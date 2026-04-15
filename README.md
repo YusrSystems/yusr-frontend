@@ -1,8 +1,8 @@
 # Monorepo Docs
 
 - #### [how to add existing project](#how-to-add-existing-project)
-- #### how to run
-- #### how to install packs
+- #### [how to run](#how-to-run)
+- #### [how to install packages](how-to-install-packages)
 
 
 ## How to add existing project
@@ -64,3 +64,18 @@ put these on path section
 pnpm install
 ```
 ### 8. all done, jsut update the imports using your text editor
+
+
+## How to run
+```cmd
+pnpm --filter <app-name> dev
+```
+### Transport as example
+```cmd
+pnpm --filter transport dev
+```
+
+## How to install packages
+```cmd
+pnpm add <package-name> --filter <app-name>
+```
