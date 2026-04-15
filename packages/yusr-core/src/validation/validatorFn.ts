@@ -1,0 +1,1 @@
+export type ValidatorFn<T = any> = (value: T, formData?: any) => string | null;
