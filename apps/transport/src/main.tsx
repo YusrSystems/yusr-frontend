@@ -2,10 +2,10 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import { ApiConstants } from "@yusr_systems/core";
 import { store } from './core/store.ts';
 import { Provider } from "react-redux";
-
+import { ApiConstants } from "../../../packages/yusr-core/src";
+import ErrorBoundary from "../../../packages/yusr-ui/src/error/errorBoundary.tsx";
 
 
 
@@ -14,7 +14,9 @@ ApiConstants.initialize("https://yusrbus.runasp.net/api");
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-      <App />
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
     </Provider>
   </StrictMode>,
 )
