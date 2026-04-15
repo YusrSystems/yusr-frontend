@@ -12,8 +12,8 @@
       "import": "./dist/yusr-ui.js"
     },
     "./style.css": {
-      "style": "./src/styles/style.css",
-      "default": "./src/styles/style.css"
+      "style": "./style.css",
+      "default": "./style.css"
     }
   },
   "peerDependencies": {
@@ -37,7 +37,7 @@
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@reduxjs/toolkit": "^2.0.0",
-    "@yusr_systems/core": "^6.0.18",
+    "yusr-core": "^6.0.18",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -60,7 +60,7 @@
   },
   "files": [
     "dist",
-    "src/styles/style.css"
+    "style.css"
   ],
   "scripts": {
     "dev": "vite",

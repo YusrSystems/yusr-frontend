@@ -1,21 +1,28 @@
-import { defineConfig } from 'vite'
-import react, { reactCompilerPreset } from '@vitejs/plugin-react'
-import babel from '@rolldown/plugin-babel'
-import tailwindcss from '@tailwindcss/vite'
-import path from 'path'
+import tailwindcss from "@tailwindcss/vite";
+import basicSsl from "@vitejs/plugin-basic-ssl";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import { defineConfig } from "vite";
 
 export default defineConfig({
-  resolve:{
+  plugins: [react(), tailwindcss(), basicSsl()],
+  server: { port: 5173 },
+  resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      'yusr-core': path.resolve(__dirname, '../../packages/yusr-core/src/index.ts'),
-      'yusr-ui': path.resolve(__dirname, '../../packages/yusr-ui/src/index.ts'),
-    }
+      "yusr-core": path.resolve(__dirname, "../../packages/yusr-core/src/index.ts"),
+      "yusr-ui": path.resolve(__dirname, "../../packages/yusr-ui/src/index.ts")
+    },
+    dedupe: ["react", "react-dom", "react/jsx-runtime"]
   },
-  
-  plugins: [
-    tailwindcss(),
-    react(),
-    babel({ presets: [reactCompilerPreset()] }),
-  ],
-})
+  optimizeDeps: {
+    include: [
+      "react-redux",
+      "@reduxjs/toolkit",
+      "use-sync-external-store",
+      "use-sync-external-store/shim",
+      "use-sync-external-store/shim/with-selector",
+      "react-is"
+    ]
+  }
+});

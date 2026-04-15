@@ -1,4 +1,4 @@
-# @yusr_systems/core
+# yusr-core
 
 ## 6.0.18
 

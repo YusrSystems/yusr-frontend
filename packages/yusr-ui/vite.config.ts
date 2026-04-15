@@ -35,7 +35,7 @@ export default defineConfig({
         '@reduxjs/toolkit',
         'lucide-react',
         'sonner',
-        '@yusr_systems/core',
+        'yusr-core',
         'class-variance-authority',
         'clsx',
         'tailwind-merge',
