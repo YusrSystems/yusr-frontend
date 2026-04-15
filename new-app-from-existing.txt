@@ -1,0 +1,22 @@
+1. craete an empty folder with app name at /apps
+
+2. clone the project from it's repo in any
+
+git clone <app-repo-path>
+
+3. cd /app-path
+
+4. npm init
+
+5. copy all folder content to the folder on step #1
+
+6. update vite.config.ts 
+- copy it's content from  /apps/transport/vite.config.ts
+
+7. update tsconfig.app.json
+- put these on path section
+      "@/*": ["./src/*"],
+      "yusr-core": ["../../packages/yusr-core/src/index.ts"],
+      "yusr-ui": ["../../packages/yusr-ui/src/index.ts"]
+
+8. all done, jsut update the imports using your text editor
