@@ -1,5 +1,5 @@
-import type { Passenger } from "@/app/features/passengers/data/passenger";
-import { BaseApiService } from "@yusr_systems/core";
+import type { Passenger } from "@/features/passengers/data/passenger";
+import { BaseApiService } from "yusr-core";
 
 export default class PassengersApiService extends BaseApiService<Passenger>
 {

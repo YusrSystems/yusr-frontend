@@ -1,11 +1,7 @@
 {
-  "name": "@yusr_systems/ui",
-  "version": "6.0.18",
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "private": false,
+  "name": "yusr-ui",
+  "version": "1.0.0",
+  "private": true,
   "type": "module",
   "main": "./dist/yusr-ui.js",
   "module": "./dist/yusr-ui.js",
@@ -84,6 +80,7 @@
     "vite-plugin-dts": "^4.0.0"
   },
   "dependencies": {
+    "immer": "^11.1.4",
     "radix-ui": "^1.4.3"
   }
 }

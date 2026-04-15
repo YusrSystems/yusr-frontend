@@ -1,8 +1,7 @@
 import { Key, Shield, Trash2 } from "lucide-react";
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label, Separator, Switch, Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from "@yusr_systems/ui";
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Label, Separator, Switch, Tabs, TabsContent, TabsList, TabsTrigger, Textarea } from "yusr-ui";
 
-export default function ProfileContent()
-{
+export default function ProfileContent() {
   return (
     <Tabs defaultValue="personal" className="space-y-6">
       <TabsList className="grid w-full grid-cols-4">
@@ -12,7 +11,7 @@ export default function ProfileContent()
         <TabsTrigger value="notifications">Notifications</TabsTrigger>
       </TabsList>
 
-      { /* Personal Information */ }
+      { /* Personal Information */}
       <TabsContent value="personal" className="space-y-6">
         <Card>
           <CardHeader>
@@ -52,7 +51,7 @@ export default function ProfileContent()
                 id="bio"
                 placeholder="Tell us about yourself..."
                 defaultValue="Passionate product designer with 8+ years of experience creating user-centered digital experiences. I love solving complex problems and turning ideas into beautiful, functional products."
-                rows={ 4 }
+                rows={4}
               />
             </div>
             <div className="space-y-2">
@@ -63,7 +62,7 @@ export default function ProfileContent()
         </Card>
       </TabsContent>
 
-      { /* Account Settings */ }
+      { /* Account Settings */}
       <TabsContent value="account" className="space-y-6">
         <Card>
           <CardHeader>
@@ -125,7 +124,7 @@ export default function ProfileContent()
         </Card>
       </TabsContent>
 
-      { /* Security Settings */ }
+      { /* Security Settings */}
       <TabsContent value="security" className="space-y-6">
         <Card>
           <CardHeader>
@@ -179,7 +178,7 @@ export default function ProfileContent()
         </Card>
       </TabsContent>
 
-      { /* Notification Settings */ }
+      { /* Notification Settings */}
       <TabsContent value="notifications" className="space-y-6">
         <Card>
           <CardHeader>

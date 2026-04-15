@@ -1,4 +1,4 @@
-import { createGenericEntitySlice } from "@yusr_systems/ui";
+import { createGenericEntitySlice } from "yusr-ui";
 import type { Country } from "../../data/country";
 import CountriesApiService from "../../networking/countriesApiService";
 

@@ -1,4 +1,4 @@
-import { ApiConstants, YusrApiHelper } from "@yusr_systems/core";
+import { ApiConstants, YusrApiHelper } from "yusr-core";
 import type { RequestResult } from "../data/requestResult";
 import type { Setting } from "../data/setting";
 

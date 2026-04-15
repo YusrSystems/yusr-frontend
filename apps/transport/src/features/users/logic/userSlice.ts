@@ -1,5 +1,5 @@
-import UsersApiService from "@/app/core/networking/usersApiService";
-import { createGenericEntitySlice } from "@yusr_systems/ui";
+ import { UsersApiService } from "yusr-core";
+import { createGenericEntitySlice } from "yusr-ui";
 
 const { reducer, actions } = createGenericEntitySlice("user", new UsersApiService());
 

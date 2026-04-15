@@ -1,5 +1,5 @@
-import type { StorageFile } from "@/app/core/data/storageFile";
-import { BaseEntity } from "@yusr_systems/core";
+import type { StorageFile } from "@/core/data/storageFile";
+import { BaseEntity } from "yusr-core";
 
 export class Deposit extends BaseEntity
 {

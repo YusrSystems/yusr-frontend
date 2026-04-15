@@ -1,8 +1,8 @@
-import { selectPermissionsByResource } from "@/app/core/auth/authSelectors";
-import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import RolesApiService from "@/app/core/networking/rolesApiService";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
-import { CrudPage } from "@yusr_systems/ui";
+import { selectPermissionsByResource } from "@/core/auth/authSelectors";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import RolesApiService from "@/core/networking/rolesApiService";
+import { useAppDispatch, useAppSelector } from "@/core/state/store";
+import { CrudPage } from "yusr-ui";
 import { Settings2 } from "lucide-react";
 import { useMemo } from "react";
 import { type Role, RoleFilterColumns } from "../data/role";
@@ -10,8 +10,7 @@ import { openRoleChangeDialog, openRoleDeleteDialog, setIsRoleChangeDialogOpen, 
 import { filterRoles, refreshRoles, setCurrentRolesPage } from "../logic/roleSlice";
 import ChangeRoleDialog from "./changeRoleDialog";
 
-export default function RolesPage()
-{
+export default function RolesPage() {
   const dispatch = useAppDispatch();
   const roleState = useAppSelector((state) => state.role);
   const roleDialogState = useAppSelector((state) => state.roleDialog);
@@ -23,24 +22,24 @@ export default function RolesPage()
       title="إدارة الادوار"
       entityName="الدور"
       addNewItemTitle="إضافة دور جديد"
-      permissions={ permissions }
-      entityState={ roleState }
-      useSlice={ () => roleDialogState }
-      service={ service }
-      cards={ [{
+      permissions={permissions}
+      entityState={roleState}
+      useSlice={() => roleDialogState}
+      service={service}
+      cards={[{
         title: "إجمالي الادوار",
         data: (roleState.entities?.count ?? 0).toString(),
         icon: <Settings2 className="h-4 w-4 text-muted-foreground" />
-      }] }
-      columnsToFilter={ RoleFilterColumns.columnsNames }
-      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, { rowName: "رقم الصلاحية", rowStyles: "w-30" }, {
+      }]}
+      columnsToFilter={RoleFilterColumns.columnsNames}
+      tableHeadRows={[{ rowName: "", rowStyles: "text-left w-12.5" }, { rowName: "رقم الصلاحية", rowStyles: "w-30" }, {
         rowName: "اسم الصلاحية",
         rowStyles: ""
-      }] }
-      tableRowMapper={ (
+      }]}
+      tableRowMapper={(
         role: Role
-      ) => [{ rowName: `#${role.id}`, rowStyles: "" }, { rowName: role.name, rowStyles: "font-semibold" }] }
-      actions={ {
+      ) => [{ rowName: `#${role.id}`, rowStyles: "" }, { rowName: role.name, rowStyles: "font-semibold" }]}
+      actions={{
         filter: filterRoles,
         openChangeDialog: (entity) => openRoleChangeDialog(entity),
         openDeleteDialog: (entity) => openRoleDeleteDialog(entity),
@@ -48,22 +47,20 @@ export default function RolesPage()
         setIsDeleteDialogOpen: (open) => setIsRoleDeleteDialogOpen(open),
         refresh: refreshRoles,
         setCurrentPage: (page) => setCurrentRolesPage(page)
-      } }
-      ChangeDialog={ 
+      }}
+      ChangeDialog={
         <ChangeRoleDialog
-          entity={ roleDialogState.selectedRow || undefined }
-          mode={ roleDialogState.selectedRow ? "update" : "create" }
-          service={ service }
-          onSuccess={ (data, mode) =>
-          {
+          entity={roleDialogState.selectedRow || undefined}
+          mode={roleDialogState.selectedRow ? "update" : "create"}
+          service={service}
+          onSuccess={(data, mode) => {
             dispatch(refreshRoles({ data: data }));
-            if (mode === "create")
-            {
+            if (mode === "create") {
               dispatch(setIsRoleChangeDialogOpen(false));
             }
-          } }
+          }}
         />
-       }
+      }
     />
   );
 }

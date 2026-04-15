@@ -1,4 +1,4 @@
-import { ApiConstants, YusrApiHelper } from "@yusr_systems/core";
+import { ApiConstants, YusrApiHelper } from "yusr-core";
 import { ReportHelper } from "./reportHelper";
 
 export default class TripTicketsReportApiService

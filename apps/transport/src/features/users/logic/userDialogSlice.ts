@@ -1,5 +1,5 @@
-import { createGenericDialogSlice } from "@yusr_systems/ui";
-import type User from "../data/user";
+import { createGenericDialogSlice } from "yusr-ui";
+import type User from "../data/User.1";
 
 export const userDialogSlice = createGenericDialogSlice<User>("userDialog");
 

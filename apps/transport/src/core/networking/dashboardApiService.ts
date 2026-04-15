@@ -1,4 +1,4 @@
-import { ApiConstants, BaseFilterableApiService, YusrApiHelper } from "@yusr_systems/core";
+import { ApiConstants, BaseFilterableApiService, YusrApiHelper } from "yusr-core";
 import { Dashboard } from "../data/dashboard";
 import type { RequestResult } from "../data/requestResult";
 

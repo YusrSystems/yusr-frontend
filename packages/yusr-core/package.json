@@ -1,12 +1,8 @@
 {
-  "name": "@yusr_systems/core",
-  "version": "6.0.18",
+  "name": "yusr-core",
+  "version": "1.0.0",
   "private": false,
   "type": "module",
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
   "main": "./dist/yusr-core.js",
   "module": "./dist/yusr-core.js",
   "types": "./dist/index.d.ts",

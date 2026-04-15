@@ -1,4 +1,4 @@
-import { BaseEntity, type ColumnName } from "@yusr_systems/core";
+import { BaseEntity, type ColumnName } from "yusr-core";
 import type { Country } from "./country";
 
 export class City extends BaseEntity

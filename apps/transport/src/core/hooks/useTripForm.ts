@@ -1,10 +1,10 @@
-import TripsApiService from "@/app/core/networking/tripsApiService";
-import type { SeatType } from "@/app/features/trips/bus/busTypes";
-import { Deposit } from "@/app/features/trips/data/deposit";
-import { Ticket } from "@/app/features/trips/data/ticket";
-import type { Trip } from "@/app/features/trips/data/trip";
-import { type ValidationRule, Validators } from "@yusr_systems/core";
-import { useEntityForm } from "@yusr_systems/ui";
+import TripsApiService from "@/core/networking/tripsApiService";
+import type { SeatType } from "@/features/trips/bus/busTypes";
+import { Deposit } from "@/features/trips/data/deposit";
+import { Ticket } from "@/features/trips/data/ticket";
+import type { Trip } from "@/features/trips/data/trip";
+import { type ValidationRule, Validators } from "yusr-core";
+import { useEntityForm } from "yusr-ui";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../state/store";
 

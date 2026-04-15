@@ -1,25 +1,30 @@
-import branchDialogReducer from "@/app/features/branches/logic/branchDialogSlice";
-import branchReducer from "@/app/features/branches/logic/branchSlice";
-import passengerDialogReducer from "@/app/features/passengers/logic/passengerDialogSlice";
-import passengerReducer from "@/app/features/passengers/logic/passengerSlice";
-import roleDialogReducer from "@/app/features/roles/logic/roleDialogSlice";
-import roleReducer from "@/app/features/roles/logic/roleSlice";
-import routeDialogReducer from "@/app/features/routes/logic/routeDialogSlice";
-import routeReducer from "@/app/features/routes/logic/routeSlice";
-import tripDialogReducer from "@/app/features/trips/logic/tripDialogSlice";
-import tripReducer from "@/app/features/trips/logic/tripSlice";
-import type User from "@/app/features/users/data/user";
-import userDialogReducer from "@/app/features/users/logic/userDialogSlice";
-import userReducer from "@/app/features/users/logic/userSlice";
-import { configureStore } from "@reduxjs/toolkit";
-import { createAuthSlice } from "@yusr_systems/core";
-import { setupAuthListeners } from "@yusr_systems/ui";
+
 import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import type { Setting } from "../data/setting";
 import cityReducer from "./shared/citySlice";
 import countryReducer from "./shared/countrySlice";
 import currencyReducer from "./shared/currencySlice";
 import systemReducer from "./shared/systemSlice";
+import { configureStore } from "@reduxjs/toolkit"; 
+import { createAuthSlice, User } from "yusr-core";
+
+
+
+import branchDialogReducer from "@/features/branches/logic/branchDialogSlice";
+import branchReducer from "@/features/branches/logic/branchSlice";
+import passengerDialogReducer from "@/features/passengers/logic/passengerDialogSlice";
+import passengerReducer from "@/features/passengers/logic/passengerSlice";
+import roleDialogReducer from "@/features/roles/logic/roleDialogSlice";
+import roleReducer from "@/features/roles/logic/roleSlice";
+import routeDialogReducer from "@/features/routes/logic/routeDialogSlice";
+import routeReducer from "@/features/routes/logic/routeSlice";
+import tripDialogReducer from "@/features/trips/logic/tripDialogSlice";
+import tripReducer from "@/features/trips/logic/tripSlice";
+ import userDialogReducer from "@/features/users/logic/userDialogSlice"; 
+import userReducer from "@/features/users/logic/userSlice";
+import { setupAuthListeners } from "yusr-ui";
+
+
 
 const authSlice = createAuthSlice<User, Setting>();
 export const { login, logout, updateLoggedInUser, updateSetting, syncFromStorage } = authSlice.actions;

@@ -1,5 +1,5 @@
-import RolesApiService from "@/app/core/networking/rolesApiService";
-import { createGenericEntitySlice } from "@yusr_systems/ui";
+import RolesApiService from "@/core/networking/rolesApiService";
+import { createGenericEntitySlice } from "yusr-ui";
 
 const { reducer, actions } = createGenericEntitySlice("role", new RolesApiService());
 

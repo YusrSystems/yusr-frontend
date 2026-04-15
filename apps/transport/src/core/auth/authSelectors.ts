@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
-import type { PermissionSelector } from "@yusr_systems/core";
-import { SystemPermissions } from "@yusr_systems/core";
+import type { PermissionSelector } from "yusr-core";
+import { SystemPermissions } from "yusr-core";
 import { SystemPermissionsActions } from "../auth/systemPermissionsActions";
 import type { RootState } from "../state/store";
 

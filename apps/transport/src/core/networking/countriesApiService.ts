@@ -1,4 +1,4 @@
-import { ApiConstants, BaseFilterableApiService, YusrApiHelper } from "@yusr_systems/core";
+import { ApiConstants, BaseFilterableApiService, YusrApiHelper } from "yusr-core";
 import type { Country } from "../data/country";
 import type { FilterCondition } from "../data/filterCondition";
 import type { FilterResult } from "../data/filterResult";

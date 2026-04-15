@@ -1,4 +1,4 @@
-import type { ColumnName } from "@yusr_systems/core";
+import type { ColumnName } from "yusr-core";
 import { Check, ChevronsUpDown } from "lucide-react";
 import * as React from "react";
 import { cn } from "../../../utils/cn";
@@ -33,8 +33,7 @@ export function SearchableSelect<T>(
     columnsNames,
     onSearch
   }: SearchableSelectParams<T>
-)
-{
+) {
   const [open, setOpen] = React.useState(false);
 
   // Find the selected item's label to display in the button
@@ -43,20 +42,20 @@ export function SearchableSelect<T>(
   const selectedLabel = selectedItem ? String(selectedItem[itemLabelKey]) : placeholder;
 
   return (
-    <Popover open={ open } onOpenChange={ setOpen } modal={ true }>
+    <Popover open={open} onOpenChange={setOpen} modal={true}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
           role="combobox"
-          aria-expanded={ open }
-          disabled={ disabled }
-          className={ cn(
+          aria-expanded={open}
+          disabled={disabled}
+          className={cn(
             "w-full justify-between px-3 font-normal",
             !value && "text-muted-foreground",
-            isInvalid? "error" : ""
-          ) }
+            isInvalid ? "error" : ""
+          )}
         >
-          <span className="truncate text-start">{ selectedLabel }</span>
+          <span className="truncate text-start">{selectedLabel}</span>
           <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50 ltr:ml-2 rtl:mr-2" />
         </Button>
       </PopoverTrigger>
@@ -68,31 +67,29 @@ export function SearchableSelect<T>(
       */
       }
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start" dir="rtl">
-        { /* Search Input Header */ }
-        <SearchInput columnsNames={ columnsNames } onSearch={ onSearch } />
+        { /* Search Input Header */}
+        <SearchInput columnsNames={columnsNames} onSearch={onSearch} />
 
-        { /* List Container */ }
-        <Command shouldFilter={ false }>
+        { /* List Container */}
+        <Command shouldFilter={false}>
           <CommandList className="max-h-50 overflow-y-auto overflow-x-hidden">
-            { items.length === 0
+            {items.length === 0
               ? <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">لا توجد بيانات</CommandEmpty>
               : (
                 <CommandGroup>
-                  { items.map((item) =>
-                  {
+                  {items.map((item) => {
                     const itemValue = String(item[itemValueKey]);
                     const itemLabel = String(item[itemLabelKey]);
                     const isSelected = value === itemValue;
 
                     return (
                       <CommandItem
-                        key={ itemValue }
-                        value={ itemValue }
-                        onSelect={ () =>
-                        {
+                        key={itemValue}
+                        value={itemValue}
+                        onSelect={() => {
                           onValueChange(itemValue);
                           setOpen(false);
-                        } }
+                        }}
                         className="cursor-pointer"
                       >
                         {
@@ -104,14 +101,14 @@ export function SearchableSelect<T>(
                       */
                         }
                         <Check
-                          className={ cn("h-4 w-4 ltr:mr-2 rtl:ml-2", isSelected ? "opacity-100" : "opacity-0") }
+                          className={cn("h-4 w-4 ltr:mr-2 rtl:ml-2", isSelected ? "opacity-100" : "opacity-0")}
                         />
-                        { itemLabel }
+                        {itemLabel}
                       </CommandItem>
                     );
-                  }) }
+                  })}
                 </CommandGroup>
-              ) }
+              )}
           </CommandList>
         </Command>
       </PopoverContent>

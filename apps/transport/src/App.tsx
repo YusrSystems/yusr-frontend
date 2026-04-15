@@ -1,4 +1,4 @@
-import { ProtectedRoute, Skeleton, ThemeProvider, Toaster, TooltipProvider } from "@yusr_systems/ui";
+import { ProtectedRoute, Skeleton, ThemeProvider, Toaster, TooltipProvider } from "yusr-ui";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import useAppInitialization from "./core/hooks/useAppInitialization";
 import RoutesService from "./core/services/constants/routesService";

@@ -1,5 +1,5 @@
-import { SystemPermissionsActions } from "@/app/core/auth/systemPermissionsActions";
-import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
+import { SystemPermissionsActions } from "@/core/auth/systemPermissionsActions";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import { Database, FileBarChart, LayoutDashboard, Pencil, Plus, Trash2 } from "lucide-react";
 
 export const ArabicLabels: Record<string, string> = {

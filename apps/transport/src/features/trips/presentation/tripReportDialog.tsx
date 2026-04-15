@@ -1,8 +1,7 @@
-import { Button, Checkbox, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Input, Label } from "@yusr_systems/ui";
+import { Button, Checkbox, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, Input, Label } from "yusr-ui";
 import { Loader2, Printer, Share2 } from "lucide-react";
 
-interface TripReportDialogProps
-{
+interface TripReportDialogProps {
   title: string;
   label: string;
   isOpen: boolean;
@@ -32,20 +31,19 @@ export default function TripReportDialog(
     showAmount,
     setShowAmount
   }: TripReportDialogProps
-)
-{
+) {
   return (
-    <Dialog open={ isOpen } onOpenChange={ setIsOpen }>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <div className="flex items-center overflow-hidden rounded-md border bg-primary text-primary-foreground shadow-sm">
-        { /* Action Buttons */ }
+        { /* Action Buttons */}
         <DialogTrigger asChild>
-          <Button disabled={ isPrinting || isSharing } onClick={ () => setIsOpen(true) }>{ label }</Button>
+          <Button disabled={isPrinting || isSharing} onClick={() => setIsOpen(true)}>{label}</Button>
         </DialogTrigger>
       </div>
 
       <DialogContent dir="rtl" className="sm:max-w-81.25">
         <DialogHeader>
-          <DialogTitle className="text-right">{ title }</DialogTitle>
+          <DialogTitle className="text-right">{title}</DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
@@ -55,33 +53,33 @@ export default function TripReportDialog(
               id="commission"
               type="number"
               className="text-right"
-              value={ commission }
-              onChange={ (e) => setCommission(Number(e.target.value)) }
+              value={commission}
+              onChange={(e) => setCommission(Number(e.target.value))}
             />
           </div>
 
           <div className="flex items-center justify-start gap-3 py-2 px-1 border rounded-md bg-muted/30">
             <Checkbox
               id="showAmount"
-              checked={ showAmount }
-              onCheckedChange={ (checked) => setShowAmount(!!checked) }
+              checked={showAmount}
+              onCheckedChange={(checked) => setShowAmount(!!checked)}
             />
             <Label htmlFor="showAmount" className="text-xs cursor-pointer">عرض المبالغ المالية</Label>
           </div>
         </div>
 
         <DialogFooter className="flex flex-row gap-2">
-          <Button className="flex-1 gap-2" onClick={ () => onPrint(commission, showAmount) } disabled={ isPrinting }>
-            { isPrinting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Printer className="w-4 h-4" /> }
+          <Button className="flex-1 gap-2" onClick={() => onPrint(commission, showAmount)} disabled={isPrinting}>
+            {isPrinting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Printer className="w-4 h-4" />}
             طباعة
           </Button>
           <Button
             variant="secondary"
             className="flex-1 gap-2"
-            onClick={ () => onShare(commission, showAmount) }
-            disabled={ isSharing }
+            onClick={() => onShare(commission, showAmount)}
+            disabled={isSharing}
           >
-            { isSharing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" /> }
+            {isSharing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
             مشاركة
           </Button>
         </DialogFooter>

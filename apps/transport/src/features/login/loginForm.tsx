@@ -1,16 +1,15 @@
-import { LoginRequest } from "@/app/core/data/loginRequest";
-import type { Setting } from "@/app/core/data/setting";
-import { login, updateLoggedInUser, useAppDispatch } from "@/app/core/state/store";
+import { LoginRequest } from "@/core/data/loginRequest";
+import type { Setting } from "@/core/data/setting";
+import { login, updateLoggedInUser, useAppDispatch } from "@/core/state/store";
 import placeholderImg from "@/assets/placeholder.svg";
-import { ApiConstants, type ValidationRule, Validators, YusrApiHelper } from "@yusr_systems/core";
-import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, PasswordField, TextField, useEntityForm } from "@yusr_systems/ui";
+import { ApiConstants, type ValidationRule, Validators, YusrApiHelper } from "yusr-core";
+import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, PasswordField, TextField, useEntityForm } from "yusr-ui";
 import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import type User from "../users/data/user";
+import type User from "../users/data/User.1";
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
-{
+export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
   const validationRules: ValidationRule<Partial<LoginRequest>>[] = useMemo(
     () => [{
@@ -37,31 +36,25 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
   const emailStorageItemName = "remembered_email";
   const usernameStorageItemName = "remembered_username";
 
-  useEffect(() =>
-  {
+  useEffect(() => {
     const savedEmail = localStorage.getItem(emailStorageItemName);
     const savedUsername = localStorage.getItem(usernameStorageItemName);
-    if (savedEmail || savedUsername)
-    {
+    if (savedEmail || savedUsername) {
       handleChange((prev) => ({ ...prev, companyEmail: savedEmail || "", username: savedUsername || "" }));
       setRememberMe(true);
     }
   }, []);
 
-  const Login = async () =>
-  {
-    if (!validate())
-    {
+  const Login = async () => {
+    if (!validate()) {
       return;
     }
 
-    if (rememberMe)
-    {
+    if (rememberMe) {
       localStorage.setItem(emailStorageItemName, formData.companyEmail || "");
       localStorage.setItem(usernameStorageItemName, formData.username || "");
     }
-    else
-    {
+    else {
       localStorage.removeItem(emailStorageItemName);
       localStorage.removeItem(usernameStorageItemName);
     }
@@ -79,8 +72,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
       request
     );
 
-    if (result.status === 200 && result.data)
-    {
+    if (result.status === 200 && result.data) {
       dispatch(login(result.data));
       dispatch(updateLoggedInUser(result.data.user));
 
@@ -88,19 +80,17 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 
       setLoading(false);
 
-      setTimeout(() =>
-      {
+      setTimeout(() => {
         navigate(origin, { replace: true });
       }, 10);
     }
-    else
-    {
+    else {
       setLoading(false);
     }
   };
 
   return (
-    <div className={ cn("flex flex-col gap-6", className) } { ...props }>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form className="p-6 md:p-8">
@@ -115,14 +105,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 id="email"
                 type="email"
                 placeholder="m@example.com"
-                value={ formData.companyEmail || "" }
-                isInvalid={ isInvalid("email") }
-                error={ getError("email") }
-                onChange={ (e) =>
-                {
+                value={formData.companyEmail || ""}
+                isInvalid={isInvalid("email")}
+                error={getError("email")}
+                onChange={(e) => {
                   handleChange({ companyEmail: e.target.value });
                   clearError("email");
-                } }
+                }}
                 required
               />
 
@@ -131,14 +120,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 id="username"
                 type="text"
                 placeholder="أدخل اسم المستخدم"
-                value={ formData.username || "" }
-                isInvalid={ isInvalid("username") }
-                error={ getError("username") }
-                onChange={ (e) =>
-                {
+                value={formData.username || ""}
+                isInvalid={isInvalid("username")}
+                error={getError("username")}
+                onChange={(e) => {
                   handleChange({ username: e.target.value });
                   clearError("username");
-                } }
+                }}
                 required
               />
 
@@ -146,22 +134,21 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 label="كلمة المرور"
                 id="password"
                 placeholder="••••••••"
-                value={ formData.password || "" }
-                isInvalid={ isInvalid("password") }
-                error={ getError("password") }
-                onChange={ (e) =>
-                {
+                value={formData.password || ""}
+                isInvalid={isInvalid("password")}
+                error={getError("password")}
+                onChange={(e) => {
                   handleChange({ password: e.target.value });
                   clearError("password");
-                } }
+                }}
                 required
               />
 
               <div className="flex items-center gap-3">
                 <Checkbox
                   id="rememberMe"
-                  checked={ rememberMe }
-                  onCheckedChange={ (checked) => setRememberMe(checked as boolean) }
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked as boolean)}
                 />
                 <label
                   htmlFor="rememberMe"
@@ -172,8 +159,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
               </div>
 
               <Field>
-                <Button type="button" disabled={ loading } onClick={ Login }>
-                  { loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
+                <Button type="button" disabled={loading} onClick={Login}>
+                  {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
                   تسجيل الدخول
                 </Button>
               </Field>
@@ -184,7 +171,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
           </form>
           <div className="bg-muted relative hidden md:block">
             <img
-              src={ placeholderImg }
+              src={placeholderImg}
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />

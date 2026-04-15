@@ -1,4 +1,4 @@
-import { createGenericDialogSlice } from "@yusr_systems/ui";
+import { createGenericDialogSlice } from "yusr-ui";
 import type { Ticket } from "../data/ticket";
 
 export const TicketDialogSlice = createGenericDialogSlice<Ticket>("ticketDialog");

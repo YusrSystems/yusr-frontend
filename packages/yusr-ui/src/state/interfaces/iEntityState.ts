@@ -1,4 +1,4 @@
-import type { FilterResult } from "@yusr_systems/core";
+import type { FilterResult } from "yusr-core";
 
 export interface IEntityState<T>
 {

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { StorageFile, StorageFileStatus } from "@yusr_systems/core";
+import { StorageFile, StorageFileStatus } from "yusr-core";
 
 export function useStorageFile<T>(setFormData: React.Dispatch<React.SetStateAction<T>>, fieldName: keyof T)
 {

@@ -1,4 +1,4 @@
-import { createGenericDialogSlice } from "@yusr_systems/ui";
+import { createGenericDialogSlice } from "yusr-ui";
 import type Branch from "../data/branch";
 
 export const branchDialogSlice = createGenericDialogSlice<Branch>("branchDialog");

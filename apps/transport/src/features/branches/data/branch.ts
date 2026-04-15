@@ -1,5 +1,8 @@
-import { BaseEntity, type ColumnName } from "@yusr_systems/core";
+import { BaseEntity, type ColumnName } from "yusr-core";
 
+ 
+
+ 
 export default class Branch extends BaseEntity
 {
   public name!: string;

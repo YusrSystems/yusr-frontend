@@ -8,7 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarProvider,
-} from "@/components/pure/sidebar";
+} from "../../pure/sidebar";
 import {
   SidebarContext,
   useSidebarContext,

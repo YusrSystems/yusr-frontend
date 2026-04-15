@@ -1,4 +1,4 @@
-import { createGenericEntitySlice } from "@yusr_systems/ui";
+import { createGenericEntitySlice } from "yusr-ui";
 import type { Currency } from "../../data/currency";
 import CurrenciesApiService from "../../networking/currenciesApiService";
 

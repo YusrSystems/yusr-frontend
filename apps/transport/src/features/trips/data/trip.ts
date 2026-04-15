@@ -1,4 +1,4 @@
-import { BaseEntity, type ColumnName } from "@yusr_systems/core";
+import { BaseEntity, type ColumnName } from "yusr-core";
 import type { Route } from "../../routes/data/route";
 import type { Deposit } from "./deposit";
 import type { Ticket } from "./ticket";

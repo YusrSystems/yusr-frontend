@@ -1,5 +1,5 @@
-import type { SeatType } from "@/app/features/trips/bus/busTypes";
-import type { Ticket } from "@/app/features/trips/data/ticket";
+import type { SeatType } from "@/features/trips/bus/busTypes";
+import type { Ticket } from "@/features/trips/data/ticket";
 import { useMemo, useState } from "react";
 
 export function useBusLogic(seats: SeatType[], tickets: Ticket[])

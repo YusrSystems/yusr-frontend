@@ -1,9 +1,8 @@
-import { SideBar } from "@/app/core/components/sideBar/sideBar";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@yusr_systems/ui";
+import { SideBar } from "@/core/components/sideBar/sideBar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "yusr-ui";
 import { Outlet } from "react-router-dom";
 
-const MainPage = () =>
-{
+const MainPage = () => {
   return (
     <SidebarProvider>
       <SideBar variant="inset" />

@@ -1,8 +1,9 @@
-import WhatsappService from "@/app/core/chat/whatsappService";
-import TicketReportApiService from "@/app/core/networking/reports/ticketReportApiService";
-import { useAppSelector } from "@/app/core/state/store";
+
 import { toast } from "sonner";
+import TicketReportApiService from "../../../core/networking/reports/ticketReportApiService";
+import { useAppSelector } from "../../../core/state/store";
 import type { Ticket } from "../data/ticket";
+import WhatsappService from "../../../core/chat/whatsappService";
 
 export type useBusSeatProps = { ticket?: Ticket; isOccupied: boolean; onCheckInUpdate?: (ticketId: number) => void; };
 export default function useBusSeat({ ticket, isOccupied, onCheckInUpdate }: useBusSeatProps)

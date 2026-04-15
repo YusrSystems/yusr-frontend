@@ -1,4 +1,4 @@
-import { BaseEntity } from "@yusr_systems/core";
+import { BaseEntity } from "yusr-core";
 
 export type TripInTimeData = { totalTrips: number; date: Date; };
 export class Dashboard extends BaseEntity

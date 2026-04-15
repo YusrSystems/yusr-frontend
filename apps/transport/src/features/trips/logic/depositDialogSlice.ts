@@ -1,4 +1,4 @@
-import { createGenericDialogSlice } from "@yusr_systems/ui";
+import { createGenericDialogSlice } from "yusr-ui";
 import type { Deposit } from "../data/deposit";
 
 export const DepositDialogSlice = createGenericDialogSlice<Deposit>("depositDialog");

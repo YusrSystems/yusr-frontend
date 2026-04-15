@@ -1,5 +1,5 @@
 import type { Dispatch, UnknownAction } from "@reduxjs/toolkit";
-import { AuthConstants } from "@yusr_systems/core";
+import { AuthConstants } from "yusr-core";
 
 interface AuthActions 
 {

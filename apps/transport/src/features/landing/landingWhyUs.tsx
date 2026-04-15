@@ -1,4 +1,4 @@
-import { Button, Card } from "@yusr_systems/ui";
+import { Button, Card } from "yusr-ui";
 import { ArrowLeft, type LucideProps } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -10,8 +10,7 @@ export default function LandingWhyUs(
       desc: string;
     }[];
   }
-)
-{
+) {
   return (
     <section className="mx-auto max-w-6xl px-6 py-20">
       <div className="mb-12 text-center">
@@ -22,29 +21,28 @@ export default function LandingWhyUs(
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        { whyUs.map((w, i) =>
-        {
+        {whyUs.map((w, i) => {
           const Icon = w.icon;
           return (
             // Added hover border
             <Card
-              key={ i }
+              key={i}
               className="flex gap-4 p-6 transition-all duration-200 hover:bg-accent hover:border-primary/30"
             >
-              { /* Changed icon background */ }
+              { /* Changed icon background */}
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <Icon className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold">{ w.title }</h3>
-                <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{ w.desc }</p>
+                <h3 className="text-base font-bold">{w.title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{w.desc}</p>
               </div>
             </Card>
           );
-        }) }
+        })}
       </div>
 
-      { /* Added color to CTA box */ }
+      { /* Added color to CTA box */}
       <div className="mt-12 rounded-2xl border border-primary/20 bg-primary/5 p-8 text-center">
         <p className="text-xl font-bold md:text-2xl text-primary">
           أوقف الفوضى في إدارة رحلاتك — ابدأ مع حافلات يُسر اليوم

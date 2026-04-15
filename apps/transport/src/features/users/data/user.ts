@@ -1,5 +1,6 @@
+ import { BaseEntity, Branch, Role } from "yusr-core/entities";
+import type { ColumnName } from "yusr-core/types";
 
-import { BaseEntity, Branch, Role, type ColumnName } from "@yusr_systems/core";
 
 export default class User extends BaseEntity
 {

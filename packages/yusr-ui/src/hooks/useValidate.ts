@@ -1,4 +1,4 @@
-import type { ValidationRule } from "@yusr_systems/core";
+import type { ValidationRule } from "yusr-core";
 import { useCallback } from "react";
 
 export function useValidate<T>(

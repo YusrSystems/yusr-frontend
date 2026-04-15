@@ -1,17 +1,16 @@
-import { type ValidationRule, Validators } from "@yusr_systems/core";
-import type { CommonChangeDialogProps } from "@yusr_systems/ui";
-import { ChangeDialog, FieldGroup, Skeleton, TextField, useEntityForm } from "@yusr_systems/ui";
+import { type ValidationRule, Validators } from "yusr-core";
+import type { CommonChangeDialogProps } from "yusr-ui";
+import { ChangeDialog, FieldGroup, Skeleton, TextField, useEntityForm } from "yusr-ui";
 import { useEffect, useMemo } from "react";
 import type { Role } from "../data/role";
 import { categorizePermissions, PermissionCard } from "./permissionCard";
 import { ActionIcons, ArabicLabels, PERMISSION_SECTIONS } from "./permissionConfig";
 import { PermissionSkeleton } from "./permissionSkeleton";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
-import { fetchSystemPermissions } from "@/app/core/state/shared/systemSlice";
-import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
+import { useAppDispatch, useAppSelector } from "@/core/state/store";
+import { fetchSystemPermissions } from "@/core/state/shared/systemSlice";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 
-export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Role>)
-{
+export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Role>) {
   const validationRules: ValidationRule<Partial<Role>>[] = useMemo(
     () => [{ field: "name", selector: (d) => d.name, validators: [Validators.required("يرجى اختيار اسم للدور")] }],
     []
@@ -23,16 +22,13 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
   const systemState = useAppSelector((state) => state.system);
   const dispatch = useAppDispatch();
 
-  useEffect(() =>
-  {
-    if (systemState.permissions.length === 0)
-    {
+  useEffect(() => {
+    if (systemState.permissions.length === 0) {
       dispatch(fetchSystemPermissions());
     }
   }, [dispatch, systemState.permissions.length]);
 
-  const categorized = useMemo(() =>
-  {
+  const categorized = useMemo(() => {
     return PERMISSION_SECTIONS.map((section) => ({
       ...section,
       data: categorizePermissions(systemState.permissions, section.resources)
@@ -41,68 +37,67 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
 
   return (
     <ChangeDialog<Role>
-      title={ `${mode === "create" ? "إضافة" : "تعديل"} دور` }
+      title={`${mode === "create" ? "إضافة" : "تعديل"} دور`}
       className="sm:max-w-6xl max-h-[90vh] flex flex-col"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => systemState.isLoading }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
+      formData={formData}
+      dialogMode={mode}
+      service={service}
+      disable={() => systemState.isLoading}
+      onSuccess={(data) => onSuccess?.(data, mode)}
+      validate={validate}
     >
       <div className="flex-1 overflow-y-auto py-4 px-1">
         <FieldGroup className="space-y-8">
           <TextField
             label="اسم الدور"
             required
-            value={ formData.name || "" }
-            isInvalid={ isInvalid("name") }
-            error={ getError("name") }
-            onChange={ (e) =>
-            {
+            value={formData.name || ""}
+            isInvalid={isInvalid("name")}
+            error={getError("name")}
+            onChange={(e) => {
               handleChange({ name: e.target.value });
               clearError("name");
-            } }
+            }}
           />
 
-          { systemState.isLoading
+          {systemState.isLoading
             ? (
               <div className="space-y-8">
                 <section className="space-y-4">
                   <Skeleton className="h-6 w-40" />
-                  { PermissionSkeleton() }
+                  {PermissionSkeleton()}
                 </section>
               </div>
             )
             : (
               <>
-                { categorized.map((section) => (
-                  <section key={ section.id } className="space-y-4">
+                {categorized.map((section) => (
+                  <section key={section.id} className="space-y-4">
                     <div className="flex items-center gap-2 text-primary font-bold">
-                      { section.icon } <span>{ section.title }</span>
+                      {section.icon} <span>{section.title}</span>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      { section.data.map((item) => (
+                      {section.data.map((item) => (
                         <PermissionCard
-                          key={ item.resource }
-                          resourceId={ item.resource }
-                          label={ ArabicLabels[item.resource] || item.resource }
-                          masterPermission={ item.get }
-                          isMasterRequired={ item.resource === SystemPermissionsResources.Settings }
-                          selectedPermissions={ formData.permissions || [] }
-                          onToggle={ (updated) => handleChange({ permissions: updated }) }
-                          actions={ item.actions.map((perm) => ({
+                          key={item.resource}
+                          resourceId={item.resource}
+                          label={ArabicLabels[item.resource] || item.resource}
+                          masterPermission={item.get}
+                          isMasterRequired={item.resource === SystemPermissionsResources.Settings}
+                          selectedPermissions={formData.permissions || []}
+                          onToggle={(updated) => handleChange({ permissions: updated })}
+                          actions={item.actions.map((perm) => ({
                             id: perm,
                             label: ArabicLabels[perm.split(".")[1]] || perm.split(".")[1],
                             icon: ActionIcons[perm.split(".")[1]]
-                          })) }
+                          }))}
                         />
-                      )) }
+                      ))}
                     </div>
                   </section>
-                )) }
+                ))}
               </>
-            ) }
+            )}
         </FieldGroup>
       </div>
     </ChangeDialog>

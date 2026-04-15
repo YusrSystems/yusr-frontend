@@ -1,5 +1,5 @@
-import type { RequestResult } from "@/app/core/data/requestResult";
-import { ApiConstants, YusrApiHelper } from "@yusr_systems/core";
+import type { RequestResult } from "@/core/data/requestResult";
+import { ApiConstants, YusrApiHelper } from "yusr-core";
 import { ReportHelper } from "./reportHelper";
 
 export default class TicketReportApiService

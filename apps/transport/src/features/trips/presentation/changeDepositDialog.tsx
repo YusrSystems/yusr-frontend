@@ -1,15 +1,14 @@
-import { CityFilterColumns } from "@/app/core/data/city";
-import { filterCities } from "@/app/core/state/shared/citySlice";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
-import { type ValidationRule, Validators } from "@yusr_systems/core";
-import { ChangeDialog, FieldGroup, FieldsSection, FormField, NumberField, PhoneField, SearchableSelect, StorageFileField, TextField, useEntityForm, useStorageFile } from "@yusr_systems/ui";
+import { CityFilterColumns } from "@/core/data/city";
+import { filterCities } from "@/core/state/shared/citySlice";
+import { useAppDispatch, useAppSelector } from "@/core/state/store";
+import { type ValidationRule, Validators } from "yusr-core";
+import { ChangeDialog, FieldGroup, FieldsSection, FormField, NumberField, PhoneField, SearchableSelect, StorageFileField, TextField, useEntityForm, useStorageFile } from "yusr-ui";
 import { useEffect, useMemo } from "react";
 import type { Deposit } from "../data/deposit";
 
 type ChangeDepositDialogProps = { entity?: Deposit; onSuccess?: (newData: Deposit) => void; };
 
-export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDepositDialogProps)
-{
+export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDepositDialogProps) {
   const cityState = useAppSelector((state) => state.city);
   const dispatch = useAppDispatch();
   const validationRules: ValidationRule<Partial<Deposit>>[] = useMemo(
@@ -52,8 +51,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
   const { fileInputRef, handleFileChange, handleRemoveFile, handleDownload, showFilePreview, getFileSrc } =
     useStorageFile(handleChange, "image");
 
-  useEffect(() =>
-  {
+  useEffect(() => {
     dispatch(filterCities(undefined));
   }, [dispatch]);
 
@@ -61,23 +59,22 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
     <ChangeDialog
       title="بيانات الأمانة"
       className="sm:max-w-4xl"
-      formData={ formData as Deposit }
-      validate={ validate }
-      onSuccess={ (data) => onSuccess?.(data as Deposit) }
+      formData={formData as Deposit}
+      validate={validate}
+      onSuccess={(data) => onSuccess?.(data as Deposit)}
     >
       <FieldGroup>
         <div className="flex flex-col lg:flex-row gap-4 items-start">
           <div className="flex-1 w-full space-y-2">
-            <FieldsSection columns={ 2 }>
-              <FormField label="من المدينة" isInvalid={ isInvalid("fromCityId") } error={ getError("fromCityId") }>
+            <FieldsSection columns={2}>
+              <FormField label="من المدينة" isInvalid={isInvalid("fromCityId")} error={getError("fromCityId")}>
                 <SearchableSelect
-                  items={ cityState.entities.data ?? [] }
+                  items={cityState.entities.data ?? []}
                   itemLabelKey="name"
                   itemValueKey="id"
                   placeholder="مدينة المغادرة"
-                  value={ formData.fromCityId?.toString() || "" }
-                  onValueChange={ (val) =>
-                  {
+                  value={formData.fromCityId?.toString() || ""}
+                  onValueChange={(val) => {
                     const selectedCity = cityState.entities.data?.find((c) => c.id.toString() === val);
                     handleChange((prev) => ({
                       ...prev,
@@ -85,98 +82,92 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
                       fromCityName: selectedCity?.name
                     }));
                     clearError("fromCityId");
-                  } }
-                  columnsNames={ CityFilterColumns.columnsNames }
-                  onSearch={ (condition) => dispatch(filterCities(condition)) }
-                  errorInputClass={ errorInputClass("fromCityId") }
-                  disabled={ cityState.isLoading }
+                  }}
+                  columnsNames={CityFilterColumns.columnsNames}
+                  onSearch={(condition) => dispatch(filterCities(condition))}
+                  errorInputClass={errorInputClass("fromCityId")}
+                  disabled={cityState.isLoading}
                 />
               </FormField>
 
-              <FormField label="إلى المدينة" isInvalid={ isInvalid("toCityId") } error={ getError("toCityId") }>
+              <FormField label="إلى المدينة" isInvalid={isInvalid("toCityId")} error={getError("toCityId")}>
                 <SearchableSelect
-                  items={ cityState.entities.data ?? [] }
+                  items={cityState.entities.data ?? []}
                   itemLabelKey="name"
                   itemValueKey="id"
                   placeholder="مدينة الوجهة"
-                  value={ formData.toCityId?.toString() || "" }
-                  onValueChange={ (val) =>
-                  {
+                  value={formData.toCityId?.toString() || ""}
+                  onValueChange={(val) => {
                     const selectedCity = cityState.entities.data?.find((c) => c.id.toString() === val);
                     handleChange((prev) => ({ ...prev, toCityId: selectedCity?.id, toCityName: selectedCity?.name }));
                     clearError("toCityId");
-                  } }
-                  columnsNames={ CityFilterColumns.columnsNames }
-                  onSearch={ (condition) => dispatch(filterCities(condition)) }
-                  errorInputClass={ errorInputClass("toCityId") }
-                  disabled={ cityState.isLoading }
+                  }}
+                  columnsNames={CityFilterColumns.columnsNames}
+                  onSearch={(condition) => dispatch(filterCities(condition))}
+                  errorInputClass={errorInputClass("toCityId")}
+                  disabled={cityState.isLoading}
                 />
               </FormField>
 
               <TextField
                 label="اسم المرسل"
-                value={ formData.sender || "" }
-                isInvalid={ isInvalid("sender") }
-                error={ getError("sender") }
-                onChange={ (e) =>
-                {
+                value={formData.sender || ""}
+                isInvalid={isInvalid("sender")}
+                error={getError("sender")}
+                onChange={(e) => {
                   handleChange({ sender: e.target.value });
                   clearError("sender");
-                } }
+                }}
               />
 
               <PhoneField
                 label="رقم هاتف المرسل"
-                value={ formData.senderPhone || "" }
-                isInvalid={ isInvalid("senderPhone") }
-                error={ getError("senderPhone") }
-                onChange={ (e) =>
-                {
+                value={formData.senderPhone || ""}
+                isInvalid={isInvalid("senderPhone")}
+                error={getError("senderPhone")}
+                onChange={(e) => {
                   handleChange({ senderPhone: e.target.value });
                   clearError("senderPhone");
-                } }
+                }}
               />
 
               <TextField
                 label="اسم المستلم"
-                value={ formData.recipient || "" }
-                isInvalid={ isInvalid("recipient") }
-                error={ getError("recipient") }
-                onChange={ (e) =>
-                {
+                value={formData.recipient || ""}
+                isInvalid={isInvalid("recipient")}
+                error={getError("recipient")}
+                onChange={(e) => {
                   handleChange({ recipient: e.target.value });
                   clearError("recipient");
-                } }
+                }}
               />
 
               <PhoneField
                 label="رقم هاتف المستلم"
-                value={ formData.recipientPhone || "" }
-                isInvalid={ isInvalid("recipientPhone") }
-                error={ getError("recipientPhone") }
-                onChange={ (e) =>
-                {
+                value={formData.recipientPhone || ""}
+                isInvalid={isInvalid("recipientPhone")}
+                error={getError("recipientPhone")}
+                onChange={(e) => {
                   handleChange({ recipientPhone: e.target.value });
                   clearError("recipientPhone");
-                } }
+                }}
               />
 
               <NumberField
                 label="إجمالي المبلغ"
-                value={ formData.amount }
-                isInvalid={ isInvalid("amount") }
-                error={ getError("amount") }
-                onChange={ (val) =>
-                {
+                value={formData.amount}
+                isInvalid={isInvalid("amount")}
+                error={getError("amount")}
+                onChange={(val) => {
                   handleChange({ amount: val });
                   clearError("amount");
-                } }
+                }}
               />
 
               <NumberField
                 label="المبلغ المدفوع"
-                value={ formData.paidAmount }
-                onChange={ (val) => handleChange({ paidAmount: val }) }
+                value={formData.paidAmount}
+                onChange={(val) => handleChange({ paidAmount: val })}
               />
             </FieldsSection>
           </div>
@@ -184,15 +175,15 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
           <div className="w-full md:w-100 shrink-0">
             <StorageFileField
               label="مرفق الأمانة"
-              file={ formData.image }
-              fileInputRef={ fileInputRef }
-              onFileChange={ handleFileChange }
-              onRemove={ handleRemoveFile }
-              onDownload={ handleDownload }
-              getFileSrc={ getFileSrc }
-              showPreview={ showFilePreview }
-              isInvalid={ isInvalid("image") }
-              error={ getError("image") }
+              file={formData.image}
+              fileInputRef={fileInputRef}
+              onFileChange={handleFileChange}
+              onRemove={handleRemoveFile}
+              onDownload={handleDownload}
+              getFileSrc={getFileSrc}
+              showPreview={showFilePreview}
+              isInvalid={isInvalid("image")}
+              error={getError("image")}
             />
           </div>
         </div>
@@ -200,21 +191,20 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
         <TextField
           label="وصف الأمانة"
           placeholder="محتويات الأمانة"
-          value={ formData.description || "" }
-          isInvalid={ isInvalid("description") }
-          error={ getError("description") }
-          onChange={ (e) =>
-          {
+          value={formData.description || ""}
+          isInvalid={isInvalid("description")}
+          error={getError("description")}
+          onChange={(e) => {
             handleChange({ description: e.target.value });
             clearError("description");
-          } }
+          }}
         />
 
         <TextField
           label="الملاحظات"
           placeholder="أي ملاحظات إضافية ..."
-          value={ formData.notes || "" }
-          onChange={ (e) => handleChange({ notes: e.target.value }) }
+          value={formData.notes || ""}
+          onChange={(e) => handleChange({ notes: e.target.value })}
         />
       </FieldGroup>
     </ChangeDialog>

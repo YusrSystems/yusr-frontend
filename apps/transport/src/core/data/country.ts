@@ -1,4 +1,4 @@
-import { BaseEntity, type ColumnName } from "@yusr_systems/core";
+import { BaseEntity, type ColumnName } from "yusr-core";
 
 export class Country extends BaseEntity
 {

@@ -1,5 +1,5 @@
 import { type CaseReducerActions, createAsyncThunk, createSlice, type PayloadAction, type SliceCaseReducers } from "@reduxjs/toolkit";
-import type { BaseEntity, BaseFilterableApiService, FilterCondition, FilterResult, RequestResult } from "@yusr_systems/core";
+import type { BaseEntity, BaseFilterableApiService, FilterCondition, FilterResult, RequestResult } from "yusr-core";
 import { castDraft } from "immer";
 import type { IEntityState } from "../interfaces/iEntityState";
 
