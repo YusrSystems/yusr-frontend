@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@yusr_systems/core": "^6.0.18",
+    "@yusr_systems/ui": "^6.0.18",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
