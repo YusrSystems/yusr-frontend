@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import { store } from './core/store.ts';
+import { store } from './core/state/store.ts';
 import { Provider } from "react-redux";
 import { ApiConstants } from "../../../packages/yusr-core/src";
 import ErrorBoundary from "../../../packages/yusr-ui/src/error/errorBoundary.tsx";

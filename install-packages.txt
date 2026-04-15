@@ -1,0 +1,1 @@
+pnpm add <package-name> --filter <app-name>
