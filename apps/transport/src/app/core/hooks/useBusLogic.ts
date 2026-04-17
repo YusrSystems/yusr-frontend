@@ -2,7 +2,11 @@ import type { SeatType } from "@/app/features/trips/bus/busTypes";
 import type { Ticket } from "@/app/features/trips/data/ticket";
 import { useMemo, useState } from "react";
 
-export function useBusLogic(seats: SeatType[], tickets: Ticket[])
+export function useBusLogic(
+  seats: SeatType[],
+  tickets: Ticket[],
+  chairsPerRow: number = 4 // إضافة المعامل الجديد مع قيمة افتراضية 4
+)
 {
   const [hoverFilter, setHoverFilter] = useState<{ type: string; value: string; } | undefined>(undefined);
 
@@ -30,12 +34,13 @@ export function useBusLogic(seats: SeatType[], tickets: Ticket[])
   const columns = useMemo(() =>
   {
     const cols = [];
-    for (let i = 0; i < seats.length; i += 4)
+    // استبدال الرقم 4 بالمتغير chairsPerRow
+    for (let i = 0; i < seats.length; i += chairsPerRow)
     {
-      cols.push(seats.slice(i, i + 4));
+      cols.push(seats.slice(i, i + chairsPerRow));
     }
     return cols;
-  }, [seats]);
+  }, [seats, chairsPerRow]); // إضافة chairsPerRow إلى مصفوفة الاعتماديات (dependencies)
 
   const handleHover = (type: any, value?: string) =>
   {

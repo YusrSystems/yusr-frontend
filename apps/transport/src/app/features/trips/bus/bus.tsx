@@ -6,24 +6,29 @@ import BusLoadingSkeleton from "./busLoadingSkeleton";
 import BusSeat from "./busSeat";
 import type { BusProps, SeatType } from "./busTypes";
 
-export default function BusLayout(
-  {
-    seats,
-    tickets,
-    onSeatClick,
-    onCheckInUpdate,
-    onDeleteTicket,
-    onMoveTicket,
-    movingTicketId,
-    lastRowFull = false,
-    isLoading = false
-  }: BusProps
-) {
+// قمنا بتوسيع الـ Props لتقبل chairsPerRow مع إعطائها قيمة افتراضية 4
+interface ExtendedBusProps extends BusProps {
+  chairsPerRow?: number;
+}
+
+export default function BusLayout({
+  seats,
+  tickets,
+  onSeatClick,
+  onCheckInUpdate,
+  onDeleteTicket,
+  onMoveTicket,
+  movingTicketId,
+  lastRowFull = false,
+  isLoading = false,
+  chairsPerRow = 4, // القيمة الافتراضية 4 مقاعد في الصف
+}: ExtendedBusProps) {
   if (isLoading) {
     return <BusLoadingSkeleton columns={10} showLogo={true} />;
   }
 
-  const { ticketMap, babyTickets, nextBabyId, columns, hoverFilter, handleHover } = useBusLogic(seats, tickets);
+  // ملاحظة: تأكد من أن useBusLogic يقوم بتقسيم (chunk) المقاعد بناءً على chairsPerRow
+  const { ticketMap, babyTickets, nextBabyId, columns, hoverFilter, handleHover } = useBusLogic(seats, tickets, chairsPerRow);
 
   const getHighlightStatus = (ticket?: Ticket) => {
     if (movingTicketId !== undefined && movingTicketId !== null) {
@@ -38,10 +43,11 @@ export default function BusLayout(
       return { isHighlighted: false, isDimmed: true };
     }
 
-    const match = ticket.passenger?.nationality?.name === hoverFilter.value
-      || ticket.fromCityName === hoverFilter.value
-      || ticket.toCityName === hoverFilter.value
-      || ticket.amount?.toString() === hoverFilter.value;
+    const match =
+      ticket.passenger?.nationality?.name === hoverFilter.value ||
+      ticket.fromCityName === hoverFilter.value ||
+      ticket.toCityName === hoverFilter.value ||
+      ticket.amount?.toString() === hoverFilter.value;
 
     return { isHighlighted: match, isDimmed: !match };
   };
@@ -65,10 +71,14 @@ export default function BusLayout(
     );
   };
 
+  // حساب كيفية تقسيم المقاعد حول الممر (Aisle)
+  // مثلاً: إذا كان 4 -> 2 فوق و 2 تحت. إذا كان 3 -> 2 فوق و 1 تحت. إذا كان 5 -> 3 فوق و 2 تحت.
+  const topSeatsCount = Math.ceil(chairsPerRow / 2);
+
   return (
     <div className="w-full overflow-x-auto pb-4 custom-scrollbar">
       <div className="flex flex-col items-center justify-center min-w-min overflow-hidden p-10 bg-background gap-12">
-        { /* Move Mode Indicator */}
+        {/* Move Mode Indicator */}
         {movingTicketId && (
           <div className="flex items-center gap-4 px-4 py-2 bg-blue-50 border border-blue-200 rounded-full animate-in slide-in-from-top-4">
             <span className="text-xs font-bold text-blue-700">وضع النقل مفعل: إختر مقعداً فارغاً</span>
@@ -83,9 +93,9 @@ export default function BusLayout(
           </div>
         )}
 
-        { /* Bus Structure */}
+        {/* Bus Structure */}
         <div className="relative flex w-max min-w-130 flex-row rounded-[2.2rem] border-2 border-border bg-muted/30 p-4 shadow-xl">
-          { /* Lights & Mirrors */}
+          {/* Lights & Mirrors */}
           <div className="absolute -right-1 top-10 h-8 w-2 rounded-l-full bg-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.6)]" />
           <div className="absolute -right-1 bottom-10 h-8 w-2 rounded-l-full bg-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.6)]" />
           <div className="absolute -top-5 right-12 flex flex-col items-center">
@@ -109,6 +119,8 @@ export default function BusLayout(
           <div className="flex flex-row gap-3">
             {columns.map((colSeats, colIndex) => {
               const isLastColumn = colIndex === columns.length - 1;
+
+              // إذا كان الصف الأخير ممتلئاً (بدون ممر)
               if (isLastColumn && lastRowFull) {
                 return (
                   <div key={colIndex} className="flex flex-col justify-center gap-1 border-r border-border pr-1">
@@ -116,29 +128,37 @@ export default function BusLayout(
                   </div>
                 );
               }
+
+              // الصفوف العادية (مفصولة بممر)
               return (
                 <div key={colIndex} className="flex flex-col justify-between">
+                  {/* الجزء العلوي من المقاعد */}
                   <div className="flex flex-col gap-1">
-                    {colSeats.slice(0, 2).map((seat) => renderSeat(seat, ticketMap[seat.id]))}
+                    {colSeats.slice(0, topSeatsCount).map((seat) => renderSeat(seat, ticketMap[seat.id]))}
                   </div>
+
+                  {/* الممر (رقم الصف) */}
                   <div className="flex h-8 items-center justify-center text-[9px] font-mono text-muted-foreground/50">
                     {colIndex + 1}
                   </div>
+
+                  {/* الجزء السفلي من المقاعد */}
                   <div className="flex flex-col gap-1">
-                    {colSeats.slice(2, 4).map((seat) => renderSeat(seat, ticketMap[seat.id]))}
+                    {colSeats.slice(topSeatsCount, chairsPerRow).map((seat) => renderSeat(seat, ticketMap[seat.id]))}
                   </div>
                 </div>
               );
             })}
           </div>
 
-          { /* Wheels */}
+          {/* Wheels */}
           <div className="absolute -bottom-3 left-20 h-4 w-14 rounded-b-xl bg-neutral-900 dark:bg-gray-400" />
           <div className="absolute -bottom-3 right-24 h-4 w-14 rounded-b-xl bg-neutral-900 dark:bg-gray-400" />
           <div className="absolute -top-3 left-20 h-4 w-14 rounded-t-xl bg-neutral-900 dark:bg-gray-400" />
           <div className="absolute -top-3 right-24 h-4 w-14 rounded-t-xl bg-neutral-900 dark:bg-gray-400" />
         </div>
 
+        {/* Baby Tickets Section */}
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Baby className="h-4 w-4" />

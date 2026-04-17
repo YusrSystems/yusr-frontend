@@ -66,12 +66,25 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
     dispatch(VehicleSlice.entityActions.filter(undefined));
   }, [dispatch]);
 
-  const seats = useMemo(() => {
-    // Use vehicle's chair number if vehicle is selected, otherwise default to 44
-    const selectedVehicle = vehicleState.entities?.data?.find(v => v.id === formData.vehicleId);
-    const numberOfSeats = selectedVehicle ? selectedVehicle.chairsNumber : 44;
-    return Array.from({ length: numberOfSeats }, (_, i) => ({ id: i + 1 }));
-  }, [formData.vehicleId, vehicleState.entities?.data]);
+  // تحديث: حساب المقاعد وعدد المقاعد في الصف الواحد معاً
+  const { seats, chairsPerRow } = useMemo(() => {
+    // 1. البحث عن المركبة في القائمة المحملة من الـ API
+    let selectedVehicle = vehicleState.entities?.data?.find(v => v.id === formData.vehicleId);
+
+    // 2. إذا لم تكن محملة بعد (مثلاً عند فتح نافذة التعديل)، نستخدم الكيان المرفق مع الرحلة
+    if (!selectedVehicle && formData.vehicle) {
+      selectedVehicle = formData.vehicle;
+    }
+
+    // 3. استخراج القيم مع وضع قيم افتراضية (44 مقعد إجمالي، 4 في الصف)
+    const numberOfSeats = selectedVehicle?.chairsNumber || 44;
+    const perRow = selectedVehicle?.chairsNumberPerRow || 4;
+
+    return {
+      seats: Array.from({ length: numberOfSeats }, (_, i) => ({ id: i + 1 })),
+      chairsPerRow: perRow
+    };
+  }, [formData.vehicleId, formData.vehicle, vehicleState.entities?.data]);
 
   if (initLoading) {
     return (
@@ -131,7 +144,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
                     const selected = vehicleState.entities.data?.find((v) => v.id.toString() === val);
                     if (selected) {
                       handleChange({ vehicleId: selected.id });
-                      handleChange({ vehicle: selected });
+                      handleChange({ vehicle: selected }); // تحديث الكيان بالكامل ليعكس التغيير فوراً
                     }
                   }}
                 />
@@ -179,7 +192,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
             <Bus
               isLoading={initLoading}
               seats={seats}
-
+              chairsPerRow={chairsPerRow} // تمرير القيمة الديناميكية هنا
               tickets={formData.tickets ?? []}
               onSeatClick={handleSeatClick}
               onCheckInUpdate={handleTicketCheckInUpdate}
