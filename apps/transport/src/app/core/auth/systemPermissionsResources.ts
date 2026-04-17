@@ -13,4 +13,5 @@ export class SystemPermissionsResources
   public static TripTicketsReport: string = "TrpTktRpt";
   public static TripDepositsReport: string = "TrpDpstRpt";
   public static TripUnblock: string = "TripUnblock";
+  public static Vehicles: string = "Vehicles";
 }

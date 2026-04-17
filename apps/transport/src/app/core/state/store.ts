@@ -16,11 +16,11 @@ import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux
 import { createAuthSlice } from "yusr-core";
 import { setupAuthListeners } from "yusr-ui";
 import type { Setting } from "../data/setting";
+import { VehicleSlice } from "../data/vehicle";
 import cityReducer from "./shared/citySlice";
 import countryReducer from "./shared/countrySlice";
 import currencyReducer from "./shared/currencySlice";
 import systemReducer from "./shared/systemSlice";
-
 const authSlice = createAuthSlice<User, Setting>();
 export const { login, logout, updateLoggedInUser, updateSetting, syncFromStorage } = authSlice.actions;
 
@@ -42,7 +42,9 @@ export const store = configureStore({
     country: countryReducer,
     currency: currencyReducer,
     auth: authSlice.reducer,
-    system: systemReducer
+    system: systemReducer,
+    vehicle: VehicleSlice.entityReducer,
+    vehicleDialog: VehicleSlice.dialogReducer
   }
 });
 

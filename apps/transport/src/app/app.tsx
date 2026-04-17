@@ -17,6 +17,7 @@ import RoutesPage from "./features/routes/presentation/routesPage";
 import SettingPage from "./features/setting/settingPage";
 import TripsPage from "./features/trips/presentation/tripsPage";
 import UsersPage from "./features/users/presentation/usersPage";
+import VehiclesPage from "./features/vehicles/vehiclesPage";
 
 function App() {
   const { isLoading } = useAppInitialization();
@@ -63,6 +64,7 @@ function AppRoutes() {
         <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
           <Route element={<MainPage />}>
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/vehicles" element={<VehiclesPage />} />
             <Route path="/trips" element={<TripsPage />} />
             <Route path="/passengers" element={<PassengersPage />} />
             <Route path="/routes" element={<RoutesPage />} />

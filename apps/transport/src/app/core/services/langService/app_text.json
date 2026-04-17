@@ -1,7 +1,6 @@
 {
   "ar": {
     "companyName": "حافلات يُسر",
-
     "dashborad": {
       "income": "مجموع الدخل",
       "totalPassengers": "مجموع الركاب",
@@ -19,7 +18,7 @@
       "branches": "الفروع",
       "users": "المستخدمون",
       "roles": "الأدوار",
-
+      "vehicles": "المركبات",
       "settings": "الإعدادات"
     },
     "sideBarUserData": {

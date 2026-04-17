@@ -1,6 +1,6 @@
 import { ApiConstants, SystemPermissions, YusrApiHelper } from "yusr-core";
 import { Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SideBarUserData } from "yusr-ui";
-import { Building2Icon, BusFrontIcon, LayoutDashboardIcon, MapPinnedIcon, SettingsIcon, ShieldCheck, UserCogIcon, UsersIcon } from "lucide-react";
+import { Building2Icon, BusFrontIcon, BusIcon, LayoutDashboardIcon, MapPinnedIcon, SettingsIcon, ShieldCheck, UserCogIcon, UsersIcon } from "lucide-react";
 import * as React from "react";
 import { SystemPermissionsActions } from "../../auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
@@ -35,7 +35,14 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         SystemPermissionsResources.Dashboard,
         SystemPermissionsActions.Get
       )
-    }, {
+    },
+    {
+      title: appLangSections.vehicles,
+      url: "/vehicles",
+      icon: <BusIcon />,
+      hasAuth: true
+    },
+    {
       title: appLangSections.trips,
       url: "/trips",
       icon: <BusFrontIcon />,
