@@ -50,6 +50,8 @@ export default function TripHeader(
 
       <DateTimeField
         label="تاريخ ووقت التحرك"
+        // todays date
+        minDate={new Date()}
         // className="h-8 text-xs"
         value={formData.startDate}
         isInvalid={isInvalid("startDate")}
@@ -58,6 +60,7 @@ export default function TripHeader(
           setFormData((prev) => ({ ...prev, startDate: newDate }));
           clearError("startDate");
         }}
+
       />
 
       <NumberField

@@ -15,6 +15,8 @@ export interface DateInputProps {
   locale?: any;
   startYear?: number;
   endYear?: number;
+  minDate?: Date;
+  maxDate?: Date;
 }
 
 export function DateInput({
@@ -25,8 +27,14 @@ export function DateInput({
   locale = arSA,
   startYear = new Date().getFullYear() - 100,
   endYear = new Date().getFullYear() + 10,
+  minDate,
+  maxDate,
 }: DateInputProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const disabledDays = [];
+  if (minDate) disabledDays.push({ before: minDate });
+  if (maxDate) disabledDays.push({ after: maxDate });
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -57,8 +65,9 @@ export function DateInput({
           }}
           locale={locale}
           captionLayout="dropdown"
-          startMonth={new Date(startYear, 0)}
-          endMonth={new Date(endYear, 11)}
+          disabled={disabledDays}
+          startMonth={minDate || new Date(startYear, 0)}
+          endMonth={maxDate || new Date(endYear, 11)}
         />
       </PopoverContent>
     </Popover>
