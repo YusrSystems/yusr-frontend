@@ -77,6 +77,7 @@ export default function TripsPage() {
               dispatch(setIsTripChangeDialogOpen(false));
             }
           }}
+
         />
       }
     >

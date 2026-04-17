@@ -1,3 +1,4 @@
+import type Vehicle from "@/app/core/data/vehicle";
 import { BaseEntity, type ColumnName } from "yusr-core";
 import type { Route } from "../../routes/data/route";
 import type { Deposit } from "./deposit";
@@ -10,9 +11,11 @@ export class Trip extends BaseEntity
   public busName?: string;
   public routeId!: number;
   public branchId!: number;
+  public vehicleId!: number; // Add vehicleId
   public startDate!: Date;
   public ticketPrice!: number;
   public route!: Route;
+  public vehicle!: Vehicle; // Add vehicle
   public tickets!: Ticket[];
   public deposits!: Deposit[];
 
