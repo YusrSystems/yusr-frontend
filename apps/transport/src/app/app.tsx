@@ -18,6 +18,7 @@ import SettingPage from "./features/setting/settingPage";
 import TripsPage from "./features/trips/presentation/tripsPage";
 import UsersPage from "./features/users/presentation/usersPage";
 import VehiclesPage from "./features/vehicles/vehiclesPage";
+import PassengerSelfRegisterPage from "./features/passengers/presentation/PassengerSelfRegisterPage";
 
 function App() {
   const { isLoading } = useAppInitialization();
@@ -58,6 +59,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/passreg" element={<PassengerSelfRegisterPage />} />
 
         <Route path="/t/:accessKey" element={<TicketRedirect />} />
 
