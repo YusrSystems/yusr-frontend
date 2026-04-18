@@ -1,6 +1,6 @@
-import type { ColumnName } from "yusr-core";
 import { Check, ChevronsUpDown } from "lucide-react";
 import * as React from "react";
+import type { ColumnName } from "yusr-core";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "../../pure/command";

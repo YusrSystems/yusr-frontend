@@ -2,21 +2,9 @@ import { useTripForm } from "@/app/core/hooks/useTripForm";
 import PassengersApiService from "@/app/core/networking/passengersApiService";
 import TripsApiService from "@/app/core/networking/tripsApiService";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
+import { useEffect, useMemo, useState } from "react";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import {
-  Button,
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  Loading,
-  SaveButton,
-  Separator,
-  SearchableSelect,
-  FormField,
-} from "yusr-ui";
-import { useEffect, useState, useMemo } from "react";
+import { Button, Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, Loading, SaveButton, Separator } from "yusr-ui";
 import type { Passenger } from "../../passengers/data/passenger";
 import { refreshPassengers } from "../../passengers/logic/passengerSlice";
 import ChangePassengerDialog from "../../passengers/presentation/changePassengerDialog";
@@ -52,13 +40,13 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
     isTicketDialogOpen,
     setIsTicketDialogOpen,
     isDepositDialogOpen,
-    setIsDepositDialogOpen,
+    setIsDepositDialogOpen
   } = useTripForm(entity, mode);
 
   const [selectedPassenger, setSelectedPassenger] = useState<Passenger | undefined>(undefined);
   const [isEditPassengerDialogOpen, setIsEditPassengerDialogOpen] = useState(false);
-  const dispatch = useAppDispatch();
   const vehicleState = useAppSelector((state) => state.vehicle);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(filterRoutes());
@@ -66,7 +54,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
   }, [dispatch]);
 
   const { seats, chairsPerRow } = useMemo(() => {
-    let selectedVehicle = vehicleState.entities?.data?.find(v => v.id === formData.vehicleId);
+    let selectedVehicle = vehicleState.entities?.data?.find((v) => v.id === formData.vehicleId);
 
     if (!selectedVehicle && formData.vehicle) {
       selectedVehicle = formData.vehicle;
@@ -75,10 +63,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
     const numberOfSeats = selectedVehicle?.chairsNumber || 44;
     const perRow = selectedVehicle?.chairsNumberPerRow || 4;
 
-    return {
-      seats: Array.from({ length: numberOfSeats }, (_, i) => ({ id: i + 1 })),
-      chairsPerRow: perRow
-    };
+    return { seats: Array.from({ length: numberOfSeats }, (_, i) => ({ id: i + 1 })), chairsPerRow: perRow };
   }, [formData.vehicleId, formData.vehicle, vehicleState.entities?.data]);
 
   if (initLoading) {
@@ -122,28 +107,6 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
                 isInvalid={isInvalid}
                 getError={getError}
               />
-
-              {/* Vehicle Selection */}
-              <FormField label="المركبة" required isInvalid={isInvalid("vehicleId")} error={getError("vehicleId")}>
-                <SearchableSelect
-                  items={vehicleState.entities.data ?? []}
-                  itemLabelKey="name"
-                  itemValueKey="id"
-                  placeholder="اختر المركبة"
-                  value={formData.vehicleId?.toString() || ""}
-                  columnsNames={VehicleFilterColumns.columnsNames}
-                  onSearch={(condition) => dispatch(VehicleSlice.entityActions.filter(condition))}
-                  errorInputClass={errorInputClass("vehicleId")}
-                  disabled={vehicleState.isLoading}
-                  onValueChange={(val) => {
-                    const selected = vehicleState.entities.data?.find((v) => v.id.toString() === val);
-                    if (selected) {
-                      handleChange({ vehicleId: selected.id });
-                      handleChange({ vehicle: selected }); // تحديث الكيان بالكامل ليعكس التغيير فوراً
-                    }
-                  }}
-                />
-              </FormField>
             </section>
 
             <section>
@@ -154,8 +117,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
               <TripDeposits
                 deposits={formData.deposits ?? []}
                 onDepositDeleted={(i) =>
-                  handleChange((prev) => ({ ...prev, deposits: prev.deposits?.filter((_, idx) => idx !== i) }))
-                }
+                  handleChange((prev) => ({ ...prev, deposits: prev.deposits?.filter((_, idx) => idx !== i) }))}
                 onDepositDialogOpened={(deposit) => handleDepositOpen(deposit)}
               />
             </section>
@@ -199,7 +161,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
         </main>
       </div>
 
-      {/* Nested Ticket Dialog */}
+      { /* Nested Ticket Dialog */}
       <Dialog open={isTicketDialogOpen} onOpenChange={setIsTicketDialogOpen}>
         {isTicketDialogOpen && (
           <ChangeTicketDialog
@@ -213,7 +175,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
         )}
       </Dialog>
 
-      {/* Nested Passenger Dialog */}
+      { /* Nested Passenger Dialog */}
       <Dialog open={isEditPassengerDialogOpen} onOpenChange={setIsEditPassengerDialogOpen}>
         {isEditPassengerDialogOpen && (
           <ChangePassengerDialog
@@ -229,7 +191,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
         )}
       </Dialog>
 
-      {/* Nested Deposit Dialog */}
+      { /* Nested Deposit Dialog */}
       <Dialog open={isDepositDialogOpen} onOpenChange={setIsDepositDialogOpen}>
         {isDepositDialogOpen && (
           <ChangeDepositDialog
