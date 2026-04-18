@@ -1,7 +1,7 @@
 {
   "name": "yusr-core",
   "version": "1.0.0",
-  "private": false,
+  "private": true,
   "type": "module",
   "main": "./dist/yusr-core.js",
   "module": "./dist/yusr-core.js",

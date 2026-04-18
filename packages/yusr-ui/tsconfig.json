@@ -3,5 +3,13 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "target": "ES2022",
+    "strict": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
 }
