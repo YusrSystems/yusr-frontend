@@ -75,7 +75,9 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
     >
       <FieldGroup>
         <div className="grid grid-cols-2 gap-3">
-          <TextField label="رقم التذكرة" value={entity?.id || ""} disabled />
+          {entity?.id &&
+            <TextField label="رقم التذكرة" value={entity?.id || ""} disabled />
+          }
           <TextField
             label="رقم الكرسي"
             value={(entity?.chairNo ?? -1) < 0 ? "0" : entity?.chairNo?.toString()}
