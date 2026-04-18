@@ -2,9 +2,9 @@ import { useBusLogic } from "@/app/core/hooks/useBusLogic";
 import { Button } from "yusr-ui";
 import { Baby, Plus, ShipWheel, XCircle } from "lucide-react";
 import type { Ticket } from "../data/ticket";
-import BusLoadingSkeleton from "./busLoadingSkeleton";
-import BusSeat from "./busSeat";
-import type { BusProps, SeatType } from "./busTypes";
+import BusLoadingSkeleton from "./vehicleLoadingSkeleton";
+import BusSeat from "./vehicleSeat";
+import type { BusProps, SeatType } from "./vehicleTypes";
 
 // قمنا بتوسيع الـ Props لتقبل chairsPerRow مع إعطائها قيمة افتراضية 4
 interface ExtendedBusProps extends BusProps {

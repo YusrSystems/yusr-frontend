@@ -1,6 +1,6 @@
 import { CheckCircle2 } from "lucide-react";
 import type { Ticket } from "../data/ticket";
-import type { SeatType } from "./busTypes";
+import type { SeatType } from "./vehicleTypes";
 import { cn } from "yusr-ui";
 
 type BusButtonProps = {

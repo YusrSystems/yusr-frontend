@@ -3,8 +3,8 @@ import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsRes
 import { SystemPermissions } from "yusr-core";
 import { cn, ContextMenu, ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "yusr-ui";
 import { CheckCircle2, Mail, MoveHorizontal, Printer, Share2, Trash2 } from "lucide-react";
-import type { SeatProps } from "./busTypes";
-import useBusSeat from "./useBusSeat";
+import type { SeatProps } from "./vehicleTypes";
+import useBusSeat from "./useVehicleSeat";
 
 export default function BusSeat(
   {

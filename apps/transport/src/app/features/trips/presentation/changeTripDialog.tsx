@@ -21,7 +21,7 @@ import type { Passenger } from "../../passengers/data/passenger";
 import { refreshPassengers } from "../../passengers/logic/passengerSlice";
 import ChangePassengerDialog from "../../passengers/presentation/changePassengerDialog";
 import { filterRoutes } from "../../routes/logic/routeSlice";
-import Bus from "../bus/bus";
+import Bus from "../vehicle/vehicle";
 import type { Trip } from "../data/trip";
 import ChangeDepositDialog from "./changeDepositDialog";
 import ChangeTicketDialog from "./changeTicketDialog";

@@ -1,8 +1,8 @@
 import TripsApiService from "@/app/core/networking/tripsApiService";
-import type { SeatType } from "@/app/features/trips/bus/busTypes";
 import { Deposit } from "@/app/features/trips/data/deposit";
 import { Ticket } from "@/app/features/trips/data/ticket";
 import type { Trip } from "@/app/features/trips/data/trip";
+import type { SeatType } from "@/app/features/trips/vehicle/vehicleTypes";
 import { useEffect, useState } from "react";
 import { type ValidationRule, Validators } from "yusr-core";
 import { useEntityForm } from "yusr-ui";
