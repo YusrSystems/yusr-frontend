@@ -1,6 +1,7 @@
 import branchDialogReducer from "@/app/features/branches/logic/branchDialogSlice";
 import branchReducer from "@/app/features/branches/logic/branchSlice";
 import passengerDialogReducer from "@/app/features/passengers/logic/passengerDialogSlice";
+import passengerSelfRegisterReducer from "@/app/features/passengers/logic/passengerSelfRegisterSlice";
 import passengerReducer from "@/app/features/passengers/logic/passengerSlice";
 import roleDialogReducer from "@/app/features/roles/logic/roleDialogSlice";
 import roleReducer from "@/app/features/roles/logic/roleSlice";
@@ -43,6 +44,7 @@ export const store = configureStore({
     currency: currencyReducer,
     auth: authSlice.reducer,
     system: systemReducer,
+    passengerSelfRegister: passengerSelfRegisterReducer,
     vehicle: VehicleSlice.entityReducer,
     vehicleDialog: VehicleSlice.dialogReducer
   }

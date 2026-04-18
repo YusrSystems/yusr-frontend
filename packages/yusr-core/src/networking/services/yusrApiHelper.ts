@@ -1,6 +1,6 @@
 import { toast } from "sonner";
-import type { RequestResult } from "../../types/requestResult";
 import { AuthConstants } from "../../auth";
+import type { RequestResult } from "../../types/requestResult";
 
 export class YusrApiHelper
 {
@@ -103,6 +103,12 @@ export class YusrApiHelper
     {
       toast.error("لم يتم العثور على طلبك");
       return { data: undefined, status: 404, errorTitle: "Not Found", errorDetails: "" };
+    }
+
+    if (response.status === 429)
+    {
+      toast.error("لقد تجاوزت الحد المسموح به. يرجى المحاولة لاحقا.");
+      return { data: undefined, status: 429, errorTitle: "Rejected", errorDetails: "" };
     }
 
     if (!response.ok)
