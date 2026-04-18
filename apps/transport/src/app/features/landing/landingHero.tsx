@@ -19,7 +19,7 @@ export default function LandingHero() {
 
       { /* 2. Main Title: Using foreground gradient to muted-foreground */}
       <h1 className="text-6xl font-extrabold leading-[1.1] tracking-tighter md:text-8xl">
-        <span className="bg-linear-to-b from-foreground to-foreground/60 bg-clip-text text-transparent">حافلات يُسر</span>
+        <span className="bg-linear-to-b from-foreground to-foreground/60 bg-clip-text text-transparent">يُسر نقل</span>
       </h1>
 
       { /* 3. Subtitle: Pure Primary color for the "Pop" */}
@@ -27,7 +27,7 @@ export default function LandingHero() {
 
       { /* 4. Description: Using muted-foreground */}
       <p className="mx-auto mt-8 max-w-2xl text-lg font-medium leading-relaxed text-muted-foreground md:text-xl">
-        منصة شاملة تُمكّنك من إدارة رحلات الحافلات، إصدار التذاكر، وتسجيل الركاب عبر حلول تقنية متطورة مصممة لرفع كفاءة
+        منصة شاملة تُمكّنك من إدارة رحلات الحافلات و المركبات، إصدار التذاكر، وتسجيل الركاب عبر حلول تقنية متطورة مصممة لرفع كفاءة
         النقل العام.
       </p>
 

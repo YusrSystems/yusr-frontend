@@ -34,9 +34,9 @@ export default function TripsPage() {
       tableHeadRows={[
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: "رقم الرحلة", rowStyles: "w-30" },
-        { rowName: "اسم قائد الحافلة", rowStyles: "" },
-        { rowName: "اسم مساعد قائد الحافلة", rowStyles: "" },
-        { rowName: "اسم الحافلة (اذا توفر)", rowStyles: "" },
+        { rowName: "اسم قائد المركبة", rowStyles: "" },
+        { rowName: "اسم مساعد قائد المركبة", rowStyles: "" },
+        { rowName: "اسم المركبة (اذا توفر)", rowStyles: "" },
         { rowName: "تاريخ بدء الرحلة", rowStyles: "" }
       ]}
       tableRowMapper={(

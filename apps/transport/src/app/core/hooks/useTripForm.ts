@@ -13,7 +13,7 @@ export function useTripForm(entity: Trip | undefined, mode: string)
   const validationRules: ValidationRule<Partial<Trip>>[] = [{
     field: "mainCaptainName",
     selector: (d) => d.mainCaptainName,
-    validators: [Validators.required("يرجى إدخال اسم قائد الحافلة")]
+    validators: [Validators.required("يرجى إدخال اسم قائد المركبة")]
   }, {
     field: "startDate",
     selector: (d) => d.startDate,

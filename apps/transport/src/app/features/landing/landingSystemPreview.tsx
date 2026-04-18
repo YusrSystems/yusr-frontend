@@ -33,7 +33,7 @@ export default function LandingSystemPreview(
           <div className="h-3 w-3 rounded-full bg-destructive/60" />
           <div className="h-3 w-3 rounded-full bg-yellow-400/60" />
           <div className="h-3 w-3 rounded-full bg-green-500/60" />
-          <span className="mx-auto text-xs text-muted-foreground/60">حافلات يُسر — لوحة التحكم الرئيسية</span>
+          <span className="mx-auto text-xs text-muted-foreground/60">يُسر نقل — لوحة التحكم الرئيسية</span>
         </div>
         <ZoomableImage
           srcLight={dashboardLight}

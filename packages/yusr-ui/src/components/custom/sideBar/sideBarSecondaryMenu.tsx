@@ -8,6 +8,7 @@ import {
   SidebarMenuItem,
 } from "../../pure/sidebar";
 import { ThemeToggle } from "../theme/themeToggle";
+import { Link } from "react-router-dom";
 
 export interface SideBarSecondaryMenuProps
   extends React.ComponentPropsWithoutRef<typeof SidebarGroup> {
@@ -33,8 +34,8 @@ export function SideBarSecondaryMenu({
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild>
-                <LinkComponent
-                  href={item.url}
+                <Link
+                  to={item.url}
                   className="flex items-center justify-start gap-3 w-full px-3"
                 >
                   <span className="flex items-center justify-center shrink-0 size-4">
@@ -42,7 +43,7 @@ export function SideBarSecondaryMenu({
                   </span>
 
                   <span className="font-medium truncate">{item.title}</span>
-                </LinkComponent>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

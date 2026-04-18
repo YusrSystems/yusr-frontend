@@ -23,7 +23,7 @@ export default function TripHeader(
   return (
     <FieldGroup>
       <TextField
-        label="اسم قائد الحافلة"
+        label="اسم قائد المركبة"
         className="h-8 text-xs"
         value={formData.mainCaptainName || ""}
         isInvalid={isInvalid("mainCaptainName")}
@@ -42,7 +42,7 @@ export default function TripHeader(
       />
 
       <TextField
-        label="الحافلة"
+        label="المركبة"
         className="h-8 text-xs"
         value={formData.busName || ""}
         onChange={(e) => setFormData((prev) => ({ ...prev, busName: e.target.value }))}

@@ -32,6 +32,6 @@ export class TripFilterColumns
     { label: "رقم الرحلة", value: "Id" },
     { label: "اسم القائد", value: "MainCaptainName" },
     { label: "اسم المساعد", value: "SecondaryCaptainName" },
-    { label: "الحافلة", value: "BusName" }
+    { label: "المركبة", value: "BusName" }
   ];
 }

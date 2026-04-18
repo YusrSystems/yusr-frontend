@@ -102,7 +102,7 @@ export default function TicketRedirect() {
         </CardContent>
 
         <div className="border-t pt-4 text-center text-[10px] text-muted-foreground uppercase tracking-widest">
-          Yusr Bus | حافلات يُسر
+          Yusr Bus | يُسر نقل
         </div>
       </Card>
     </div>

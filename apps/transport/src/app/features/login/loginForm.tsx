@@ -3,7 +3,7 @@ import type { Setting } from "@/app/core/data/setting";
 import { login, updateLoggedInUser, useAppDispatch } from "@/app/core/state/store";
 import placeholderImg from "@/assets/placeholder.svg";
 import { ApiConstants, type ValidationRule, Validators, YusrApiHelper } from "yusr-core";
-import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, PasswordField, TextField, useEntityForm } from "yusr-ui";
+import { Button, Card, CardContent, Checkbox, cn, Field, FieldGroup, PasswordField, TextField, useEntityForm } from "yusr-ui";
 import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -164,9 +164,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   تسجيل الدخول
                 </Button>
               </Field>
-              <FieldDescription className="text-center">
+              {/* <FieldDescription className="text-center">
                 لا تملك حسابًا بعد؟ <a href="#">سجل معنا</a>
-              </FieldDescription>
+              </FieldDescription> */}
             </FieldGroup>
           </form>
           <div className="bg-muted relative hidden md:block">
