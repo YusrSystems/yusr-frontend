@@ -21,7 +21,6 @@ import type { Passenger } from "../../passengers/data/passenger";
 import { refreshPassengers } from "../../passengers/logic/passengerSlice";
 import ChangePassengerDialog from "../../passengers/presentation/changePassengerDialog";
 import { filterRoutes } from "../../routes/logic/routeSlice";
-import Bus from "../vehicle/vehicle";
 import type { Trip } from "../data/trip";
 import ChangeDepositDialog from "./changeDepositDialog";
 import ChangeTicketDialog from "./changeTicketDialog";
@@ -29,6 +28,7 @@ import TripAmountSummary from "./TripAmountSummary";
 import TripDeposits from "./tripDeposits";
 import TripHeader from "./tripHeader";
 import { VehicleFilterColumns, VehicleSlice } from "@/app/core/data/vehicle";
+import Vehicle from "./vehicle/vehicle";
 
 export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChangeDialogProps<Trip>) {
   const {
@@ -184,7 +184,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
           <TripAmountSummary trip={formData as Trip} />
 
           <div className="flex-1 overflow-auto custom-scrollbar flex flex-col items-center justify-start p-4">
-            <Bus
+            <Vehicle
               isLoading={initLoading}
               seats={seats}
               chairsPerRow={chairsPerRow}
@@ -194,7 +194,6 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
               onMoveTicket={(t) => setMovingTicket(t || undefined)}
               movingTicketId={movingTicket?.id || movingTicket?.chairNo}
               onDeleteTicket={(id) => handleChange((p) => ({ ...p, tickets: p.tickets?.filter((t) => t.id !== id) }))}
-              lastRowFull
             />
           </div>
         </main>

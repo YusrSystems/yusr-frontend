@@ -4,8 +4,12 @@ import { useAppSelector } from "@/app/core/state/store";
 import { toast } from "sonner";
 import type { Ticket } from "../data/ticket";
 
-export type useBusSeatProps = { ticket?: Ticket; isOccupied: boolean; onCheckInUpdate?: (ticketId: number) => void; };
-export default function useBusSeat({ ticket, isOccupied, onCheckInUpdate }: useBusSeatProps)
+export type useVehicleSeatProps = {
+  ticket?: Ticket;
+  isOccupied: boolean;
+  onCheckInUpdate?: (ticketId: number) => void;
+};
+export default function useVehicleSeat({ ticket, isOccupied, onCheckInUpdate }: useVehicleSeatProps)
 {
   const authState = useAppSelector((state) => state.auth);
 

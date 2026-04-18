@@ -3,7 +3,7 @@ import type { Ticket } from "../data/ticket";
 import type { SeatType } from "./vehicleTypes";
 import { cn } from "yusr-ui";
 
-type BusButtonProps = {
+type VehicleButtonProps = {
   seat: SeatType;
   ticket?: Ticket;
   isDimmed?: boolean;
@@ -17,7 +17,7 @@ type BusButtonProps = {
 
   handleContextMenuAction: (e: React.MouseEvent<Element, MouseEvent>) => void;
 };
-export default function BusButton(
+export default function VehicleButton(
   {
     seat,
     ticket,
@@ -30,7 +30,7 @@ export default function BusButton(
     onClick,
     onHoverData,
     handleContextMenuAction
-  }: BusButtonProps
+  }: VehicleButtonProps
 ) {
   return (
     <button

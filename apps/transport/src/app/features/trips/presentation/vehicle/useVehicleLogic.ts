@@ -2,7 +2,7 @@ import type { Ticket } from "@/app/features/trips/data/ticket";
 import type { SeatType } from "@/app/features/trips/vehicle/vehicleTypes";
 import { useMemo, useState } from "react";
 
-export function useBusLogic(
+export function useVehicleLogic(
   seats: SeatType[],
   tickets: Ticket[],
   chairsPerRow: number = 4 // إضافة المعامل الجديد مع قيمة افتراضية 4

@@ -20,7 +20,7 @@ export interface SeatProps
   onHoverData?: (type: "nationality" | "from" | "to" | "amount" | null, value?: string) => void;
 }
 
-export interface BusProps
+export interface VehicleProps
 {
   seats: SeatType[];
   tickets: Ticket[];
@@ -29,6 +29,6 @@ export interface BusProps
   onDeleteTicket?: (ticketId: number) => void;
   onMoveTicket?: (ticket: Ticket) => void;
   movingTicketId?: number | string;
-  lastRowFull?: boolean; // If true, the back of the bus has 5 seats (no aisle)
+  lastRowFull?: boolean;
   isLoading?: boolean;
 }

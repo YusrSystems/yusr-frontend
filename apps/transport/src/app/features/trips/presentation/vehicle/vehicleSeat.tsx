@@ -4,9 +4,9 @@ import { SystemPermissions } from "yusr-core";
 import { cn, ContextMenu, ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "yusr-ui";
 import { CheckCircle2, Mail, MoveHorizontal, Printer, Share2, Trash2 } from "lucide-react";
 import type { SeatProps } from "./vehicleTypes";
-import useBusSeat from "./useVehicleSeat";
+import useVehicleSeat from "./useVehicleSeat";
 
-export default function BusSeat(
+export default function VehicleSeat(
   {
     seat,
     ticket,
@@ -29,7 +29,7 @@ export default function BusSeat(
     handleShareTicket,
     handleSendByWhatsappTicket,
     handleSendByEmailTicket
-  } = useBusSeat({ ticket, isOccupied, onCheckInUpdate: onCheckInUpdate });
+  } = useVehicleSeat({ ticket, isOccupied, onCheckInUpdate: onCheckInUpdate });
 
   return (
     <ContextMenu dir="rtl">

@@ -1,17 +1,17 @@
-import { useBusLogic } from "@/app/core/hooks/useBusLogic";
 import { Button } from "yusr-ui";
 import { Baby, Plus, ShipWheel, XCircle } from "lucide-react";
-import type { Ticket } from "../data/ticket";
-import BusLoadingSkeleton from "./vehicleLoadingSkeleton";
-import BusSeat from "./vehicleSeat";
-import type { BusProps, SeatType } from "./vehicleTypes";
+import VehicleLoadingSkeleton from "./vehicleLoadingSkeleton";
+import VehicleSeat from "./vehicleSeat";
+import type { VehicleProps as VehicleProps, SeatType } from "./vehicleTypes";
+import { useVehicleLogic } from "./useVehicleLogic";
+import type { Ticket } from "../../data/ticket";
 
 // قمنا بتوسيع الـ Props لتقبل chairsPerRow مع إعطائها قيمة افتراضية 4
-interface ExtendedBusProps extends BusProps {
+interface ExtendedVehicleProps extends VehicleProps {
   chairsPerRow?: number;
 }
 
-export default function BusLayout({
+export default function VehicleLayout({
   seats,
   tickets,
   onSeatClick,
@@ -21,14 +21,13 @@ export default function BusLayout({
   movingTicketId,
   lastRowFull = false,
   isLoading = false,
-  chairsPerRow = 4, // القيمة الافتراضية 4 مقاعد في الصف
-}: ExtendedBusProps) {
+  chairsPerRow = 4,
+}: ExtendedVehicleProps) {
   if (isLoading) {
-    return <BusLoadingSkeleton columns={10} showLogo={true} />;
+    return <VehicleLoadingSkeleton columns={10} showLogo={true} />;
   }
 
-  // ملاحظة: تأكد من أن useBusLogic يقوم بتقسيم (chunk) المقاعد بناءً على chairsPerRow
-  const { ticketMap, babyTickets, nextBabyId, columns, hoverFilter, handleHover } = useBusLogic(seats, tickets, chairsPerRow);
+  const { ticketMap, babyTickets, nextBabyId, columns, hoverFilter, handleHover } = useVehicleLogic(seats, tickets, chairsPerRow);
 
   const getHighlightStatus = (ticket?: Ticket) => {
     if (movingTicketId !== undefined && movingTicketId !== null) {
@@ -55,7 +54,7 @@ export default function BusLayout({
   const renderSeat = (seat: SeatType, ticket?: Ticket) => {
     const { isHighlighted, isDimmed } = getHighlightStatus(ticket);
     return (
-      <BusSeat
+      <VehicleSeat
         key={seat.id}
         seat={seat}
         ticket={ticket}
@@ -71,8 +70,6 @@ export default function BusLayout({
     );
   };
 
-  // حساب كيفية تقسيم المقاعد حول الممر (Aisle)
-  // مثلاً: إذا كان 4 -> 2 فوق و 2 تحت. إذا كان 3 -> 2 فوق و 1 تحت. إذا كان 5 -> 3 فوق و 2 تحت.
   const topSeatsCount = Math.ceil(chairsPerRow / 2);
 
   return (
@@ -93,7 +90,7 @@ export default function BusLayout({
           </div>
         )}
 
-        {/* Bus Structure */}
+        {/* Vehicle Structure */}
         <div className="relative flex w-max min-w-130 flex-row rounded-[2.2rem] border-2 border-border bg-muted/30 p-4 shadow-xl">
           {/* Lights & Mirrors */}
           <div className="absolute -right-1 top-10 h-8 w-2 rounded-l-full bg-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.6)]" />
@@ -120,7 +117,6 @@ export default function BusLayout({
             {columns.map((colSeats, colIndex) => {
               const isLastColumn = colIndex === columns.length - 1;
 
-              // إذا كان الصف الأخير ممتلئاً (بدون ممر)
               if (isLastColumn && lastRowFull) {
                 return (
                   <div key={colIndex} className="flex flex-col justify-center gap-1 border-r border-border pr-1">
@@ -133,14 +129,10 @@ export default function BusLayout({
               return (
                 <div key={colIndex} className="flex flex-col justify-between">
                   {/* الجزء العلوي من المقاعد */}
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 mt-2 mb-2">
                     {colSeats.slice(0, topSeatsCount).map((seat) => renderSeat(seat, ticketMap[seat.id]))}
                   </div>
 
-                  {/* الممر (رقم الصف) */}
-                  <div className="flex h-8 items-center justify-center text-[9px] font-mono text-muted-foreground/50">
-                    {colIndex + 1}
-                  </div>
 
                   {/* الجزء السفلي من المقاعد */}
                   <div className="flex flex-col gap-1">
