@@ -4,11 +4,12 @@ import TripsApiService from "@/app/core/networking/tripsApiService";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { CrudPage } from "yusr-ui";
 import { Building } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Trip, TripFilterColumns } from "../data/trip";
 import { openTripChangeDialog, openTripDeleteDialog, setIsTripChangeDialogOpen, setIsTripDeleteDialogOpen } from "../logic/tripDialogSlice";
 import { filterTrips, refreshTrips, setCurrentTripsPage } from "../logic/tripSlice";
 import ChangeTripDialog from "./changeTripDialog";
+import { VehicleSlice } from "@/app/core/data/vehicle";
 
 export default function TripsPage() {
   const dispatch = useAppDispatch();
@@ -16,6 +17,12 @@ export default function TripsPage() {
   const tripDialogState = useAppSelector((state) => state.tripDialog);
   const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Trips));
   const service = useMemo(() => new TripsApiService(), []);
+  const vehicleState = useAppSelector((state) => state.vehicle);
+
+  useEffect(() => {
+    dispatch(VehicleSlice.entityActions.filter(undefined));
+  }, [dispatch]);
+
   return (
     <CrudPage<Trip>
       title="إدارة الرحلات"
@@ -37,7 +44,8 @@ export default function TripsPage() {
         { rowName: "اسم قائد المركبة", rowStyles: "" },
         { rowName: "اسم مساعد قائد المركبة", rowStyles: "" },
         { rowName: "اسم المركبة (اذا توفر)", rowStyles: "" },
-        { rowName: "تاريخ بدء الرحلة", rowStyles: "" }
+        { rowName: "تاريخ بدء الرحلة", rowStyles: "" },
+        { rowName: "عدد المقاعد", rowStyles: "" },
       ]}
       tableRowMapper={(
         trip: Trip
@@ -45,7 +53,7 @@ export default function TripsPage() {
         rowName: trip.secondaryCaptainName ?? "",
         rowStyles: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800"
       }, {
-        rowName: trip.busName ?? "",
+        rowName: vehicleState.entities?.data?.find((vehicle) => vehicle.id === trip.vehicleId)?.name ?? "",
         rowStyles: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800"
       }, {
         rowName: new Date(trip.startDate).toLocaleString("en-GB", {
@@ -55,6 +63,9 @@ export default function TripsPage() {
           hour: "2-digit",
           minute: "2-digit"
         }),
+        rowStyles: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800"
+      }, {
+        rowName: vehicleState.entities?.data?.find((vehicle) => vehicle.id === trip.vehicleId)?.chairsNumber?.toString() ?? "",
         rowStyles: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800"
       }]}
       actions={{
