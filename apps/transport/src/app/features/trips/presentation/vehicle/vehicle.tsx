@@ -91,7 +91,7 @@ export default function VehicleLayout({
         )}
 
         {/* Vehicle Structure */}
-        <div className="relative flex w-max min-w-130 flex-row rounded-[2.2rem] border-2 border-border bg-muted/30 p-4 shadow-xl">
+        <div className="relative flex w-max min-w-100 flex-row rounded-[2.2rem] border-2 border-border bg-muted/30 p-10 shadow-xl">
           {/* Lights & Mirrors */}
           <div className="absolute -right-1 top-10 h-8 w-2 rounded-l-full bg-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.6)]" />
           <div className="absolute -right-1 bottom-10 h-8 w-2 rounded-l-full bg-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.6)]" />
@@ -113,7 +113,7 @@ export default function VehicleLayout({
             <span className="mt-1 text-[10px] font-semibold text-muted-foreground">السائق</span>
           </div>
 
-          <div className="flex flex-row gap-3">
+          <div className="flex flex-row gap-10">
             {columns.map((colSeats, colIndex) => {
               const isLastColumn = colIndex === columns.length - 1;
 

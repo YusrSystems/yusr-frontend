@@ -156,6 +156,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
               onMoveTicket={(t) => setMovingTicket(t || undefined)}
               movingTicketId={movingTicket?.id || movingTicket?.chairNo}
               onDeleteTicket={(id) => handleChange((p) => ({ ...p, tickets: p.tickets?.filter((t) => t.id !== id) }))}
+              lastRowFull={seats.length % chairsPerRow !== 0}
             />
           </div>
         </main>
