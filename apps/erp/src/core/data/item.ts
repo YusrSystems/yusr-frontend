@@ -132,10 +132,10 @@ export class BarcodeResult
 
 export class ItemFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{ label: "رقم الصنف", value: "Id" }, {
-    label: "اسم الصنف",
+  public static columnsNames: ColumnName[] = [{ label: "رقم المادة", value: "Id" }, {
+    label: "اسم المادة",
     value: "Name"
-  }, { label: "التصنيف", value: "Class" }];
+  }, { label: "الصنف", value: "Class" }];
 }
 
 export class ItemValidationRules

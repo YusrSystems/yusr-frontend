@@ -32,9 +32,9 @@ export default function ItemsPage()
 
   return (
     <CrudPage<Item>
-      title="إدارة الأصناف"
-      entityName="صنف"
-      addNewItemTitle="إضافة صنف جديد"
+      title="إدارة المواد"
+      entityName="مادة"
+      addNewItemTitle="إضافة مادة جديد"
       onConditionChange={ setCondition }
       actionButtons={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],
@@ -60,7 +60,7 @@ export default function ItemsPage()
       useSlice={ () => itemDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي الأصناف",
+        title: "إجمالي المواد",
         data: (itemState.entities?.count ?? 0).toString(),
         icon: <Package className="h-4 w-4 text-muted-foreground" />
       }] }
@@ -69,8 +69,8 @@ export default function ItemsPage()
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: "رقم المادة", rowStyles: "w-12.5" },
         { rowName: "النوع", rowStyles: "w-24" },
-        { rowName: "اسم الصنف", rowStyles: "w-48" },
-        { rowName: "التصنيف", rowStyles: "w-32" },
+        { rowName: "اسم المادة", rowStyles: "w-48" },
+        { rowName: "الصنف", rowStyles: "w-32" },
         { rowName: "الكمية", rowStyles: "w-24" },
         { rowName: "التكلفة", rowStyles: "w-24" },
         ...(SystemPermissions.hasAuth(
@@ -86,7 +86,9 @@ export default function ItemsPage()
         {
           rowName: item.type === ItemType.Product ? "منتج" : "خدمة",
           rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            item.type === ItemType.Product ? "bg-blue-100 text-blue-800" : "bg-purple-100 text-purple-800"
+            item.type === ItemType.Product
+              ? "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400"
+              : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
           }`
         },
         { rowName: item.name, rowStyles: "font-semibold" },

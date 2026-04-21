@@ -29,7 +29,7 @@ export default function ItemStatementButton({ item }: { item: Item; })
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-2">
-            <FormField label="المستودع" required={ true }>
+            <FormField label="المستودع">
               <SearchableSelect
                 items={ storeState.entities.data ?? [] }
                 itemLabelKey="name"
