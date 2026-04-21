@@ -2,7 +2,7 @@ import WhatsappService from "@/app/core/chat/whatsappService";
 import TicketReportApiService from "@/app/core/networking/reports/ticketReportApiService";
 import { useAppSelector } from "@/app/core/state/store";
 import { toast } from "sonner";
-import type { Ticket } from "../data/ticket";
+import type { Ticket } from "../../data/ticket";
 
 export type useVehicleSeatProps = {
   ticket?: Ticket;

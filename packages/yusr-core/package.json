@@ -3,28 +3,21 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "./dist/yusr-core.js",
-  "module": "./dist/yusr-core.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/yusr-core.js",
-      "default": "./dist/yusr-core.js"
+      "import": "./dist/yusr-core.js"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
-    "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview"
-  },
-  "peerDependencies": {
-    "sonner": "^2.0.7"
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@reduxjs/toolkit": "^2.11.2",
+    "sonner": "^2.0.7",
     "typescript": "~5.9.3",
     "vite": "^8.0.0",
     "vite-plugin-dts": "^4.0.0"

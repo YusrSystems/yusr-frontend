@@ -7,25 +7,17 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'YusrCore',
       formats: ['es'],
       fileName: () => 'yusr-core.js',
     },
     rollupOptions: {
       external: [
-        'react',
-        'react-dom',
-        'react/jsx-runtime',
         '@reduxjs/toolkit',
         'redux',
         'immer',
         'reselect',
         'sonner',
       ],
-      output: {
-        format: 'es',
-        exports: 'named'
-      },
     },
   },
 })

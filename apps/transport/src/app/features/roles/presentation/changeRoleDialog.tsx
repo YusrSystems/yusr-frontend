@@ -1,8 +1,7 @@
-import { type ValidationRule, Validators } from "yusr-core";
+import { Role, type ValidationRule, Validators } from "yusr-core";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, Skeleton, TextField, useEntityForm } from "yusr-ui";
 import { useEffect, useMemo } from "react";
-import type { Role } from "../data/role";
 import { categorizePermissions, PermissionCard } from "./permissionCard";
 import { ActionIcons, ArabicLabels, PERMISSION_SECTIONS } from "./permissionConfig";
 import { PermissionSkeleton } from "./permissionSkeleton";

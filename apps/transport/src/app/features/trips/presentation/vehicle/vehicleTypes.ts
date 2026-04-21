@@ -1,4 +1,4 @@
-import type { Ticket } from "../data/ticket";
+import type { Ticket } from "../../data/ticket";
 
 export interface SeatType
 {

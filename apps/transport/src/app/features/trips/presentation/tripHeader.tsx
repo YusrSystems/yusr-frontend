@@ -10,7 +10,6 @@ interface TripSidePanelProps
 {
   formData: Partial<Trip>;
   setFormData: React.Dispatch<React.SetStateAction<Partial<Trip>>>;
-  errorInputClass: (field: string) => string;
   clearError: (field: string) => void;
   isInvalid: (field: string) => boolean;
   getError: (field: string) => string;

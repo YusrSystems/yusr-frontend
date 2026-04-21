@@ -6,10 +6,6 @@
   ],
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
-    "target": "ES2022",
-    "strict": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "strict": true
   }
 }

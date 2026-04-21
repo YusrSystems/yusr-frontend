@@ -1,4 +1,4 @@
-import { Currency } from "./currency";
+import type { Currency } from "yusr-core";
 import type { StorageFile } from "./storageFile";
 
 export class Tenant

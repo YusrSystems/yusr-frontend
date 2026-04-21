@@ -1,6 +1,6 @@
 import type { Ticket } from "@/app/features/trips/data/ticket";
-import type { SeatType } from "@/app/features/trips/vehicle/vehicleTypes";
 import { useMemo, useState } from "react";
+import type { SeatType } from "./vehicleTypes";
 
 export function useVehicleLogic(
   seats: SeatType[],

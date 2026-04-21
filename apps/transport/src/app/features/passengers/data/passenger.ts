@@ -1,5 +1,4 @@
-import { Country } from "@/app/core/data/country";
-import { BaseEntity, type ColumnName } from "yusr-core";
+import { BaseEntity, Country, type ColumnName } from "yusr-core";
 
 export class Passenger extends BaseEntity
 {

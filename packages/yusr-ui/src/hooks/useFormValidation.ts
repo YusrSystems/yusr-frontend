@@ -44,8 +44,5 @@ export function useFormValidation<T>(data: T, rules: ValidationRule<T>[])
     });
   };
 
-  const errorInputClass = (field: string) =>
-    isInvalid(field) ? "border-red-600 dark:border-red-600 ring-red-600 text-red-600 placeholder:text-red-600" : "";
-
-  return { errors, getError, isInvalid, validate, clearError, errorInputClass };
+  return { errors, getError, isInvalid, validate, clearError };
 }

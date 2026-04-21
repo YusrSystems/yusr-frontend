@@ -1,14 +1,13 @@
 import { selectPermissionsByResource } from "@/app/core/auth/authSelectors";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import RolesApiService from "@/app/core/networking/rolesApiService";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { CrudPage } from "yusr-ui";
 import { Settings2 } from "lucide-react";
 import { useMemo } from "react";
-import { type Role, RoleFilterColumns } from "../data/role";
 import { openRoleChangeDialog, openRoleDeleteDialog, setIsRoleChangeDialogOpen, setIsRoleDeleteDialogOpen } from "../logic/roleDialogSlice";
 import { filterRoles, refreshRoles, setCurrentRolesPage } from "../logic/roleSlice";
 import ChangeRoleDialog from "./changeRoleDialog";
+import { RolesApiService, Role, RoleFilterColumns } from "yusr-core";
 
 export default function RolesPage() {
   const dispatch = useAppDispatch();

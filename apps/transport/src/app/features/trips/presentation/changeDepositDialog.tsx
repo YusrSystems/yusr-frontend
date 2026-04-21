@@ -1,7 +1,6 @@
-import { CityFilterColumns } from "@/app/core/data/city";
 import { filterCities } from "@/app/core/state/shared/citySlice";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
-import { type ValidationRule, Validators } from "yusr-core";
+import { CityFilterColumns, type ValidationRule, Validators } from "yusr-core";
 import { ChangeDialog, FieldGroup, FieldsSection, FormField, NumberField, PhoneField, SearchableSelect, StorageFileField, TextField, useEntityForm, useStorageFile } from "yusr-ui";
 import { useEffect, useMemo } from "react";
 import type { Deposit } from "../data/deposit";
@@ -44,7 +43,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
     ],
     []
   );
-  const { formData, handleChange, getError, isInvalid, validate, errorInputClass, clearError } = useEntityForm<Deposit>(
+  const { formData, handleChange, getError, isInvalid, validate, clearError } = useEntityForm<Deposit>(
     entity,
     validationRules
   );
@@ -85,7 +84,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
                   }}
                   columnsNames={CityFilterColumns.columnsNames}
                   onSearch={(condition) => dispatch(filterCities(condition))}
-                  errorInputClass={errorInputClass("fromCityId")}
+                  isInvalid={isInvalid("fromCityId")}
                   disabled={cityState.isLoading}
                 />
               </FormField>
@@ -104,7 +103,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
                   }}
                   columnsNames={CityFilterColumns.columnsNames}
                   onSearch={(condition) => dispatch(filterCities(condition))}
-                  errorInputClass={errorInputClass("toCityId")}
+                  isInvalid={isInvalid("toCityId")}
                   disabled={cityState.isLoading}
                 />
               </FormField>

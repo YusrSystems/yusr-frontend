@@ -1,14 +1,13 @@
 import { selectPermissionsByResource } from "@/app/core/auth/authSelectors";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import UsersApiService from "@/app/core/networking/usersApiService";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { CrudPage } from "yusr-ui";
 import { User2Icon } from "lucide-react";
 import { useMemo } from "react";
-import User, { UserFilterColumns } from "../data/user";
 import { openUserChangeDialog, openUserDeleteDialog, setIsUserChangeDialogOpen, setIsUserDeleteDialogOpen } from "../logic/userDialogSlice";
 import { filterUsers, refreshUsers, setCurrentUsersPage } from "../logic/userSlice";
 import ChangeUserDialog from "./changeUserDialog";
+import { UsersApiService, User, UserFilterColumns } from "yusr-core";
 
 export default function UsersPage() {
   const dispatch = useAppDispatch();

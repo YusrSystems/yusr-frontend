@@ -2,12 +2,12 @@ import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
-import path from 'path'
 
 export default defineConfig({
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': resolve(__dirname, './src'),
+      'yusr-core': resolve(__dirname, '../../packages/yusr-core/src/index.ts'),
     },
   },
   plugins: [
@@ -20,7 +20,6 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'YusrUI',
       formats: ['es'],
       fileName: () => 'yusr-ui.js',
     },
@@ -51,15 +50,6 @@ export default defineConfig({
         /^@radix-ui\/.*/,
         /^@base-ui\/.*/,
       ],
-      output: {
-        format: 'es',
-        exports: 'named',
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-          'react/jsx-runtime': 'jsxRuntime',
-        },
-      },
     },
   },
 })

@@ -18,7 +18,7 @@ import SettingPage from "./features/setting/settingPage";
 import TripsPage from "./features/trips/presentation/tripsPage";
 import UsersPage from "./features/users/presentation/usersPage";
 import VehiclesPage from "./features/vehicles/vehiclesPage";
-import PassengerSelfRegisterPage from "./features/passengers/presentation/PassengerSelfRegisterPage";
+import PassengerSelfRegisterPage from "./features/passengers/presentation/passengerSelfRegisterPage";
 
 function App() {
   const { isLoading } = useAppInitialization();

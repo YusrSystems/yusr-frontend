@@ -11,18 +11,8 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "yusr-core": path.resolve(__dirname, "../../packages/yusr-core/src/index.ts"),
-      "yusr-ui": path.resolve(__dirname, "../../packages/yusr-ui/src/index.ts")
+      "yusr-ui": path.resolve(__dirname, "../../packages/yusr-ui/src/index.ts"),
     },
-    dedupe: ["react", "react-dom", "react/jsx-runtime"]
+    dedupe: ["react", "react-dom", "react/jsx-runtime"],
   },
-  optimizeDeps: {
-    include: [
-      "react-redux",
-      "@reduxjs/toolkit",
-      "use-sync-external-store",
-      "use-sync-external-store/shim",
-      "use-sync-external-store/shim/with-selector",
-      "react-is"
-    ]
-  }
 });

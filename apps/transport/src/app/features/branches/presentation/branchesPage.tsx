@@ -1,14 +1,13 @@
 import { selectPermissionsByResource } from "@/app/core/auth/authSelectors";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import BranchesApiService from "@/app/core/networking/branchesApiService";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
-import Branch, { BranchFilterColumns } from "@/app/features/branches/data/branch";
 import { openBranchChangeDialog, openBranchDeleteDialog, setIsBranchChangeDialogOpen, setIsBranchDeleteDialogOpen } from "@/app/features/branches/logic/branchDialogSlice";
 import { filterBranches, refreshBranches, setCurrentBranchesPage } from "@/app/features/branches/logic/branchSlice";
 import { CrudPage } from "yusr-ui";
 import { Building, MapPin } from "lucide-react";
 import { useMemo } from "react";
 import ChangeBranchDialog from "./changeBranchDialog";
+import { BranchesApiService, BranchFilterColumns, type Branch } from "yusr-core";
 
 export default function BranchesPage() {
   const dispatch = useAppDispatch();
@@ -41,7 +40,7 @@ export default function BranchesPage() {
       tableRowMapper={(
         branch: Branch
       ) => [{ rowName: `#${branch.id}`, rowStyles: "" }, { rowName: branch.name, rowStyles: "font-semibold" }, {
-        rowName: branch.cityName,
+        rowName: branch.city.name,
         rowStyles: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800"
       }]}
       actions={{

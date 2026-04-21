@@ -2,11 +2,11 @@ import TripsApiService from "@/app/core/networking/tripsApiService";
 import { Deposit } from "@/app/features/trips/data/deposit";
 import { Ticket } from "@/app/features/trips/data/ticket";
 import type { Trip } from "@/app/features/trips/data/trip";
-import type { SeatType } from "@/app/features/trips/vehicle/vehicleTypes";
 import { useEffect, useState } from "react";
 import { type ValidationRule, Validators } from "yusr-core";
 import { useEntityForm } from "yusr-ui";
 import { useAppSelector } from "../state/store";
+import type { SeatType } from "@/app/features/trips/presentation/vehicle/vehicleTypes";
 
 export function useTripForm(entity: Trip | undefined, mode: string)
 {
@@ -23,7 +23,7 @@ export function useTripForm(entity: Trip | undefined, mode: string)
     selector: (d) => d.ticketPrice,
     validators: [Validators.required("يرجى إدخال سعر التذكرة")]
   }, { field: "routeId", selector: (d) => d.routeId, validators: [Validators.required("يرجى تحديد خط السفر")] }];
-  const { formData, handleChange, errorInputClass, getError, isInvalid, clearError, validate } = useEntityForm<Trip>(
+  const { formData, handleChange, getError, isInvalid, clearError, validate } = useEntityForm<Trip>(
     entity,
     validationRules
   );
@@ -162,7 +162,6 @@ export function useTripForm(entity: Trip | undefined, mode: string)
     isInvalid,
     getError,
     clearError,
-    errorInputClass,
     handleSeatClick,
     handleTicketUpdate,
     handleTicketCheckInUpdate,

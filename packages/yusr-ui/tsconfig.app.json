@@ -9,7 +9,8 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "yusr-core": ["../../packages/yusr-core/src/index.ts"]
     },
 
     /* Bundler mode */

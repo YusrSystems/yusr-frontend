@@ -1,6 +1,5 @@
-import { BaseEntity } from "yusr-core";
+import { BaseEntity, User } from "yusr-core";
 import type { Passenger } from "../../passengers/data/passenger";
-import type User from "../../users/data/user";
 
 export class Ticket extends BaseEntity
 {
