@@ -13,18 +13,9 @@ export default function SellInvoicesPage()
   const authState = useAppSelector((state) => state.auth);
   const clientsState = useAppSelector((state) => state.clients);
 
-  const { invoiceId } = useParams();
-
-  useEffect(() =>
-  {
-    if (invoiceId)
-    {
-      // openInvoiceDialog(invoiceId);
-    }
-  }, [invoiceId]);
-
   return (
     <InvoicesPage
+      basePath="/sales"
       slice={ SalesSlice }
       stateKey="sales"
       dialogStateKey="salesDialog"

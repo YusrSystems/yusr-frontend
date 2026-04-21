@@ -13,6 +13,7 @@ export default function PurchaseInvoicesPage()
 
   return (
     <InvoicesPage
+      basePath="/purchases"
       slice={ PurchasesSlice }
       stateKey="purchases"
       dialogStateKey="purchasesDialog"

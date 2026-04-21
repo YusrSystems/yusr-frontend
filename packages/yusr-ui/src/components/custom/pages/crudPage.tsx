@@ -2,6 +2,7 @@ import type { ActionCreatorWithPayload, AsyncThunk, UnknownAction } from "@redux
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import type { BaseApiService, BaseEntity, ColumnName, FilterCondition, FilterResult, ResourcePermissions } from "yusr-core";
 import type { IDialogState } from "../../../state/interfaces/iDialogState";
 import type { IEntityState } from "../../../state/interfaces/iEntityState";
@@ -11,12 +12,13 @@ import { DeleteDialog } from "../dialogs/deleteDialog";
 import { SearchInput } from "../inputs/searchInput";
 import { CrudTable } from "../table/crudTable";
 import { CrudTableBodyRow, type TableBodyRowInfo } from "../table/crudTableBodyRow";
-import { CrudTableCard, type CardProps } from "../table/crudTableCard";
+import { type CardProps, CrudTableCard } from "../table/crudTableCard";
 import { CrudTableHeader } from "../table/crudTableHeader";
 import { CrudTableHeaderRows, type CrudTableHeadRow } from "../table/crudTableHeaderRows";
 import { CrudTablePagination } from "../table/crudTablePagination";
 import { CrudTableRowActionsMenu } from "../table/crudTableRowActionsMenu";
 import { UnauthorizedPage } from "../unauthorized/unauthorizedPage";
+import useCrudPage from "./useCrudPage";
 
 export interface CrudActions<T extends BaseEntity>
 {
@@ -45,10 +47,12 @@ export type CrudPageProps<T extends BaseEntity> = PropsWithChildren & {
   service: BaseApiService<T>;
   tableHeadRows: CrudTableHeadRow[];
   tableRowMapper: (entity: T) => TableBodyRowInfo[];
-
   ChangeDialog: React.ReactNode;
   dorpdownItems?: (entity: T) => React.ReactNode[];
   contextMenuItems?: (entity: T) => React.ReactNode[];
+  basePath?: string;
+  routeIdParam?: string;
+  onRouteOpen?: (id: number) => void;
 };
 
 export function CrudPage<T extends BaseEntity>(
@@ -71,20 +75,34 @@ export function CrudPage<T extends BaseEntity>(
     ChangeDialog,
     dorpdownItems,
     contextMenuItems,
-    children,
+    basePath,
+    routeIdParam,
+    onRouteOpen,
+    children
   }: CrudPageProps<T>
 )
 {
   const dispatch = useDispatch();
   const { selectedRow, isChangeDialogOpen, isDeleteDialogOpen } = useSlice();
+  const { handleOpenChangeDialog, handleSetIsChangeDialogOpen } = useCrudPage<T>({
+    actions,
+    routeIdParam,
+    basePath,
+    onRouteOpen
+  });
+
   useEffect(() =>
   {
-    if(hasPagePermission)
+    if (hasPagePermission)
+    {
       dispatch(actions.filter(undefined) as any);
+    }
   }, [dispatch, actions.filter]);
 
-  if (!hasPagePermission) 
+  if (!hasPagePermission)
+  {
     return <UnauthorizedPage />;
+  }
 
   return (
     <div className="px-5 py-3">
@@ -98,12 +116,13 @@ export function CrudPage<T extends BaseEntity>(
 
       <CrudTableCard cards={ cards } />
 
-      <SearchInput 
-        columnsNames={ columnsToFilter } 
-        onSearch={ (condition) => {
+      <SearchInput
+        columnsNames={ columnsToFilter }
+        onSearch={ (condition) =>
+        {
           onConditionChange?.(condition);
-          dispatch(actions.filter(condition) as any); 
-        }} 
+          dispatch(actions.filter(condition) as any);
+        } }
       />
 
       <div className="rounded-b-xl border shadow-sm overflow-hidden">
@@ -119,20 +138,20 @@ export function CrudPage<T extends BaseEntity>(
                   <CrudTableRowActionsMenu
                     permissions={ permissions }
                     type="dropdown"
-                    onEditClicked={ () => dispatch(actions.openChangeDialog(entity)) }
+                    onEditClicked={ () => handleOpenChangeDialog(entity) }
                     onDeleteClicked={ () => dispatch(actions.openDeleteDialog(entity)) }
-                    dorpdownItems={dorpdownItems?.(entity)}
-                    contextMenuItems={contextMenuItems?.(entity)}
+                    dorpdownItems={ dorpdownItems?.(entity) }
+                    contextMenuItems={ contextMenuItems?.(entity) }
                   />
                  }
                 contextMenuContent={ 
                   <CrudTableRowActionsMenu
                     permissions={ permissions }
                     type="context"
-                    onEditClicked={ () => dispatch(actions.openChangeDialog(entity)) }
+                    onEditClicked={ () => handleOpenChangeDialog(entity) }
                     onDeleteClicked={ () => dispatch(actions.openDeleteDialog(entity)) }
-                    dorpdownItems={dorpdownItems?.(entity)}
-                    contextMenuItems={contextMenuItems?.(entity)}
+                    dorpdownItems={ dorpdownItems?.(entity) }
+                    contextMenuItems={ contextMenuItems?.(entity) }
                   />
                  }
               />
@@ -150,7 +169,7 @@ export function CrudPage<T extends BaseEntity>(
         { isChangeDialogOpen && permissions.updatePermission && (
           <Dialog
             open={ isChangeDialogOpen }
-            onOpenChange={ (open) => dispatch(actions.setIsChangeDialogOpen(open)) }
+            onOpenChange={ handleSetIsChangeDialogOpen }
           >
             { ChangeDialog }
           </Dialog>

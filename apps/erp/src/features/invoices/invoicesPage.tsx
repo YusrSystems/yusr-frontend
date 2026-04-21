@@ -1,5 +1,6 @@
 import { FileTextIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import { FilterCondition, SystemPermissions } from "yusr-core";
 import { ContextMenuItem, CrudPage, DropdownMenuItem, type IDialogState, type IEntityState } from "yusr-ui";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
@@ -25,7 +26,8 @@ export default function InvoicesPage({
   selectFormState,
   accountSlice,
   accountState,
-  hasPagePermission
+  hasPagePermission,
+  basePath
 }: {
   title: string;
   slice: ReturnType<typeof InvoiceSlice.create>;
@@ -36,6 +38,7 @@ export default function InvoicesPage({
   accountSlice: AccountSliceType;
   accountState: IEntityState<Account>;
   hasPagePermission: boolean;
+  basePath?: string;
 })
 {
   const dispatch = useAppDispatch();
@@ -104,8 +107,27 @@ export default function InvoicesPage({
 
   const service = useMemo(() => new InvoicesApiService(), []);
 
+  const { invoiceId } = useParams();
+
+  useEffect(() =>
+  {
+    if (invoiceId)
+    {
+      // openInvoiceDialog(invoiceId);
+    }
+  }, [invoiceId]);
   return (
     <CrudPage<Invoice>
+      basePath={ basePath }
+      routeIdParam="id"
+      onRouteOpen={ async (id) =>
+      {
+        const invoice = (await service.Get(id)).data;
+        if (invoice)
+        {
+          dispatch(slice.dialogActions.openChangeDialog(invoice));
+        }
+      } }
       title={ title }
       entityName="الفاتورة"
       addNewItemTitle="إنشاء فاتورة جديدة"
