@@ -2,7 +2,6 @@ import type { ActionCreatorWithPayload, AsyncThunk, UnknownAction } from "@redux
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
 import type { BaseApiService, BaseEntity, ColumnName, FilterCondition, FilterResult, ResourcePermissions } from "yusr-core";
 import type { IDialogState } from "../../../state/interfaces/iDialogState";
 import type { IEntityState } from "../../../state/interfaces/iEntityState";

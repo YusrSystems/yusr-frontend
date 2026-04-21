@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { SystemPermissions } from "yusr-core";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
