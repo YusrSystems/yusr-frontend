@@ -151,15 +151,16 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
 
           <div className="flex-1 overflow-auto custom-scrollbar flex flex-col items-center justify-start p-4">
             <Vehicle
-              isLoading={ initLoading }
-              seats={ seats }
-              chairsPerRow={ chairsPerRow }
-              tickets={ formData.tickets ?? [] }
-              onSeatClick={ handleSeatClick }
-              onCheckInUpdate={ handleTicketCheckInUpdate }
-              onMoveTicket={ (t) => setMovingTicket(t || undefined) }
-              movingTicketId={ movingTicket?.id || movingTicket?.chairNo }
-              onDeleteTicket={ (id) => handleChange((p) => ({ ...p, tickets: p.tickets?.filter((t) => t.id !== id) })) }
+              isLoading={initLoading}
+              seats={seats}
+              chairsPerRow={chairsPerRow}
+              tickets={formData.tickets ?? []}
+              onSeatClick={handleSeatClick}
+              onCheckInUpdate={handleTicketCheckInUpdate}
+              onMoveTicket={(t) => setMovingTicket(t || undefined)}
+              movingTicketId={movingTicket?.id || movingTicket?.chairNo}
+              onDeleteTicket={(id) => handleChange((p) => ({ ...p, tickets: p.tickets?.filter((t) => t.id !== id) }))}
+              lastRowFull={seats.length % chairsPerRow !== 0}
             />
           </div>
         </main>
