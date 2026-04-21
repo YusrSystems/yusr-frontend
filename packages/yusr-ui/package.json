@@ -10,11 +10,11 @@
       "import": "./dist/yusr-ui.js"
     },
     "./style.css": {
-      "style": "./style.css",
-      "default": "./style.css"
+      "style": "./src/styles/style.css",
+      "default": "./src/styles/style.css"
     }
   },
-  "files": ["dist", "style.css"],
+  "files": ["dist", "src/styles/style.css"],
   "scripts": {
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit"
