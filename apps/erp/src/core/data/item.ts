@@ -190,6 +190,39 @@ export class ItemValidationRules
       )
     ]
   }, {
+    field: "itemStores",
+    selector: (d) => d.itemStores,
+    validators: [
+      Validators.arrayMinLength(1, "يرجى إضافة مخزن واحد على الأقل"),
+      Validators.custom(
+        (stores: any[], form) =>
+        {
+          if (form.type === ItemType.Service || (!stores || stores.length === 0))
+          {
+            return true;
+          }
+
+          const isService = form.type === ItemType.Service;
+
+          for (let i = 0; i < stores.length; i++)
+          {
+            const s = stores[i];
+            if (!isService && !s.storeId)
+            {
+              return false;
+            }
+            if (!isService && !s.initialQuantity)
+            {
+              return false;
+            }
+          }
+
+          return true;
+        },
+        "يرجى تعبئة جميع الحقول المطلوبة في الجدول (المستودع، الكمية الافتتاحية)"
+      )
+    ]
+  }, {
     field: "sellUnitId",
     selector: (d) => d.sellUnitId,
     validators: [Validators.custom(

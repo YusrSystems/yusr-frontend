@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { type DialogMode, SelectField, StorageFileField, TextAreaField, TextField, useFormErrors, useStorageFile } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemUnitPricingMethod } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
@@ -20,11 +19,6 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
   const { getError, isInvalid } = useFormErrors(errors);
 
   const serviceIdsState = useAppSelector((state) => state.serviceIds);
-
-  useEffect(() =>
-  {
-    console.log(formData);
-  }, [formData]);
 
   return (
     <div className="space-y-6 animate-in fade-in">

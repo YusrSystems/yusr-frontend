@@ -1,6 +1,6 @@
 import { Plus, Trash2 } from "lucide-react";
 import { Button, type DialogMode, FormField, NumberField, SearchableSelect, TextField, useFormErrors } from "yusr-ui";
-import { ItemSlice, ItemStore } from "../../../core/data/item";
+import { ItemSlice, ItemStore, ItemType } from "../../../core/data/item";
 import { StoreFilterColumns, StoreSlice } from "../../../core/data/store";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 
@@ -45,6 +45,10 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
     dispatch(ItemSlice.formActions.updateFormData({ itemStores: list, initialQuantity: totalInitial }));
   };
 
+  const hasError = isInvalid("itemStores");
+  const errorMessage = getError("itemStores");
+  const isService = formData.type === ItemType.Service;
+
   return (
     <div className="space-y-6 animate-in fade-in">
       <div className="grid grid-cols-3 gap-6">
@@ -85,7 +89,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
           </Button>
         </div>
 
-        <div className="bg-muted/20 rounded-lg border overflow-hidden">
+        <div className={ `bg-muted/20 rounded-lg border overflow-hidden ${hasError ? "border-red-500" : ""}` }>
           <table className="w-full text-sm text-right">
             <thead className="bg-muted/50 text-muted-foreground">
               <tr>
@@ -103,8 +107,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                   <td className="p-3">
                     <FormField
                       label=""
-                      isInvalid={ isInvalid("storeId") }
-                      error={ getError("storeId") }
+                      isInvalid={ hasError && !isService && !store.storeId }
                     >
                       <SearchableSelect
                         items={ storeState.entities.data ?? [] }
@@ -124,6 +127,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                         columnsNames={ StoreFilterColumns.columnsNames }
                         onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
                         disabled={ storeState.isLoading }
+                        isInvalid={ hasError && !isService && !store.storeId }
                       />
                     </FormField>
                   </td>
@@ -132,6 +136,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                       label=""
                       value={ store.initialQuantity || "0" }
                       disabled={ mode === "update" }
+                      isInvalid={ hasError && !isService && !store.initialQuantity }
                       onChange={ (val) =>
                         updateStore(index, {
                           initialQuantity: val
@@ -166,6 +171,11 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
             </div>
           ) }
         </div>
+        { hasError && errorMessage && (
+          <div className="text-xs font-medium text-red-500 mt-2 animate-in fade-in slide-in-from-top-1">
+            { errorMessage }
+          </div>
+        ) }
       </div>
     </div>
   );

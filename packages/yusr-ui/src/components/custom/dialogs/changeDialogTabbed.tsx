@@ -6,6 +6,7 @@ import { type ChangeDialogProps, ChangeDialog } from "./changeDialog";
 
 export type TabProps = {
   active: boolean;
+  hasError?: boolean;
   icon: any;
   label: string;
   content: React.ReactElement;
@@ -29,6 +30,7 @@ export function ChangeDialogTabbed<T extends BaseEntity>({
             <TabButton
               key={ i }
               active={ currentTab === i }
+              hasError={ tab.hasError }
               icon={ tab.icon }
               label={ tab.label }
               onClick={ () => setCurrentTab(i) }

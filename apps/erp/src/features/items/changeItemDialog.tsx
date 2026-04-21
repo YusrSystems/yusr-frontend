@@ -1,7 +1,7 @@
 import { Box, Database, DollarSign } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { DialogContent, ChangeDialogTabbed, DialogDescription, DialogHeader, DialogTitle, Loading, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialogTabbed, DialogContent, DialogDescription, DialogHeader, DialogTitle, Loading, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemValidationRules } from "../../core/data/item";
 import { PricingMethodSlice } from "../../core/data/pricingMethod";
 import { StoreSlice } from "../../core/data/store";
@@ -12,6 +12,10 @@ import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import BasicTab from "./basic/basicTab";
 import PricingTab from "./pricing/pricingTab";
 import StorageTab from "./storage/storageTab";
+
+const BASIC_FIELDS = ["name", "type"] as const;
+const STORAGE_FIELDS = ["itemStores"] as const;
+const PRICING_FIELDS = ["sellUnitId", "initialCost", "itemUnitPricingMethods"] as const;
 
 export default function ChangeItemDialog({
   entity,
@@ -39,13 +43,18 @@ export default function ChangeItemDialog({
     [entity]
   );
 
-  const { formData } = useAppSelector((state) => state.itemForm);
+  const { formData, errors } = useAppSelector((state) => state.itemForm);
+  const { isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
     ItemValidationRules.validationRules,
     (errors) => dispatch(ItemSlice.formActions.setErrors(errors))
   );
   useFormInit(ItemSlice.formActions.setInitialData, initialValues);
+
+  const basicHasError = BASIC_FIELDS.some((f) => isInvalid(f));
+  const storageHasError = STORAGE_FIELDS.some((f) => isInvalid(f));
+  const pricingHasError = PRICING_FIELDS.some((f) => isInvalid(f));
 
   useEffect(() =>
   {
@@ -107,6 +116,7 @@ export default function ChangeItemDialog({
           label: "المعلومات الأساسية",
           icon: Box,
           active: true,
+          hasError: basicHasError,
           content: <BasicTab mode={ mode } />
         },
         ...(formData.type !== ItemType.Service
@@ -114,6 +124,7 @@ export default function ChangeItemDialog({
             label: "التخزين",
             icon: Database,
             active: false,
+            hasError: storageHasError,
             content: <StorageTab mode={ mode } />
           }]
           : []),
@@ -121,6 +132,7 @@ export default function ChangeItemDialog({
           label: "التسعير",
           icon: DollarSign,
           active: false,
+          hasError: pricingHasError,
           content: <PricingTab mode={ mode } />
         }
       ] }

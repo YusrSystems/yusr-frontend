@@ -3,6 +3,7 @@ import { createSlice, type PayloadAction, type SliceCaseReducers, type ValidateS
 export interface FormState<T> {
   formData: Partial<T>;
   errors: Record<string, string>;
+  isDirty: boolean;
 }
 
 export function createGenericFormSlice<T, Reducer extends SliceCaseReducers<FormState<T>> = SliceCaseReducers<FormState<T>>>(
@@ -14,6 +15,7 @@ export function createGenericFormSlice<T, Reducer extends SliceCaseReducers<Form
   const initialState: FormState<T> = {
     formData: defaultData,
     errors: {},
+    isDirty: false,
   };
 
   return createSlice({
@@ -21,7 +23,7 @@ export function createGenericFormSlice<T, Reducer extends SliceCaseReducers<Form
     initialState,
     reducers: {
       setInitialData(state, action: PayloadAction<Partial<T>>) {
-        Object.assign(state, { formData: action.payload, errors: {} });
+        Object.assign(state, { formData: action.payload, errors: {}, isDirty: false });
       },
       updateFormData(state, action: PayloadAction<Partial<T> | ((prev: Partial<T>) => Partial<T>)>) {
         const updates =
@@ -32,6 +34,7 @@ export function createGenericFormSlice<T, Reducer extends SliceCaseReducers<Form
         Object.keys(updates).forEach((key) => {
           delete state.errors[key];
         });
+        state.isDirty = true;
       },
       setErrors(state, action: PayloadAction<Record<string, string>>) {
         state.errors = action.payload;
@@ -40,7 +43,7 @@ export function createGenericFormSlice<T, Reducer extends SliceCaseReducers<Form
         delete state.errors[action.payload];
       },
       resetForm(state) {
-        Object.assign(state, { formData: defaultData, errors: {} });
+        Object.assign(state, { formData: defaultData, errors: {}, isDirty: false });
       },
       ...reducers
     },

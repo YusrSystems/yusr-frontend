@@ -40,7 +40,7 @@ export default function PricingMethodsTable()
 
       <div
         className={ `bg-muted/20 rounded-lg border overflow-hidden overflow-x-auto transition-colors ${
-          hasError ? "border-red-500/50" : ""
+          hasError ? "border-red-500" : ""
         }` }
       >
         <table className="w-full text-sm text-right min-w-200">
@@ -90,6 +90,7 @@ export default function PricingMethodsTable()
                       onSearch={ (condition) =>
                         dispatch(UnitSlice.entityActions.filter(condition)) }
                       disabled={ unitState.isLoading || isService }
+                      isInvalid={ hasError && !isService && !method.unitId }
                     />
                   </FormField>
                 </td>
@@ -116,26 +117,29 @@ export default function PricingMethodsTable()
                       columnsNames={ PricingMethodFilterColumns.columnsNames }
                       onSearch={ (condition) => dispatch(PricingMethodSlice.entityActions.filter(condition)) }
                       disabled={ pricingMethodState.isLoading || isService }
+                      isInvalid={ hasError && !isService && !method.pricingMethodId }
                     />
                   </FormField>
                 </td>
                 <td className="p-3">
+                  {method.quantityMultiplier}
                   <NumberField
                     label=""
-                    min={ 1 }
+                    min={ 0 }
                     disabled={ method.unitId === formData.sellUnitId }
-                    value={ method.quantityMultiplier || 1 }
+                    value={ method.quantityMultiplier ?? "0" }
                     onChange={ (val) => updatePricingMethod(index, { quantityMultiplier: val }) }
-                    isInvalid={ hasError && (!method.quantityMultiplier || method.quantityMultiplier <= 0) }
+                    isInvalid={ hasError && (method.quantityMultiplier == undefined || method.quantityMultiplier <= 0) }
                   />
                 </td>
                 <td className="p-3">
+                  {method.price}
                   <NumberField
                     label=""
                     min={ 0 }
                     value={ method.price ?? "0" }
                     onChange={ (val) => updatePricingMethod(index, { price: val }) }
-                    isInvalid={ hasError && (method.price === undefined || method.price === null || method.price < 0) }
+                    isInvalid={ hasError && (method.price == undefined || method.price <= 0) }
                   />
                 </td>
                 <td className="p-3">

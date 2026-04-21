@@ -9,13 +9,13 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
 {
   const dispatch = useAppDispatch();
   const taxState = useAppSelector((state) => state.tax);
-  const { formData } = useAppSelector((state) => state.itemForm);
+  const { formData, isDirty } = useAppSelector((state) => state.itemForm);
 
   useEffect(() =>
   {
-    if (mode === "create")
+    if (mode === "create" && !isDirty && taxState.entities?.data?.length)
     {
-      handleTaxableChange(formData.taxable ?? false);
+      handleTaxableChange(true);
     }
   }, [taxState.entities?.data]);
 
