@@ -34,7 +34,7 @@ export default function ItemsPage()
     <CrudPage<Item>
       title="إدارة المواد"
       entityName="مادة"
-      addNewItemTitle="إضافة مادة جديد"
+      addNewItemTitle="إضافة مادة جديدة"
       onConditionChange={ setCondition }
       actionButtons={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],

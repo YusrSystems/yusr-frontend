@@ -32,13 +32,15 @@ export function CrudTableHeader(
         <div>
           <h1>{ title }</h1>
         </div>
-        {...actionButtons}
-        { isButtonVisible && (
-          <Button variant="default" onClick={ () => setOpenDialogState(true) }>
-            <PlusIcon className="h-4 w-4" />
-            { buttonTitle }
-          </Button>
-        ) }
+        <div className="flex gap-3">
+          { ...actionButtons }
+          { isButtonVisible && (
+            <Button variant="default" onClick={ () => setOpenDialogState(true) }>
+              <PlusIcon className="h-4 w-4" />
+              { buttonTitle }
+            </Button>
+          ) }
+        </div>
       </div>
       { isDialogOpen && <Dialog open={ isDialogOpen } onOpenChange={ setOpenDialogState }>{ contentWithClose }
       </Dialog> }
