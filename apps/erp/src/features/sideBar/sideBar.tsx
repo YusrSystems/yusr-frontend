@@ -23,8 +23,8 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
   const dispatch = useAppDispatch();
 
   const logoConfig = {
-    full: { light: logoFullLight, dark: logoFullDark },
-    collapsed: { light: logoOnlyLight, dark: logoOnlyDark }
+    full: { light: logoFullLight, dark: logoFullDark, sizeStyle: "w-25 px-2" },
+    collapsed: { light: logoOnlyLight, dark: logoOnlyDark, sizeStyle: "w-8" }
   };
 
   const data = {

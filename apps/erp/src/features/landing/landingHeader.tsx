@@ -9,7 +9,7 @@ export default function LandingHeader()
     <header className="sticky top-0 z-50 border-b border-border/50 backdrop-blur-lg">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         { /* Logo */ }
-        <div className="flex items-center w-32">
+        <div className="flex items-center w-25">
           <img
             src={ logoLight }
             alt="يُسر"

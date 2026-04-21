@@ -5,10 +5,12 @@ export interface SidebarLogoProps {
     full: {
       light: string;
       dark: string;
+      sizeStyle?: string;
     };
     collapsed: {
       light: string;
       dark: string;
+      sizeStyle?: string;
     };
   };
   alt?: string;
@@ -23,7 +25,7 @@ export function SidebarLogo({ logos, alt = "Logo" }: SidebarLogoProps)
     <div
       className={`
         animate-fadeSlide transition-all duration-300 pb-3
-        ${isCollapsed ? "w-8" : "w-35 px-2"} 
+        ${isCollapsed ? logos.collapsed.sizeStyle || "w-8" : logos.full.sizeStyle || "w-35 px-2"} 
       `}
     >
       {/* Light Mode Logo */}
