@@ -17,7 +17,7 @@ import { CrudTableHeaderRows, type CrudTableHeadRow } from "../table/crudTableHe
 import { CrudTablePagination } from "../table/crudTablePagination";
 import { CrudTableRowActionsMenu } from "../table/crudTableRowActionsMenu";
 import { UnauthorizedPage } from "../unauthorized/unauthorizedPage";
-import useCrudPage from "./useCrudPage";
+import useCrudPageRoute from "./useCrudPageRoute";
 
 export interface CrudActions<T extends BaseEntity>
 {
@@ -83,7 +83,7 @@ export function CrudPage<T extends BaseEntity>(
 {
   const dispatch = useDispatch();
   const { selectedRow, isChangeDialogOpen, isDeleteDialogOpen } = useSlice();
-  const { handleOpenChangeDialog, handleSetIsChangeDialogOpen } = useCrudPage<T>({
+  const { handleOpenChangeDialog, handleSetIsChangeDialogOpen } = useCrudPageRoute<T>({
     actions,
     routeIdParam,
     basePath,

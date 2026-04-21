@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import type { BaseEntity } from "../../../../../yusr-core/src/entities";
 import type { CrudActions } from "./crudPage";
 
-export default function useCrudPage<T extends BaseEntity>(
+export default function useCrudPageRoute<T extends BaseEntity>(
   { actions, routeIdParam, basePath, onRouteOpen }: {
     actions: CrudActions<T>;
     routeIdParam?: string;
