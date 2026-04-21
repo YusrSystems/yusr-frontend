@@ -1,14 +1,18 @@
-import ErrorBoundary from "../../../error/errorBoundary";
+import type { Store } from "@reduxjs/toolkit";
 import { StrictMode, type PropsWithChildren } from "react";
 import { Provider } from "react-redux";
 import { ApiConstants } from "yusr-core";
+import ErrorBoundary from "../../../error/errorBoundary";
 
-export function YusrApp({ children, store = null, backendUrl = undefined }: PropsWithChildren & { store?: any, backendUrl?: string }) {
-    if (backendUrl)
-        ApiConstants.initialize("https://yusrbus.runasp.net/api");
+interface YusrAppProps extends PropsWithChildren {
+    store: Store;
+    backendUrl: string;
+}
+
+export function YusrApp({ children, store, backendUrl }: YusrAppProps) {
+    ApiConstants.initialize(backendUrl);
 
     return (
-
         <StrictMode>
             <Provider store={store}>
                 <ErrorBoundary>
