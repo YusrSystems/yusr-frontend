@@ -2,11 +2,22 @@ import { AlertCircle, Trash2 } from "lucide-react";
 import { cn, type DialogMode, InputField, SelectField } from "yusr-ui";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import { ItemTransferActions } from "./logic/itemTransferActions";
+import type { TransferRowItem } from "./logic/itemTransferSlice";
 
 export default function SelectedItemsTable({ mode }: { mode: DialogMode; })
 {
   const dispatch = useAppDispatch();
   const { items, errors } = useAppSelector((state) => state.itemTransferUI);
+
+  const getAvailableQuantity = (row: TransferRowItem): number =>
+  {
+    const iupm = row.itemUnitPricingMethods.find((method) => method.id === row.selectedPricingMethodId);
+    if (!iupm || iupm.quantityMultiplier === 0)
+    {
+      return 0;
+    }
+    return row.maxQuantity / iupm.quantityMultiplier;
+  };
 
   if (items.length === 0)
   {
@@ -47,9 +58,9 @@ export default function SelectedItemsTable({ mode }: { mode: DialogMode; })
               { /* العمود الأول: اسم المادة */ }
               <td className="p-4">
                 <div className="font-semibold text-foreground">{ row.itemName }</div>
-                { row.maxQuantity > 0 && (
+                { row.quantity > 0 && row.selectedPricingMethodId && (
                   <div className="text-xs text-muted-foreground mt-1">
-                    المتوفر: { row.maxQuantity }
+                    المتوفر: { getAvailableQuantity(row) }
                   </div>
                 ) }
               </td>

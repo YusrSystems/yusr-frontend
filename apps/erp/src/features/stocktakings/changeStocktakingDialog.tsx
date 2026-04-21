@@ -145,6 +145,7 @@ export default function ChangeStocktakingDialog(
           { formData.storeId && (
             <StocktakingItemsTable
               formData={ formData }
+              errors={ errors }
               handleChange={ (update) =>
                 dispatch(
                   StocktakingSlice.formActions.updateFormData(

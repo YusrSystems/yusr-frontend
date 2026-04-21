@@ -30,8 +30,8 @@ export default function ItemTransfersPage()
   return (
     <CrudPage<ItemTransfer>
       title="نقل المواد"
-      entityName="عملية نقل"
-      addNewItemTitle="إنشاء عملية نقل مواد جديدة"
+      entityName="نقل مواد"
+      addNewItemTitle="إضافة نقل مواد جديد"
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],

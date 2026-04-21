@@ -1,6 +1,6 @@
-import { ShoppingCart, Trash2, X } from "lucide-react";
+import { AlertCircle, Trash2, X } from "lucide-react";
 import { useMemo } from "react";
-import { Button, type DialogMode, NumberField, SearchableSelect } from "yusr-ui";
+import { Button, type DialogMode, NumberField, SearchableSelect, useFormErrors } from "yusr-ui";
 import { ItemType, ItemUnitPricingMethod, StoreItem } from "../../core/data/item";
 import type { IStocktaking, IStocktakingItem } from "../../core/data/stocktaking";
 import { useAppSelector } from "../../core/state/store";
@@ -9,17 +9,18 @@ import StoreItemSelector from "../items/storeItemSelector";
 export interface StocktakingItemsTableProps
 {
   formData: Partial<IStocktaking>;
+  errors: Record<string, string>;
   handleChange: (update: Partial<IStocktaking> | ((prev: Partial<IStocktaking>) => Partial<IStocktaking>)) => void;
   createInstance: () => IStocktakingItem;
   mode: DialogMode;
 }
 
 export default function StocktakingItemsTable(
-  { formData, handleChange, createInstance, mode }: StocktakingItemsTableProps
+  { formData, errors, handleChange, createInstance, mode }: StocktakingItemsTableProps
 )
 {
   const storeItemsState = useAppSelector((state) => state.storeItems);
-
+  const { getError, isInvalid } = useFormErrors(errors);
   const groupedItems = useMemo(() =>
   {
     const groups = new Map<number, IStocktakingItem[]>();
@@ -290,10 +291,15 @@ export default function StocktakingItemsTable(
           </div>
         )
         : (
-          <div className="text-center py-12 border-2 border-dashed rounded-lg text-muted-foreground bg-muted/5">
-            <ShoppingCart className="w-12 h-12 mx-auto mb-4 opacity-20" />
-            <p className="text-lg font-medium">لا توجد مواد مضافة</p>
-            { mode === "create" && <p className="text-sm mt-2">استخدم شريط البحث بالأعلى لإضافة مواد للجرد</p> }
+          <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground border border-dashed border-border rounded-lg bg-background/50">
+            <p>لا توجد مواد مضافة حالياً.</p>
+            <p className="text-xs mt-1">قم باختيار مادة من القائمة أو باستخدام الباركود لإضافتها للجدول.</p>
+            { isInvalid("items") && (
+              <div className="flex items-center gap-1 text-red-500 mt-3 text-sm font-medium bg-red-500/10 px-3 py-1.5 rounded-md">
+                <AlertCircle className="h-4 w-4" />
+                { getError("items") }
+              </div>
+            ) }
           </div>
         ) }
     </div>

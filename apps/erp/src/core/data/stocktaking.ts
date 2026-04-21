@@ -71,11 +71,19 @@ export class StocktakingFilterColumns
 
 export class StocktakingValidationRules
 {
-  public static validationRules: ValidationRule<Partial<Stocktaking>>[] = [{
-    field: "storeId",
-    selector: (d) => d.storeId,
-    validators: [Validators.required("يرجى اختيار المستودع")]
-  }, { field: "date", selector: (d) => d.date, validators: [Validators.required("يرجى اختيار التاريخ")] }];
+  public static validationRules: ValidationRule<Partial<Stocktaking>>[] = [
+    {
+      field: "storeId",
+      selector: (d) => d.storeId,
+      validators: [Validators.required("يرجى اختيار المستودع")]
+    },
+    { field: "date", selector: (d) => d.date, validators: [Validators.required("يرجى اختيار التاريخ")] },
+    {
+      field: "items",
+      selector: (d) => d.stocktakingItems,
+      validators: [Validators.arrayMinLength(1, "يرجى إضافة مادة واحدة على الأقل للجرد")]
+    }
+  ];
 }
 
 export class StocktakingSlice

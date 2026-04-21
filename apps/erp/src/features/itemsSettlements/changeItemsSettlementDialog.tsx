@@ -77,22 +77,15 @@ export default function ChangeItemsSettlementDialog(
     ItemsSettlementSlice.formActions.clearError("storeId");
   };
 
-  // ==========================================
-  // Adapter Logic (لربط الجدول بكيان التسوية)
-  // ==========================================
-
-  // 1. تجهيز البيانات للجدول بالاسم الذي يتوقعه (stocktakingItems)
   const tableFormData = useMemo(() => ({
     ...formData,
     stocktakingItems: formData.itemsSettlementItems
   }), [formData]);
 
-  // 2. اعتراض التحديثات القادمة من الجدول وتحويلها للاسم الصحيح
   const handleTableChange = (update: any) =>
   {
     if (typeof update === "function")
     {
-      // في حال تم تمرير دالة (Callback)
       dispatch(ItemsSettlementSlice.formActions.updateFormData((prev) =>
       {
         const mappedPrev = { ...prev, stocktakingItems: prev.itemsSettlementItems };
@@ -106,7 +99,6 @@ export default function ChangeItemsSettlementDialog(
     }
     else
     {
-      // في حال تم تمرير كائن مباشر
       if (update.stocktakingItems !== undefined)
       {
         dispatch(
@@ -190,6 +182,7 @@ export default function ChangeItemsSettlementDialog(
           { formData.storeId && (
             <StocktakingItemsTable
               formData={ tableFormData as Partial<IStocktaking> }
+              errors={errors}
               handleChange={ handleTableChange }
               createInstance={ () => new ItemsSettlementItem() } // إنشاء كائن تسوية جديد
               mode={ mode }

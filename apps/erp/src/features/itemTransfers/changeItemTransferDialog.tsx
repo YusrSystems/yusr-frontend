@@ -232,19 +232,13 @@ export default function ChangeItemTransferDialog({
 
         <FieldsSection columns={ 1 }>
           <TextField
-            label="البيان والملاحظات"
+            label="الوصف"
             value={ formData.description || "" }
             onChange={ (e) => dispatch(ItemTransferSlice.formActions.updateFormData({ description: e.target.value })) }
           />
         </FieldsSection>
 
         <FieldsSection columns={ 1 }>
-          { isInvalid("itemTransfersItems") && (
-            <div className="text-sm text-red-500 mb-2 font-medium">
-              { getError("itemTransfersItems") }
-            </div>
-          ) }
-
           { formData.fromStoreId && (
             <>
               { mode === "create" && (

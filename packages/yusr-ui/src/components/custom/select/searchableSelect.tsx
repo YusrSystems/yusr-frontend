@@ -33,7 +33,7 @@ export function SearchableSelect<T>(
     placeholder = "اختر...",
     columnsNames,
     onSearch,
-    showAllOption = true
+    showAllOption = false
   }: SearchableSelectParams<T>
 )
 {

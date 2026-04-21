@@ -53,11 +53,19 @@ export class ItemsSettlementFilterColumns
 
 export class ItemsSettlementValidationRules
 {
-  public static validationRules: ValidationRule<Partial<ItemsSettlement>>[] = [{
-    field: "storeId",
-    selector: (d) => d.storeId,
-    validators: [Validators.required("يرجى اختيار المستودع")]
-  }, { field: "date", selector: (d) => d.date, validators: [Validators.required("يرجى اختيار التاريخ")] }];
+  public static validationRules: ValidationRule<Partial<ItemsSettlement>>[] = [
+    {
+      field: "storeId",
+      selector: (d) => d.storeId,
+      validators: [Validators.required("يرجى اختيار المستودع")]
+    },
+    { field: "date", selector: (d) => d.date, validators: [Validators.required("يرجى اختيار التاريخ")] },
+    {
+      field: "items",
+      selector: (d) => d.itemsSettlementItems,
+      validators: [Validators.arrayMinLength(1, "يرجى إضافة مادة واحدة على الأقل للتسوية")]
+    }
+  ];
 }
 
 export class ItemsSettlementSlice

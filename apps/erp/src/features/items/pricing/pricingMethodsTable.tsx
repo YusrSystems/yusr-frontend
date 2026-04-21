@@ -134,7 +134,6 @@ export default function PricingMethodsTable()
                   />
                 </td>
                 <td className="p-3">
-                  { method.price }
                   <NumberField
                     label=""
                     min={ 0 }
