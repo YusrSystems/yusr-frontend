@@ -33,9 +33,11 @@ export default function PricingMethodsTable()
     <div className="pt-4">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-bold">طرق التسعير</h3>
-        <Button type="button" size="sm" onClick={ addPricingMethod }>
-          <Plus className="w-4 h-4 ml-2" /> إضافة طريقة تسعير
-        </Button>
+        { !isService && (
+          <Button type="button" size="sm" onClick={ addPricingMethod }>
+            <Plus className="w-4 h-4 ml-2" /> إضافة طريقة تسعير
+          </Button>
+        ) }
       </div>
 
       <div
@@ -58,7 +60,7 @@ export default function PricingMethodsTable()
                 SystemPermissionsResources.ReportItemBarcode,
                 SystemPermissionsActions.Get
               ) && <th className="p-3 w-12 text-center"></th> }
-              <th className="p-3 w-12 text-center"></th>
+              { !isService && <th className="p-3 w-12 text-center"></th> }
             </tr>
           </thead>
           <tbody>
@@ -122,7 +124,6 @@ export default function PricingMethodsTable()
                   </FormField>
                 </td>
                 <td className="p-3">
-                  {method.quantityMultiplier}
                   <NumberField
                     label=""
                     min={ 0 }
@@ -133,7 +134,7 @@ export default function PricingMethodsTable()
                   />
                 </td>
                 <td className="p-3">
-                  {method.price}
+                  { method.price }
                   <NumberField
                     label=""
                     min={ 0 }
@@ -167,17 +168,19 @@ export default function PricingMethodsTable()
                   </td>
                 ) }
 
-                <td className="p-3 text-center">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="text-red-500 hover:text-red-700 hover:bg-red-100"
-                    onClick={ () => removePricingMethod(index) }
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </td>
+                { !isService && (
+                  <td className="p-3 text-center">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                      onClick={ () => removePricingMethod(index) }
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </td>
+                ) }
               </tr>
             )) }
           </tbody>
