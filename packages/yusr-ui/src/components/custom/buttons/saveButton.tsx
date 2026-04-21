@@ -1,30 +1,47 @@
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import type { BaseEntity } from "yusr-core";
-import type { BaseApiService } from "yusr-core";
+import type { BaseApiService, BaseEntity } from "yusr-core";
 import { Button } from "../../pure/button";
 import type { DialogMode } from "../dialogs/dialogType";
 
-export interface SaveButtonProps<T extends BaseEntity> {
+export interface SaveButtonProps<T extends BaseEntity>
+{
   formData: T | Partial<T>;
   dialogMode?: DialogMode;
   service?: BaseApiService<T>;
   disable?: () => boolean;
   onSuccess?: (newData: T) => void;
   validate?: () => boolean;
+  onBeforeSave?: () => Promise<{ handled: boolean; data?: T }>;
 }
 
 export function SaveButton<T extends BaseEntity>(
-  { formData, dialogMode, service, disable, onSuccess, validate = () => true }: SaveButtonProps<T>
-) {
+  { formData, dialogMode, service, disable, onSuccess, validate = () => true, onBeforeSave  }: SaveButtonProps<T>
+)
+{
   const [loading, setLoading] = useState(false);
 
-  async function Save() {
-    if (!validate()) {
+  async function Save()
+  {
+    if (!validate())
+    {
       return;
     }
 
-    if (!service) {
+    if (onBeforeSave)
+    {
+      setLoading(true);
+      const { handled, data } = await onBeforeSave();
+      setLoading(false);
+      if (handled)
+      {
+        if (data) onSuccess?.(data);
+        return;
+      }
+    }
+
+    if (!service)
+    {
       onSuccess?.(formData as T);
       return;
     }
@@ -35,16 +52,17 @@ export function SaveButton<T extends BaseEntity>(
 
     setLoading(false);
 
-    if (result.status === 200) {
+    if (result.status === 200)
+    {
       onSuccess?.(result.data as T);
     }
   }
 
   return (
-    <Button disabled={loading || disable?.()} onClick={Save}>
-      {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+    <Button disabled={ loading || disable?.() } onClick={ Save }>
+      { loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
       حفظ
-      {service ? " التغييرات" : ""}
+      { service ? " التغييرات" : "" }
     </Button>
   );
 }

@@ -6,12 +6,14 @@ export * from "./background/yusrBackground";
 
 // Buttons
 export * from "./buttons/saveButton";
+export * from "./buttons/tabButton";
 
 // Containers
 export * from "./containers/dynamicListContainer";
 export * from "./containers/yusrApp";
 // Dialogs
 export * from "./dialogs/changeDialog";
+export * from "./dialogs/changeDialogTabbed";
 export * from "./dialogs/commonChangeDialogProps";
 export * from "./dialogs/deleteDialog";
 export * from "./dialogs/dialogType";
@@ -82,3 +84,5 @@ export * from "./table/crudTableRowActionsMenu";
 export * from "./theme/themeProvider";
 export * from "./theme/themeToggle";
 
+export * from "./notFound/notFoundPage";
+export * from "./unauthorized/unauthorizedPage";

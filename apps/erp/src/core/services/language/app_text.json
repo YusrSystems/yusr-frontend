@@ -1,0 +1,47 @@
+{
+  "ar": {
+    "companyName": "حافلات يُسر",
+
+    "dashborad": {
+      "income": "مجموع الدخل",
+      "totalPassengers": "مجموع الركاب",
+      "totalTrips": "الرحلات",
+      "growthRate": "معدل النمو",
+      "charts": {
+        "last3months": ""
+      }
+    },
+    "sections": {
+      "dashboard": "لوحة المعلومات",
+      "taxes": "الضرائب",
+      "stores": "المستودعات",
+      "reports": "التقارير",
+      "units": "الوحدات",
+      "items": "المواد",
+      "accounts": "الحسابات",
+      "clients": "العملاء",
+      "suppliers": "الموردين",
+      "employees": "الموظفين",
+      "banks": "البنوك",
+      "boxes": "الصناديق",
+      "branches": "الفروع",
+      "users": "المستخدمون",
+      "roles": "الأدوار",
+      "invoices": "الفواتير",
+      "sellInvoices": "فواتير البيع",
+      "purchaseInvoices": "فواتير الشراء",
+      "vouchers": "السندات",
+      "paymentMethods": "طرق الدفع",
+      "balanceTransfer": "تحويلات الأرصدة",
+      "pricingMethods": "طرق التسعير",
+      "itemTransfers": "نقل المواد",
+      "stocktakings": "جرد المواد",
+      "itemsSettlements": "تسوية المواد",
+      "settings": "الإعدادات"
+    },
+    "sideBarUserData": {
+      "account": "الحساب",
+      "logout": "تسجيل الخروج"
+    }
+  }
+}

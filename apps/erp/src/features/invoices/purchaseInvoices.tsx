@@ -1,0 +1,31 @@
+import { SystemPermissions } from "yusr-core";
+import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
+import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
+import { SuppliersSlice } from "../../core/data/account";
+import { InvoiceType, PurchasesSlice } from "../../core/data/invoice";
+import { useAppSelector } from "../../core/state/store";
+import InvoicesPage from "./invoicesPage";
+
+export default function PurchaseInvoicesPage()
+{
+  const authState = useAppSelector((state) => state.auth);
+  const suppliersState = useAppSelector((state) => state.suppliers);
+
+  return (
+    <InvoicesPage
+      slice={ PurchasesSlice }
+      stateKey="purchases"
+      dialogStateKey="purchasesDialog"
+      title="إدارة المشتريات"
+      fixedType={ InvoiceType.Purchase }
+      selectFormState={ (state) => state.purchasesForm }
+      accountSlice={ SuppliersSlice }
+      accountState={ suppliersState }
+      hasPagePermission={ SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.InvoicePurchase,
+        SystemPermissionsActions.Get
+      ) }
+    />
+  );
+}

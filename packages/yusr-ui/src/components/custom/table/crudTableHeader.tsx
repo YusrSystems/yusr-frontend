@@ -1,15 +1,15 @@
+import { PlusIcon } from "lucide-react";
+import React, { type ReactElement, type ReactNode, useState } from "react";
 import { Button } from "../../pure/button";
 import { Dialog } from "../../pure/dialog";
-import { PlusIcon } from "lucide-react";
-import React from "react";
-import { type ReactElement, type ReactNode, useState } from "react";
 
 export function CrudTableHeader(
-  { title, buttonTitle, createComp, isButtonVisible = true }: {
+  { title, buttonTitle, createComp, isButtonVisible = true, actionButtons }: {
     title: string;
     buttonTitle: string;
     createComp: ReactNode;
     isButtonVisible?: boolean;
+    actionButtons: ReactNode[];
   }
 )
 {
@@ -32,6 +32,7 @@ export function CrudTableHeader(
         <div>
           <h1>{ title }</h1>
         </div>
+        {...actionButtons}
         { isButtonVisible && (
           <Button variant="default" onClick={ () => setOpenDialogState(true) }>
             <PlusIcon className="h-4 w-4" />
