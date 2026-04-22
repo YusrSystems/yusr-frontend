@@ -1,6 +1,5 @@
-import debounce from "lodash/debounce";
 import { ScanBarcode, ShoppingCart } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { SearchableSelect } from "yusr-ui";
 import { FilterByTypeRequest } from "../../core/data/filterByTypeRequest";
 import { ItemFilterColumns, ItemType, ItemUnitPricingMethod, type StoreItem } from "../../core/data/item";
@@ -33,29 +32,13 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
     }
   }, [itemBarcodeState.barcodeResult]);
 
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((value, storeId) =>
-      {
-        if (value && storeId)
-        {
-          dispatch(GetItemByBarcode({ barcode: value, storeId: storeId }));
-          setBarcode("");
-        }
-      }, 500),
-    [dispatch]
-  );
-
-  useEffect(() =>
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) =>
   {
-    return () => debouncedSearch.cancel();
-  }, [debouncedSearch]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) =>
-  {
-    const val = e.target.value;
-    setBarcode(val);
-    debouncedSearch(val, storeId);
+    if (e.key === "Enter" && barcode && storeId)
+    {
+      dispatch(GetItemByBarcode({ barcode, storeId }));
+      setBarcode("");
+    }
   };
 
   return (
@@ -70,7 +53,8 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
           type="text"
           placeholder="اقرأ الباركود..."
           value={ barcode }
-          onChange={ handleChange }
+          onChange={(e) => setBarcode(e.target.value)}
+          onKeyDown={ handleKeyDown }
           disabled={ storeItemsState.isLoading }
           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pl-10"
         />
