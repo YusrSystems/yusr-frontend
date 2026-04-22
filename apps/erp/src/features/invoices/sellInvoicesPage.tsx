@@ -26,6 +26,10 @@ export default function SellInvoicesPage()
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.InvoiceSell,
         SystemPermissionsActions.Get
+      ) && SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.Invoices,
+        SystemPermissionsActions.Get
       ) }
     />
   );

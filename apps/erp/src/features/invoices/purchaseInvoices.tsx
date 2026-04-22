@@ -26,6 +26,10 @@ export default function PurchaseInvoicesPage()
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.InvoicePurchase,
         SystemPermissionsActions.Get
+      ) && SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.Invoices,
+        SystemPermissionsActions.Get
       ) }
     />
   );

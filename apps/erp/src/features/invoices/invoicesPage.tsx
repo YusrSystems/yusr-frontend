@@ -1,6 +1,6 @@
 import { FileTextIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { FilterCondition, SystemPermissions } from "yusr-core";
 import { ContextMenuItem, CrudPage, DropdownMenuItem, type IDialogState, type IEntityState } from "yusr-ui";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
@@ -107,26 +107,36 @@ export default function InvoicesPage({
 
   const service = useMemo(() => new InvoicesApiService(), []);
 
-  const { invoiceId } = useParams();
-
-  useEffect(() =>
-  {
-    if (invoiceId)
-    {
-      // openInvoiceDialog(invoiceId);
-    }
-  }, [invoiceId]);
   return (
     <CrudPage<Invoice>
       basePath={ basePath }
       routeIdParam="id"
       onRouteOpen={ async (id) =>
       {
-        const invoice = (await service.Get(id)).data;
-        if (invoice)
+        if (!hasPagePermission)
         {
-          dispatch(slice.dialogActions.openChangeDialog(invoice));
+          return;
         }
+
+        const invoice = (await service.Get(id)).data;
+        if (invoice == undefined)
+        {
+          return;
+        }
+
+        if (
+          (fixedType === InvoiceType.Purchase
+            && (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.SellReturn
+              || invoice.type === InvoiceType.Quotation))
+          || (fixedType === InvoiceType.Sell
+            && (invoice.type === InvoiceType.Purchase || invoice.type === InvoiceType.PurchaseReturn))
+        )
+        {
+          toast.error("الفاتورة غير موجودة");
+          return;
+        }
+
+        dispatch(slice.dialogActions.openChangeDialog(invoice));
       } }
       title={ title }
       entityName="الفاتورة"

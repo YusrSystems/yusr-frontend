@@ -30,7 +30,7 @@ export default function useCrudPageRoute<T extends BaseEntity>(
   {
     if (basePath)
     {
-      navigate(`${basePath}/${(entity as any).id}`);
+      navigate(`${basePath}/${entity.id}`);
     }
     dispatch(actions.openChangeDialog(entity));
   };

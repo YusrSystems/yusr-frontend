@@ -53,6 +53,10 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           permissions,
           SystemPermissionsResources.InvoiceSell,
           SystemPermissionsActions.Get
+        ) && SystemPermissions.hasAuth(
+          authState.loggedInUser?.role?.permissions ?? [],
+          SystemPermissionsResources.Invoices,
+          SystemPermissionsActions.Get
         )
       }, {
         title: appLangSections.purchaseInvoices,
@@ -60,6 +64,10 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
         hasAuth: SystemPermissions.hasAuth(
           permissions,
           SystemPermissionsResources.InvoicePurchase,
+          SystemPermissionsActions.Get
+        ) && SystemPermissions.hasAuth(
+          authState.loggedInUser?.role?.permissions ?? [],
+          SystemPermissionsResources.Invoices,
           SystemPermissionsActions.Get
         )
       }]
