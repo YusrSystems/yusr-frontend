@@ -1,19 +1,26 @@
+import { useEffect } from "react";
 import type { City } from "yusr-core";
 import { SelectField, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
-import { updateField } from "../../logic/registerSlice";
+import RegisterActions from "../../logic/registerActions";
+import { citySelected, fetchCurrenciesAsync, updateField } from "../../logic/registerSlice";
 
 export default function AddressInfo()
 {
   const dispatch = useAppDispatch();
-  const { formData, errors } = useAppSelector((state) => state.register);
-  const cities: City[] = [];
+  const { formData, errors, cities } = useAppSelector((state) => state.register);
 
   function onFieldChange(field: Partial<Registration>)
   {
     dispatch(updateField(field));
   }
+
+  // get cities from api and set them in state using
+  useEffect(() =>
+  {
+    dispatch(RegisterActions.fetchCitiesAsync());
+  }, []);
   return (
     <>
       <SelectField
@@ -21,7 +28,7 @@ export default function AddressInfo()
         value={ formData.cityId?.toString() ?? "" }
         isInvalid={ !!errors.cityId }
         error={ errors.cityId }
-        onValueChange={ (val) => onFieldChange({ cityId: Number(val) }) }
+        onValueChange={ (val) => dispatch(citySelected({ cityId: parseInt(val) })) }
         required
         options={ cities.map((c) => ({ label: c.name, value: c.id.toString() })) }
       />

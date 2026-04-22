@@ -32,6 +32,19 @@ export default function CompanyInfo()
         } }
         required
       />
+
+      <TextField
+        label="البريد الإلكتروني للشركة"
+        id="email"
+        type="email"
+        placeholder="company@example.com"
+        value={ formData.email || "" }
+        isInvalid={ !!errors.email }
+        error={ errors.email }
+        onChange={ (e) => onFieldChange({ email: e.target.value }) }
+        required
+      />
+
       <TextField
         label="اسم الفرع"
         id="branchName"

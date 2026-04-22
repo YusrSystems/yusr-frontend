@@ -1,15 +1,17 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { Currency } from "yusr-core";
+import { City, Currency } from "yusr-core";
 import type Registration from "../../../core/data/registration";
 import RegisterApiService from "../../../core/networking/registerApiService";
+import RegisterActions from "./registerActions";
 
-interface RegisterState
+export interface RegisterState
 {
   formData: Partial<Registration>;
   currentStep: number;
   loading: boolean;
   errors: Partial<Record<keyof Registration, string>>;
   currencies?: Currency[];
+  cities: City[];
 }
 
 const initialState: RegisterState = {
@@ -17,13 +19,22 @@ const initialState: RegisterState = {
   currentStep: 0,
   loading: false,
   errors: {},
-  currencies: []
+  currencies: [],
+  cities: []
 };
 
 export const registerSlice = createSlice({
   name: "register",
   initialState,
   reducers: {
+    citySelected(state, action: PayloadAction<{ cityId: number; }>)
+    {
+      const city = state.cities.find((c) => c.id === action.payload.cityId);
+      if (city)
+      {
+        state.formData.cityId = action.payload.cityId;
+      }
+    },
     updateField(state, action: PayloadAction<Partial<Registration>>)
     {
       state.formData = { ...state.formData, ...action.payload };
@@ -76,6 +87,7 @@ export const registerSlice = createSlice({
     {
       state.currencies = [];
     });
+    RegisterActions.addCitiesCases(builder);
   }
 });
 
@@ -102,5 +114,5 @@ export const fetchCurrenciesAsync = createAsyncThunk("register/fetchCurrencies",
   return res;
 });
 
-export const { updateField, nextStep, prevStep, setErrors, resetForm } = registerSlice.actions;
+export const { citySelected, updateField, nextStep, prevStep, setErrors, resetForm } = registerSlice.actions;
 export default registerSlice.reducer;

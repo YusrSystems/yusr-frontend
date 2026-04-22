@@ -14,29 +14,6 @@ export default function AccountInfo()
   return (
     <>
       <TextField
-        label="البريد الإلكتروني للشركة"
-        id="email"
-        type="email"
-        placeholder="company@example.com"
-        value={ formData.email || "" }
-        isInvalid={ !!errors.email }
-        error={ errors.email }
-        onChange={ (e) => onFieldChange({ email: e.target.value }) }
-        required
-      />
-
-      <PasswordField
-        label="كلمة مرور الشركة"
-        id="password"
-        placeholder="••••••••"
-        value={ formData.password || "" }
-        isInvalid={ !!errors.password }
-        error={ errors.password }
-        onChange={ (e) => onFieldChange({ password: e.target.value }) }
-        required
-      />
-
-      <TextField
         label="اسم المستخدم"
         id="username"
         type="text"
