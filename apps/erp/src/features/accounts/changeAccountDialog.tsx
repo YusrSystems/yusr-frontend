@@ -126,35 +126,16 @@ export default function ChangeAccountDialog({
       <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
         <FieldGroup className="gap-10">
           <FieldsSection title="المعلومات الأساسية" columns={ 2 }>
-            <TextField
-              label="اسم الحساب"
-              required
-              value={ formData.name || "" }
-              onChange={ (e) => dispatch(slice.formActions.updateFormData({ name: e.target.value })) }
-              isInvalid={ isInvalid("name") }
-              error={ getError("name") }
-            />
-
-            {
-              /* <SelectField
-              label="نوع الحساب"
-              required
-              value={formData.type?.toString() || ""}
-              onValueChange={(val) =>
-                dispatch(slice.formActions.updateFormData({ type: Number(val) as AccountType })
-              }
-              isInvalid={isInvalid("type")}
-              error={getError("type")}
-              disabled={mode === "update"}
-              options={[
-                { label: "عميل", value: AccountType.Client.toString() },
-                { label: "مورد", value: AccountType.Supplier.toString() },
-                { label: "موظف", value: AccountType.Employee.toString() },
-                { label: "بنك", value: AccountType.Bank.toString() },
-                { label: "صندوق", value: AccountType.Box.toString() },
-              ]}
-            /> */
-            }
+            { (formData.type === AccountType.Client || formData.type === AccountType.Supplier) && (
+              <TextField
+                label="اسم الحساب"
+                required
+                value={ formData.name || "" }
+                onChange={ (e) => dispatch(slice.formActions.updateFormData({ name: e.target.value })) }
+                isInvalid={ isInvalid("name") }
+                error={ getError("name") }
+              />
+            ) }
 
             <div className="flex flex-col gap-1.5 w-full">
               <label className="text-sm font-medium">الحساب الأب</label>

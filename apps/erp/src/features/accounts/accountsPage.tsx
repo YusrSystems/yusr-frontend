@@ -101,8 +101,8 @@ export default function AccountsPage({
       {
         const isBoxOrBank = account.type === AccountType.Box || account.type === AccountType.Bank;
         const isCredit = isBoxOrBank ? account.balance >= 0 : account.balance <= 0;
-        const label = isCredit ? "دائن" : "مدين";
-        const colorStyle = isCredit ? "text-green-600" : "text-red-600";
+        const label = isCredit ? "مدين" : "دائن";
+        const colorStyle = isCredit ? "text-red-600" : "text-green-600";
 
         return [
           { rowName: `#${account.id}`, rowStyles: "" },
