@@ -21,6 +21,10 @@ export default function BoxesAccountsPage()
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.AccountBox,
         SystemPermissionsActions.Get
+      ) && SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.Accounts,
+        SystemPermissionsActions.Get
       ) }
     />
   );

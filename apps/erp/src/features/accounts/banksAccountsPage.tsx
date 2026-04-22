@@ -21,6 +21,10 @@ export default function BanksAccountsPage()
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.AccountBank,
         SystemPermissionsActions.Get
+      ) && SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.Accounts,
+        SystemPermissionsActions.Get
       ) }
     />
   );

@@ -21,6 +21,10 @@ export default function EmployeesAccountsPage()
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.AccountEmployee,
         SystemPermissionsActions.Get
+      ) && SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.Accounts,
+        SystemPermissionsActions.Get
       ) }
     />
   );

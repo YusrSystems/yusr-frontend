@@ -21,6 +21,10 @@ export default function SuppliersAccountsPage()
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.AccountSupplier,
         SystemPermissionsActions.Get
+      ) && SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.Accounts,
+        SystemPermissionsActions.Get
       ) }
     />
   );

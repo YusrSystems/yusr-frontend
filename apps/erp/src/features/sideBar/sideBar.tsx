@@ -92,6 +92,10 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           permissions,
           SystemPermissionsResources.AccountClient,
           SystemPermissionsActions.Get
+        ) && SystemPermissions.hasAuth(
+          authState.loggedInUser?.role?.permissions ?? [],
+          SystemPermissionsResources.Accounts,
+          SystemPermissionsActions.Get
         )
       }, {
         title: appLangSections.suppliers,
@@ -99,6 +103,10 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
         hasAuth: SystemPermissions.hasAuth(
           permissions,
           SystemPermissionsResources.AccountSupplier,
+          SystemPermissionsActions.Get
+        ) && SystemPermissions.hasAuth(
+          authState.loggedInUser?.role?.permissions ?? [],
+          SystemPermissionsResources.Accounts,
           SystemPermissionsActions.Get
         )
       }, {
@@ -108,6 +116,10 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           permissions,
           SystemPermissionsResources.AccountEmployee,
           SystemPermissionsActions.Get
+        ) && SystemPermissions.hasAuth(
+          authState.loggedInUser?.role?.permissions ?? [],
+          SystemPermissionsResources.Accounts,
+          SystemPermissionsActions.Get
         )
       }, {
         title: appLangSections.banks,
@@ -116,6 +128,10 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           permissions,
           SystemPermissionsResources.AccountBank,
           SystemPermissionsActions.Get
+        ) && SystemPermissions.hasAuth(
+          authState.loggedInUser?.role?.permissions ?? [],
+          SystemPermissionsResources.Accounts,
+          SystemPermissionsActions.Get
         )
       }, {
         title: appLangSections.boxes,
@@ -123,6 +139,10 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
         hasAuth: SystemPermissions.hasAuth(
           permissions,
           SystemPermissionsResources.AccountBox,
+          SystemPermissionsActions.Get
+        ) && SystemPermissions.hasAuth(
+          authState.loggedInUser?.role?.permissions ?? [],
+          SystemPermissionsResources.Accounts,
           SystemPermissionsActions.Get
         )
       }, {

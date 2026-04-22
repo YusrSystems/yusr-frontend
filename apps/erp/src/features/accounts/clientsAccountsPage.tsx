@@ -21,6 +21,10 @@ export default function ClientsAccountsPage()
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.AccountClient,
         SystemPermissionsActions.Get
+      ) && SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.Accounts,
+        SystemPermissionsActions.Get
       ) }
     />
   );

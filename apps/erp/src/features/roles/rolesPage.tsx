@@ -6,7 +6,7 @@ import { selectPermissionsByResource } from "../../core/auth/authSelectors";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { RoleSlice } from "../../core/data/role";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import { updateLoggedInUser, useAppDispatch, useAppSelector } from "../../core/state/store";
 import ChangeRoleDialog from "./changeRoleDialog";
 
 export default function RolesPage()
@@ -65,6 +65,13 @@ export default function RolesPage()
             if (mode === "create")
             {
               dispatch(RoleSlice.dialogActions.setIsChangeDialogOpen(false));
+            }
+            if (mode === "update")
+            {
+              if (authState.loggedInUser?.roleId === data.id)
+              {
+                dispatch(updateLoggedInUser({ ...authState.loggedInUser, role: data }));
+              }
             }
           } }
         />
