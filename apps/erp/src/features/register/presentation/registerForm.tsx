@@ -26,7 +26,7 @@ export function RegisterForm({
   ...props
 }: RegisterFormProps)
 {
-  const { loading, currentStep } = useAppSelector((state) => state.register);
+  const { loading, currentStep, acceptPolicies } = useAppSelector((state) => state.register);
 
   const isLastStep = currentStep === STEPS.length - 1;
   return (
@@ -89,7 +89,7 @@ export function RegisterForm({
                 <Field className="flex-1">
                   <Button
                     type="button"
-                    disabled={ loading }
+                    disabled={ loading || (isLastStep && !acceptPolicies) }
                     onClick={ isLastStep ? onSubmit : onNextStep }
                   >
                     { loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }

@@ -1,11 +1,11 @@
 import { PasswordField, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
-import { updateField } from "../../logic/registerSlice";
+import { acceptPoliciesToggle, updateField } from "../../logic/registerSlice";
 
 export default function AccountInfo()
 {
-  const { formData, errors } = useAppSelector((state) => state.register);
+  const { formData, errors, acceptPolicies } = useAppSelector((state) => state.register);
   const dispatch = useAppDispatch();
   function onFieldChange(field: Partial<Registration>)
   {
@@ -35,6 +35,24 @@ export default function AccountInfo()
         onChange={ (e) => onFieldChange({ userPassword: e.target.value }) }
         required
       />
+      { /* accept out policies , policies link: https://github.com/YusrSystems/Legal-Documents */ }
+
+      <div className="flex items-start space-x-2 rtl:space-x-reverse">
+        <input
+          type="checkbox"
+          id="acceptPolicies"
+          checked={ acceptPolicies || false }
+          onChange={ () => dispatch(acceptPoliciesToggle()) }
+          className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+        />
+        <label htmlFor="acceptPolicies" className="text-sm text-muted-foreground">
+          أوافق على{" "}
+          <a href="https://github.com/YusrSystems/Legal-Documents" className="text-primary hover:underline">
+            شروط الخدمة وسياسة الخصوصية
+          </a>
+        </label>
+      </div>
+
       {
         /*
       <SelectField

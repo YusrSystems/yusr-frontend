@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { YusrBusBackground } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
@@ -9,10 +10,15 @@ export default function RegisterPage()
 {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { formData } = useAppSelector((state) => state.register);
+  const { formData, acceptPolicies } = useAppSelector((state) => state.register);
 
   const handleSubmit = async () =>
   {
+    if (!acceptPolicies)
+    {
+      toast.error("يجب الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة");
+      return;
+    }
     await dispatch(registerAsync(formData as Registration));
     dispatch(resetForm());
     navigate("/login");

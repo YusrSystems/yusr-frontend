@@ -12,6 +12,7 @@ export interface RegisterState
   errors: Partial<Record<keyof Registration, string>>;
   currencies?: Currency[];
   cities: City[];
+  acceptPolicies?: boolean;
 }
 
 const initialState: RegisterState = {
@@ -20,7 +21,8 @@ const initialState: RegisterState = {
   loading: false,
   errors: {},
   currencies: [],
-  cities: []
+  cities: [],
+  acceptPolicies: false
 };
 
 export const registerSlice = createSlice({
@@ -56,6 +58,10 @@ export const registerSlice = createSlice({
       state.formData = {};
       state.currentStep = 0;
       state.errors = {};
+    },
+    acceptPoliciesToggle(state)
+    {
+      state.acceptPolicies = !state.acceptPolicies;
     }
   },
   extraReducers: (builder) =>
@@ -114,5 +120,6 @@ export const fetchCurrenciesAsync = createAsyncThunk("register/fetchCurrencies",
   return res;
 });
 
-export const { citySelected, updateField, nextStep, prevStep, setErrors, resetForm } = registerSlice.actions;
+export const { citySelected, updateField, nextStep, prevStep, setErrors, resetForm, acceptPoliciesToggle } =
+  registerSlice.actions;
 export default registerSlice.reducer;
