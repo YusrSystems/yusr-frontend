@@ -1,10 +1,9 @@
 import { useEffect } from "react";
-import type { City } from "yusr-core";
 import { SelectField, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import RegisterActions from "../../logic/registerActions";
-import { citySelected, fetchCurrenciesAsync, updateField } from "../../logic/registerSlice";
+import { citySelected, updateField } from "../../logic/registerSlice";
 
 export default function AddressInfo()
 {
@@ -16,7 +15,6 @@ export default function AddressInfo()
     dispatch(updateField(field));
   }
 
-  // get cities from api and set them in state using
   useEffect(() =>
   {
     dispatch(RegisterActions.fetchCitiesAsync());

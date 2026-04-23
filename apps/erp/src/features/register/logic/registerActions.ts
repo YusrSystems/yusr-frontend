@@ -1,5 +1,5 @@
 import { type ActionReducerMapBuilder, createAsyncThunk } from "@reduxjs/toolkit";
-import { CitiesApiService } from "yusr-core";
+import { CitiesApiService, CurrenciesApiService } from "yusr-core";
 import type { RegisterState } from "./registerSlice";
 
 export default class RegisterActions
@@ -19,6 +19,24 @@ export default class RegisterActions
     {
       state.loading = false;
       state.cities = action.payload.data?.data || [];
+    });
+  }
+
+  public static fetchCurrenciesAsync = createAsyncThunk("register/fetchCurrencies", async () =>
+  {
+    const service = new CurrenciesApiService();
+    const currencies = await service.Filter(1, 10);
+    return currencies;
+  });
+  public static addCurrenciesCases(builder: ActionReducerMapBuilder<RegisterState>)
+  {
+    builder.addCase(this.fetchCurrenciesAsync.pending, (state: RegisterState) =>
+    {
+      state.loading = true;
+    }).addCase(this.fetchCurrenciesAsync.fulfilled, (state, action) =>
+    {
+      state.loading = false;
+      state.currencies = action.payload.data?.data || [];
     });
   }
 }

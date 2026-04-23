@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { SelectField, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
-import { fetchCurrenciesAsync, updateField } from "../../logic/registerSlice";
+import RegisterActions from "../../logic/registerActions";
+import { updateField } from "../../logic/registerSlice";
 
 export default function CompanyInfo()
 {
@@ -10,7 +11,7 @@ export default function CompanyInfo()
   const { formData, errors, currencies } = useAppSelector((state) => state.register);
   useEffect(() =>
   {
-    dispatch(fetchCurrenciesAsync());
+    dispatch(RegisterActions.fetchCurrenciesAsync());
   }, []);
   function onFieldChange(field: Partial<Registration>)
   {

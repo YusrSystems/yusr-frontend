@@ -81,19 +81,8 @@ export const registerSlice = createSlice({
         state.loading = false;
       });
 
-    builder.addCase(fetchCurrenciesAsync.fulfilled, (state, action) =>
-    {
-      state.currencies = action.payload;
-    });
-    builder.addCase(fetchCurrenciesAsync.rejected, (state) =>
-    {
-      state.currencies = [];
-    });
-    builder.addCase(fetchCurrenciesAsync.pending, (state) =>
-    {
-      state.currencies = [];
-    });
     RegisterActions.addCitiesCases(builder);
+    RegisterActions.addCurrenciesCases(builder);
   }
 });
 
@@ -106,19 +95,6 @@ export const registerAsync = createAsyncThunk(
     return res.data ?? null;
   }
 );
-export const fetchCurrenciesAsync = createAsyncThunk("register/fetchCurrencies", async () =>
-{
-  // sample idle time
-  await new Promise((resolve) => setTimeout(resolve, 400));
-  // mock currencies
-  const res: Currency[] = [
-    new Currency({ id: 1, code: "SAR", name: "Saudi Riyal" }),
-    new Currency({ id: 2, code: "USD", name: "US Dollar" }),
-    new Currency({ id: 3, code: "EUR", name: "Euro" })
-  ];
-
-  return res;
-});
 
 export const { citySelected, updateField, nextStep, prevStep, setErrors, resetForm, acceptPoliciesToggle } =
   registerSlice.actions;
