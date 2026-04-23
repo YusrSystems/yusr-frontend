@@ -47,7 +47,11 @@ export default function AccountInfo()
         />
         <label htmlFor="acceptPolicies" className="text-sm text-muted-foreground">
           أوافق على{" "}
-          <a href="https://github.com/YusrSystems/Legal-Documents" className="text-primary hover:underline">
+          <a
+            href="https://github.com/YusrSystems/Legal-Documents"
+            target="_blank"
+            className="text-primary hover:underline"
+          >
             شروط الخدمة وسياسة الخصوصية
           </a>
         </label>
