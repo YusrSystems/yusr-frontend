@@ -5,7 +5,7 @@ export default class RegisterApiService extends BaseApiService<Registration>
 {
   routeName: string = "Register";
 
-  async register(data: Registration): Promise<RequestResult<Registration>>
+  async register(data: Registration): Promise<RequestResult<boolean>>
   {
     return await YusrApiHelper.Post(
       `${ApiConstants.baseUrl}/${this.routeName}`,
