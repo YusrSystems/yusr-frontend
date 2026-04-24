@@ -5,7 +5,7 @@ import { ApiConstants, YusrApiHelper } from "yusr-core";
 import { YusrBusBackground } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import { logout, useAppDispatch, useAppSelector } from "../../../core/state/store";
-import { nextStep, prevStep, registerAsync } from "../logic/registerSlice";
+import { nextStep, prevStep, registerAsync, reset } from "../logic/registerSlice";
 import { RegisterForm } from "./registerForm";
 import Wellcome from "./wellcome";
 
@@ -24,6 +24,7 @@ export default function RegisterPage()
       if (result.status === 200 || result.status === 204)
       {
         dispatch(logout());
+        dispatch(reset());
       }
     };
 
