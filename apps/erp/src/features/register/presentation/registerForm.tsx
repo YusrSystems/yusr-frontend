@@ -1,7 +1,9 @@
 import placeholderImg from "@/assets/placeholder.svg";
 import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { Button, Card, CardContent, cn, Field, FieldDescription, FieldGroup } from "yusr-ui";
-import { useAppSelector } from "../../../core/state/store";
+import { useAppDispatch, useAppSelector } from "../../../core/state/store";
+import RegisterActions from "../logic/registerActions";
 import AccountInfo from "./feildsInfo/accountInfo";
 import AddressInfo from "./feildsInfo/addressInfo";
 import CompanyInfo from "./feildsInfo/companyInfo";
@@ -27,8 +29,14 @@ export function RegisterForm({
 }: RegisterFormProps)
 {
   const { loading, currentStep, acceptPolicies } = useAppSelector((state) => state.register);
-
+  const dispatch = useAppDispatch();
   const isLastStep = currentStep === STEPS.length - 1;
+
+  useEffect(() =>
+  {
+    dispatch(RegisterActions.fetchCitiesAsync());
+    dispatch(RegisterActions.fetchCurrenciesAsync());
+  }, []);
   return (
     <div className={ cn("flex flex-col gap-6", className) } { ...props }>
       <Card className="overflow-hidden p-0">

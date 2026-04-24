@@ -1,8 +1,6 @@
-import { useEffect } from "react";
 import { SelectField, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
-import RegisterActions from "../../logic/registerActions";
 import { citySelected, updateField } from "../../logic/registerSlice";
 
 export default function AddressInfo()
@@ -14,11 +12,6 @@ export default function AddressInfo()
   {
     dispatch(updateField(field));
   }
-
-  useEffect(() =>
-  {
-    dispatch(RegisterActions.fetchCitiesAsync());
-  }, []);
   return (
     <>
       <SelectField
