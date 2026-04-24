@@ -93,7 +93,7 @@ export function StorageFileField(
 
       {activeFiles.length > 0
         ? (
-          <div className="space-y-2 max-w-100 mt-3">
+          <div className="space-y-2 w-100 max-w-100 mt-3">
             <Carousel opts={{ direction: dir, align: "start", dragFree: true }} className="w-full relative group">
               <CarouselContent>
                 {activeFiles.map((f, index) => {
