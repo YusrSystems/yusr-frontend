@@ -126,40 +126,40 @@ export default function ChangeAccountDialog({
       <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
         <FieldGroup className="gap-10">
           <FieldsSection title="المعلومات الأساسية" columns={ 2 }>
+            <TextField
+              label="اسم الحساب"
+              required
+              value={ formData.name || "" }
+              onChange={ (e) => dispatch(slice.formActions.updateFormData({ name: e.target.value })) }
+              isInvalid={ isInvalid("name") }
+              error={ getError("name") }
+            />
+
             { (formData.type === AccountType.Client || formData.type === AccountType.Supplier) && (
-              <TextField
-                label="اسم الحساب"
-                required
-                value={ formData.name || "" }
-                onChange={ (e) => dispatch(slice.formActions.updateFormData({ name: e.target.value })) }
-                isInvalid={ isInvalid("name") }
-                error={ getError("name") }
-              />
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-sm font-medium">الحساب الأب</label>
+                <SearchableSelect
+                  items={ accountState.entities.data ?? [] }
+                  itemLabelKey="name"
+                  itemValueKey="id"
+                  value={ formData.parentId?.toString() || "" }
+                  columnsNames={ AccountFilterColumns.columnsNames }
+                  onSearch={ (condition) => dispatch(slice.entityActions.filter(condition)) }
+                  disabled={ accountState.isLoading || mode === "update" }
+                  onValueChange={ (val) =>
+                  {
+                    const selected = accountState.entities.data?.find(
+                      (a) => a.id.toString() === val
+                    );
+                    dispatch(slice.formActions.updateFormData({
+                      parentId: selected?.id,
+                      parentName: selected?.name
+                    }));
+                  } }
+                />
+              </div>
             ) }
-
-            <div className="flex flex-col gap-1.5 w-full">
-              <label className="text-sm font-medium">الحساب الأب</label>
-              <SearchableSelect
-                items={ accountState.entities.data ?? [] }
-                itemLabelKey="name"
-                itemValueKey="id"
-                value={ formData.parentId?.toString() || "" }
-                columnsNames={ AccountFilterColumns.columnsNames }
-                onSearch={ (condition) => dispatch(slice.entityActions.filter(condition)) }
-                disabled={ accountState.isLoading || mode === "update" }
-                onValueChange={ (val) =>
-                {
-                  const selected = accountState.entities.data?.find(
-                    (a) => a.id.toString() === val
-                  );
-                  dispatch(slice.formActions.updateFormData({
-                    parentId: selected?.id,
-                    parentName: selected?.name
-                  }));
-                } }
-              />
-            </div>
-
+            
             <NumberField
               label="الرصيد الافتتاحي"
               value={ canShowBalance ? (formData.initialBalance || "") : "" }
