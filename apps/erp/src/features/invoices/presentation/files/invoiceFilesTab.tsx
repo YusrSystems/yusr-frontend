@@ -1,3 +1,4 @@
+import type Invoice from "@/core/data/invoice";
 import { StorageFileField, useStorageFile } from "yusr-ui";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
@@ -5,7 +6,13 @@ export default function InvoiceFilesTab()
 {
   const { formData, slice, dispatch } = useInvoiceContext();
   const { fileInputRef, handleFileChange, handleRemoveFile, handleDownload, showFilePreview, getFileSrc } =
-    useStorageFile((files) => dispatch(slice.formActions.onInvoiceFilesChange(files)), "invoiceFiles");
+    useStorageFile(
+      (updater) =>
+        dispatch(slice.formActions.updateFormData(
+          updater as (prev: Partial<Invoice>) => Partial<Invoice>
+        )),
+      "invoiceFiles"
+    );
 
   return (
     <div className="w-full flex items-center justify-center shrink-0 bg-muted/10 p-4 rounded-lg border">
