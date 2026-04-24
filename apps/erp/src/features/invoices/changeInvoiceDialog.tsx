@@ -117,7 +117,7 @@ export default function ChangeInvoiceDialog({
 
   useEffect(() =>
   {
-    if (paymentVouchers().length > 1 || mode === "update")
+    if (paymentVouchers().length > 1 && mode === "update")
     {
       return;
     }
@@ -129,20 +129,24 @@ export default function ChangeInvoiceDialog({
     }
     else if (paymentVouchers().length === 1)
     {
+      const voucher = paymentVouchers()[0];
       const updatedVoucher = {
-        ...paymentVouchers()[0],
+        ...voucher,
         amount: invoiceTaxInclusivePrice(),
-        amountReceived: invoiceTaxInclusivePrice()
+        amountReceived: invoiceTaxInclusivePrice(),
+        accountId: voucher.accountId === 0 ? formData.actionAccountId : voucher.accountId,
+        accountName: voucher.accountId === 0 ? formData.actionAccountName : voucher.accountName
       };
       dispatch(slice.formActions.updateVoucher(updatedVoucher));
     }
+
     dispatch(
       slice.formActions.updateFormData({
         fullAmount: invoiceTaxInclusivePrice(),
         paidAmount: invoiceTaxInclusivePrice()
       })
     );
-  }, [formData.invoiceItems]);
+  }, [formData.invoiceItems, formData.actionAccountId, accountState.entities.data?.length]);
 
   useEffect(() =>
   {
