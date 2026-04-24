@@ -31,6 +31,15 @@ export const registerSlice = createSlice({
   name: "register",
   initialState,
   reducers: {
+    reset(state)
+    {
+      state.formData = {};
+      state.currentStep = 0;
+      state.loading = false;
+      state.successed = false;
+      state.errors = {};
+      state.acceptPolicies = false;
+    },
     citySelected(state, action: PayloadAction<{ cityId: number; }>)
     {
       const city = state.cities.find((c) => c.id === action.payload.cityId);
@@ -74,15 +83,12 @@ export const registerSlice = createSlice({
       {
         state.loading = false;
         state.successed = true;
-        state.formData = {};
-        state.currentStep = 0;
-        state.errors = {};
-        state.successed = false;
       })
       .addCase(registerAsync.rejected, (state) =>
       {
         state.loading = false;
         state.successed = false;
+        state.currentStep = 0;
       });
 
     RegisterActions.addCitiesCases(builder);
@@ -92,15 +98,18 @@ export const registerSlice = createSlice({
 
 export const registerAsync = createAsyncThunk(
   "register/register",
-  async (data: Registration) =>
+  async (data: Registration, { rejectWithValue }) =>
   {
     const res = await new RegisterApiService().register(data);
-
-    return res.data ?? null;
+    if (res.status !== 200)
+    {
+      return rejectWithValue(res.status);
+    }
   }
 );
 
 export const {
+  reset,
   citySelected,
   updateField,
   nextStep,
