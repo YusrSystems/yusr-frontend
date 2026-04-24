@@ -204,9 +204,7 @@ export default function ChangeInvoiceDialog({
 
     setInitLoading(true);
     setShowConfirm(false);
-    const res = await new InvoicesApiService().ConvertToSell(formData.id, ignoreWarnings, [
-      createInitialPaymentVoucher()
-    ]);
+    const res = await new InvoicesApiService().ConvertToSell(formData.id, ignoreWarnings);
     if (res.status === 412)
     {
       setWarnings(res.errorDetails?.split("\n") ?? []);
@@ -297,9 +295,7 @@ export default function ChangeInvoiceDialog({
     );
   }
 
-  const disabled = mode === "update"
-    && (formData.type === InvoiceType.Sell || formData.type === InvoiceType.SellReturn
-      || formData.type === InvoiceType.PurchaseReturn);
+  const disabled = mode === "update" && formData.type !== InvoiceType.Quotation;
 
   return (
     <InvoiceContext.Provider

@@ -107,6 +107,53 @@ export default function InvoicesPage({
 
   const service = useMemo(() => new InvoicesApiService(), []);
 
+  const getActions = (
+    entity: Invoice,
+    ItemComponent: React.ComponentType<React.ComponentProps<any>>
+  ) =>
+  {
+    const items: React.ReactNode[] = [];
+
+    if (
+      entity.type === InvoiceType.Quotation
+      && SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.Invoices,
+        SystemPermissionsActions.Delete
+      )
+    )
+    {
+      items.push(
+        <ItemComponent
+          className="text-red-600!"
+          onSelect={ () =>
+          {
+            dispatch(slice.dialogActions.openDeleteDialog(entity));
+          } }
+        >
+          حذف
+        </ItemComponent>
+      );
+    }
+
+    if (entity.type === InvoiceType.Sell || entity.type === InvoiceType.Purchase)
+    {
+      items.push(
+        <ItemComponent
+          onSelect={ () =>
+          {
+            setIsAddReturn(true);
+            dispatch(slice.dialogActions.openChangeDialog(entity));
+          } }
+        >
+          إرجاع
+        </ItemComponent>
+      );
+    }
+
+    return items;
+  };
+
   return (
     <CrudPage<Invoice>
       basePath={ basePath }
@@ -160,7 +207,12 @@ export default function InvoicesPage({
           />
         ]
         : [] }
-      permissions={ permissions }
+      permissions={ {
+        getPermission: permissions.getPermission,
+        addPermission: permissions.addPermission,
+        updatePermission: permissions.updatePermission,
+        deletePermission: false
+      } }
       hasPagePermission={ hasPagePermission }
       entityState={ invoiceState }
       useSlice={ () => invoiceDialogState }
@@ -283,34 +335,8 @@ export default function InvoicesPage({
           } }
         />
        }
-      dorpdownItems={ (entity) =>
-        (entity.type === InvoiceType.Sell || entity.type === InvoiceType.Purchase)
-          ? [
-            <DropdownMenuItem
-              onSelect={ () =>
-              {
-                setIsAddReturn(true);
-                dispatch(slice.dialogActions.openChangeDialog(entity));
-              } }
-            >
-              إرجاع
-            </DropdownMenuItem>
-          ]
-          : [] }
-      contextMenuItems={ (entity) =>
-        (entity.type === InvoiceType.Sell || entity.type === InvoiceType.Purchase)
-          ? [
-            <ContextMenuItem
-              onSelect={ () =>
-              {
-                setIsAddReturn(true);
-                dispatch(slice.dialogActions.openChangeDialog(entity));
-              } }
-            >
-              إرجاع
-            </ContextMenuItem>
-          ]
-          : [] }
+      dorpdownItems={ (entity) => getActions(entity, DropdownMenuItem) }
+      contextMenuItems={ (entity) => getActions(entity, ContextMenuItem) }
     />
   );
 }
