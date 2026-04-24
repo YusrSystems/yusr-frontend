@@ -1,4 +1,6 @@
-import { SelectField, TextField } from "yusr-ui";
+import { filterCurrencies } from "@/core/state/shared/currencySlice";
+import { useEffect } from "react";
+import { SearchableSelect, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import { updateField } from "../../logic/registerSlice";
@@ -6,11 +8,24 @@ import { updateField } from "../../logic/registerSlice";
 export default function CompanyInfo()
 {
   const dispatch = useAppDispatch();
-  const { formData, errors, currencies } = useAppSelector((state) => state.register);
+
+  // 1. Get formData and errors from register slice
+  const { formData, errors } = useAppSelector((state) => state.register);
+
+  // 2. Get currencies from the shared currency slice (where filterCurrencies actually updates)
+  const currencyState = useAppSelector((state) => state.currency);
+
+  // 3. (Optional but recommended) Fetch initial currencies when component mounts
+  useEffect(() =>
+  {
+    dispatch(filterCurrencies(undefined));
+  }, [dispatch]);
+
   function onFieldChange(field: Partial<Registration>)
   {
     dispatch(updateField(field));
   }
+
   return (
     <>
       <TextField
@@ -21,10 +36,7 @@ export default function CompanyInfo()
         value={ formData.companyName || "" }
         isInvalid={ !!errors.companyName }
         error={ errors.companyName }
-        onChange={ (e) =>
-        {
-          dispatch(updateField({ companyName: e.target.value }));
-        } }
+        onChange={ (e) => onFieldChange({ companyName: e.target.value }) }
         required
       />
 
@@ -51,6 +63,7 @@ export default function CompanyInfo()
         onChange={ (e) => onFieldChange({ branchName: e.target.value }) }
         required
       />
+
       <TextField
         label="نشاط الشركة التجاري"
         id="companyBusinessCategory"
@@ -62,6 +75,7 @@ export default function CompanyInfo()
         onChange={ (e) => onFieldChange({ companyBusinessCategory: e.target.value }) }
         required
       />
+
       <TextField
         label="رقم هاتف الشركة"
         id="companyPhone"
@@ -73,6 +87,7 @@ export default function CompanyInfo()
         onChange={ (e) => onFieldChange({ companyPhone: e.target.value }) }
         required
       />
+
       <TextField
         label="السجل التجاري (CRN)"
         id="crn"
@@ -84,6 +99,7 @@ export default function CompanyInfo()
         onChange={ (e) => onFieldChange({ crn: e.target.value }) }
         required
       />
+
       <TextField
         label="الرقم الضريبي (VAT)"
         id="vatNumber"
@@ -95,18 +111,30 @@ export default function CompanyInfo()
         onChange={ (e) => onFieldChange({ vatNumber: e.target.value }) }
         required
       />
-      { currencies
-        && (
-          <SelectField
-            label="العملة"
-            value={ formData.currencyId?.toString() ?? "" }
-            isInvalid={ !!errors.currencyId }
-            error={ errors.currencyId }
-            onValueChange={ (val) => onFieldChange({ currencyId: Number(val) }) }
-            required
-            options={ currencies.map((c) => ({ label: c.name, value: c.id.toString() })) }
-          />
+
+      <div className="flex flex-col gap-1.5 w-full">
+        <label className="text-sm font-medium">
+          العملة <span className="text-red-500">*</span>
+        </label>
+
+        <SearchableSelect
+          // 4. Use the data from the shared currency state
+          items={ currencyState.entities?.data ?? [] }
+          value={ formData.currencyId?.toString() ?? "" }
+          isInvalid={ !!errors.currencyId }
+          columnsNames={ [{ label: "اسم العملة", value: "name" }] }
+          itemLabelKey="name"
+          itemValueKey="id"
+          disabled={ currencyState.isLoading } // Disable while searching/loading
+          onSearch={ (condition) => dispatch(filterCurrencies(condition)) }
+          onValueChange={ (val) => onFieldChange({ currencyId: Number(val) }) }
+        />
+        { !!errors.currencyId && (
+          <span className="text-xs text-red-500 animate-in fade-in slide-in-from-top-1">
+            { errors.currencyId }
+          </span>
         ) }
+      </div>
     </>
   );
 }
