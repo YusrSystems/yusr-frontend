@@ -204,7 +204,9 @@ export default function ChangeInvoiceDialog({
 
     setInitLoading(true);
     setShowConfirm(false);
-    const res = await new InvoicesApiService().ConvertToSell(formData.id, ignoreWarnings);
+    const res = await new InvoicesApiService().ConvertToSell(formData.id, ignoreWarnings, [
+      createInitialPaymentVoucher()
+    ]);
     if (res.status === 412)
     {
       setWarnings(res.errorDetails?.split("\n") ?? []);
@@ -336,32 +338,42 @@ export default function ChangeInvoiceDialog({
             )
             : undefined
         } }
-        tabs={ [{
-          label: "المعلومات الأساسية",
-          icon: Box,
-          active: true,
-          content: <InvoiceBasicTab />
-        }, {
-          label: "سندات الدفع",
-          icon: BanknoteArrowDown,
-          active: false,
-          content: <InvoicePaymentsTab />
-        }, {
-          label: "تكاليف الفاتورة",
-          icon: BanknoteArrowUp,
-          active: false,
-          content: <InvoiceCostsTab />
-        }, {
-          label: "سياسة الفاتورة",
-          icon: Siren,
-          active: false,
-          content: <InvoicePolicyTab />
-        }, {
-          label: "مرفقات الفاتورة",
-          icon: FolderKanban,
-          active: false,
-          content: <InvoiceFilesTab />
-        }] }
+        tabs={ [
+          {
+            label: "المعلومات الأساسية",
+            icon: Box,
+            active: true,
+            content: <InvoiceBasicTab />
+          },
+          ...(formData.type !== InvoiceType.Quotation
+            ? [{
+              label: "سندات الدفع",
+              icon: BanknoteArrowDown,
+              active: false,
+              content: <InvoicePaymentsTab />
+            }]
+            : []),
+          ...(formData.type !== InvoiceType.Quotation
+            ? [{
+              label: "تكاليف الفاتورة",
+              icon: BanknoteArrowUp,
+              active: false,
+              content: <InvoiceCostsTab />
+            }]
+            : []),
+          {
+            label: "سياسة الفاتورة",
+            icon: Siren,
+            active: false,
+            content: <InvoicePolicyTab />
+          },
+          {
+            label: "مرفقات الفاتورة",
+            icon: FolderKanban,
+            active: false,
+            content: <InvoiceFilesTab />
+          }
+        ] }
       />
     </InvoiceContext.Provider>
   );
