@@ -41,6 +41,7 @@ export * from "./inputs/baseInput";
 export * from "./inputs/dateInput";
 export * from "./inputs/dateTimeInput";
 export * from "./inputs/numberInput";
+export * from "./inputs/otpInput";
 export * from "./inputs/searchInput";
 export * from "./inputs/selectInput";
 export * from "./inputs/textAreaInput";

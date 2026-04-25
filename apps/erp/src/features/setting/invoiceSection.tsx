@@ -1,7 +1,8 @@
 import { FieldGroup, FieldsSection, FormField, SearchableSelect, SelectField, SelectInput, TextAreaField } from "yusr-ui";
-import { InvoicePrintSize } from "../../core/data/setting";
+import { EInvoicingEnvironmentType, InvoicePrintSize } from "../../core/data/setting";
 import { TaxFilterColumns, TaxSlice } from "../../core/data/tax";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import { EInvoicingRegisterButton } from "./eInvoicing/eInvoicingRegisterButton";
 import { useSettingContext } from "./settingContext";
 
 export default function InvoiceSection()
@@ -77,6 +78,22 @@ export default function InvoiceSection()
           />
         </FieldsSection>
       </FieldGroup>
+
+      <EInvoicingRegisterButton
+        title="Fatoora Simulation"
+        subtitle="تجربة الربط مع الهيئة"
+        linkType={ EInvoicingEnvironmentType.Simulation }
+        linked={ formData.eInvoicingEnvironmentType === EInvoicingEnvironmentType.Simulation }
+        onFinish={ () => handleChange({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Simulation }) }
+      />
+
+      <EInvoicingRegisterButton
+        title="Fatoora Portal"
+        subtitle="الربط مع الهيئة وإرسال المستندات بشكل رسمي"
+        linkType={ EInvoicingEnvironmentType.Production }
+        linked={ formData.eInvoicingEnvironmentType === EInvoicingEnvironmentType.Production }
+        onFinish={ () => handleChange({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Production }) }
+      />
     </div>
   );
 }
