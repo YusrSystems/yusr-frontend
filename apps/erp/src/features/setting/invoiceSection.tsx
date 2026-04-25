@@ -80,6 +80,14 @@ export default function InvoiceSection()
       </FieldGroup>
 
       <EInvoicingRegisterButton
+        title="test"
+        subtitle="test"
+        linkType={ EInvoicingEnvironmentType.Test }
+        linked={ formData.eInvoicingEnvironmentType === EInvoicingEnvironmentType.Test }
+        onFinish={ () => handleChange({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Test }) }
+      />
+
+      <EInvoicingRegisterButton
         title="Fatoora Simulation"
         subtitle="تجربة الربط مع الهيئة"
         linkType={ EInvoicingEnvironmentType.Simulation }

@@ -1,5 +1,6 @@
 import type { EInvoicingEnvironmentType } from "@/core/data/setting";
 import EInvoicingApiService from "@/core/networking/eInvoicingApiService";
+import { updateSetting, useAppDispatch } from "@/core/state/store";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { Button, Card, CardContent, OtpInput } from "yusr-ui";
@@ -14,6 +15,7 @@ export function EInvoicingRegister({ linkType, onFinish }: EInvoicingRegisterPro
 {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useAppDispatch();
 
   const handleLink = async () =>
   {
@@ -29,13 +31,14 @@ export function EInvoicingRegister({ linkType, onFinish }: EInvoicingRegisterPro
     if (res.status === 200)
     {
       onFinish?.();
+      dispatch(updateSetting({ eInvoicingEnvironmentType: linkType }));
     }
 
     setLoading(false);
   };
 
   return (
-    <div dir="rtl" className="flex flex-col items-center gap-8 py-6 px-4">
+    <div dir="rtl" className="flex flex-col items-center gap-8 py-6">
       { /* Icon + heading */ }
       <div className="flex flex-col items-center gap-3 text-center">
         <div className="flex items-center justify-center w-14 h-14 rounded-full bg-green-50 dark:bg-green-950">

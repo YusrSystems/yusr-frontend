@@ -1,7 +1,7 @@
 import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { type ValidationRule, Validators } from "yusr-core";
-import { Button, TabButton, Card, CardContent, CardFooter, useEntityForm } from "yusr-ui";
+import { Button, Card, CardContent, CardFooter, TabButton, useEntityForm } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import { PaymentMethodSlice } from "../../core/data/paymentMethod";
 import { Setting } from "../../core/data/setting";
@@ -26,6 +26,10 @@ export default function SettingPage()
       field: "companyPhone",
       selector: (d) => d.companyPhone,
       validators: [Validators.required("رقم الهاتف مطلوب")]
+    }, {
+      field: "branchId",
+      selector: (d) => d.branchId,
+      validators: [Validators.required(" الفرع مطلوب")]
     }, {
       field: "email",
       selector: (d) => d.email,

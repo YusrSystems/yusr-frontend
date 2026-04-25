@@ -1,7 +1,9 @@
+import { BranchSlice } from "@/core/data/branchLogic";
+import { useAppDispatch, useAppSelector } from "@/core/state/store";
 import { differenceInDays, format } from "date-fns";
 import { Camera, Trash2, Upload } from "lucide-react";
-import { StorageFileStatus } from "yusr-core";
-import { Avatar, AvatarFallback, AvatarImage, Button, FieldGroup, FieldsSection, Label, TextField, useStorageFile } from "yusr-ui";
+import { BranchFilterColumns, StorageFileStatus } from "yusr-core";
+import { Avatar, AvatarFallback, AvatarImage, Button, FieldGroup, FieldsSection, FormField, Label, SearchableSelect, TextField, useStorageFile } from "yusr-ui";
 import type { Setting } from "../../core/data/setting";
 import { useSettingContext } from "./settingContext";
 
@@ -16,6 +18,8 @@ export default function BasicSection()
   } = useSettingContext();
 
   const { fileInputRef, handleFileChange, handleRemoveFile } = useStorageFile<Partial<Setting>>(handleChange, "logo");
+  const branchState = useAppSelector((state) => state.branch);
+  const dispatch = useAppDispatch();
 
   return (
     <div className="space-y-5 animate-in fade-in">
@@ -115,6 +119,28 @@ export default function BasicSection()
               clearError("email");
             } }
           />
+          <FormField label="الفرع الرئيسي" required>
+            <SearchableSelect
+              items={ branchState.entities.data ?? [] }
+              itemLabelKey="name"
+              itemValueKey="id"
+              value={ formData.branchId?.toString() || "" }
+              onValueChange={ (val) =>
+              {
+                const selected = branchState.entities.data?.find(
+                  (s) => s.id.toString() === val
+                );
+                handleChange({
+                  branchId: selected?.id,
+                  branch: selected
+                });
+              } }
+              columnsNames={ BranchFilterColumns.columnsNames }
+              onSearch={ (condition) => dispatch(BranchSlice.entityActions.filter(condition)) }
+              disabled={ branchState.isLoading }
+            />
+          </FormField>
+
           <TextField
             label="السجل التجاري (CRN)"
             value={ formData.crn || "" }
