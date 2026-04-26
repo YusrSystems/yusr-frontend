@@ -1,7 +1,7 @@
 import { ApiConstants, BaseApiService, type FilterResult, type RequestResult, YusrApiHelper } from "yusr-core";
 import type { FilterByTypeRequest } from "../data/filterByTypeRequest";
 import type Invoice from "../data/invoice";
-import type { InvoiceVoucher } from "../data/invoice";
+import type { EInvoiceStatus, InvoiceVoucher } from "../data/invoice";
 
 export default class InvoicesApiService extends BaseApiService<Invoice>
 {
@@ -33,6 +33,13 @@ export default class InvoicesApiService extends BaseApiService<Invoice>
     return await YusrApiHelper.Put(
       `${ApiConstants.baseUrl}/${this.routeName}/ConvertToSell?invoiceId=${invoiceId}&ignoreWarnings=${ignoreWarnings}`,
       invoiceVouchers
+    );
+  }
+
+  async ResendEInvoice(invoiceId: number): Promise<RequestResult<EInvoiceStatus>>
+  {
+    return await YusrApiHelper.Put(
+      `${ApiConstants.baseUrl}/${this.routeName}/ResendEInvoice/${invoiceId}`
     );
   }
 }

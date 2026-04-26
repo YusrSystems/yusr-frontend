@@ -1,8 +1,8 @@
-import { FileTextIcon } from "lucide-react";
+import { FileTextIcon, RotateCw } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { FilterCondition, SystemPermissions } from "yusr-core";
-import { ContextMenuItem, CrudPage, DropdownMenuItem, type IDialogState, type IEntityState } from "yusr-ui";
+import { Button, ContextMenuItem, CrudPage, DropdownMenuItem, type IDialogState, type IEntityState, Tooltip, TooltipContent, TooltipTrigger } from "yusr-ui";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
@@ -47,6 +47,7 @@ export default function InvoicesPage({
   const invoiceState = useAppSelector((state) => state[stateKey] as IEntityState<Invoice>);
   const authState = useAppSelector((state) => state.auth);
   const invoiceDialogState = useAppSelector((state) => state[dialogStateKey] as IDialogState<Invoice>);
+  const [resendingEInvoice, setResendingEInvoice] = useState(false);
 
   // Update with your actual permission resource enum
   const permissions = useAppSelector((state) =>
@@ -154,6 +155,25 @@ export default function InvoicesPage({
     return items;
   };
 
+  const resendEInvoice = async (invoice: Invoice) =>
+  {
+    setResendingEInvoice(true);
+    const res = await service.ResendEInvoice(invoice.id);
+    if (res.status === 200 && res.data != undefined)
+    {
+      if (res.data === EInvoiceStatus.NotSent)
+      {
+        toast.error("لم يتم إرسال الفاتورة بنجاح");
+      }
+      else
+      {
+        toast.success("تم إرسال الفاتورة بنجاح");
+      }
+      dispatch(slice.entityActions.refresh({ data: { ...invoice, eInvoiceStatus: res.data } }));
+    }
+    setResendingEInvoice(false);
+  };
+
   return (
     <CrudPage<Invoice>
       basePath={ basePath }
@@ -234,7 +254,7 @@ export default function InvoicesPage({
         { rowName: "الحالة", rowStyles: "w-32" },
         { rowName: "", rowStyles: "w-32" },
         ...(authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
-          ? [{ rowName: "حالة الفاتورة الإلكترونية", rowStyles: "w-32" }]
+          ? [{ rowName: "حالة الفاتورة الإلكترونية", rowStyles: "w-50" }]
           : []),
         ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
@@ -276,10 +296,41 @@ export default function InvoicesPage({
         },
         ...(authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
           ? [{
-            rowName: getEInvoiceStatus(invoice).message,
-            rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              getEInvoiceStatus(invoice).styles
-            }`
+            rowName: (
+              <div className="flex items-center gap-2">
+                { getEInvoiceStatus(invoice).message && (
+                  <span
+                    className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      getEInvoiceStatus(invoice).styles
+                    }` }
+                  >
+                    { getEInvoiceStatus(invoice).message }
+                  </span>
+                ) }
+
+                { invoice.eInvoiceStatus === EInvoiceStatus.NotSent
+                  && invoice.statusId === InvoiceStatus.Valid
+                  && (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.SellReturn) && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-50"
+                        onClick={ () => resendEInvoice(invoice) }
+                        disabled={ resendingEInvoice }
+                      >
+                        <RotateCw className="h-3.5 w-3.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">
+                      <p>إعادة إرسال الفاتورة الإلكترونية</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) }
+              </div>
+            ),
+            rowStyles: ``
           }]
           : []),
         ...(SystemPermissions.hasAuth(
