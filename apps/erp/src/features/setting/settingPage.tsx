@@ -1,3 +1,4 @@
+import { BranchSlice } from "@/core/data/branchLogic";
 import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { type ValidationRule, Validators } from "yusr-core";
@@ -74,6 +75,7 @@ export default function SettingPage()
     dispatch(TaxSlice.entityActions.filter());
     dispatch(StoreSlice.entityActions.filter());
     dispatch(PaymentMethodSlice.entityActions.filter());
+    dispatch(BranchSlice.entityActions.filter());
     dispatch(ClientsAndSuppliersSlice.entityActions.filter());
   }, [dispatch]);
 
