@@ -11,7 +11,7 @@ export abstract class BaseApiService<T extends BaseEntity> extends BaseFilterabl
     return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/${id}`);
   }
 
-  async Add(entity: T)
+  async Add(entity: T): Promise<RequestResult<T>>
   {
     return await YusrApiHelper.Post(
       `${ApiConstants.baseUrl}/${this.routeName}/Add`,
@@ -21,7 +21,7 @@ export abstract class BaseApiService<T extends BaseEntity> extends BaseFilterabl
     );
   }
 
-  async Update(entity: T)
+  async Update(entity: T): Promise<RequestResult<T>>
   {
     return await YusrApiHelper.Put(
       `${ApiConstants.baseUrl}/${this.routeName}/Update`,

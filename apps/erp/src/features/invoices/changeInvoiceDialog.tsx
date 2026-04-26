@@ -15,8 +15,8 @@ import { type RootState, useAppDispatch, useAppSelector } from "../../core/state
 import { InvoiceContext } from "./logic/invoiceContext";
 import InvoiceItemsMath from "./logic/invoiceItemsMath";
 import InvoiceBasicTab from "./presentation/basic/invoiceBasicTab";
-import AlertConvertDialog from "./presentation/conversionToSell/alertConvertDialog";
 import InvoiceCostsTab from "./presentation/costs/invoiceCostsTab";
+import AlertConvertDialog from "./presentation/dialogs/alertConvertDialog";
 import InvoiceFilesTab from "./presentation/files/invoiceFilesTab";
 import InvoicePaymentsTab from "./presentation/payments/invoicePaymentsTab";
 import InvoicePolicyTab from "./presentation/policy/invoicePolicyTab";
@@ -80,9 +80,6 @@ export default function ChangeInvoiceDialog({
 
   const { formData, errors } = useAppSelector(selectFormState);
   const { getError, isInvalid } = useFormErrors(errors);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [warnings, setWarnings] = useState<string[]>([]);
-  const [showWarnings, setShowWarnings] = useState(false);
   const [fullyReturned, setFullyReturned] = useState(false);
 
   const paymentVouchers = () =>
@@ -194,34 +191,6 @@ export default function ChangeInvoiceDialog({
     } as InvoiceVoucher;
   };
 
-  const convertToSell = async (ignoreWarnings = false) =>
-  {
-    if (!formData?.id)
-    {
-      return;
-    }
-
-    setInitLoading(true);
-    setShowConfirm(false);
-    const res = await new InvoicesApiService().ConvertToSell(formData.id, ignoreWarnings, [
-      createInitialPaymentVoucher()
-    ]);
-    if (res.status === 412)
-    {
-      setWarnings(res.errorDetails?.split("\n") ?? []);
-      setShowWarnings(true);
-      setInitLoading(false);
-      return;
-    }
-
-    if (res.data != undefined)
-    {
-      dispatch(slice.formActions.updateFormData(res.data));
-      onSuccess?.(res.data, "update");
-    }
-    setInitLoading(false);
-  };
-
   const onBeforeSave = async (): Promise<{ handled: boolean; data?: Invoice; }> =>
   {
     if (mode === "return")
@@ -315,15 +284,16 @@ export default function ChangeInvoiceDialog({
           onSuccess: (data) => onSuccess?.(data, mode),
           validate,
           onBeforeSave: onBeforeSave,
-          actionButtons: formData.type === InvoiceType.Quotation && mode === "update"
+          actionButtons: formData.type === InvoiceType.Quotation && mode === "update" && formData?.id != undefined
             ? (
               <AlertConvertDialog
-                showConfirm={ showConfirm }
-                setShowConfirm={ setShowConfirm }
-                convertToSell={ convertToSell }
-                warnings={ warnings }
-                showWarnings={ showWarnings }
-                setShowWarnings={ setShowWarnings }
+                invoiceId={ formData.id }
+                createInitialPaymentVoucher={ createInitialPaymentVoucher }
+                onSuccess={ (data) =>
+                {
+                  dispatch(slice.formActions.updateFormData(data));
+                  onSuccess?.(data, mode);
+                } }
               />
             )
             : undefined
