@@ -110,7 +110,7 @@ export default function AccountsPage({
             ? [{
               rowName: Math.abs(account.balance ?? 0).toLocaleString("en-US", {
                 style: "currency",
-                currency: authState.setting?.currency?.code
+                currency: authState.setting?.currency?.code ?? "SAR"
               }),
               rowStyles: `font-mono ${colorStyle}`
             }, {
