@@ -11,6 +11,20 @@ export class BranchValidationRules
     field: "cityId",
     selector: (d) => d.cityId,
     validators: [Validators.required("يرجى اختيار المدينة")]
+  }, {
+    field: "buildingNumber",
+    selector: (d) => d.buildingNumber,
+    validators: [Validators.optional(
+      Validators.exactLength(4, "رقم المبنى يجب أن يتكون من أربع أرقام"),
+      Validators.numeric()
+    )]
+  }, {
+    field: "postalCode",
+    selector: (d) => d.postalCode,
+    validators: [Validators.optional(
+      Validators.exactLength(5, "الرمز البريدي يجب أن يتكون من خمس أرقام"),
+      Validators.numeric()
+    )]
   }];
 }
 

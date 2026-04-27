@@ -6,7 +6,6 @@ import { Button, ChangeDialog, FieldGroup, FieldsSection, Input, NumberField, Se
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Account, { AccountContact, AccountFilterColumns, type AccountSliceType, AccountType, AccountValidationRules } from "../../core/data/account";
-import { TaxSlice } from "../../core/data/tax";
 import { filterCities } from "../../core/state/shared/citySlice";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
 
@@ -46,7 +45,7 @@ export default function ChangeAccountDialog({
   const { validate } = useValidate(
     formData,
     AccountValidationRules.validationRules,
-    (errors) => dispatch(TaxSlice.formActions.setErrors(errors))
+    (errors) => dispatch(slice.formActions.setErrors(errors))
   );
   useFormInit(slice.formActions.setInitialData, initialValues);
 
@@ -159,7 +158,7 @@ export default function ChangeAccountDialog({
                 />
               </div>
             ) }
-            
+
             <NumberField
               label="الرصيد الافتتاحي"
               value={ canShowBalance ? (formData.initialBalance || "") : "" }
@@ -254,11 +253,15 @@ export default function ChangeAccountDialog({
                       label="رقم المبنى"
                       value={ formData.buildingNumber || "" }
                       onChange={ (e) => dispatch(slice.formActions.updateFormData({ buildingNumber: e.target.value })) }
+                      isInvalid={ isInvalid("buildingNumber") }
+                      error={ getError("buildingNumber") }
                     />
                     <TextField
                       label="الرمز البريدي"
                       value={ formData.postalCode || "" }
                       onChange={ (e) => dispatch(slice.formActions.updateFormData({ postalCode: e.target.value })) }
+                      isInvalid={ isInvalid("postalCode") }
+                      error={ getError("postalCode") }
                     />
                   </div>
                 </FieldsSection>

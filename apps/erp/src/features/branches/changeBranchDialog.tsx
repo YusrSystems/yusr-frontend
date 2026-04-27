@@ -59,7 +59,7 @@ export default function ChangeBranchDialog({ entity, mode, service, onSuccess }:
           />
         </FormField>
 
-        <FieldsSection title="الموقع" columns={ 2 }>
+        <FieldsSection title="" columns={ 2 }>
           <TextField
             label="الشارع"
             value={ formData.street || "" }
@@ -74,11 +74,15 @@ export default function ChangeBranchDialog({ entity, mode, service, onSuccess }:
             label="رقم المبنى"
             value={ formData.buildingNumber || "" }
             onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ buildingNumber: e.target.value })) }
+            isInvalid={ isInvalid("buildingNumber") }
+            error={ getError("buildingNumber") }
           />
           <TextField
             label="الرمز البريدي"
             value={ formData.postalCode || "" }
             onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ postalCode: e.target.value })) }
+            isInvalid={ isInvalid("postalCode") }
+            error={ getError("postalCode") }
           />
         </FieldsSection>
       </FieldGroup>
