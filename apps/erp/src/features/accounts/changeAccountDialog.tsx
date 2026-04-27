@@ -1,7 +1,7 @@
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { CityFilterColumns, SystemPermissions } from "yusr-core";
-import type { CommonChangeDialogProps, IEntityState } from "yusr-ui";
+import type { CommonChangeDialogProps, FormState, IEntityState } from "yusr-ui";
 import { Button, ChangeDialog, FieldGroup, FieldsSection, Input, NumberField, SearchableSelect, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
@@ -22,7 +22,7 @@ export default function ChangeAccountDialog({
   slice: AccountSliceType;
   stateKey: keyof RootState;
   fixedType?: AccountType;
-  selectFormState: (state: any) => { formData: Partial<Account>; errors: Record<string, string>; };
+  selectFormState: (state: any) => FormState<Account>;
 })
 {
   const dispatch = useAppDispatch();
