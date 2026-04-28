@@ -1,7 +1,7 @@
 import { WalletIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { FilterCondition, SystemPermissions } from "yusr-core";
-import { CrudPage, type IDialogState, type IEntityState } from "yusr-ui";
+import { CrudPage, type FormState, type IDialogState, type IEntityState } from "yusr-ui";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
@@ -27,7 +27,7 @@ export default function AccountsPage({
   stateKey: keyof RootState;
   dialogStateKey: keyof RootState;
   fixedType?: AccountType;
-  selectFormState: (state: any) => { formData: Partial<Account>; errors: Record<string, string>; };
+  selectFormState: (state: any) => FormState<Account>;
   hasPagePermission: boolean;
 })
 {
