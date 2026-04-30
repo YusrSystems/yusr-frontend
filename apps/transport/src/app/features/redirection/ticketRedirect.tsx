@@ -31,7 +31,7 @@ export default function TicketRedirect() {
       }
       else {
         setStep("input");
-        setError(response.errorTitle || "الأرقام التي أدخلتها غير صحيحة، يرجى التأكد والمحاولة مرة أخرى.");
+        setError(response.title || "الأرقام التي أدخلتها غير صحيحة، يرجى التأكد والمحاولة مرة أخرى.");
       }
     }
     catch (err) {

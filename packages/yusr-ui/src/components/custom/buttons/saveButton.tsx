@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import type { BaseApiService, BaseEntity, RequestResult } from "yusr-core";
+import { type BaseApiService, type BaseEntity, type RequestResult, ResultStatus } from "yusr-core";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure";
 import { Button } from "../../pure/button";
 import type { DialogMode } from "../dialogs/dialogType";
@@ -40,6 +40,8 @@ export function SaveButton<T extends BaseEntity>(
 )
 {
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [showErrors, setShowErrors] = useState(false);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [showWarnings, setShowWarnings] = useState(false);
   const [pendingIgnore, setPendingIgnore] = useState(false);
@@ -90,18 +92,21 @@ export function SaveButton<T extends BaseEntity>(
 
     setLoading(false);
 
-    if (result.status === 412)
+    if (result.status === ResultStatus.UnprocessableEntity)
     {
-      const lines = result.errorDetails
-        ?.split("/n")
-        .map((l: string) => l.trim())
-        .filter((l: string) => l.length > 0) ?? [];
-      setWarnings(lines);
+      setErrors(result.errors);
+      setShowErrors(true);
+      return;
+    }
+
+    if (result.status === ResultStatus.PreconditionFailed)
+    {
+      setWarnings(result.warnings);
       setShowWarnings(true);
       return;
     }
 
-    if (result.status === 200)
+    if (result.status === ResultStatus.Ok)
     {
       onSuccess?.(result.data as T);
     }
@@ -144,6 +149,24 @@ export function SaveButton<T extends BaseEntity>(
             <Button onClick={ handleIgnoreWarnings }>
               تجاهل التحذيرات
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={ showErrors } onOpenChange={ setShowErrors }>
+        <DialogContent dir="rtl">
+          <DialogHeader>
+            <DialogTitle>أخطاء</DialogTitle>
+            <DialogDescription asChild>
+              <ul className="mt-2 space-y-1 text-sm text-right">
+                { errors.map((w, i) => <li key={ i } className="text-red-600">• { w }</li>) }
+              </ul>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">إلغاء</Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

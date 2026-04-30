@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { ApiConstants, YusrApiHelper } from "yusr-core";
+import { ApiConstants, ResultStatus, YusrApiHelper } from "yusr-core";
 import { YusrBusBackground } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import { logout, useAppDispatch, useAppSelector } from "../../../core/state/store";
@@ -21,7 +21,7 @@ export default function RegisterPage()
     {
       const result = await YusrApiHelper.Post(`${ApiConstants.baseUrl}/Logout`);
 
-      if (result.status === 200 || result.status === 204)
+      if (result.status === ResultStatus.Ok || result.status === ResultStatus.NoContent)
       {
         dispatch(logout());
         dispatch(reset());

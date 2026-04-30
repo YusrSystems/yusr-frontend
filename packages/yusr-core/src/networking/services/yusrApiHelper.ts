@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { AuthConstants } from "../../auth";
-import type { RequestResult } from "../../types/requestResult";
+import { type RequestResult, ResultStatus } from "../../types/requestResult";
 
 export class YusrApiHelper
 {
@@ -96,26 +96,40 @@ export class YusrApiHelper
     {
       window.dispatchEvent(new Event(AuthConstants.UnauthorizedEventName));
       toast.error("انتهت صلاحية الدخول", { description: "سجل الدخول  مجددًا." });
-      return { data: undefined, status: 401, errorTitle: "Unauthorized", errorDetails: "Session expired" };
+      return {
+        data: undefined,
+        status: ResultStatus.Unauthorized,
+        title: "Unauthorized",
+        errors: ["Session expired"],
+        warnings: []
+      };
     }
 
     if (response.status === 404)
     {
       toast.error("لم يتم العثور على طلبك");
-      return { data: undefined, status: 404, errorTitle: "Not Found", errorDetails: "" };
+      return { data: undefined, status: 404, title: "Not Found", errors: [], warnings: [] };
     }
 
     if (response.status === 429)
     {
       toast.error("لقد تجاوزت الحد المسموح به. يرجى المحاولة لاحقا.");
-      return { data: undefined, status: 429, errorTitle: "Rejected", errorDetails: "" };
+      return { data: undefined, status: ResultStatus.TooManyRequests, title: "Rejected", errors: [], warnings: [] };
     }
 
     if (!response.ok)
     {
-      const errorData = await response.json();
-      toast.error(errorData.title || "An error occurred", { description: errorData.detail });
-      return { data: undefined, status: response.status, errorTitle: errorData.title, errorDetails: errorData.detail };
+      const errorData = await response.json() as RequestResult<any>;
+      toast.error(errorData.title || "An error occurred", {
+        description: errorData.errors.join("\n")
+      });
+      return {
+        data: undefined,
+        status: response.status as ResultStatus,
+        title: errorData.title,
+        errors: errorData.errors,
+        warnings: errorData.warnings
+      };
     }
 
     const data = await response.json() as T;
@@ -125,6 +139,6 @@ export class YusrApiHelper
       toast.success(successMessage);
     }
 
-    return { data, status: response.status, errorTitle: "", errorDetails: "" };
+    return { data, status: response.status as ResultStatus, title: "", errors: [], warnings: [] };
   }
 }

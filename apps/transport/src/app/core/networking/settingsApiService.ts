@@ -1,5 +1,4 @@
-import { ApiConstants, YusrApiHelper } from "yusr-core";
-import type { RequestResult } from "../data/requestResult";
+import { ApiConstants, YusrApiHelper, type RequestResult } from "yusr-core";
 import type { Setting } from "../data/setting";
 
 export default class SettingsApiService
