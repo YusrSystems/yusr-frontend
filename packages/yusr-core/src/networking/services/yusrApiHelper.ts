@@ -92,7 +92,7 @@ export class YusrApiHelper
 
   private static async handleResponse<T>(response: Response, successMessage?: string): Promise<RequestResult<T>>
   {
-    if (response.status === 401)
+    if (response.status === ResultStatus.Unauthorized)
     {
       window.dispatchEvent(new Event(AuthConstants.UnauthorizedEventName));
       toast.error("انتهت صلاحية الدخول", { description: "سجل الدخول  مجددًا." });
@@ -105,13 +105,13 @@ export class YusrApiHelper
       };
     }
 
-    if (response.status === 404)
+    if (response.status === ResultStatus.NotFound)
     {
       toast.error("لم يتم العثور على طلبك");
       return { data: undefined, status: 404, title: "Not Found", errors: [], warnings: [] };
     }
 
-    if (response.status === 429)
+    if (response.status === ResultStatus.TooManyRequests)
     {
       toast.error("لقد تجاوزت الحد المسموح به. يرجى المحاولة لاحقا.");
       return { data: undefined, status: ResultStatus.TooManyRequests, title: "Rejected", errors: [], warnings: [] };
@@ -120,9 +120,14 @@ export class YusrApiHelper
     if (!response.ok)
     {
       const errorData = await response.json() as RequestResult<any>;
-      toast.error(errorData.title || "An error occurred", {
-        description: errorData.errors.join("\n")
-      });
+
+      if (response.status !== ResultStatus.UnprocessableEntity && response.status !== ResultStatus.PreconditionFailed)
+      {
+        toast.error(errorData.title || "An error occurred", {
+          description: errorData.errors.join("\n") || errorData.warnings.join("\n")
+        });
+      }
+
       return {
         data: undefined,
         status: response.status as ResultStatus,
