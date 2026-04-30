@@ -44,7 +44,7 @@ export default function ChangeTaxDialog({ entity, mode, service, onSuccess }: Co
             required
             min={ 0 }
             max={ 100 }
-            value={ formData.percentage ?? "" }
+            value={ formData.percentage ?? 0 }
             onChange={ (value) => dispatch(TaxSlice.formActions.updateFormData({ percentage: Number(value) })) }
             isInvalid={ isInvalid("percentage") }
             error={ getError("percentage") }

@@ -25,7 +25,15 @@ export class TaxValidationRules
   public static validationRules: ValidationRule<Partial<Tax>>[] = [{
     field: "name",
     selector: (d) => d.name,
-    validators: [Validators.required("يرجى إدخال اسم الوحدة")]
+    validators: [Validators.required("يرجى إدخال اسم الضريبة")]
+  }, {
+    field: "percentage",
+    selector: (d) => d.percentage,
+    validators: [
+      Validators.required("يرجى إدخال نسبة الضريبة"),
+      Validators.min(0, "الحد الادنى هو 0%"),
+      Validators.max(100, "الحد الاقصى هو 100%")
+    ]
   }];
 }
 
