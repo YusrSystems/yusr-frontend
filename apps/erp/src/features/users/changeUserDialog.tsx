@@ -1,7 +1,9 @@
+import BranchesSearchableSelect from "@/core/components/searchableSelect/branchesSearchableSelect";
+import RolesSearchableSelect from "@/core/components/searchableSelect/rolesSearchableSelect";
 import { useEffect, useMemo } from "react";
-import { RoleFilterColumns, User } from "yusr-core";
+import { User } from "yusr-core";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, FormField, PasswordField, SearchableSelect, SelectField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, FieldGroup, FormField, PasswordField, SelectField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BranchSlice } from "../../core/data/branchLogic";
 import { RoleSlice } from "../../core/data/role";
 import { UserSlice, UserValidationRules } from "../../core/data/UserLogic";
@@ -63,49 +65,25 @@ export default function ChangeUserDialog({ entity, mode, service, onSuccess }: C
         </div>
 
         <FormField label="الدور" required isInvalid={ isInvalid("roleId") } error={ getError("roleId") }>
-          <SearchableSelect
-            items={ roleState.entities.data ?? [] }
-            itemLabelKey="name"
-            itemValueKey="id"
-            placeholder="اختر الدور"
-            value={ formData.roleId?.toString() || "" }
-            columnsNames={ RoleFilterColumns.columnsNames }
-            onSearch={ (condition) => dispatch(RoleSlice.entityActions.filter(condition)) }
-            isLoading={ roleState.isLoading }
+          <RolesSearchableSelect
+            id={ formData.roleId }
             isInvalid={ isInvalid("roleId") }
-            disabled={ roleState.isLoading }
-            onValueChange={ (val) =>
+            onValueChange={ (role) =>
             {
-              const selected = roleState.entities.data?.find((r) => r.id.toString() === val);
-              if (selected)
-              {
-                dispatch(UserSlice.formActions.updateFormData({ roleId: selected.id }));
-                dispatch(UserSlice.formActions.updateFormData({ role: selected }));
-              }
+              dispatch(UserSlice.formActions.updateFormData({ roleId: role.id }));
+              dispatch(UserSlice.formActions.updateFormData({ role: role }));
             } }
           />
         </FormField>
 
         <FormField label="الفرع" required isInvalid={ isInvalid("branchId") } error={ getError("branchId") }>
-          <SearchableSelect
-            items={ branchState.entities.data ?? [] }
-            itemLabelKey="name"
-            itemValueKey="id"
-            placeholder="اختر الفرع"
-            value={ formData.branchId?.toString() || "" }
-            columnsNames={ RoleFilterColumns.columnsNames }
-            onSearch={ (condition) => dispatch(BranchSlice.entityActions.filter(condition)) }
-            isLoading={ branchState.isLoading }
+          <BranchesSearchableSelect
+            id={ formData.branchId }
             isInvalid={ isInvalid("branchId") }
-            disabled={ branchState.isLoading }
-            onValueChange={ (val) =>
+            onValueChange={ (branch) =>
             {
-              const selected = branchState.entities.data?.find((b) => b.id.toString() === val);
-              if (selected)
-              {
-                dispatch(UserSlice.formActions.updateFormData({ branchId: selected.id }));
-                dispatch(UserSlice.formActions.updateFormData({ branch: selected }));
-              }
+              dispatch(UserSlice.formActions.updateFormData({ branchId: branch.id }));
+              dispatch(UserSlice.formActions.updateFormData({ branch: branch }));
             } }
           />
         </FormField>

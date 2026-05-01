@@ -28,6 +28,16 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
     {
       dispatch(fetchSystemPermissions());
     }
+
+    if (mode === "create" && systemState.permissions.length > 0)
+    {
+      dispatch(
+        RoleSlice.formActions.setInitialData({
+          ...entity,
+          permissions: systemState.permissions
+        })
+      );
+    }
   }, [dispatch, systemState.permissions.length]);
 
   const categorized = useMemo(() =>

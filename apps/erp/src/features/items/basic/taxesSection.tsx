@@ -1,8 +1,9 @@
+import TaxesSearchableSelect from "@/core/components/searchableSelect/taxesSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
-import { Button, Checkbox, type DialogMode, NumberField, SearchableSelect, TextField } from "yusr-ui";
+import { Button, Checkbox, type DialogMode, NumberField, TextField } from "yusr-ui";
 import { ItemSlice, ItemTax } from "../../../core/data/item";
-import { type Tax, TaxFilterColumns, TaxSlice } from "../../../core/data/tax";
+import { type Tax } from "../../../core/data/tax";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 
 export default function TaxesSection({ mode }: { mode: DialogMode; })
@@ -132,29 +133,15 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
                       <tr key={ index } className="border-t border-muted">
                         <td className="p-3 font-bold">{ index + 1 }</td>
                         <td className="p-3">
-                          <SearchableSelect
-                            items={ taxState.entities?.data || [] }
-                            itemLabelKey="name"
-                            itemValueKey="id"
-                            placeholder="اختر الضريبة"
-                            value={ tax.taxId?.toString() || "" }
-                            columnsNames={ TaxFilterColumns.columnsNames }
-                            onSearch={ (condition) => dispatch(TaxSlice.entityActions.filter(condition)) }
-                            isLoading={ taxState.isLoading }
-                            disabled={ taxState.isLoading }
-                            onValueChange={ (val) =>
+                          <TaxesSearchableSelect
+                            id={ tax.taxId }
+                            onValueChange={ (tax) =>
                             {
-                              const selectedTax = taxState.entities?.data?.find(
-                                (t: Tax) => t.id.toString() === val
-                              );
-                              if (selectedTax)
-                              {
-                                updateTax(index, {
-                                  taxId: selectedTax.id,
-                                  taxName: selectedTax.name,
-                                  taxPercentage: selectedTax.percentage
-                                });
-                              }
+                              updateTax(index, {
+                                taxId: tax.id,
+                                taxName: tax.name,
+                                taxPercentage: tax.percentage
+                              });
                             } }
                           />
                         </td>

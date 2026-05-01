@@ -1,4 +1,4 @@
-import UnitsSearchableSelect from "@/core/components/unitsSearchableSelect";
+import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import { Checkbox, type DialogMode, FormField, NumberField, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemType } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
@@ -20,7 +20,7 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
           error={ getError("sellUnitId") }
         >
           <UnitsSearchableSelect
-            unitId={ formData.sellUnitId }
+            id={ formData.sellUnitId }
             disabled={ formData.type === ItemType.Service || mode === "update" }
             isInvalid={ isInvalid("sellUnitId") }
             onValueChange={ (unit) =>

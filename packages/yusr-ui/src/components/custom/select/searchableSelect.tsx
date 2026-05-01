@@ -7,19 +7,27 @@ import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from ".
 import { Popover, PopoverContent, PopoverTrigger } from "../../pure/popover";
 import { SearchInput } from "../inputs/searchInput";
 
+export type EntitySearchableSelectParams<T> = {
+  id?: number;
+  disabled?: boolean;
+  isInvalid?: boolean;
+  onValueChange: (value: T) => void;
+};
+
 type SearchableSelectParams<T> = {
   items: T[];
   itemLabelKey: keyof T;
   itemValueKey: keyof T;
   value: string | undefined;
-  onValueChange: (value: string | undefined) => void;
   disabled?: boolean;
   isInvalid?: boolean;
   placeholder?: string;
   columnsNames: ColumnName[];
-  onSearch: (condition: { value: string; columnName: string; } | undefined) => void;
   isLoading?: boolean;
   showAllOption?: boolean;
+  buttonClassName?: string;
+  onSearch: (condition: { value: string; columnName: string; } | undefined) => void;
+  onValueChange: (value: string | undefined) => void;
   onNotFound?: (typedValue: string) => void;
   onDelete?: (id: number) => Promise<boolean>;
 };
@@ -30,14 +38,15 @@ export function SearchableSelect<T>(
     itemLabelKey,
     itemValueKey,
     value,
-    onValueChange,
     disabled,
     isInvalid,
     placeholder = "اختر...",
     columnsNames,
-    onSearch,
     isLoading = false,
     showAllOption = false,
+    buttonClassName,
+    onSearch,
+    onValueChange,
     onNotFound,
     onDelete
   }: SearchableSelectParams<T>
@@ -101,6 +110,7 @@ export function SearchableSelect<T>(
           disabled={ disabled }
           className={ cn(
             "w-full justify-between px-3 font-normal",
+            buttonClassName,
             !value && "text-muted-foreground",
             isInvalid ? "error" : ""
           ) }
@@ -212,7 +222,9 @@ export function SearchableSelect<T>(
                             { onDelete && (
                               <div className="flex items-center justify-center min-w-[32px]">
                                 { isDeleting
-                                  ? <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground shrink-0" />
+                                  ? (
+                                    <Loader2 className="h-3.5 w-3.5 my-1.5 animate-spin text-muted-foreground shrink-0" />
+                                  )
                                   : (
                                     <Button
                                       onClick={ (e) => handleDelete(e, itemValue) }

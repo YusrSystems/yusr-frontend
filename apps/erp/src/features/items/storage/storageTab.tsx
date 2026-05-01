@@ -1,4 +1,4 @@
-import StoresSearchableSelect from "@/core/components/storesSearchableSelect";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { Button, type DialogMode, FormField, NumberField, TextField, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemStore, ItemType } from "../../../core/data/item";
@@ -109,7 +109,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                       isInvalid={ hasError && !isService && !store.storeId }
                     >
                       <StoresSearchableSelect
-                        storeId={ store.storeId }
+                        id={ store.storeId }
                         isInvalid={ hasError && !isService && !store.storeId }
                         onValueChange={ (store) =>
                         {

@@ -1,5 +1,5 @@
-import PricingMethodsSearchableSelect from "@/core/components/pricingMethodSearchableSelect";
-import UnitsSearchableSelect from "@/core/components/unitsSearchableSelect";
+import PricingMethodsSearchableSelect from "@/core/components/searchableSelect/pricingMethodsSearchableSelect";
+import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { SystemPermissions } from "yusr-core";
 import { Button, FormField, NumberField, TextField } from "yusr-ui";
@@ -70,7 +70,7 @@ export default function PricingMethodsTable()
                     isInvalid={ hasError && !isService && !method.unitId }
                   >
                     <UnitsSearchableSelect
-                      unitId={ method.unitId }
+                      id={ method.unitId }
                       disabled={ isService }
                       isInvalid={ hasError && !isService && !method.unitId }
                       onValueChange={ (unit) =>
@@ -89,7 +89,7 @@ export default function PricingMethodsTable()
                     isInvalid={ hasError && !isService && !method.pricingMethodId }
                   >
                     <PricingMethodsSearchableSelect
-                      pricingMethodId={ method.pricingMethodId }
+                      id={ method.pricingMethodId }
                       disabled={ isService }
                       isInvalid={ hasError && !isService && !method.pricingMethodId }
                       onValueChange={ (pricingMethod) =>
