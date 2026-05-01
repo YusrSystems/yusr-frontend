@@ -53,6 +53,7 @@ export default function InvoiceSection()
               onValueChange={ (val) => handleChange({ mainTaxId: Number(val) }) }
               columnsNames={ TaxFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(TaxSlice.entityActions.filter(condition)) }
+              isLoading={ taxState.isLoading }
               disabled={ taxState.isLoading }
             />
           </div>

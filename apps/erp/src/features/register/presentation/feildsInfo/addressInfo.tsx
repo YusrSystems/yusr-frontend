@@ -44,6 +44,7 @@ export default function AddressInfo()
           itemValueKey="id"
           disabled={ cityState.isLoading }
           onSearch={ (condition) => dispatch(filterCities(condition)) }
+          isLoading={ cityState.isLoading }
           onValueChange={ (val) => onFieldChange({ cityId: val ? parseInt(val) : undefined }) }
         />
         { !!errors.cityId && (

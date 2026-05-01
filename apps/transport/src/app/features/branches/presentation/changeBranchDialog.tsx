@@ -53,6 +53,7 @@ export default function ChangeBranchDialog({ entity, mode, service, onSuccess }:
             onValueChange={ (val) => handleChange({ cityId: Number(val) }) }
             columnsNames={ CityFilterColumns.columnsNames }
             onSearch={ (condition) => dispatch(filterCities(condition)) }
+            isLoading={ cityState.isLoading }
             isInvalid={ isInvalid("cityId") }
             disabled={ cityState.isLoading }
           />

@@ -15,7 +15,7 @@ export default class Unit extends BaseEntity
 
 export class UnitFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{ label: "رقم الوحدة", value: "Id" }, {
+  public static columnsNames: ColumnName[] = [{
     label: "اسم الوحدة",
     value: "name"
   }];

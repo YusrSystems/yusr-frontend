@@ -107,6 +107,7 @@ export default function ChangeBalanceTransferDialog(
                 value={ formData.fromAccountId?.toString() || "" }
                 columnsNames={ AccountFilterColumns.columnsNames }
                 onSearch={ (condition) => dispatch(BanksAndBoxesSlice.entityActions.filter(condition)) }
+                isLoading={ accountState.isLoading }
                 disabled={ accountState.isLoading }
                 isInvalid={ isInvalid("fromAccountId") }
                 onValueChange={ (val) =>
@@ -137,6 +138,7 @@ export default function ChangeBalanceTransferDialog(
                 value={ formData.toAccountId?.toString() || "" }
                 columnsNames={ AccountFilterColumns.columnsNames }
                 onSearch={ (condition) => dispatch(BanksAndBoxesSlice.entityActions.filter(condition)) }
+                isLoading={ accountState.isLoading }
                 disabled={ accountState.isLoading }
                 isInvalid={ isInvalid("toAccountId") }
                 onValueChange={ (val) =>

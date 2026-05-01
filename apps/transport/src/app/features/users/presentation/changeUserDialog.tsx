@@ -80,6 +80,7 @@ export default function ChangeUserDialog({ entity, mode, service, onSuccess }: C
             value={ formData.roleId?.toString() || "" }
             columnsNames={ RoleFilterColumns.columnsNames }
             onSearch={ (condition) => dispatch(filterRoles(condition)) }
+            isLoading={ roleState.isLoading }
             isInvalid={ isInvalid("roleId") }
             disabled={ roleState.isLoading }
             onValueChange={ (val) =>
@@ -103,6 +104,7 @@ export default function ChangeUserDialog({ entity, mode, service, onSuccess }: C
             value={ formData.branchId?.toString() || "" }
             columnsNames={ RoleFilterColumns.columnsNames }
             onSearch={ (condition) => dispatch(filterBranches(condition)) }
+            isLoading={ branchState.isLoading }
             isInvalid={ isInvalid("branchId") }
             disabled={ branchState.isLoading }
             onValueChange={ (val) =>

@@ -130,6 +130,7 @@ export default function ChangeStocktakingDialog(
                 onValueChange={ handleStoreChange }
                 columnsNames={ StoreFilterColumns.columnsNames }
                 onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
+                isLoading={ storeState.isLoading }
                 disabled={ storeState.isLoading || mode === "update" }
               />
               { isInvalid("storeId") && <span className="text-xs text-red-500">{ getError("storeId") }</span> }

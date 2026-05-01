@@ -39,6 +39,7 @@ export default function ItemStatementButton({ item }: { item: Item; })
                 onValueChange={ (val) => setStoreId(Number(val)) }
                 columnsNames={ StoreFilterColumns.columnsNames }
                 onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
+                isLoading={ storeState.isLoading }
                 disabled={ storeState.isLoading }
               />
             </FormField>

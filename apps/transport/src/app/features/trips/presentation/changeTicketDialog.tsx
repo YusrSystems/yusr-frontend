@@ -110,6 +110,7 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
                 } }
                 columnsNames={ PassengerFilterColumns.columnsNames }
                 onSearch={ (condition) => dispatch(filterPassengers(condition)) }
+                isLoading={ passengerState.isLoading }
                 isInvalid={ isInvalid("passengerId") }
                 disabled={ passengerState.isLoading }
               />
@@ -153,6 +154,7 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
               } }
               columnsNames={ CityFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(filterCities(condition)) }
+              isLoading={ cityState.isLoading }
               isInvalid={ isInvalid("fromCityId") }
               disabled={ cityState.isLoading }
             />
@@ -173,6 +175,7 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
               } }
               columnsNames={ CityFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(filterCities(condition)) }
+              isLoading={ cityState.isLoading }
               isInvalid={ isInvalid("toCityId") }
               disabled={ cityState.isLoading }
             />
@@ -226,6 +229,7 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
               } }
               columnsNames={ CityFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(filterCities(condition)) }
+              isLoading={ cityState.isLoading }
               isInvalid={ isInvalid("issueCityId") }
               disabled={ cityState.isLoading }
             />

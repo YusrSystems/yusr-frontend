@@ -37,6 +37,7 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
             } }
             columnsNames={ UnitFilterColumns.columnsNames }
             onSearch={ (condition) => dispatch(UnitSlice.entityActions.filter(condition)) }
+            isLoading={ unitState.isLoading }
             disabled={ unitState.isLoading || formData.type === ItemType.Service || mode === "update" }
           />
         </FormField>

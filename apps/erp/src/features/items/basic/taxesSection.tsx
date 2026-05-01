@@ -140,6 +140,7 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
                             value={ tax.taxId?.toString() || "" }
                             columnsNames={ TaxFilterColumns.columnsNames }
                             onSearch={ (condition) => dispatch(TaxSlice.entityActions.filter(condition)) }
+                            isLoading={ taxState.isLoading }
                             disabled={ taxState.isLoading }
                             onValueChange={ (val) =>
                             {

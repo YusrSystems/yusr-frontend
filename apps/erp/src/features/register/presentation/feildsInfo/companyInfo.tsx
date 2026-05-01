@@ -127,6 +127,7 @@ export default function CompanyInfo()
           itemValueKey="id"
           disabled={ currencyState.isLoading } // Disable while searching/loading
           onSearch={ (condition) => dispatch(filterCurrencies(condition)) }
+          isLoading={ currencyState.isLoading }
           onValueChange={ (val) => onFieldChange({ currencyId: Number(val) }) }
         />
         { !!errors.currencyId && (

@@ -123,6 +123,7 @@ export default function ChangeRouteDialog({ entity, mode, service, onSuccess }: 
               } }
               columnsNames={ CityFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(filterCities(condition)) }
+              isLoading={ cityState.isLoading }
               disabled={ cityState.isLoading }
             />
           </FormField>
@@ -145,6 +146,7 @@ export default function ChangeRouteDialog({ entity, mode, service, onSuccess }: 
               } }
               columnsNames={ CityFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(filterCities(condition)) }
+              isLoading={ cityState.isLoading }
               disabled={ cityState.isLoading }
             />
           </FormField>
@@ -191,6 +193,7 @@ export default function ChangeRouteDialog({ entity, mode, service, onSuccess }: 
                     } }
                     columnsNames={ CityFilterColumns.columnsNames }
                     onSearch={ (condition) => dispatch(filterCities(condition)) }
+                    isLoading={ cityState.isLoading }
                     isInvalid={ hasGlobalError && isCityMissing }
                     disabled={ cityState.isLoading }
                   />

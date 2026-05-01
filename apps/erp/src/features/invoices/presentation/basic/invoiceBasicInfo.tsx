@@ -121,6 +121,7 @@ export default function InvoiceBasicInfo()
           value={ formData.storeId?.toString() || "" }
           columnsNames={ StoreFilterColumns.columnsNames }
           onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
+          isLoading={ storeState.isLoading }
           disabled={ storeState.isLoading || mode === "update" || mode === "return" }
           onValueChange={ (val) =>
           {
@@ -145,6 +146,7 @@ export default function InvoiceBasicInfo()
           value={ formData.actionAccountId?.toString() || "" }
           columnsNames={ AccountFilterColumns.columnsNames }
           onSearch={ (condition) => dispatch(accountSlice.entityActions.filter(condition)) }
+          isLoading={ accountState.isLoading }
           disabled={ accountState.isLoading || mode === "update" || mode === "return" }
           onValueChange={ (val) =>
           {

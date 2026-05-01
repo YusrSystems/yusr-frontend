@@ -1,4 +1,4 @@
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import * as React from "react";
 import type { ColumnName } from "yusr-core";
 import { cn } from "../../../utils/cn";
@@ -18,6 +18,7 @@ type SearchableSelectParams<T> = {
   placeholder?: string;
   columnsNames: ColumnName[];
   onSearch: (condition: { value: string; columnName: string; } | undefined) => void;
+  isLoading?: boolean;
   showAllOption?: boolean;
 };
 
@@ -33,6 +34,7 @@ export function SearchableSelect<T>(
     placeholder = "اختر...",
     columnsNames,
     onSearch,
+    isLoading = false,
     showAllOption = false
   }: SearchableSelectParams<T>
 )
@@ -55,7 +57,7 @@ export function SearchableSelect<T>(
           className={ cn(
             "w-full justify-between px-3 font-normal",
             !value && "text-muted-foreground",
-            isInvalid? "error" : ""
+            isInvalid ? "error" : ""
           ) }
         >
           <span className="truncate text-start">{ selectedLabel }</span>
@@ -76,29 +78,36 @@ export function SearchableSelect<T>(
         { /* List Container */ }
         <Command shouldFilter={ false }>
           <CommandList className="max-h-50 overflow-y-auto overflow-x-hidden">
-            { items.length === 0
+            { isLoading
+              ? (
+                <div className="flex items-center justify-center py-6 text-muted-foreground">
+                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                  <span className="text-sm">جاري التحميل...</span>
+                </div>
+              )
+              : items.length === 0
               ? <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">لا توجد بيانات</CommandEmpty>
               : (
                 <CommandGroup>
-
-                {showAllOption && (
-                  <CommandItem
-                    value="all-items-option"
-                    onSelect={() => {
-                      onValueChange(undefined);
-                      setOpen(false);
-                    }}
-                    className="cursor-pointer"
-                  >
-                    <Check
-                      className={cn(
-                        "h-4 w-4 ltr:mr-2 rtl:ml-2",
-                        (value === undefined || value === "") ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    الكل
-                  </CommandItem>
-                )}
+                  { showAllOption && (
+                    <CommandItem
+                      value="all-items-option"
+                      onSelect={ () =>
+                      {
+                        onValueChange(undefined);
+                        setOpen(false);
+                      } }
+                      className="cursor-pointer"
+                    >
+                      <Check
+                        className={ cn(
+                          "h-4 w-4 ltr:mr-2 rtl:ml-2",
+                          (value === undefined || value === "") ? "opacity-100" : "opacity-0"
+                        ) }
+                      />
+                      الكل
+                    </CommandItem>
+                  ) }
 
                   { items.map((item) =>
                   {

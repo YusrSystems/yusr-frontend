@@ -181,6 +181,7 @@ export default function ChangeItemTransferDialog({
               value={ formData.fromStoreId?.toString() || "" }
               columnsNames={ StoreFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
+              isLoading={ storeState.isLoading }
               isInvalid={ isInvalid("fromStoreId") }
               disabled={ storeState.isLoading || mode === "update" }
               onValueChange={ (val) =>
@@ -214,6 +215,7 @@ export default function ChangeItemTransferDialog({
               value={ formData.toStoreId?.toString() || "" }
               columnsNames={ StoreFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
+              isLoading={ storeState.isLoading }
               isInvalid={ isInvalid("toStoreId") }
               disabled={ storeState.isLoading || mode === "update" }
               onValueChange={ (val) =>

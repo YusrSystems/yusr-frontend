@@ -63,6 +63,7 @@ export default function ItemsMovementDialog()
                 onValueChange={ (val) => setItemId(val ? Number(val) : undefined) }
                 columnsNames={ ItemFilterColumns.columnsNames }
                 onSearch={ (condition) => dispatch(ItemSlice.entityActions.filter(condition)) }
+                isLoading={ itemState.isLoading }
                 disabled={ itemState.isLoading }
               />
             </FormField>
@@ -91,6 +92,7 @@ export default function ItemsMovementDialog()
                   onValueChange={ (val) => setFromAccountId(val ? Number(val) : undefined) }
                   columnsNames={ AccountFilterColumns.columnsNames }
                   onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
+                  isLoading={ accountState.isLoading }
                   disabled={ accountState.isLoading }
                 />
               </FormField>
@@ -105,6 +107,7 @@ export default function ItemsMovementDialog()
                   onValueChange={ (val) => setToAccountId(val ? Number(val) : undefined) }
                   columnsNames={ AccountFilterColumns.columnsNames }
                   onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
+                  isLoading={ accountState.isLoading }
                   disabled={ accountState.isLoading }
                 />
               </FormField>
@@ -121,6 +124,7 @@ export default function ItemsMovementDialog()
                   onValueChange={ (val) => setFromStoreId(val ? Number(val) : undefined) }
                   columnsNames={ StoreFilterColumns.columnsNames }
                   onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
+                  isLoading={ storeState.isLoading }
                   disabled={ storeState.isLoading }
                 />
               </FormField>
@@ -135,6 +139,7 @@ export default function ItemsMovementDialog()
                   onValueChange={ (val) => setToStoreId(val ? Number(val) : undefined) }
                   columnsNames={ StoreFilterColumns.columnsNames }
                   onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
+                  isLoading={ storeState.isLoading }
                   disabled={ storeState.isLoading }
                 />
               </FormField>

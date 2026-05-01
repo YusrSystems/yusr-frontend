@@ -137,6 +137,7 @@ export default function BasicSection()
               } }
               columnsNames={ BranchFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(BranchSlice.entityActions.filter(condition)) }
+              isLoading={ branchState.isLoading }
               disabled={ branchState.isLoading }
             />
           </FormField>

@@ -78,6 +78,7 @@ export default function ChangePaymentMethodDialog({
               value={ formData.accountId?.toString() || "" }
               columnsNames={ AccountFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(BanksAndBoxesSlice.entityActions.filter(condition)) }
+              isLoading={ accountState.isLoading }
               isInvalid={ isInvalid("accountId") }
               disabled={ accountState.isLoading }
               onValueChange={ (val) =>

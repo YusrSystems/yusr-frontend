@@ -144,6 +144,7 @@ export default function ChangeAccountDialog({
                   value={ formData.parentId?.toString() || "" }
                   columnsNames={ AccountFilterColumns.columnsNames }
                   onSearch={ (condition) => dispatch(slice.entityActions.filter(condition)) }
+                  isLoading={ accountState.isLoading }
                   disabled={ accountState.isLoading || mode === "update" }
                   onValueChange={ (val) =>
                   {
@@ -226,6 +227,7 @@ export default function ChangeAccountDialog({
                       value={ formData.cityId?.toString() || "" }
                       columnsNames={ CityFilterColumns.columnsNames }
                       onSearch={ (condition) => dispatch(filterCities(condition)) }
+                      isLoading={ cityState.isLoading }
                       disabled={ cityState.isLoading }
                       onValueChange={ (val) =>
                       {

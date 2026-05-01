@@ -78,6 +78,7 @@ export default function InvoicePaymentsTab()
                       value={ row.paymentMethodId?.toString() }
                       columnsNames={ PaymentMethodFilterColumns.columnsNames }
                       onSearch={ (condition) => dispatch(PaymentMethodSlice.entityActions.filter(condition)) }
+                      isLoading={ paymentMethodState.isLoading }
                       disabled={ paymentMethodState.isLoading }
                       onValueChange={ (val) =>
                       {

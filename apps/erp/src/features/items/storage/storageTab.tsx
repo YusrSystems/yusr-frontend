@@ -126,6 +126,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                         } }
                         columnsNames={ StoreFilterColumns.columnsNames }
                         onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
+                        isLoading={ storeState.isLoading }
                         disabled={ storeState.isLoading }
                         isInvalid={ hasError && !isService && !store.storeId }
                       />

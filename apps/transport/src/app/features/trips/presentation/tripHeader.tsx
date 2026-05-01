@@ -1,10 +1,10 @@
+import { VehicleFilterColumns, VehicleSlice } from "@/app/core/data/vehicle";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { DateTimeField, FieldGroup, FormField, NumberField, SearchableSelect, TextField } from "yusr-ui";
 import { RouteFilterColumns } from "../../routes/data/route";
 import { filterRoutes } from "../../routes/logic/routeSlice";
 import type { Trip } from "../data/trip";
 import TripStationsList from "./tripStationsList";
-import { VehicleFilterColumns, VehicleSlice } from "@/app/core/data/vehicle";
 
 interface TripSidePanelProps
 {
@@ -15,9 +15,7 @@ interface TripSidePanelProps
   getError: (field: string) => string;
 }
 
-export default function TripHeader(
-  { formData, setFormData, clearError, isInvalid, getError }: TripSidePanelProps
-)
+export default function TripHeader({ formData, setFormData, clearError, isInvalid, getError }: TripSidePanelProps)
 {
   const routeState = useAppSelector((state) => state.route);
   const vehicleState = useAppSelector((state) => state.vehicle);
@@ -92,6 +90,7 @@ export default function TripHeader(
           } }
           columnsNames={ RouteFilterColumns.columnsNames }
           onSearch={ (condition) => dispatch(filterRoutes(condition)) }
+          isLoading={ routeState.isLoading }
           isInvalid={ isInvalid("routeId") }
           disabled={ routeState.isLoading }
         />
@@ -106,6 +105,7 @@ export default function TripHeader(
           value={ formData.vehicleId?.toString() || "" }
           columnsNames={ VehicleFilterColumns.columnsNames }
           onSearch={ (condition) => dispatch(VehicleSlice.entityActions.filter(condition)) }
+          isLoading={ vehicleState.isLoading }
           isInvalid={ isInvalid("vehicleId") }
           disabled={ vehicleState.isLoading }
           onValueChange={ (val) =>

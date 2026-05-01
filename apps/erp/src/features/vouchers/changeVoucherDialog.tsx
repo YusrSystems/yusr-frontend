@@ -172,6 +172,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
                 value={ formData.accountId?.toString() || "" }
                 columnsNames={ AccountFilterColumns.columnsNames }
                 onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
+                isLoading={ accountState.isLoading }
                 disabled={ accountState.isLoading }
                 isInvalid={ isInvalid("accountId") }
                 onValueChange={ (val) =>
@@ -197,6 +198,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
                 value={ formData.paymentMethodId?.toString() || "" }
                 columnsNames={ PaymentMethodFilterColumns.columnsNames }
                 onSearch={ (condition) => dispatch(PaymentMethodSlice.entityActions.filter(condition)) }
+                isLoading={ paymentMethodState.isLoading }
                 disabled={ paymentMethodState.isLoading }
                 isInvalid={ isInvalid("paymentMethodId") }
                 onValueChange={ handlePaymentMethodChange }

@@ -71,6 +71,7 @@ export default function ChangePassengerForm(
             } }
             columnsNames={ CountryFilterColumns.columnsNames }
             onSearch={ (condition) => dispatch(filterCountries(condition)) }
+            isLoading={ countryState.isLoading }
             isInvalid={ isInvalid("nationalityId") }
             disabled={ countryState.isLoading }
           />

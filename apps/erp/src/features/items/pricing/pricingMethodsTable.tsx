@@ -91,6 +91,7 @@ export default function PricingMethodsTable()
                       columnsNames={ UnitFilterColumns.columnsNames }
                       onSearch={ (condition) =>
                         dispatch(UnitSlice.entityActions.filter(condition)) }
+                      isLoading={ unitState.isLoading }
                       disabled={ unitState.isLoading || isService }
                       isInvalid={ hasError && !isService && !method.unitId }
                     />
@@ -118,6 +119,7 @@ export default function PricingMethodsTable()
                       } }
                       columnsNames={ PricingMethodFilterColumns.columnsNames }
                       onSearch={ (condition) => dispatch(PricingMethodSlice.entityActions.filter(condition)) }
+                      isLoading={ pricingMethodState.isLoading }
                       disabled={ pricingMethodState.isLoading || isService }
                       isInvalid={ hasError && !isService && !method.pricingMethodId }
                     />

@@ -35,6 +35,7 @@ export default function DefaultsSection()
               } }
               columnsNames={ StoreFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
+              isLoading={ storeState.isLoading }
               disabled={ storeState.isLoading }
             />
           </div>
@@ -53,6 +54,7 @@ export default function DefaultsSection()
               } }
               columnsNames={ PaymentMethodFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(PaymentMethodSlice.entityActions.filter(condition)) }
+              isLoading={ paymentMethodState.isLoading }
               disabled={ paymentMethodState.isLoading }
             />
           </div>
@@ -71,6 +73,7 @@ export default function DefaultsSection()
               } }
               columnsNames={ AccountFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
+              isLoading={ accountState.isLoading }
               disabled={ accountState.isLoading }
             />
           </div>
@@ -89,6 +92,7 @@ export default function DefaultsSection()
               } }
               columnsNames={ AccountFilterColumns.columnsNames }
               onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
+              isLoading={ accountState.isLoading }
               disabled={ accountState.isLoading }
             />
           </div>

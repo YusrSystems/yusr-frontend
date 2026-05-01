@@ -165,6 +165,7 @@ export default function ChangeItemsSettlementDialog(
                 onValueChange={ handleStoreChange }
                 columnsNames={ StoreFilterColumns.columnsNames }
                 onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
+                isLoading={ storeState.isLoading }
                 disabled={ storeState.isLoading || mode === "update" }
               />
               { isInvalid("storeId") && <span className="text-xs text-red-500">{ getError("storeId") }</span> }
@@ -182,7 +183,7 @@ export default function ChangeItemsSettlementDialog(
           { formData.storeId && (
             <StocktakingItemsTable
               formData={ tableFormData as Partial<IStocktaking> }
-              errors={errors}
+              errors={ errors }
               handleChange={ handleTableChange }
               createInstance={ () => new ItemsSettlementItem() } // إنشاء كائن تسوية جديد
               mode={ mode }

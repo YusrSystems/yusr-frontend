@@ -50,6 +50,7 @@ export default function ItemsTaxStatementDialog()
                 onValueChange={ (val) => setItemId(Number(val)) }
                 columnsNames={ StoreFilterColumns.columnsNames }
                 onSearch={ (condition) => dispatch(ItemSlice.entityActions.filter(condition)) }
+                isLoading={ itemState.isLoading }
                 disabled={ itemState.isLoading }
               />
             </FormField>
