@@ -1,4 +1,4 @@
-import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2, Trash2 } from "lucide-react";
 import * as React from "react";
 import type { ColumnName } from "yusr-core";
 import { cn } from "../../../utils/cn";
@@ -20,6 +20,8 @@ type SearchableSelectParams<T> = {
   onSearch: (condition: { value: string; columnName: string; } | undefined) => void;
   isLoading?: boolean;
   showAllOption?: boolean;
+  onNotFound?: (typedValue: string) => void;
+  onDelete?: (id: number) => Promise<boolean>;
 };
 
 export function SearchableSelect<T>(
@@ -35,19 +37,62 @@ export function SearchableSelect<T>(
     columnsNames,
     onSearch,
     isLoading = false,
-    showAllOption = false
+    showAllOption = false,
+    onNotFound,
+    onDelete
   }: SearchableSelectParams<T>
 )
 {
   const [open, setOpen] = React.useState(false);
+  const [typedValue, setTypedValue] = React.useState("");
+  const [deletingId, setDeletingId] = React.useState<string | null>(null);
 
   // Find the selected item's label to display in the button
   const selectedItem = items.find((item) => String(item[itemValueKey]) === value);
-
   const selectedLabel = selectedItem ? String(selectedItem[itemLabelKey]) : placeholder;
 
+  const showCreateOption = onNotFound
+    && typedValue.trim() !== ""
+    && !items.some(
+      (item) => String(item[itemLabelKey]).toLowerCase() === typedValue.trim().toLowerCase()
+    );
+
+  function handleOpenChange(next: boolean)
+  {
+    setOpen(next);
+    if (!next)
+    {
+      setTypedValue(""); // clear typed text on close
+    }
+  }
+
+  function handleCreate()
+  {
+    onNotFound?.(typedValue.trim());
+    setTypedValue("");
+    setOpen(false);
+  }
+
+  async function handleDelete(e: React.MouseEvent, itemValue: string)
+  {
+    e.stopPropagation(); // prevent triggering onSelect
+    setDeletingId(itemValue);
+
+    const success = await onDelete?.(Number(itemValue));
+
+    if (!success)
+    {
+      setDeletingId(null); // reset spinner on failure
+    }
+    // If deleted item was selected, clear selection
+    else if (value === itemValue)
+    {
+      onValueChange(undefined);
+    }
+  }
+
   return (
-    <Popover open={ open } onOpenChange={ setOpen } modal={ true }>
+    <Popover open={ open } onOpenChange={ handleOpenChange } modal={ true }>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -73,7 +118,29 @@ export function SearchableSelect<T>(
       }
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start" dir="rtl">
         { /* Search Input Header */ }
-        <SearchInput columnsNames={ columnsNames } onSearch={ onSearch } />
+        <SearchInput
+          columnsNames={ columnsNames }
+          onSearch={ (con) =>
+          {
+            onSearch(con);
+            if (onNotFound)
+            {
+              // Only update typedValue when there's an actual value
+              // Don't reset it when con is undefined (that just means "fetch all")
+              if (con?.value !== undefined)
+              {
+                setTypedValue(con.value);
+              }
+            }
+          } }
+          onType={ (val) =>
+          {
+            if (onNotFound)
+            {
+              setTypedValue(val);
+            }
+          } }
+        />
 
         { /* List Container */ }
         <Command shouldFilter={ false }>
@@ -85,63 +152,96 @@ export function SearchableSelect<T>(
                   <span className="text-sm">جاري التحميل...</span>
                 </div>
               )
-              : items.length === 0
-              ? <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">لا توجد بيانات</CommandEmpty>
               : (
-                <CommandGroup>
-                  { showAllOption && (
-                    <CommandItem
-                      value="all-items-option"
-                      onSelect={ () =>
-                      {
-                        onValueChange(undefined);
-                        setOpen(false);
-                      } }
-                      className="cursor-pointer"
-                    >
-                      <Check
-                        className={ cn(
-                          "h-4 w-4 ltr:mr-2 rtl:ml-2",
-                          (value === undefined || value === "") ? "opacity-100" : "opacity-0"
-                        ) }
-                      />
-                      الكل
-                    </CommandItem>
+                <>
+                  { items.length === 0 && !showCreateOption && (
+                    <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
+                      لا توجد بيانات
+                    </CommandEmpty>
                   ) }
 
-                  { items.map((item) =>
-                  {
-                    const itemValue = String(item[itemValueKey]);
-                    const itemLabel = String(item[itemLabelKey]);
-                    const isSelected = value === itemValue;
+                  { (items.length > 0 || showCreateOption) && (
+                    <CommandGroup>
+                      { showAllOption && (
+                        <CommandItem
+                          value="all-items-option"
+                          onSelect={ () =>
+                          {
+                            onValueChange(undefined);
+                            setOpen(false);
+                          } }
+                          className="cursor-pointer"
+                        >
+                          <Check
+                            className={ cn(
+                              "h-4 w-4 ltr:mr-2 rtl:ml-2",
+                              (value === undefined || value === "") ? "opacity-100" : "opacity-0"
+                            ) }
+                          />
+                          الكل
+                        </CommandItem>
+                      ) }
 
-                    return (
-                      <CommandItem
-                        key={ itemValue }
-                        value={ itemValue }
-                        onSelect={ () =>
-                        {
-                          onValueChange(itemValue);
-                          setOpen(false);
-                        } }
-                        className="cursor-pointer"
-                      >
-                        {
-                          /*
-                        Check Icon:
-                        1. We use opacity-0/100 instead of removing it from DOM.
-                           This keeps alignment consistent (like a native Select).
-                        2. rtl/ltr classes ensure correct margins based on direction.
-                      */
-                        }
-                        <Check
-                          className={ cn("h-4 w-4 ltr:mr-2 rtl:ml-2", isSelected ? "opacity-100" : "opacity-0") }
-                        />
-                        { itemLabel }
-                      </CommandItem>
-                    );
-                  }) }
-                </CommandGroup>
+                      { items.map((item) =>
+                      {
+                        const itemValue = String(item[itemValueKey]);
+                        const itemLabel = String(item[itemLabelKey]);
+                        const isSelected = value === itemValue;
+                        const isDeleting = deletingId === itemValue;
+
+                        return (
+                          <CommandItem
+                            key={ itemValue }
+                            value={ itemValue }
+                            onSelect={ () =>
+                            {
+                              onValueChange(itemValue);
+                              setOpen(false);
+                            } }
+                            className="cursor-pointer group"
+                          >
+                            <Check
+                              className={ cn(
+                                "h-4 w-4 ltr:mr-2 rtl:ml-2 shrink-0",
+                                isSelected ? "opacity-100" : "opacity-0"
+                              ) }
+                            />
+
+                            <span className="flex-1 truncate">{ itemLabel }</span>
+
+                            { onDelete && (
+                              <div className="flex items-center justify-center min-w-[32px]">
+                                { isDeleting
+                                  ? <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground shrink-0" />
+                                  : (
+                                    <Button
+                                      onClick={ (e) => handleDelete(e, itemValue) }
+                                      variant="destructive"
+                                      size="sm"
+                                      className={ "shrink-0 rounded-lg px-1.5 opacity-0 group-hover:opacity-100 transition-opacity" }
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" />
+                                    </Button>
+                                  ) }
+                              </div>
+                            ) }
+                          </CommandItem>
+                        );
+                      }) }
+
+                      { showCreateOption && (
+                        <CommandItem
+                          value={ `__create__${typedValue}` }
+                          onSelect={ handleCreate }
+                          className="cursor-pointer text-primary"
+                        >
+                          <span className="ltr:mr-2 rtl:ml-2">+</span>
+                          إضافة "{ typedValue.trim() }"
+                        </CommandItem>
+                      ) }
+                    </CommandGroup>
+                  ) }
+                </>
               ) }
           </CommandList>
         </Command>
