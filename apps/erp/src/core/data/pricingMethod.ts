@@ -15,7 +15,7 @@ export default class PricingMethod extends BaseEntity
 
 export class PricingMethodFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{ label: "رقم الطريقة", value: "Id" }, {
+  public static columnsNames: ColumnName[] = [{
     label: "اسم طريقة التسعير",
     value: "name"
   }];

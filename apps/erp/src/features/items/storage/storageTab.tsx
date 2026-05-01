@@ -1,7 +1,7 @@
+import StoresSearchableSelect from "@/core/components/storesSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
-import { Button, type DialogMode, FormField, NumberField, SearchableSelect, TextField, useFormErrors } from "yusr-ui";
+import { Button, type DialogMode, FormField, NumberField, TextField, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemStore, ItemType } from "../../../core/data/item";
-import { StoreFilterColumns, StoreSlice } from "../../../core/data/store";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 
 export default function StorageTab({ mode }: { mode: DialogMode; })
@@ -10,7 +10,6 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
 
   const { formData, errors } = useAppSelector((state) => state.itemForm);
   const { getError, isInvalid } = useFormErrors(errors);
-  const storeState = useAppSelector((state) => state.store);
 
   const addStore = () =>
     dispatch(ItemSlice.formActions.updateFormData({
@@ -109,26 +108,16 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                       label=""
                       isInvalid={ hasError && !isService && !store.storeId }
                     >
-                      <SearchableSelect
-                        items={ storeState.entities.data ?? [] }
-                        itemLabelKey="name"
-                        itemValueKey="id"
-                        value={ store.storeId?.toString() || "" }
-                        onValueChange={ (val) =>
+                      <StoresSearchableSelect
+                        storeId={ store.storeId }
+                        isInvalid={ hasError && !isService && !store.storeId }
+                        onValueChange={ (store) =>
                         {
-                          const selected = storeState.entities.data?.find(
-                            (s) => s.id.toString() === val
-                          );
                           updateStore(index, {
-                            storeId: selected?.id,
-                            storeName: selected?.name
+                            storeId: store?.id,
+                            storeName: store?.name
                           });
                         } }
-                        columnsNames={ StoreFilterColumns.columnsNames }
-                        onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
-                        isLoading={ storeState.isLoading }
-                        disabled={ storeState.isLoading }
-                        isInvalid={ hasError && !isService && !store.storeId }
                       />
                     </FormField>
                   </td>

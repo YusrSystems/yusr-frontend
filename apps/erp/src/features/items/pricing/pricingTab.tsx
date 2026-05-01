@@ -22,11 +22,29 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
           <UnitsSearchableSelect
             unitId={ formData.sellUnitId }
             disabled={ formData.type === ItemType.Service || mode === "update" }
+            isInvalid={ isInvalid("sellUnitId") }
             onValueChange={ (unit) =>
             {
               dispatch(ItemSlice.formActions.updateFormData({
                 sellUnitId: unit?.id,
                 sellUnitName: unit?.name
+              }));
+
+              dispatch(ItemSlice.formActions.updateFormData((prev) =>
+              {
+                const list = [...(prev.itemUnitPricingMethods || [])];
+                list.forEach((iupm, i) =>
+                {
+                  if (iupm.unitId === unit?.id)
+                  {
+                    list[i] = {
+                      ...iupm,
+                      quantityMultiplier: 1
+                    };
+                  }
+                });
+
+                return { itemUnitPricingMethods: list };
               }));
             } }
           />

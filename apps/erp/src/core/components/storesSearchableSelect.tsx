@@ -2,35 +2,35 @@ import { ResultStatus, SystemPermissions } from "yusr-core";
 import { SearchableSelect } from "yusr-ui";
 import { SystemPermissionsActions } from "../auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../auth/systemPermissionsResources";
-import Unit, { UnitFilterColumns, UnitSlice } from "../data/unit";
-import UnitsApiService from "../networking/unitApiService";
+import Store, { StoreFilterColumns, StoreSlice } from "../data/store";
+import StoresApiService from "../networking/storeApiService";
 import { useAppDispatch, useAppSelector } from "../state/store";
 
-export type UnitsSearchableSelectParams = {
-  unitId?: number;
-  disabled: boolean;
+export type StoresSearchableSelectParams = {
+  storeId?: number;
+  disabled?: boolean;
   isInvalid?: boolean;
-  onValueChange: (value: Unit) => void;
+  onValueChange: (value: Store) => void;
 };
 
-export default function UnitsSearchableSelect(
-  { unitId, disabled, isInvalid, onValueChange }: UnitsSearchableSelectParams
+export default function StoresSearchableSelect(
+  { storeId, disabled, isInvalid, onValueChange }: StoresSearchableSelectParams
 )
 {
-  const unitState = useAppSelector((state) => state.unit);
+  const storeState = useAppSelector((state) => state.store);
   const authState = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
   return (
     <SearchableSelect
-      items={ unitState.entities.data ?? [] }
+      items={ storeState.entities.data ?? [] }
       itemLabelKey="name"
       itemValueKey="id"
-      value={ unitId?.toString() || "" }
+      value={ storeId?.toString() || "" }
       onValueChange={ (val) =>
       {
-        const selected = unitState.entities.data?.find(
-          (u) => u.id.toString() === val
+        const selected = storeState.entities.data?.find(
+          (s) => s.id.toString() === val
         );
 
         if (selected)
@@ -38,41 +38,41 @@ export default function UnitsSearchableSelect(
           onValueChange(selected);
         }
       } }
-      columnsNames={ UnitFilterColumns.columnsNames }
-      onSearch={ (condition) => dispatch(UnitSlice.entityActions.filter(condition)) }
-      isLoading={ unitState.isLoading }
-      disabled={ unitState.isLoading || disabled }
+      columnsNames={ StoreFilterColumns.columnsNames }
+      onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
+      isLoading={ storeState.isLoading }
+      disabled={ storeState.isLoading || disabled }
       isInvalid={ isInvalid }
       onNotFound={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],
-          SystemPermissionsResources.Units,
+          SystemPermissionsResources.Stores,
           SystemPermissionsActions.Add
         )
         ? async (typedValue) =>
         {
-          var res = await new UnitsApiService().Add({ name: typedValue, id: 0 });
+          var res = await new StoresApiService().Add({ name: typedValue, id: 0, createdBy: 0, authorized: true });
           if (res.status === ResultStatus.Ok)
           {
             if (res.data)
             {
               onValueChange(res.data);
-              dispatch(UnitSlice.entityActions.refresh({ data: res.data }));
-              dispatch(UnitSlice.entityActions.filter());
+              dispatch(StoreSlice.entityActions.refresh({ data: res.data }));
+              dispatch(StoreSlice.entityActions.filter());
             }
           }
         }
         : undefined }
       onDelete={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],
-          SystemPermissionsResources.Units,
+          SystemPermissionsResources.Stores,
           SystemPermissionsActions.Delete
         )
         ? async (id) =>
         {
-          const res = await new UnitsApiService().Delete(id);
+          const res = await new StoresApiService().Delete(id);
           if (res.status === ResultStatus.Ok)
           {
-            dispatch(UnitSlice.entityActions.refresh({ deletedId: id }));
+            dispatch(StoreSlice.entityActions.refresh({ deletedId: id }));
             return true;
           }
           return false;

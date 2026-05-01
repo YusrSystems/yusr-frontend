@@ -229,7 +229,7 @@ export function SearchableSelect<T>(
                         );
                       }) }
 
-                      { showCreateOption && (
+                      { items.length <= 0 && showCreateOption && (
                         <CommandItem
                           value={ `__create__${typedValue}` }
                           onSelect={ handleCreate }

@@ -26,7 +26,7 @@ function LoadingMode()
         <EmptyMedia variant="icon">
           <Table />
         </EmptyMedia>
-        <EmptyTitle>الرجاء الانتظار</EmptyTitle>
+        <EmptyTitle>فضلا انتظر</EmptyTitle>
         <EmptyDescription>يتم تحميل البيانات المطلوبة</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>

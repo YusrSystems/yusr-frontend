@@ -1,11 +1,11 @@
+import PricingMethodsSearchableSelect from "@/core/components/pricingMethodSearchableSelect";
+import UnitsSearchableSelect from "@/core/components/unitsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { SystemPermissions } from "yusr-core";
-import { Button, FormField, NumberField, SearchableSelect, TextField } from "yusr-ui";
+import { Button, FormField, NumberField, TextField } from "yusr-ui";
 import { SystemPermissionsActions } from "../../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../../core/auth/systemPermissionsResources";
 import Item, { ItemType } from "../../../core/data/item";
-import { PricingMethodFilterColumns, PricingMethodSlice } from "../../../core/data/pricingMethod";
-import { UnitFilterColumns, UnitSlice } from "../../../core/data/unit";
 import { useAppSelector } from "../../../core/state/store";
 import ItemBarcodeButton from "../../reports/itemBarcodeDialog";
 import usePricingMethodsTable from "./usePricingMethodsTable";
@@ -13,10 +13,7 @@ import usePricingMethodsTable from "./usePricingMethodsTable";
 export default function PricingMethodsTable()
 {
   const {
-    dispatch,
     formData,
-    unitState,
-    pricingMethodState,
     addPricingMethod,
     updatePricingMethod,
     removePricingMethod,
@@ -72,28 +69,17 @@ export default function PricingMethodsTable()
                     label=""
                     isInvalid={ hasError && !isService && !method.unitId }
                   >
-                    <SearchableSelect
-                      items={ unitState.entities.data ?? [] }
-                      itemLabelKey="name"
-                      itemValueKey="id"
-                      value={ method.unitId?.toString() || "" }
-                      onValueChange={ (val) =>
+                    <UnitsSearchableSelect
+                      unitId={ method.unitId }
+                      disabled={ isService }
+                      isInvalid={ hasError && !isService && !method.unitId }
+                      onValueChange={ (unit) =>
                       {
-                        const selected = unitState.entities.data?.find(
-                          (u) =>
-                            u.id.toString() === val
-                        );
                         updatePricingMethod(index, {
-                          unitId: selected?.id,
-                          unitName: selected?.name
+                          unitId: unit.id,
+                          unitName: unit.name
                         });
                       } }
-                      columnsNames={ UnitFilterColumns.columnsNames }
-                      onSearch={ (condition) =>
-                        dispatch(UnitSlice.entityActions.filter(condition)) }
-                      isLoading={ unitState.isLoading }
-                      disabled={ unitState.isLoading || isService }
-                      isInvalid={ hasError && !isService && !method.unitId }
                     />
                   </FormField>
                 </td>
@@ -102,26 +88,17 @@ export default function PricingMethodsTable()
                     label=""
                     isInvalid={ hasError && !isService && !method.pricingMethodId }
                   >
-                    <SearchableSelect
-                      items={ pricingMethodState.entities.data ?? [] }
-                      itemLabelKey="name"
-                      itemValueKey="id"
-                      value={ method.pricingMethodId?.toString() || "" }
-                      onValueChange={ (val) =>
+                    <PricingMethodsSearchableSelect
+                      pricingMethodId={ method.pricingMethodId }
+                      disabled={ isService }
+                      isInvalid={ hasError && !isService && !method.pricingMethodId }
+                      onValueChange={ (pricingMethod) =>
                       {
-                        const selected = pricingMethodState.entities.data?.find(
-                          (p) => p.id.toString() === val
-                        );
                         updatePricingMethod(index, {
-                          pricingMethodId: selected?.id,
-                          pricingMethodName: selected?.name
+                          pricingMethodId: pricingMethod.id,
+                          pricingMethodName: pricingMethod.name
                         });
                       } }
-                      columnsNames={ PricingMethodFilterColumns.columnsNames }
-                      onSearch={ (condition) => dispatch(PricingMethodSlice.entityActions.filter(condition)) }
-                      isLoading={ pricingMethodState.isLoading }
-                      disabled={ pricingMethodState.isLoading || isService }
-                      isInvalid={ hasError && !isService && !method.pricingMethodId }
                     />
                   </FormField>
                 </td>
@@ -131,7 +108,8 @@ export default function PricingMethodsTable()
                     min={ 0 }
                     disabled={ method.unitId === formData.sellUnitId }
                     value={ method.quantityMultiplier ?? "0" }
-                    onChange={ (val) => updatePricingMethod(index, { quantityMultiplier: val }) }
+                    onChange={ (val) =>
+                      updatePricingMethod(index, { quantityMultiplier: val }) }
                     isInvalid={ hasError && (method.quantityMultiplier == undefined || method.quantityMultiplier <= 0) }
                   />
                 </td>
@@ -140,7 +118,8 @@ export default function PricingMethodsTable()
                     label=""
                     min={ 0 }
                     value={ method.price ?? "0" }
-                    onChange={ (val) => updatePricingMethod(index, { price: val }) }
+                    onChange={ (val) =>
+                      updatePricingMethod(index, { price: val }) }
                     isInvalid={ hasError && (method.price == undefined || method.price <= 0) }
                   />
                 </td>
