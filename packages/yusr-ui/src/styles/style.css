@@ -143,3 +143,21 @@ h1 {
 .dark .error {
   border-color: #dc2626;
 }
+
+/* Custom scrollbar - matches shadcn theme */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--muted-foreground);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--foreground);
+}
