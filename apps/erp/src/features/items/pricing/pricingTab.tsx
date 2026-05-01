@@ -1,6 +1,6 @@
-import { Checkbox, type DialogMode, FormField, NumberField, SearchableSelect, useFormErrors } from "yusr-ui";
+import UnitsSearchableSelect from "@/core/components/unitsSearchableSelect";
+import { Checkbox, type DialogMode, FormField, NumberField, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemType } from "../../../core/data/item";
-import { UnitFilterColumns, UnitSlice } from "../../../core/data/unit";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 import PricingMethodsTable from "./pricingMethodsTable";
 
@@ -8,7 +8,6 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
 {
   const { formData, errors } = useAppSelector((state) => state.itemForm);
   const { getError, isInvalid } = useFormErrors(errors);
-  const unitState = useAppSelector((state) => state.unit);
   const dispatch = useAppDispatch();
 
   return (
@@ -20,25 +19,16 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
           isInvalid={ isInvalid("sellUnitId") }
           error={ getError("sellUnitId") }
         >
-          <SearchableSelect
-            items={ unitState.entities.data ?? [] }
-            itemLabelKey="name"
-            itemValueKey="id"
-            value={ formData.sellUnitId?.toString() || "" }
-            onValueChange={ (val) =>
+          <UnitsSearchableSelect
+            unitId={ formData.sellUnitId }
+            disabled={ formData.type === ItemType.Service || mode === "update" }
+            onValueChange={ (unit) =>
             {
-              const selected = unitState.entities.data?.find(
-                (u) => u.id.toString() === val
-              );
               dispatch(ItemSlice.formActions.updateFormData({
-                sellUnitId: selected?.id,
-                sellUnitName: selected?.name
+                sellUnitId: unit?.id,
+                sellUnitName: unit?.name
               }));
             } }
-            columnsNames={ UnitFilterColumns.columnsNames }
-            onSearch={ (condition) => dispatch(UnitSlice.entityActions.filter(condition)) }
-            isLoading={ unitState.isLoading }
-            disabled={ unitState.isLoading || formData.type === ItemType.Service || mode === "update" }
           />
         </FormField>
 
