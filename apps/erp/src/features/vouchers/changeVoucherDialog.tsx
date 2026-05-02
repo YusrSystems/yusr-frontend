@@ -48,14 +48,9 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
     }
   }, [formData.amount, authState.setting?.currency]);
 
-  const calculateCommission = (amount: number | undefined, methodId?: number): number =>
+  const calculateCommission = (type?: VoucherType, amount?: number, method?: PaymentMethod): number =>
   {
-    if (!methodId || !amount)
-    {
-      return 0;
-    }
-    const method = paymentMethodState.entities.data?.find((m) => m.id === methodId);
-    if (!method)
+    if (type == undefined || amount == undefined || method == undefined || type === VoucherType.Payment)
     {
       return 0;
     }
@@ -72,15 +67,18 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
     return 0;
   };
 
+  const getPaymentMethod = (paymentMethodId?: number): PaymentMethod | undefined =>
+  {
+    return paymentMethodState.entities.data?.find((pm) => pm.id === paymentMethodId);
+  };
+
   const handleTypeChange = (val: string) =>
   {
     const newType = Number(val) as VoucherType;
     dispatch(VoucherSlice.formActions.updateFormData({
       type: newType,
       amountDue: newType === VoucherType.Payment ? formData.amountDue : undefined,
-      commissionAmount: newType === VoucherType.Receipt
-        ? calculateCommission(formData.amount, formData.paymentMethodId)
-        : 0
+      commissionAmount: calculateCommission(newType, formData.amount, getPaymentMethod(formData.paymentMethodId))
     }));
   };
 
@@ -88,7 +86,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
   {
     dispatch(VoucherSlice.formActions.updateFormData({
       amount: val,
-      commissionAmount: formData.type === VoucherType.Receipt ? calculateCommission(val, formData.paymentMethodId) : 0
+      commissionAmount: calculateCommission(formData.type, val, getPaymentMethod(formData.paymentMethodId))
     }));
   };
 
@@ -97,9 +95,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
     dispatch(VoucherSlice.formActions.updateFormData({
       paymentMethodId: paymentMethod.id,
       paymentMethod: paymentMethod,
-      commissionAmount: formData.type === VoucherType.Receipt
-        ? calculateCommission(formData.amount, paymentMethod.id)
-        : 0
+      commissionAmount: calculateCommission(formData.type, formData.amount, paymentMethod)
     }));
   };
 

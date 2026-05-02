@@ -80,7 +80,7 @@ export default function ChangePaymentMethodDialog({
               onSearch={ (condition) => dispatch(BanksAndBoxesSlice.entityActions.filter(condition)) }
               isLoading={ accountState.isLoading }
               isInvalid={ isInvalid("accountId") }
-              disabled={ accountState.isLoading }
+              disabled={ accountState.isLoading || mode === "update" }
               onValueChange={ (val) =>
               {
                 const selected = accountState.entities.data?.find(
@@ -102,6 +102,7 @@ export default function ChangePaymentMethodDialog({
           <SelectField
             label="نوع العمولة"
             required
+            disabled={ mode === "update" }
             value={ formData.commissionType?.toString()
               || CommissionType.Percent.toString() }
             onValueChange={ (val) =>
@@ -119,6 +120,7 @@ export default function ChangePaymentMethodDialog({
           <NumberField
             label="قيمة العمولة"
             required
+            disabled={ mode === "update" }
             value={ formData.commissionAmount || "" }
             onChange={ (e) => dispatch(PaymentMethodSlice.formActions.updateFormData({ commissionAmount: Number(e) })) }
             isInvalid={ isInvalid("commissionAmount") }
