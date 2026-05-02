@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField, SearchableSelect, SelectField } from "yusr-ui";
-import { ItemSlice } from "../../core/data/item";
+import { ItemFilterColumns, ItemSlice } from "../../core/data/item";
 import { ItemsTaxStatementReportRequest, ItemsTaxStatementReportType } from "../../core/data/report/itemsTaxStatementReportRequest";
 import ReportConstants from "../../core/data/report/reportConstants";
-import { StoreFilterColumns } from "../../core/data/store";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "./reportButton";
 
@@ -48,7 +47,7 @@ export default function ItemsTaxStatementDialog()
                 showAllOption
                 value={ itemId?.toString() || "" }
                 onValueChange={ (val) => setItemId(Number(val)) }
-                columnsNames={ StoreFilterColumns.columnsNames }
+                columnsNames={ ItemFilterColumns.columnsNames }
                 onSearch={ (condition) => dispatch(ItemSlice.entityActions.filter(condition)) }
                 isLoading={ itemState.isLoading }
                 disabled={ itemState.isLoading }

@@ -140,7 +140,7 @@ export default class Invoice extends BaseEntity
 
 export class InvoiceFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{ label: "رقم الفاتورة", value: "Id" }];
+  public static columnsNames: ColumnName<Invoice>[] = [{ label: "رقم الفاتورة", value: "id" }];
 }
 
 export class InvoiceValidationRules

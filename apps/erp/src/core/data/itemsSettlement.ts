@@ -45,10 +45,10 @@ export default class ItemsSettlement extends BaseEntity implements IStocktaking
 
 export class ItemsSettlementFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{ label: "رقم التسوية", value: "Id" }, {
+  public static columnsNames: ColumnName<ItemsSettlement>[] = [{ label: "رقم التسوية", value: "id" }, {
     label: "المستودع",
-    value: "StoreName"
-  }, { label: "الوصف", value: "Description" }];
+    value: "storeName"
+  }, { label: "الوصف", value: "description" }];
 }
 
 export class ItemsSettlementValidationRules

@@ -35,5 +35,5 @@ export class RouteStation extends BaseEntity
 
 export class RouteFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{ label: "اسم الخط", value: "Name" }];
+  public static columnsNames: ColumnName<Route>[] = [{ label: "اسم الخط", value: "name" }];
 }

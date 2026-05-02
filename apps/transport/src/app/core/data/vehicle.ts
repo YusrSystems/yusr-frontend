@@ -20,11 +20,11 @@ export default class Vehicle extends BaseEntity
 
 export class VehicleFilterColumns
 {
-  public static columnsNames: ColumnName[] = [
-    { label: "رقم المركبة", value: "Id" },
-    { label: "اسم المركبة", value: "Name" },
-    { label: "الشركة المصنعة", value: "Make" },
-    { label: "الموديل", value: "Model" }
+  public static columnsNames: ColumnName<Vehicle>[] = [
+    { label: "رقم المركبة", value: "id" },
+    { label: "اسم المركبة", value: "name" },
+    { label: "الشركة المصنعة", value: "make" },
+    { label: "الموديل", value: "model" }
   ];
 }
 

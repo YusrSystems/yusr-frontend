@@ -27,10 +27,10 @@ export const GENDER = { Male: 0 as Gender, Female: 1 as Gender } as const;
 
 export class PassengerFilterColumns
 {
-  public static columnsNames: ColumnName[] = [
-    { label: "اسم الراكب", value: "Name" },
-    { label: "رقم الجوال", value: "PhoneNumber" },
-    { label: "رقم جواز السفر", value: "PassportNo" },
-    { label: "رقم الراكب", value: "Id" }
+  public static columnsNames: ColumnName<Passenger>[] = [
+    { label: "اسم الراكب", value: "name" },
+    { label: "رقم الجوال", value: "phoneNumber" },
+    { label: "رقم جواز السفر", value: "passportNo" },
+    { label: "رقم الراكب", value: "id" }
   ];
 }

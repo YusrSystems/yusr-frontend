@@ -119,16 +119,16 @@ YusrCrudPage.Cards = function({ cards }: { cards: CardProps[]; })
   return <CrudTableCard cards={ cards } />;
 };
 
-YusrCrudPage.Search = function(
+YusrCrudPage.Search = function<T extends BaseEntity>(
   { columnsToFilter, onConditionChange }: {
-    columnsToFilter: ColumnName[];
+    columnsToFilter: ColumnName<T>[];
     onConditionChange?: (condition: FilterCondition | undefined) => void;
   }
 )
 {
   const { actions, dispatch } = useCrudPageContext();
   return (
-    <SearchInput
+    <SearchInput<T>
       columnsNames={ columnsToFilter }
       onSearch={ (condition) =>
       {

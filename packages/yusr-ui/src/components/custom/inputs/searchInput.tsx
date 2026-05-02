@@ -5,16 +5,16 @@ import type { ColumnName, FilterCondition } from "yusr-core";
 import { Input } from "../../pure/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../pure/select";
 
-type SearchInputParams = {
-  columnsNames: ColumnName[];
+type SearchInputParams<T> = {
+  columnsNames: ColumnName<T>[];
   onSearch: (condition: FilterCondition | undefined) => void;
   onType?: (value: string) => void;
 };
 
-export function SearchInput({ columnsNames, onSearch, onType }: SearchInputParams)
+export function SearchInput<T>({ columnsNames, onSearch, onType }: SearchInputParams<T>)
 {
   const [searchValue, setSearchValue] = useState("");
-  const [selectedColumn, setSelectedColumn] = useState<string>(columnsNames[0]?.value || "");
+  const [selectedColumn, setSelectedColumn] = useState<string>(columnsNames[0]?.value.toString() || "");
 
   const debouncedAction = useDebouncedCallback((value: string, column: string) =>
   {
@@ -66,7 +66,7 @@ export function SearchInput({ columnsNames, onSearch, onType }: SearchInputParam
             </SelectTrigger>
             <SelectContent>
               { columnsNames.map((col) => (
-                <SelectItem key={ col.value } value={ col.value }>{ col.label }</SelectItem>
+                <SelectItem key={ col.value.toString() } value={ col.value.toString() }>{ col.label }</SelectItem>
               )) }
             </SelectContent>
           </Select>

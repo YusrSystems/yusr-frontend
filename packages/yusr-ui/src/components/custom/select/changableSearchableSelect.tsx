@@ -24,7 +24,7 @@ export type ChangableSearchableSelectParams<T extends BaseEntity, TDialogProps e
   itemValueKey: keyof T;
   state: IEntityState<T>;
   apiService: BaseApiService<T>;
-  columnsNames: ColumnName[];
+  columnsNames: ColumnName<T>[];
   disabled?: boolean;
   isInvalid?: boolean;
   systemPermissionsResources: string;
@@ -73,7 +73,7 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
   );
   const [typedCondition, setTypedCondition] = React.useState<FilterCondition>({
     value: "",
-    columnName: columnsNames[0]?.value || ""
+    columnName: columnsNames[0]?.value.toString() || ""
   });
   const dispatch = useAppDispatch();
 

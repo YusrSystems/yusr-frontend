@@ -28,10 +28,10 @@ export class Trip extends BaseEntity
 
 export class TripFilterColumns
 {
-  public static columnsNames: ColumnName[] = [
-    { label: "رقم الرحلة", value: "Id" },
-    { label: "اسم القائد", value: "MainCaptainName" },
-    { label: "اسم المساعد", value: "SecondaryCaptainName" },
-    { label: "المركبة", value: "BusName" }
+  public static columnsNames: ColumnName<Trip>[] = [
+    { label: "رقم الرحلة", value: "id" },
+    { label: "اسم القائد", value: "mainCaptainName" },
+    { label: "اسم المساعد", value: "secondaryCaptainName" },
+    { label: "المركبة", value: "busName" }
   ];
 }

@@ -17,5 +17,5 @@ export class City extends BaseEntity
 
 export class CityFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{ label: "اسم المدينة", value: "Name" }];
+  public static columnsNames: ColumnName<City>[] = [{ label: "اسم المدينة", value: "name" }];
 }

@@ -21,9 +21,9 @@ export default class BalanceTransfer extends BaseEntity
 
 export class BalanceTransferFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{ label: "رقم التحويل", value: "Id" }, {
+  public static columnsNames: ColumnName<BalanceTransfer>[] = [{ label: "رقم التحويل", value: "id" }, {
     label: "البيان",
-    value: "Description"
+    value: "description"
   }];
 }
 

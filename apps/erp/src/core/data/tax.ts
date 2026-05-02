@@ -17,7 +17,7 @@ export class Tax extends BaseEntity
 
 export class TaxFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{ label: "اسم الضريبة", value: "Name" }];
+  public static columnsNames: ColumnName<Tax>[] = [{ label: "اسم الضريبة", value: "name" }];
 }
 
 export class TaxValidationRules

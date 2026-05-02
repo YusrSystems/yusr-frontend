@@ -17,9 +17,9 @@ export default class Store extends BaseEntity
 
 export class StoreFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{
+  public static columnsNames: ColumnName<Store>[] = [{
     label: "اسم المستودع",
-    value: "Name"
+    value: "name"
   }];
 }
 

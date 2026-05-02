@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { useEffect, useMemo } from "react";
-import { RoleFilterColumns, User, type ValidationRule, Validators } from "yusr-core";
+import { BranchFilterColumns, RoleFilterColumns, User, type ValidationRule, Validators } from "yusr-core";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, FormField, PasswordField, SearchableSelect, SelectField, TextField, useEntityForm } from "yusr-ui";
 import { filterBranches } from "../../branches/logic/branchSlice";
@@ -102,7 +102,7 @@ export default function ChangeUserDialog({ entity, mode, service, onSuccess }: C
             itemValueKey="id"
             placeholder="اختر الفرع"
             value={ formData.branchId?.toString() || "" }
-            columnsNames={ RoleFilterColumns.columnsNames }
+            columnsNames={ BranchFilterColumns.columnsNames }
             onSearch={ (condition) => dispatch(filterBranches(condition)) }
             isLoading={ branchState.isLoading }
             isInvalid={ isInvalid("branchId") }

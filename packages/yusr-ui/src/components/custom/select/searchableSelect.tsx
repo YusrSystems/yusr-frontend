@@ -22,7 +22,7 @@ type SearchableSelectParams<T> = {
   disabled?: boolean;
   isInvalid?: boolean;
   placeholder?: string;
-  columnsNames: ColumnName[];
+  columnsNames: ColumnName<T>[];
   isLoading?: boolean;
   showAllOption?: boolean;
   buttonClassName?: string;
@@ -55,7 +55,7 @@ export function SearchableSelect<T>(
   const [open, setOpen] = React.useState(false);
   const [typedCondition, setTypedCondition] = React.useState<FilterCondition>({
     value: "",
-    columnName: columnsNames[0]?.value || ""
+    columnName: columnsNames[0]?.value.toString() || ""
   });
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
 
@@ -131,7 +131,7 @@ export function SearchableSelect<T>(
       }
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start" dir="rtl">
         { /* Search Input Header */ }
-        <SearchInput
+        <SearchInput<T>
           columnsNames={ columnsNames }
           onSearch={ (con) =>
           {

@@ -22,8 +22,8 @@ export class User extends BaseEntity
 
 export class UserFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{ label: "رقم المستخدم", value: "Id" }, {
+  public static columnsNames: ColumnName<User>[] = [{ label: "رقم المستخدم", value: "id" }, {
     label: "اسم المستخدم",
-    value: "Username"
+    value: "username"
   }];
 }

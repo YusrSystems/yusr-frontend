@@ -42,7 +42,7 @@ export type CrudPageProps<T extends BaseEntity> = PropsWithChildren & {
   onConditionChange?: (condition: FilterCondition | undefined) => void;
   actionButtons?: React.ReactNode[];
   cards: CardProps[];
-  columnsToFilter: ColumnName[];
+  columnsToFilter: ColumnName<T>[];
   service: BaseApiService<T>;
   tableHeadRows: CrudTableHeadRow[];
   tableRowMapper: (entity: T) => TableBodyRowInfo[];
@@ -115,7 +115,7 @@ export function CrudPage<T extends BaseEntity>(
 
       <CrudTableCard cards={ cards } />
 
-      <SearchInput
+      <SearchInput<T>
         columnsNames={ columnsToFilter }
         onSearch={ (condition) =>
         {

@@ -38,10 +38,10 @@ export default class Voucher extends BaseEntity
 
 export class VoucherFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{ label: "رقم السند", value: "Id" }, {
+  public static columnsNames: ColumnName<Voucher>[] = [{ label: "رقم السند", value: "id" }, {
     label: "اسم الحساب",
-    value: "AccountName"
-  }, { label: "البيان", value: "Description" }];
+    value: "accountName"
+  }, { label: "البيان", value: "description" }];
 }
 
 export class VoucherValidationRules

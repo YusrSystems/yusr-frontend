@@ -63,10 +63,10 @@ export default class Stocktaking extends BaseEntity implements IStocktaking
 
 export class StocktakingFilterColumns
 {
-  public static columnsNames: ColumnName[] = [{ label: "رقم الجرد", value: "Id" }, {
+  public static columnsNames: ColumnName<Stocktaking>[] = [{ label: "رقم الجرد", value: "id" }, {
     label: "المستودع",
-    value: "StoreName"
-  }, { label: "الوصف", value: "Description" }];
+    value: "storeName"
+  }, { label: "الوصف", value: "description" }];
 }
 
 export class StocktakingValidationRules

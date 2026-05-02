@@ -47,11 +47,11 @@ export default class ItemTransfer extends BaseEntity
 
 export class ItemTransferFilterColumns
 {
-  public static columnsNames: ColumnName[] = [
-    { label: "رقم التحويل", value: "Id" },
-    { label: "المستودع المحول منه", value: "FromStoreName" },
-    { label: "المستودع المحول إليه", value: "ToStoreName" },
-    { label: "الوصف", value: "Description" }
+  public static columnsNames: ColumnName<ItemTransfer>[] = [
+    { label: "رقم التحويل", value: "id" },
+    { label: "المستودع المحول منه", value: "fromStoreName" },
+    { label: "المستودع المحول إليه", value: "toStoreName" },
+    { label: "الوصف", value: "description" }
   ];
 }
 

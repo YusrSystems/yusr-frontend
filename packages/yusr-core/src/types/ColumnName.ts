@@ -1,1 +1,1 @@
-export type ColumnName = { label: string; value: string; };
+export type ColumnName<T> = { label: string; value: keyof T };
