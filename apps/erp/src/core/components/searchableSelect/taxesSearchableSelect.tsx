@@ -28,9 +28,9 @@ export default function TaxesSearchableSelect(
         filter: TaxSlice.entityActions.filter,
         refresh: TaxSlice.entityActions.refresh
       } }
-      createEntity={ (typedValue) =>
+      createEntity={ (con) =>
       {
-        return { name: typedValue } as Tax;
+        return { name: con.value } as Tax;
       } }
       changeDialog={ ChangeTaxDialog }
     />

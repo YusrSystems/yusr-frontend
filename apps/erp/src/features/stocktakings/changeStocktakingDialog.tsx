@@ -1,10 +1,11 @@
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, Loading, SearchableSelect, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FormField, Loading, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { FilterByTypeRequest } from "../../core/data/filterByTypeRequest";
 import { ItemType } from "../../core/data/item";
 import Stocktaking, { StocktakingItem, StocktakingSlice, StocktakingValidationRules } from "../../core/data/stocktaking";
-import { StoreFilterColumns, StoreSlice } from "../../core/data/store";
+import Store, { StoreSlice } from "../../core/data/store";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import StocktakingItemsTable from "./stocktakingItemsTable";
@@ -68,12 +69,11 @@ export default function ChangeStocktakingDialog(
     }
   }, [entity?.id, mode]);
 
-  const handleStoreChange = (val: string | undefined) =>
+  const handleStoreChange = (store: Store) =>
   {
-    const selected = storeState.entities.data?.find((s) => s.id.toString() === val);
     dispatch(StocktakingSlice.formActions.updateFormData({
-      storeId: selected?.id,
-      storeName: selected?.name,
+      storeId: store?.id,
+      storeName: store?.name,
       stocktakingItems: []
     }));
     StocktakingSlice.formActions.clearError("storeId");
@@ -117,24 +117,18 @@ export default function ChangeStocktakingDialog(
               disabled
             />
 
-            <div className="flex flex-col gap-1.5 w-full">
-              <label className="text-sm font-medium">
-                المستودع <span className="text-red-500">*</span>
-              </label>
-              <SearchableSelect
-                items={ storeState.entities.data ?? [] }
-                itemLabelKey="name"
-                itemValueKey="id"
-                placeholder="اختر المستودع"
-                value={ formData.storeId?.toString() || "" }
+            <FormField
+              label="المستودع"
+              required
+              isInvalid={ isInvalid("storeId") }
+              error={ getError("storeId") }
+            >
+              <StoresSearchableSelect
+                id={ formData.storeId }
+                isInvalid={ isInvalid("storeId") }
                 onValueChange={ handleStoreChange }
-                columnsNames={ StoreFilterColumns.columnsNames }
-                onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
-                isLoading={ storeState.isLoading }
-                disabled={ storeState.isLoading || mode === "update" }
               />
-              { isInvalid("storeId") && <span className="text-xs text-red-500">{ getError("storeId") }</span> }
-            </div>
+            </FormField>
           </FieldsSection>
 
           <TextField

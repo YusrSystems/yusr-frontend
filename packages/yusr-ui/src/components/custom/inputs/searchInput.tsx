@@ -1,13 +1,13 @@
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import type { ColumnName } from "yusr-core";
+import type { ColumnName, FilterCondition } from "yusr-core";
 import { Input } from "../../pure/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../pure/select";
 
 type SearchInputParams = {
   columnsNames: ColumnName[];
-  onSearch: (condition: { value: string; columnName: string; } | undefined) => void;
+  onSearch: (condition: FilterCondition | undefined) => void;
   onType?: (value: string) => void;
 };
 

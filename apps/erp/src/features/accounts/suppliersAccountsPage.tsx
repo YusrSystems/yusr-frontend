@@ -13,9 +13,9 @@ export default function SuppliersAccountsPage()
     <AccountsPage
       title="إدارة حسابات الموردين"
       slice={ SuppliersSlice }
-      stateKey="suppliers"
-      dialogStateKey="suppliersDialog"
       fixedType={ AccountType.Supplier }
+      selectEntityState={ (state) => state.suppliers }
+      selectDialogState={ (state) => state.suppliersDialog }
       selectFormState={ (state) => state.suppliersForm }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],

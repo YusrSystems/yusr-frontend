@@ -12,10 +12,10 @@ export default function BanksAccountsPage()
   return (
     <AccountsPage
       slice={ BanksSlice }
-      stateKey="banks"
-      dialogStateKey="banksDialog"
       title="إدارة حسابات البنوك"
       fixedType={ AccountType.Bank }
+      selectEntityState={ (state) => state.banks }
+      selectDialogState={ (state) => state.banksDialog }
       selectFormState={ (state) => state.banksForm }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],

@@ -9,9 +9,17 @@ import { Button, Dialog } from "../../pure";
 import type { DialogMode } from "../dialogs/dialogType";
 import { SearchableSelect } from "./searchableSelect";
 
-export type ChangableSearchableSelectParams<T extends BaseEntity> = {
+type BaseDialogProps<T extends BaseEntity> = {
+  entity?: T;
+  mode: DialogMode;
+  service: BaseApiService<T>;
+  onSuccess: (data: T) => void;
+};
+
+export type ChangableSearchableSelectParams<T extends BaseEntity, TDialogProps extends object = {}> = {
   mode?: "dialog" | "inline";
   id?: number;
+  items?: T[];
   itemLabelKey: keyof T;
   itemValueKey: keyof T;
   state: IEntityState<T>;
@@ -27,19 +35,16 @@ export type ChangableSearchableSelectParams<T extends BaseEntity> = {
     filter: AsyncThunk<FilterResult<T> | undefined, FilterCondition | undefined, object>;
     refresh: ActionCreatorWithPayload<{ data?: T; deletedId?: number; }>;
   };
-  createEntity: (typedValue: string) => T;
-  changeDialog: React.ComponentType<{
-    entity?: T;
-    mode: DialogMode;
-    service: BaseApiService<T>;
-    onSuccess: (data: T) => void;
-  }>;
+  createEntity: (typedCondition: FilterCondition) => T;
+  changeDialog: React.ComponentType<BaseDialogProps<T> & TDialogProps>;
+  changeDialogProps?: TDialogProps;
 };
 
-export default function ChangableSearchableSelect<T extends BaseEntity>(
+export default function ChangableSearchableSelect<T extends BaseEntity, TDialogProps extends object = {}>(
   {
     mode = "dialog",
     id,
+    items,
     itemLabelKey,
     itemValueKey,
     state,
@@ -53,19 +58,23 @@ export default function ChangableSearchableSelect<T extends BaseEntity>(
     onValueChange,
     entityActions,
     createEntity,
-    changeDialog
-  }: ChangableSearchableSelectParams<T>
+    changeDialog,
+    changeDialogProps
+  }: ChangableSearchableSelectParams<T, TDialogProps>
 )
 {
   const authState = useAppSelector((state) => state.auth);
   const [openDialog, setOpenDialog] = React.useState(false);
   const [dialogMode, setDialogMode] = React.useState<DialogMode>("create");
   const [selected, setSelected] = React.useState<T | undefined>(
-    state.entities?.data?.find(
+    (items ?? state.entities?.data)?.find(
       (t: T) => t.id === id
     )
   );
-  const [typedValue, setTypedValue] = React.useState("");
+  const [typedCondition, setTypedCondition] = React.useState<FilterCondition>({
+    value: "",
+    columnName: columnsNames[0]?.value || ""
+  });
   const dispatch = useAppDispatch();
 
   const ChangeDialog = changeDialog;
@@ -86,7 +95,7 @@ export default function ChangableSearchableSelect<T extends BaseEntity>(
     <div className="flex w-full">
       <div className="flex-9">
         <SearchableSelect
-          items={ state.entities?.data || [] }
+          items={ items ?? state.entities?.data ?? [] }
           itemLabelKey={ itemLabelKey }
           itemValueKey={ itemValueKey }
           value={ id?.toString() || "" }
@@ -98,7 +107,7 @@ export default function ChangableSearchableSelect<T extends BaseEntity>(
           isInvalid={ isInvalid }
           onValueChange={ (val) =>
           {
-            const selected = state.entities?.data?.find(
+            const selected = (items ?? state.entities?.data)?.find(
               (t: T) => t.id.toString() === val
             );
             if (selected)
@@ -112,12 +121,12 @@ export default function ChangableSearchableSelect<T extends BaseEntity>(
               systemPermissionsResources,
               SystemPermissionsActions.Add
             )
-            ? async (typedValue) =>
+            ? async (con) =>
             {
               if (mode === "inline")
               {
                 // create directly, no dialog
-                const res = await apiService.Add(createEntity(typedValue));
+                const res = await apiService.Add(createEntity(con));
                 if (res.status === ResultStatus.Ok && res.data)
                 {
                   dispatch(entityActions.refresh({ data: res.data }));
@@ -127,7 +136,7 @@ export default function ChangableSearchableSelect<T extends BaseEntity>(
               }
               else
               {
-                setTypedValue(typedValue);
+                setTypedCondition(con);
                 setDialogMode("create");
                 dispatch(entityActions.filter());
                 setOpenDialog(true);
@@ -156,11 +165,11 @@ export default function ChangableSearchableSelect<T extends BaseEntity>(
       { showAddButton && (
         <Button
           variant="outline"
-          className={ `flex-1 ${selected &&showUpdateButton ? "rounded-none" : "rounded-r-none"}` }
+          className={ `flex-1 ${selected && showUpdateButton ? "rounded-none" : "rounded-r-none"}` }
           onClick={ () =>
           {
             setDialogMode("create");
-            setTypedValue("");
+            setTypedCondition({ ...typedCondition, value: "" });
             setOpenDialog(true);
           } }
         >
@@ -186,18 +195,21 @@ export default function ChangableSearchableSelect<T extends BaseEntity>(
         && (
           <Dialog open={ openDialog } onOpenChange={ setOpenDialog }>
             <ChangeDialog
-              entity={ dialogMode === "create"
-                ? createEntity(typedValue)
-                : selected }
-              mode={ dialogMode }
-              service={ apiService }
-              onSuccess={ (data: T) =>
-              {
-                dispatch(entityActions.refresh({ data: data }));
-                onValueChange(data);
-                setSelected(data);
-                setOpenDialog(false);
-              } }
+              { ...({
+                entity: dialogMode === "create"
+                  ? createEntity(typedCondition)
+                  : selected,
+                mode: dialogMode,
+                service: apiService,
+                onSuccess: (data: T) =>
+                {
+                  dispatch(entityActions.refresh({ data }));
+                  onValueChange(data);
+                  setSelected(data);
+                  setOpenDialog(false);
+                },
+                ...(changeDialogProps ?? {})
+              } as BaseDialogProps<T> & TDialogProps) }
             />
           </Dialog>
         ) }

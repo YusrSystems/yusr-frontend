@@ -1,5 +1,6 @@
 import { BaseEntity, City, type ColumnName, type ValidationRule, Validators } from "yusr-core";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
+import { SystemPermissionsResources } from "../auth/systemPermissionsResources";
 import AccountsApiService from "../networking/accountApiService";
 import { FilterByTypeRequest } from "./filterByTypeRequest";
 
@@ -12,6 +13,14 @@ export const AccountType = {
 } as const;
 
 export type AccountType = typeof AccountType[keyof typeof AccountType];
+
+export const accountTypeToResource: Record<AccountType, string> = {
+  [AccountType.Client]: SystemPermissionsResources.AccountClient,
+  [AccountType.Supplier]: SystemPermissionsResources.AccountSupplier,
+  [AccountType.Employee]: SystemPermissionsResources.AccountEmployee,
+  [AccountType.Bank]: SystemPermissionsResources.AccountBank,
+  [AccountType.Box]: SystemPermissionsResources.AccountBox
+};
 
 export class AccountContact extends BaseEntity
 {
@@ -58,12 +67,10 @@ export default class Account extends BaseEntity
 
 export class AccountFilterColumns
 {
-  public static columnsNames: ColumnName[] = [
-    { label: "رقم الحساب", value: "Id" },
-    { label: "اسم الحساب", value: "Name" },
-    { label: "رقم الحساب البنكي", value: "BankAccountNumber" },
-    { label: "الرقم الضريبي", value: "VatNumber" }
-  ];
+  public static columnsNames: ColumnName[] = [{ label: "اسم الحساب", value: "Name" }, {
+    label: "رقم الحساب البنكي",
+    value: "BankAccountNumber"
+  }, { label: "الرقم الضريبي", value: "VatNumber" }];
 }
 
 export class AccountValidationRules

@@ -8,7 +8,7 @@ import { StoreFilterColumns, StoreSlice } from "../../data/store";
 import { useAppSelector } from "../../state/store";
 
 export default function StoresSearchableSelect(
-  { id, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<Store>
+  { id, items, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<Store> & { items?: Store[]; }
 )
 {
   const storeState = useAppSelector((state) => state.store);
@@ -17,6 +17,7 @@ export default function StoresSearchableSelect(
     <ChangableSearchableSelect<Store>
       mode="inline"
       id={ id }
+      items={ items }
       itemLabelKey="name"
       itemValueKey="id"
       state={ storeState }
@@ -32,9 +33,9 @@ export default function StoresSearchableSelect(
         filter: StoreSlice.entityActions.filter,
         refresh: StoreSlice.entityActions.refresh
       } }
-      createEntity={ (typedValue) =>
+      createEntity={ (con) =>
       {
-        return { name: typedValue } as Store;
+        return { name: con.value } as Store;
       } }
       changeDialog={ ChangeStoreDialog }
     />

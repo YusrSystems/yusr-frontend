@@ -16,26 +16,26 @@ import ChangeAccountDialog from "./changeAccountDialog";
 export default function AccountsPage({
   title,
   slice,
-  stateKey,
-  dialogStateKey,
   fixedType,
+  selectEntityState,
+  selectDialogState,
   selectFormState,
   hasPagePermission
 }: {
   title: string;
   slice: ReturnType<typeof AccountSlice.create>;
-  stateKey: keyof RootState;
-  dialogStateKey: keyof RootState;
   fixedType?: AccountType;
-  selectFormState: (state: any) => FormState<Account>;
+  selectEntityState: (state: RootState) => IEntityState<Account>;
+  selectDialogState: (state: RootState) => IDialogState<Account>;
+  selectFormState: (state: RootState) => FormState<Account>;
   hasPagePermission: boolean;
 })
 {
   const [condition, setCondition] = useState<FilterCondition | undefined>(undefined);
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
-  const accountState = useAppSelector((state) => state[stateKey] as IEntityState<Account>);
-  const accountDialogState = useAppSelector((state) => state[dialogStateKey] as IDialogState<Account>);
+  const accountState = useAppSelector(selectEntityState);
+  const accountDialogState = useAppSelector(selectDialogState);
 
   const permissions = useAppSelector((state) =>
     selectPermissionsByResource(state, SystemPermissionsResources.Accounts)
@@ -145,7 +145,7 @@ export default function AccountsPage({
           mode={ accountDialogState.selectedRow ? "update" : "create" }
           service={ service }
           slice={ slice }
-          stateKey={ stateKey }
+          selectEntityState={ selectEntityState }
           fixedType={ fixedType }
           selectFormState={ selectFormState }
           onSuccess={ (data, mode) =>

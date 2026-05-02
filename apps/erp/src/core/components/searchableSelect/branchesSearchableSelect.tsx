@@ -28,9 +28,9 @@ export default function BranchesSearchableSelect(
         filter: BranchSlice.entityActions.filter,
         refresh: BranchSlice.entityActions.refresh
       } }
-      createEntity={ (typedValue) =>
+      createEntity={ (con) =>
       {
-        return { name: typedValue } as Branch;
+        return { name: con.value } as Branch;
       } }
       changeDialog={ ChangeBranchDialog }
     />

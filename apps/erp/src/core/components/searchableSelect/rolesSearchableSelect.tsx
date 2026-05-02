@@ -28,9 +28,9 @@ export default function RolesSearchableSelect(
         filter: RoleSlice.entityActions.filter,
         refresh: RoleSlice.entityActions.refresh
       } }
-      createEntity={ (typedValue) =>
+      createEntity={ (con) =>
       {
-        return { name: typedValue } as Role;
+        return { name: con.value } as Role;
       } }
       changeDialog={ ChangeRoleDialog }
     />

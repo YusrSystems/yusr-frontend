@@ -12,10 +12,10 @@ export default function BoxesAccountsPage()
   return (
     <AccountsPage
       slice={ BoxesSlice }
-      stateKey="boxes"
-      dialogStateKey="boxesDialog"
       title="إدارة حسابات الصناديق"
       fixedType={ AccountType.Box }
+      selectEntityState={ (state) => state.boxes }
+      selectDialogState={ (state) => state.boxesDialog }
       selectFormState={ (state) => state.boxesForm }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],

@@ -1,9 +1,10 @@
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
-import { ChangeDialog, type CommonChangeDialogProps, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FormField, Loading, SearchableSelect, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, type CommonChangeDialogProps, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FormField, Loading, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { FilterByTypeRequest } from "../../core/data/filterByTypeRequest";
 import { ItemType } from "../../core/data/item";
 import ItemTransfer, { ItemTransfersItem, ItemTransferSlice, ItemTransferValidationRules } from "../../core/data/itemTransfer";
-import { StoreFilterColumns, StoreSlice } from "../../core/data/store";
+import { StoreSlice } from "../../core/data/store";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import StoreItemSelector from "../items/storeItemSelector";
@@ -173,30 +174,19 @@ export default function ChangeItemTransferDialog({
             isInvalid={ isInvalid("fromStoreId") }
             error={ getError("fromStoreId") }
           >
-            <SearchableSelect
+            <StoresSearchableSelect
+              id={ formData.fromStoreId }
               items={ availableFromStores }
-              itemLabelKey="name"
-              itemValueKey="id"
-              placeholder="اختر المستودع"
-              value={ formData.fromStoreId?.toString() || "" }
-              columnsNames={ StoreFilterColumns.columnsNames }
-              onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
-              isLoading={ storeState.isLoading }
               isInvalid={ isInvalid("fromStoreId") }
-              disabled={ storeState.isLoading || mode === "update" }
-              onValueChange={ (val) =>
+              onValueChange={ (store) =>
               {
-                const selected = availableFromStores.find((s) => s.id.toString() === val);
-                if (selected)
-                {
-                  ItemTransferActions.clear(dispatch);
-                  dispatch(
-                    ItemTransferSlice.formActions.updateFormData({
-                      fromStoreId: selected.id,
-                      fromStoreName: selected.name
-                    })
-                  );
-                }
+                ItemTransferActions.clear(dispatch);
+                dispatch(
+                  ItemTransferSlice.formActions.updateFormData({
+                    fromStoreId: store.id,
+                    fromStoreName: store.name
+                  })
+                );
               } }
             />
           </FormField>
@@ -207,26 +197,15 @@ export default function ChangeItemTransferDialog({
             isInvalid={ isInvalid("toStoreId") }
             error={ getError("toStoreId") }
           >
-            <SearchableSelect
+            <StoresSearchableSelect
+              id={ formData.toStoreId }
               items={ availableToStores }
-              itemLabelKey="name"
-              itemValueKey="id"
-              placeholder="اختر المستودع"
-              value={ formData.toStoreId?.toString() || "" }
-              columnsNames={ StoreFilterColumns.columnsNames }
-              onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
-              isLoading={ storeState.isLoading }
               isInvalid={ isInvalid("toStoreId") }
-              disabled={ storeState.isLoading || mode === "update" }
-              onValueChange={ (val) =>
+              onValueChange={ (store) =>
               {
-                const selected = availableToStores.find((s) => s.id.toString() === val);
-                if (selected)
-                {
-                  dispatch(
-                    ItemTransferSlice.formActions.updateFormData({ toStoreId: selected.id, toStoreName: selected.name })
-                  );
-                }
+                dispatch(
+                  ItemTransferSlice.formActions.updateFormData({ toStoreId: store.id, toStoreName: store.name })
+                );
               } }
             />
           </FormField>

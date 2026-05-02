@@ -7,7 +7,7 @@ export function UnauthorizedPage()
   const navigate = useNavigate();
 
   return (
-    <div className="relative flex min-h-[80vh] flex-col items-center justify-center px-6 text-center">
+    <div className="relative flex h-full flex-col items-center justify-center px-6 text-center">
       <div className="absolute -z-10 select-none opacity-[0.03] dark:opacity-[0.05]">
         <ShieldOff className="h-80! w-[20rem]!" />
       </div>

@@ -1,8 +1,9 @@
+import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
 import { NumbertoWordsService } from "yusr-core";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, DateField, FieldGroup, FieldsSection, NumberField, SearchableSelect, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { AccountFilterColumns, ClientsAndSuppliersSlice } from "../../core/data/account";
+import { ChangeDialog, DateField, FieldGroup, FieldsSection, FormField, NumberField, SearchableSelect, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import { CommissionType, PaymentMethodFilterColumns, PaymentMethodSlice } from "../../core/data/paymentMethod";
 import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -160,31 +161,23 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
           </FieldsSection>
 
           <FieldsSection title="الحساب وطريقة الدفع" columns={ 2 }>
-            <div className="flex flex-col gap-1.5 w-full">
-              <label className="text-sm font-medium">
-                الحساب <span className="text-red-500">*</span>
-              </label>
-              <SearchableSelect
-                items={ accountState.entities.data ?? [] }
-                itemLabelKey="name"
-                itemValueKey="id"
-                placeholder="اختر الحساب"
-                value={ formData.accountId?.toString() || "" }
-                columnsNames={ AccountFilterColumns.columnsNames }
-                onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
-                isLoading={ accountState.isLoading }
-                disabled={ accountState.isLoading }
+            <FormField
+              label="الحساب"
+              required
+              isInvalid={ isInvalid("accountId") }
+              error={ getError("accountId") }
+            >
+              <ClientsAndSuppliersSearchableSelect
+                id={ formData.accountId }
                 isInvalid={ isInvalid("accountId") }
-                onValueChange={ (val) =>
+                onValueChange={ (account) =>
                 {
-                  const selected = accountState.entities.data?.find((a) => a.id.toString() === val);
                   dispatch(
-                    VoucherSlice.formActions.updateFormData({ accountId: selected?.id, accountName: selected?.name })
+                    VoucherSlice.formActions.updateFormData({ accountId: account?.id, accountName: account?.name })
                   );
                 } }
               />
-              { isInvalid("accountId") && <span className="text-xs text-red-500">{ getError("accountId") }</span> }
-            </div>
+            </FormField>
 
             <div className="flex flex-col gap-1.5 w-full">
               <label className="text-sm font-medium">

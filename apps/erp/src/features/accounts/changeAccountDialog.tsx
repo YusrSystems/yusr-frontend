@@ -2,10 +2,10 @@ import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { CityFilterColumns, SystemPermissions } from "yusr-core";
 import type { CommonChangeDialogProps, FormState, IEntityState } from "yusr-ui";
-import { Button, ChangeDialog, FieldGroup, FieldsSection, Input, NumberField, SearchableSelect, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { Button, ChangeDialog, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, TextAreaField, TextField, UnauthorizedPage, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import Account, { AccountContact, AccountFilterColumns, type AccountSliceType, AccountType, AccountValidationRules } from "../../core/data/account";
+import Account, { AccountContact, AccountFilterColumns, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules } from "../../core/data/account";
 import { filterCities } from "../../core/state/shared/citySlice";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
 
@@ -15,20 +15,25 @@ export default function ChangeAccountDialog({
   service,
   onSuccess,
   slice,
-  stateKey,
   fixedType,
+  selectTypes = [],
+  selectEntityState,
   selectFormState
 }: CommonChangeDialogProps<Account> & {
   slice: AccountSliceType;
-  stateKey: keyof RootState;
   fixedType?: AccountType;
-  selectFormState: (state: any) => FormState<Account>;
+  selectTypes?: {
+    label: string;
+    value: string;
+  }[];
+  selectEntityState: (state: RootState) => IEntityState<Account>;
+  selectFormState: (state: RootState) => FormState<Account>;
 })
 {
   const dispatch = useAppDispatch();
   const cityState = useAppSelector((state) => state.city);
   const authState = useAppSelector((state) => state.auth);
-  const accountState = useAppSelector((state) => state[stateKey] as IEntityState<Account>);
+  const accountState = useAppSelector(selectEntityState);
 
   const initialValues = useMemo(
     () => ({
@@ -90,6 +95,11 @@ export default function ChangeAccountDialog({
 
   const getTypeName = () =>
   {
+    if (!formData?.type)
+    {
+      return "";
+    }
+
     switch (formData.type)
     {
       case AccountType.Client:
@@ -111,6 +121,39 @@ export default function ChangeAccountDialog({
     SystemPermissionsActions.Get
   );
 
+  const hasTypeUpdatePerm = () =>
+  {
+    const resource = formData?.type
+      ? accountTypeToResource[formData.type]
+      : undefined;
+
+    if (!resource)
+    {
+      return false;
+    }
+
+    return SystemPermissions.hasAuth(
+      authState.loggedInUser?.role?.permissions ?? [],
+      resource,
+      SystemPermissionsActions.Get
+    );
+  };
+
+  if (!hasTypeUpdatePerm())
+  {
+    return (
+      <Dialog open={ true }>
+        <DialogContent className="sm:max-w-xl rtl" dir="rtl">
+          <DialogHeader>
+            <DialogTitle>غير مصرح</DialogTitle>
+            <DialogDescription></DialogDescription>
+            <UnauthorizedPage />
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <ChangeDialog<Account>
       title={ `${mode === "create" ? "إضافة" : "تعديل"} حساب ${getTypeName()}` }
@@ -125,6 +168,20 @@ export default function ChangeAccountDialog({
       <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
         <FieldGroup className="gap-10">
           <FieldsSection title="المعلومات الأساسية" columns={ 2 }>
+            { selectTypes.length > 0 && (
+              <SelectField
+                label="نوع الحساب"
+                required
+                disabled={ mode === "update" }
+                value={ formData.type?.toString() || "" }
+                onValueChange={ (val) =>
+                  dispatch(slice.formActions.updateFormData({ type: Number(val) as AccountType })) }
+                options={ selectTypes }
+                isInvalid={ isInvalid("type") }
+                error={ getError("type") }
+              />
+            ) }
+
             <TextField
               label="اسم الحساب"
               required
@@ -135,8 +192,7 @@ export default function ChangeAccountDialog({
             />
 
             { (formData.type === AccountType.Client || formData.type === AccountType.Supplier) && (
-              <div className="flex flex-col gap-1.5 w-full">
-                <label className="text-sm font-medium">الحساب الأب</label>
+              <FormField label="الحساب الأب">
                 <SearchableSelect
                   items={ accountState.entities.data ?? [] }
                   itemLabelKey="name"
@@ -157,7 +213,7 @@ export default function ChangeAccountDialog({
                     }));
                   } }
                 />
-              </div>
+              </FormField>
             ) }
 
             <NumberField

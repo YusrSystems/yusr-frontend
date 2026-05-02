@@ -13,9 +13,9 @@ export default function ClientsAccountsPage()
     <AccountsPage
       title="إدارة حسابات العملاء"
       slice={ ClientsSlice }
-      stateKey="clients"
-      dialogStateKey="clientsDialog"
       fixedType={ AccountType.Client }
+      selectEntityState={ (state) => state.clients }
+      selectDialogState={ (state) => state.clientsDialog }
       selectFormState={ (state) => state.clientsForm }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],

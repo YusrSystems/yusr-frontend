@@ -12,10 +12,10 @@ export default function EmployeesAccountsPage()
   return (
     <AccountsPage
       slice={ EmployeesSlice }
-      stateKey="employees"
-      dialogStateKey="employeesDialog"
       title="إدارة حسابات الموظفين"
       fixedType={ AccountType.Employee }
+      selectEntityState={ (state) => state.employees }
+      selectDialogState={ (state) => state.employeesDialog }
       selectFormState={ (state) => state.employeesForm }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],

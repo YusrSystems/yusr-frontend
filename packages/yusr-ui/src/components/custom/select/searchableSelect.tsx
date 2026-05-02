@@ -1,6 +1,6 @@
 import { Check, ChevronsUpDown, Loader2, Trash2 } from "lucide-react";
 import * as React from "react";
-import type { ColumnName } from "yusr-core";
+import type { ColumnName, FilterCondition } from "yusr-core";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "../../pure/command";
@@ -26,9 +26,9 @@ type SearchableSelectParams<T> = {
   isLoading?: boolean;
   showAllOption?: boolean;
   buttonClassName?: string;
-  onSearch: (condition: { value: string; columnName: string; } | undefined) => void;
+  onSearch: (condition: FilterCondition | undefined) => void;
   onValueChange: (value: string | undefined) => void;
-  onNotFound?: (typedValue: string) => void;
+  onNotFound?: (condition: FilterCondition) => void;
   onDelete?: (id: number) => Promise<boolean>;
 };
 
@@ -53,7 +53,10 @@ export function SearchableSelect<T>(
 )
 {
   const [open, setOpen] = React.useState(false);
-  const [typedValue, setTypedValue] = React.useState("");
+  const [typedCondition, setTypedCondition] = React.useState<FilterCondition>({
+    value: "",
+    columnName: columnsNames[0]?.value || ""
+  });
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
 
   // Find the selected item's label to display in the button
@@ -61,9 +64,9 @@ export function SearchableSelect<T>(
   const selectedLabel = selectedItem ? String(selectedItem[itemLabelKey]) : placeholder;
 
   const showCreateOption = onNotFound
-    && typedValue.trim() !== ""
+    && typedCondition.value.trim() !== ""
     && !items.some(
-      (item) => String(item[itemLabelKey]).toLowerCase() === typedValue.trim().toLowerCase()
+      (item) => String(item[itemLabelKey]).toLowerCase() === typedCondition.value.trim().toLowerCase()
     );
 
   function handleOpenChange(next: boolean)
@@ -71,14 +74,14 @@ export function SearchableSelect<T>(
     setOpen(next);
     if (!next)
     {
-      setTypedValue(""); // clear typed text on close
+      setTypedCondition({ ...typedCondition, value: "" }); // clear typed text on close
     }
   }
 
   function handleCreate()
   {
-    onNotFound?.(typedValue.trim());
-    setTypedValue("");
+    onNotFound?.(typedCondition);
+    setTypedCondition({ ...typedCondition, value: "" });
     setOpen(false);
   }
 
@@ -139,7 +142,7 @@ export function SearchableSelect<T>(
               // Don't reset it when con is undefined (that just means "fetch all")
               if (con?.value !== undefined)
               {
-                setTypedValue(con.value);
+                setTypedCondition(con);
               }
             }
           } }
@@ -147,7 +150,7 @@ export function SearchableSelect<T>(
           {
             if (onNotFound)
             {
-              setTypedValue(val);
+              setTypedCondition({ ...typedCondition, value: val });
             }
           } }
         />
@@ -243,12 +246,12 @@ export function SearchableSelect<T>(
 
                       { items.length <= 0 && showCreateOption && (
                         <CommandItem
-                          value={ `__create__${typedValue}` }
+                          value={ `__create__${typedCondition.value}` }
                           onSelect={ handleCreate }
                           className="cursor-pointer text-primary"
                         >
                           <span className="ltr:mr-2 rtl:ml-2">+</span>
-                          إضافة "{ typedValue.trim() }"
+                          إضافة "{ typedCondition.value.trim() }"
                         </CommandItem>
                       ) }
                     </CommandGroup>

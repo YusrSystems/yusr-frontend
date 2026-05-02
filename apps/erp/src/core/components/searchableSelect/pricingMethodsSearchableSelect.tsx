@@ -32,9 +32,9 @@ export default function PricingMethodsSearchableSelect(
         filter: PricingMethodSlice.entityActions.filter,
         refresh: PricingMethodSlice.entityActions.refresh
       } }
-      createEntity={ (typedValue) =>
+      createEntity={ (con) =>
       {
-        return { name: typedValue } as PricingMethod;
+        return { name: con.value } as PricingMethod;
       } }
       changeDialog={ ChangePricingMethodDialog }
     />
