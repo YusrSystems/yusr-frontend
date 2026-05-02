@@ -1,8 +1,8 @@
 import { Plus, Trash2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { CityFilterColumns, SystemPermissions } from "yusr-core";
 import type { CommonChangeDialogProps, FormState, IEntityState } from "yusr-ui";
-import { Button, ChangeDialog, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, TextAreaField, TextField, UnauthorizedPage, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { Button, ChangeDialog, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Account, { AccountContact, AccountFilterColumns, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules } from "../../core/data/account";
@@ -34,7 +34,6 @@ export default function ChangeAccountDialog({
   const cityState = useAppSelector((state) => state.city);
   const authState = useAppSelector((state) => state.auth);
   const accountState = useAppSelector(selectEntityState);
-  const [notAuthorized, setNotAuthorized] = useState(false);
 
   const initialValues = useMemo(
     () => ({
@@ -122,43 +121,19 @@ export default function ChangeAccountDialog({
     SystemPermissionsActions.Get
   );
 
-  const hasTypeUpdatePerm = () =>
+  const authorized = () =>
   {
-    const resource = formData?.type
-      ? accountTypeToResource[formData.type]
-      : undefined;
-
-    if (!resource)
+    if (mode === "create" || formData.type == undefined)
     {
-      setNotAuthorized(true);
-      return false;
+      return true;
     }
 
-    const res = SystemPermissions.hasAuth(
+    return SystemPermissions.hasAuth(
       authState.loggedInUser?.role?.permissions ?? [],
-      resource,
+      accountTypeToResource[formData.type],
       SystemPermissionsActions.Get
     );
-
-    setNotAuthorized(!res);
-
-    return res;
   };
-
-  if (notAuthorized)
-  {
-    return (
-      <Dialog open={ notAuthorized } onOpenChange={ setNotAuthorized }>
-        <DialogContent className="sm:max-w-xl rtl" dir="rtl">
-          <DialogHeader>
-            <DialogTitle>غير مصرح</DialogTitle>
-            <DialogDescription></DialogDescription>
-            <UnauthorizedPage />
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-    );
-  }
 
   return (
     <ChangeDialog<Account>
@@ -170,6 +145,7 @@ export default function ChangeAccountDialog({
       disable={ () => cityState.isLoading || accountState.isLoading }
       onSuccess={ (data) => onSuccess?.(data, mode) }
       validate={ validate }
+      authorized={ authorized() }
     >
       <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
         <FieldGroup className="gap-10">

@@ -1,10 +1,11 @@
-import type { BaseEntity } from "yusr-core";
 import type { PropsWithChildren, ReactNode } from "react";
+import type { BaseEntity } from "yusr-core";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
 import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure/dialog";
 import { Separator } from "../../pure/separator";
 import { SaveButton, type SaveButtonProps } from "../buttons/saveButton";
+import { UnauthorizedPage } from "../unauthorized/unauthorizedPage";
 
 export interface ChangeDialogProps<T extends BaseEntity> extends SaveButtonProps<T>, PropsWithChildren
 {
@@ -12,6 +13,7 @@ export interface ChangeDialogProps<T extends BaseEntity> extends SaveButtonProps
   description?: string;
   className?: string;
   actionButtons?: ReactNode;
+  authorized?: boolean;
 }
 
 export function ChangeDialog<T extends BaseEntity>(
@@ -20,6 +22,7 @@ export function ChangeDialog<T extends BaseEntity>(
     description = "",
     className = "sm:max-w-sm",
     actionButtons,
+    authorized = true,
     formData,
     dialogMode,
     service,
@@ -31,6 +34,24 @@ export function ChangeDialog<T extends BaseEntity>(
   }: ChangeDialogProps<T>
 )
 {
+  if (!authorized)
+  {
+    return (
+      <DialogContent className="sm:max-w-xl rtl" dir="rtl">
+        <DialogHeader>
+          <DialogTitle>غير مصرح</DialogTitle>
+          <DialogDescription></DialogDescription>
+        </DialogHeader>
+        <UnauthorizedPage showButtons={ false } />
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">إغلاق</Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    );
+  }
+
   return (
     <DialogContent dir="rtl" className={ cn(className, "scroll-auto") }>
       <DialogHeader>
@@ -43,7 +64,7 @@ export function ChangeDialog<T extends BaseEntity>(
       { children }
 
       <DialogFooter>
-        {actionButtons}
+        { actionButtons }
         <DialogClose asChild>
           <Button variant="outline">إلغاء</Button>
         </DialogClose>

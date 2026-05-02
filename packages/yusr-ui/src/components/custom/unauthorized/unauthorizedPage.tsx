@@ -2,7 +2,7 @@ import { ArrowRight, Home, ShieldOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../pure/button";
 
-export function UnauthorizedPage()
+export function UnauthorizedPage({ showButtons = true }: { showButtons?: boolean; })
 {
   const navigate = useNavigate();
 
@@ -22,38 +22,40 @@ export function UnauthorizedPage()
         عذراً، ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة. تواصل مع مدير النظام إذا كنت تعتقد أن هذا خطأ.
       </p>
 
-      <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
-        <Button asChild size="lg" className="h-12 rounded-full px-8 shadow-lg shadow-primary/20">
-          <Link to="/dashboard">
-            <Home className="ml-2 h-4 w-4" />
-            العودة للرئيسية
-          </Link>
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="lg"
-          className="h-12 rounded-full px-8"
-          onClick={ (e) =>
-          {
-            e.preventDefault();
+      { showButtons && (
+        <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+          <Button asChild size="lg" className="h-12 rounded-full px-8 shadow-lg shadow-primary/20">
+            <Link to="/dashboard">
+              <Home className="ml-2 h-4 w-4" />
+              العودة للرئيسية
+            </Link>
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="lg"
+            className="h-12 rounded-full px-8"
+            onClick={ (e) =>
+            {
+              e.preventDefault();
 
-            // Check if we have history to go back to
-            if (window.history.state && window.history.state.idx > 0)
-            {
-              navigate(-1);
-            }
-            else
-            {
-              // If they landed here directly, send them to dashboard instead of landing
-              navigate("/dashboard", { replace: true });
-            }
-          } }
-        >
-          <ArrowRight className="ml-2 h-4 w-4" />
-          العودة للخلف
-        </Button>
-      </div>
+              // Check if we have history to go back to
+              if (window.history.state && window.history.state.idx > 0)
+              {
+                navigate(-1);
+              }
+              else
+              {
+                // If they landed here directly, send them to dashboard instead of landing
+                navigate("/dashboard", { replace: true });
+              }
+            } }
+          >
+            <ArrowRight className="ml-2 h-4 w-4" />
+            العودة للخلف
+          </Button>
+        </div>
+      ) }
     </div>
   );
 }
