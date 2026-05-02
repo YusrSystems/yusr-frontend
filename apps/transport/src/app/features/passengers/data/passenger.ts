@@ -1,4 +1,4 @@
-import { BaseEntity, Country, type ColumnName } from "yusr-core";
+import { BaseEntity, type ColumnName, Country } from "yusr-core";
 
 export class Passenger extends BaseEntity
 {
@@ -13,6 +13,11 @@ export class Passenger extends BaseEntity
   public email?: string;
 
   public nationality?: Country;
+
+  public get displayLabel()
+  {
+    return `${this.name} - ${this.passportNo}`;
+  }
 
   constructor(init?: Partial<Passenger>)
   {

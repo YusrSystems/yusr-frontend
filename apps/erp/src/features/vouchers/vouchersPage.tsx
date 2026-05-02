@@ -24,7 +24,7 @@ export default function VouchersPage()
   );
 
   const service = useMemo(() => new VouchersApiService(), []);
-  const [condition, setCondition] = useState<FilterCondition | undefined>(undefined);
+  const [condition, setCondition] = useState<FilterCondition<Voucher> | undefined>(undefined);
 
   return (
     <CrudPage<Voucher>

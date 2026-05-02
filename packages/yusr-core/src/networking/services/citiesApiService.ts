@@ -12,7 +12,7 @@ export class CitiesApiService extends BaseFilterableApiService<City>
   async Filter(
     pageNumber: number,
     rowsPerPage: number,
-    condition?: FilterCondition
+    condition?: FilterCondition<City>
   ): Promise<RequestResult<FilterResult<City>>>
   {
     return await YusrApiHelper.Post(

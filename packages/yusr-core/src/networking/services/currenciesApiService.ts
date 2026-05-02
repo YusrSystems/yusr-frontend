@@ -11,7 +11,7 @@ export class CurrenciesApiService extends BaseFilterableApiService<Currency>
   async Filter(
     pageNumber: number,
     rowsPerPage: number,
-    condition?: FilterCondition
+    condition?: FilterCondition<Currency>
   ): Promise<RequestResult<FilterResult<Currency>>>
   {
     return await YusrApiHelper.Post(

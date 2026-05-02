@@ -42,7 +42,7 @@ export default function InvoicesPage({
 })
 {
   const dispatch = useAppDispatch();
-  const [condition, setCondition] = useState<FilterCondition | undefined>(undefined);
+  const [condition, setCondition] = useState<FilterCondition<Invoice> | undefined>(undefined);
   const [isAddReturn, setIsAddReturn] = useState<boolean>(false);
   const invoiceState = useAppSelector((state) => state[stateKey] as IEntityState<Invoice>);
   const authState = useAppSelector((state) => state.auth);

@@ -6,7 +6,7 @@ import type { IEntityState } from "../interfaces/iEntityState";
 type FilterMethodType<T> = (
   pageNumber: number,
   rowsPerPage: number,
-  condition?: FilterCondition | undefined,
+  condition?: FilterCondition<T> | undefined,
   filterTypes?: number[]
 ) => Promise<RequestResult<FilterResult<T>>> | undefined;
 
@@ -23,7 +23,7 @@ export function createGenericEntitySlice<
     rowsPerPage: 100
   };
 
-  const filter = createAsyncThunk(`${sliceName}/filter`, async (condition: FilterCondition | undefined, { getState }) =>
+  const filter = createAsyncThunk(`${sliceName}/filter`, async (condition: FilterCondition<T> | undefined, { getState }) =>
   {
     const state = (getState() as never)[sliceName] as IEntityState<T>;
 

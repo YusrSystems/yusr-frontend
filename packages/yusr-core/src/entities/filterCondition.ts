@@ -1,9 +1,9 @@
-export class FilterCondition
+export class FilterCondition<T>
 {
   value!: string;
-  columnName!: string;
+  columnName!: keyof T;
 
-  constructor(init?: Partial<FilterCondition>)
+  constructor(init?: Partial<FilterCondition<T>>)
   {
     Object.assign(this, init);
   }

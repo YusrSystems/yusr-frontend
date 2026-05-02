@@ -32,10 +32,10 @@ export type ChangableSearchableSelectParams<T extends BaseEntity, TDialogProps e
   allowUpdate?: boolean;
   onValueChange: (value: T) => void;
   entityActions: {
-    filter: AsyncThunk<FilterResult<T> | undefined, FilterCondition | undefined, object>;
+    filter: AsyncThunk<FilterResult<T> | undefined, FilterCondition<T> | undefined, object>;
     refresh: ActionCreatorWithPayload<{ data?: T; deletedId?: number; }>;
   };
-  createEntity: (typedCondition: FilterCondition) => T;
+  createEntity: (typedCondition: FilterCondition<T>) => T;
   changeDialog: React.ComponentType<BaseDialogProps<T> & TDialogProps>;
   changeDialogProps?: TDialogProps;
 };
@@ -71,9 +71,9 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
       (t: T) => t.id === id
     )
   );
-  const [typedCondition, setTypedCondition] = React.useState<FilterCondition>({
+  const [typedCondition, setTypedCondition] = React.useState<FilterCondition<T>>({
     value: "",
-    columnName: columnsNames[0]?.value.toString() || ""
+    columnName: columnsNames[0]?.value
   });
   const dispatch = useAppDispatch();
 

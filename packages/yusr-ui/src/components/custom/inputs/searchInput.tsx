@@ -7,16 +7,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 
 type SearchInputParams<T> = {
   columnsNames: ColumnName<T>[];
-  onSearch: (condition: FilterCondition | undefined) => void;
+  onSearch: (condition: FilterCondition<T> | undefined) => void;
   onType?: (value: string) => void;
 };
 
 export function SearchInput<T>({ columnsNames, onSearch, onType }: SearchInputParams<T>)
 {
-  const [searchValue, setSearchValue] = useState("");
-  const [selectedColumn, setSelectedColumn] = useState<string>(columnsNames[0]?.value.toString() || "");
+  const [filterCondition, setFilterCondition] = useState<FilterCondition<T>>({
+    value: "",
+    columnName: columnsNames[0]?.value
+  });
 
-  const debouncedAction = useDebouncedCallback((value: string, column: string) =>
+  const debouncedAction = useDebouncedCallback((value: string, column: keyof T) =>
   {
     if (!value.trim())
     {
@@ -31,7 +33,7 @@ export function SearchInput<T>({ columnsNames, onSearch, onType }: SearchInputPa
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
   {
     const val = e.target.value;
-    setSearchValue(val);
+    setFilterCondition((prev) => ({ ...prev, value: val }));
     onType?.(val);
 
     if (!val)
@@ -41,17 +43,19 @@ export function SearchInput<T>({ columnsNames, onSearch, onType }: SearchInputPa
     }
     else
     {
-      debouncedAction(val, selectedColumn);
+      debouncedAction(val, filterCondition.columnName);
     }
   };
 
-  const handleColumnChange = (column: string) =>
+  const handleColumnChange = (value: string) =>
   {
-    setSelectedColumn(column);
+    const column = value as keyof T;
 
-    if (searchValue.trim())
+    setFilterCondition((prev) => ({ ...prev, columnName: column }));
+
+    if (filterCondition.value.trim())
     {
-      debouncedAction(searchValue, column);
+      debouncedAction(filterCondition.value, column);
     }
   };
 
@@ -60,7 +64,7 @@ export function SearchInput<T>({ columnsNames, onSearch, onType }: SearchInputPa
       <div className="relative w-full flex gap-2">
         { /* Shadcn Select for Columns */ }
         { columnsNames.length > 1 && (
-          <Select dir="rtl" value={ selectedColumn } onValueChange={ handleColumnChange }>
+          <Select dir="rtl" value={ filterCondition.columnName.toString() } onValueChange={ handleColumnChange }>
             <SelectTrigger className="bg-secondary border-none">
               <SelectValue placeholder="اختر العمود" />
             </SelectTrigger>
@@ -76,7 +80,7 @@ export function SearchInput<T>({ columnsNames, onSearch, onType }: SearchInputPa
         <div className="relative flex-1 z-10">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            value={ searchValue }
+            value={ filterCondition.value }
             onChange={ handleInputChange }
             placeholder="ابحث..."
             className="pr-10 bg-background border focus-visible:ring-1"

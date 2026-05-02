@@ -11,7 +11,7 @@ export class CountriesApiService extends BaseFilterableApiService<Country>
   async Filter(
     pageNumber: number,
     rowsPerPage: number,
-    condition?: FilterCondition
+    condition?: FilterCondition<Country>
   ): Promise<RequestResult<FilterResult<Country>>>
   {
     return await YusrApiHelper.Post(

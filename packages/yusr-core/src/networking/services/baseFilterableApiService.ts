@@ -12,7 +12,7 @@ export abstract class BaseFilterableApiService<T extends BaseEntity>
   async Filter(
     pageNumber: number,
     rowsPerPage: number,
-    condition?: FilterCondition
+    condition?: FilterCondition<T>
   ): Promise<RequestResult<FilterResult<T>>>
   {
     return await YusrApiHelper.Post(

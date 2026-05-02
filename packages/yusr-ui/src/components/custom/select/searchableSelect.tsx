@@ -26,9 +26,9 @@ type SearchableSelectParams<T> = {
   isLoading?: boolean;
   showAllOption?: boolean;
   buttonClassName?: string;
-  onSearch: (condition: FilterCondition | undefined) => void;
+  onSearch: (condition: FilterCondition<T> | undefined) => void;
   onValueChange: (value: string | undefined) => void;
-  onNotFound?: (condition: FilterCondition) => void;
+  onNotFound?: (condition: FilterCondition<T>) => void;
   onDelete?: (id: number) => Promise<boolean>;
 };
 
@@ -53,9 +53,9 @@ export function SearchableSelect<T>(
 )
 {
   const [open, setOpen] = React.useState(false);
-  const [typedCondition, setTypedCondition] = React.useState<FilterCondition>({
+  const [typedCondition, setTypedCondition] = React.useState<FilterCondition<T>>({
     value: "",
-    columnName: columnsNames[0]?.value.toString() || ""
+    columnName: columnsNames[0]?.value
   });
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
 

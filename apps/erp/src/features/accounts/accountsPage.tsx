@@ -31,7 +31,7 @@ export default function AccountsPage({
   hasPagePermission: boolean;
 })
 {
-  const [condition, setCondition] = useState<FilterCondition | undefined>(undefined);
+  const [condition, setCondition] = useState<FilterCondition<Account> | undefined>(undefined);
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const accountState = useAppSelector(selectEntityState);

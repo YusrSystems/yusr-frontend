@@ -3,13 +3,14 @@ import type { FilterResult } from "yusr-core";
 import type { FilterByTypeRequest } from "../../data/filterByTypeRequest";
 import type { StoreItem } from "../../data/item";
 import ItemsApiService from "../../networking/itemApiService";
+import type Item from "../../data/item";
 
 export interface FetchStoreItemsProps
 {
   pageNumber: number;
   rowsPerPage: number;
   storeId: number | undefined;
-  request: FilterByTypeRequest;
+  request: FilterByTypeRequest<Item>;
 }
 export const fetchStoreItems = createAsyncThunk<FilterResult<StoreItem>, FetchStoreItemsProps>(
   "storeItems/fetch",

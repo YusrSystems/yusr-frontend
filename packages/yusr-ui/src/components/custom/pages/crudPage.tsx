@@ -21,7 +21,7 @@ import useCrudPageRoute from "./useCrudPageRoute";
 
 export interface CrudActions<T extends BaseEntity>
 {
-  filter: AsyncThunk<FilterResult<T> | undefined, FilterCondition | undefined, object>;
+  filter: AsyncThunk<FilterResult<T> | undefined, FilterCondition<T> | undefined, object>;
   openChangeDialog: (entity: T) => UnknownAction;
   openDeleteDialog: (entity: T) => UnknownAction;
   setIsChangeDialogOpen: (open: boolean) => UnknownAction;
@@ -39,7 +39,7 @@ export type CrudPageProps<T extends BaseEntity> = PropsWithChildren & {
   entityName: string;
   title: string;
   addNewItemTitle: string;
-  onConditionChange?: (condition: FilterCondition | undefined) => void;
+  onConditionChange?: (condition: FilterCondition<T> | undefined) => void;
   actionButtons?: React.ReactNode[];
   cards: CardProps[];
   columnsToFilter: ColumnName<T>[];

@@ -23,7 +23,7 @@ export default function ItemsPage()
   const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Items));
 
   const service = useMemo(() => new ItemsApiService(), []);
-  const [condition, setCondition] = useState<FilterCondition | undefined>(undefined);
+  const [condition, setCondition] = useState<FilterCondition<Item> | undefined>(undefined);
 
   useEffect(() =>
   {
