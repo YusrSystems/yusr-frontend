@@ -28,10 +28,6 @@ export default function TaxesSearchableSelect(
         filter: TaxSlice.entityActions.filter,
         refresh: TaxSlice.entityActions.refresh
       } }
-      createEntity={ (con) =>
-      {
-        return { name: con.value } as Tax;
-      } }
       changeDialog={ ChangeTaxDialog }
     />
   );

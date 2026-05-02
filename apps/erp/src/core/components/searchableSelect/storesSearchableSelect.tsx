@@ -33,10 +33,6 @@ export default function StoresSearchableSelect(
         filter: StoreSlice.entityActions.filter,
         refresh: StoreSlice.entityActions.refresh
       } }
-      createEntity={ (con) =>
-      {
-        return { name: con.value } as Store;
-      } }
       changeDialog={ ChangeStoreDialog }
     />
   );

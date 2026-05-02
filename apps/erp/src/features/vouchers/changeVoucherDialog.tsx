@@ -1,10 +1,11 @@
 import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
+import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
 import { NumbertoWordsService } from "yusr-core";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, DateField, FieldGroup, FieldsSection, FormField, NumberField, SearchableSelect, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, DateField, FieldGroup, FieldsSection, FormField, NumberField, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
-import { CommissionType, PaymentMethodFilterColumns, PaymentMethodSlice } from "../../core/data/paymentMethod";
+import PaymentMethod, { CommissionType, PaymentMethodSlice } from "../../core/data/paymentMethod";
 import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
@@ -53,7 +54,6 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
     {
       return 0;
     }
-
     const method = paymentMethodState.entities.data?.find((m) => m.id === methodId);
     if (!method)
     {
@@ -92,14 +92,14 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
     }));
   };
 
-  const handlePaymentMethodChange = (val: string | undefined) =>
+  const handlePaymentMethodChange = (paymentMethod: PaymentMethod) =>
   {
-    const methodId = Number(val);
-    const selected = paymentMethodState.entities.data?.find((m) => m.id === methodId);
     dispatch(VoucherSlice.formActions.updateFormData({
-      paymentMethodId: methodId,
-      paymentMethod: selected,
-      commissionAmount: formData.type === VoucherType.Receipt ? calculateCommission(formData.amount, methodId) : 0
+      paymentMethodId: paymentMethod.id,
+      paymentMethod: paymentMethod,
+      commissionAmount: formData.type === VoucherType.Receipt
+        ? calculateCommission(formData.amount, paymentMethod.id)
+        : 0
     }));
   };
 
@@ -179,27 +179,18 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
               />
             </FormField>
 
-            <div className="flex flex-col gap-1.5 w-full">
-              <label className="text-sm font-medium">
-                طريقة الدفع <span className="text-red-500">*</span>
-              </label>
-              <SearchableSelect
-                items={ paymentMethodState.entities.data ?? [] }
-                itemLabelKey="name"
-                itemValueKey="id"
-                placeholder="اختر طريقة الدفع"
-                value={ formData.paymentMethodId?.toString() || "" }
-                columnsNames={ PaymentMethodFilterColumns.columnsNames }
-                onSearch={ (condition) => dispatch(PaymentMethodSlice.entityActions.filter(condition)) }
-                isLoading={ paymentMethodState.isLoading }
-                disabled={ paymentMethodState.isLoading }
+            <FormField
+              label="طريقة الدفع"
+              required
+              isInvalid={ isInvalid("paymentMethodId") }
+              error={ getError("paymentMethodId") }
+            >
+              <PaymentMethodsSearchableSelect
+                id={ formData.paymentMethodId }
                 isInvalid={ isInvalid("paymentMethodId") }
                 onValueChange={ handlePaymentMethodChange }
               />
-              { isInvalid("paymentMethodId") && (
-                <span className="text-xs text-red-500">{ getError("paymentMethodId") }</span>
-              ) }
-            </div>
+            </FormField>
           </FieldsSection>
 
           <FieldsSection title="تفاصيل مالية" columns={ 2 }>

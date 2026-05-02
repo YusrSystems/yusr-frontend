@@ -62,10 +62,6 @@ export default function AccountsSearchableSelect(
         filter: slice.entityActions.filter,
         refresh: slice.entityActions.refresh
       } }
-      createEntity={ (con) =>
-      {
-        return { name: con.value } as Account;
-      } }
       changeDialog={ ChangeAccountDialog }
       changeDialogProps={ {
         slice: slice,

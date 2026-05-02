@@ -1,5 +1,5 @@
 import { Plus, Trash2 } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CityFilterColumns, SystemPermissions } from "yusr-core";
 import type { CommonChangeDialogProps, FormState, IEntityState } from "yusr-ui";
 import { Button, ChangeDialog, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, TextAreaField, TextField, UnauthorizedPage, useFormErrors, useFormInit, useValidate } from "yusr-ui";
@@ -34,6 +34,7 @@ export default function ChangeAccountDialog({
   const cityState = useAppSelector((state) => state.city);
   const authState = useAppSelector((state) => state.auth);
   const accountState = useAppSelector(selectEntityState);
+  const [notAuthorized, setNotAuthorized] = useState(false);
 
   const initialValues = useMemo(
     () => ({
@@ -129,20 +130,25 @@ export default function ChangeAccountDialog({
 
     if (!resource)
     {
+      setNotAuthorized(true);
       return false;
     }
 
-    return SystemPermissions.hasAuth(
+    const res = SystemPermissions.hasAuth(
       authState.loggedInUser?.role?.permissions ?? [],
       resource,
       SystemPermissionsActions.Get
     );
+
+    setNotAuthorized(!res);
+
+    return res;
   };
 
-  if (!hasTypeUpdatePerm())
+  if (notAuthorized)
   {
     return (
-      <Dialog open={ true }>
+      <Dialog open={ notAuthorized } onOpenChange={ setNotAuthorized }>
         <DialogContent className="sm:max-w-xl rtl" dir="rtl">
           <DialogHeader>
             <DialogTitle>غير مصرح</DialogTitle>

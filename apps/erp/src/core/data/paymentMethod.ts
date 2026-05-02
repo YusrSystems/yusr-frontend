@@ -25,10 +25,10 @@ export default class PaymentMethod extends BaseEntity
 
 export class PaymentMethodFilterColumns
 {
-  public static columnsNames: ColumnName<PaymentMethod>[] = [{ label: "رقم طريقة الدفع", value: "id" }, {
+  public static columnsNames: ColumnName<PaymentMethod>[] = [{
     label: "الاسم",
     value: "name"
-  }, { label: "اسم الحساب", value: "accountName" }];
+  }];
 }
 
 export class PaymentMethodValidationRules

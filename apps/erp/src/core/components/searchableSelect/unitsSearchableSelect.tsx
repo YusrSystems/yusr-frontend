@@ -32,10 +32,6 @@ export default function UnitsSearchableSelect(
         filter: UnitSlice.entityActions.filter,
         refresh: UnitSlice.entityActions.refresh
       } }
-      createEntity={ (con) =>
-      {
-        return { name: con.value } as Unit;
-      } }
       changeDialog={ ChangeUnitDialog }
     />
   );

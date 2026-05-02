@@ -35,7 +35,6 @@ export type ChangableSearchableSelectParams<T extends BaseEntity, TDialogProps e
     filter: AsyncThunk<FilterResult<T> | undefined, FilterCondition<T> | undefined, object>;
     refresh: ActionCreatorWithPayload<{ data?: T; deletedId?: number; }>;
   };
-  createEntity: (typedCondition: FilterCondition<T>) => T;
   changeDialog: React.ComponentType<BaseDialogProps<T> & TDialogProps>;
   changeDialogProps?: TDialogProps;
 };
@@ -57,7 +56,6 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
     allowUpdate = true,
     onValueChange,
     entityActions,
-    createEntity,
     changeDialog,
     changeDialogProps
   }: ChangableSearchableSelectParams<T, TDialogProps>
@@ -90,6 +88,11 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
     systemPermissionsResources,
     SystemPermissionsActions.Update
   ) && allowUpdate;
+
+  const createEntity = (con: FilterCondition<T>): T =>
+  {
+    return { [con.columnName]: con.value } as unknown as T;
+  };
 
   return (
     <div className="flex w-full">
@@ -204,8 +207,8 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
                 onSuccess: (data: T) =>
                 {
                   dispatch(entityActions.refresh({ data }));
-                  onValueChange(data);
                   setSelected(data);
+                  onValueChange(data);
                   setOpenDialog(false);
                 },
                 ...(changeDialogProps ?? {})

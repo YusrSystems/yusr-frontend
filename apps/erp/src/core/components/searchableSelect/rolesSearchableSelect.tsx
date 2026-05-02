@@ -28,10 +28,6 @@ export default function RolesSearchableSelect(
         filter: RoleSlice.entityActions.filter,
         refresh: RoleSlice.entityActions.refresh
       } }
-      createEntity={ (con) =>
-      {
-        return { name: con.value } as Role;
-      } }
       changeDialog={ ChangeRoleDialog }
     />
   );
