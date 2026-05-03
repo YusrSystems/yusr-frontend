@@ -1,9 +1,10 @@
+import ClientsSearchableSelect from "@/core/components/searchableSelect/clientsSearchableSelect";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
 import { useEffect } from "react";
-import { Checkbox, DateField, FieldsSection, FormField, SearchableSelect, SelectField, TextField } from "yusr-ui";
-import Account, { AccountFilterColumns } from "../../../../core/data/account";
+import { Checkbox, DateField, FieldsSection, FormField, SelectField, TextField } from "yusr-ui";
+import Account from "../../../../core/data/account";
 import { ImportExportType, InvoiceType } from "../../../../core/data/invoice";
-import { StoreFilterColumns, StoreSlice } from "../../../../core/data/store";
-import { useAppSelector } from "../../../../core/state/store";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function InvoiceBasicInfo()
@@ -16,10 +17,8 @@ export default function InvoiceBasicInfo()
     slice,
     authState,
     dispatch,
-    accountState,
-    accountSlice
+    accountState
   } = useInvoiceContext();
-  const storeState = useAppSelector((state) => state.store);
   let selectedAccount: Account | undefined = accountState.entities?.data?.find((account) =>
     account.id === formData.actionAccountId
   );
@@ -73,6 +72,9 @@ export default function InvoiceBasicInfo()
     }
   }, [canBeExportInvoice()]);
 
+  const isPurchaseInvoice = () =>
+    formData.type === InvoiceType.Purchase || formData.type === InvoiceType.PurchaseReturn;
+
   return (
     <FieldsSection title="البيانات الأساسية" columns={ { base: 1, md: 2, lg: 4 } }>
       { (formData.type === InvoiceType.Sell || formData.type === InvoiceType.Quotation) && (
@@ -113,21 +115,19 @@ export default function InvoiceBasicInfo()
         />
       ) }
 
-      <FormField label="المستودع" required={ true } isInvalid={ isInvalid("storeId") } error={ getError("storeId") }>
-        <SearchableSelect
-          items={ storeState.entities.data ?? [] }
-          itemLabelKey="name"
-          itemValueKey="id"
-          value={ formData.storeId?.toString() || "" }
-          columnsNames={ StoreFilterColumns.columnsNames }
-          onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
-          isLoading={ storeState.isLoading }
-          disabled={ storeState.isLoading || mode === "update" || mode === "return" }
-          onValueChange={ (val) =>
+      <FormField
+        label="المستودع"
+        required
+        isInvalid={ isInvalid("storeId") }
+        error={ getError("storeId") }
+      >
+        <StoresSearchableSelect
+          id={ formData.storeId }
+          isInvalid={ isInvalid("storeId") }
+          onValueChange={ (store) =>
           {
-            const selected = storeState.entities.data?.find((a) => a.id.toString() === val);
             dispatch(
-              slice.formActions.updateFormData({ storeId: selected?.id, storeName: selected?.name, invoiceItems: [] })
+              slice.formActions.updateFormData({ storeId: store?.id, storeName: store?.name, invoiceItems: [] })
             );
           } }
         />
@@ -135,28 +135,37 @@ export default function InvoiceBasicInfo()
 
       <FormField
         label="الحساب"
-        required={ true }
+        required
         isInvalid={ isInvalid("actionAccountId") }
         error={ getError("actionAccountId") }
       >
-        <SearchableSelect
-          items={ accountState.entities.data ?? [] }
-          itemLabelKey="name"
-          itemValueKey="id"
-          value={ formData.actionAccountId?.toString() || "" }
-          columnsNames={ AccountFilterColumns.columnsNames }
-          onSearch={ (condition) => dispatch(accountSlice.entityActions.filter(condition)) }
-          isLoading={ accountState.isLoading }
-          disabled={ accountState.isLoading || mode === "update" || mode === "return" }
-          onValueChange={ (val) =>
-          {
-            const selected = accountState.entities.data?.find((a) => a.id.toString() === val);
-            selectedAccount = selected;
-            dispatch(
-              slice.formActions.updateFormData({ actionAccountId: selected?.id, actionAccountName: selected?.name })
-            );
-          } }
-        />
+        { isPurchaseInvoice() && (
+          <SuppliersSearchableSelect
+            id={ formData.actionAccountId }
+            isInvalid={ isInvalid("actionAccountId") }
+            onValueChange={ (account) =>
+            {
+              selectedAccount = account;
+              dispatch(
+                slice.formActions.updateFormData({ actionAccountId: account?.id, actionAccountName: account?.name })
+              );
+            } }
+          />
+        ) }
+
+        { !isPurchaseInvoice() && (
+          <ClientsSearchableSelect
+            id={ formData.actionAccountId }
+            isInvalid={ isInvalid("actionAccountId") }
+            onValueChange={ (account) =>
+            {
+              selectedAccount = account;
+              dispatch(
+                slice.formActions.updateFormData({ actionAccountId: account?.id, actionAccountName: account?.name })
+              );
+            } }
+          />
+        ) }
       </FormField>
 
       <TextField

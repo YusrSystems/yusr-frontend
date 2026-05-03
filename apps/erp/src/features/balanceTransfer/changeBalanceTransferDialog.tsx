@@ -1,8 +1,9 @@
+import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/banksAndBoxesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
 import { NumbertoWordsService } from "yusr-core";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, DateField, FieldGroup, FieldsSection, NumberField, SearchableSelect, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { AccountFilterColumns, BanksAndBoxesSlice } from "../../core/data/account";
+import { ChangeDialog, DateField, FieldGroup, FieldsSection, FormField, NumberField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { BanksAndBoxesSlice } from "../../core/data/account";
 import type BalanceTransfer from "../../core/data/balanceTransfer";
 import { BalanceTransferSlice, BalanceTransferValidationRules } from "../../core/data/balanceTransfer";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -95,65 +96,49 @@ export default function ChangeBalanceTransferDialog(
           </FieldsSection>
 
           <FieldsSection title="أطراف التحويل" columns={ 2 }>
-            <div className="flex flex-col gap-1.5 w-full">
-              <label className="text-sm font-medium">
-                من حساب <span className="text-red-500">*</span>
-              </label>
-              <SearchableSelect
+            <FormField
+              label="من حساب"
+              required
+              isInvalid={ isInvalid("fromAccountId") }
+              error={ getError("fromAccountId") }
+            >
+              <BanksAndBoxesSearchableSelect
+                id={ formData.fromAccountId }
                 items={ availableFromAccounts }
-                itemLabelKey="name"
-                itemValueKey="id"
-                placeholder="اختر الحساب المحول منه"
-                value={ formData.fromAccountId?.toString() || "" }
-                columnsNames={ AccountFilterColumns.columnsNames }
-                onSearch={ (condition) => dispatch(BanksAndBoxesSlice.entityActions.filter(condition)) }
-                isLoading={ accountState.isLoading }
-                disabled={ accountState.isLoading }
                 isInvalid={ isInvalid("fromAccountId") }
-                onValueChange={ (val) =>
+                onValueChange={ (account) =>
                 {
-                  const selected = availableFromAccounts.find((a) => a.id.toString() === val);
                   dispatch(
                     BalanceTransferSlice.formActions.updateFormData({
-                      fromAccountId: selected?.id,
-                      fromAccountName: selected?.name
+                      fromAccountId: account?.id,
+                      fromAccountName: account?.name
                     })
                   );
                 } }
               />
-              { isInvalid("fromAccountId") && (
-                <span className="text-xs text-red-500">{ getError("fromAccountId") }</span>
-              ) }
-            </div>
+            </FormField>
 
-            <div className="flex flex-col gap-1.5 w-full">
-              <label className="text-sm font-medium">
-                إلى حساب <span className="text-red-500">*</span>
-              </label>
-              <SearchableSelect
+            <FormField
+              label="إلى حساب"
+              required
+              isInvalid={ isInvalid("toAccountId") }
+              error={ getError("toAccountId") }
+            >
+              <BanksAndBoxesSearchableSelect
+                id={ formData.toAccountId }
                 items={ availableToAccounts }
-                itemLabelKey="name"
-                itemValueKey="id"
-                placeholder="اختر الحساب المحول إليه"
-                value={ formData.toAccountId?.toString() || "" }
-                columnsNames={ AccountFilterColumns.columnsNames }
-                onSearch={ (condition) => dispatch(BanksAndBoxesSlice.entityActions.filter(condition)) }
-                isLoading={ accountState.isLoading }
-                disabled={ accountState.isLoading }
                 isInvalid={ isInvalid("toAccountId") }
-                onValueChange={ (val) =>
+                onValueChange={ (account) =>
                 {
-                  const selected = availableToAccounts.find((a) => a.id.toString() === val);
                   dispatch(
                     BalanceTransferSlice.formActions.updateFormData({
-                      toAccountId: selected?.id,
-                      toAccountName: selected?.name
+                      toAccountId: account?.id,
+                      toAccountName: account?.name
                     })
                   );
                 } }
               />
-              { isInvalid("toAccountId") && <span className="text-xs text-red-500">{ getError("toAccountId") }</span> }
-            </div>
+            </FormField>
           </FieldsSection>
 
           <FieldsSection title="معلومات إضافية" columns={ 1 }>

@@ -5,7 +5,7 @@ import type { EntitySearchableSelectParams, FormState, IEntityState } from "yusr
 import ChangableSearchableSelect from "../../../../../../packages/yusr-ui/src/components/custom/select/changableSearchableSelect";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type Account from "../../data/account";
-import { AccountFilterColumns, type AccountSliceType } from "../../data/account";
+import { AccountFilterColumns, type AccountSliceType, AccountType } from "../../data/account";
 
 export default function AccountsSearchableSelect(
   {
@@ -14,11 +14,13 @@ export default function AccountsSearchableSelect(
     selectEntityState,
     selectFormState,
     selectTypes,
+    fixedType,
     disabled,
     isInvalid,
     onValueChange,
     allowAdd = true,
-    allowUpdate = true
+    allowUpdate = true,
+    items = undefined
   }:
     & EntitySearchableSelectParams<Account>
     & {
@@ -29,8 +31,10 @@ export default function AccountsSearchableSelect(
         label: string;
         value: string;
       }[];
+      fixedType?: AccountType;
       allowAdd?: boolean;
       allowUpdate?: boolean;
+      items?: Account[];
     }
 )
 {
@@ -45,8 +49,10 @@ export default function AccountsSearchableSelect(
         label: string;
         value: string;
       }[];
+      fixedType?: AccountType;
     }>
       id={ id }
+      items={ items }
       itemLabelKey="name"
       itemValueKey="id"
       state={ accountState }
@@ -67,7 +73,8 @@ export default function AccountsSearchableSelect(
         slice: slice,
         selectEntityState: selectEntityState,
         selectFormState: selectFormState,
-        selectTypes: selectTypes
+        selectTypes: selectTypes,
+        fixedType: fixedType
       } }
     />
   );

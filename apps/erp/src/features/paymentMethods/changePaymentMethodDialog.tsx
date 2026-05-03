@@ -1,7 +1,8 @@
+import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/banksAndBoxesSearchableSelect";
 import { useEffect, useMemo } from "react";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, FormField, NumberField, SearchableSelect, SelectField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { AccountFilterColumns, BanksAndBoxesSlice } from "../../core/data/account";
+import { ChangeDialog, FieldGroup, FormField, NumberField, SelectField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { BanksAndBoxesSlice } from "../../core/data/account";
 import type PaymentMethod from "../../core/data/paymentMethod";
 import { CommissionType, PaymentMethodSlice, PaymentMethodValidationRules } from "../../core/data/paymentMethod";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -70,29 +71,15 @@ export default function ChangePaymentMethodDialog({
             isInvalid={ isInvalid("accountId") }
             error={ getError("accountId") }
           >
-            <SearchableSelect
-              items={ accountState.entities.data ?? [] }
-              itemLabelKey="name"
-              itemValueKey="id"
-              placeholder="اختر الحساب"
-              value={ formData.accountId?.toString() || "" }
-              columnsNames={ AccountFilterColumns.columnsNames }
-              onSearch={ (condition) => dispatch(BanksAndBoxesSlice.entityActions.filter(condition)) }
-              isLoading={ accountState.isLoading }
+            <BanksAndBoxesSearchableSelect
+              id={ formData.accountId }
               isInvalid={ isInvalid("accountId") }
-              disabled={ accountState.isLoading || mode === "update" }
-              onValueChange={ (val) =>
+              onValueChange={ (account) =>
               {
-                const selected = accountState.entities.data?.find(
-                  (a) => a.id.toString() === val
-                );
-                if (selected)
-                {
-                  dispatch(PaymentMethodSlice.formActions.updateFormData({
-                    accountId: selected.id,
-                    accountName: selected.name
-                  }));
-                }
+                dispatch(PaymentMethodSlice.formActions.updateFormData({
+                  accountId: account.id,
+                  accountName: account.name
+                }));
               } }
             />
           </FormField>

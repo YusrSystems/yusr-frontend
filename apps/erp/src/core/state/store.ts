@@ -83,6 +83,7 @@ export const store = configureStore({
     boxesForm: BoxesSlice.formReducer,
     boxesDialog: BoxesSlice.dialogReducer,
     banksAndBoxes: BanksAndBoxesSlice.entityReducer,
+    banksAndBoxesForm: BanksAndBoxesSlice.formReducer,
     clientsAndSuppliers: ClientsAndSuppliersSlice.entityReducer,
     clientsAndSuppliersForm: ClientsAndSuppliersSlice.formReducer,
     sales: SalesSlice.entityReducer,

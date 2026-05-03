@@ -277,7 +277,7 @@ export default function ChangeInvoiceDialog({
       <ChangeDialogTabbed<Invoice>
         changeDialogProps={ {
           title: dialogTitle,
-          className: "sm:max-w-[90vw]",
+          className: "sm:max-w-[100vw] sm:w-screen sm:h-screen",
           formData,
           dialogMode: mode as DialogMode,
           service,

@@ -123,7 +123,7 @@ export default function ChangeAccountDialog({
 
   const authorized = () =>
   {
-    if (mode === "create" || formData.type == undefined)
+    if (formData.type == undefined)
     {
       return true;
     }

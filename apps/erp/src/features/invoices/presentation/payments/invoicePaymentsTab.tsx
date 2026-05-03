@@ -1,8 +1,7 @@
+import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
-import { Button, FormField, NumberField, SearchableSelect } from "yusr-ui";
+import { Button, FormField, NumberField } from "yusr-ui";
 import { InvoiceRelationType } from "../../../../core/data/invoice";
-import { PaymentMethodFilterColumns, PaymentMethodSlice } from "../../../../core/data/paymentMethod";
-import { useAppSelector } from "../../../../core/state/store";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 
@@ -14,7 +13,7 @@ export default function InvoicePaymentsTab()
     slice,
     dispatch
   } = useInvoiceContext();
-  const paymentMethodState = useAppSelector((state) => state.paymentMethod);
+
   const paymentVouchers = () =>
     formData.invoiceVouchers?.filter((v) => v.invoiceRelationType == InvoiceRelationType.Payment) ?? [];
   const unpaidPrice = InvoiceItemsMath.CalcInvoiceUnpaidPrice(
@@ -71,26 +70,15 @@ export default function InvoicePaymentsTab()
 
                 <td className="p-2">
                   <FormField label="">
-                    <SearchableSelect
-                      items={ paymentMethodState.entities.data ?? [] }
-                      itemLabelKey="name"
-                      itemValueKey="id"
-                      value={ row.paymentMethodId?.toString() }
-                      columnsNames={ PaymentMethodFilterColumns.columnsNames }
-                      onSearch={ (condition) => dispatch(PaymentMethodSlice.entityActions.filter(condition)) }
-                      isLoading={ paymentMethodState.isLoading }
-                      disabled={ paymentMethodState.isLoading }
-                      onValueChange={ (val) =>
+                    <PaymentMethodsSearchableSelect
+                      id={ row.paymentMethodId }
+                      onValueChange={ (pm) =>
                       {
-                        const selected = paymentMethodState.entities.data?.find((a) => a.id.toString() === val);
-                        if (selected)
-                        {
-                          dispatch(slice.formActions.updateVoucher({
-                            ...row,
-                            paymentMethodId: selected?.id,
-                            paymentMethodName: selected?.name
-                          }));
-                        }
+                        dispatch(slice.formActions.updateVoucher({
+                          ...row,
+                          paymentMethodId: pm?.id,
+                          paymentMethodName: pm?.name
+                        }));
                       } }
                     />
                   </FormField>
