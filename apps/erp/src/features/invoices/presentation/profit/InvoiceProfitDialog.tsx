@@ -1,6 +1,7 @@
 import { Banknote } from "lucide-react";
 import { useState } from "react";
 import { Button, cn, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
+import CurrencyIcon from "../../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import { InvoiceRelationType } from "../../../../core/data/invoice";
 import type { InvoiceProfitResult } from "../../../../core/data/InvoiceProfitResult";
 import { useInvoiceContext } from "../../logic/invoiceContext";
@@ -10,23 +11,25 @@ interface ProfitRowProps
 {
   label: string;
   value: number;
+  showCurrency?: boolean;
   variant?: "default" | "profit";
 }
 
-function ProfitRow({ label, value, variant = "default" }: ProfitRowProps)
+export function ProfitRow({ label, value, showCurrency = true, variant = "default" }: ProfitRowProps)
 {
   return (
     <div className="flex justify-between items-center py-2.5 border-b border-border last:border-b-0">
       <span className="text-sm text-muted-foreground">{ label }</span>
       <span
         className={ cn(
-          "text-sm font-medium tabular-nums",
+          "inline-flex items-center gap-1 text-sm font-medium tabular-nums",
           variant === "profit" && value >= 0 && "text-emerald-600 dark:text-emerald-400",
           variant === "profit" && value < 0 && "text-red-600 dark:text-red-400",
           variant === "default" && "text-foreground"
         ) }
       >
-        { value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+        <span>{ value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }</span>
+        { showCurrency && <CurrencyIcon /> }
       </span>
     </div>
   );

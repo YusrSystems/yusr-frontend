@@ -1,7 +1,8 @@
-import { Trash2 } from "lucide-react";
+import { PercentIcon, Trash2 } from "lucide-react";
 import React from "react";
 import { SystemPermissions } from "yusr-core";
 import { NumberField, SelectField, TextField } from "yusr-ui";
+import CurrencyIcon from "../../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import { SystemPermissionsActions } from "../../../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
 import { InvoiceType } from "../../../../core/data/invoice";
@@ -74,10 +75,10 @@ export default function InvoiceItemsTable()
           <thead className="sticky top-0 bg-muted z-50 border-b border-border">
             <tr>
               <th className="p-3 font-semibold w-16 text-center text-muted-foreground">الرقم</th>
-              <th className="p-3 font-semibold w-50 ">المادة</th>
-              <th className="p-3 font-semibold w-40">طريقة التسعير</th>
-              <th className="p-3 font-semibold w-30 ">التكلفة</th>
-              <th className="p-3 font-semibold w-30">الكمية</th>
+              <th className="p-3 font-semibold w-40 ">المادة</th>
+              <th className="p-3 font-semibold w-20">طريقة التسعير</th>
+              <th className="p-3 font-semibold w-25 ">التكلفة</th>
+              <th className="p-3 font-semibold w-25">الكمية</th>
               <th className="p-3 font-semibold w-30 ">السعر بدون ضريبة</th>
               <th className="p-3 font-semibold w-30 ">نسبة الضريبة</th>
               <th className="p-3 font-semibold w-30 ">السعر بعد الضريبة</th>
@@ -85,11 +86,11 @@ export default function InvoiceItemsTable()
                 authState.loggedInUser?.role?.permissions ?? [],
                 SystemPermissionsResources.InvoiceAddSettlement,
                 SystemPermissionsActions.Get
-              ) && <th className="p-3 font-semibold w-30 ">التسوية</th> }
+              ) && <th className="p-3 font-semibold w-25 ">التسوية</th> }
 
               <th className="p-3 font-semibold w-30 ">التكلفة النهائية</th>
               <th className="p-3 font-semibold w-30 ">السعر النهائي بدون ضريبة</th>
-              <th className="p-3 font-semibold w-24 ">السعر النهائي مع ضريبة</th>
+              <th className="p-3 font-semibold w-30 ">السعر النهائي مع ضريبة</th>
               { SystemPermissions.hasAuth(
                 authState.loggedInUser?.role?.permissions ?? [],
                 SystemPermissionsResources.InvoiceShowItemProfit,
@@ -136,7 +137,7 @@ export default function InvoiceItemsTable()
                   </td>
 
                   <td className="px-2 pt-2">
-                    <NumberField disabled label="" value={ row.cost || "0" } />
+                    <NumberField disabled label="" value={ row.cost || "0" } currency={ <CurrencyIcon /> } />
                   </td>
 
                   <td className="px-2 pt-2">
@@ -159,11 +160,17 @@ export default function InvoiceItemsTable()
                       value={ row.taxExclusivePrice || "0" }
                       onChange={ () =>
                       {} }
+                      currency={ <CurrencyIcon /> }
                     />
                   </td>
 
                   <td className="px-2 pt-2">
-                    <TextField label="" value={ row.totalTaxesPerc || "0" } disabled />
+                    <NumberField
+                      label=""
+                      value={ row.totalTaxesPerc || "0" }
+                      disabled
+                      currency={ <PercentIcon className="w-4 h-4" /> }
+                    />
                   </td>
 
                   <td className="px-2 pt-2">
@@ -179,6 +186,7 @@ export default function InvoiceItemsTable()
                             newPrice: Number(newVal)
                           })
                         ) }
+                      currency={ <CurrencyIcon /> }
                     />
                   </td>
 
@@ -201,31 +209,35 @@ export default function InvoiceItemsTable()
                             })
                           );
                         } }
+                        currency={ <CurrencyIcon /> }
                       />
                     </td>
                   ) }
 
                   <td className="px-2 pt-2">
-                    <TextField
+                    <NumberField
                       label=""
                       value={ InvoiceItemsMath.CalcTotalCost(row.cost, row.quantity) || "0" }
                       disabled
+                      currency={ <CurrencyIcon /> }
                     />
                   </td>
 
                   <td className="px-2 pt-2">
-                    <TextField
+                    <NumberField
                       label=""
                       value={ row.taxExclusiveTotalPrice || "0" }
                       disabled
+                      currency={ <CurrencyIcon /> }
                     />
                   </td>
 
                   <td className="px-2 pt-2">
-                    <TextField
+                    <NumberField
                       label=""
                       value={ row.taxInclusiveTotalPrice || "0" }
                       disabled
+                      currency={ <CurrencyIcon /> }
                     />
                   </td>
 

@@ -4,6 +4,7 @@ import { Button, FormField, NumberField } from "yusr-ui";
 import { InvoiceRelationType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
+import CurrencyIcon from "../../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 
 export default function InvoicePaymentsTab()
 {
@@ -57,7 +58,7 @@ export default function InvoicePaymentsTab()
               <th className="p-3 font-semibold text-center">المبلغ</th>
               <th className="p-3 font-semibold">المبلغ المستلم</th>
               <th className="p-3 font-semibold text-center">المبلغ المسترد</th>
-              <th className="p-4 font-semibold w-16 text-center"></th>
+              <th className="p-4 font-semibold text-center"></th>
             </tr>
           </thead>
           <tbody>
@@ -97,6 +98,7 @@ export default function InvoicePaymentsTab()
                         dispatch(slice.formActions.updateVoucher({ ...row, amount: val }));
                       }
                     } }
+                    currency={ <CurrencyIcon /> }
                   />
                 </td>
 
@@ -105,6 +107,7 @@ export default function InvoicePaymentsTab()
                     label=""
                     value={ row.amountReceived || "0" }
                     onChange={ (val) => dispatch(slice.formActions.updateVoucher({ ...row, amountReceived: val })) }
+                    currency={ <CurrencyIcon /> }
                   />
                 </td>
 
@@ -113,8 +116,7 @@ export default function InvoicePaymentsTab()
                     disabled
                     label=""
                     value={ (row.amountReceived ?? 0) - (row.amount ?? 0) || "0" }
-                    onChange={ () =>
-                    {} }
+                    currency={ <CurrencyIcon /> }
                   />
                 </td>
 

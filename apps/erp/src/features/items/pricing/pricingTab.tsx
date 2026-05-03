@@ -3,6 +3,7 @@ import { Checkbox, type DialogMode, FormField, NumberField, useFormErrors } from
 import { ItemSlice, ItemType } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 import PricingMethodsTable from "./pricingMethodsTable";
+import CurrencyIcon from "../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 
 export default function PricingTab({ mode }: { mode: DialogMode; })
 {
@@ -58,12 +59,14 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ initialCost: val })) }
           isInvalid={ isInvalid("initialCost") }
           error={ getError("initialCost") }
+          currency={<CurrencyIcon />}
         />
         <NumberField
           label="التكلفة"
           disabled
           value={ formData.cost || "0" }
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ cost: val })) }
+          currency={<CurrencyIcon />}
         />
       </div>
 

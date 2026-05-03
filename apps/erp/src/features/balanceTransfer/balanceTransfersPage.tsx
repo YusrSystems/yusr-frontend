@@ -2,6 +2,7 @@ import { ArrowRightLeft } from "lucide-react";
 import { useMemo } from "react";
 import { NumbertoWordsService, SystemPermissions } from "yusr-core";
 import { CrudPage } from "yusr-ui";
+import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
@@ -65,10 +66,18 @@ export default function BalanceTransfersPage()
         transfer: BalanceTransfer
       ) => [
         { rowName: `#${transfer.id}`, rowStyles: "" },
-        { rowName: new Date(transfer.date).toLocaleDateString("ar-SA"), rowStyles: "" },
+        { rowName: new Date(transfer.date).toLocaleDateString().replace(/\//g, "-"), rowStyles: "" },
         { rowName: transfer.fromAccountName ?? "-", rowStyles: "font-semibold text-red-600" },
         { rowName: transfer.toAccountName ?? "-", rowStyles: "font-semibold text-green-600" },
-        { rowName: transfer.amount?.toLocaleString() ?? "0", rowStyles: "font-mono font-bold" },
+        {
+          rowName: (
+            <div className="flex items-center gap-1">
+              { (transfer.amount ?? 0).toLocaleString("en-US") }
+              <CurrencyIcon />
+            </div>
+          ),
+          rowStyles: "font-mono font-bold"
+        },
         { rowName: transfer.description ?? "-", rowStyles: "text-sm text-gray-500 truncate max-w-[200px]" },
         ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],

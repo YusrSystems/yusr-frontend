@@ -18,6 +18,9 @@ export * from "./dialogs/commonChangeDialogProps";
 export * from "./dialogs/deleteDialog";
 export * from "./dialogs/dialogType";
 
+// Currency
+export * from "./currency/currencyIcon";
+
 // Fields
 export * from "./fields/dateField";
 export * from "./fields/dateTimeField";

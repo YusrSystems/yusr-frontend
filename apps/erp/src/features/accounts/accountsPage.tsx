@@ -2,6 +2,7 @@ import { WalletIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { FilterCondition, SystemPermissions } from "yusr-core";
 import { CrudPage, type FormState, type IDialogState, type IEntityState } from "yusr-ui";
+import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
@@ -108,10 +109,12 @@ export default function AccountsPage({
           { rowName: account.name, rowStyles: "font-semibold" },
           ...(canShowBalance
             ? [{
-              rowName: Math.abs(account.balance ?? 0).toLocaleString("en-US", {
-                style: "currency",
-                currency: authState.setting?.currency?.code ?? "SAR"
-              }),
+              rowName: (
+                <div className="flex items-center gap-1">
+                  { Math.abs(account.balance ?? 0).toLocaleString("en-US") }
+                  <CurrencyIcon />
+                </div>
+              ),
               rowStyles: `font-mono ${colorStyle}`
             }, {
               rowName: label,

@@ -2,6 +2,7 @@ import { FileText } from "lucide-react";
 import { useMemo, useState } from "react";
 import { FilterCondition, NumbertoWordsService, SystemPermissions } from "yusr-core";
 import { CrudPage } from "yusr-ui";
+import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
@@ -87,7 +88,15 @@ export default function VouchersPage()
         },
         { rowName: new Date(voucher.date).toLocaleDateString("ar-SA"), rowStyles: "" },
         { rowName: voucher.accountName ?? "-", rowStyles: "font-semibold" },
-        { rowName: voucher.amount?.toLocaleString() ?? "0", rowStyles: "font-mono font-bold" },
+        {
+          rowName: (
+            <div className="flex items-center gap-1">
+              { (voucher.amount ?? 0).toLocaleString("en-US") }
+              <CurrencyIcon />
+            </div>
+          ),
+          rowStyles: "font-mono font-bold"
+        },
         { rowName: voucher.paymentMethod?.name ?? "-", rowStyles: "text-sm text-gray-600" },
         ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],

@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { FilterCondition, SystemPermissions } from "yusr-core";
 import { Button, ContextMenuItem, CrudPage, DropdownMenuItem, type IDialogState, type IEntityState, Tooltip, TooltipContent, TooltipTrigger } from "yusr-ui";
+import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
@@ -277,7 +278,12 @@ export default function InvoicesPage({
         { rowName: invoice.actionAccountName || "-", rowStyles: "" },
         { rowName: invoice.storeName || "-", rowStyles: "" },
         {
-          rowName: `${invoice.fullAmount} ر.س`,
+          rowName: (
+            <div className="flex items-center gap-1">
+              { (invoice.fullAmount ?? 0).toLocaleString("en-US") }
+              <CurrencyIcon />
+            </div>
+          ),
           rowStyles: "font-bold text-blue-600"
         },
         {

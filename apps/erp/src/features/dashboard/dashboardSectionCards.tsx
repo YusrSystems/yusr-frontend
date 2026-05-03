@@ -1,6 +1,7 @@
 import { Activity } from "lucide-react";
 import { useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "yusr-ui";
+import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import type DashboardData from "../../core/data/dashboardData";
 
 type DashboardSectionCardsProps = { data: DashboardData; };
@@ -86,8 +87,9 @@ export function DashboardSectionCards({ data }: DashboardSectionCardsProps)
               <Activity className={ `h-4 w-4 opacity-50 ${card.textColor}` } />
             </div>
 
-            <CardTitle className="mt-2 text-3xl font-bold tracking-tight tabular-nums @[250px]:text-4xl">
+            <CardTitle className="mt-2 flex items-center gap-1.5 text-3xl font-bold tracking-tight tabular-nums @[250px]:text-4xl">
               { formatNumber(card.total) }
+              <CurrencyIcon className="w-8 h-8 shrink-0" />
             </CardTitle>
           </CardHeader>
 

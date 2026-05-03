@@ -9,6 +9,7 @@ import Item, { ItemType } from "../../../core/data/item";
 import { useAppSelector } from "../../../core/state/store";
 import ItemBarcodeButton from "../../reports/itemBarcodeDialog";
 import usePricingMethodsTable from "./usePricingMethodsTable";
+import CurrencyIcon from "../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 
 export default function PricingMethodsTable()
 {
@@ -121,6 +122,7 @@ export default function PricingMethodsTable()
                     onChange={ (val) =>
                       updatePricingMethod(index, { price: val }) }
                     isInvalid={ hasError && (method.price == undefined || method.price <= 0) }
+                    currency={<CurrencyIcon />}
                   />
                 </td>
                 <td className="p-3">

@@ -1,9 +1,7 @@
 import { Coins } from "lucide-react";
+import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 
-export type CurrencyBadgeProps = {
-  currency: string;
-};
-export default function CurrencyBadge({ currency }: CurrencyBadgeProps)
+export default function CurrencyBadge()
 {
   return (
     <div className="flex items-center justify-between px-4 lg:px-6">
@@ -17,7 +15,7 @@ export default function CurrencyBadge({ currency }: CurrencyBadgeProps)
             <Coins className="h-3.5 w-3.5 text-primary" />
           </div>
           <span className="text-sm font-bold tracking-wider text-primary">
-            { currency }
+            <CurrencyIcon />
           </span>
         </div>
       </div>

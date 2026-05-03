@@ -1,36 +1,11 @@
 import { Banknote } from "lucide-react";
 import { useState } from "react";
 
-import { cn, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
 import { InvoiceItem } from "../../../../core/data/invoice";
 import type { InvoiceItemProfitResult } from "../../../../core/data/InvoiceItemProfitResult";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
-
-interface ProfitRowProps
-{
-  label: string;
-  value: number;
-  variant?: "default" | "profit";
-}
-
-function ProfitRow({ label, value, variant = "default" }: ProfitRowProps)
-{
-  return (
-    <div className="flex justify-between items-center py-2.5 border-b border-border last:border-b-0">
-      <span className="text-sm text-muted-foreground">{ label }</span>
-      <span
-        className={ cn(
-          "text-sm font-medium tabular-nums",
-          variant === "profit" && value >= 0 && "text-emerald-600 dark:text-emerald-400",
-          variant === "profit" && value < 0 && "text-red-600 dark:text-red-400",
-          variant === "default" && "text-foreground"
-        ) }
-      >
-        { value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
-      </span>
-    </div>
-  );
-}
+import { ProfitRow } from "./InvoiceProfitDialog";
 
 interface ItemProfitDialogProps
 {
@@ -65,7 +40,7 @@ export function ItemProfitDialog({ item }: ItemProfitDialogProps)
             <ProfitRow label="السعر شامل الضريبة" value={ profit.taxInclusivePrice } />
             <ProfitRow label="التكلفة" value={ profit.cost } />
             <ProfitRow label="إجمالي الضرائب" value={ profit.totalTaxesAmount } />
-            <ProfitRow label="الكمية" value={ profit.quantity } />
+            <ProfitRow label="الكمية" value={ profit.quantity } showCurrency={ false } />
             <ProfitRow label="الربح لكل وحدة" value={ profit.profit } variant="profit" />
             <ProfitRow label="إجمالي الربح" value={ profit.totalProfit } variant="profit" />
           </div>

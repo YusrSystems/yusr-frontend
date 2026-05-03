@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, ToggleGroup, ToggleGroupItem } from "yusr-ui";
+import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import type DashboardData from "../../core/data/dashboardData";
 
 const chartConfig = {
@@ -18,7 +19,7 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
   {
     if (timeRange === "weekly")
     {
-      const days = ["اليوم 1", "اليوم 2", "اليوم 3", "اليوم 4", "اليوم 5", "اليوم 6", "اليوم 7"];
+      const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
       return days.map((day, index) => ({
         label: day,
         sales: data.weeklySales?.[index] || 0,
@@ -99,11 +100,26 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
               tickLine={ false }
               axisLine={ false }
               tickMargin={ 8 }
-              minTickGap={ 32 }
+              interval={ 0 }
+              tick={ { fontSize: 11 } }
+              padding={{ left: 20, right: 20 }}
             />
             <ChartTooltip
               cursor={ false }
-              content={ <ChartTooltipContent indicator="dot" /> }
+              content={ 
+                <ChartTooltipContent
+                  indicator="dot"
+                  formatter={ (value) =>
+                    typeof value === "number"
+                      ? (
+                        <span className="inline-flex items-center gap-1 tabular-nums">
+                          { value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+                          <CurrencyIcon />
+                        </span>
+                      )
+                      : value }
+                />
+               }
             />
             <Area
               dataKey="sales"

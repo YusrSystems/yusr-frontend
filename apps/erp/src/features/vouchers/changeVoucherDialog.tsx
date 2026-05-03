@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { NumbertoWordsService } from "yusr-core";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, DateField, FieldGroup, FieldsSection, FormField, NumberField, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import PaymentMethod, { CommissionType, PaymentMethodSlice } from "../../core/data/paymentMethod";
 import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
@@ -145,6 +146,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
               onChange={ handleAmountChange }
               isInvalid={ isInvalid("amount") }
               error={ getError("amount") }
+              currency={ <CurrencyIcon /> }
             />
 
             <div className="col-span-full">

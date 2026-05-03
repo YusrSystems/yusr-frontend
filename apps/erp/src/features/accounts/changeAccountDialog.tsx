@@ -5,6 +5,7 @@ import { useEffect, useMemo } from "react";
 import { CityFilterColumns, SystemPermissions } from "yusr-core";
 import type { CommonChangeDialogProps, FormState, IEntityState } from "yusr-ui";
 import { Button, ChangeDialog, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Account, { AccountContact, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/account";
@@ -235,6 +236,7 @@ export default function ChangeAccountDialog({
               label="الرصيد الافتتاحي"
               value={ canShowBalance ? (formData.initialBalance || "") : "" }
               onChange={ (val) => dispatch(slice.formActions.updateFormData({ initialBalance: val })) }
+              currency={ <CurrencyIcon /> }
             />
 
             <NumberField
@@ -242,6 +244,7 @@ export default function ChangeAccountDialog({
               disabled
               value={ canShowBalance ? (formData.balance || "") : "" }
               onChange={ (val) => dispatch(slice.formActions.updateFormData({ initialBalance: val })) }
+              currency={ <CurrencyIcon /> }
             />
           </FieldsSection>
 

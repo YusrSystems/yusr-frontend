@@ -6,6 +6,7 @@ interface NumberFieldProps extends NumberInputProps
   label: string;
   error?: string;
   required?: boolean;
+  currency?: React.ReactNode;
 }
 
 export function NumberField({ label, error, isInvalid, required, ...props }: NumberFieldProps)

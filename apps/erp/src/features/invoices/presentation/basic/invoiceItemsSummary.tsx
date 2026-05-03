@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { cn } from "yusr-ui";
+import CurrencyIcon from "../../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 
@@ -74,15 +75,15 @@ function StatCell({ label, value, icon, variant = "default" }: StatCellProps)
       </p>
 
       <span
-        ref={ ref }
         className={ cn(
-          "text-2xl font-medium tabular-nums text-left leading-none relative z-10",
+          "flex items-center gap-1 text-2xl font-medium tabular-nums text-left leading-none relative z-10",
           variant === "paid" && "text-emerald-700 dark:text-emerald-300",
           variant === "remaining" && "text-red-700 dark:text-red-300",
           variant === "default" && "text-foreground"
         ) }
       >
-        0.00
+        <span ref={ ref }>0.00</span>
+        <CurrencyIcon />
       </span>
     </div>
   );

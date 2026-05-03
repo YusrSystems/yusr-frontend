@@ -10,7 +10,6 @@ export default function DashboardPage()
 {
   const dispatch = useAppDispatch();
   const { data } = useAppSelector((state) => state.dashboard);
-  const currency = useAppSelector((state) => state.auth.setting?.currency?.code) || "ريال سعودي";
 
   useEffect(() =>
   {
@@ -24,7 +23,7 @@ export default function DashboardPage()
 
   return (
     <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-      <CurrencyBadge currency={ currency } />
+      <CurrencyBadge />
 
       <DashboardSectionCards data={ data } />
       <DashboardChartAreaInteractive data={ data } />

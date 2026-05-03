@@ -7,6 +7,7 @@ import { BanksAndBoxesSlice } from "../../core/data/account";
 import type BalanceTransfer from "../../core/data/balanceTransfer";
 import { BalanceTransferSlice, BalanceTransferValidationRules } from "../../core/data/balanceTransfer";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 
 export default function ChangeBalanceTransferDialog(
   { entity, mode, service, onSuccess }: CommonChangeDialogProps<BalanceTransfer>
@@ -85,6 +86,7 @@ export default function ChangeBalanceTransferDialog(
               onChange={ (val) => dispatch(BalanceTransferSlice.formActions.updateFormData({ amount: val })) }
               isInvalid={ isInvalid("amount") }
               error={ getError("amount") }
+              currency={<CurrencyIcon />}
             />
             <div className="col-span-full">
               <TextField
