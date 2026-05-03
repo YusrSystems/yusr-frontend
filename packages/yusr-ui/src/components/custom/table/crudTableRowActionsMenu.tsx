@@ -1,5 +1,5 @@
+import type { ResourcePermissions } from "../../../auth";
 import { MoreHorizontal } from "lucide-react";
-import type { ResourcePermissions } from "yusr-core";
 import { Button } from "../../pure/button";
 import { ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuLabel, ContextMenuSeparator } from "../../pure/context-menu";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../../pure/dropdown-menu";
@@ -16,7 +16,9 @@ export interface CrudTableRowActionsMenuProps
   contextMenuItems?: React.ReactNode[];
 }
 
-export function CrudTableRowActionsMenu({ onEditClicked, onDeleteClicked, type, permissions, dorpdownItems, contextMenuItems }: CrudTableRowActionsMenuProps)
+export function CrudTableRowActionsMenu(
+  { onEditClicked, onDeleteClicked, type, permissions, dorpdownItems, contextMenuItems }: CrudTableRowActionsMenuProps
+)
 {
   return (
     <>
@@ -31,7 +33,7 @@ export function CrudTableRowActionsMenu({ onEditClicked, onDeleteClicked, type, 
             <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
             <DropdownMenuSeparator></DropdownMenuSeparator>
             { permissions.updatePermission && <DropdownMenuItem onSelect={ onEditClicked }>تعديل</DropdownMenuItem> }
-            {dorpdownItems}
+            { dorpdownItems }
             { permissions.deletePermission && (
               <DropdownMenuItem className="text-destructive" onSelect={ onDeleteClicked }>حذف</DropdownMenuItem>
             ) }
@@ -45,7 +47,7 @@ export function CrudTableRowActionsMenu({ onEditClicked, onDeleteClicked, type, 
             <ContextMenuLabel>الإجراءات</ContextMenuLabel>
             <ContextMenuSeparator></ContextMenuSeparator>
             { permissions.updatePermission && <ContextMenuItem onSelect={ onEditClicked }>تعديل</ContextMenuItem> }
-            {contextMenuItems}
+            { contextMenuItems }
             { permissions.deletePermission && (
               <ContextMenuItem className="text-destructive" onSelect={ onDeleteClicked }>حذف</ContextMenuItem>
             ) }

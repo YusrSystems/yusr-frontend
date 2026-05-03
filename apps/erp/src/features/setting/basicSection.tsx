@@ -2,7 +2,7 @@ import { BranchSlice } from "@/core/data/branchLogic";
 import { useAppDispatch, useAppSelector } from "@/core/state/store";
 import { differenceInDays, format } from "date-fns";
 import { Camera, Trash2, Upload } from "lucide-react";
-import { BranchFilterColumns, StorageFileStatus } from "yusr-core";
+import { BranchFilterColumns, StorageFileStatus } from "yusr-ui";
 import { Avatar, AvatarFallback, AvatarImage, Button, FieldGroup, FieldsSection, FormField, Label, SearchableSelect, TextField, useStorageFile } from "yusr-ui";
 import type { Setting } from "../../core/data/setting";
 import { useSettingContext } from "./settingContext";

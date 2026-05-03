@@ -1,5 +1,7 @@
+import type { BaseEntity, FilterCondition } from "../../entities";
+import type { BaseFilterableApiService } from "../../networking";
+import type { FilterResult, RequestResult } from "../../types";
 import { type CaseReducerActions, createAsyncThunk, createSlice, type PayloadAction, type SliceCaseReducers } from "@reduxjs/toolkit";
-import type { BaseEntity, BaseFilterableApiService, FilterCondition, FilterResult, RequestResult } from "yusr-core";
 import { castDraft } from "immer";
 import type { IEntityState } from "../interfaces/iEntityState";
 
@@ -23,28 +25,32 @@ export function createGenericEntitySlice<
     rowsPerPage: 100
   };
 
-  const filter = createAsyncThunk(`${sliceName}/filter`, async (condition: FilterCondition<T> | undefined, { getState }) =>
-  {
-    const state = (getState() as never)[sliceName] as IEntityState<T>;
-
-    let result;
-    if (filterMethod)
+  const filter = createAsyncThunk(
+    `${sliceName}/filter`,
+    async (condition: FilterCondition<T> | undefined, { getState }) =>
     {
-      result = await filterMethod(state.currentPage, state.rowsPerPage, condition,  state.filterTypes);
-    }
-    else
-    {
-      result = await service.Filter(state.currentPage, state.rowsPerPage, condition);
-    }
+      const state = (getState() as never)[sliceName] as IEntityState<T>;
 
-    return result?.data;
-  });
+      let result;
+      if (filterMethod)
+      {
+        result = await filterMethod(state.currentPage, state.rowsPerPage, condition, state.filterTypes);
+      }
+      else
+      {
+        result = await service.Filter(state.currentPage, state.rowsPerPage, condition);
+      }
+
+      return result?.data;
+    }
+  );
 
   const slice = createSlice({
     name: sliceName,
     initialState,
     reducers: {
-      setFilterTypes: (state, action: PayloadAction<number[]>) => {
+      setFilterTypes: (state, action: PayloadAction<number[]>) =>
+      {
         state.filterTypes = action.payload;
       },
       setCurrentPage: (state, action: PayloadAction<number>) =>
@@ -102,10 +108,10 @@ export function createGenericEntitySlice<
     reducer: slice.reducer,
     actions: { ...slice.actions, filter } as
       & CaseReducerActions<
-        { 
+        {
           setCurrentPage: typeof slice.caseReducers.setCurrentPage;
           setFilterTypes: typeof slice.caseReducers.setFilterTypes;
-          refresh: typeof slice.caseReducers.refresh; 
+          refresh: typeof slice.caseReducers.refresh;
         } & CR,
         string
       >

@@ -1,8 +1,8 @@
+import type { BaseEntity } from "../../../entities";
 import { useState } from "react";
-import type { BaseEntity } from "yusr-core";
 import { FieldGroup } from "../../pure/field";
 import { TabButton } from "../buttons/tabButton";
-import { type ChangeDialogProps, ChangeDialog } from "./changeDialog";
+import { ChangeDialog, type ChangeDialogProps } from "./changeDialog";
 
 export type TabProps = {
   active: boolean;

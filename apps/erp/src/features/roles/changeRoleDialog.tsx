@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { Role } from "yusr-core";
+import { Role } from "yusr-ui";
 import type { CommonChangeDialogProps, TabProps } from "yusr-ui";
 import { categorizePermissions, ChangeDialogTabbed, PermissionCard, PermissionSkeleton, Skeleton, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";

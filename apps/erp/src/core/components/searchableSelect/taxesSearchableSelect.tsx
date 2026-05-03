@@ -11,6 +11,7 @@ export default function TaxesSearchableSelect(
 )
 {
   const taxState = useAppSelector((state) => state.tax);
+  const authState = useAppSelector((state) => state.auth);
 
   return (
     <ChangableSearchableSelect<Tax>
@@ -29,6 +30,7 @@ export default function TaxesSearchableSelect(
         refresh: TaxSlice.entityActions.refresh
       } }
       changeDialog={ ChangeTaxDialog }
+      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
     />
   );
 }

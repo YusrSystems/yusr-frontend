@@ -2,7 +2,7 @@ import { filterCities } from "@/app/core/state/shared/citySlice";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { CityFilterColumns, type ValidationRule, Validators } from "yusr-core";
+import { CityFilterColumns, type ValidationRule, Validators } from "yusr-ui";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { Button, ChangeDialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DynamicListContainer, FieldGroup, FormField, Loading, NumberInput, SearchableSelect, Separator, TextField, useDynamicList, useEntityForm } from "yusr-ui";
 import { Route, RouteStation } from "../data/route";

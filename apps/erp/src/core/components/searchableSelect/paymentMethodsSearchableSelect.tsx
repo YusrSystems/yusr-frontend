@@ -12,6 +12,7 @@ export default function PaymentMethodsSearchableSelect(
 )
 {
   const PaymentMethodState = useAppSelector((state) => state.paymentMethod);
+  const authState = useAppSelector((state) => state.auth);
 
   return (
     <ChangableSearchableSelect<PaymentMethod, {
@@ -35,6 +36,7 @@ export default function PaymentMethodsSearchableSelect(
       changeDialogProps={ {
         filterDataOutside: true
       } }
+      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
     />
   );
 }

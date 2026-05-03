@@ -24,7 +24,7 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@/*": ["./src/*"],
-      "yusr-core": ["../../packages/yusr-core/src/index.ts"],
+      "yusr-ui": ["../../packages/yusr-ui/src/index.ts"],
       "yusr-ui": ["../../packages/yusr-ui/src/index.ts"]
     }
   },

@@ -2,7 +2,7 @@ import { SystemPermissionsActions } from "@/app/core/auth/systemPermissionsActio
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
 import useDashbaord from "@/app/core/hooks/useDashboard";
 import { useAppSelector } from "@/app/core/state/store";
-import { SystemPermissions } from "yusr-core";
+import { SystemPermissions } from "yusr-ui";
 import TripsPage from "../trips/presentation/tripsPage";
 import { DashboardChartAreaInteractive } from "./dashboardChartAreaInteractive";
 import { DashboardSectionCards } from "./dashboardSectionCards";

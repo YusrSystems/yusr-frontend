@@ -1,4 +1,4 @@
-import { BaseEntity, type ColumnName } from "yusr-core";
+import { BaseEntity, type ColumnName } from "yusr-ui";
 
 export class Route extends BaseEntity
 {

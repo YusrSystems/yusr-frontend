@@ -1,9 +1,8 @@
 import { User2Icon } from "lucide-react";
 import { useMemo } from "react";
-import { SystemPermissions, User, UserFilterColumns, UsersApiService } from "yusr-core";
-import { CrudPage } from "yusr-ui";
+import { CrudPage, SystemPermissions, User, UserFilterColumns, UsersApiService } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
-import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { UserSlice } from "../../core/data/UserLogic";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";

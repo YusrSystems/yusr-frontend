@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { City, Currency } from "yusr-core";
+import { City, Currency } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import RegisterApiService from "../../../core/networking/registerApiService";
 import RegisterActions from "./registerActions";

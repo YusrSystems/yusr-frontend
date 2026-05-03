@@ -1,9 +1,8 @@
-import { SystemPermissionsActions } from "@/core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import Account, { AccountType, ClientsAndSuppliersSlice } from "@/core/data/account";
 import { useAppSelector } from "@/core/state/store";
-import { SystemPermissions } from "yusr-core";
 import type { EntitySearchableSelectParams } from "yusr-ui";
+import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import AccountsSearchableSelect from "./accountsSearchableSelect";
 
 export default function ClientsAndSuppliersSearchableSelect(

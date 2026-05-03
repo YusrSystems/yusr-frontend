@@ -1,4 +1,4 @@
-import { BaseEntity, type ColumnName, RolesApiService, type ValidationRule, Validators } from "yusr-core";
+import { BaseEntity, type ColumnName, RolesApiService, type ValidationRule, Validators } from "yusr-ui";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
 
 export class Role extends BaseEntity

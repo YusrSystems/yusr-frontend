@@ -1,4 +1,4 @@
-import { Branch, BranchesApiService, type ValidationRule, Validators } from "yusr-core";
+import { Branch, BranchesApiService, type ValidationRule, Validators } from "yusr-ui";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
 
 export class BranchValidationRules

@@ -1,4 +1,4 @@
-import { BaseApiService } from "yusr-core";
+import { BaseApiService } from "yusr-ui";
 import type Vehicle from "./vehicle";
 
 export default class VehiclesApiService extends BaseApiService<Vehicle>

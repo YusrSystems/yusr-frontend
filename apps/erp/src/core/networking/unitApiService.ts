@@ -1,4 +1,4 @@
-import { ApiConstants, BaseApiService, type RequestResult, YusrApiHelper } from "yusr-core";
+import { ApiConstants, BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
 import type ServiceIds from "../data/serviceIds";
 import type Unit from "../data/unit";
 

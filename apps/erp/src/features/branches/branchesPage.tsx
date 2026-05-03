@@ -1,9 +1,8 @@
 import { Building } from "lucide-react";
 import { useMemo } from "react";
-import { Branch, BranchesApiService, BranchFilterColumns, SystemPermissions } from "yusr-core";
-import { CrudPage } from "yusr-ui";
+import { Branch, BranchesApiService, BranchFilterColumns, CrudPage, SystemPermissions } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
-import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { BranchSlice } from "../../core/data/branchLogic";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";

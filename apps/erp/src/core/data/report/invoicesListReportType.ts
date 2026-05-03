@@ -1,4 +1,4 @@
-import type { FilterCondition } from "yusr-core";
+import type { FilterCondition } from "yusr-ui";
 import type { BaseReportRequest } from "./baseReportRequest";
 import type Invoice from "../invoice";
 

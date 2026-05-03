@@ -1,9 +1,11 @@
+import { SystemPermissions, SystemPermissionsActions } from "../../../auth";
+import type { BaseEntity, FilterCondition } from "../../../entities";
+import type { BaseApiService } from "../../../networking";
+import { type ColumnName, type FilterResult, ResultStatus } from "../../../types";
 import type { ActionCreatorWithPayload, AsyncThunk } from "@reduxjs/toolkit";
 import { Edit, PlusCircle } from "lucide-react";
 import React from "react";
-import { BaseApiService, BaseEntity, type ColumnName, FilterCondition, type FilterResult, ResultStatus, SystemPermissions } from "yusr-core";
-import { SystemPermissionsActions } from "../../../../../../apps/erp/src/core/auth/systemPermissionsActions";
-import { useAppDispatch, useAppSelector } from "../../../../../../apps/erp/src/core/state/store";
+import { useDispatch } from "react-redux";
 import type { IEntityState } from "../../../state";
 import { Button, Dialog } from "../../pure";
 import type { DialogMode } from "../dialogs/dialogType";
@@ -37,6 +39,7 @@ export type ChangableSearchableSelectParams<T extends BaseEntity, TDialogProps e
   };
   changeDialog: React.ComponentType<BaseDialogProps<T> & TDialogProps>;
   changeDialogProps?: TDialogProps;
+  authPermissions: string[];
 };
 
 export default function ChangableSearchableSelect<T extends BaseEntity, TDialogProps extends object = {}>(
@@ -57,11 +60,11 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
     onValueChange,
     entityActions,
     changeDialog,
-    changeDialogProps
+    changeDialogProps,
+    authPermissions
   }: ChangableSearchableSelectParams<T, TDialogProps>
 )
 {
-  const authState = useAppSelector((state) => state.auth);
   const [openDialog, setOpenDialog] = React.useState(false);
   const [dialogMode, setDialogMode] = React.useState<DialogMode>("create");
   const [selected, setSelected] = React.useState<T | undefined>(
@@ -73,18 +76,18 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
     value: "",
     columnName: columnsNames[0]?.value
   });
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   const ChangeDialog = changeDialog;
 
   const showAddButton = SystemPermissions.hasAuth(
-    authState.loggedInUser?.role?.permissions ?? [],
+    authPermissions ?? [],
     systemPermissionsResources,
     SystemPermissionsActions.Add
   ) && allowAdd;
 
   const showUpdateButton = SystemPermissions.hasAuth(
-    authState.loggedInUser?.role?.permissions ?? [],
+    authPermissions ?? [],
     systemPermissionsResources,
     SystemPermissionsActions.Update
   ) && allowUpdate;
@@ -104,7 +107,7 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
           value={ id?.toString() || "" }
           columnsNames={ columnsNames }
           buttonClassName={ showAddButton ? "rounded-l-none" : "" }
-          onSearch={ (condition) => dispatch(entityActions.filter(condition)) }
+          onSearch={ (condition) => dispatch(entityActions.filter(condition) as any) }
           isLoading={ state.isLoading }
           disabled={ state.isLoading || disabled }
           isInvalid={ isInvalid }
@@ -120,7 +123,7 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
             }
           } }
           onNotFound={ SystemPermissions.hasAuth(
-              authState.loggedInUser?.role?.permissions ?? [],
+              authPermissions ?? [],
               systemPermissionsResources,
               SystemPermissionsActions.Add
             )
@@ -133,7 +136,7 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
                 if (res.status === ResultStatus.Ok && res.data)
                 {
                   dispatch(entityActions.refresh({ data: res.data }));
-                  dispatch(entityActions.filter());
+                  dispatch(entityActions.filter() as any);
                   onValueChange(res.data);
                 }
               }
@@ -141,13 +144,13 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
               {
                 setTypedCondition(con);
                 setDialogMode("create");
-                dispatch(entityActions.filter());
+                dispatch(entityActions.filter() as any);
                 setOpenDialog(true);
               }
             }
             : undefined }
           onDelete={ SystemPermissions.hasAuth(
-              authState.loggedInUser?.role?.permissions ?? [],
+              authPermissions ?? [],
               systemPermissionsResources,
               SystemPermissionsActions.Delete
             )

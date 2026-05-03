@@ -1,8 +1,7 @@
-import type { BaseEntity } from "../../entities/baseEntity";
-import type { FilterCondition } from "../../entities/filterCondition";
-import type { FilterResult } from "../../types/filterResult";
-import type { RequestResult } from "../../types/requestResult";
-import { ApiConstants } from "../constants/apiConstants";
+import type { BaseEntity, FilterCondition } from "../entities";
+import type { FilterResult } from "../types/filterResult";
+import type { RequestResult } from "../types/requestResult";
+import { ApiConstants } from "./apiConstants";
 import { YusrApiHelper } from "./yusrApiHelper";
 
 export abstract class BaseFilterableApiService<T extends BaseEntity>

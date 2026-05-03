@@ -1,5 +1,5 @@
-import { SystemPermissions } from "yusr-core";
-import { SystemPermissionsActions } from "../../../../core/auth/systemPermissionsActions";
+import { SystemPermissions } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
 import { InvoiceType } from "../../../../core/data/invoice";
 import StoreItemSelector from "../../../items/storeItemSelector";
@@ -39,8 +39,8 @@ export default function InvoiceBasicTab()
           authState.loggedInUser?.role?.permissions ?? [],
           SystemPermissionsResources.InvoiceShowProfit,
           SystemPermissionsActions.Get
-        ) && (formData.type === InvoiceType.Sell || formData.type === InvoiceType.Quotation) && 
-        <InvoiceProfitDialog /> }
+        ) && (formData.type === InvoiceType.Sell || formData.type === InvoiceType.Quotation)
+          && <InvoiceProfitDialog /> }
         <InvoiceItemsSummary />
       </div>
     </div>

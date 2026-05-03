@@ -7,7 +7,7 @@ import { CrudPage } from "yusr-ui";
 import { Building, MapPin } from "lucide-react";
 import { useMemo } from "react";
 import ChangeBranchDialog from "./changeBranchDialog";
-import { BranchesApiService, BranchFilterColumns, type Branch } from "yusr-core";
+import { BranchesApiService, BranchFilterColumns, type Branch } from "yusr-ui";
 
 export default function BranchesPage() {
   const dispatch = useAppDispatch();

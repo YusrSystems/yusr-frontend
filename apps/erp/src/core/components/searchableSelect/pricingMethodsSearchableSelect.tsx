@@ -12,6 +12,7 @@ export default function PricingMethodsSearchableSelect(
 )
 {
   const pricingMethodState = useAppSelector((state) => state.pricingMethod);
+  const authState = useAppSelector((state) => state.auth);
 
   return (
     <ChangableSearchableSelect<PricingMethod>
@@ -33,6 +34,7 @@ export default function PricingMethodsSearchableSelect(
         refresh: PricingMethodSlice.entityActions.refresh
       } }
       changeDialog={ ChangePricingMethodDialog }
+      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
     />
   );
 }

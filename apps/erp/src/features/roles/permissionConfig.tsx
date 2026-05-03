@@ -1,5 +1,5 @@
 import { Database, FileBarChart, Pencil, Plus, ShoppingCart, Trash2, Wallet } from "lucide-react";
-import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 
 export const ArabicLabels: Record<string, string> = {

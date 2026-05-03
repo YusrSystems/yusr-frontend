@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { useEffect, useMemo } from "react";
-import { BranchFilterColumns, RoleFilterColumns, User, type ValidationRule, Validators } from "yusr-core";
+import { BranchFilterColumns, RoleFilterColumns, User, type ValidationRule, Validators } from "yusr-ui";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, FormField, PasswordField, SearchableSelect, SelectField, TextField, useEntityForm } from "yusr-ui";
 import { filterBranches } from "../../branches/logic/branchSlice";

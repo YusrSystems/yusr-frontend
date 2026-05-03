@@ -1,4 +1,4 @@
-import { ApiConstants, YusrApiHelper, type RequestResult } from "yusr-core";
+import { ApiConstants, YusrApiHelper, type RequestResult } from "yusr-ui";
 
 export default class SystemApiService
 {

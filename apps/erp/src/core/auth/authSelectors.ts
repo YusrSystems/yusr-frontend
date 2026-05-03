@@ -1,7 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
-import type { PermissionSelector } from "yusr-core";
-import { SystemPermissions } from "yusr-core";
-import { SystemPermissionsActions } from "../auth/systemPermissionsActions";
+import type { PermissionSelector } from "yusr-ui";
+import { SystemPermissions } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import type { RootState } from "../state/store";
 
 const selectRawPermissions = (state: RootState) => state.auth.loggedInUser?.role?.permissions || [];

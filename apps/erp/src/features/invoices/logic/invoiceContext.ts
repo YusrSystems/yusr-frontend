@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import type { ThunkDispatch } from "redux-thunk";
-import type { AuthState, User } from "yusr-core";
+import type { AuthState, User } from "yusr-ui";
 import type { IEntityState } from "yusr-ui";
 import type Account from "../../../core/data/account";
 import type { AccountSliceType } from "../../../core/data/account";

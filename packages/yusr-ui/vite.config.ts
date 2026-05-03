@@ -7,7 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
-      'yusr-core': resolve(__dirname, '../../packages/yusr-core/src/index.ts'),
+      'yusr-ui': resolve(__dirname, '../../packages/yusr-ui/src/index.ts'),
     },
   },
   plugins: [
@@ -34,7 +34,7 @@ export default defineConfig({
         '@reduxjs/toolkit',
         'lucide-react',
         'sonner',
-        'yusr-core',
+        'yusr-ui',
         'class-variance-authority',
         'clsx',
         'tailwind-merge',

@@ -1,4 +1,4 @@
-import { BaseEntity } from "yusr-core";
+import { BaseEntity } from "yusr-ui";
 
 export default class Registration extends BaseEntity
 {

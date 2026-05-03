@@ -1,6 +1,6 @@
 import { SystemPermissionsActions } from "@/app/core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import { SystemPermissions } from "yusr-core";
+import { SystemPermissions } from "yusr-ui";
 import { cn, ContextMenu, ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from "yusr-ui";
 import { CheckCircle2, Mail, MoveHorizontal, Printer, Share2, Trash2 } from "lucide-react";
 import type { SeatProps } from "./vehicleTypes";

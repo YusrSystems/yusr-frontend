@@ -1,6 +1,6 @@
-import type { BaseEntity } from "../../entities/baseEntity";
-import type { RequestResult } from "../../types/requestResult";
-import { ApiConstants } from "../constants/apiConstants";
+import type { BaseEntity } from "../entities/baseEntity";
+import type { RequestResult } from "../types/requestResult";
+import { ApiConstants } from "./apiConstants";
 import { BaseFilterableApiService } from "./baseFilterableApiService";
 import { YusrApiHelper } from "./yusrApiHelper";
 

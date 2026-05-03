@@ -1,9 +1,8 @@
 import { ClipboardCheck } from "lucide-react";
 import { useMemo } from "react";
-import { SystemPermissions } from "yusr-core";
-import { CrudPage } from "yusr-ui";
+import { CrudPage, SystemPermissions } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
-import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import ReportConstants from "../../core/data/report/reportConstants";
 import Stocktaking, { StocktakingFilterColumns, StocktakingSlice } from "../../core/data/stocktaking";

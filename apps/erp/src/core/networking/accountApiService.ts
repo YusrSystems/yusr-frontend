@@ -1,4 +1,4 @@
-import { ApiConstants, BaseApiService, type FilterResult, type RequestResult, YusrApiHelper } from "yusr-core";
+import { ApiConstants, BaseApiService, type FilterResult, type RequestResult, YusrApiHelper } from "yusr-ui";
 import type Account from "../data/account";
 import type { FilterByTypeRequest } from "../data/filterByTypeRequest";
 

@@ -6,7 +6,7 @@
 
 - fix NumberInput
 - Updated dependencies
-  - yusr-core@6.0.18
+  - yusr-ui@6.0.18
 
 ## 6.0.17
 
@@ -14,7 +14,7 @@
 
 - fix NumberInput
 - Updated dependencies
-  - yusr-core@6.0.17
+  - yusr-ui@6.0.17
 
 ## 6.0.16
 
@@ -22,7 +22,7 @@
 
 - add city prop to branch
 - Updated dependencies
-  - yusr-core@6.0.16
+  - yusr-ui@6.0.16
 
 ## 6.0.15
 
@@ -30,7 +30,7 @@
 
 - fix FieldsSection
 - Updated dependencies
-  - yusr-core@6.0.15
+  - yusr-ui@6.0.15
 
 ## 6.0.14
 
@@ -38,7 +38,7 @@
 
 - fix FieldsSection
 - Updated dependencies
-  - yusr-core@6.0.14
+  - yusr-ui@6.0.14
 
 ## 6.0.13
 
@@ -46,7 +46,7 @@
 
 - fix NumbertoWordsService name
 - Updated dependencies
-  - yusr-core@6.0.13
+  - yusr-ui@6.0.13
 
 ## 6.0.12
 
@@ -54,7 +54,7 @@
 
 - add numbertoWordsService
 - Updated dependencies
-  - yusr-core@6.0.12
+  - yusr-ui@6.0.12
 
 ## 6.0.11
 
@@ -62,7 +62,7 @@
 
 - include the perms copms
 - Updated dependencies
-  - yusr-core@6.0.11
+  - yusr-ui@6.0.11
 
 ## 6.0.10
 
@@ -70,7 +70,7 @@
 
 - b
 - Updated dependencies
-  - yusr-core@6.0.10
+  - yusr-ui@6.0.10
 
 ## 6.0.9
 
@@ -78,7 +78,7 @@
 
 - b
 - Updated dependencies
-  - yusr-core@6.0.9
+  - yusr-ui@6.0.9
 
 ## 6.0.8
 
@@ -86,7 +86,7 @@
 
 - add permissions comps
 - Updated dependencies
-  - yusr-core@6.0.8
+  - yusr-ui@6.0.8
 
 ## 6.0.7
 
@@ -94,7 +94,7 @@
 
 - add filter types
 - Updated dependencies
-  - yusr-core@6.0.7
+  - yusr-ui@6.0.7
 
 ## 6.0.6
 
@@ -102,7 +102,7 @@
 
 - enhance- sidebar and allow yusr side bar to collabsable
 - Updated dependencies
-  - yusr-core@6.0.6
+  - yusr-ui@6.0.6
 
 ## 6.0.5
 
@@ -110,7 +110,7 @@
 
 - making sidebar collabsable
 - Updated dependencies
-  - yusr-core@6.0.5
+  - yusr-ui@6.0.5
 
 ## 6.0.4
 
@@ -118,7 +118,7 @@
 
 - add the ability to change perm format
 - Updated dependencies
-  - yusr-core@6.0.4
+  - yusr-ui@6.0.4
 
 ## 6.0.3
 
@@ -126,7 +126,7 @@
 
 - reset
 - Updated dependencies
-  - yusr-core@6.0.3
+  - yusr-ui@6.0.3
 
 ## 3.1.2
 
@@ -170,7 +170,7 @@
 
 - fixes
 - Updated dependencies
-  - yusr-core@2.2.10
+  - yusr-ui@2.2.10
 
 ## 2.2.9
 
@@ -178,7 +178,7 @@
 
 - making theme provider to be next.js safe
 - Updated dependencies
-  - yusr-core@2.2.9
+  - yusr-ui@2.2.9
 
 ## 2.2.8
 
@@ -186,7 +186,7 @@
 
 - fix export
 - Updated dependencies
-  - yusr-core@2.2.8
+  - yusr-ui@2.2.8
 
 ## 2.2.7
 
@@ -194,7 +194,7 @@
 
 - fix export
 - Updated dependencies
-  - yusr-core@2.2.7
+  - yusr-ui@2.2.7
 
 ## 2.2.6
 
@@ -202,7 +202,7 @@
 
 - export api services
 - Updated dependencies
-  - yusr-core@2.2.6
+  - yusr-ui@2.2.6
 
 ## 2.2.5
 
@@ -210,7 +210,7 @@
 
 - add common entities and services
 - Updated dependencies
-  - yusr-core@2.2.5
+  - yusr-ui@2.2.5
 
 ## 2.2.4
 
@@ -218,7 +218,7 @@
 
 - fix sonner
 - Updated dependencies
-  - yusr-core@2.2.4
+  - yusr-ui@2.2.4
 
 ## 2.2.3
 
@@ -226,7 +226,7 @@
 
 - fix esm
 - Updated dependencies
-  - yusr-core@2.2.3
+  - yusr-ui@2.2.3
 
 ## 2.2.2
 
@@ -234,7 +234,7 @@
 
 - fix esm issue
 - Updated dependencies
-  - yusr-core@2.2.2
+  - yusr-ui@2.2.2
 
 ## 2.0.0
 

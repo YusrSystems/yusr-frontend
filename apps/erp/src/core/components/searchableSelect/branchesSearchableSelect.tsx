@@ -1,5 +1,5 @@
 import ChangeBranchDialog from "@/features/branches/changeBranchDialog";
-import { Branch, BranchesApiService, BranchFilterColumns } from "yusr-core";
+import { Branch, BranchesApiService, BranchFilterColumns } from "yusr-ui";
 import type { EntitySearchableSelectParams } from "yusr-ui";
 import ChangableSearchableSelect from "../../../../../../packages/yusr-ui/src/components/custom/select/changableSearchableSelect";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
@@ -11,6 +11,7 @@ export default function BranchesSearchableSelect(
 )
 {
   const branchState = useAppSelector((state) => state.branch);
+  const authState = useAppSelector((state) => state.auth);
 
   return (
     <ChangableSearchableSelect<Branch>
@@ -29,6 +30,7 @@ export default function BranchesSearchableSelect(
         refresh: BranchSlice.entityActions.refresh
       } }
       changeDialog={ ChangeBranchDialog }
+      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
     />
   );
 }

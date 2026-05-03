@@ -3,7 +3,7 @@ import { StorageFileStatus } from "@/app/core/data/storageFile";
 import SettingsApiService from "@/app/core/networking/settingsApiService";
 import { filterCurrencies } from "@/app/core/state/shared/currencySlice";
 import { updateSetting, useAppDispatch, useAppSelector } from "@/app/core/state/store";
-import { type ValidationRule, Validators } from "yusr-core";
+import { type ValidationRule, Validators } from "yusr-ui";
 import { Avatar, AvatarFallback, AvatarImage, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, FieldGroup, FormField, Label, SelectInput, Separator, TextField, useEntityForm, useStorageFile } from "yusr-ui";
 import { differenceInDays, format } from "date-fns";
 import { Camera, Loader2, Trash2, Upload } from "lucide-react";

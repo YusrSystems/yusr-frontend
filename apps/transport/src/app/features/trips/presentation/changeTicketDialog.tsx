@@ -2,7 +2,7 @@ import { filterCities } from "@/app/core/state/shared/citySlice";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { Edit, PlusCircle, PrinterCheck } from "lucide-react";
 import { useEffect, useMemo } from "react";
-import { CityFilterColumns, type ValidationRule, Validators } from "yusr-core";
+import { CityFilterColumns, type ValidationRule, Validators } from "yusr-ui";
 import { Button, ChangeDialog, DateField, FieldGroup, FormField, NumberField, SearchableSelect, TextField, useEntityForm } from "yusr-ui";
 import { type Passenger, PassengerFilterColumns } from "../../passengers/data/passenger";
 import { filterPassengers } from "../../passengers/logic/passengerSlice";

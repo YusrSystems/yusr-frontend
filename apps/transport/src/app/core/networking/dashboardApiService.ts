@@ -1,4 +1,4 @@
-import { ApiConstants, BaseFilterableApiService, YusrApiHelper, type RequestResult } from "yusr-core";
+import { ApiConstants, BaseFilterableApiService, YusrApiHelper, type RequestResult } from "yusr-ui";
 import { Dashboard } from "../data/dashboard";
 
 export default class DashboardApiService extends BaseFilterableApiService<Dashboard>

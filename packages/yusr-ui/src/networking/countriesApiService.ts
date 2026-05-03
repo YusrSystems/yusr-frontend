@@ -1,6 +1,6 @@
-import type { Country, FilterCondition } from "../../entities";
-import type { FilterResult, RequestResult } from "../../types";
-import { ApiConstants } from "../constants/apiConstants";
+import type { Country, FilterCondition } from "../entities";
+import type { FilterResult, RequestResult } from "../types";
+import { ApiConstants } from "./apiConstants";
 import { BaseFilterableApiService } from "./baseFilterableApiService";
 import { YusrApiHelper } from "./yusrApiHelper";
 

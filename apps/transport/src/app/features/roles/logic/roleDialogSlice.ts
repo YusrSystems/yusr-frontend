@@ -1,4 +1,4 @@
-import type { Role } from "yusr-core";
+import type { Role } from "yusr-ui";
 import { createGenericDialogSlice } from "yusr-ui";
 
 export const roleDialogSlice = createGenericDialogSlice<Role>("roleDialog");

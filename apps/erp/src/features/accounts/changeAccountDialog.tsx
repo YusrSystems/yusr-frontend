@@ -2,11 +2,10 @@ import ClientsSearchableSelect from "@/core/components/searchableSelect/clientsS
 import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
-import { CityFilterColumns, SystemPermissions } from "yusr-core";
 import type { CommonChangeDialogProps, FormState, IEntityState } from "yusr-ui";
-import { Button, ChangeDialog, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { Button, ChangeDialog, CityFilterColumns, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, SystemPermissions, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
-import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Account, { AccountContact, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/account";
 import { filterCities } from "../../core/state/shared/citySlice";

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Branch, CityFilterColumns } from "yusr-core";
+import { Branch, CityFilterColumns } from "yusr-ui";
 import { ChangeDialog, type CommonChangeDialogProps, FieldGroup, FieldsSection, FormField, SearchableSelect, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BranchSlice, BranchValidationRules } from "../../core/data/branchLogic";
 import { filterCities } from "../../core/state/shared/citySlice";

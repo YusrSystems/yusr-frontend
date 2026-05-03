@@ -1,4 +1,4 @@
-import type { FilterCondition } from "yusr-core";
+import type { FilterCondition } from "yusr-ui";
 import type Voucher from "../voucher";
 import type { BaseReportRequest } from "./baseReportRequest";
 

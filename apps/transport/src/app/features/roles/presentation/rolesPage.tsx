@@ -7,7 +7,7 @@ import { useMemo } from "react";
 import { openRoleChangeDialog, openRoleDeleteDialog, setIsRoleChangeDialogOpen, setIsRoleDeleteDialogOpen } from "../logic/roleDialogSlice";
 import { filterRoles, refreshRoles, setCurrentRolesPage } from "../logic/roleSlice";
 import ChangeRoleDialog from "./changeRoleDialog";
-import { RolesApiService, Role, RoleFilterColumns } from "yusr-core";
+import { RolesApiService, Role, RoleFilterColumns } from "yusr-ui";
 
 export default function RolesPage() {
   const dispatch = useAppDispatch();

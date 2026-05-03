@@ -1,7 +1,7 @@
 import { ArrowRightLeft, BarChart2, FileText, type LucideIcon, Percent, TrendingUp } from "lucide-react";
 import { useEffect } from "react";
-import { SystemPermissions } from "yusr-core";
-import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
+import { SystemPermissions } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import { ItemSlice } from "../../core/data/item";

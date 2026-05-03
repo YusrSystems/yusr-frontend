@@ -1,8 +1,8 @@
 import type { Store } from "@reduxjs/toolkit";
 import { StrictMode, type PropsWithChildren } from "react";
 import { Provider } from "react-redux";
-import { ApiConstants } from "yusr-core";
 import ErrorBoundary from "../../../error/errorBoundary";
+import { ApiConstants } from "../../../networking";
 
 interface YusrAppProps extends PropsWithChildren {
     store: Store;

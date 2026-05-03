@@ -1,6 +1,6 @@
 import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/banksAndBoxesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
-import { NumbertoWordsService } from "yusr-core";
+import { NumbertoWordsService } from "yusr-ui";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, DateField, FieldGroup, FieldsSection, FormField, NumberField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BanksAndBoxesSlice } from "../../core/data/account";

@@ -1,10 +1,9 @@
 import { FileText } from "lucide-react";
 import { useMemo, useState } from "react";
-import { FilterCondition, NumbertoWordsService, SystemPermissions } from "yusr-core";
-import { CrudPage } from "yusr-ui";
+import { CrudPage, FilterCondition, NumbertoWordsService, SystemPermissions } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
-import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import ReportConstants from "../../core/data/report/reportConstants";
 import Voucher, { VoucherFilterColumns, VoucherSlice, VoucherType } from "../../core/data/voucher";

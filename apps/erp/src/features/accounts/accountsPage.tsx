@@ -1,10 +1,9 @@
 import { WalletIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-import { FilterCondition, SystemPermissions } from "yusr-core";
-import { CrudPage, type FormState, type IDialogState, type IEntityState } from "yusr-ui";
+import { CrudPage, FilterCondition, type FormState, type IDialogState, type IEntityState, SystemPermissions } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
-import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Account, { AccountFilterColumns, AccountSlice, AccountType } from "../../core/data/account";
 import ReportConstants from "../../core/data/report/reportConstants";

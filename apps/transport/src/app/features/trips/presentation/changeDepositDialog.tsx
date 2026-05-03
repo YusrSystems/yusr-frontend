@@ -1,7 +1,7 @@
 import { filterCities } from "@/app/core/state/shared/citySlice";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { useEffect, useMemo } from "react";
-import { CityFilterColumns, type ValidationRule, Validators } from "yusr-core";
+import { CityFilterColumns, type ValidationRule, Validators } from "yusr-ui";
 import { ChangeDialog, FieldGroup, FieldsSection, FormField, NumberField, PhoneField, SearchableSelect, StorageFileField, TextField, useEntityForm, useStorageFile } from "yusr-ui";
 import type { Deposit } from "../data/deposit";
 

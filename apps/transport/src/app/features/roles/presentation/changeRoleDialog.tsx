@@ -1,4 +1,4 @@
-import { Role, type ValidationRule, Validators } from "yusr-core";
+import { Role, type ValidationRule, Validators } from "yusr-ui";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, Skeleton, TextField, useEntityForm } from "yusr-ui";
 import { useEffect, useMemo } from "react";

@@ -1,4 +1,4 @@
-import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-core";
+import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
 import BalanceTransfersApiService from "../networking/balanceTransferApiService";
 

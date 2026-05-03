@@ -1,6 +1,6 @@
 import { RoleSlice } from "@/core/data/role";
 import ChangeRoleDialog from "@/features/roles/changeRoleDialog";
-import { Role, RoleFilterColumns, RolesApiService } from "yusr-core";
+import { Role, RoleFilterColumns, RolesApiService } from "yusr-ui";
 import type { EntitySearchableSelectParams } from "yusr-ui";
 import ChangableSearchableSelect from "../../../../../../packages/yusr-ui/src/components/custom/select/changableSearchableSelect";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
@@ -11,6 +11,7 @@ export default function RolesSearchableSelect(
 )
 {
   const roleState = useAppSelector((state) => state.role);
+  const authState = useAppSelector((state) => state.auth);
 
   return (
     <ChangableSearchableSelect<Role>
@@ -29,6 +30,7 @@ export default function RolesSearchableSelect(
         refresh: RoleSlice.entityActions.refresh
       } }
       changeDialog={ ChangeRoleDialog }
+      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
     />
   );
 }

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "packageManager": "pnpm@10.33.0",
   "scripts": {
-    "build:core": "pnpm --filter yusr-core build",
+    "build:core": "pnpm --filter yusr-ui build",
     "build:ui": "pnpm --filter yusr-ui build",
     "build": "pnpm build:core && pnpm build:ui"
   }

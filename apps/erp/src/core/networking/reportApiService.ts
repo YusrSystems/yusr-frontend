@@ -1,4 +1,4 @@
-import { ApiConstants, YusrApiHelper } from "yusr-core";
+import { ApiConstants, YusrApiHelper } from "yusr-ui";
 import type { BaseReportRequest } from "../data/report/baseReportRequest";
 
 export default class ReportApiService

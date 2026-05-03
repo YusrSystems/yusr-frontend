@@ -12,6 +12,7 @@ export default function UnitsSearchableSelect(
 )
 {
   const unitState = useAppSelector((state) => state.unit);
+  const authState = useAppSelector((state) => state.auth);
 
   return (
     <ChangableSearchableSelect<Unit>
@@ -33,6 +34,7 @@ export default function UnitsSearchableSelect(
         refresh: UnitSlice.entityActions.refresh
       } }
       changeDialog={ ChangeUnitDialog }
+      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
     />
   );
 }

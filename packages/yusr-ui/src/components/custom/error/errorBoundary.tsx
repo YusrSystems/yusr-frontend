@@ -1,5 +1,5 @@
 import React from "react";
-import { ErrorFallback } from "./errorFallback";
+import ErrorFallback from "./errorFallback";
 
 interface ErrorBoundaryProps
 {

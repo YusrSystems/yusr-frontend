@@ -7,7 +7,7 @@ import { useMemo } from "react";
 import { openUserChangeDialog, openUserDeleteDialog, setIsUserChangeDialogOpen, setIsUserDeleteDialogOpen } from "../logic/userDialogSlice";
 import { filterUsers, refreshUsers, setCurrentUsersPage } from "../logic/userSlice";
 import ChangeUserDialog from "./changeUserDialog";
-import { UsersApiService, User, UserFilterColumns } from "yusr-core";
+import { UsersApiService, User, UserFilterColumns } from "yusr-ui";
 
 export default function UsersPage() {
   const dispatch = useAppDispatch();

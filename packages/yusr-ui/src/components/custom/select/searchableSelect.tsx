@@ -1,6 +1,7 @@
+import type { FilterCondition } from "../../../entities";
+import type { ColumnName } from "../../../types";
 import { Check, ChevronsUpDown, Loader2, Trash2 } from "lucide-react";
 import * as React from "react";
-import type { ColumnName, FilterCondition } from "yusr-core";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "../../pure/command";

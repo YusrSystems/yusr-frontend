@@ -1,4 +1,4 @@
-import { ApiConstants, SystemPermissions, YusrApiHelper } from "yusr-core";
+import { ApiConstants, SystemPermissions, YusrApiHelper } from "yusr-ui";
 import { Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SideBarUserData } from "yusr-ui";
 import { Building2Icon, BusFrontIcon, BusIcon, LayoutDashboardIcon, MapPinnedIcon, SettingsIcon, ShieldCheck, UserCogIcon, UsersIcon } from "lucide-react";
 import * as React from "react";

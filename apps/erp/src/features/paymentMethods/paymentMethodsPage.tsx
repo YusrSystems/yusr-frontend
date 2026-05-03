@@ -1,9 +1,8 @@
 import { CreditCardIcon } from "lucide-react";
 import { useMemo } from "react";
-import { SystemPermissions } from "yusr-core";
-import { CrudPage } from "yusr-ui";
+import { CrudPage, SystemPermissions } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
-import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type PaymentMethod from "../../core/data/paymentMethod";
 import { CommissionType, PaymentMethodFilterColumns, PaymentMethodSlice } from "../../core/data/paymentMethod";

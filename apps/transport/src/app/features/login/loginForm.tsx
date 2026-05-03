@@ -1,7 +1,7 @@
 import type { Setting } from "@/app/core/data/setting";
 import { login, updateLoggedInUser, useAppDispatch } from "@/app/core/state/store";
 import placeholderImg from "@/assets/placeholder.svg";
-import { ApiConstants, LoginRequest, User, type ValidationRule, Validators, YusrApiHelper } from "yusr-core";
+import { ApiConstants, LoginRequest, User, type ValidationRule, Validators, YusrApiHelper } from "yusr-ui";
 import { Button, Card, CardContent, Checkbox, cn, Field, FieldGroup, PasswordField, TextField, useEntityForm } from "yusr-ui";
 import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";

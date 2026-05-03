@@ -13,7 +13,7 @@ import userDialogReducer from "@/app/features/users/logic/userDialogSlice";
 import userReducer from "@/app/features/users/logic/userSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { createAuthSlice, User } from "yusr-core";
+import { createAuthSlice, User } from "yusr-ui";
 import { setupAuthListeners } from "yusr-ui";
 import type { Setting } from "../data/setting";
 import { VehicleSlice } from "../data/vehicle";

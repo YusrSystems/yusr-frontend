@@ -1,4 +1,4 @@
-import type { Role } from "../../entities";
+import type { Role } from "../entities";
 import { BaseApiService } from "./baseApiService";
 
 export class RolesApiService extends BaseApiService<Role>

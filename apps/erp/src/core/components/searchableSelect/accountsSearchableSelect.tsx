@@ -39,6 +39,7 @@ export default function AccountsSearchableSelect(
 )
 {
   const accountState = useAppSelector(selectEntityState) as IEntityState<Account>;
+  const authState = useAppSelector((state) => state.auth);
 
   return (
     <ChangableSearchableSelect<Account, {
@@ -78,6 +79,7 @@ export default function AccountsSearchableSelect(
         fixedType: fixedType,
         filterDataOutside: true
       } }
+      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
     />
   );
 }

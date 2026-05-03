@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { createAuthSlice, User } from "yusr-core";
+import { createAuthSlice, User } from "yusr-ui";
 import { setupAuthListeners } from "yusr-ui";
 import dashboardReducer from "../../features/dashboard/logic/dashboardSlice";
 import { itemTransferReducer } from "../../features/itemTransfers/logic/itemTransferSlice";

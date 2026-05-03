@@ -1,4 +1,4 @@
-import { BranchesApiService } from "yusr-core";
+import { BranchesApiService } from "yusr-ui";
 import { createGenericEntitySlice } from "yusr-ui";
 
 const { reducer, actions } = createGenericEntitySlice("branch", new BranchesApiService());

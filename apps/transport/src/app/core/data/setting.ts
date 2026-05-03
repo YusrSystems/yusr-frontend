@@ -1,4 +1,4 @@
-import type { Currency } from "yusr-core";
+import type { Currency } from "yusr-ui";
 import type { StorageFile } from "./storageFile";
 
 export class Setting

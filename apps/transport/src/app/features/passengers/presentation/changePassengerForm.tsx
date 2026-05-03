@@ -1,6 +1,6 @@
 import { filterCountries } from "@/app/core/state/shared/countrySlice";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
-import { CountryFilterColumns } from "yusr-core";
+import { CountryFilterColumns } from "yusr-ui";
 import { DateField, FieldGroup, FieldsSection, FormField, PhoneField, SearchableSelect, SelectField, TextField } from "yusr-ui";
 import type { Gender, Passenger } from "../data/passenger";
 

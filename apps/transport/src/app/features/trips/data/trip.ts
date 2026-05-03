@@ -1,5 +1,5 @@
 import type Vehicle from "@/app/core/data/vehicle";
-import { BaseEntity, type ColumnName } from "yusr-core";
+import { BaseEntity, type ColumnName } from "yusr-ui";
 import type { Route } from "../../routes/data/route";
 import type { Deposit } from "./deposit";
 import type { Ticket } from "./ticket";

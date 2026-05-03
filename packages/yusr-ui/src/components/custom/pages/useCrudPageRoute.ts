@@ -1,7 +1,7 @@
+import type { BaseEntity } from "../../../entities";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import type { BaseEntity } from "../../../../../yusr-core/src/entities";
 import type { CrudActions } from "./crudPage";
 
 export default function useCrudPageRoute<T extends BaseEntity>(

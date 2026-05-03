@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { ApiConstants, ResultStatus, YusrApiHelper } from "yusr-core";
+import { ApiConstants, ResultStatus, YusrApiHelper } from "yusr-ui";
 import { YusrBusBackground } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import { logout, useAppDispatch, useAppSelector } from "../../../core/state/store";

@@ -4,7 +4,7 @@ import {
   type ColumnName,
   type ValidationRule,
   Validators,
-} from "yusr-core";
+} from "yusr-ui";
 import {
   createGenericDialogSlice,
   createGenericEntitySlice,

@@ -1,7 +1,7 @@
 import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
-import { NumbertoWordsService } from "yusr-core";
+import { NumbertoWordsService } from "yusr-ui";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, DateField, FieldGroup, FieldsSection, FormField, NumberField, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";

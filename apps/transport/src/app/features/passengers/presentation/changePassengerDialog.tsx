@@ -1,7 +1,7 @@
 import { filterCountries } from "@/app/core/state/shared/countrySlice";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { useEffect, useMemo } from "react";
-import { type ValidationRule, Validators } from "yusr-core";
+import { type ValidationRule, Validators } from "yusr-ui";
 import { ChangeDialog, type CommonChangeDialogProps, useEntityForm } from "yusr-ui";
 import type { Passenger } from "../data/passenger";
 import ChangePassengerForm from "./changePassengerForm";

@@ -1,5 +1,6 @@
+import type { ResourcePermissions } from "@/auth";
+import type { BaseEntity } from "../../../entities";
 import { createContext, useContext } from "react";
-import type { BaseEntity, ResourcePermissions } from "yusr-core";
 import type { CrudActions } from "./crudPage";
 
 interface crudPageContextProps<T extends BaseEntity>

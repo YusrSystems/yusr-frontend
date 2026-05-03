@@ -1,4 +1,4 @@
-import { BaseEntity, type ColumnName, StorageFile, type ValidationRule, Validators } from "yusr-core";
+import { BaseEntity, type ColumnName, StorageFile, type ValidationRule, Validators } from "yusr-ui";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
 import InvoiceItemsActions from "../../features/invoices/logic/invoiceItemsActions";
 import InvoiceVouchersActions from "../../features/invoices/logic/invoiceVouchersActions";

@@ -1,7 +1,7 @@
 import BranchesSearchableSelect from "@/core/components/searchableSelect/branchesSearchableSelect";
 import RolesSearchableSelect from "@/core/components/searchableSelect/rolesSearchableSelect";
 import { useEffect, useMemo } from "react";
-import { User } from "yusr-core";
+import { User } from "yusr-ui";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, FormField, PasswordField, SelectField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BranchSlice } from "../../core/data/branchLogic";

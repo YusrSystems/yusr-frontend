@@ -12,6 +12,7 @@ export default function StoresSearchableSelect(
 )
 {
   const storeState = useAppSelector((state) => state.store);
+  const authState = useAppSelector((state) => state.auth);
 
   return (
     <ChangableSearchableSelect<Store>
@@ -34,6 +35,7 @@ export default function StoresSearchableSelect(
         refresh: StoreSlice.entityActions.refresh
       } }
       changeDialog={ ChangeStoreDialog }
+      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
     />
   );
 }

@@ -1,5 +1,5 @@
+import type { ValidationRule } from "../validation";
 import { useCallback, useState } from "react";
-import type { ValidationRule } from "yusr-core";
 
 export function useFormValidation<T>(data: T, rules: ValidationRule<T>[])
 {

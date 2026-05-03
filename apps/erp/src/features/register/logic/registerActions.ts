@@ -1,5 +1,5 @@
 import { type ActionReducerMapBuilder, createAsyncThunk } from "@reduxjs/toolkit";
-import { CitiesApiService, CurrenciesApiService } from "yusr-core";
+import { CitiesApiService, CurrenciesApiService } from "yusr-ui";
 import type { RegisterState } from "./registerSlice";
 
 export default class RegisterActions

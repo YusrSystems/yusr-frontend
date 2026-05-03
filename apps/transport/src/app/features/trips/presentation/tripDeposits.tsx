@@ -8,7 +8,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import type { Deposit } from "../data/deposit";
 import { useAppSelector } from "@/app/core/state/store";
-import { SystemPermissions } from "yusr-core";
+import { SystemPermissions } from "yusr-ui";
 
 type TripDepositsParams = {
   deposits: Deposit[];

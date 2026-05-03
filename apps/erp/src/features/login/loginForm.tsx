@@ -2,7 +2,7 @@ import placeholderImg from "@/assets/placeholder.svg";
 import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ApiConstants, LoginRequest, User, type ValidationRule, Validators, YusrApiHelper } from "yusr-core";
+import { ApiConstants, LoginRequest, User, type ValidationRule, Validators, YusrApiHelper } from "yusr-ui";
 import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, PasswordField, TextField, useEntityForm } from "yusr-ui";
 import type { Setting } from "../../core/data/setting";
 import { login, updateLoggedInUser, useAppDispatch } from "../../core/state/store";

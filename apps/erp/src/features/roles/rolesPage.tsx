@@ -1,9 +1,8 @@
 import { Settings2 } from "lucide-react";
 import { useMemo } from "react";
-import { Role, RoleFilterColumns, RolesApiService, SystemPermissions } from "yusr-core";
-import { CrudPage } from "yusr-ui";
+import { CrudPage, Role, RoleFilterColumns, RolesApiService, SystemPermissions } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
-import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { RoleSlice } from "../../core/data/role";
 import { updateLoggedInUser, useAppDispatch, useAppSelector } from "../../core/state/store";

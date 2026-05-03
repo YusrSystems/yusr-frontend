@@ -1,9 +1,8 @@
 import { TagIcon } from "lucide-react";
 import { useMemo } from "react";
-import { SystemPermissions } from "yusr-core";
-import { CrudPage } from "yusr-ui";
+import { CrudPage, SystemPermissions } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
-import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type PricingMethod from "../../core/data/pricingMethod";
 import { PricingMethodFilterColumns, PricingMethodSlice } from "../../core/data/pricingMethod";

@@ -1,4 +1,4 @@
-import { BaseEntity, type ColumnName, StorageFile } from "yusr-core";
+import { BaseEntity, type ColumnName, StorageFile } from "yusr-ui";
 import { createGenericDialogSlice, createGenericEntitySlice } from "yusr-ui";
 import VehiclesApiService from "./vehiclesApiService";
 

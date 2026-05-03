@@ -1,7 +1,7 @@
 import { BranchSlice } from "@/core/data/branchLogic";
 import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { type ValidationRule, Validators } from "yusr-core";
+import { type ValidationRule, Validators } from "yusr-ui";
 import { Button, Card, CardContent, CardFooter, TabButton, useEntityForm } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import { PaymentMethodSlice } from "../../core/data/paymentMethod";

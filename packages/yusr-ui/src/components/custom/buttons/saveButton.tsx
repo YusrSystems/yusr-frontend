@@ -1,6 +1,8 @@
+import type { BaseEntity } from "../../../entities";
+import type { BaseApiService } from "../../../networking";
+import { type RequestResult, ResultStatus } from "../../../types";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { type BaseApiService, type BaseEntity, type RequestResult, ResultStatus } from "yusr-core";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure";
 import { Button } from "../../pure/button";
 import type { DialogMode } from "../dialogs/dialogType";

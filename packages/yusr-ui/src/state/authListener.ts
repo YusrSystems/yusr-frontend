@@ -1,7 +1,7 @@
+import { AuthConstants } from "../auth";
 import type { Dispatch, UnknownAction } from "@reduxjs/toolkit";
-import { AuthConstants } from "yusr-core";
 
-interface AuthActions 
+interface AuthActions
 {
   logout: () => any;
   syncFromStorage: () => any;

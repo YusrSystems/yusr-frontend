@@ -1,6 +1,6 @@
 import { toast } from "sonner";
-import { AuthConstants } from "../../auth";
-import { type RequestResult, ResultStatus } from "../../types/requestResult";
+import { AuthConstants } from "../auth";
+import { type RequestResult, ResultStatus } from "../types/requestResult";
 
 export class YusrApiHelper
 {

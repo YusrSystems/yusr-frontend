@@ -1,6 +1,6 @@
 import type Vehicle from "@/app/core/data/vehicle";
 import { useMemo } from "react";
-import { type ValidationRule, Validators } from "yusr-core";
+import { type ValidationRule, Validators } from "yusr-ui";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, NumberField, StorageFileField, TextField, useEntityForm, useStorageFile } from "yusr-ui";
 

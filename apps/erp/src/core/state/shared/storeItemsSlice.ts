@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { FilterResult } from "yusr-core";
+import type { FilterResult } from "yusr-ui";
 import type { FilterByTypeRequest } from "../../data/filterByTypeRequest";
 import type { StoreItem } from "../../data/item";
 import ItemsApiService from "../../networking/itemApiService";

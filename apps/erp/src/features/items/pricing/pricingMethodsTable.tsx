@@ -1,15 +1,14 @@
 import PricingMethodsSearchableSelect from "@/core/components/searchableSelect/pricingMethodsSearchableSelect";
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
-import { SystemPermissions } from "yusr-core";
-import { Button, FormField, NumberField, TextField } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../core/auth/systemPermissionsActions";
+import { Button, FormField, NumberField, SystemPermissions, TextField } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
+import CurrencyIcon from "../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 import { SystemPermissionsResources } from "../../../core/auth/systemPermissionsResources";
 import Item, { ItemType } from "../../../core/data/item";
 import { useAppSelector } from "../../../core/state/store";
 import ItemBarcodeButton from "../../reports/itemBarcodeDialog";
 import usePricingMethodsTable from "./usePricingMethodsTable";
-import CurrencyIcon from "../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 
 export default function PricingMethodsTable()
 {
@@ -122,7 +121,7 @@ export default function PricingMethodsTable()
                     onChange={ (val) =>
                       updatePricingMethod(index, { price: val }) }
                     isInvalid={ hasError && (method.price == undefined || method.price <= 0) }
-                    currency={<CurrencyIcon />}
+                    currency={ <CurrencyIcon /> }
                   />
                 </td>
                 <td className="p-3">

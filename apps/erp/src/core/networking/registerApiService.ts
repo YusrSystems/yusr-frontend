@@ -1,4 +1,4 @@
-import { ApiConstants, BaseApiService, type RequestResult, YusrApiHelper } from "yusr-core";
+import { ApiConstants, BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
 import type Registration from "../data/registration";
 
 export default class RegisterApiService extends BaseApiService<Registration>

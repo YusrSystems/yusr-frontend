@@ -3,7 +3,7 @@ import { GetTenantInfo } from "@/app/core/state/shared/systemSlice";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { type ValidationRule, Validators } from "yusr-core";
+import { type ValidationRule, Validators } from "yusr-ui";
 import { ThemeToggle, useEntityForm } from "yusr-ui";
 import type { Passenger } from "../data/passenger";
 import { resetRegistration, selfRegister } from "../logic/passengerSelfRegisterSlice";

@@ -3,7 +3,7 @@ import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsRes
 import TripDepositsReportApiService from "@/app/core/networking/reports/tripDepositsReportApiService";
 import TripTicketsReportApiService from "@/app/core/networking/reports/tripTicketsReportApiService";
 import { useAppSelector } from "@/app/core/state/store";
-import { SystemPermissions } from "yusr-core";
+import { SystemPermissions } from "yusr-ui";
 import { Badge, cn } from "yusr-ui";
 import { Archive, Calculator, Coins, Ticket as TicketIcon, Wallet } from "lucide-react";
 import { useEffect, useRef, useState } from "react";

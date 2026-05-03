@@ -2,9 +2,12 @@ import type { ActionCreatorWithPayload, AsyncThunk, UnknownAction } from "@redux
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import type { BaseApiService, BaseEntity, ColumnName, FilterCondition, FilterResult, ResourcePermissions } from "yusr-core";
+import type { ResourcePermissions } from "../../../auth";
+import type { BaseEntity, FilterCondition } from "../../../entities";
+import type { BaseApiService } from "../../../networking";
 import type { IDialogState } from "../../../state/interfaces/iDialogState";
 import type { IEntityState } from "../../../state/interfaces/iEntityState";
+import type { ColumnName, FilterResult } from "../../../types";
 import { Dialog, DialogContent } from "../../pure/dialog";
 import { TableBody } from "../../pure/table";
 import { DeleteDialog } from "../dialogs/deleteDialog";

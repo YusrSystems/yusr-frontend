@@ -1,7 +1,7 @@
 import { filterCities } from "@/app/core/state/shared/citySlice";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { useEffect, useMemo } from "react";
-import { Branch, CityFilterColumns, type ValidationRule, Validators } from "yusr-core";
+import { Branch, CityFilterColumns, type ValidationRule, Validators } from "yusr-ui";
 import { ChangeDialog, type CommonChangeDialogProps, FieldGroup, FieldsSection, FormField, SearchableSelect, TextField, useEntityForm } from "yusr-ui";
 
 export default function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Branch>)

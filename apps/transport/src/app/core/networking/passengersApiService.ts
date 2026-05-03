@@ -1,5 +1,5 @@
 import type { Passenger } from "@/app/features/passengers/data/passenger";
-import { ApiConstants, BaseApiService, type RequestResult, YusrApiHelper } from "yusr-core";
+import { ApiConstants, BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
 
 export default class PassengersApiService extends BaseApiService<Passenger>
 {

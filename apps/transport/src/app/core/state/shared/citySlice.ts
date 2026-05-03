@@ -1,4 +1,4 @@
-import { City, CitiesApiService } from "yusr-core";
+import { City, CitiesApiService } from "yusr-ui";
 import { createGenericEntitySlice } from "yusr-ui";
 
 const citySlice = createGenericEntitySlice<City>("city", new CitiesApiService());

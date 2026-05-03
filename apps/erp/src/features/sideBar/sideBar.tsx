@@ -1,8 +1,7 @@
 import { Building2, FileChartColumnIncreasing, LayoutDashboardIcon, Package, ReceiptText, ScrollText, SettingsIcon, UsersIcon, WalletCards } from "lucide-react";
 import * as React from "react";
-import { ApiConstants, SystemPermissions, YusrApiHelper } from "yusr-core";
-import { Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SideBarUserData } from "yusr-ui";
-import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
+import { ApiConstants, Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SideBarUserData, SystemPermissions, YusrApiHelper } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import ApplicationLanguages from "../../core/services/language/applicationLanguages";
 import { logout, useAppDispatch, useAppSelector } from "../../core/state/store";

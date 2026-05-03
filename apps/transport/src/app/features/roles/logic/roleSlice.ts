@@ -1,4 +1,4 @@
-import { RolesApiService } from "yusr-core";
+import { RolesApiService } from "yusr-ui";
 import { createGenericEntitySlice } from "yusr-ui";
 
 const { reducer, actions } = createGenericEntitySlice("role", new RolesApiService());

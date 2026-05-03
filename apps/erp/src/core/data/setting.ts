@@ -1,4 +1,4 @@
-import type { Branch, Currency, StorageFile } from "yusr-core";
+import type { Branch, Currency, StorageFile } from "yusr-ui";
 import type { Tax } from "./tax";
 
 export const EInvoicingEnvironmentType = {
