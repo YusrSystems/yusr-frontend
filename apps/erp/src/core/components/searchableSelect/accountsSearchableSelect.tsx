@@ -50,6 +50,7 @@ export default function AccountsSearchableSelect(
         value: string;
       }[];
       fixedType?: AccountType;
+      filterDataOutside?: boolean;
     }>
       id={ id }
       items={ items }
@@ -74,7 +75,8 @@ export default function AccountsSearchableSelect(
         selectEntityState: selectEntityState,
         selectFormState: selectFormState,
         selectTypes: selectTypes,
-        fixedType: fixedType
+        fixedType: fixedType,
+        filterDataOutside: true
       } }
     />
   );

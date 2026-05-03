@@ -14,7 +14,9 @@ export default function PaymentMethodsSearchableSelect(
   const PaymentMethodState = useAppSelector((state) => state.paymentMethod);
 
   return (
-    <ChangableSearchableSelect<PaymentMethod>
+    <ChangableSearchableSelect<PaymentMethod, {
+      filterDataOutside?: boolean;
+    }>
       id={ id }
       itemLabelKey="name"
       itemValueKey="id"
@@ -30,6 +32,9 @@ export default function PaymentMethodsSearchableSelect(
         refresh: PaymentMethodSlice.entityActions.refresh
       } }
       changeDialog={ ChangePaymentMethodDialog }
+      changeDialogProps={ {
+        filterDataOutside: true
+      } }
     />
   );
 }

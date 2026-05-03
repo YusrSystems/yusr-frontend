@@ -1,3 +1,5 @@
+import ClientsSearchableSelect from "@/core/components/searchableSelect/clientsSearchableSelect";
+import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { CityFilterColumns, SystemPermissions } from "yusr-core";
@@ -5,7 +7,7 @@ import type { CommonChangeDialogProps, FormState, IEntityState } from "yusr-ui";
 import { Button, ChangeDialog, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import Account, { AccountContact, AccountFilterColumns, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules } from "../../core/data/account";
+import Account, { AccountContact, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/account";
 import { filterCities } from "../../core/state/shared/citySlice";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
 
@@ -17,6 +19,7 @@ export default function ChangeAccountDialog({
   slice,
   fixedType,
   selectTypes = [],
+  filterDataOutside = false,
   selectEntityState,
   selectFormState
 }: CommonChangeDialogProps<Account> & {
@@ -26,6 +29,7 @@ export default function ChangeAccountDialog({
     label: string;
     value: string;
   }[];
+  filterDataOutside?: boolean;
   selectEntityState: (state: RootState) => IEntityState<Account>;
   selectFormState: (state: RootState) => FormState<Account>;
 })
@@ -56,9 +60,29 @@ export default function ChangeAccountDialog({
 
   useEffect(() =>
   {
-    dispatch(filterCities(undefined));
-    dispatch(slice.entityActions.filter(undefined));
+    if (filterDataOutside)
+    {
+      return;
+    }
+    dispatch(filterCities());
   }, [dispatch]);
+
+  useEffect(() =>
+  {
+    if (formData.type == undefined || filterDataOutside)
+    {
+      return;
+    }
+
+    if (formData.type === AccountType.Client)
+    {
+      dispatch(ClientsSlice.entityActions.filter());
+    }
+    if (formData.type === AccountType.Supplier)
+    {
+      dispatch(SuppliersSlice.entityActions.filter());
+    }
+  }, [formData.type]);
 
   const addContact = () =>
   {
@@ -175,26 +199,35 @@ export default function ChangeAccountDialog({
 
             { (formData.type === AccountType.Client || formData.type === AccountType.Supplier) && (
               <FormField label="الحساب الأب">
-                <SearchableSelect
-                  items={ accountState.entities.data ?? [] }
-                  itemLabelKey="name"
-                  itemValueKey="id"
-                  value={ formData.parentId?.toString() || "" }
-                  columnsNames={ AccountFilterColumns.columnsNames }
-                  onSearch={ (condition) => dispatch(slice.entityActions.filter(condition)) }
-                  isLoading={ accountState.isLoading }
-                  disabled={ accountState.isLoading || mode === "update" }
-                  onValueChange={ (val) =>
-                  {
-                    const selected = accountState.entities.data?.find(
-                      (a) => a.id.toString() === val
-                    );
-                    dispatch(slice.formActions.updateFormData({
-                      parentId: selected?.id,
-                      parentName: selected?.name
-                    }));
-                  } }
-                />
+                { formData.type === AccountType.Supplier && (
+                  <SuppliersSearchableSelect
+                    id={ formData.parentId }
+                    isInvalid={ isInvalid("parentId") }
+                    disabled={ mode === "update" }
+                    onValueChange={ (account) =>
+                    {
+                      dispatch(slice.formActions.updateFormData({
+                        parentId: account?.id,
+                        parentName: account?.name
+                      }));
+                    } }
+                  />
+                ) }
+
+                { formData.type === AccountType.Client && (
+                  <ClientsSearchableSelect
+                    id={ formData.parentId }
+                    isInvalid={ isInvalid("parentId") }
+                    disabled={ mode === "update" }
+                    onValueChange={ (account) =>
+                    {
+                      dispatch(slice.formActions.updateFormData({
+                        parentId: account?.id,
+                        parentName: account?.name
+                      }));
+                    } }
+                  />
+                ) }
               </FormField>
             ) }
 

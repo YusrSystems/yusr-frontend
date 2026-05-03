@@ -11,8 +11,11 @@ export default function ChangePaymentMethodDialog({
   entity,
   mode,
   service,
+  filterDataOutside,
   onSuccess
-}: CommonChangeDialogProps<PaymentMethod>)
+}: CommonChangeDialogProps<PaymentMethod> & {
+  filterDataOutside?: boolean;
+})
 {
   const dispatch = useAppDispatch();
   const accountState = useAppSelector((state) => state.banksAndBoxes);
@@ -40,6 +43,10 @@ export default function ChangePaymentMethodDialog({
 
   useEffect(() =>
   {
+    if (filterDataOutside)
+    {
+      return;
+    }
     dispatch(BanksAndBoxesSlice.entityActions.filter());
   }, []);
 
