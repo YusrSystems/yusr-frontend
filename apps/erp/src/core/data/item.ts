@@ -193,7 +193,7 @@ export class ItemValidationRules
     field: "itemStores",
     selector: (d) => d.itemStores,
     validators: [
-      Validators.arrayMinLength(1, "يرجى إضافة مخزن واحد على الأقل"),
+      Validators.arrayMinLength(1, "يرجى إضافة مستودع واحد على الأقل"),
       Validators.custom(
         (stores: any[], form) =>
         {

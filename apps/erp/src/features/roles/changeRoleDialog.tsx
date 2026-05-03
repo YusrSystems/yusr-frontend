@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { Role } from "yusr-core";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { categorizePermissions, ChangeDialog, FieldGroup, PermissionCard, PermissionSkeleton, Skeleton, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import type { CommonChangeDialogProps, TabProps } from "yusr-ui";
+import { categorizePermissions, ChangeDialogTabbed, PermissionCard, PermissionSkeleton, Skeleton, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { RoleSlice, RoleValidationRules } from "../../core/data/role";
 import { fetchSystemPermissions } from "../../core/state/shared/systemSlice";
@@ -48,19 +48,37 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
     }));
   }, [systemState.permissions]);
 
-  return (
-    <ChangeDialog<Role>
-      title={ `${mode === "create" ? "إضافة" : "تعديل"} دور` }
-      className="sm:max-w-6xl max-h-[90vh] flex flex-col"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => systemState.isLoading }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-    >
-      <div className="flex-1 overflow-y-auto py-4 px-1">
-        <FieldGroup className="space-y-8">
+  const renderSectionContent = (sectionData: typeof categorized[number]) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      { systemState.isLoading
+        ? PermissionSkeleton()
+        : sectionData.data.map((item) => (
+          <PermissionCard
+            key={ item.resource }
+            resourceId={ item.resource }
+            label={ ArabicLabels[item.resource] || item.resource }
+            masterPermission={ item.get }
+            isMasterRequired={ item.resource === SystemPermissionsResources.Settings }
+            selectedPermissions={ formData.permissions || [] }
+            onToggle={ (updated) => dispatch(RoleSlice.formActions.updateFormData({ permissions: updated })) }
+            actions={ item.actions.map((perm) => ({
+              id: perm,
+              label: ArabicLabels[perm.split(delimiter)[1]] || perm.split(delimiter)[1],
+              icon: ActionIcons[perm.split(delimiter)[1]]
+            })) }
+          />
+        )) }
+    </div>
+  );
+
+  const tabs: TabProps[] = categorized.map((section, index) => ({
+    active: index === 0,
+    icon: section.icon,
+    label: section.title,
+    content: (
+      <div className="space-y-4">
+        { /* Role name field only in the first tab */ }
+        { index === 0 && (
           <TextField
             label="اسم الدور"
             required
@@ -73,48 +91,34 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
               dispatch(RoleSlice.formActions.clearError("name"));
             } }
           />
-
-          { systemState.isLoading
-            ? (
-              <div className="space-y-8">
-                <section className="space-y-4">
-                  <Skeleton className="h-6 w-40" />
-                  { PermissionSkeleton() }
-                </section>
-              </div>
-            )
-            : (
-              <>
-                { categorized.map((section) => (
-                  <section key={ section.id } className="space-y-4">
-                    <div className="flex items-center gap-2 text-primary font-bold">
-                      { section.icon } <span>{ section.title }</span>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      { section.data.map((item) => (
-                        <PermissionCard
-                          key={ item.resource }
-                          resourceId={ item.resource }
-                          label={ ArabicLabels[item.resource] || item.resource }
-                          masterPermission={ item.get }
-                          isMasterRequired={ item.resource === SystemPermissionsResources.Settings }
-                          selectedPermissions={ formData.permissions || [] }
-                          onToggle={ (updated) =>
-                            dispatch(RoleSlice.formActions.updateFormData({ permissions: updated })) }
-                          actions={ item.actions.map((perm) => ({
-                            id: perm,
-                            label: ArabicLabels[perm.split(delimiter)[1]] || perm.split(delimiter)[1],
-                            icon: ActionIcons[perm.split(delimiter)[1]]
-                          })) }
-                        />
-                      )) }
-                    </div>
-                  </section>
-                )) }
-              </>
-            ) }
-        </FieldGroup>
+        ) }
+        { systemState.isLoading
+          ? (
+            <div className="space-y-4">
+              <Skeleton className="h-6 w-40" />
+              { PermissionSkeleton() }
+            </div>
+          )
+          : renderSectionContent(section) }
       </div>
-    </ChangeDialog>
+    ),
+    // Mark tab with error if name field has error and we're on the first tab
+    hasError: index === 0 ? isInvalid("name") : undefined
+  }));
+
+  return (
+    <ChangeDialogTabbed<Role>
+      changeDialogProps={ {
+        title: `${mode === "create" ? "إضافة" : "تعديل"} دور`,
+        className: "sm:max-w-6xl",
+        formData,
+        dialogMode: mode,
+        service,
+        disable: () => systemState.isLoading,
+        onSuccess: (data) => onSuccess?.(data, mode),
+        validate
+      } }
+      tabs={ tabs }
+    />
   );
 }

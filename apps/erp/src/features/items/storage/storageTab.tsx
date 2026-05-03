@@ -62,7 +62,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ maxQuantity: val })) }
         />
         <TextField
-          label="موقع المادة في المخزن"
+          label="موقع المادة في المستودع"
           value={ formData.location || "" }
           onChange={ (e) => dispatch(ItemSlice.formActions.updateFormData({ location: e.target.value })) }
         />

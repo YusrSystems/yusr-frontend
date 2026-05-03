@@ -1,4 +1,4 @@
-import { Database, FileBarChart, LayoutDashboard, Pencil, Plus, ShoppingCart, Trash2, Wallet } from "lucide-react";
+import { Database, FileBarChart, Pencil, Plus, ShoppingCart, Trash2, Wallet } from "lucide-react";
 import { SystemPermissionsActions } from "../../core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 
@@ -20,7 +20,7 @@ export const ArabicLabels: Record<string, string> = {
   [SystemPermissionsResources.Stocktakings]: "الجرد",
   [SystemPermissionsResources.Units]: "الوحدات",
   [SystemPermissionsResources.PricingMethods]: "طرق التسعير",
-  [SystemPermissionsResources.Stores]: "المخازن",
+  [SystemPermissionsResources.Stores]: "المستودعات",
   [SystemPermissionsResources.Taxes]: "الضرائب",
   [SystemPermissionsResources.Obligations]: "الالتزامات",
   [SystemPermissionsResources.PosTerminals]: "نقاط البيع",
@@ -79,7 +79,7 @@ export const ActionIcons: Record<string, React.ReactNode> = {
 export const PERMISSION_SECTIONS = [{
   id: "tables",
   title: "بيانات النظام الأساسية",
-  icon: <Database className="w-5 h-5" />,
+  icon: Database,
   resources: [
     SystemPermissionsResources.Invoices,
     SystemPermissionsResources.Vouchers,
@@ -97,18 +97,14 @@ export const PERMISSION_SECTIONS = [{
     SystemPermissionsResources.Users,
     SystemPermissionsResources.Roles,
     SystemPermissionsResources.Branches,
-    SystemPermissionsResources.PosTerminals,
-    SystemPermissionsResources.Obligations
+    // SystemPermissionsResources.PosTerminals,
+    // SystemPermissionsResources.Obligations,
+    SystemPermissionsResources.Settings
   ]
-}, {
-  id: "system",
-  title: "الإعدادات والتحكم",
-  icon: <LayoutDashboard className="w-5 h-5" />,
-  resources: [SystemPermissionsResources.Settings, SystemPermissionsResources.Dashboard]
 }, {
   id: "invoices",
   title: "صلاحيات الفواتير",
-  icon: <ShoppingCart className="w-5 h-5" />,
+  icon: ShoppingCart,
   resources: [
     SystemPermissionsResources.InvoiceAddSettlement,
     SystemPermissionsResources.InvoiceShowProfit,
@@ -121,7 +117,7 @@ export const PERMISSION_SECTIONS = [{
 }, {
   id: "accounts",
   title: "صلاحيات الحسابات",
-  icon: <Wallet className="w-5 h-5" />,
+  icon: Wallet,
   resources: [
     SystemPermissionsResources.AccountShowBalance,
     SystemPermissionsResources.AccountClient,
@@ -133,7 +129,7 @@ export const PERMISSION_SECTIONS = [{
 }, {
   id: "reports",
   title: "تقارير النظام",
-  icon: <FileBarChart className="w-5 h-5" />,
+  icon: FileBarChart,
   resources: [
     SystemPermissionsResources.ReportInvoice,
     SystemPermissionsResources.ReportInvoiceList,
