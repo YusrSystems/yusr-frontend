@@ -8,5 +8,84 @@
     "cta_features": "Explore features",
     "zatca_compliance": "Compliant with ZATCA requirements —",
     "zatca_phases": "Phase One & Two"
+  },
+
+  "features": {
+    "title": "Built-in Applications in the System",
+    "description": "All system features are available instantly, without complexity or additional configuration",
+    "items": [
+      {
+        "id": "invoices",
+        "title": "Invoices",
+        "desc": "Create and track invoices, including electronic and tax invoices, seamlessly.",
+        "details": [
+          "Unlimited sales and purchase invoices",
+          "Electronic invoice (Phase 1 and Phase 2)",
+          "Accurate sales reports"
+        ],
+        "cta": "View invoices",
+        "to": "/sales"
+      },
+      {
+        "id": "accounts",
+        "title": "Accounts",
+        "desc": "Manage all accounts in one place: suppliers, customers, employees, and bank accounts.",
+        "details": [
+          "Customer, supplier, and employee accounts",
+          "Track balances and financial transactions",
+          "Detailed account statements"
+        ],
+        "cta": "View accounts",
+        "to": "/clients"
+      },
+      {
+        "id": "inventory",
+        "title": "Inventory",
+        "desc": "Track every product and service accurately, with easy inventory organization to keep your business under control.",
+        "details": [
+          "Unlimited products and services",
+          "Inventory tracking and stocktaking",
+          "Stock adjustments and reports"
+        ],
+        "cta": "View inventory",
+        "to": "/items"
+      },
+      {
+        "id": "stores",
+        "title": "Stores",
+        "desc": "Manage unlimited warehouses while tracking every stock movement in and out accurately and smoothly.",
+        "details": [
+          "Unlimited warehouses",
+          "Track incoming and outgoing movements",
+          "Detailed reports per warehouse"
+        ],
+        "cta": "View warehouses",
+        "to": "/stores"
+      },
+      {
+        "id": "vouchers",
+        "title": "Vouchers",
+        "desc": "Issue and track vouchers accurately to simplify money and internal account management.",
+        "details": [
+          "Unlimited receipt and payment vouchers",
+          "Multiple cash boxes and bank accounts",
+          "Flexible payment methods"
+        ],
+        "cta": "View vouchers",
+        "to": "/vouchers"
+      },
+      {
+        "id": "users",
+        "title": "Users & Roles",
+        "desc": "Full control over your team — create user accounts, assign roles, and define precise permissions for each user.",
+        "details": [
+          "Unlimited users",
+          "Custom roles per job",
+          "Fine-grained permissions per role"
+        ],
+        "cta": "View roles",
+        "to": "/roles"
+      }
+    ]
   }
 }

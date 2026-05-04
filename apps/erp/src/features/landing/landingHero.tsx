@@ -45,10 +45,10 @@ export default function LandingHero()
         <Link to="/register">
           <Button
             size="lg"
-            className="h-14 rounded-full px-10 text-lg shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            className="flex ltr:flex-row-reverse h-14 rounded-full px-10 text-lg shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
           >
             { t("hero.cta_start") }
-            <ArrowLeft className="ms-2 h-5 w-5 transition-transform rtl:rotate-0" />
+            <ArrowLeft className="ms-2 h-5 w-5 transition-transform ltr:rotate-180" />
           </Button>
         </Link>
         <a href="#features">

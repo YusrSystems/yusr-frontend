@@ -1,4 +1,4 @@
-import { FileText, Globe, HelpCircle, Landmark, Package, Receipt, RefreshCw, Rocket, ShieldCheck, Tags, Timer, Users, Warehouse } from "lucide-react";
+import { Globe, HelpCircle, RefreshCw, Rocket, ShieldCheck, Tags, Timer } from "lucide-react";
 import { Lightbox, Separator, useLightBox, YusrBusBackground } from "yusr-ui";
 import LandingFeatures from "./landingFeatures";
 import LandingFooter from "./landingFooter";
@@ -6,64 +6,6 @@ import LandingHeader from "./landingHeader";
 import LandingHero from "./landingHero";
 import LandingPricing from "./landingPricing";
 import LandingWhyUs from "./landingWhyUs";
-
-const PH = (name: string) => `/assets/${name}`;
-
-const features = [{
-  icon: Receipt,
-  title: "الفواتير",
-  desc: "إصدار وتتبع الفواتير، بما في ذلك الفاتورة الإلكترونية والضريبية، بسلاسة تامة.",
-  details: ["فواتير بيع وشراء غير محدودة", "الفاتورة الإلكترونية (المرحلة الأولى والثانية)", "تقارير مبيعات دقيقة"],
-  cta: "استعراض الفواتير",
-  to: "/sales",
-  screenshotDark: PH("invoices_dark.webp"),
-  screenshotLight: PH("invoices_light.webp")
-}, {
-  icon: Landmark,
-  title: "الحسابات",
-  desc: "إدارة كل الحسابات في مكان واحد: الموردين والعملاء والموظفين والحسابات البنكية.",
-  details: ["حسابات عملاء وموردين وموظفين", "متابعة الأرصدة والحركات المالية", "تقارير كشوف حساب مفصّلة"],
-  cta: "استعراض الحسابات",
-  to: "/clients",
-  screenshotDark: PH("accounts_dark.webp"),
-  screenshotLight: PH("accounts_light.webp")
-}, {
-  icon: Package,
-  title: "المخزون",
-  desc: "تتبع كل منتج وخدمة بدقة، مع تنظيم المخزون بسهولة، لتبقى أعمالك دائمًا تحت السيطرة.",
-  details: ["منتجات وخدمات غير محدودة", "تتبع المخزون وجرده", "تسوية المواد والتقارير"],
-  cta: "استعراض المخزون",
-  to: "/items",
-  screenshotDark: PH("inventory_dark.webp"),
-  screenshotLight: PH("inventory_light.webp")
-}, {
-  icon: Warehouse,
-  title: "المستودعات",
-  desc: "إدارة عدد لا محدود من المستودعات، مع تتبع كل حركة من وإلى المخزون بدقة وسلاسة.",
-  details: ["مستودعات غير محدودة", "تتبع الحركات الواردة والصادرة", "تقارير تفصيلية لكل مستودع"],
-  cta: "استعراض المستودعات",
-  to: "/stores",
-  screenshotDark: PH("warehouses_dark.webp"),
-  screenshotLight: PH("warehouses_light.webp")
-}, {
-  icon: FileText,
-  title: "السندات",
-  desc: "إصدار السندات وتتبعها بدقة، لتسهيل إدارة الأموال والحسابات الداخلية.",
-  details: ["سندات قبض وصرف غير محدودة", "خزائن وحسابات بنكية متعددة", "طرق دفع مرنة"],
-  cta: "استعراض السندات",
-  to: "/vouchers",
-  screenshotDark: PH("vouchers_dark.webp"),
-  screenshotLight: PH("vouchers_light.webp")
-}, {
-  icon: Users,
-  title: "المستخدمون والأدوار",
-  desc: "تحكم كامل في فريق عملك — أنشئ حسابات المستخدمين، وزّع الأدوار، وحدد الصلاحيات بدقة لكل شخص.",
-  details: ["مستخدمون غير محدودين", "أدوار مخصصة لكل وظيفة", "صلاحيات دقيقة لكل دور"],
-  cta: "استعراض الأدوار",
-  to: "/roles",
-  screenshotDark: PH("entities_dark.webp"),
-  screenshotLight: PH("entities_light.webp")
-}];
 
 const whyUs = [{
   icon: HelpCircle,
@@ -143,7 +85,7 @@ const Landing = () =>
       <LandingHero />
 
       <Separator className="mx-auto max-w-6xl" />
-      <LandingFeatures features={ features } />
+      <LandingFeatures />
 
       <Separator className="mx-auto max-w-6xl" />
       { /* <LandingSystemPreview openLightbox={ openLightbox } features={ features } /> */ }
