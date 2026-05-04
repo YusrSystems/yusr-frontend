@@ -1,8 +1,8 @@
+import { type ActionReducerMapBuilder, type CaseReducerActions, createAsyncThunk, createSlice, type PayloadAction, type SliceCaseReducers } from "@reduxjs/toolkit";
+import { castDraft } from "immer";
 import type { BaseEntity, FilterCondition } from "../../entities";
 import type { BaseFilterableApiService } from "../../networking";
 import type { FilterResult, RequestResult } from "../../types";
-import { type CaseReducerActions, createAsyncThunk, createSlice, type PayloadAction, type SliceCaseReducers } from "@reduxjs/toolkit";
-import { castDraft } from "immer";
 import type { IEntityState } from "../interfaces/iEntityState";
 
 type FilterMethodType<T> = (
@@ -15,7 +15,13 @@ type FilterMethodType<T> = (
 export function createGenericEntitySlice<
   T extends BaseEntity,
   CR extends SliceCaseReducers<IEntityState<T>> = {}
->(sliceName: string, service: BaseFilterableApiService<T>, filterMethod?: FilterMethodType<T>, customReducers?: CR)
+>(
+  sliceName: string,
+  service: BaseFilterableApiService<T>,
+  filterMethod?: FilterMethodType<T>,
+  customReducers?: CR,
+  extraActions?: ((builder: ActionReducerMapBuilder<IEntityState<T>>) => void) | undefined
+)
 {
   const initialState: IEntityState<T> = {
     entities: { data: [], count: 0 },
@@ -86,21 +92,26 @@ export function createGenericEntitySlice<
     },
     extraReducers: (builder) =>
     {
-      builder.addCase(filter.pending, (state) =>
-      {
-        state.isLoading = true;
-      }).addCase(filter.fulfilled, (state, action) =>
-      {
-        state.isLoading = false;
-        state.isLoaded = true;
-        if (action.payload)
+      builder
+        .addCase(filter.pending, (state) =>
         {
-          state.entities = action.payload as never;
-        }
-      }).addCase(filter.rejected, (state) =>
-      {
-        state.isLoading = false;
-      });
+          state.isLoading = true;
+        })
+        .addCase(filter.fulfilled, (state, action) =>
+        {
+          state.isLoading = false;
+          state.isLoaded = true;
+          if (action.payload)
+          {
+            state.entities = action.payload as never;
+          }
+        })
+        .addCase(filter.rejected, (state) =>
+        {
+          state.isLoading = false;
+        });
+
+      extraActions?.(builder);
     }
   });
 

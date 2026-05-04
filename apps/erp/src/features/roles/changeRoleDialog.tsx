@@ -1,12 +1,13 @@
+import { StoreSlice } from "@/core/data/store";
+import { WarehouseIcon } from "lucide-react";
 import { useEffect, useMemo } from "react";
-import { Role } from "yusr-ui";
 import type { CommonChangeDialogProps, TabProps } from "yusr-ui";
-import { categorizePermissions, ChangeDialogTabbed, PermissionCard, PermissionSkeleton, Skeleton, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { categorizePermissions, ChangeDialogTabbed, PermissionCard, PermissionSkeleton, Role, RoleSlice, RoleValidationRules, Skeleton, TextField, useFormErrors, useValidate } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { RoleSlice, RoleValidationRules } from "../../core/data/role";
 import { fetchSystemPermissions } from "../../core/state/shared/systemSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import { ActionIcons, ArabicLabels, PERMISSION_SECTIONS } from "./permissionConfig";
+import StorePermissionsList from "./storePermissionsList";
 
 export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Role>)
 {
@@ -18,7 +19,7 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
     RoleValidationRules.validationRules,
     (errors) => dispatch(RoleSlice.formActions.setErrors(errors))
   );
-  useFormInit(RoleSlice.formActions.setInitialData, entity ?? {});
+
   const systemState = useAppSelector((state) => state.system);
   const dispatch = useAppDispatch();
 
@@ -39,6 +40,32 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
       );
     }
   }, [dispatch, systemState.permissions.length]);
+
+  useEffect(() =>
+  {
+    dispatch(StoreSlice.entityActions.filterAll());
+  }, [dispatch]);
+
+  useEffect(() =>
+  {
+    if (mode === "update" && entity?.id)
+    {
+      // setInitLoading(true);
+
+      const getRoute = async () =>
+      {
+        const res = await service.Get(entity.id);
+        dispatch(RoleSlice.formActions.setInitialData({ ...res.data }));
+        // setInitLoading(false);
+      };
+
+      getRoute();
+    }
+    else
+    {
+      dispatch(RoleSlice.formActions.setInitialData(entity ?? {}));
+    }
+  }, [entity?.id, mode]);
 
   const categorized = useMemo(() =>
   {
@@ -71,7 +98,7 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
     </div>
   );
 
-  const tabs: TabProps[] = categorized.map((section, index) => ({
+  const permissionTabs: TabProps[] = categorized.map((section, index) => ({
     active: index === 0,
     icon: section.icon,
     label: section.title,
@@ -105,6 +132,18 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
     // Mark tab with error if name field has error and we're on the first tab
     hasError: index === 0 ? isInvalid("name") : undefined
   }));
+
+  const tabs: TabProps[] = [...permissionTabs, {
+    active: false,
+    icon: WarehouseIcon,
+    label: "المستودعات المسموح بها",
+    content: (
+      <StorePermissionsList
+        authorizedStoreIds={ formData.authorizedStores || [] }
+        onChange={ (updated) => dispatch(RoleSlice.formActions.updateFormData({ authorizedStores: updated })) }
+      />
+    )
+  }];
 
   return (
     <ChangeDialogTabbed<Role>

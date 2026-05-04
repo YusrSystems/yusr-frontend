@@ -1,7 +1,6 @@
-import { RoleSlice } from "@/core/data/role";
 import ChangeRoleDialog from "@/features/roles/changeRoleDialog";
-import { Role, RoleFilterColumns, RolesApiService } from "yusr-ui";
 import type { EntitySearchableSelectParams } from "yusr-ui";
+import { Role, RoleFilterColumns, RolesApiService, RoleSlice } from "yusr-ui";
 import ChangableSearchableSelect from "../../../../../../packages/yusr-ui/src/components/custom/select/changableSearchableSelect";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import { useAppSelector } from "../../state/store";

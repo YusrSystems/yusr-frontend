@@ -1,5 +1,5 @@
-import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterCondition, type IEntityState, type ValidationRule, Validators } from "yusr-ui";
 import StoresApiService from "../networking/storeApiService";
 
 export default class Store extends BaseEntity
@@ -32,10 +32,49 @@ export class StoreValidationRules
   }];
 }
 
+const storeService = new StoresApiService();
+
+const filterAll = createAsyncThunk(
+  "store/filterAll",
+  async (condition: FilterCondition<Store> | undefined, { getState }) =>
+  {
+    const state = (getState() as never)["store"] as IEntityState<Store>;
+    const result = await storeService.FilterAll(state.currentPage, state.rowsPerPage, condition);
+    return result?.data;
+  }
+);
+
 export class StoreSlice
 {
-  private static entitySliceInstance = createGenericEntitySlice("store", new StoresApiService());
-  public static entityActions = StoreSlice.entitySliceInstance.actions;
+  private static entitySliceInstance = createGenericEntitySlice(
+    "store",
+    storeService,
+    undefined, // filterMethod
+    {}, // customReducers
+    // extraActions
+    (builder) =>
+    {
+      builder
+        .addCase(filterAll.pending, (state) =>
+        {
+          state.isLoading = true;
+        })
+        .addCase(filterAll.fulfilled, (state, action) =>
+        {
+          state.isLoading = false;
+          state.isLoaded = true;
+          if (action.payload)
+          {
+            state.entities = action.payload as never;
+          }
+        })
+        .addCase(filterAll.rejected, (state) =>
+        {
+          state.isLoading = false;
+        });
+    }
+  );
+  public static entityActions = { ...StoreSlice.entitySliceInstance.actions, filterAll };
   public static entityReducer = StoreSlice.entitySliceInstance.reducer;
 
   private static dialogSliceInstance = createGenericDialogSlice<Store>("storeDialog");

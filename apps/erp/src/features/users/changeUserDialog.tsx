@@ -1,11 +1,10 @@
 import BranchesSearchableSelect from "@/core/components/searchableSelect/branchesSearchableSelect";
 import RolesSearchableSelect from "@/core/components/searchableSelect/rolesSearchableSelect";
 import { useEffect, useMemo } from "react";
-import { User } from "yusr-ui";
+import { RoleSlice, User } from "yusr-ui";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, FormField, PasswordField, SelectField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BranchSlice } from "../../core/data/branchLogic";
-import { RoleSlice } from "../../core/data/role";
 import { UserSlice, UserValidationRules } from "../../core/data/UserLogic";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
