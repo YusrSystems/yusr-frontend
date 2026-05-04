@@ -49,6 +49,9 @@ export * from "./inputs/searchInput";
 export * from "./inputs/selectInput";
 export * from "./inputs/textAreaInput";
 
+// locale
+export * from "./locale/languageToggle";
+
 // Pages
 export * from "./pages/crudPage";
 

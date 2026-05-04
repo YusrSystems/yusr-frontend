@@ -1,15 +1,17 @@
-import logoDark from "@/assets/yusrErpLogoRTL_Dark.png";
-import logoLight from "@/assets/yusrErpLogoRTL_Light.png";
+import logoDark from "@/assets/yusrLogoOnly_Dark.png";
+import logoLight from "@/assets/yusrLogoOnly_Light.png";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Button, ThemeToggle } from "yusr-ui";
+import { Button, LanguageToggle, ThemeToggle } from "yusr-ui";
 
 export default function LandingHeader()
 {
+  const { t } = useTranslation("common");
+
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 backdrop-blur-lg">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        { /* Logo */ }
-        <div className="flex items-center w-25">
+      <div className="mx-auto flex ltr:flex-row-reverse max-w-6xl items-center justify-between px-6 py-4">
+        <div className="flex items-center w-10">
           <img
             src={ logoLight }
             alt="يُسر"
@@ -20,21 +22,19 @@ export default function LandingHeader()
             alt="يُسر"
             className="hidden dark:block h-auto w-full object-contain"
           />
-          { /* Fallback text logo if image not found */ }
-          { /* <span className="text-2xl font-bold">يُـسْر</span> */ }
         </div>
 
-        { /* Actions */ }
-        <div className="flex items-center gap-3">
+        <div className="flex ltr:flex-row-reverse items-center gap-3">
           <ThemeToggle />
+          <LanguageToggle />
           <Link to="/login">
             <Button size="lg" variant="outline">
-              تسجيل الدخول
+              { t("login") }
             </Button>
           </Link>
           <Link to="/register">
             <Button size="lg" variant="default">
-              ابدأ الاستخدام مجانًا
+              { t("register") }
             </Button>
           </Link>
         </div>

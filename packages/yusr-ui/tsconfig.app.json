@@ -13,6 +13,9 @@
       "yusr-ui": ["../../packages/yusr-ui/src/index.ts"]
     },
 
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,

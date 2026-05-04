@@ -7,5 +7,11 @@
     "build:core": "pnpm --filter yusr-ui build",
     "build:ui": "pnpm --filter yusr-ui build",
     "build": "pnpm build:core && pnpm build:ui"
+  },
+  "dependencies": {
+    "i18next": "^26.0.8",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "i18next-http-backend": "^4.0.0",
+    "react-i18next": "^17.0.6"
   }
 }

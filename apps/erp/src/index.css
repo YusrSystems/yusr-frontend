@@ -6,4 +6,20 @@
 @import "@fontsource/ibm-plex-sans-arabic/700.css";
 @import "../../../packages/yusr-ui/src/styles/style.css";
 
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap");
+
+/* 1. Set the default variable (Global) */
+:root {
+  --main-font: "Geist", "Inter", system-ui, sans-serif;
+}
+
+/* 2. Override when the document is RTL (Arabic locale) */
+[dir="rtl"] {
+  --main-font: "IBM Plex Sans Arabic", "Geist", sans-serif;
+}
+
+body {
+  font-family: var(--main-font);
+}
+
 @source "../../../packages/yusr-ui/src/**/*.{ts,tsx}";

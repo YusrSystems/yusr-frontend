@@ -1,0 +1,12 @@
+{
+  "hero": {
+    "badge": "Version 3.4.0 — Simpler, smarter, faster, everything you need in one place",
+    "title": "Yusr",
+    "subtitle": "An integrated accounting software to manage your business",
+    "description": "A cloud-based accounting software that helps you manage your accounts, invoices, sales, and expenses with ease. It features a simple and flexible interface, allowing you to track your business from anywhere at any time, while ensuring the security and accuracy of your data.",
+    "cta_start": "Start for free",
+    "cta_features": "Explore features",
+    "zatca_compliance": "Compliant with ZATCA requirements —",
+    "zatca_phases": "Phase One & Two"
+  }
+}
