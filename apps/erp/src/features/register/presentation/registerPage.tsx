@@ -1,3 +1,5 @@
+import { filterCities } from "@/core/state/shared/citySlice";
+import { filterCurrencies } from "@/core/state/shared/currencySlice";
 import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -34,11 +36,6 @@ export default function RegisterPage()
       {
         dispatch(logout());
         dispatch(reset());
-
-        await Promise.all([
-          dispatch(RegisterActions.fetchCurrenciesAsync()),
-          dispatch(RegisterActions.fetchCitiesAsync())
-        ]);
       }
     };
 
@@ -64,6 +61,12 @@ export default function RegisterPage()
 
     await dispatch(registerAsync(formData as Registration));
   };
+
+  useEffect(() =>
+  {
+    dispatch(filterCurrencies(undefined));
+    dispatch(filterCities(undefined));
+  }, [dispatch]);
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center p-6 md:p-10">

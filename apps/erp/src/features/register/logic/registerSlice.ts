@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { City, Currency, type ValidationRule, Validators } from "yusr-ui";
+import { type ValidationRule, Validators } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import RegisterApiService from "../../../core/networking/registerApiService";
-import RegisterActions from "./registerActions";
 
 export interface RegisterState
 {
@@ -11,8 +10,6 @@ export interface RegisterState
   loading: boolean;
   successed: boolean;
   errors: Partial<Record<keyof Registration, string>>;
-  currencies?: Currency[];
-  cities: City[];
   acceptPolicies?: boolean;
 }
 
@@ -74,8 +71,6 @@ const initialState: RegisterState = {
   loading: false,
   successed: false,
   errors: {},
-  currencies: [],
-  cities: [],
   acceptPolicies: false
 };
 
@@ -92,17 +87,17 @@ export const registerSlice = createSlice({
       state.errors = {};
       state.acceptPolicies = false;
     },
-    citySelected(state, action: PayloadAction<{ cityId: number; }>)
-    {
-      const city = state.cities.find((c) => c.id === action.payload.cityId);
-      if (city)
-      {
-        state.formData.cityId = action.payload.cityId;
-      }
-    },
     updateField(state, action: PayloadAction<Partial<Registration>>)
     {
       state.formData = { ...state.formData, ...action.payload };
+      Object.keys(action.payload).forEach((key) =>
+      {
+        const fieldKey = key as keyof Registration;
+        if (state.errors[fieldKey])
+        {
+          delete state.errors[fieldKey];
+        }
+      });
     },
     nextStep(state)
     {
@@ -146,9 +141,6 @@ export const registerSlice = createSlice({
         state.successed = false;
         state.currentStep = 0;
       });
-
-    RegisterActions.addCitiesCases(builder);
-    RegisterActions.addCurrenciesCases(builder);
   }
 });
 
@@ -166,7 +158,6 @@ export const registerAsync = createAsyncThunk(
 
 export const {
   reset,
-  citySelected,
   updateField,
   nextStep,
   prevStep,
