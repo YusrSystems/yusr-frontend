@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequest, PasswordField, TextField, useEntityForm, User, type ValidationRule, Validators, YusrApiHelper } from "yusr-ui";
 import type { Setting } from "../../core/data/setting";
-import { login, updateLoggedInUser, useAppDispatch } from "../../core/state/store";
+import { login, updateLoggedInUser, useAppDispatch, useAppSelector } from "../../core/state/store";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 {
@@ -41,11 +41,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 
   const emailStorageItemName = "remembered_email";
   const usernameStorageItemName = "remembered_username";
-
+  const { formData: registerInfo } = useAppSelector((state) => state.register);
   useEffect(() =>
   {
-    const savedEmail = localStorage.getItem(emailStorageItemName);
-    const savedUsername = localStorage.getItem(usernameStorageItemName);
+    const savedEmail = registerInfo.email || localStorage.getItem(emailStorageItemName);
+    const savedUsername = registerInfo.username || localStorage.getItem(usernameStorageItemName);
     if (savedEmail || savedUsername)
     {
       handleChange((prev) => ({ ...prev, companyEmail: savedEmail || "", username: savedUsername || "" }));
