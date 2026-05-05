@@ -122,6 +122,10 @@ export const registerSlice = createSlice({
     acceptPoliciesToggle(state)
     {
       state.acceptPolicies = !state.acceptPolicies;
+    },
+    setStep(state, action: PayloadAction<number>)
+    {
+      state.currentStep = action.payload;
     }
   },
   extraReducers: (builder) =>
@@ -167,6 +171,7 @@ export const {
   nextStep,
   prevStep,
   setErrors,
-  acceptPoliciesToggle
+  acceptPoliciesToggle,
+  setStep
 } = registerSlice.actions;
 export default registerSlice.reducer;
