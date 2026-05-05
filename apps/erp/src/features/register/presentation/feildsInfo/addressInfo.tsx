@@ -1,10 +1,9 @@
-import { useEffect } from "react";
+import { filterCities } from "@/core/state/shared/citySlice";
 import { useTranslation } from "react-i18next";
 import { SearchableSelect, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import { updateField } from "../../logic/registerSlice";
-import { filterCities } from "@/core/state/shared/citySlice";
 
 export default function AddressInfo()
 {
@@ -12,11 +11,6 @@ export default function AddressInfo()
   const dispatch = useAppDispatch();
   const { formData, errors } = useAppSelector((state) => state.register);
   const cityState = useAppSelector((state) => state.city);
-
-  useEffect(() =>
-  {
-    dispatch(filterCities(undefined));
-  }, [dispatch]);
 
   function onFieldChange(field: Partial<Registration>)
   {
@@ -27,7 +21,7 @@ export default function AddressInfo()
     <>
       <div className="flex flex-col gap-1.5 w-full">
         <label className="text-sm font-medium">
-          {t("register.addressInfo.city.label")} <span className="text-red-500">*</span>
+          { t("register.addressInfo.city.label") } <span className="text-red-500">*</span>
         </label>
 
         <SearchableSelect
@@ -50,9 +44,9 @@ export default function AddressInfo()
       </div>
 
       <TextField
-        label={t("register.addressInfo.street.label")}
+        label={ t("register.addressInfo.street.label") }
         type="text"
-        placeholder={t("register.addressInfo.street.placeholder")}
+        placeholder={ t("register.addressInfo.street.placeholder") }
         value={ formData.street || "" }
         isInvalid={ !!errors.street }
         error={ errors.street }
@@ -60,9 +54,9 @@ export default function AddressInfo()
       />
 
       <TextField
-        label={t("register.addressInfo.district.label")}
+        label={ t("register.addressInfo.district.label") }
         type="text"
-        placeholder={t("register.addressInfo.district.placeholder")}
+        placeholder={ t("register.addressInfo.district.placeholder") }
         value={ formData.district || "" }
         isInvalid={ !!errors.district }
         error={ errors.district }
@@ -70,9 +64,9 @@ export default function AddressInfo()
       />
 
       <TextField
-        label={t("register.addressInfo.buildingNumber.label")}
+        label={ t("register.addressInfo.buildingNumber.label") }
         type="text"
-        placeholder={t("register.addressInfo.buildingNumber.placeholder")}
+        placeholder={ t("register.addressInfo.buildingNumber.placeholder") }
         value={ formData.buildingNumber || "" }
         isInvalid={ !!errors.buildingNumber }
         error={ errors.buildingNumber }
@@ -80,9 +74,9 @@ export default function AddressInfo()
       />
 
       <TextField
-        label={t("register.addressInfo.postalCode.label")}
+        label={ t("register.addressInfo.postalCode.label") }
         type="text"
-        placeholder={t("register.addressInfo.postalCode.placeholder")}
+        placeholder={ t("register.addressInfo.postalCode.placeholder") }
         value={ formData.postalCode || "" }
         isInvalid={ !!errors.postalCode }
         error={ errors.postalCode }

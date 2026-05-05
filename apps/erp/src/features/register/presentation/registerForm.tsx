@@ -1,10 +1,8 @@
 import placeholderImg from "@/assets/placeholder.svg";
 import { Loader2 } from "lucide-react";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardContent, cn, Field, FieldDescription, FieldGroup } from "yusr-ui";
-import { useAppDispatch, useAppSelector } from "../../../core/state/store";
-import RegisterActions from "../logic/registerActions";
+import { useAppSelector } from "../../../core/state/store";
 import AccountInfo from "./feildsInfo/accountInfo";
 import AddressInfo from "./feildsInfo/addressInfo";
 import CompanyInfo from "./feildsInfo/companyInfo";
@@ -29,15 +27,8 @@ export function RegisterForm({
 {
   const { t } = useTranslation("loginRegister");
   const { loading, currentStep, acceptPolicies } = useAppSelector((state) => state.register);
-  const dispatch = useAppDispatch();
   const steps = t("register.steps", { returnObjects: true }) as string[];
   const isLastStep = currentStep === steps.length - 1;
-
-  useEffect(() =>
-  {
-    dispatch(RegisterActions.fetchCitiesAsync());
-    dispatch(RegisterActions.fetchCurrenciesAsync());
-  }, []);
 
   return (
     <div className={ cn("flex flex-col gap-6", className) } { ...props }>

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { ApiConstants, ResultStatus, useValidate, YusrApiHelper, YusrBusBackground } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import { logout, useAppDispatch, useAppSelector } from "../../../core/state/store";
+import RegisterActions from "../logic/registerActions";
 import { nextStep, prevStep, registerAsync, reset, setErrors, setStep, validationRules } from "../logic/registerSlice";
 import { RegisterForm } from "./registerForm";
 import Welcome from "./wellcome";
@@ -33,6 +34,11 @@ export default function RegisterPage()
       {
         dispatch(logout());
         dispatch(reset());
+
+        await Promise.all([
+          dispatch(RegisterActions.fetchCurrenciesAsync()),
+          dispatch(RegisterActions.fetchCitiesAsync())
+        ]);
       }
     };
 

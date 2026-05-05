@@ -1,5 +1,4 @@
 import { filterCurrencies } from "@/core/state/shared/currencySlice";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SearchableSelect, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
@@ -13,11 +12,6 @@ export default function CompanyInfo()
   const { formData, errors } = useAppSelector((state) => state.register);
   const currencyState = useAppSelector((state) => state.currency);
 
-  useEffect(() =>
-  {
-    dispatch(filterCurrencies(undefined));
-  }, [dispatch]);
-
   function onFieldChange(field: Partial<Registration>)
   {
     dispatch(updateField(field));
@@ -26,10 +20,10 @@ export default function CompanyInfo()
   return (
     <>
       <TextField
-        label={t("register.companyInfo.companyName.label")}
+        label={ t("register.companyInfo.companyName.label") }
         id="companyName"
         type="text"
-        placeholder={t("register.companyInfo.companyName.placeholder")}
+        placeholder={ t("register.companyInfo.companyName.placeholder") }
         value={ formData.companyName || "" }
         isInvalid={ !!errors.companyName }
         error={ errors.companyName }
@@ -38,10 +32,10 @@ export default function CompanyInfo()
       />
 
       <TextField
-        label={t("register.companyInfo.email.label")}
+        label={ t("register.companyInfo.email.label") }
         id="email"
         type="email"
-        placeholder={t("register.companyInfo.email.placeholder")}
+        placeholder={ t("register.companyInfo.email.placeholder") }
         value={ formData.email || "" }
         isInvalid={ !!errors.email }
         error={ errors.email }
@@ -50,10 +44,10 @@ export default function CompanyInfo()
       />
 
       <TextField
-        label={t("register.companyInfo.branchName.label")}
+        label={ t("register.companyInfo.branchName.label") }
         id="branchName"
         type="text"
-        placeholder={t("register.companyInfo.branchName.placeholder")}
+        placeholder={ t("register.companyInfo.branchName.placeholder") }
         value={ formData.branchName || "" }
         isInvalid={ !!errors.branchName }
         error={ errors.branchName }
@@ -62,10 +56,10 @@ export default function CompanyInfo()
       />
 
       <TextField
-        label={t("register.companyInfo.companyBusinessCategory.label")}
+        label={ t("register.companyInfo.companyBusinessCategory.label") }
         id="companyBusinessCategory"
         type="text"
-        placeholder={t("register.companyInfo.companyBusinessCategory.placeholder")}
+        placeholder={ t("register.companyInfo.companyBusinessCategory.placeholder") }
         value={ formData.companyBusinessCategory || "" }
         isInvalid={ !!errors.companyBusinessCategory }
         error={ errors.companyBusinessCategory }
@@ -74,10 +68,10 @@ export default function CompanyInfo()
       />
 
       <TextField
-        label={t("register.companyInfo.companyPhone.label")}
+        label={ t("register.companyInfo.companyPhone.label") }
         id="companyPhone"
         type="tel"
-        placeholder={t("register.companyInfo.companyPhone.placeholder")}
+        placeholder={ t("register.companyInfo.companyPhone.placeholder") }
         value={ formData.companyPhone || "" }
         isInvalid={ !!errors.companyPhone }
         error={ errors.companyPhone }
@@ -86,10 +80,10 @@ export default function CompanyInfo()
       />
 
       <TextField
-        label={t("register.companyInfo.crn.label")}
+        label={ t("register.companyInfo.crn.label") }
         id="crn"
         type="text"
-        placeholder={t("register.companyInfo.crn.placeholder")}
+        placeholder={ t("register.companyInfo.crn.placeholder") }
         value={ formData.crn || "" }
         isInvalid={ !!errors.crn }
         error={ errors.crn }
@@ -98,10 +92,10 @@ export default function CompanyInfo()
       />
 
       <TextField
-        label={t("register.companyInfo.vatNumber.label")}
+        label={ t("register.companyInfo.vatNumber.label") }
         id="vatNumber"
         type="text"
-        placeholder={t("register.companyInfo.vatNumber.placeholder")}
+        placeholder={ t("register.companyInfo.vatNumber.placeholder") }
         value={ formData.vatNumber || "" }
         isInvalid={ !!errors.vatNumber }
         error={ errors.vatNumber }
@@ -111,7 +105,7 @@ export default function CompanyInfo()
 
       <div className="flex flex-col gap-1.5 w-full">
         <label className="text-sm font-medium">
-          {t("register.companyInfo.currency.label")} <span className="text-red-500">*</span>
+          { t("register.companyInfo.currency.label") } <span className="text-red-500">*</span>
         </label>
 
         <SearchableSelect
