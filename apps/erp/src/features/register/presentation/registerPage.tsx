@@ -1,11 +1,11 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { ApiConstants, ResultStatus, YusrApiHelper, YusrBusBackground } from "yusr-ui";
+import { ApiConstants, ResultStatus, useValidate, YusrApiHelper, YusrBusBackground } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import { logout, useAppDispatch, useAppSelector } from "../../../core/state/store";
-import { nextStep, prevStep, registerAsync, reset } from "../logic/registerSlice";
+import { nextStep, prevStep, registerAsync, reset, setErrors, validationRules } from "../logic/registerSlice";
 import { RegisterForm } from "./registerForm";
 import Welcome from "./wellcome";
 
@@ -15,6 +15,13 @@ export default function RegisterPage()
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { formData, acceptPolicies, successed } = useAppSelector((state) => state.register);
+
+  const handleSetErrors = useCallback((errors: Record<string, string>) =>
+  {
+    dispatch(setErrors(errors as Partial<Record<keyof Registration, string>>));
+  }, [dispatch]);
+
+  const { validate } = useValidate(formData, validationRules, handleSetErrors);
 
   useEffect(() =>
   {
@@ -30,13 +37,21 @@ export default function RegisterPage()
     };
 
     Logout();
-  }, []);
+  }, [dispatch]);
 
   const handleSubmit = async () =>
   {
     if (!acceptPolicies)
     {
       toast.error(t("register.accountInfo.acceptPoliciesError"));
+      return;
+    }
+
+    const isValid = validate();
+
+    if (!isValid)
+    {
+      toast.error("خطأ في المدخلات، يرجى مراجعة الحقول المطلوبة");
       return;
     }
 

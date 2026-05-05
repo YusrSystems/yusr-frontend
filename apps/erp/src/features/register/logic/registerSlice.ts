@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { City, Currency } from "yusr-ui";
+import { City, Currency, type ValidationRule, Validators } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import RegisterApiService from "../../../core/networking/registerApiService";
 import RegisterActions from "./registerActions";
@@ -15,6 +15,58 @@ export interface RegisterState
   cities: City[];
   acceptPolicies?: boolean;
 }
+
+export const validationRules: ValidationRule<Partial<Registration>>[] = [{
+  field: "username",
+  selector: (d) => d.username,
+  validators: [Validators.required("يرجى إدخال اسم المستخدم")]
+}, {
+  field: "userPassword",
+  selector: (d) => d.userPassword,
+  validators: [Validators.required("يرجى إدخال كلمة المرور")]
+}, {
+  field: "cityId",
+  selector: (d) => d.cityId,
+  validators: [Validators.required("يرجى اختيار المدينة")]
+}, {
+  field: "companyName",
+  selector: (d) => d.companyName,
+  validators: [Validators.required("يرجى إدخال اسم الشركة")]
+}, {
+  field: "email",
+  selector: (d) => d.email,
+  validators: [
+    Validators.required("يرجى إدخال البريد الإلكتروني"),
+    Validators.custom(
+      (val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val as string),
+      "صيغة البريد الإلكتروني غير صحيحة"
+    )
+  ]
+}, {
+  field: "branchName",
+  selector: (d) => d.branchName,
+  validators: [Validators.required("يرجى إدخال اسم الفرع")]
+}, {
+  field: "companyBusinessCategory",
+  selector: (d) => d.companyBusinessCategory,
+  validators: [Validators.required("يرجى إدخال نشاط الشركة")]
+}, {
+  field: "companyPhone",
+  selector: (d) => d.companyPhone,
+  validators: [Validators.required("يرجى إدخال رقم هاتف الشركة")]
+}, {
+  field: "crn",
+  selector: (d) => d.crn,
+  validators: [Validators.required("يرجى إدخال السجل التجاري")]
+}, {
+  field: "vatNumber",
+  selector: (d) => d.vatNumber,
+  validators: [Validators.required("يرجى إدخال الرقم الضريبي")]
+}, {
+  field: "currencyId",
+  selector: (d) => d.currencyId,
+  validators: [Validators.required("يرجى اختيار العملة")]
+}];
 
 const initialState: RegisterState = {
   formData: {},
