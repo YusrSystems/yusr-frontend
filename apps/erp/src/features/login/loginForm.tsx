@@ -41,11 +41,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 
   const emailStorageItemName = "remembered_email";
   const usernameStorageItemName = "remembered_username";
-  const { formData: registerInfo } = useAppSelector((state) => state.register);
   useEffect(() =>
   {
-    const savedEmail = registerInfo.email || localStorage.getItem(emailStorageItemName);
-    const savedUsername = registerInfo.username || localStorage.getItem(usernameStorageItemName);
+    const savedEmail = localStorage.getItem(emailStorageItemName);
+    const savedUsername = localStorage.getItem(usernameStorageItemName);
     if (savedEmail || savedUsername)
     {
       handleChange((prev) => ({ ...prev, companyEmail: savedEmail || "", username: savedUsername || "" }));

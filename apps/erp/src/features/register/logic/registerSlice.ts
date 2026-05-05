@@ -134,6 +134,11 @@ export const registerSlice = createSlice({
       {
         state.loading = false;
         state.successed = true;
+        const emailStorageItemName = "remembered_email";
+        const usernameStorageItemName = "remembered_username";
+
+        localStorage.setItem(emailStorageItemName, state.formData.email || "");
+        localStorage.setItem(usernameStorageItemName, state.formData.username || "");
       })
       .addCase(registerAsync.rejected, (state) =>
       {
