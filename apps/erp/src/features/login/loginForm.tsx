@@ -1,27 +1,34 @@
 import placeholderImg from "@/assets/placeholder.svg";
 import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ApiConstants, LoginRequest, User, type ValidationRule, Validators, YusrApiHelper } from "yusr-ui";
-import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, PasswordField, TextField, useEntityForm } from "yusr-ui";
+import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequest, PasswordField, TextField, useEntityForm, User, type ValidationRule, Validators, YusrApiHelper } from "yusr-ui";
 import type { Setting } from "../../core/data/setting";
 import { login, updateLoggedInUser, useAppDispatch } from "../../core/state/store";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 {
+  const { t } = useTranslation("loginRegister");
   const navigate = useNavigate();
+
   const validationRules: ValidationRule<Partial<LoginRequest>>[] = useMemo(
     () => [{
       field: "email",
       selector: (d) => d.companyEmail,
-      validators: [Validators.required("البريد الإلكتروني مطلوب")]
+      validators: [Validators.required(t("login.email.required"))]
     }, {
       field: "username",
       selector: (d) => d.username,
-      validators: [Validators.required("اسم المستخدم مطلوب")]
-    }, { field: "password", selector: (d) => d.password, validators: [Validators.required("كلمة المرور مطلوبة")] }],
-    []
+      validators: [Validators.required(t("login.username.required"))]
+    }, {
+      field: "password",
+      selector: (d) => d.password,
+      validators: [Validators.required(t("login.password.required"))]
+    }],
+    [t]
   );
+
   const INITIAL_STATE = useMemo(() => ({}), []);
   const { formData, handleChange, getError, isInvalid, validate, clearError } = useEntityForm<LoginRequest>(
     INITIAL_STATE,
@@ -104,15 +111,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
           <form className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">أهلا بك مجددًا</h1>
-                <p className="text-muted-foreground text-balance">سجل الدخول إلى حسابك</p>
+                <h1 className="text-2xl font-bold">{ t("login.title") }</h1>
+                <p className="text-muted-foreground text-balance">{ t("login.subtitle") }</p>
               </div>
 
               <TextField
-                label="البريد الإلكتروني"
+                label={ t("login.email.label") }
                 id="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder={ t("login.email.placeholder") }
                 value={ formData.companyEmail || "" }
                 isInvalid={ isInvalid("email") }
                 error={ getError("email") }
@@ -125,10 +132,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
               />
 
               <TextField
-                label="اسم المستخدم"
+                label={ t("login.username.label") }
                 id="username"
                 type="text"
-                placeholder="أدخل اسم المستخدم"
+                placeholder={ t("login.username.placeholder") }
                 value={ formData.username || "" }
                 isInvalid={ isInvalid("username") }
                 error={ getError("username") }
@@ -141,9 +148,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
               />
 
               <PasswordField
-                label="كلمة المرور"
+                label={ t("login.password.label") }
                 id="password"
-                placeholder="••••••••"
+                placeholder={ t("login.password.placeholder") }
                 value={ formData.password || "" }
                 isInvalid={ isInvalid("password") }
                 error={ getError("password") }
@@ -165,18 +172,18 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                   htmlFor="rememberMe"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
                 >
-                  تذكرني
+                  { t("login.rememberMe") }
                 </label>
               </div>
 
               <Field>
                 <Button type="button" disabled={ loading } onClick={ Login }>
                   { loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
-                  تسجيل الدخول
+                  { t("login.button") }
                 </Button>
               </Field>
               <FieldDescription className="text-center">
-                لا تملك حسابًا بعد؟ <Link to="/register">سجل معنا</Link>
+                { t("login.noAccount") } <Link to="/register">{ t("login.registerLink") }</Link>
               </FieldDescription>
             </FieldGroup>
           </form>

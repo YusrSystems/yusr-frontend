@@ -7,5 +7,15 @@
   "changeTheme": "Change Theme",
   "darkTheme": "Dark",
   "lightTheme": "Light",
-  "systemTheme": "System"
+  "systemTheme": "System",
+  "searchPlaceholder": "Search...",
+  "searchNullOption": "Choose a column",
+
+  "searchableSelect": {
+    "placeholder": "Select...",
+    "loading": "Loading...",
+    "noData": "No data found",
+    "allOption": "All",
+    "addOption": "Add \"{{value}}\""
+  }
 }

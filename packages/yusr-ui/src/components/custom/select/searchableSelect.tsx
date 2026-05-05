@@ -1,7 +1,8 @@
-import type { FilterCondition } from "../../../entities";
-import type { ColumnName } from "../../../types";
 import { Check, ChevronsUpDown, Loader2, Trash2 } from "lucide-react";
 import * as React from "react";
+import { useTranslation } from "react-i18next";
+import type { FilterCondition } from "../../../entities";
+import type { ColumnName } from "../../../types";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "../../pure/command";
@@ -41,7 +42,7 @@ export function SearchableSelect<T>(
     value,
     disabled,
     isInvalid,
-    placeholder = "اختر...",
+    placeholder: customPlaceholder,
     columnsNames,
     isLoading = false,
     showAllOption = false,
@@ -53,6 +54,7 @@ export function SearchableSelect<T>(
   }: SearchableSelectParams<T>
 )
 {
+  const { t, i18n } = useTranslation("common");
   const [open, setOpen] = React.useState(false);
   const [typedCondition, setTypedCondition] = React.useState<FilterCondition<T>>({
     value: "",
@@ -62,6 +64,7 @@ export function SearchableSelect<T>(
 
   // Find the selected item's label to display in the button
   const selectedItem = items.find((item) => String(item[itemValueKey]) === value);
+  const placeholder = customPlaceholder || t("searchableSelect.placeholder");
   const selectedLabel = selectedItem ? String(selectedItem[itemLabelKey]) : placeholder;
 
   const showCreateOption = onNotFound
@@ -108,6 +111,7 @@ export function SearchableSelect<T>(
     <Popover open={ open } onOpenChange={ handleOpenChange } modal={ true }>
       <PopoverTrigger asChild>
         <Button
+          dir={ i18n.dir() }
           variant="outline"
           role="combobox"
           aria-expanded={ open }
@@ -130,7 +134,7 @@ export function SearchableSelect<T>(
          p-0: Removes padding so the Command list sits flush
       */
       }
-      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start" dir="rtl">
+      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start" dir={ i18n.dir() }>
         { /* Search Input Header */ }
         <SearchInput<T>
           columnsNames={ columnsNames }
@@ -163,14 +167,14 @@ export function SearchableSelect<T>(
               ? (
                 <div className="flex items-center justify-center py-6 text-muted-foreground">
                   <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                  <span className="text-sm">جاري التحميل...</span>
+                  <span className="text-sm">{ t("searchableSelect.loading") }</span>
                 </div>
               )
               : (
                 <>
                   { items.length === 0 && !showCreateOption && (
                     <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
-                      لا توجد بيانات
+                      { t("searchableSelect.noData") }
                     </CommandEmpty>
                   ) }
 
@@ -192,7 +196,7 @@ export function SearchableSelect<T>(
                               (value === undefined || value === "") ? "opacity-100" : "opacity-0"
                             ) }
                           />
-                          الكل
+                          { t("searchableSelect.allOption") }
                         </CommandItem>
                       ) }
 
@@ -252,7 +256,7 @@ export function SearchableSelect<T>(
                           className="cursor-pointer text-primary"
                         >
                           <span className="ltr:mr-2 rtl:ml-2">+</span>
-                          إضافة "{ typedCondition.value.trim() }"
+                          { t("searchableSelect.addOption", { value: typedCondition.value.trim() }) }
                         </CommandItem>
                       ) }
                     </CommandGroup>

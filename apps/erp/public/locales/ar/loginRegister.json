@@ -1,0 +1,128 @@
+{
+  "login": {
+    "title": "أهلا بك مجددًا",
+    "subtitle": "سجل الدخول إلى حسابك",
+    "email": {
+      "label": "البريد الإلكتروني",
+      "placeholder": "m@example.com",
+      "required": "البريد الإلكتروني مطلوب"
+    },
+    "username": {
+      "label": "اسم المستخدم",
+      "placeholder": "أدخل اسم المستخدم",
+      "required": "اسم المستخدم مطلوب"
+    },
+    "password": {
+      "label": "كلمة المرور",
+      "placeholder": "••••••••",
+      "required": "كلمة المرور مطلوبة"
+    },
+    "rememberMe": "تذكرني",
+    "button": "تسجيل الدخول",
+    "noAccount": "لا تملك حسابًا بعد؟",
+    "registerLink": "سجل معنا"
+  },
+
+  "register": {
+    "title": "إنشاء حساب جديد",
+    "subtitle": "أدخل بيانات شركتك للبدء",
+    "steps": [
+      "معلومات الشركة",
+      "العنوان",
+      "معلومات الحساب"
+    ],
+    "buttons": {
+      "previous": "السابق",
+      "next": "التالي",
+      "create": "إنشاء الحساب",
+      "login": "سجل الدخول"
+    },
+    "alreadyHaveAccount": "لديك حساب بالفعل؟",
+    "companyInfo": {
+      "title": "معلومات الشركة",
+      "companyName": {
+        "label": "اسم الشركة",
+        "placeholder": "أدخل اسم الشركة",
+        "required": "اسم الشركة مطلوب"
+      },
+      "email": {
+        "label": "البريد الإلكتروني للشركة",
+        "placeholder": "company@example.com",
+        "required": "البريد الإلكتروني مطلوب"
+      },
+      "branchName": {
+        "label": "اسم الفرع",
+        "placeholder": "أدخل اسم الفرع",
+        "required": "اسم الفرع مطلوب"
+      },
+      "companyBusinessCategory": {
+        "label": "نشاط الشركة التجاري",
+        "placeholder": "مثال: تجزئة، مطاعم، تقنية...",
+        "required": "نشاط الشركة التجاري مطلوب"
+      },
+      "companyPhone": {
+        "label": "رقم هاتف الشركة",
+        "placeholder": "05xxxxxxxx",
+        "required": "رقم هاتف الشركة مطلوب"
+      },
+      "crn": {
+        "label": "السجل التجاري (CRN)",
+        "placeholder": "أدخل رقم السجل التجاري",
+        "required": "السجل التجاري مطلوب"
+      },
+      "vatNumber": {
+        "label": "الرقم الضريبي (VAT)",
+        "placeholder": "أدخل الرقم الضريبي",
+        "required": "الرقم الضريبي مطلوب"
+      },
+      "currency": {
+        "label": "العملة",
+        "required": "العملة مطلوبة"
+      }
+    },
+    "addressInfo": {
+      "title": "العنوان",
+      "city": {
+        "label": "المدينة",
+        "required": "المدينة مطلوبة"
+      },
+      "street": {
+        "label": "الشارع",
+        "placeholder": "اسم الشارع"
+      },
+      "district": {
+        "label": "الحي",
+        "placeholder": "اسم الحي"
+      },
+      "buildingNumber": {
+        "label": "رقم المبنى",
+        "placeholder": "رقم المبنى"
+      },
+      "postalCode": {
+        "label": "الرمز البريدي",
+        "placeholder": "الرمز البريدي"
+      }
+    },
+    "accountInfo": {
+      "title": "معلومات الحساب",
+      "username": {
+        "label": "اسم المستخدم",
+        "placeholder": "أدخل اسم المستخدم",
+        "required": "اسم المستخدم مطلوب"
+      },
+      "password": {
+        "label": "كلمة مرور المستخدم",
+        "placeholder": "••••••••",
+        "required": "كلمة المرور مطلوبة"
+      },
+      "acceptPolicies": "أوافق على",
+      "termsAndPrivacy": "شروط الخدمة وسياسة الخصوصية",
+      "acceptPoliciesError": "يجب الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة"
+    },
+    "welcome": {
+      "title": "أهلاً بك في يُسْر",
+      "subtitle": "تم إنشاء حسابك بنجاح. كل شيء جاهز.",
+      "button": "تسجيل الدخول"
+    }
+  }
+}

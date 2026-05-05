@@ -7,5 +7,15 @@
   "changeTheme": "تغيير السمة",
   "darkTheme": "داكن",
   "lightTheme": "فاتح",
-  "systemTheme": "النظام"
+  "systemTheme": "النظام",
+  "searchPlaceholder": "ابحث...",
+  "searchNullOption": "اختر العمود",
+
+  "searchableSelect": {
+    "placeholder": "اختر...",
+    "loading": "جاري التحميل...",
+    "noData": "لا توجد بيانات",
+    "allOption": "الكل",
+    "addOption": "إضافة \"{{value}}\""
+  }
 }

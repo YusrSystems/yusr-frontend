@@ -1,0 +1,128 @@
+{
+  "login": {
+    "title": "Welcome back",
+    "subtitle": "Log in to your account",
+    "email": {
+      "label": "Email",
+      "placeholder": "m@example.com",
+      "required": "Email is required"
+    },
+    "username": {
+      "label": "Username",
+      "placeholder": "Enter your username",
+      "required": "Username is required"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "••••••••",
+      "required": "Password is required"
+    },
+    "rememberMe": "Remember me",
+    "button": "Log in",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Sign up"
+  },
+
+  "register": {
+    "title": "Create a new account",
+    "subtitle": "Enter your company details to get started",
+    "steps": [
+      "Company Information",
+      "Address",
+      "Account Information"
+    ],
+    "buttons": {
+      "previous": "Previous",
+      "next": "Next",
+      "create": "Create account",
+      "login": "Log in"
+    },
+    "alreadyHaveAccount": "Already have an account?",
+    "companyInfo": {
+      "title": "Company Information",
+      "companyName": {
+        "label": "Company Name",
+        "placeholder": "Enter company name",
+        "required": "Company name is required"
+      },
+      "email": {
+        "label": "Company Email",
+        "placeholder": "company@example.com",
+        "required": "Email is required"
+      },
+      "branchName": {
+        "label": "Branch Name",
+        "placeholder": "Enter branch name",
+        "required": "Branch name is required"
+      },
+      "companyBusinessCategory": {
+        "label": "Business Activity",
+        "placeholder": "Example: Retail, Restaurants, Technology...",
+        "required": "Business activity is required"
+      },
+      "companyPhone": {
+        "label": "Company Phone",
+        "placeholder": "05xxxxxxxx",
+        "required": "Company phone is required"
+      },
+      "crn": {
+        "label": "Commercial Registration (CRN)",
+        "placeholder": "Enter commercial registration number",
+        "required": "Commercial registration is required"
+      },
+      "vatNumber": {
+        "label": "Tax Number (VAT)",
+        "placeholder": "Enter tax number",
+        "required": "Tax number is required"
+      },
+      "currency": {
+        "label": "Currency",
+        "required": "Currency is required"
+      }
+    },
+    "addressInfo": {
+      "title": "Address",
+      "city": {
+        "label": "City",
+        "required": "City is required"
+      },
+      "street": {
+        "label": "Street",
+        "placeholder": "Street name"
+      },
+      "district": {
+        "label": "District",
+        "placeholder": "District name"
+      },
+      "buildingNumber": {
+        "label": "Building Number",
+        "placeholder": "Building number"
+      },
+      "postalCode": {
+        "label": "Postal Code",
+        "placeholder": "Postal code"
+      }
+    },
+    "accountInfo": {
+      "title": "Account Information",
+      "username": {
+        "label": "Username",
+        "placeholder": "Enter username",
+        "required": "Username is required"
+      },
+      "password": {
+        "label": "User Password",
+        "placeholder": "••••••••",
+        "required": "Password is required"
+      },
+      "acceptPolicies": "I agree to the",
+      "termsAndPrivacy": "Terms of Service and Privacy Policy",
+      "acceptPoliciesError": "You must agree to the Terms of Service and Privacy Policy to continue"
+    },
+    "welcome": {
+      "title": "Welcome to Yusr",
+      "subtitle": "Your account has been created successfully. Everything is ready.",
+      "button": "Log in"
+    }
+  }
+}

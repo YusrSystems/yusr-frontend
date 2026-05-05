@@ -10,7 +10,7 @@ i18n
   .init({
     fallbackLng: "ar",
     supportedLngs: ["ar", "en"],
-    ns: ["common", "landing"],
+    ns: ["common", "landing", "loginRegister"],
     defaultNS: "common",
 
     backend: {

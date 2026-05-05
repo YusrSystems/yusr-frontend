@@ -1,16 +1,17 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { ApiConstants, ResultStatus, YusrApiHelper } from "yusr-ui";
-import { YusrBusBackground } from "yusr-ui";
+import { ApiConstants, ResultStatus, YusrApiHelper, YusrBusBackground } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import { logout, useAppDispatch, useAppSelector } from "../../../core/state/store";
 import { nextStep, prevStep, registerAsync, reset } from "../logic/registerSlice";
 import { RegisterForm } from "./registerForm";
-import Wellcome from "./wellcome";
+import Welcome from "./wellcome";
 
 export default function RegisterPage()
 {
+  const { t } = useTranslation("loginRegister");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { formData, acceptPolicies, successed } = useAppSelector((state) => state.register);
@@ -35,7 +36,7 @@ export default function RegisterPage()
   {
     if (!acceptPolicies)
     {
-      toast.error("يجب الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة");
+      toast.error(t("register.accountInfo.acceptPoliciesError"));
       return;
     }
 
@@ -55,7 +56,7 @@ export default function RegisterPage()
           />
         </div>
       ) }
-      { successed && <Wellcome /> }
+      { successed && <Welcome /> }
     </div>
   );
 }

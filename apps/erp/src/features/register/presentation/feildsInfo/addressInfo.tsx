@@ -1,23 +1,18 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { SearchableSelect, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import { updateField } from "../../logic/registerSlice";
-
-// Adjust this import path based on where your city slice is located
 import { filterCities } from "@/core/state/shared/citySlice";
 
 export default function AddressInfo()
 {
+  const { t } = useTranslation("loginRegister");
   const dispatch = useAppDispatch();
-
-  // 1. Get formData and errors from register slice
   const { formData, errors } = useAppSelector((state) => state.register);
-
-  // 2. Get cities from the shared city slice
   const cityState = useAppSelector((state) => state.city);
 
-  // 3. Fetch initial cities when component mounts
   useEffect(() =>
   {
     dispatch(filterCities(undefined));
@@ -32,7 +27,7 @@ export default function AddressInfo()
     <>
       <div className="flex flex-col gap-1.5 w-full">
         <label className="text-sm font-medium">
-          المدينة <span className="text-red-500">*</span>
+          {t("register.addressInfo.city.label")} <span className="text-red-500">*</span>
         </label>
 
         <SearchableSelect
@@ -55,9 +50,9 @@ export default function AddressInfo()
       </div>
 
       <TextField
-        label="الشارع"
+        label={t("register.addressInfo.street.label")}
         type="text"
-        placeholder="اسم الشارع"
+        placeholder={t("register.addressInfo.street.placeholder")}
         value={ formData.street || "" }
         isInvalid={ !!errors.street }
         error={ errors.street }
@@ -65,9 +60,9 @@ export default function AddressInfo()
       />
 
       <TextField
-        label="الحي"
+        label={t("register.addressInfo.district.label")}
         type="text"
-        placeholder="اسم الحي"
+        placeholder={t("register.addressInfo.district.placeholder")}
         value={ formData.district || "" }
         isInvalid={ !!errors.district }
         error={ errors.district }
@@ -75,9 +70,9 @@ export default function AddressInfo()
       />
 
       <TextField
-        label="رقم المبنى"
+        label={t("register.addressInfo.buildingNumber.label")}
         type="text"
-        placeholder="رقم المبنى"
+        placeholder={t("register.addressInfo.buildingNumber.placeholder")}
         value={ formData.buildingNumber || "" }
         isInvalid={ !!errors.buildingNumber }
         error={ errors.buildingNumber }
@@ -85,9 +80,9 @@ export default function AddressInfo()
       />
 
       <TextField
-        label="الرمز البريدي"
+        label={t("register.addressInfo.postalCode.label")}
         type="text"
-        placeholder="الرمز البريدي"
+        placeholder={t("register.addressInfo.postalCode.placeholder")}
         value={ formData.postalCode || "" }
         isInvalid={ !!errors.postalCode }
         error={ errors.postalCode }

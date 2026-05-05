@@ -1,23 +1,27 @@
 import { PasswordField, TextField } from "yusr-ui";
+import { useTranslation } from "react-i18next";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import { acceptPoliciesToggle, updateField } from "../../logic/registerSlice";
 
 export default function AccountInfo()
 {
+  const { t } = useTranslation("loginRegister");
   const { formData, errors, acceptPolicies } = useAppSelector((state) => state.register);
   const dispatch = useAppDispatch();
+  
   function onFieldChange(field: Partial<Registration>)
   {
     dispatch(updateField(field));
   }
+  
   return (
     <>
       <TextField
-        label="اسم المستخدم"
+        label={t("register.accountInfo.username.label")}
         id="username"
         type="text"
-        placeholder="أدخل اسم المستخدم"
+        placeholder={t("register.accountInfo.username.placeholder")}
         value={ formData.username || "" }
         isInvalid={ !!errors.username }
         error={ errors.username }
@@ -26,16 +30,15 @@ export default function AccountInfo()
       />
 
       <PasswordField
-        label="كلمة مرور المستخدم"
+        label={t("register.accountInfo.password.label")}
         id="userPassword"
-        placeholder="••••••••"
+        placeholder={t("register.accountInfo.password.placeholder")}
         value={ formData.userPassword || "" }
         isInvalid={ !!errors.userPassword }
         error={ errors.userPassword }
         onChange={ (e) => onFieldChange({ userPassword: e.target.value }) }
         required
       />
-      { /* accept out policies , policies link: https://github.com/YusrSystems/Legal-Documents */ }
 
       <div className="flex items-start space-x-2 rtl:space-x-reverse">
         <input
@@ -46,31 +49,17 @@ export default function AccountInfo()
           className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
         />
         <label htmlFor="acceptPolicies" className="text-sm text-muted-foreground">
-          أوافق على{" "}
+          {t("register.accountInfo.acceptPolicies")}{" "}
           <a
+            rel="noopener noreferrer"
             href="https://github.com/YusrSystems/Legal-Documents"
             target="_blank"
             className="text-primary hover:underline"
           >
-            شروط الخدمة وسياسة الخصوصية
+            {t("register.accountInfo.termsAndPrivacy")}
           </a>
         </label>
       </div>
-
-      {
-        /*
-      <SelectField
-        label="مندوب المبيعات (اختياري)"
-        value={ formData.salesDelegateId?.toString() || "none" }
-        isInvalid={ !!errors.salesDelegateId }
-        error={ errors.salesDelegateId }
-        onValueChange={ (val) => onFieldChange({ salesDelegateId: val === "none" ? undefined : Number(val) }) }
-        options={ [
-          { label: "بدون مندوب", value: "none" },
-          ...salesDelegates.map((s) => ({ label: s.name, value: s.id.toString() }))
-        ] }
-      /> */
-      }
     </>
   );
 }

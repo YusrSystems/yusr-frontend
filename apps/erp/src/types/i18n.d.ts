@@ -1,6 +1,7 @@
 import "i18next";
 import common from "../../public/locales/ar/common.json";
 import landing from "../../public/locales/ar/landing.json";
+import loginRegister from "../../public/locales/ar/loginRegister.json";
 
 declare module "i18next"
 {
@@ -10,6 +11,7 @@ declare module "i18next"
     resources: {
       common: typeof common;
       landing: typeof landing;
+      loginRegister: typeof loginRegister;
     };
   }
 }

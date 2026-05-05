@@ -1,6 +1,7 @@
 import placeholderImg from "@/assets/placeholder.svg";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Card, CardContent, cn, Field, FieldDescription, FieldGroup } from "yusr-ui";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 import RegisterActions from "../logic/registerActions";
@@ -17,8 +18,6 @@ export interface RegisterFormProps
   onLoginClick: () => void;
 }
 
-const STEPS = [{ label: "معلومات الشركة" }, { label: "العنوان" }, { label: "معلومات الحساب" }];
-
 export function RegisterForm({
   className,
   onNextStep,
@@ -28,15 +27,18 @@ export function RegisterForm({
   ...props
 }: RegisterFormProps)
 {
+  const { t } = useTranslation("loginRegister");
   const { loading, currentStep, acceptPolicies } = useAppSelector((state) => state.register);
   const dispatch = useAppDispatch();
-  const isLastStep = currentStep === STEPS.length - 1;
+  const steps = t("register.steps", { returnObjects: true }) as string[];
+  const isLastStep = currentStep === steps.length - 1;
 
   useEffect(() =>
   {
     dispatch(RegisterActions.fetchCitiesAsync());
     dispatch(RegisterActions.fetchCurrenciesAsync());
   }, []);
+
   return (
     <div className={ cn("flex flex-col gap-6", className) } { ...props }>
       <Card className="overflow-hidden p-0">
@@ -44,12 +46,12 @@ export function RegisterForm({
           <form className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">إنشاء حساب جديد</h1>
-                <p className="text-muted-foreground text-balance">أدخل بيانات شركتك للبدء</p>
+                <h1 className="text-2xl font-bold">{ t("register.title") }</h1>
+                <p className="text-muted-foreground text-balance">{ t("register.subtitle") }</p>
               </div>
 
               <div className="flex items-center justify-between gap-2">
-                { STEPS.map((step, index) => (
+                { steps.map((step, index) => (
                   <div key={ index } className="flex flex-1 flex-col items-center gap-1">
                     <div
                       className={ cn(
@@ -67,30 +69,21 @@ export function RegisterForm({
                         index === currentStep ? "text-foreground font-medium" : "text-muted-foreground"
                       ) }
                     >
-                      { step.label }
+                      { step }
                     </span>
-                    { index < STEPS.length - 1 && (
-                      <div
-                        className={ cn(
-                          "absolute hidden"
-                        ) }
-                      />
-                    ) }
                   </div>
                 )) }
               </div>
 
               { currentStep === 0 && <CompanyInfo /> }
-
               { currentStep === 1 && <AddressInfo /> }
-
               { currentStep === 2 && <AccountInfo /> }
 
               <div className={ cn("flex gap-2", currentStep > 0 ? "justify-between" : "justify-end") }>
                 { currentStep > 0 && (
                   <Field className="flex-1">
                     <Button type="button" variant="outline" onClick={ onPrevStep } disabled={ loading }>
-                      السابق
+                      { t("register.buttons.previous") }
                     </Button>
                   </Field>
                 ) }
@@ -101,13 +94,13 @@ export function RegisterForm({
                     onClick={ isLastStep ? onSubmit : onNextStep }
                   >
                     { loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
-                    { isLastStep ? "إنشاء الحساب" : "التالي" }
+                    { isLastStep ? t("register.buttons.create") : t("register.buttons.next") }
                   </Button>
                 </Field>
               </div>
 
               <FieldDescription className="text-center">
-                لديك حساب بالفعل؟{" "}
+                { t("register.alreadyHaveAccount") }{" "}
                 <a
                   href="#"
                   onClick={ (e) =>
@@ -116,7 +109,7 @@ export function RegisterForm({
                     onLoginClick();
                   } }
                 >
-                  سجل الدخول
+                  { t("register.buttons.login") }
                 </a>
               </FieldDescription>
             </FieldGroup>
