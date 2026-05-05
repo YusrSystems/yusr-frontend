@@ -87,5 +87,101 @@
         "to": "/roles"
       }
     ]
+  },
+
+  "whyUs": {
+    "title": "Why is Yusr the perfect partner for your business?",
+    "description": "A system designed specifically for business needs — no complexity and no compromise on quality",
+    "items": [
+      {
+        "icon": "HelpCircle",
+        "title": "Free technical support available",
+        "desc": "Always available for free, to help you with any inquiry or problem quickly and effectively."
+      },
+      {
+        "icon": "ShieldCheck",
+        "title": "Security & Protection",
+        "desc": "Yusr gives full attention to the safety of your data on fully secure servers."
+      },
+      {
+        "icon": "Rocket",
+        "title": "Easy-to-use interface",
+        "desc": "Manage your business easily through a clear and simple Arabic interface, with built-in tools that don't require deep expertise."
+      },
+      {
+        "icon": "Timer",
+        "title": "Save time and effort",
+        "desc": "Track your business indicators and manage your operations quickly and efficiently, with easy steps that save you time and effort."
+      },
+      {
+        "icon": "Globe",
+        "title": "From anywhere, anytime",
+        "desc": "Being a cloud-based system, you can access it from any device at any time."
+      },
+      {
+        "icon": "RefreshCw",
+        "title": "Free periodic updates",
+        "desc": "The software is constantly updated to add new features and tools, and you get them for free."
+      },
+      {
+        "icon": "Tags",
+        "title": "Economic price",
+        "desc": "Get a complete accounting system with a simple monthly subscription, with continuous technical support and free updates."
+      }
+    ],
+    "cta": {
+      "title": "Stop the chaos in managing your accounts — start with Yusr today",
+      "description": "Log in and start using immediately with no complex setup"
+    }
+  },
+
+  "pricing": {
+    "title": "Pricing",
+    "subtitle": "One subscription includes everything — no hidden costs",
+    "billing": {
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "save": "Save {{amount}} SAR"
+    },
+    "plan": {
+      "name": "Yusr Complete Plan",
+      "description": "Includes all modules and features",
+      "currency": "SAR",
+      "perMonth": "/ month",
+      "paidAnnually": "Paid {{amount}} SAR annually",
+      "annualTotal": "{{amount}} SAR annually"
+    },
+    "cta": "Start now",
+    "unlimited": "Unlimited",
+    "features": [
+      { "index": 1, "label": "Financial Transactions", "type": "title" },
+      { "index": 2, "label": "Invoices", "type": "unlimited" },
+      { "index": 3, "label": "Quotations", "type": "unlimited" },
+      { "index": 4, "label": "Receipt & Payment Vouchers", "type": "unlimited" },
+      { "index": 5, "label": "Cash Boxes & Bank Accounts", "type": "unlimited" },
+      { "index": 6, "label": "Payment Methods", "type": "unlimited" },
+      { "index": 7, "label": "Reports", "type": "check" },
+      { "index": 8, "label": "Electronic Invoice", "type": "title" },
+      { "index": 9, "label": "Phase One", "type": "check" },
+      { "index": 10, "label": "Phase Two", "type": "check" },
+      { "index": 11, "label": "Inventory", "type": "title" },
+      { "index": 12, "label": "Products & Services", "type": "unlimited" },
+      { "index": 13, "label": "Inventory Tracking", "type": "check" },
+      { "index": 14, "label": "Inventory Stocktaking", "type": "check" },
+      { "index": 15, "label": "Warehouses", "type": "unlimited" },
+      { "index": 16, "label": "Stock Adjustments", "type": "check" },
+      { "index": 17, "label": "Statements & Reports", "type": "check" },
+      { "index": 18, "label": "Accounting", "type": "title" },
+      { "index": 19, "label": "Accounts (Customer, Supplier, Employee, etc.)", "type": "unlimited" },
+      { "index": 20, "label": "Balance Tracking", "type": "check" },
+      { "index": 21, "label": "Statements & Reports", "type": "check" },
+      { "index": 22, "label": "Users", "type": "title" },
+      { "index": 23, "label": "Number of Users", "type": "unlimited" },
+      { "index": 24, "label": "Roles & Permissions", "type": "unlimited" }
+    ]
+  },
+
+  "footer": {
+    "copyright": "© {{year}} Yusr — All rights reserved"
   }
 }

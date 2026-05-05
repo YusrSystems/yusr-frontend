@@ -1,32 +1,45 @@
-import { ArrowLeft, type LucideProps } from "lucide-react";
+import { ArrowLeft, Globe, HelpCircle, type LucideProps, RefreshCw, Rocket, ShieldCheck, Tags, Timer } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Button, Card } from "yusr-ui";
 
-export default function LandingWhyUs(
-  {
-    whyUs
-  }: {
-    whyUs: {
-      icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
-      title: string;
-      desc: string;
-    }[];
-  }
-)
+const iconMap: Record<
+  string,
+  React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>
+> = {
+  HelpCircle,
+  ShieldCheck,
+  Rocket,
+  Timer,
+  Globe,
+  RefreshCw,
+  Tags
+};
+
+export default function LandingWhyUs()
 {
+  const { t, i18n } = useTranslation("landing");
+  const { t: tCommon } = useTranslation("common");
+
+  const whyUsItems = t("whyUs.items", { returnObjects: true }) as {
+    icon: string;
+    title: string;
+    desc: string;
+  }[];
+
   return (
-    <section id="why-us" className="mx-auto max-w-6xl px-6 py-20">
+    <section id="why-us" dir={ i18n.dir() } className="mx-auto max-w-6xl px-6 py-20">
       <div className="mb-12 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold">لماذا يُعَدُّ يُسر شريكًا مثاليًا لأعمالك؟</h2>
+        <h2 className="text-3xl md:text-4xl font-bold">{ t("whyUs.title") }</h2>
         <p className="mt-5 text-base text-muted-foreground">
-          نظام مصمم خصيصًا لاحتياجات الأعمال — بدون تعقيد وبدون مساومة على الجودة
+          { t("whyUs.description") }
         </p>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        { whyUs.map((w, i) =>
+        { whyUsItems.map((w, i) =>
         {
-          const Icon = w.icon;
+          const Icon = iconMap[w.icon];
           return (
             <Card
               key={ i }
@@ -47,14 +60,15 @@ export default function LandingWhyUs(
       { /* CTA */ }
       <div className="mt-12 rounded-2xl border border-primary/20 bg-card p-8 text-center">
         <p className="text-xl font-bold md:text-2xl text-primary">
-          أوقف الفوضى في إدارة حساباتك — ابدأ مع يُسر اليوم
+          { t("whyUs.cta.title") }
         </p>
         <p className="mt-3 text-muted-foreground">
-          سجّل دخولك وابدأ الاستخدام الفوري دون إعداد معقد
+          { t("whyUs.cta.description") }
         </p>
         <Link to="/register">
           <Button className="mt-6 gap-2 px-8 shadow-md shadow-primary/20" size="lg">
-            ابدأ الاستخدام مجانًا <ArrowLeft className="h-4 w-4" />
+            { tCommon("register") }
+            <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
           </Button>
         </Link>
       </div>
