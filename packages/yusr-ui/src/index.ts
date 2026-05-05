@@ -1,5 +1,4 @@
 export * from "./components/custom/index";
-export * from "./components/loading/loadingTranslations";
 export * from "./components/pure/index";
 export * from "./error/index";
 export * from "./hooks/index";

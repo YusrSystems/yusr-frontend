@@ -1,19 +1,30 @@
-import { Suspense } from "react";
 import { createRoot } from "react-dom/client";
-import { LoadingTranslations, YusrApp } from "yusr-ui";
+import { YusrApp } from "yusr-ui";
 import App from "./app.tsx";
-import { store } from "./core/state/store.ts";
 import "./config/i18n.ts";
+import { store } from "./core/state/store.ts";
 import "./index.css";
 
+function revealApp()
+{
+  const loader = document.getElementById("initial-loader");
+  if (!loader)
+  {
+    return;
+  }
+
+  loader.classList.add("hiding");
+  loader.addEventListener("transitionend", () => loader.remove(), { once: true });
+
+  document.body.style.animation = "_app-pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards";
+}
+
 createRoot(document.getElementById("root")!).render(
-  <Suspense fallback={<LoadingTranslations />}>
-    <YusrApp
-      store={ store }
-      backendUrl="https://yusrerp.runasp.net/api"
-      // backendUrl="https://localhost:7142/api"
-    >
-      <App />
-    </YusrApp>
-  </Suspense>
+  <YusrApp
+    store={ store }
+    backendUrl="https://yusrerp.runasp.net/api"
+    onReady={ revealApp }
+  >
+    <App />
+  </YusrApp>
 );
