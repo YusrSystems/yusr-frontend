@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { NotFoundPage, ProtectedRoute, Skeleton, ThemeProvider, Toaster, TooltipProvider } from "yusr-ui";
+import { NotFoundPage, ProtectedRoute, ThemeProvider, Toaster, TooltipProvider } from "yusr-ui";
 import AppLayout from "./appLayout";
-import useAppInitialization from "./core/hooks/useAppInitialization";
 import { useAppSelector } from "./core/state/store";
 import BanksAccountsPage from "./features/accounts/banksAccountsPage";
 import BoxesAccountsPage from "./features/accounts/boxesAccountsPage";
@@ -33,13 +32,6 @@ import VouchersPage from "./features/vouchers/vouchersPage";
 
 function App()
 {
-  const { isLoading } = useAppInitialization();
-
-  if (isLoading)
-  {
-    return <Apploading />;
-  }
-
   return <AppBody />;
 }
 
@@ -52,17 +44,6 @@ function AppBody()
         <Toaster richColors closeButton position="top-center" dir="rtl" />
       </ThemeProvider>
     </TooltipProvider>
-  );
-}
-
-function Apploading()
-{
-  return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="flex w-full max-w-xs flex-col gap-2">
-        <Skeleton className="h-4 w-full" />
-      </div>
-    </div>
   );
 }
 

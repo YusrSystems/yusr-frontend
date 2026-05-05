@@ -1,39 +1,34 @@
-import { Building2, FileChartColumnIncreasing, LayoutDashboardIcon, Package, ReceiptText, ScrollText, SettingsIcon, UsersIcon, WalletCards } from "lucide-react";
-import * as React from "react";
-import { ApiConstants, Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SideBarUserData, SystemPermissions, YusrApiHelper } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import ApplicationLanguages from "../../core/services/language/applicationLanguages";
-import { logout, useAppDispatch, useAppSelector } from "../../core/state/store";
-
-import logoFullDark from "@/assets/yusrErpLogoRTL_Dark.png";
-import logoFullLight from "@/assets/yusrErpLogoRTL_Light.png";
 import logoOnlyDark from "@/assets/yusrLogoOnly_Dark.png";
 import logoOnlyLight from "@/assets/yusrLogoOnly_Light.png";
-
-const appLang = ApplicationLanguages.getAppLanguageText();
-const appLangSections = appLang.sections;
+import { Building2, FileChartColumnIncreasing, LayoutDashboardIcon, Package, ReceiptText, ScrollText, SettingsIcon, UsersIcon, WalletCards } from "lucide-react";
+import * as React from "react";
+import { ApiConstants, Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SidebarTrigger, SideBarUserData, SystemPermissions, useSidebar, YusrApiHelper } from "yusr-ui";
+import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
+import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
+import { logout, useAppDispatch, useAppSelector } from "../../core/state/store";
+import { useTranslation } from "react-i18next";
 
 export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
 {
+  const { t } = useTranslation("common");
   const authState = useAppSelector((state) => state.auth);
   const permissions: string[] = authState.loggedInUser?.role?.permissions || [];
 
   const dispatch = useAppDispatch();
 
   const logoConfig = {
-    full: { light: logoFullLight, dark: logoFullDark, sizeStyle: "w-25 px-2" },
+    full: { light: logoOnlyLight, dark: logoOnlyDark, sizeStyle: "w-12 px-2" },
     collapsed: { light: logoOnlyLight, dark: logoOnlyDark, sizeStyle: "w-8" }
   };
 
   const data = {
     navMain: [{
-      title: appLangSections.dashboard,
+      title: t("sidebar.dashboard"),
       url: "/dashboard",
       icon: <LayoutDashboardIcon />,
       hasAuth: true
     }, {
-      title: appLangSections.invoices,
+      title: t("sidebar.invoices"),
       url: "/invoices",
       icon: <ReceiptText />,
       hasAuth: SystemPermissions.hasAuth(
@@ -46,7 +41,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
         SystemPermissionsActions.Get
       ),
       subItems: [{
-        title: appLangSections.sellInvoices,
+        title: t("sidebar.sellInvoices"),
         url: "/sales",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -58,7 +53,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.purchaseInvoices,
+        title: t("sidebar.purchaseInvoices"),
         url: "/purchases",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -71,7 +66,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
         )
       }]
     }, {
-      title: appLangSections.vouchers,
+      title: t("sidebar.vouchers"),
       url: "/vouchers",
       icon: <ScrollText />,
       hasAuth: SystemPermissions.hasAuth(
@@ -80,12 +75,12 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
         SystemPermissionsActions.Get
       )
     }, {
-      title: "الحسابات",
+      title: t("sidebar.accounts"),
       url: "#",
       icon: <WalletCards />,
       hasAuth: true,
       subItems: [{
-        title: appLangSections.clients,
+        title: t("sidebar.clients"),
         url: "/clients",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -97,7 +92,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.suppliers,
+        title: t("sidebar.suppliers"),
         url: "/suppliers",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -109,7 +104,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.employees,
+        title: t("sidebar.employees"),
         url: "/employees",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -121,7 +116,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.banks,
+        title: t("sidebar.banks"),
         url: "/banks",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -133,7 +128,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.boxes,
+        title: t("sidebar.boxes"),
         url: "/boxes",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -145,7 +140,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.paymentMethods,
+        title: t("sidebar.paymentMethods"),
         url: "/paymentMethods",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -153,7 +148,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.balanceTransfer,
+        title: t("sidebar.balanceTransfer"),
         url: "/balanceTransfer",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -162,12 +157,12 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
         )
       }]
     }, {
-      title: "المواد",
+      title: t("sidebar.items"),
       url: "#",
       icon: <Package />,
       hasAuth: true,
       subItems: [{
-        title: appLangSections.items,
+        title: t("sidebar.items"),
         url: "/items",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -175,7 +170,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.itemTransfers,
+        title: t("sidebar.itemTransfers"),
         url: "/itemTransfers",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -183,7 +178,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.stocktakings,
+        title: t("sidebar.stocktakings"),
         url: "/stocktakings",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -191,7 +186,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.itemsSettlements,
+        title: t("sidebar.itemsSettlements"),
         url: "/itemsSettlements",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -199,7 +194,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.pricingMethods,
+        title: t("sidebar.pricingMethods"),
         url: "/pricingMethods",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -207,7 +202,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.units,
+        title: t("sidebar.units"),
         url: "/units",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -215,7 +210,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.stores,
+        title: t("sidebar.stores"),
         url: "/stores",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -223,7 +218,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.taxes,
+        title: t("sidebar.taxes"),
         url: "/taxes",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -232,7 +227,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
         )
       }]
     }, {
-      title: appLangSections.branches,
+      title: t("sidebar.branches"),
       url: "/branches",
       icon: <Building2 />,
       hasAuth: SystemPermissions.hasAuth(
@@ -241,12 +236,12 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
         SystemPermissionsActions.Get
       )
     }, {
-      title: "المستخدمون",
+      title: t("sidebar.users"),
       url: "#",
       icon: <UsersIcon />,
       hasAuth: true,
       subItems: [{
-        title: appLangSections.roles,
+        title: t("sidebar.roles"),
         url: "/roles",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -254,7 +249,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsActions.Get
         )
       }, {
-        title: appLangSections.users,
+        title: t("sidebar.users"),
         url: "/users",
         hasAuth: SystemPermissions.hasAuth(
           permissions,
@@ -263,7 +258,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
         )
       }]
     }, {
-      title: appLangSections.reports,
+      title: t("sidebar.reports"),
       url: "/reports",
       icon: <FileChartColumnIncreasing />,
       hasAuth: SystemPermissions.hasAuth(
@@ -273,7 +268,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
       )
     }],
     navSecondary: [{
-      title: appLangSections.settings,
+      title: t("sidebar.settings"),
       url: "/settings",
       icon: <SettingsIcon />
     }]
@@ -294,12 +289,24 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
     }
   };
 
+  const { i18n } = useTranslation("common");
+  const { state } = useSidebar();
+
   return (
-    <Sidebar collapsible="icon" side="right" { ...props }>
+    <Sidebar collapsible="icon" side={ i18n.dir() === "rtl" ? "right" : "left" } { ...props }>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarLogo logos={ logoConfig } />
+            <div
+              className={ `gap-2 ${
+                state === "collapsed"
+                  ? "flex flex-col justify-between items-center"
+                  : "flex flex-row-reverse justify-between items-center"
+              }` }
+            >
+              <SidebarTrigger />
+              <SidebarLogo logos={ logoConfig } />
+            </div>
             <SideBarCompanyData company={ displayCompany } />
           </SidebarMenuItem>
         </SidebarMenu>

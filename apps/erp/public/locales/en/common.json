@@ -3,6 +3,7 @@
   "arabic": "العربية",
   "english": "English",
   "login": "Login",
+  "logout": "Logout",
   "register": "Get started for free",
   "changeTheme": "Change Theme",
   "darkTheme": "Dark",
@@ -17,5 +18,79 @@
     "noData": "No data found",
     "allOption": "All",
     "addOption": "Add \"{{value}}\""
+  },
+
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "taxes": "Taxes",
+    "stores": "Stores",
+    "reports": "Reports",
+    "units": "Units",
+    "items": "Items",
+    "accounts": "Accounts",
+    "clients": "Customers",
+    "suppliers": "Suppliers",
+    "employees": "Employees",
+    "banks": "Banks",
+    "boxes": "Cash Boxes",
+    "branches": "Branches",
+    "users": "Users",
+    "roles": "Roles",
+    "invoices": "Invoices",
+    "sellInvoices": "Sales Invoices",
+    "purchaseInvoices": "Purchase Invoices",
+    "vouchers": "Vouchers",
+    "paymentMethods": "Payment Methods",
+    "balanceTransfer": "Balance Transfers",
+    "pricingMethods": "Pricing Methods",
+    "itemTransfers": "Item Transfers",
+    "stocktakings": "Stocktaking",
+    "itemsSettlements": "Stock Adjustments",
+    "settings": "Settings",
+    "account": "Account"
+  },
+
+  "dashborad": {
+    "income": "Total Income",
+    "totalPassengers": "Total Passengers",
+    "totalTrips": "Total Trips",
+    "growthRate": "Growth Rate",
+    "charts": {
+      "last3months": "Last 3 Months"
+    },
+    "overview": "Overview",
+    "currencyTooltip": "Current system currency",
+    "salesAndPurchases": "Sales and Purchases",
+    "salesPurchasesDescription": "Comparison between total sales and purchases",
+    "yearly": "Yearly",
+    "weekly": "Weekly",
+    "weekSales": "Week Sales",
+    "weekPurchases": "Week Purchases",
+    "weekReceipts": "Week Receipts",
+    "weekPayments": "Week Payments",
+    "valueTitle": "Value: {{value}}",
+    "days": {
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    },
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    }
   }
 }

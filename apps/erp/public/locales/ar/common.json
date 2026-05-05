@@ -3,6 +3,7 @@
   "arabic": "العربية",
   "english": "English",
   "login": "تسجيل الدخول",
+  "logout": "تسجيل الخروج",
   "register": "إبدأ الاستخدام مجانًا",
   "changeTheme": "تغيير السمة",
   "darkTheme": "داكن",
@@ -17,5 +18,79 @@
     "noData": "لا توجد بيانات",
     "allOption": "الكل",
     "addOption": "إضافة \"{{value}}\""
+  },
+
+  "sidebar": {
+    "dashboard": "لوحة المعلومات",
+    "taxes": "الضرائب",
+    "stores": "المستودعات",
+    "reports": "التقارير",
+    "units": "الوحدات",
+    "items": "المواد",
+    "accounts": "الحسابات",
+    "clients": "العملاء",
+    "suppliers": "الموردين",
+    "employees": "الموظفين",
+    "banks": "البنوك",
+    "boxes": "الصناديق",
+    "branches": "الفروع",
+    "users": "المستخدمون",
+    "roles": "الأدوار",
+    "invoices": "الفواتير",
+    "sellInvoices": "فواتير البيع",
+    "purchaseInvoices": "فواتير الشراء",
+    "vouchers": "السندات",
+    "paymentMethods": "طرق الدفع",
+    "balanceTransfer": "تحويلات الأرصدة",
+    "pricingMethods": "طرق التسعير",
+    "itemTransfers": "نقل المواد",
+    "stocktakings": "جرد المواد",
+    "itemsSettlements": "تسوية المواد",
+    "settings": "الإعدادات",
+    "account": "الحساب"
+  },
+
+  "dashborad": {
+    "income": "مجموع الدخل",
+    "totalPassengers": "مجموع الركاب",
+    "totalTrips": "الرحلات",
+    "growthRate": "معدل النمو",
+    "charts": {
+      "last3months": ""
+    },
+    "overview": "نظرة عامة",
+    "currencyTooltip": "عملة النظام الحالية",
+    "salesAndPurchases": "المبيعات والمشتريات",
+    "salesPurchasesDescription": "مقارنة بين إجمالي المبيعات والمشتريات",
+    "yearly": "سنوي",
+    "weekly": "أسبوعي",
+    "weekSales": "مبيعات الأسبوع",
+    "weekPurchases": "مشتريات الأسبوع",
+    "weekReceipts": "مقبوضات الأسبوع",
+    "weekPayments": "مدفوعات الأسبوع",
+    "valueTitle": "القيمة: {{value}}",
+    "days": {
+      "sunday": "الأحد",
+      "monday": "الاثنين",
+      "tuesday": "الثلاثاء",
+      "wednesday": "الأربعاء",
+      "thursday": "الخميس",
+      "friday": "الجمعة",
+      "saturday": "السبت"
+    },
+    "months": {
+      "january": "يناير",
+      "february": "فبراير",
+      "march": "مارس",
+      "april": "أبريل",
+      "may": "مايو",
+      "june": "يونيو",
+      "july": "يوليو",
+      "august": "أغسطس",
+      "september": "سبتمبر",
+      "october": "أكتوبر",
+      "november": "نوفمبر",
+      "december": "ديسمبر"
+    }
   }
 }

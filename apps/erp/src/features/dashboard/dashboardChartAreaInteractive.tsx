@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, ToggleGroup, ToggleGroupItem } from "yusr-ui";
 import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
@@ -13,13 +14,22 @@ type ChartAreaInteractiveProps = { data: DashboardData; };
 
 export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProps)
 {
+  const { t } = useTranslation("common");
   const [timeRange, setTimeRange] = React.useState<"weekly" | "yearly">("yearly");
 
   const chartData = React.useMemo(() =>
   {
     if (timeRange === "weekly")
     {
-      const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+      const days = [
+        t("dashborad.days.sunday"),
+        t("dashborad.days.monday"),
+        t("dashborad.days.tuesday"),
+        t("dashborad.days.wednesday"),
+        t("dashborad.days.thursday"),
+        t("dashborad.days.friday"),
+        t("dashborad.days.saturday")
+      ];
       return days.map((day, index) => ({
         label: day,
         sales: data.weeklySales?.[index] || 0,
@@ -29,18 +39,18 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
     else
     {
       const months = [
-        "يناير",
-        "فبراير",
-        "مارس",
-        "أبريل",
-        "مايو",
-        "يونيو",
-        "يوليو",
-        "أغسطس",
-        "سبتمبر",
-        "أكتوبر",
-        "نوفمبر",
-        "ديسمبر"
+        t("dashborad.months.january"),
+        t("dashborad.months.february"),
+        t("dashborad.months.march"),
+        t("dashborad.months.april"),
+        t("dashborad.months.may"),
+        t("dashborad.months.june"),
+        t("dashborad.months.july"),
+        t("dashborad.months.august"),
+        t("dashborad.months.september"),
+        t("dashborad.months.october"),
+        t("dashborad.months.november"),
+        t("dashborad.months.december")
       ];
       return months.map((month, index) => ({
         label: month,
@@ -48,13 +58,13 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
         purchases: data.yearlyData?.purchases?.[index] || 0
       }));
     }
-  }, [data, timeRange]);
+  }, [data, timeRange, t]);
 
   return (
     <Card className="@container/card m-6">
       <CardHeader>
-        <CardTitle>المبيعات والمشتريات</CardTitle>
-        <CardDescription>مقارنة بين إجمالي المبيعات والمشتريات</CardDescription>
+        <CardTitle>{t("dashborad.salesAndPurchases")}</CardTitle>
+        <CardDescription>{t("dashborad.salesPurchasesDescription")}</CardDescription>
         <CardAction>
           <ToggleGroup
             type="single"
@@ -63,8 +73,8 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
             variant="outline"
             className="hidden *:data-[slot=toggle-group-item]:px-4! @[767px]/card:flex"
           >
-            <ToggleGroupItem value="yearly">سنوي</ToggleGroupItem>
-            <ToggleGroupItem value="weekly">أسبوعي</ToggleGroupItem>
+            <ToggleGroupItem value="yearly">{t("dashborad.yearly")}</ToggleGroupItem>
+            <ToggleGroupItem value="weekly">{t("dashborad.weekly")}</ToggleGroupItem>
           </ToggleGroup>
           <Select value={ timeRange } onValueChange={ (val) => setTimeRange(val as "weekly" | "yearly") }>
             <SelectTrigger
@@ -72,11 +82,11 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
               size="sm"
               aria-label="Select a value"
             >
-              <SelectValue placeholder="سنوي" />
+              <SelectValue placeholder={t("dashborad.yearly")} />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value="yearly" className="rounded-lg">سنوي</SelectItem>
-              <SelectItem value="weekly" className="rounded-lg">أسبوعي</SelectItem>
+              <SelectItem value="yearly" className="rounded-lg">{t("dashborad.yearly")}</SelectItem>
+              <SelectItem value="weekly" className="rounded-lg">{t("dashborad.weekly")}</SelectItem>
             </SelectContent>
           </Select>
         </CardAction>
