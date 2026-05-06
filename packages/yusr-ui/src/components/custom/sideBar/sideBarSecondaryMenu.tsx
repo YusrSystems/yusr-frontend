@@ -2,7 +2,8 @@ import { LogOutIcon } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../../pure/sidebar";
+import { cn } from "../../../utils/cn";
+import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "../../pure/sidebar";
 import { LanguageToggle } from "../locale/languageToggle";
 import { ThemeToggle } from "../theme/themeToggle";
 
@@ -25,13 +26,17 @@ export function SideBarSecondaryMenu({
 }: SideBarSecondaryMenuProps)
 {
   const { t } = useTranslation("common");
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+  const itemsFontSize = "text-base font-semibold";
+
   return (
     <SidebarGroup { ...props }>
       <SidebarGroupContent>
-        <SidebarMenu>
+        <SidebarMenu className={ isCollapsed ? "space-y-2" : "" }>
           { items.map((item) => (
             <SidebarMenuItem key={ item.title }>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild className="w-full justify-between h-12">
                 <Link
                   to={ item.url }
                   className="flex items-center justify-start gap-3 w-full px-3"
@@ -40,24 +45,26 @@ export function SideBarSecondaryMenu({
                     { item.icon }
                   </span>
 
-                  <span className="font-medium truncate">{ item.title }</span>
+                  <span className={ cn("truncate ps-2", itemsFontSize) }>
+                    { item.title }
+                  </span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           )) }
 
-          <SidebarMenuItem>
+          <SidebarMenuItem className={ isCollapsed ? "space-y-2" : "" }>
             <LanguageToggle variant="sidebar" />
             <ThemeToggle variant="sidebar" />
           </SidebarMenuItem>
 
           <SidebarMenuItem key="logout">
-            <SidebarMenuButton asChild onClick={ onLogout }>
+            <SidebarMenuButton asChild onClick={ onLogout } className="w-full justify-between h-12">
               <div className="flex items-center justify-start gap-3 w-full px-3 text-destructive cursor-pointer">
                 <span className="flex items-center justify-center shrink-0 size-4">
                   <LogOutIcon />
                 </span>
-                <span className="font-medium truncate">{ t("logout") }</span>
+                <span className={ cn("truncate ps-2", itemsFontSize) }>{ t("logout") }</span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>

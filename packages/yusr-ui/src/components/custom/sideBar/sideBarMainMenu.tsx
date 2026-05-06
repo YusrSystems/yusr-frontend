@@ -1,8 +1,9 @@
 import { ChevronLeft } from "lucide-react";
 import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
+import { cn } from "../../../utils/cn";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../pure/collapsible";
-import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "../../pure/sidebar";
+import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, useSidebar } from "../../pure/sidebar";
 
 export type MainMenuItem = {
   title: string;
@@ -20,10 +21,15 @@ export type MainMenuItem = {
 
 export function SideBarMainMenu({ items }: { items: MainMenuItem[]; })
 {
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+  const menuButtonMarginClass = !isCollapsed ? "mx-2" : "";
+  const itemsFontSize = "text-base font-semibold";
+
   return (
     <SidebarGroup>
       <SidebarGroupContent>
-        <SidebarMenu>
+        <SidebarMenu className={isCollapsed? "space-y-2" : ""}>
           { items.map((item) =>
           {
             if (!item.hasAuth)
@@ -53,13 +59,15 @@ export function SideBarMainMenu({ items }: { items: MainMenuItem[]; })
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton
                           tooltip={ item.title }
-                          className="w-full justify-between"
+                          className="w-full justify-between h-12"
                         >
                           <div className="flex items-center gap-3">
-                            <span className="flex items-center justify-center shrink-0 size-4">
+                            <span
+                              className={ `flex items-center justify-center shrink-0 size-4 ${menuButtonMarginClass}` }
+                            >
                               { item.icon }
                             </span>
-                            <span className="font-medium truncate">
+                            <span className={ cn("truncate", itemsFontSize) }>
                               { item.title }
                             </span>
                           </div>
@@ -101,15 +109,15 @@ export function SideBarMainMenu({ items }: { items: MainMenuItem[]; })
             return (
               <Fragment key={ item.title }>
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild tooltip={ item.title }>
+                  <SidebarMenuButton asChild tooltip={ item.title } className="h-12">
                     <Link
                       to={ item.url }
-                      className="flex items-center justify-start gap-3 w-full px-3"
+                      className="flex items-center justify-start gap-3 w-full "
                     >
-                      <span className="flex items-center justify-center shrink-0 size-4">
+                      <span className={ `flex items-center justify-center shrink-0 size-4 ${menuButtonMarginClass}` }>
                         { item.icon }
                       </span>
-                      <span className="font-medium truncate">{ item.title }</span>
+                      <span className={ cn("truncate", itemsFontSize) }>{ item.title }</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
