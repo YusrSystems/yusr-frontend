@@ -1,15 +1,16 @@
 import BranchesSearchableSelect from "@/core/components/searchableSelect/branchesSearchableSelect";
 import RolesSearchableSelect from "@/core/components/searchableSelect/rolesSearchableSelect";
 import { useEffect, useMemo } from "react";
-import { RoleSlice, User } from "yusr-ui";
+import { useTranslation } from "react-i18next";
+import { RoleSlice, User, UserSlice, UserValidationRules } from "yusr-ui";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, FormField, PasswordField, SelectField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BranchSlice } from "../../core/data/branchLogic";
-import { UserSlice, UserValidationRules } from "../../core/data/UserLogic";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
 export default function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<User>)
 {
+  const { t } = useTranslation(["commonEntities", "common"]);
   const roleState = useAppSelector((state) => state.role);
   const branchState = useAppSelector((state) => state.branch);
   const dispatch = useAppDispatch();
@@ -20,7 +21,7 @@ export default function ChangeUserDialog({ entity, mode, service, onSuccess }: C
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    UserValidationRules.validationRules,
+    UserValidationRules.validationRules(t),
     (errors) => dispatch(UserSlice.formActions.setErrors(errors))
   );
   useFormInit(UserSlice.formActions.setInitialData, initialValues);
@@ -31,68 +32,73 @@ export default function ChangeUserDialog({ entity, mode, service, onSuccess }: C
     dispatch(BranchSlice.entityActions.filter());
   }, [dispatch]);
 
+  const title = mode === "create" ? t("users.addNewTitle") : `${t("common:crudRow.edit")} ${t("users.entityName")}`;
+
   return (
     <ChangeDialog<User>
-      title={ `${mode === "create" ? "إضافة" : "تعديل"} مستخدم` }
+      title={title}
       className="sm:max-w-xl"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => roleState.isLoading || branchState.isLoading }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
+      formData={formData}
+      dialogMode={mode}
+      service={service}
+      disable={() => roleState.isLoading || branchState.isLoading}
+      onSuccess={(data) => onSuccess?.(data, mode)}
+      validate={validate}
     >
       <FieldGroup>
         <div className="grid grid-cols-2 gap-4">
           <TextField
-            label="اسم المستخدم"
+            label={t("users.username")}
             required
-            value={ formData.username || "" }
-            onChange={ (e) => dispatch(UserSlice.formActions.updateFormData({ username: e.target.value })) }
-            isInvalid={ isInvalid("username") }
-            error={ getError("username") }
+            value={formData.username || ""}
+            onChange={(e) => dispatch(UserSlice.formActions.updateFormData({ username: e.target.value }))}
+            isInvalid={isInvalid("username")}
+            error={getError("username")}
           />
 
           <PasswordField
-            label="كلمة المرور"
+            label={t("users.password")}
             required
-            value={ formData.password || "" }
-            onChange={ (e) => dispatch(UserSlice.formActions.updateFormData({ password: e.target.value })) }
-            isInvalid={ isInvalid("password") }
-            error={ getError("password") }
+            value={formData.password || ""}
+            onChange={(e) => dispatch(UserSlice.formActions.updateFormData({ password: e.target.value }))}
+            isInvalid={isInvalid("password")}
+            error={getError("password")}
           />
         </div>
 
-        <FormField label="الدور" required isInvalid={ isInvalid("roleId") } error={ getError("roleId") }>
+        <FormField label={t("users.role")} required isInvalid={isInvalid("roleId")} error={getError("roleId")}>
           <RolesSearchableSelect
-            id={ formData.roleId }
-            isInvalid={ isInvalid("roleId") }
-            onValueChange={ (role) =>
+            id={formData.roleId}
+            isInvalid={isInvalid("roleId")}
+            onValueChange={(role) =>
             {
               dispatch(UserSlice.formActions.updateFormData({ roleId: role.id }));
               dispatch(UserSlice.formActions.updateFormData({ role: role }));
-            } }
+            }}
           />
         </FormField>
 
-        <FormField label="الفرع" required isInvalid={ isInvalid("branchId") } error={ getError("branchId") }>
+        <FormField label={t("users.branch")} required isInvalid={isInvalid("branchId")} error={getError("branchId")}>
           <BranchesSearchableSelect
-            id={ formData.branchId }
-            isInvalid={ isInvalid("branchId") }
-            onValueChange={ (branch) =>
+            id={formData.branchId}
+            isInvalid={isInvalid("branchId")}
+            onValueChange={(branch) =>
             {
               dispatch(UserSlice.formActions.updateFormData({ branchId: branch.id }));
               dispatch(UserSlice.formActions.updateFormData({ branch: branch }));
-            } }
+            }}
           />
         </FormField>
 
         <SelectField
-          label="حالة المستخدم"
-          value={ formData.isActive ? "active" : "inactive" }
-          onValueChange={ (val) => dispatch(UserSlice.formActions.updateFormData({ isActive: val === "active" })) }
-          required={ true }
-          options={ [{ label: "نشط", value: "active" }, { label: "غير نشط", value: "inactive" }] }
+          label={t("users.userStatus")}
+          value={formData.isActive ? "active" : "inactive"}
+          onValueChange={(val) => dispatch(UserSlice.formActions.updateFormData({ isActive: val === "active" }))}
+          required={true}
+          options={[
+            { label: t("users.active"), value: "active" },
+            { label: t("users.inactive"), value: "inactive" }
+          ]}
         />
       </FieldGroup>
     </ChangeDialog>

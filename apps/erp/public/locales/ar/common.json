@@ -48,6 +48,15 @@
     "confirm": "تأكيد الحذف"
   },
 
+  "saveButton": {
+    "save": "حفظ",
+    "saveChanges": "حفظ التغييرات",
+    "warnings": "تحذيرات",
+    "errors": "أخطاء",
+    "cancel": "إلغاء",
+    "ignoreWarnings": "تجاهل التحذيرات"
+  },
+
   "sidebar": {
     "dashboard": "لوحة المعلومات",
     "taxes": "الضرائب",

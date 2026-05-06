@@ -1,8 +1,9 @@
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { BaseEntity } from "../../../entities";
 import type { BaseApiService } from "../../../networking";
 import { type RequestResult, ResultStatus } from "../../../types";
-import { Loader2 } from "lucide-react";
-import { useState } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure";
 import { Button } from "../../pure/button";
 import type { DialogMode } from "../dialogs/dialogType";
@@ -41,6 +42,7 @@ export function SaveButton<T extends BaseEntity>(
   }: SaveButtonProps<T>
 )
 {
+  const { t, i18n } = useTranslation("common");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [showErrors, setShowErrors] = useState(false);
@@ -122,6 +124,9 @@ export function SaveButton<T extends BaseEntity>(
     setPendingIgnore(false);
   }
 
+  const defaultLabel = service ? t("saveButton.saveChanges") : t("saveButton.save");
+  const buttonLabel = label ?? defaultLabel;
+
   return (
     <>
       <Button
@@ -131,13 +136,13 @@ export function SaveButton<T extends BaseEntity>(
         className={ className }
       >
         { (loading || pendingIgnore) && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
-        { label ?? `حفظ ${service ? "التغييرات" : ""}` }
+        { buttonLabel }
       </Button>
 
       <Dialog open={ showWarnings } onOpenChange={ setShowWarnings }>
-        <DialogContent dir="rtl">
+        <DialogContent dir={ i18n.dir() }>
           <DialogHeader>
-            <DialogTitle>تحذيرات</DialogTitle>
+            <DialogTitle>{ t("saveButton.warnings") }</DialogTitle>
             <DialogDescription asChild>
               <ul className="mt-2 space-y-1 text-sm text-right">
                 { warnings.map((w, i) => <li key={ i } className="text-orange-600">• { w }</li>) }
@@ -146,19 +151,19 @@ export function SaveButton<T extends BaseEntity>(
           </DialogHeader>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">إلغاء</Button>
+              <Button variant="outline">{ t("saveButton.cancel") }</Button>
             </DialogClose>
             <Button onClick={ handleIgnoreWarnings }>
-              تجاهل التحذيرات
+              { t("saveButton.ignoreWarnings") }
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       <Dialog open={ showErrors } onOpenChange={ setShowErrors }>
-        <DialogContent dir="rtl">
+        <DialogContent dir={ i18n.dir() }>
           <DialogHeader>
-            <DialogTitle>أخطاء</DialogTitle>
+            <DialogTitle>{ t("saveButton.errors") }</DialogTitle>
             <DialogDescription asChild>
               <ul className="mt-2 space-y-1 text-sm text-right">
                 { errors.map((w, i) => <li key={ i } className="text-red-600">• { w }</li>) }
@@ -167,7 +172,7 @@ export function SaveButton<T extends BaseEntity>(
           </DialogHeader>
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">إلغاء</Button>
+              <Button variant="outline">{ t("saveButton.cancel") }</Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

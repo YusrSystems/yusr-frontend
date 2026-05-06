@@ -48,6 +48,15 @@
     "confirm": "Confirm Delete"
   },
 
+  "saveButton": {
+    "save": "Save",
+    "saveChanges": "Save Changes",
+    "warnings": "Warnings",
+    "errors": "Errors",
+    "cancel": "Cancel",
+    "ignoreWarnings": "Ignore Warnings"
+  },
+
   "sidebar": {
     "dashboard": "Dashboard",
     "taxes": "Taxes",

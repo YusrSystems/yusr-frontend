@@ -2,6 +2,7 @@ import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import Backend from "i18next-http-backend";
 import { initReactI18next } from "react-i18next";
+import { arCommonEntities, enCommonEntities } from "yusr-ui";
 
 i18n
   .use(Backend)
@@ -10,8 +11,19 @@ i18n
   .init({
     fallbackLng: "ar",
     supportedLngs: ["ar", "en"],
-    ns: ["common", "landing", "loginRegister", "accounting"],
+    ns: ["common", "landing"],
     defaultNS: "common",
+
+    partialBundledLanguages: true,
+
+    resources: {
+      ar: {
+        commonEntities: arCommonEntities
+      },
+      en: {
+        commonEntities: enCommonEntities
+      }
+    },
 
     backend: {
       loadPath: "/locales/{{lng}}/{{ns}}.json"
@@ -19,7 +31,7 @@ i18n
 
     detection: {
       order: ["localStorage", "htmlTag", "cookie", "navigator"],
-      caches: ["localStorage", "cookie"] // Remember the user's choice
+      caches: ["localStorage", "cookie"]
     },
 
     interpolation: {

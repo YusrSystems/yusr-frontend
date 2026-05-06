@@ -1,0 +1,21 @@
+{
+  "users": {
+    "title": "إدارة المستخدمين",
+    "entityName": "المستخدم",
+    "addNewTitle": "إضافة مستخدم جديد",
+    "totalUsers": "إجمالي المستخدمين",
+    "userId": "رقم المستخدم",
+    "username": "اسم المستخدم",
+    "isActive": "هل المستخدم نشط",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "password": "كلمة المرور",
+    "role": "الدور",
+    "branch": "الفرع",
+    "userStatus": "حالة المستخدم",
+    "usernameRequired": "يرجى إدخال اسم المستخدم",
+    "passwordRequired": "يرجى إدخال كلمة مرور",
+    "roleRequired": "يرجى اختيار دور",
+    "branchRequired": "يرجى اختيار فرع"
+  }
+}

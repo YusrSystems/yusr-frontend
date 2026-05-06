@@ -228,7 +228,7 @@ YusrCrudPage.Dialogs = function<T extends BaseEntity>(
           open={ isDeleteDialogOpen }
           onOpenChange={ (open) => dispatch(actions.setIsDeleteDialogOpen(open)) }
         >
-          <DialogContent dir="rtl" className="sm:max-w-sm">
+          <DialogContent className="sm:max-w-sm">
             <DeleteDialog
               entityName={ entityName }
               id={ selectedRow?.id ?? 0 }

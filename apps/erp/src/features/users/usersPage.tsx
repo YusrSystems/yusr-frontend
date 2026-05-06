@@ -1,15 +1,16 @@
 import { User2Icon } from "lucide-react";
 import { useMemo } from "react";
-import { CrudPage, SystemPermissions, User, UserFilterColumns, UsersApiService } from "yusr-ui";
+import { useTranslation } from "react-i18next";
+import { CrudPage, SystemPermissions, User, UserFilterColumns, UsersApiService, UserSlice } from "yusr-ui";
 import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { UserSlice } from "../../core/data/UserLogic";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ChangeUserDialog from "./changeUserDialog";
 
 export default function UsersPage()
 {
+  const { t } = useTranslation("commonEntities");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const userState = useAppSelector((state) => state.user);
@@ -19,9 +20,9 @@ export default function UsersPage()
 
   return (
     <CrudPage<User>
-      title="إدارة المستخدمين"
-      entityName="المستخدم"
-      addNewItemTitle="إضافة مستخدم جديد"
+      title={ t("users.title") }
+      entityName={ t("users.entityName") }
+      addNewItemTitle={ t("users.addNewTitle") }
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -32,19 +33,21 @@ export default function UsersPage()
       useSlice={ () => userDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي المستخدمين",
+        title: t("users.totalUsers"),
         data: (userState.entities?.count ?? 0).toString(),
         icon: <User2Icon className="h-4 w-4 text-muted-foreground" />
       }] }
       columnsToFilter={ UserFilterColumns.columnsNames }
-      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, { rowName: "رقم المستخدم", rowStyles: "w-30" }, {
-        rowName: "اسم المستخدم",
-        rowStyles: "w-70"
-      }, { rowName: "هل المستخدم نشط", rowStyles: "" }] }
+      tableHeadRows={ [
+        { rowName: "", rowStyles: "text-left w-12.5" },
+        { rowName: t("users.userId"), rowStyles: "w-30" },
+        { rowName: t("users.username"), rowStyles: "w-70" },
+        { rowName: t("users.isActive"), rowStyles: "" }
+      ] }
       tableRowMapper={ (
         user: User
       ) => [{ rowName: `#${user.id}`, rowStyles: "" }, { rowName: user.username, rowStyles: "font-semibold" }, {
-        rowName: user.isActive ? "نشط" : "غير نشط",
+        rowName: user.isActive ? t("users.active") : t("users.inactive"),
         rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
           user.isActive ? "bg-green-300" : "bg-red-300"
         } text-slate-800`

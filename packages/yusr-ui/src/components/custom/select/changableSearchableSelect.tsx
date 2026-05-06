@@ -106,7 +106,7 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
           itemValueKey={ itemValueKey }
           value={ id?.toString() || "" }
           columnsNames={ columnsNames }
-          buttonClassName={ showAddButton ? "rounded-l-none" : "" }
+          buttonClassName={ showAddButton ? "rounded-e-none" : "" }
           onSearch={ (condition) => dispatch(entityActions.filter(condition) as any) }
           isLoading={ state.isLoading }
           disabled={ state.isLoading || disabled }
@@ -171,7 +171,7 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
       { showAddButton && (
         <Button
           variant="outline"
-          className={ `flex-1 ${selected && showUpdateButton ? "rounded-none" : "rounded-r-none"}` }
+          className={ `flex-1 ${selected && showUpdateButton ? "rounded-none" : "rounded-s-none"}` }
           onClick={ () =>
           {
             setDialogMode("create");
@@ -186,7 +186,7 @@ export default function ChangableSearchableSelect<T extends BaseEntity, TDialogP
       { selected && showUpdateButton && (
         <Button
           variant="secondary"
-          className="flex-1 rounded-r-none border-border"
+          className="flex-1 rounded-s-none border-border"
           onClick={ () =>
           {
             setDialogMode("update");

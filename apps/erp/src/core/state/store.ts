@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { createAuthSlice, RoleSlice, setupAuthListeners, User } from "yusr-ui";
+import { createAuthSlice, RoleSlice, setupAuthListeners, User, UserSlice } from "yusr-ui";
 import dashboardReducer from "../../features/dashboard/logic/dashboardSlice";
 import { itemTransferReducer } from "../../features/itemTransfers/logic/itemTransferSlice";
 import registerReducer from "../../features/register/logic/registerSlice";
@@ -18,7 +18,6 @@ import { StocktakingSlice } from "../data/stocktaking";
 import { StoreSlice } from "../data/store";
 import { TaxSlice } from "../data/tax";
 import { UnitSlice } from "../data/unit";
-import { UserSlice } from "../data/UserLogic";
 import { VoucherSlice } from "../data/voucher";
 import cityReducer from "./shared/citySlice";
 import countryReducer from "./shared/countrySlice";

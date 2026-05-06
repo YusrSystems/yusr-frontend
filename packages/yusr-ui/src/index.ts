@@ -11,3 +11,5 @@ export * from "./networking";
 export * from "./services";
 export * from "./types";
 export * from "./validation";
+
+export * from "./locale";

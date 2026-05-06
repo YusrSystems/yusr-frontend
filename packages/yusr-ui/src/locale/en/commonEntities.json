@@ -1,0 +1,21 @@
+{
+  "users": {
+    "title": "User Management",
+    "entityName": "User",
+    "addNewTitle": "Add New User",
+    "totalUsers": "Total Users",
+    "userId": "User Id",
+    "username": "Username",
+    "isActive": "Is User Active",
+    "active": "Active",
+    "inactive": "Inactive",
+    "password": "Password",
+    "role": "Role",
+    "branch": "Branch",
+    "userStatus": "User Status",
+    "usernameRequired": "Please enter username",
+    "passwordRequired": "Please enter password",
+    "roleRequired": "Please select a role",
+    "branchRequired": "Please select a branch"
+  }
+}
