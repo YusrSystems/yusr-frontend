@@ -1,0 +1,59 @@
+{
+  "change_language": "Change Language",
+  "arabic": "العربية",
+  "english": "English",
+  "login": "Login",
+  "logout": "Logout",
+  "register": "Get started for free",
+  "changeTheme": "Change Theme",
+  "darkTheme": "Dark",
+  "lightTheme": "Light",
+  "systemTheme": "System",
+  "searchPlaceholder": "Search...",
+  "searchNullOption": "Choose a column",
+  "yes": "Yes",
+  "no": "No",
+
+  "searchableSelect": {
+    "placeholder": "Select...",
+    "loading": "Loading...",
+    "noData": "No data found",
+    "allOption": "All",
+    "addOption": "Add \"{{value}}\""
+  },
+
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "results": "Results {{start}} - {{end}} of {{total}}"
+  },
+
+  "crudRow": {
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+
+  "changeDialog": {
+    "unauthorized": "Unauthorized",
+    "close": "Close",
+    "cancel": "Cancel"
+  },
+
+  "deleteDialog": {
+    "title": "Delete {{entityName}}",
+    "confirmMessage": "Are you sure you want to delete {{entityName}} #{{id}}?",
+    "warningMessage": "This action cannot be undone. It will permanently delete the {{entityName}} and remove it from our servers.",
+    "cancel": "Cancel",
+    "confirm": "Confirm Delete"
+  },
+
+  "saveButton": {
+    "save": "Save",
+    "saveChanges": "Save Changes",
+    "warnings": "Warnings",
+    "errors": "Errors",
+    "cancel": "Cancel",
+    "ignoreWarnings": "Ignore Warnings"
+  }
+}

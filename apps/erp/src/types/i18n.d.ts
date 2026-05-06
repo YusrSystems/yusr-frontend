@@ -1,7 +1,7 @@
 import "i18next";
-import { arCommonEntities } from "yusr-ui";
+import { arCommon, arCommonEntities } from "yusr-ui";
 import accounting from "../../public/locales/ar/accounting.json";
-import common from "../../public/locales/ar/common.json";
+import erpCommon from "../../public/locales/ar/erpCommon.json";
 import landing from "../../public/locales/ar/landing.json";
 import loginRegister from "../../public/locales/ar/loginRegister.json";
 
@@ -11,7 +11,8 @@ declare module "i18next"
   {
     defaultNS: "common";
     resources: {
-      common: typeof common;
+      erpCommon: typeof erpCommon;
+      common: typeof arCommon;
       landing: typeof landing;
       loginRegister: typeof loginRegister;
       accounting: typeof accounting;

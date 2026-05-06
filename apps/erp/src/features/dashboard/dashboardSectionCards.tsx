@@ -13,7 +13,7 @@ const formatNumber = (num: number) => new Intl.NumberFormat("en-US").format(num)
 
 const MiniBarChart = ({ data, colorClass }: { data?: number[]; colorClass: string; }) =>
 {
-  const { t } = useTranslation();
+  const { t } = useTranslation("erpCommon");
 
   if (!data || data.length === 0)
   {
@@ -45,7 +45,7 @@ const MiniBarChart = ({ data, colorClass }: { data?: number[]; colorClass: strin
 
 export function DashboardSectionCards({ data }: DashboardSectionCardsProps)
 {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("erpCommon");
 
   const cards = useMemo(() => [{
     id: "sales",

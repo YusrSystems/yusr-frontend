@@ -4,7 +4,7 @@ import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/
 
 export default function CurrencyBadge()
 {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("erpCommon");
 
   return (
     <div className="flex items-center justify-between px-4 lg:px-6">

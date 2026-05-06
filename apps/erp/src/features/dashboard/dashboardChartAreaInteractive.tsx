@@ -14,7 +14,7 @@ type ChartAreaInteractiveProps = { data: DashboardData; };
 
 export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProps)
 {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("erpCommon");
   const [timeRange, setTimeRange] = React.useState<"weekly" | "yearly">("yearly");
 
   const chartData = React.useMemo(() =>

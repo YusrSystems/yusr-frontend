@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 
 export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
 {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation("erpCommon");
   const authState = useAppSelector((state) => state.auth);
   const permissions: string[] = authState.loggedInUser?.role?.permissions || [];
 

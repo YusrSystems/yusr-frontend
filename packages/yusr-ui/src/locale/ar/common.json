@@ -1,0 +1,59 @@
+{
+  "change_language": "تغيير اللغة",
+  "arabic": "العربية",
+  "english": "English",
+  "login": "تسجيل الدخول",
+  "logout": "تسجيل الخروج",
+  "register": "إبدأ الاستخدام مجانًا",
+  "changeTheme": "تغيير السمة",
+  "darkTheme": "داكن",
+  "lightTheme": "فاتح",
+  "systemTheme": "النظام",
+  "searchPlaceholder": "ابحث...",
+  "searchNullOption": "اختر العمود",
+  "yes": "نعم",
+  "no": "لا",
+
+  "searchableSelect": {
+    "placeholder": "اختر...",
+    "loading": "جاري التحميل...",
+    "noData": "لا توجد بيانات",
+    "allOption": "الكل",
+    "addOption": "إضافة \"{{value}}\""
+  },
+
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي",
+    "results": "نتائج {{start}} - {{end}} من {{total}}"
+  },
+
+  "crudRow": {
+    "actions": "الإجراءات",
+    "edit": "تعديل",
+    "delete": "حذف"
+  },
+
+  "changeDialog": {
+    "unauthorized": "غير مصرح",
+    "close": "إغلاق",
+    "cancel": "إلغاء"
+  },
+
+  "deleteDialog": {
+    "title": "حذف {{entityName}}",
+    "confirmMessage": "هل أنت متأكد من حذف {{entityName}} رقم {{id}}؟",
+    "warningMessage": "لا يمكن التراجع عن هذا الإجراء. سيؤدي ذلك إلى حذف {{entityName}} نهائياً وإزالته من خوادمنا.",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد الحذف"
+  },
+
+  "saveButton": {
+    "save": "حفظ",
+    "saveChanges": "حفظ التغييرات",
+    "warnings": "تحذيرات",
+    "errors": "أخطاء",
+    "cancel": "إلغاء",
+    "ignoreWarnings": "تجاهل التحذيرات"
+  }
+}
