@@ -1,10 +1,10 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { FormState } from "yusr-ui";
+import type { IFormState } from "yusr-ui";
 import Invoice, { InvoiceRelationType, InvoiceVoucher } from "../../../core/data/invoice";
 
 export default class InvoiceVouchersActions
 {
-  public static removeVoucher(state: FormState<Invoice>, action: PayloadAction<number>)
+  public static removeVoucher(state: IFormState<Invoice>, action: PayloadAction<number>)
   {
     const id = action.payload;
     state.formData.invoiceVouchers = state.formData.invoiceVouchers?.filter((voucher) => voucher.voucherId !== id);
@@ -13,7 +13,7 @@ export default class InvoiceVouchersActions
   }
 
   public static updateVoucher(
-    state: FormState<Invoice>,
+    state: IFormState<Invoice>,
     action: PayloadAction<InvoiceVoucher>
   )
   {
@@ -28,7 +28,7 @@ export default class InvoiceVouchersActions
     }
   }
 
-  public static addVoucher(state: FormState<Invoice>, action: PayloadAction<InvoiceVoucher>)
+  public static addVoucher(state: IFormState<Invoice>, action: PayloadAction<InvoiceVoucher>)
   {
     const baseVoucher = action.payload;
 
@@ -48,7 +48,7 @@ export default class InvoiceVouchersActions
     });
   }
 
-  public static resetPaymentVouchers(state: FormState<Invoice>, _action: PayloadAction<void>)
+  public static resetPaymentVouchers(state: IFormState<Invoice>, _action: PayloadAction<void>)
   {
     state.formData.invoiceVouchers = state.formData.invoiceVouchers?.filter((v) =>
       v.invoiceRelationType !== InvoiceRelationType.Payment

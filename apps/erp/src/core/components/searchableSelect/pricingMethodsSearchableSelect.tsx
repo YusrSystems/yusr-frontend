@@ -1,7 +1,6 @@
 import PricingMethodsApiService from "@/core/networking/PricingMethodsApiService";
 import ChangePricingMethodDialog from "@/features/pricingMethods/changePricingMethodDialog";
-import type { EntitySearchableSelectParams } from "yusr-ui";
-import ChangableSearchableSelect from "../../../../../../packages/yusr-ui/src/components/custom/select/changableSearchableSelect";
+import { ChangableSearchableSelect, type EntitySearchableSelectParams } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type PricingMethod from "../../data/pricingMethod";
 import { PricingMethodFilterColumns, PricingMethodSlice } from "../../data/pricingMethod";

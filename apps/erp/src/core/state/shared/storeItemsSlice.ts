@@ -1,9 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { FilterResult } from "yusr-ui";
-import type { FilterByTypeRequest } from "../../data/filterByTypeRequest";
+import type { FilterByTypeRequest, FilterResult } from "yusr-ui";
+import type Item from "../../data/item";
 import type { StoreItem } from "../../data/item";
 import ItemsApiService from "../../networking/itemApiService";
-import type Item from "../../data/item";
 
 export interface FetchStoreItemsProps
 {

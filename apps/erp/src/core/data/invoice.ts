@@ -1,9 +1,7 @@
-import { BaseEntity, type ColumnName, StorageFile, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
+import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, StorageFile, type ValidationRule, Validators } from "yusr-ui";
 import InvoiceItemsActions from "../../features/invoices/logic/invoiceItemsActions";
 import InvoiceVouchersActions from "../../features/invoices/logic/invoiceVouchersActions";
 import InvoicesApiService from "../networking/invoiceApiService";
-import { FilterByTypeRequest } from "./filterByTypeRequest";
 import type { ItemUnitPricingMethod } from "./item";
 
 export const InvoiceType = {

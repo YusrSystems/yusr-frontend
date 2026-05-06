@@ -1,7 +1,6 @@
 import { Banknote } from "lucide-react";
 import { useState } from "react";
-import { Button, cn, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
-import CurrencyIcon from "../../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
+import { Button, cn, CurrencyIcon, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
 import { InvoiceRelationType } from "../../../../core/data/invoice";
 import type { InvoiceProfitResult } from "../../../../core/data/InvoiceProfitResult";
 import { useInvoiceContext } from "../../logic/invoiceContext";

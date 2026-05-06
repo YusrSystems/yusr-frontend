@@ -60,6 +60,9 @@ export * from "./permissions/permissionCard";
 export * from "./permissions/permissionSkeleton";
 
 // Select
+export * from "./select/branchesSearchableSelect";
+export * from "./select/changableSearchableSelect";
+export * from "./select/rolesSearchableSelect";
 export * from "./select/searchableSelect";
 
 // Separators

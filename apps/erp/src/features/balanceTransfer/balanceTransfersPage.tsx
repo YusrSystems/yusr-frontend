@@ -1,9 +1,6 @@
 import { ArrowRightLeft } from "lucide-react";
 import { useMemo } from "react";
-import { CrudPage, NumbertoWordsService, SystemPermissions } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
-import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
-import { selectPermissionsByResource } from "../../core/auth/authSelectors";
+import { CrudPage, CurrencyIcon, NumbertoWordsService, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import BalanceTransfer, { BalanceTransferFilterColumns, BalanceTransferSlice } from "../../core/data/balanceTransfer";
 import ReportConstants from "../../core/data/report/reportConstants";

@@ -1,8 +1,8 @@
-import { Database, FileBarChart, Pencil, Plus, ShoppingCart, Trash2, Wallet } from "lucide-react";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
+import { Database, FileBarChart, ShoppingCart, Wallet } from "lucide-react";
+import { SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 
-export const ArabicLabels: Record<string, string> = {
+export const LABELS: Record<string, string> = {
   // Resources
   [SystemPermissionsResources.Branches]: "الفروع",
   [SystemPermissionsResources.Settings]: "الإعدادات",
@@ -68,12 +68,6 @@ export const ArabicLabels: Record<string, string> = {
   [SystemPermissionsActions.Add]: "إضافة",
   [SystemPermissionsActions.Update]: "تعديل",
   [SystemPermissionsActions.Delete]: "حذف"
-};
-
-export const ActionIcons: Record<string, React.ReactNode> = {
-  [SystemPermissionsActions.Add]: <Plus className="w-4 h-4 text-blue-500" />,
-  [SystemPermissionsActions.Update]: <Pencil className="w-4 h-4 text-orange-500" />,
-  [SystemPermissionsActions.Delete]: <Trash2 className="w-4 h-4 text-red-500" />
 };
 
 export const PERMISSION_SECTIONS = [{

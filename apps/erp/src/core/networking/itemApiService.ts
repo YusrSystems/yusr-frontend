@@ -1,5 +1,4 @@
-import { ApiConstants, BaseApiService, type FilterResult, type RequestResult, YusrApiHelper } from "yusr-ui";
-import type { FilterByTypeRequest } from "../data/filterByTypeRequest";
+import { ApiConstants, BaseApiService, FilterByTypeRequest, type FilterResult, type RequestResult, YusrApiHelper } from "yusr-ui";
 import Item, { BarcodeResult, StoreItem } from "../data/item";
 
 export default class ItemsApiService extends BaseApiService<Item>

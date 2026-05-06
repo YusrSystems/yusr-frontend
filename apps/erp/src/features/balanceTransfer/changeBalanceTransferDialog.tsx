@@ -1,13 +1,12 @@
 import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/banksAndBoxesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
-import { NumbertoWordsService } from "yusr-ui";
+import { CurrencyIcon, NumbertoWordsService } from "yusr-ui";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, DateField, FieldGroup, FieldsSection, FormField, NumberField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BanksAndBoxesSlice } from "../../core/data/account";
 import type BalanceTransfer from "../../core/data/balanceTransfer";
 import { BalanceTransferSlice, BalanceTransferValidationRules } from "../../core/data/balanceTransfer";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
-import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 
 export default function ChangeBalanceTransferDialog(
   { entity, mode, service, onSuccess }: CommonChangeDialogProps<BalanceTransfer>

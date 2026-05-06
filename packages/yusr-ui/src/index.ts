@@ -7,6 +7,7 @@ export * from "./utils/cn";
 
 export * from "./auth";
 export * from "./entities";
+export * from "./features";
 export * from "./networking";
 export * from "./services";
 export * from "./types";

@@ -1,7 +1,6 @@
 import UnitsApiService from "@/core/networking/unitApiService";
 import ChangeUnitDialog from "@/features/units/changeUnitDialog";
-import type { EntitySearchableSelectParams } from "yusr-ui";
-import ChangableSearchableSelect from "../../../../../../packages/yusr-ui/src/components/custom/select/changableSearchableSelect";
+import { ChangableSearchableSelect, type EntitySearchableSelectParams } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type Unit from "../../data/unit";
 import { UnitFilterColumns, UnitSlice } from "../../data/unit";

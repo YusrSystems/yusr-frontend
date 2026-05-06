@@ -1,10 +1,8 @@
-import { filterCities } from "@/core/state/shared/citySlice";
-import { filterCurrencies } from "@/core/state/shared/currencySlice";
 import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { ApiConstants, ResultStatus, useValidate, YusrApiHelper, YusrBusBackground } from "yusr-ui";
+import { ApiConstants, CitySlice, CurrencySlice, ResultStatus, useValidate, YusrApiHelper, YusrBusBackground } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import { logout, useAppDispatch, useAppSelector } from "../../../core/state/store";
 import { nextStep, prevStep, registerAsync, reset, setErrors, setStep, validationRules } from "../logic/registerSlice";
@@ -63,8 +61,8 @@ export default function RegisterPage()
 
   useEffect(() =>
   {
-    dispatch(filterCurrencies(undefined));
-    dispatch(filterCities(undefined));
+    dispatch(CurrencySlice.entityActions.filter());
+    dispatch(CitySlice.entityActions.filter());
   }, [dispatch]);
 
   return (

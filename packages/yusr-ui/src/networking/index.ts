@@ -6,5 +6,6 @@ export * from "./citiesApiService";
 export * from "./countriesApiService";
 export * from "./currenciesApiService";
 export * from "./rolesApiService";
+export * from "./systemApiService";
 export * from "./usersApiService";
 export * from "./yusrApiHelper";

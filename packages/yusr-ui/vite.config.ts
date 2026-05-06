@@ -1,12 +1,12 @@
-import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
-import { defineConfig } from 'vite'
-import dts from 'vite-plugin-dts'
+import react from '@vitejs/plugin-react';
+import path, { resolve } from "path";
+import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src'),
+      "@": path.resolve(__dirname, "./src"),
       'yusr-ui': resolve(__dirname, '../../packages/yusr-ui/src/index.ts'),
     },
   },

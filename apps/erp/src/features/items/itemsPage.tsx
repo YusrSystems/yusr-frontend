@@ -1,8 +1,6 @@
 import { Package } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { CrudPage, FilterCondition, SystemPermissions } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
-import { selectPermissionsByResource } from "../../core/auth/authSelectors";
+import { CrudPage, FilterCondition, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Item, { ItemFilterColumns, ItemSlice, ItemType } from "../../core/data/item";
 import ReportConstants from "../../core/data/report/reportConstants";

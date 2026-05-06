@@ -1,79 +1,33 @@
-import { Settings2 } from "lucide-react";
-import { useMemo } from "react";
-import { CrudPage, Role, RoleFilterColumns, RolesApiService, RoleSlice, SystemPermissions } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
-import { selectPermissionsByResource } from "../../core/auth/authSelectors";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { updateLoggedInUser, useAppDispatch, useAppSelector } from "../../core/state/store";
-import ChangeRoleDialog from "./changeRoleDialog";
+import { StoreSlice } from "@/core/data/store";
+import { WarehouseIcon } from "lucide-react";
+import { RoleSlice, RolesPage } from "yusr-ui";
+import { updateLoggedInUser, useAppDispatch } from "../../core/state/store";
+import { LABELS, PERMISSION_SECTIONS } from "./permissionConfig";
+import StorePermissionsList from "./storePermissionsList";
 
-export default function RolesPage()
+export default function ErpRolesPage()
 {
   const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const roleState = useAppSelector((state) => state.role);
-  const roleDialogState = useAppSelector((state) => state.roleDialog);
-  const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Roles));
-  const service = useMemo(() => new RolesApiService(), []);
 
   return (
-    <CrudPage<Role>
-      title="إدارة الأدوار"
-      entityName="الدور"
-      addNewItemTitle="إضافة دور جديد"
-      permissions={ permissions }
-      hasPagePermission={ SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.Roles,
-        SystemPermissionsActions.Get
-      ) }
-      entityState={ roleState }
-      useSlice={ () => roleDialogState }
-      service={ service }
-      cards={ [{
-        title: "إجمالي الادوار",
-        data: (roleState.entities?.count ?? 0).toString(),
-        icon: <Settings2 className="h-4 w-4 text-muted-foreground" />
-      }] }
-      columnsToFilter={ RoleFilterColumns.columnsNames }
-      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, { rowName: "رقم الدور", rowStyles: "w-30" }, {
-        rowName: "اسم الدور",
-        rowStyles: ""
-      }] }
-      tableRowMapper={ (
-        role: Role
-      ) => [{ rowName: `#${role.id}`, rowStyles: "" }, { rowName: role.name, rowStyles: "font-semibold" }] }
-      actions={ {
-        filter: RoleSlice.entityActions.filter,
-        openChangeDialog: (entity) => RoleSlice.dialogActions.openChangeDialog(entity),
-        openDeleteDialog: (entity) => RoleSlice.dialogActions.openDeleteDialog(entity),
-        setIsChangeDialogOpen: (open) => RoleSlice.dialogActions.setIsChangeDialogOpen(open),
-        setIsDeleteDialogOpen: (open) => RoleSlice.dialogActions.setIsDeleteDialogOpen(open),
-        refresh: RoleSlice.entityActions.refresh,
-        setCurrentPage: (page) => RoleSlice.entityActions.setCurrentPage(page)
+    <RolesPage
+      onUpdateLoggedInUser={ (user) => dispatch(updateLoggedInUser({ ...user })) }
+      ChangeRoleDialogAdditionalProps={ {
+        additionalTabs: (formData) => [{
+          active: false,
+          icon: WarehouseIcon,
+          label: "المستودعات المسموح بها",
+          content: (
+            <StorePermissionsList
+              authorizedStoreIds={ formData.authorizedStores || [] }
+              onChange={ (updated) => dispatch(RoleSlice.formActions.updateFormData({ authorizedStores: updated })) }
+            />
+          )
+        }],
+        initRequests: () => dispatch(StoreSlice.entityActions.filterAll()),
+        permissionSecions: PERMISSION_SECTIONS,
+        labels: LABELS
       } }
-      ChangeDialog={ 
-        <ChangeRoleDialog
-          entity={ roleDialogState.selectedRow || undefined }
-          mode={ roleDialogState.selectedRow ? "update" : "create" }
-          service={ service }
-          onSuccess={ (data, mode) =>
-          {
-            dispatch(RoleSlice.entityActions.refresh({ data: data }));
-            if (mode === "create")
-            {
-              dispatch(RoleSlice.dialogActions.setIsChangeDialogOpen(false));
-            }
-            if (mode === "update")
-            {
-              if (authState.loggedInUser?.roleId === data.id)
-              {
-                dispatch(updateLoggedInUser({ ...authState.loggedInUser, role: data }));
-              }
-            }
-          } }
-        />
-       }
     />
   );
 }

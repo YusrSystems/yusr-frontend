@@ -1,8 +1,7 @@
 import AccountsApiService from "@/core/networking/accountApiService";
 import { type RootState, useAppSelector } from "@/core/state/store";
 import ChangeAccountDialog from "@/features/accounts/changeAccountDialog";
-import type { EntitySearchableSelectParams, FormState, IEntityState } from "yusr-ui";
-import ChangableSearchableSelect from "../../../../../../packages/yusr-ui/src/components/custom/select/changableSearchableSelect";
+import { ChangableSearchableSelect, type EntitySearchableSelectParams, type IEntityState, type IFormState } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type Account from "../../data/account";
 import { AccountFilterColumns, type AccountSliceType, AccountType } from "../../data/account";
@@ -26,7 +25,7 @@ export default function AccountsSearchableSelect(
     & {
       slice: AccountSliceType;
       selectEntityState: (state: RootState) => IEntityState<Account>;
-      selectFormState: (state: RootState) => FormState<Account>;
+      selectFormState: (state: RootState) => IFormState<Account>;
       selectTypes?: {
         label: string;
         value: string;
@@ -45,7 +44,7 @@ export default function AccountsSearchableSelect(
     <ChangableSearchableSelect<Account, {
       slice: AccountSliceType;
       selectEntityState: (state: RootState) => IEntityState<Account>;
-      selectFormState: (state: any) => FormState<Account>;
+      selectFormState: (state: any) => IFormState<Account>;
       selectTypes?: {
         label: string;
         value: string;

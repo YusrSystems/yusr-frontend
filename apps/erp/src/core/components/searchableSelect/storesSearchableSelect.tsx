@@ -1,7 +1,6 @@
 import StoresApiService from "@/core/networking/storeApiService";
 import ChangeStoreDialog from "@/features/stores/changeStoreDialog";
-import type { EntitySearchableSelectParams } from "yusr-ui";
-import ChangableSearchableSelect from "../../../../../../packages/yusr-ui/src/components/custom/select/changableSearchableSelect";
+import { ChangableSearchableSelect, type EntitySearchableSelectParams } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type Store from "../../data/store";
 import { StoreFilterColumns, StoreSlice } from "../../data/store";

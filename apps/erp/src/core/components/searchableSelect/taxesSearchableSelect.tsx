@@ -1,6 +1,5 @@
 import ChangeTaxDialog from "@/features/taxes/changeTaxDialog";
-import type { EntitySearchableSelectParams } from "yusr-ui";
-import ChangableSearchableSelect from "../../../../../../packages/yusr-ui/src/components/custom/select/changableSearchableSelect";
+import { ChangableSearchableSelect, type EntitySearchableSelectParams } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import { Tax, TaxFilterColumns, TaxSlice } from "../../data/tax";
 import TaxesApiService from "../../networking/taxesApiService";

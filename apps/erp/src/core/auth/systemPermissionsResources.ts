@@ -1,62 +1,70 @@
-export class SystemPermissionsResources
-{
-  public static PricingMethods: string = "PricingMethods";
-  public static Settings: string = "Settings";
-  public static Stores: string = "Stores";
-  public static Taxes: string = "Taxes";
-  public static Units: string = "Units";
-  public static Accounts: string = "Accounts";
-  public static BalanceTransfers: string = "BalanceTransfers";
-  public static Invoices: string = "Invoices";
-  public static Obligations: string = "Obligations";
-  public static PaymentMethods: string = "PaymentMethods";
-  public static PosTerminals: string = "PosTerminals";
-  public static Vouchers: string = "Vouchers";
-  public static Items: string = "Items";
-  public static ItemsSettlements: string = "ItemsSettlements";
-  public static ItemTransfers: string = "ItemTransfers";
-  public static Stocktakings: string = "Stocktakings";
-  public static Dashboard: string = "Dashboard";
-  public static Branches: string = "Branches";
-  public static Users: string = "Users";
-  public static Roles: string = "Roles";
+import { YusrSystemPermissionsResources } from "yusr-ui";
+
+export const SystemPermissionsResources = {
+  ...YusrSystemPermissionsResources,
+
+  // Core
+  PricingMethods: "PricingMethods",
+  Stores: "Stores",
+  Taxes: "Taxes",
+  Units: "Units",
+
+  // Accounts
+  Accounts: "Accounts",
+  BalanceTransfers: "BalanceTransfers",
+  PaymentMethods: "PaymentMethods",
+  Vouchers: "Vouchers",
+
+  // Invoices
+  Invoices: "Invoices",
+  Obligations: "Obligations",
+  PosTerminals: "PosTerminals",
+
+  // Items
+  Items: "Items",
+  ItemsSettlements: "ItemsSettlements",
+  ItemTransfers: "ItemTransfers",
+  Stocktakings: "Stocktakings",
+
+  // Dashboard
+  Dashboard: "Dashboard",
 
   // Invoice Permission Settings
-  public static InvoiceAddSettlement: string = "InvoiceAddSettlement";
-  public static InvoiceShowProfit: string = "InvoiceShowProfit";
-  public static InvoiceShowItemProfit: string = "InvoiceShowItemProfit";
-  public static InvoiceSellBelowSellingPrice: string = "InvoiceSellBelowSellingPrice";
-  public static InvoiceSellBeyondAvailableQuantity: string = "InvoiceSellBeyondAvailableQuantity";
+  InvoiceAddSettlement: "InvoiceAddSettlement",
+  InvoiceShowProfit: "InvoiceShowProfit",
+  InvoiceShowItemProfit: "InvoiceShowItemProfit",
+  InvoiceSellBelowSellingPrice: "InvoiceSellBelowSellingPrice",
+  InvoiceSellBeyondAvailableQuantity: "InvoiceSellBeyondAvailableQuantity",
 
   // Allowed Invoice Types
-  public static InvoiceSell: string = "InvoiceSell";
-  public static InvoicePurchase: string = "InvoicePurchase";
+  InvoiceSell: "InvoiceSell",
+  InvoicePurchase: "InvoicePurchase",
 
   // Allowed Account Types
-  public static AccountShowBalance: string = "AccountShowBalance";
-  public static AccountClient: string = "AccountClient";
-  public static AccountSupplier: string = "AccountSupplier";
-  public static AccountEmployee: string = "AccountEmployee";
-  public static AccountBank: string = "AccountBank";
-  public static AccountBox: string = "AccountBox";
+  AccountShowBalance: "AccountShowBalance",
+  AccountClient: "AccountClient",
+  AccountSupplier: "AccountSupplier",
+  AccountEmployee: "AccountEmployee",
+  AccountBank: "AccountBank",
+  AccountBox: "AccountBox",
 
-  // Report Permissions
-  public static ReportInvoice: string = "ReportInvoice";
-  public static ReportInvoiceList: string = "ReportInvoiceList";
-  public static ReportVoucher: string = "ReportVoucher";
-  public static ReportVoucherList: string = "ReportVoucherList";
-  public static ReportAccountStatement: string = "ReportAccountStatement";
-  public static ReportAccountList: string = "ReportAccountList";
-  public static ReportBalanceTransfer: string = "ReportBalanceTransfer";
-  public static ReportItemStatement: string = "ReportItemStatement";
-  public static ReportItemList: string = "ReportItemList";
-  public static ReportItemMovement: string = "ReportItemMovement";
-  public static ReportItemTaxStatement: string = "ReportItemTaxStatement";
-  public static ReportItemTransfer: string = "ReportItemTransfer";
-  public static ReportBalanceSheet: string = "ReportBalanceSheet";
-  public static ReportTaxReturn: string = "ReportTaxReturn";
-  public static ReportProfitAndLoss: string = "ReportProfitAndLoss";
-  public static ReportStocktaking: string = "ReportStocktaking";
-  public static ReportItemSettlement: string = "ReportItemSettlement";
-  public static ReportItemBarcode: string = "ReportItemBarcode";
-}
+  // Reports
+  ReportInvoice: "ReportInvoice",
+  ReportInvoiceList: "ReportInvoiceList",
+  ReportVoucher: "ReportVoucher",
+  ReportVoucherList: "ReportVoucherList",
+  ReportAccountStatement: "ReportAccountStatement",
+  ReportAccountList: "ReportAccountList",
+  ReportBalanceTransfer: "ReportBalanceTransfer",
+  ReportItemStatement: "ReportItemStatement",
+  ReportItemList: "ReportItemList",
+  ReportItemMovement: "ReportItemMovement",
+  ReportItemTaxStatement: "ReportItemTaxStatement",
+  ReportItemTransfer: "ReportItemTransfer",
+  ReportBalanceSheet: "ReportBalanceSheet",
+  ReportTaxReturn: "ReportTaxReturn",
+  ReportProfitAndLoss: "ReportProfitAndLoss",
+  ReportStocktaking: "ReportStocktaking",
+  ReportItemSettlement: "ReportItemSettlement",
+  ReportItemBarcode: "ReportItemBarcode"
+} as const;

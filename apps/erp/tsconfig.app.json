@@ -29,8 +29,7 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@/*": ["./src/*"],
-      "yusr-ui": ["../../packages/yusr-ui/src/index.ts"],
+      "yusr-ui": ["../../packages/yusr-ui/src/index.ts"]
     }
-  },
-  "include": ["src", "../../packages/yusr-ui/src/auth/systemPermissionsActions.ts"]
+  }
 }

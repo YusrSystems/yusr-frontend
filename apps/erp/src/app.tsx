@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { NotFoundPage, ProtectedRoute, ThemeProvider, Toaster, TooltipProvider } from "yusr-ui";
+import { BranchesPage, NotFoundPage, ProtectedRoute, ThemeProvider, Toaster, TooltipProvider, UsersPage } from "yusr-ui";
 import AppLayout from "./appLayout";
 import { useAppSelector } from "./core/state/store";
 import BanksAccountsPage from "./features/accounts/banksAccountsPage";
@@ -8,7 +8,6 @@ import ClientsAccountsPage from "./features/accounts/clientsAccountsPage";
 import EmployeesAccountsPage from "./features/accounts/employeesAccountsPage";
 import SuppliersAccountsPage from "./features/accounts/suppliersAccountsPage";
 import BalanceTransfersPage from "./features/balanceTransfer/balanceTransfersPage";
-import BranchesPage from "./features/branches/branchesPage";
 import DashboardPage from "./features/dashboard/dashboardPage";
 import PurchaseInvoicesPage from "./features/invoices/purchaseInvoices";
 import SellInvoicesPage from "./features/invoices/sellInvoicesPage";
@@ -21,13 +20,12 @@ import PaymentMethodsPage from "./features/paymentMethods/paymentMethodsPage";
 import PricingMethodsPage from "./features/pricingMethods/pricingMethodsPage";
 import RegisterPage from "./features/register/presentation/registerPage";
 import ReportsPage from "./features/reports/reportsPage";
-import RolesPage from "./features/roles/rolesPage";
+import ErpRolesPage from "./features/roles/rolesPage";
 import SettingPage from "./features/setting/settingPage";
 import StocktakingsPage from "./features/stocktakings/stocktakingsPage";
 import StoresPage from "./features/stores/storePage";
 import TaxesPage from "./features/taxes/taxesPage";
 import UnitsPage from "./features/units/unitsPage";
-import UsersPage from "./features/users/usersPage";
 import VouchersPage from "./features/vouchers/vouchersPage";
 
 function App()
@@ -65,7 +63,7 @@ function AppRoutes()
             <Route path="/settings" element={ <SettingPage /> } />
             <Route path="/taxes" element={ <TaxesPage /> } />
             <Route path="/branches" element={ <BranchesPage /> } />
-            <Route path="/roles" element={ <RolesPage /> } />
+            <Route path="/roles" element={ <ErpRolesPage /> } />
             <Route path="/stores" element={ <StoresPage /> } />
             <Route path="/units" element={ <UnitsPage /> } />
             <Route path="/clients" element={ <ClientsAccountsPage /> } />

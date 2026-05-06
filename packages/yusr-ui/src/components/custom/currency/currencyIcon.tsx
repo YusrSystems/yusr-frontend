@@ -1,7 +1,7 @@
 import { SaudiRiyal } from "lucide-react";
 import { useSelector } from "react-redux";
 
-export default function CurrencyIcon({ className }: { className?: string; })
+export function CurrencyIcon({ className }: { className?: string; })
 {
   const authState = useSelector((state: any) => state.auth);
 

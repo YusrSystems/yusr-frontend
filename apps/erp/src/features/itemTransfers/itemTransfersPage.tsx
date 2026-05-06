@@ -1,8 +1,6 @@
 import { ArrowLeftRightIcon } from "lucide-react";
 import { useMemo } from "react";
-import { CrudPage, SystemPermissions } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
-import { selectPermissionsByResource } from "../../core/auth/authSelectors";
+import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type ItemTransfer from "../../core/data/itemTransfer";
 import { ItemTransferFilterColumns, ItemTransferSlice } from "../../core/data/itemTransfer";

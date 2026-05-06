@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
-import { cn } from "yusr-ui";
-import CurrencyIcon from "../../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
+import { cn, CurrencyIcon } from "yusr-ui";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 

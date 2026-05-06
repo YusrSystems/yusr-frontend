@@ -1,25 +1,13 @@
-import {
-  BaseEntity,
-  City,
-  type ColumnName,
-  type ValidationRule,
-  Validators,
-} from "yusr-ui";
-import {
-  createGenericDialogSlice,
-  createGenericEntitySlice,
-  createGenericFormSlice,
-} from "yusr-ui";
+import { BaseEntity, City, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, type ValidationRule, Validators } from "yusr-ui";
 import { SystemPermissionsResources } from "../auth/systemPermissionsResources";
 import AccountsApiService from "../networking/accountApiService";
-import { FilterByTypeRequest } from "./filterByTypeRequest";
 
 export const AccountType = {
   Client: 1,
   Supplier: 2,
   Employee: 3,
   Bank: 4,
-  Box: 5,
+  Box: 5
 } as const;
 
 export type AccountType = (typeof AccountType)[keyof typeof AccountType];
@@ -29,20 +17,23 @@ export const accountTypeToResource: Record<AccountType, string> = {
   [AccountType.Supplier]: SystemPermissionsResources.AccountSupplier,
   [AccountType.Employee]: SystemPermissionsResources.AccountEmployee,
   [AccountType.Bank]: SystemPermissionsResources.AccountBank,
-  [AccountType.Box]: SystemPermissionsResources.AccountBox,
+  [AccountType.Box]: SystemPermissionsResources.AccountBox
 };
 
-export class AccountContact extends BaseEntity {
+export class AccountContact extends BaseEntity
+{
   public accountId!: number;
   public number!: string;
 
-  constructor(init?: Partial<AccountContact>) {
+  constructor(init?: Partial<AccountContact>)
+  {
     super();
     Object.assign(this, init);
   }
 }
 
-export default class Account extends BaseEntity {
+export default class Account extends BaseEntity
+{
   public type!: AccountType;
   public name!: string;
   public initialBalance!: number;
@@ -61,67 +52,60 @@ export default class Account extends BaseEntity {
   public notes?: string;
   public accountContacts: AccountContact[] = [];
 
-  constructor(init?: Partial<Account>) {
+  constructor(init?: Partial<Account>)
+  {
     super();
     Object.assign(this, init);
-    if (init?.accountContacts) {
+    if (init?.accountContacts)
+    {
       this.accountContacts = init.accountContacts.map(
-        (c) => new AccountContact(c),
+        (c) => new AccountContact(c)
       );
     }
   }
 }
 
-export class AccountFilterColumns {
-  public static columnsNames: ColumnName<Account>[] = [
-    { label: "اسم الحساب", value: "name" },
-    {
-      label: "رقم الحساب البنكي",
-      value: "bankAccountNumber",
-    },
-    { label: "الرقم الضريبي", value: "vatNumber" },
-  ];
+export class AccountFilterColumns
+{
+  public static columnsNames: ColumnName<Account>[] = [{ label: "اسم الحساب", value: "name" }, {
+    label: "رقم الحساب البنكي",
+    value: "bankAccountNumber"
+  }, { label: "الرقم الضريبي", value: "vatNumber" }];
 }
 
-export class AccountValidationRules {
-  public static validationRules: ValidationRule<Partial<Account>>[] = [
-    {
-      field: "name",
-      selector: (d) => d.name,
-      validators: [Validators.required("يرجى إدخال اسم الحساب")],
-    },
-    {
-      field: "type",
-      selector: (d) => d.type,
-      validators: [Validators.required("يرجى اختيار نوع الحساب")],
-    },
-    {
-      field: "buildingNumber",
-      selector: (d) => d.buildingNumber,
-      validators: [
-        Validators.optional(
-          Validators.exactLength(4, "رقم المبنى يجب أن يتكون من أربع أرقام"),
-          Validators.numeric(),
-        ),
-      ],
-    },
-    {
-      field: "postalCode",
-      selector: (d) => d.postalCode,
-      validators: [
-        Validators.optional(
-          Validators.exactLength(5, "الرمز البريدي يجب أن يتكون من خمس أرقام"),
-          Validators.numeric(),
-        ),
-      ],
-    },
-  ];
+export class AccountValidationRules
+{
+  public static validationRules: ValidationRule<Partial<Account>>[] = [{
+    field: "name",
+    selector: (d) => d.name,
+    validators: [Validators.required("يرجى إدخال اسم الحساب")]
+  }, {
+    field: "type",
+    selector: (d) => d.type,
+    validators: [Validators.required("يرجى اختيار نوع الحساب")]
+  }, {
+    field: "buildingNumber",
+    selector: (d) => d.buildingNumber,
+    validators: [Validators.optional(
+      Validators.exactLength(4, "رقم المبنى يجب أن يتكون من أربع أرقام"),
+      Validators.numeric()
+    )]
+  }, {
+    field: "postalCode",
+    selector: (d) => d.postalCode,
+    validators: [Validators.optional(
+      Validators.exactLength(5, "الرمز البريدي يجب أن يتكون من خمس أرقام"),
+      Validators.numeric()
+    )]
+  }];
 }
 
 export type AccountSliceType = ReturnType<typeof AccountSlice.create>;
 
-export class AccountSlice {
-  static create(sliceName: string, types: AccountType[]) {
+export class AccountSlice
+{
+  static create(sliceName: string, types: AccountType[])
+  {
     const entitySliceInstance = createGenericEntitySlice(
       sliceName,
       new AccountsApiService(),
@@ -129,15 +113,15 @@ export class AccountSlice {
         new AccountsApiService().FilterByTypes(
           pageNumber,
           rowsPerPage,
-          new FilterByTypeRequest({ types, condition }),
-        ),
+          new FilterByTypeRequest({ types, condition })
+        )
     );
 
     const dialogSliceInstance = createGenericDialogSlice<Account>(
-      sliceName + "Dialog",
+      sliceName + "Dialog"
     );
     const formSliceInstance = createGenericFormSlice<Account>(
-      sliceName + "Form",
+      sliceName + "Form"
     );
 
     return {
@@ -146,27 +130,18 @@ export class AccountSlice {
       dialogActions: dialogSliceInstance.actions,
       dialogReducer: dialogSliceInstance.reducer,
       formActions: formSliceInstance.actions,
-      formReducer: formSliceInstance.reducer,
+      formReducer: formSliceInstance.reducer
     };
   }
 }
 
-export const ClientsSlice = AccountSlice.create("clients", [
-  AccountType.Client,
-]);
-export const SuppliersSlice = AccountSlice.create("suppliers", [
-  AccountType.Supplier,
-]);
-export const EmployeesSlice = AccountSlice.create("employees", [
-  AccountType.Employee,
-]);
+export const ClientsSlice = AccountSlice.create("clients", [AccountType.Client]);
+export const SuppliersSlice = AccountSlice.create("suppliers", [AccountType.Supplier]);
+export const EmployeesSlice = AccountSlice.create("employees", [AccountType.Employee]);
 export const BanksSlice = AccountSlice.create("banks", [AccountType.Bank]);
 export const BoxesSlice = AccountSlice.create("boxes", [AccountType.Box]);
-export const BanksAndBoxesSlice = AccountSlice.create("banksAndBoxes", [
-  AccountType.Box,
-  AccountType.Bank,
-]);
+export const BanksAndBoxesSlice = AccountSlice.create("banksAndBoxes", [AccountType.Box, AccountType.Bank]);
 export const ClientsAndSuppliersSlice = AccountSlice.create(
   "clientsAndSuppliers",
-  [AccountType.Client, AccountType.Supplier],
+  [AccountType.Client, AccountType.Supplier]
 );

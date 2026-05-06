@@ -1,18 +1,41 @@
-import { StoreSlice } from "@/core/data/store";
-import { WarehouseIcon } from "lucide-react";
+import { type LucideIcon, Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
-import type { CommonChangeDialogProps, TabProps } from "yusr-ui";
-import { categorizePermissions, ChangeDialogTabbed, PermissionCard, PermissionSkeleton, Role, RoleSlice, RoleValidationRules, Skeleton, TextField, useFormErrors, useValidate } from "yusr-ui";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { fetchSystemPermissions } from "../../core/state/shared/systemSlice";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
-import { ActionIcons, ArabicLabels, PERMISSION_SECTIONS } from "./permissionConfig";
-import StorePermissionsList from "./storePermissionsList";
+import { useSelector } from "react-redux";
+import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
+import { categorizePermissions, ChangeDialogTabbed, type CommonChangeDialogProps, PermissionCard, PermissionSkeleton, type TabProps, TextField } from "../../components/custom";
+import { Skeleton } from "../../components/pure";
+import { type Role, RoleSlice, RoleValidationRules } from "../../entities";
+import { useFormErrors, useValidate } from "../../hooks";
+import { fetchSystemPermissions, useAppDispatch, type YusrRootState } from "../../state";
 
-export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Role>)
+export const ActionIcons: Record<string, React.ReactNode> = {
+  [SystemPermissionsActions.Add]: <Plus className="w-4 h-4 text-blue-500" />,
+  [SystemPermissionsActions.Update]: <Pencil className="w-4 h-4 text-orange-500" />,
+  [SystemPermissionsActions.Delete]: <Trash2 className="w-4 h-4 text-red-500" />
+};
+
+export type PermissionSecion = {
+  id: string;
+  title: string;
+  icon: LucideIcon;
+  resources: string[];
+};
+
+export type ChangeRoleDialogAdditionalProps = {
+  additionalTabs?: (role: Partial<Role>) => TabProps[];
+  initRequests?: () => void;
+  permissionSecions: PermissionSecion[];
+  labels: Record<string, string>;
+};
+
+export function ChangeRoleDialog(
+  { entity, mode, service, onSuccess, additionalTabs, initRequests, permissionSecions, labels }:
+    & CommonChangeDialogProps<Role>
+    & ChangeRoleDialogAdditionalProps
+)
 {
   const delimiter: string = ".";
-  const { formData, errors } = useAppSelector((state) => state.roleForm);
+  const { formData, errors } = useSelector((state: YusrRootState) => state.roleForm);
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
@@ -20,7 +43,7 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
     (errors) => dispatch(RoleSlice.formActions.setErrors(errors))
   );
 
-  const systemState = useAppSelector((state) => state.system);
+  const systemState = useSelector((state: YusrRootState) => state.system);
   const dispatch = useAppDispatch();
 
   useEffect(() =>
@@ -43,8 +66,8 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
 
   useEffect(() =>
   {
-    dispatch(StoreSlice.entityActions.filterAll());
-  }, [dispatch]);
+    initRequests?.();
+  }, [dispatch, initRequests]);
 
   useEffect(() =>
   {
@@ -69,7 +92,7 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
 
   const categorized = useMemo(() =>
   {
-    return PERMISSION_SECTIONS.map((section) => ({
+    return permissionSecions.map((section) => ({
       ...section,
       data: categorizePermissions(systemState.permissions, section.resources, delimiter)
     }));
@@ -83,14 +106,14 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
           <PermissionCard
             key={ item.resource }
             resourceId={ item.resource }
-            label={ ArabicLabels[item.resource] || item.resource }
+            label={ labels[item.resource] || item.resource }
             masterPermission={ item.get }
-            isMasterRequired={ item.resource === SystemPermissionsResources.Settings }
+            isMasterRequired={ item.resource === YusrSystemPermissionsResources.Settings }
             selectedPermissions={ formData.permissions || [] }
             onToggle={ (updated) => dispatch(RoleSlice.formActions.updateFormData({ permissions: updated })) }
             actions={ item.actions.map((perm) => ({
               id: perm,
-              label: ArabicLabels[perm.split(delimiter)[1]] || perm.split(delimiter)[1],
+              label: labels[perm.split(delimiter)[1]] || perm.split(delimiter)[1],
               icon: ActionIcons[perm.split(delimiter)[1]]
             })) }
           />
@@ -133,17 +156,7 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
     hasError: index === 0 ? isInvalid("name") : undefined
   }));
 
-  const tabs: TabProps[] = [...permissionTabs, {
-    active: false,
-    icon: WarehouseIcon,
-    label: "المستودعات المسموح بها",
-    content: (
-      <StorePermissionsList
-        authorizedStoreIds={ formData.authorizedStores || [] }
-        onChange={ (updated) => dispatch(RoleSlice.formActions.updateFormData({ authorizedStores: updated })) }
-      />
-    )
-  }];
+  const tabs: TabProps[] = [...permissionTabs, ...(additionalTabs?.(formData) ?? [])];
 
   return (
     <ChangeDialogTabbed<Role>

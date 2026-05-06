@@ -1,9 +1,7 @@
 import PricingMethodsSearchableSelect from "@/core/components/searchableSelect/pricingMethodsSearchableSelect";
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
-import { Button, FormField, NumberField, SystemPermissions, TextField } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
-import CurrencyIcon from "../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
+import { Button, CurrencyIcon, FormField, NumberField, SystemPermissions, SystemPermissionsActions, TextField } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../core/auth/systemPermissionsResources";
 import Item, { ItemType } from "../../../core/data/item";
 import { useAppSelector } from "../../../core/state/store";

@@ -1,21 +1,24 @@
 import { User2Icon } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, SystemPermissions, User, UserFilterColumns, UsersApiService, UserSlice } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
-import { selectPermissionsByResource } from "../../core/auth/authSelectors";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
-import ChangeUserDialog from "./changeUserDialog";
+import { useDispatch, useSelector } from "react-redux";
+import { selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
+import { CrudPage } from "../../components/custom";
+import { User, UserFilterColumns, UserSlice } from "../../entities";
+import { UsersApiService } from "../../networking";
+import type { YusrRootState } from "../../state";
+import { ChangeUserDialog } from "./changeUserDialog";
 
-export default function UsersPage()
+export function UsersPage()
 {
   const { t } = useTranslation("commonEntities");
-  const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const userState = useAppSelector((state) => state.user);
-  const userDialogState = useAppSelector((state) => state.userDialog);
-  const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Users));
+  const dispatch = useDispatch();
+  const authState = useSelector((state: any) => state.auth);
+  const userState = useSelector((state: any) => state.user);
+  const userDialogState = useSelector((state: any) => state.userDialog);
+  const permissions = useSelector((state: YusrRootState) =>
+    selectPermissionsByResource(state, YusrSystemPermissionsResources.Users)
+  );
   const service = useMemo(() => new UsersApiService(), []);
 
   return (
@@ -26,7 +29,7 @@ export default function UsersPage()
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.Users,
+        YusrSystemPermissionsResources.Users,
         SystemPermissionsActions.Get
       ) }
       entityState={ userState }

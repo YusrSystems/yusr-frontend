@@ -1,21 +1,22 @@
+import { ChangeDialog, type CommonChangeDialogProps, FieldsSection, FormField, SearchableSelect, TextField } from "../../components/custom";
+import { FieldGroup } from "../../components/pure";
+import { Branch, BranchSlice, BranchValidationRules, CityFilterColumns, CitySlice } from "../../entities";
+import { useFormErrors, useFormInit, useValidate } from "../../hooks";
+import { useAppDispatch, type YusrRootState } from "../../state";
 import { useEffect } from "react";
-import { Branch, CityFilterColumns } from "yusr-ui";
-import { ChangeDialog, type CommonChangeDialogProps, FieldGroup, FieldsSection, FormField, SearchableSelect, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { BranchSlice, BranchValidationRules } from "../../core/data/branchLogic";
-import { filterCities } from "../../core/state/shared/citySlice";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import { useSelector } from "react-redux";
 
-export default function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Branch>)
+export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Branch>)
 {
-  const cityState = useAppSelector((state) => state.city);
+  const cityState = useSelector((state: YusrRootState) => state.city);
   const dispatch = useAppDispatch();
 
   useEffect(() =>
   {
-    dispatch(filterCities(undefined));
+    dispatch(CitySlice.entityActions.filter());
   }, [dispatch]);
 
-  const { formData, errors } = useAppSelector((state) => state.branchForm);
+  const { formData, errors } = useSelector((state: YusrRootState) => state.branchForm);
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
@@ -53,7 +54,7 @@ export default function ChangeBranchDialog({ entity, mode, service, onSuccess }:
             value={ formData.cityId?.toString() || "" }
             onValueChange={ (val) => dispatch(BranchSlice.formActions.updateFormData({ cityId: Number(val) })) }
             columnsNames={ CityFilterColumns.columnsNames }
-            onSearch={ (condition) => dispatch(filterCities(condition)) }
+            onSearch={ (condition) => dispatch(CitySlice.entityActions.filter(condition)) }
             isLoading={ cityState.isLoading }
             isInvalid={ isInvalid("cityId") }
             disabled={ cityState.isLoading }

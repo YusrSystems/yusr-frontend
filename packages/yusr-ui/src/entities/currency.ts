@@ -1,3 +1,5 @@
+import { CurrenciesApiService } from "../networking";
+import { createGenericEntitySlice } from "../state";
 import { BaseEntity } from "./baseEntity";
 
 export class Currency extends BaseEntity
@@ -15,4 +17,11 @@ export class Currency extends BaseEntity
     super();
     Object.assign(this, init);
   }
+}
+
+export class CurrencySlice
+{
+  private static entitySliceInstance = createGenericEntitySlice<Currency>("currency", new CurrenciesApiService());
+  public static entityActions = CurrencySlice.entitySliceInstance.actions;
+  public static entityReducer = CurrencySlice.entitySliceInstance.reducer;
 }

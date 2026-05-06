@@ -1,8 +1,7 @@
 import { Activity } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "yusr-ui";
-import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CurrencyIcon } from "yusr-ui";
 import type DashboardData from "../../core/data/dashboardData";
 
 type DashboardSectionCardsProps = { data: DashboardData; };

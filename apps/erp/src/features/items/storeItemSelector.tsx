@@ -1,7 +1,6 @@
 import { ScanBarcode, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
-import { SearchableSelect } from "yusr-ui";
-import { FilterByTypeRequest } from "../../core/data/filterByTypeRequest";
+import { FilterByTypeRequest, SearchableSelect } from "yusr-ui";
 import { ItemFilterColumns, ItemType, ItemUnitPricingMethod, type StoreItem } from "../../core/data/item";
 import { clearBarcodeResult, GetItemByBarcode } from "../../core/state/shared/itemBarcodeSlice";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";

@@ -1,6 +1,5 @@
-import { filterCurrencies } from "@/core/state/shared/currencySlice";
 import { useTranslation } from "react-i18next";
-import { SearchableSelect, TextField } from "yusr-ui";
+import { CurrencySlice, SearchableSelect, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import { updateField } from "../../logic/registerSlice";
@@ -116,7 +115,7 @@ export default function CompanyInfo()
           itemLabelKey="name"
           itemValueKey="id"
           disabled={ currencyState.isLoading }
-          onSearch={ (condition) => dispatch(filterCurrencies(condition)) }
+          onSearch={ (condition) => dispatch(CurrencySlice.entityActions.filter(condition)) }
           isLoading={ currencyState.isLoading }
           onValueChange={ (val) => onFieldChange({ currencyId: Number(val) }) }
         />

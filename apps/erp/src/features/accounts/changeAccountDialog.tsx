@@ -2,13 +2,10 @@ import ClientsSearchableSelect from "@/core/components/searchableSelect/clientsS
 import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
-import type { CommonChangeDialogProps, FormState, IEntityState } from "yusr-ui";
-import { Button, ChangeDialog, CityFilterColumns, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, SystemPermissions, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
-import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
+import type { CommonChangeDialogProps, IEntityState, IFormState } from "yusr-ui";
+import { Button, ChangeDialog, CityFilterColumns, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Account, { AccountContact, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/account";
-import { filterCities } from "../../core/state/shared/citySlice";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
 
 export default function ChangeAccountDialog({
@@ -31,7 +28,7 @@ export default function ChangeAccountDialog({
   }[];
   filterDataOutside?: boolean;
   selectEntityState: (state: RootState) => IEntityState<Account>;
-  selectFormState: (state: RootState) => FormState<Account>;
+  selectFormState: (state: RootState) => IFormState<Account>;
 })
 {
   const dispatch = useAppDispatch();
@@ -64,7 +61,7 @@ export default function ChangeAccountDialog({
     {
       return;
     }
-    dispatch(filterCities());
+    dispatch(CitySlice.entityActions.filter());
   }, [dispatch]);
 
   useEffect(() =>
@@ -299,7 +296,7 @@ export default function ChangeAccountDialog({
                       placeholder="اختر المدينة"
                       value={ formData.cityId?.toString() || "" }
                       columnsNames={ CityFilterColumns.columnsNames }
-                      onSearch={ (condition) => dispatch(filterCities(condition)) }
+                      onSearch={ (condition) => dispatch(CitySlice.entityActions.filter(condition)) }
                       isLoading={ cityState.isLoading }
                       disabled={ cityState.isLoading }
                       onValueChange={ (val) =>

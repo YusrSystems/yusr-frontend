@@ -1,6 +1,6 @@
 import { Coins } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
+import { CurrencyIcon } from "yusr-ui";
 
 export default function CurrencyBadge()
 {

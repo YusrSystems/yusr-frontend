@@ -1,10 +1,7 @@
-import { WalletIcon } from "lucide-react";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import { CurrencyIcon, WalletIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-import { CrudPage, FilterCondition, type FormState, type IDialogState, type IEntityState, SystemPermissions } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
-import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
-import { selectPermissionsByResource } from "../../core/auth/authSelectors";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
+import { CrudPage, FilterCondition, type IFormState, type IDialogState, type IEntityState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import Account, { AccountFilterColumns, AccountSlice, AccountType } from "../../core/data/account";
 import ReportConstants from "../../core/data/report/reportConstants";
 import AccountsApiService from "../../core/networking/accountApiService";
@@ -27,7 +24,7 @@ export default function AccountsPage({
   fixedType?: AccountType;
   selectEntityState: (state: RootState) => IEntityState<Account>;
   selectDialogState: (state: RootState) => IDialogState<Account>;
-  selectFormState: (state: RootState) => FormState<Account>;
+  selectFormState: (state: RootState) => IFormState<Account>;
   hasPagePermission: boolean;
 })
 {

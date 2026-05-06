@@ -2,8 +2,7 @@ import type PaymentMethod from "@/core/data/paymentMethod";
 import { PaymentMethodFilterColumns, PaymentMethodSlice } from "@/core/data/paymentMethod";
 import PaymentMethodsApiService from "@/core/networking/paymentMethodApiService";
 import ChangePaymentMethodDialog from "@/features/paymentMethods/changePaymentMethodDialog";
-import type { EntitySearchableSelectParams } from "yusr-ui";
-import ChangableSearchableSelect from "../../../../../../packages/yusr-ui/src/components/custom/select/changableSearchableSelect";
+import { ChangableSearchableSelect, type EntitySearchableSelectParams } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import { useAppSelector } from "../../state/store";
 

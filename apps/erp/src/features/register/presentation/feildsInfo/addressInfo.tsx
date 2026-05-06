@@ -1,6 +1,5 @@
-import { filterCities } from "@/core/state/shared/citySlice";
 import { useTranslation } from "react-i18next";
-import { SearchableSelect, TextField } from "yusr-ui";
+import { CitySlice, SearchableSelect, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import { updateField } from "../../logic/registerSlice";
@@ -32,7 +31,7 @@ export default function AddressInfo()
           itemLabelKey="name"
           itemValueKey="id"
           disabled={ cityState.isLoading }
-          onSearch={ (condition) => dispatch(filterCities(condition)) }
+          onSearch={ (condition) => dispatch(CitySlice.entityActions.filter(condition)) }
           isLoading={ cityState.isLoading }
           onValueChange={ (val) => onFieldChange({ cityId: val ? parseInt(val) : undefined }) }
         />

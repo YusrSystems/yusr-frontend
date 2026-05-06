@@ -1,7 +1,6 @@
-import { BranchSlice } from "@/core/data/branchLogic";
 import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { type ValidationRule, Validators } from "yusr-ui";
+import { BranchSlice, CurrencySlice, type ValidationRule, Validators } from "yusr-ui";
 import { Button, Card, CardContent, CardFooter, TabButton, useEntityForm } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import { PaymentMethodSlice } from "../../core/data/paymentMethod";
@@ -9,7 +8,6 @@ import { Setting } from "../../core/data/setting";
 import { StoreSlice } from "../../core/data/store";
 import { TaxSlice } from "../../core/data/tax";
 import SettingsApiService from "../../core/networking/settingsApiService";
-import { filterCurrencies } from "../../core/state/shared/currencySlice";
 import { updateSetting, useAppDispatch } from "../../core/state/store";
 import BasicSection from "./basicSection";
 import DefaultsSection from "./defaultsSection";
@@ -71,7 +69,7 @@ export default function SettingPage()
 
   useEffect(() =>
   {
-    dispatch(filterCurrencies());
+    dispatch(CurrencySlice.entityActions.filter());
     dispatch(TaxSlice.entityActions.filter());
     dispatch(StoreSlice.entityActions.filter());
     dispatch(PaymentMethodSlice.entityActions.filter());

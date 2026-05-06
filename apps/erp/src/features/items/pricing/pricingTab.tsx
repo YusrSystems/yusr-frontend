@@ -1,9 +1,8 @@
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
-import { Checkbox, type DialogMode, FormField, NumberField, useFormErrors } from "yusr-ui";
+import { Checkbox, CurrencyIcon, type DialogMode, FormField, NumberField, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemType } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 import PricingMethodsTable from "./pricingMethodsTable";
-import CurrencyIcon from "../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
 
 export default function PricingTab({ mode }: { mode: DialogMode; })
 {

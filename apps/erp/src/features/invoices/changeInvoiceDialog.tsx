@@ -1,9 +1,8 @@
 import { BanknoteArrowDown, BanknoteArrowUp, Box, CheckCircle2, FolderKanban, Siren } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { CommonChangeDialogProps, DialogMode, IEntityState } from "yusr-ui";
-import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Loading, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import Account, { type AccountSliceType } from "../../core/data/account";
-import { FilterByTypeRequest } from "../../core/data/filterByTypeRequest";
 import type Invoice from "../../core/data/invoice";
 import { InvoiceRelationType, InvoiceSlice, InvoiceStatus, InvoiceType, InvoiceValidationRules, InvoiceVoucher } from "../../core/data/invoice";
 import { ItemType } from "../../core/data/item";

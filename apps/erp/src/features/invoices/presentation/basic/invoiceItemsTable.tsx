@@ -1,8 +1,6 @@
 import { PercentIcon, Trash2 } from "lucide-react";
 import React from "react";
-import { NumberField, SelectField, SystemPermissions, TextField } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
-import CurrencyIcon from "../../../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
+import { CurrencyIcon, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextField } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
 import { InvoiceType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";

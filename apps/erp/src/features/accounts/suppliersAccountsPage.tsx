@@ -1,5 +1,4 @@
-import { SystemPermissions } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
+import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { AccountType, SuppliersSlice } from "../../core/data/account";
 import { useAppSelector } from "../../core/state/store";

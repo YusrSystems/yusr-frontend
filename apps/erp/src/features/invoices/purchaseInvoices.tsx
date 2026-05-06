@@ -1,5 +1,4 @@
-import { SystemPermissions } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
+import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { SuppliersSlice } from "../../core/data/account";
 import { InvoiceType, PurchasesSlice } from "../../core/data/invoice";

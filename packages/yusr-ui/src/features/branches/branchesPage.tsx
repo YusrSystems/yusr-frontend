@@ -1,21 +1,21 @@
+import { CrudPage } from "../../components/custom";
 import { Building } from "lucide-react";
 import { useMemo } from "react";
-import { Branch, BranchesApiService, BranchFilterColumns, CrudPage, SystemPermissions } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
-import { selectPermissionsByResource } from "../../core/auth/authSelectors";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { BranchSlice } from "../../core/data/branchLogic";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
-import ChangeBranchDialog from "./changeBranchDialog";
+import { useDispatch, useSelector } from "react-redux";
+import { selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
+import { Branch, BranchFilterColumns, BranchSlice } from "../../entities";
+import { BranchesApiService } from "../../networking";
+import type { YusrRootState } from "../../state";
+import { ChangeBranchDialog } from "./changeBranchDialog";
 
-export default function BranchesPage()
+export function BranchesPage()
 {
-  const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const branchState = useAppSelector((state) => state.branch);
-  const branchDialogState = useAppSelector((state) => state.branchDialog);
-  const permissions = useAppSelector((state) =>
-    selectPermissionsByResource(state, SystemPermissionsResources.Branches)
+  const dispatch = useDispatch();
+  const authState = useSelector((state: YusrRootState) => state.auth);
+  const branchState = useSelector((state: YusrRootState) => state.branch);
+  const branchDialogState = useSelector((state: YusrRootState) => state.branchDialog);
+  const permissions = useSelector((state: YusrRootState) =>
+    selectPermissionsByResource(state, YusrSystemPermissionsResources.Branches)
   );
   const service = useMemo(() => new BranchesApiService(), []);
 
@@ -27,7 +27,7 @@ export default function BranchesPage()
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.Branches,
+        YusrSystemPermissionsResources.Branches,
         SystemPermissionsActions.Get
       ) }
       entityState={ branchState }

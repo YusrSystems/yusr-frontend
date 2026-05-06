@@ -1,19 +1,19 @@
 import { type PayloadAction } from "@reduxjs/toolkit";
-import type { FormState } from "yusr-ui";
+import type { IFormState } from "yusr-ui";
 import Invoice, { InvoiceItem } from "../../../core/data/invoice";
 import type { StoreItem } from "../../../core/data/item";
 import InvoiceItemsMath from "./invoiceItemsMath";
 
 export default class InvoiceItemsActions
 {
-  public static removeItem(state: FormState<Invoice>, action: PayloadAction<number>)
+  public static removeItem(state: IFormState<Invoice>, action: PayloadAction<number>)
   {
     const index = action.payload;
     state.formData.invoiceItems?.splice(index, 1);
   }
 
   public static updateItem(
-    state: FormState<Invoice>,
+    state: IFormState<Invoice>,
     action: PayloadAction<{ index: number; item: InvoiceItem; }>
   )
   {
@@ -24,7 +24,7 @@ export default class InvoiceItemsActions
     }
   }
 
-  public static addItem(state: FormState<Invoice>, action: PayloadAction<StoreItem>)
+  public static addItem(state: IFormState<Invoice>, action: PayloadAction<StoreItem>)
   {
     const storeItem = action.payload;
     const baseItem = storeItem.item;
@@ -84,7 +84,7 @@ export default class InvoiceItemsActions
   }
 
   public static onInvoiceItemIupmChange(
-    state: FormState<Invoice>,
+    state: IFormState<Invoice>,
     action: PayloadAction<{ index: number; iupmId: number; }>
   )
   {
@@ -122,7 +122,7 @@ export default class InvoiceItemsActions
   }
 
   public static onInvoiceItemQuantityChange(
-    state: FormState<Invoice>,
+    state: IFormState<Invoice>,
     action: PayloadAction<{ index: number; newQtn: number | undefined; }>
   )
   {
@@ -149,7 +149,7 @@ export default class InvoiceItemsActions
   }
 
   public static onInvoiceItemSettlementChange(
-    state: FormState<Invoice>,
+    state: IFormState<Invoice>,
     action: PayloadAction<{ index: number; newSettlement: number | undefined; }>
   )
   {
@@ -175,7 +175,7 @@ export default class InvoiceItemsActions
   }
 
   public static onInvoiceItemTaxInclusivePriceChange(
-    state: FormState<Invoice>,
+    state: IFormState<Invoice>,
     action: PayloadAction<{ index: number; newPrice: number | undefined; }>
   )
   {
@@ -201,7 +201,7 @@ export default class InvoiceItemsActions
     InvoiceItemsActions.updateItem(state, { payload: { index, item: row }, type: "updateItem" });
   }
 
-  public static onInvoiceSettlementAmountChange(state: FormState<Invoice>, action: PayloadAction<number>)
+  public static onInvoiceSettlementAmountChange(state: IFormState<Invoice>, action: PayloadAction<number>)
   {
     state.formData.settlementAmount = action.payload || 0;
     state.formData.invoiceItems?.forEach((_, i) =>
@@ -212,7 +212,7 @@ export default class InvoiceItemsActions
     );
   }
 
-  public static onInvoiceSettlementPercentChange(state: FormState<Invoice>, action: PayloadAction<number>)
+  public static onInvoiceSettlementPercentChange(state: IFormState<Invoice>, action: PayloadAction<number>)
   {
     state.formData.settlementPercent = action.payload || 0;
     state.formData.invoiceItems?.forEach((item, i) =>

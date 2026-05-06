@@ -1,5 +1,4 @@
-import { ApiConstants, BaseApiService, type FilterResult, type RequestResult, YusrApiHelper } from "yusr-ui";
-import type { FilterByTypeRequest } from "../data/filterByTypeRequest";
+import { ApiConstants, BaseApiService, FilterByTypeRequest, type FilterResult, type RequestResult, YusrApiHelper } from "yusr-ui";
 import type Invoice from "../data/invoice";
 import type { EInvoiceStatus, InvoiceVoucher } from "../data/invoice";
 

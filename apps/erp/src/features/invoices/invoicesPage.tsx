@@ -1,10 +1,7 @@
 import { FileTextIcon, RotateCw } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Button, ContextMenuItem, CrudPage, DropdownMenuItem, FilterCondition, type IDialogState, type IEntityState, SystemPermissions, Tooltip, TooltipContent, TooltipTrigger } from "yusr-ui";
-import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
-import CurrencyIcon from "../../../../../packages/yusr-ui/src/components/custom/currency/currencyIcon";
-import { selectPermissionsByResource } from "../../core/auth/authSelectors";
+import { Button, ContextMenuItem, CrudPage, CurrencyIcon, DropdownMenuItem, FilterCondition, type IDialogState, type IEntityState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, Tooltip, TooltipContent, TooltipTrigger } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type Account from "../../core/data/account";
 import type { AccountSliceType } from "../../core/data/account";

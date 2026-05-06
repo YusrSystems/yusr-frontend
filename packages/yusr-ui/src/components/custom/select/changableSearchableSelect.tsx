@@ -42,7 +42,7 @@ export type ChangableSearchableSelectParams<T extends BaseEntity, TDialogProps e
   authPermissions: string[];
 };
 
-export default function ChangableSearchableSelect<T extends BaseEntity, TDialogProps extends object = {}>(
+export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps extends object = {}>(
   {
     mode = "dialog",
     id,

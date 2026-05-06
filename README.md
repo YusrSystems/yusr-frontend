@@ -33,7 +33,6 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "yusr-ui": path.resolve(__dirname, "../../packages/yusr-ui/src/index.ts"),
-      "yusr-ui": path.resolve(__dirname, "../../packages/yusr-ui/src/index.ts")
     },
     dedupe: ["react", "react-dom", "react/jsx-runtime"]
   },
@@ -56,7 +55,6 @@ put these on path section
 ```json
 "@/*": ["./src/*"],
 "yusr-ui": ["../../packages/yusr-ui/src/index.ts"],
-"yusr-ui": ["../../packages/yusr-ui/src/index.ts"]
 ```
 
 ### 7. run 
