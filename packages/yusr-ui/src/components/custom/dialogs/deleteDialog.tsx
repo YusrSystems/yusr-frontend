@@ -1,7 +1,8 @@
-import type { BaseEntity } from "../../../entities";
-import type { BaseApiService } from "../../../networking";
 import { Loader2, OctagonAlert } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { BaseEntity } from "../../../entities";
+import type { BaseApiService } from "../../../networking";
 import { Button } from "../../pure/button";
 import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure/dialog";
 import { Separator } from "../../pure/separator";
@@ -16,6 +17,7 @@ interface Props<T extends BaseEntity>
 
 export function DeleteDialog<T extends BaseEntity>({ entityName, id, service, onSuccess }: Props<T>)
 {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   async function Delete()
@@ -35,7 +37,7 @@ export function DeleteDialog<T extends BaseEntity>({ entityName, id, service, on
   return (
     <>
       <DialogHeader>
-        <DialogTitle>حذف { entityName }</DialogTitle>
+        <DialogTitle>{ t("deleteDialog.title", { entityName }) }</DialogTitle>
         <DialogDescription></DialogDescription>
       </DialogHeader>
 
@@ -45,19 +47,21 @@ export function DeleteDialog<T extends BaseEntity>({ entityName, id, service, on
         <OctagonAlert className="h-7 w-7 text-destructive" />
       </div>
 
-      <span className="font-bold text-center text-xl">هل أنت متأكد من حذف { entityName } رقم { id }؟</span>
+      <span className="font-bold text-center text-xl">
+        { t("deleteDialog.confirmMessage", { entityName, id }) }
+      </span>
 
       <span className="text-center text-[15px]">
-        لا يمكن التراجع عن هذا الإجراء. سيؤدي ذلك إلى حذف { entityName } نهائياً وإزالته من خوادمنا.
+        { t("deleteDialog.warningMessage", { entityName }) }
       </span>
 
       <DialogFooter>
         <DialogClose asChild>
-          <Button variant="outline">إلغاء</Button>
+          <Button variant="outline">{ t("deleteDialog.cancel") }</Button>
         </DialogClose>
         <Button variant="destructive" onClick={ Delete } disabled={ loading }>
           { loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
-          تأكيد الحذف
+          { t("deleteDialog.confirm") }
         </Button>
       </DialogFooter>
     </>

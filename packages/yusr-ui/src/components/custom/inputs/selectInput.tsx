@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { cn } from "../../../utils/cn";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../pure/select";
 
@@ -13,8 +14,9 @@ export interface SelectInputProps
 
 export function SelectInput({ value, onValueChange, options, placeholder, isInvalid, disabled }: SelectInputProps)
 {
+  const { i18n } = useTranslation();
   return (
-    <Select value={ value } onValueChange={ onValueChange } dir="rtl" disabled={ disabled }>
+    <Select value={ value } onValueChange={ onValueChange } dir={ i18n.dir() } disabled={ disabled }>
       <SelectTrigger className={ cn("w-full", isInvalid && "border-red-600 ring-red-600 text-red-900") }>
         <SelectValue placeholder={ placeholder } />
       </SelectTrigger>

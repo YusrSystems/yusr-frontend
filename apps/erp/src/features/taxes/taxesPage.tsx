@@ -1,5 +1,6 @@
 import { Percent } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CrudPage, SystemPermissions } from "yusr-ui";
 import { SystemPermissionsActions } from "../../../../../packages/yusr-ui/src/auth/systemPermissionsActions";
 import { selectPermissionsByResource } from "../../core/auth/authSelectors";
@@ -11,6 +12,8 @@ import ChangeTaxDialog from "./changeTaxDialog";
 
 export default function TaxesPage()
 {
+  const { t } = useTranslation("accounting");
+  const { t: tCommon } = useTranslation("common");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const taxState = useAppSelector((state) => state.tax);
@@ -20,9 +23,9 @@ export default function TaxesPage()
 
   return (
     <CrudPage<Tax>
-      title="إدارة الضرائب"
-      entityName="الضريبة"
-      addNewItemTitle="إضافة ضريبة جديدة"
+      title={ t("taxes.title") }
+      entityName={ t("taxes.entityName") }
+      addNewItemTitle={ t("taxes.addNewTitle") }
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -33,17 +36,17 @@ export default function TaxesPage()
       useSlice={ () => taxDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي الضرائب",
+        title: t("taxes.totalTaxes"),
         data: (taxState.entities?.count ?? 0).toString(),
         icon: <Percent className="h-4 w-4 text-muted-foreground" />
       }] }
       columnsToFilter={ TaxFilterColumns.columnsNames }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: "رقم الضريبة", rowStyles: "w-30" },
-        { rowName: "اسم الضريبة", rowStyles: "w-50" },
-        { rowName: "النسبة", rowStyles: "w-30" },
-        { rowName: "ضريبة أساسية", rowStyles: "" }
+        { rowName: t("taxes.taxNumber"), rowStyles: "w-30" },
+        { rowName: t("taxes.taxName"), rowStyles: "w-50" },
+        { rowName: t("taxes.percentage"), rowStyles: "w-30" },
+        { rowName: t("taxes.isPrimary"), rowStyles: "" }
       ] }
       tableRowMapper={ (
         tax: Tax
@@ -51,7 +54,7 @@ export default function TaxesPage()
         rowName: `%${tax.percentage}`,
         rowStyles: ""
       }, {
-        rowName: tax.isPrimary ? "نعم" : "لا",
+        rowName: tax.isPrimary ? tCommon("yes") : tCommon("no"),
         rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
           tax.isPrimary ? "bg-blue-300" : "bg-gray-200"
         } text-slate-800`

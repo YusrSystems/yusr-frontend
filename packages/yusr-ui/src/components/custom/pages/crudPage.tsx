@@ -1,6 +1,7 @@
 import type { ActionCreatorWithPayload, AsyncThunk, UnknownAction } from "@reduxjs/toolkit";
 import type { PropsWithChildren } from "react";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import type { ResourcePermissions } from "../../../auth";
 import type { BaseEntity, FilterCondition } from "../../../entities";
@@ -84,6 +85,7 @@ export function CrudPage<T extends BaseEntity>(
   }: CrudPageProps<T>
 )
 {
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const { selectedRow, isChangeDialogOpen, isDeleteDialogOpen } = useSlice();
   const { handleOpenChangeDialog, handleSetIsChangeDialogOpen } = useCrudPageRoute<T>({
@@ -182,7 +184,7 @@ export function CrudPage<T extends BaseEntity>(
             open={ isDeleteDialogOpen }
             onOpenChange={ (open) => dispatch(actions.setIsDeleteDialogOpen(open)) }
           >
-            <DialogContent dir="rtl" className="sm:max-w-sm">
+            <DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
               <DeleteDialog
                 entityName={ entityName }
                 id={ selectedRow?.id ?? 0 }

@@ -1,4 +1,5 @@
 import "i18next";
+import accounting from "../../public/locales/ar/accounting.json";
 import common from "../../public/locales/ar/common.json";
 import landing from "../../public/locales/ar/landing.json";
 import loginRegister from "../../public/locales/ar/loginRegister.json";
@@ -12,6 +13,7 @@ declare module "i18next"
       common: typeof common;
       landing: typeof landing;
       loginRegister: typeof loginRegister;
+      accounting: typeof accounting;
     };
   }
 }

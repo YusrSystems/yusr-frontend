@@ -1,0 +1,16 @@
+{
+  "taxes": {
+    "title": "Tax Management",
+    "entityName": "Tax",
+    "addNewTitle": "Add New Tax",
+    "totalTaxes": "Total Taxes",
+    "taxNumber": "Tax ID",
+    "taxName": "Tax Name",
+    "percentage": "Percentage",
+    "isPrimary": "Primary Tax",
+    "nameRequired": "Please enter tax name",
+    "percentageRequired": "Please enter tax percentage",
+    "percentageMin": "Minimum value is 0%",
+    "percentageMax": "Maximum value is 100%"
+  }
+}

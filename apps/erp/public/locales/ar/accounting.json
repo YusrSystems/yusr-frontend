@@ -1,0 +1,16 @@
+{
+  "taxes": {
+    "title": "إدارة الضرائب",
+    "entityName": "الضريبة",
+    "addNewTitle": "إضافة ضريبة جديدة",
+    "totalTaxes": "إجمالي الضرائب",
+    "taxNumber": "رقم الضريبة",
+    "taxName": "اسم الضريبة",
+    "percentage": "النسبة",
+    "isPrimary": "ضريبة أساسية",
+    "nameRequired": "يرجى إدخال اسم الضريبة",
+    "percentageRequired": "يرجى إدخال نسبة الضريبة",
+    "percentageMin": "الحد الادنى هو 0%",
+    "percentageMax": "الحد الاقصى هو 100%"
+  }
+}

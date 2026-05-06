@@ -11,6 +11,8 @@
   "systemTheme": "النظام",
   "searchPlaceholder": "ابحث...",
   "searchNullOption": "اختر العمود",
+  "yes": "نعم",
+  "no": "لا",
 
   "searchableSelect": {
     "placeholder": "اختر...",
@@ -18,6 +20,32 @@
     "noData": "لا توجد بيانات",
     "allOption": "الكل",
     "addOption": "إضافة \"{{value}}\""
+  },
+
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي",
+    "results": "نتائج {{start}} - {{end}} من {{total}}"
+  },
+
+  "crudRow": {
+    "actions": "الإجراءات",
+    "edit": "تعديل",
+    "delete": "حذف"
+  },
+
+  "changeDialog": {
+    "unauthorized": "غير مصرح",
+    "close": "إغلاق",
+    "cancel": "إلغاء"
+  },
+
+  "deleteDialog": {
+    "title": "حذف {{entityName}}",
+    "confirmMessage": "هل أنت متأكد من حذف {{entityName}} رقم {{id}}؟",
+    "warningMessage": "لا يمكن التراجع عن هذا الإجراء. سيؤدي ذلك إلى حذف {{entityName}} نهائياً وإزالته من خوادمنا.",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد الحذف"
   },
 
   "sidebar": {

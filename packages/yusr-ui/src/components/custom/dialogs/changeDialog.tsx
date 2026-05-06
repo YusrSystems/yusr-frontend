@@ -1,5 +1,6 @@
-import type { BaseEntity } from "../../../entities";
 import type { PropsWithChildren, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
+import type { BaseEntity } from "../../../entities";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
 import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure/dialog";
@@ -34,18 +35,20 @@ export function ChangeDialog<T extends BaseEntity>(
   }: ChangeDialogProps<T>
 )
 {
+  const { t, i18n } = useTranslation("common");
+
   if (!authorized)
   {
     return (
-      <DialogContent className="sm:max-w-xl rtl" dir="rtl">
+      <DialogContent className="sm:max-w-xl" dir={ i18n.dir() }>
         <DialogHeader>
-          <DialogTitle>غير مصرح</DialogTitle>
+          <DialogTitle>{ t("changeDialog.unauthorized") }</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <UnauthorizedPage showButtons={ false } />
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">إغلاق</Button>
+            <Button variant="outline">{ t("changeDialog.close") }</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
@@ -53,7 +56,7 @@ export function ChangeDialog<T extends BaseEntity>(
   }
 
   return (
-    <DialogContent dir="rtl" className={ cn(className, "scroll-auto") }>
+    <DialogContent dir={ i18n.dir() } className={ cn(className, "scroll-auto") }>
       <DialogHeader>
         <DialogTitle>{ title }</DialogTitle>
         <DialogDescription>{ description }</DialogDescription>
@@ -66,7 +69,7 @@ export function ChangeDialog<T extends BaseEntity>(
       <DialogFooter>
         { actionButtons }
         <DialogClose asChild>
-          <Button variant="outline">إلغاء</Button>
+          <Button variant="outline">{ t("changeDialog.cancel") }</Button>
         </DialogClose>
         <SaveButton
           formData={ formData as T }
