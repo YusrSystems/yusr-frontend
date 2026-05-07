@@ -1,5 +1,6 @@
 import { Settings2 } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPage } from "../../components/custom";
@@ -15,6 +16,7 @@ type RolesPageProps = {
 
 export function RolesPage({ onUpdateLoggedInUser, ChangeRoleDialogAdditionalProps }: RolesPageProps)
 {
+  const { t } = useTranslation("commonEntities");
   const dispatch = useAppDispatch();
   const authState = useSelector((state: YusrRootState) => state.auth);
   const roleState = useSelector((state: YusrRootState) => state.role);
@@ -26,9 +28,9 @@ export function RolesPage({ onUpdateLoggedInUser, ChangeRoleDialogAdditionalProp
 
   return (
     <CrudPage<Role>
-      title="إدارة الأدوار"
-      entityName="الدور"
-      addNewItemTitle="إضافة دور جديد"
+      title={ t("roles.title") }
+      entityName={ t("roles.entityName") }
+      addNewItemTitle={ t("roles.addNewTitle") }
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -39,15 +41,15 @@ export function RolesPage({ onUpdateLoggedInUser, ChangeRoleDialogAdditionalProp
       useSlice={ () => roleDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي الادوار",
+        title: t("roles.totalRoles"),
         data: (roleState.entities?.count ?? 0).toString(),
         icon: <Settings2 className="h-4 w-4 text-muted-foreground" />
       }] }
       columnsToFilter={ RoleFilterColumns.columnsNames }
-      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, { rowName: "رقم الدور", rowStyles: "w-30" }, {
-        rowName: "اسم الدور",
-        rowStyles: ""
-      }] }
+      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
+        rowName: t("roles.roleId"),
+        rowStyles: "w-30"
+      }, { rowName: t("roles.roleName"), rowStyles: "" }] }
       tableRowMapper={ (
         role: Role
       ) => [{ rowName: `#${role.id}`, rowStyles: "" }, { rowName: role.name, rowStyles: "font-semibold" }] }

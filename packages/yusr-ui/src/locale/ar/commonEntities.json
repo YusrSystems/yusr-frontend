@@ -17,5 +17,35 @@
     "passwordRequired": "يرجى إدخال كلمة مرور",
     "roleRequired": "يرجى اختيار دور",
     "branchRequired": "يرجى اختيار فرع"
+  },
+
+  "roles": {
+    "title": "إدارة الأدوار",
+    "entityName": "الدور",
+    "addNewTitle": "إضافة دور جديد",
+    "totalRoles": "إجمالي الادوار",
+    "roleId": "رقم الدور",
+    "roleName": "اسم الدور",
+    "nameRequired": "يرجى اختيار اسم للدور"
+  },
+
+  "branches": {
+    "title": "إدارة الفروع",
+    "entityName": "الفرع",
+    "addNewTitle": "إضافة فرع جديد",
+    "totalBranches": "إجمالي الفروع",
+    "branchId": "رقم الفرع",
+    "branchName": "اسم الفرع",
+    "city": "المدينة",
+    "street": "الشارع",
+    "district": "الحي",
+    "buildingNumber": "رقم المبنى",
+    "postalCode": "الرمز البريدي",
+    "nameRequired": "اسم الفرع مطلوب",
+    "cityRequired": "يرجى اختيار المدينة",
+    "buildingNumberLength": "رقم المبنى يجب أن يتكون من أربع أرقام",
+    "buildingNumberNumeric": "رقم المبنى يجب أن يكون أرقاماً فقط",
+    "postalCodeLength": "الرمز البريدي يجب أن يتكون من خمس أرقام",
+    "postalCodeNumeric": "الرمز البريدي يجب أن يكون أرقاماً فقط"
   }
 }

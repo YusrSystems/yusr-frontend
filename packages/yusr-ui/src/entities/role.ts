@@ -1,3 +1,4 @@
+import { type TFunction } from "i18next";
 import { RolesApiService } from "../networking";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
 import type { ColumnName } from "../types";
@@ -24,10 +25,10 @@ export class RoleFilterColumns
 
 export class RoleValidationRules
 {
-  public static validationRules: ValidationRule<Partial<Role>>[] = [{
+  public static validationRules = (t: TFunction<"commonEntities", undefined>): ValidationRule<Partial<Role>>[] => [{
     field: "name",
     selector: (d) => d.name,
-    validators: [Validators.required("يرجى اختيار اسم للدور")]
+    validators: [Validators.required(t("roles.nameRequired"))]
   }];
 }
 

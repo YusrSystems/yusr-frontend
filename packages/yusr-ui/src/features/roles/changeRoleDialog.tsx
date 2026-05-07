@@ -1,5 +1,6 @@
 import { type LucideIcon, Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { categorizePermissions, ChangeDialogTabbed, type CommonChangeDialogProps, PermissionCard, PermissionSkeleton, type TabProps, TextField } from "../../components/custom";
@@ -34,12 +35,13 @@ export function ChangeRoleDialog(
     & ChangeRoleDialogAdditionalProps
 )
 {
+  const { t } = useTranslation(["commonEntities", "common"]);
   const delimiter: string = ".";
   const { formData, errors } = useSelector((state: YusrRootState) => state.roleForm);
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    RoleValidationRules.validationRules,
+    RoleValidationRules.validationRules(t),
     (errors) => dispatch(RoleSlice.formActions.setErrors(errors))
   );
 
@@ -127,10 +129,9 @@ export function ChangeRoleDialog(
     label: section.title,
     content: (
       <div className="space-y-4">
-        { /* Role name field only in the first tab */ }
         { index === 0 && (
           <TextField
-            label="اسم الدور"
+            label={ t("roles.roleName") }
             required
             value={ formData.name || "" }
             isInvalid={ isInvalid("name") }
@@ -152,7 +153,6 @@ export function ChangeRoleDialog(
           : renderSectionContent(section) }
       </div>
     ),
-    // Mark tab with error if name field has error and we're on the first tab
     hasError: index === 0 ? isInvalid("name") : undefined
   }));
 
@@ -161,7 +161,7 @@ export function ChangeRoleDialog(
   return (
     <ChangeDialogTabbed<Role>
       changeDialogProps={ {
-        title: `${mode === "create" ? "إضافة" : "تعديل"} دور`,
+        title: mode === "create" ? t("roles.addNewTitle") : `${t("common:crudRow.edit")} ${t("roles.entityName")}`,
         className: "sm:max-w-6xl",
         formData,
         dialogMode: mode,

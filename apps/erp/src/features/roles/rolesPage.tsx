@@ -1,13 +1,15 @@
 import { StoreSlice } from "@/core/data/store";
 import { WarehouseIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { RoleSlice, RolesPage } from "yusr-ui";
 import { updateLoggedInUser, useAppDispatch } from "../../core/state/store";
-import { LABELS, PERMISSION_SECTIONS } from "./permissionConfig";
+import { getLabels, getPermissionSections } from "./permissionConfig";
 import StorePermissionsList from "./storePermissionsList";
 
 export default function ErpRolesPage()
 {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation("erpCommon");
 
   return (
     <RolesPage
@@ -16,7 +18,7 @@ export default function ErpRolesPage()
         additionalTabs: (formData) => [{
           active: false,
           icon: WarehouseIcon,
-          label: "المستودعات المسموح بها",
+          label: t("permissions.resources.authorizedStores"),
           content: (
             <StorePermissionsList
               authorizedStoreIds={ formData.authorizedStores || [] }
@@ -25,8 +27,8 @@ export default function ErpRolesPage()
           )
         }],
         initRequests: () => dispatch(StoreSlice.entityActions.filterAll()),
-        permissionSecions: PERMISSION_SECTIONS,
-        labels: LABELS
+        permissionSecions: getPermissionSections(t),
+        labels: getLabels(t)
       } }
     />
   );

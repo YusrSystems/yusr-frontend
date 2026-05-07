@@ -17,5 +17,35 @@
     "passwordRequired": "Please enter password",
     "roleRequired": "Please select a role",
     "branchRequired": "Please select a branch"
+  },
+
+  "roles": {
+    "title": "Role Management",
+    "entityName": "Role",
+    "addNewTitle": "Add New Role",
+    "totalRoles": "Total Roles",
+    "roleId": "Role Id",
+    "roleName": "Role Name",
+    "nameRequired": "Please choose a name for the role"
+  },
+
+  "branches": {
+    "title": "Branch Management",
+    "entityName": "Branch",
+    "addNewTitle": "Add New Branch",
+    "totalBranches": "Total Branches",
+    "branchId": "Branch Id",
+    "branchName": "Branch Name",
+    "city": "City",
+    "street": "Street",
+    "district": "District",
+    "buildingNumber": "Building Number",
+    "postalCode": "Postal Code",
+    "nameRequired": "Branch name is required",
+    "cityRequired": "Please select a city",
+    "buildingNumberLength": "Building number must consist of 4 digits",
+    "buildingNumberNumeric": "Building number must be numeric only",
+    "postalCodeLength": "Postal code must consist of 5 digits",
+    "postalCodeNumeric": "Postal code must be numeric only"
   }
 }

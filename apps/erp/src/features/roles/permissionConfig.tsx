@@ -1,78 +1,79 @@
-import { Database, FileBarChart, ShoppingCart, Wallet } from "lucide-react";
+import type { TFunction } from "i18next";
 import { SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
+import { Database, FileBarChart, ShoppingCart, Wallet } from "lucide-react";
 
-export const LABELS: Record<string, string> = {
+export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => ({
   // Resources
-  [SystemPermissionsResources.Branches]: "الفروع",
-  [SystemPermissionsResources.Settings]: "الإعدادات",
-  [SystemPermissionsResources.Users]: "المستخدمين",
-  [SystemPermissionsResources.Roles]: "الأدوار",
-  [SystemPermissionsResources.Dashboard]: "لوحة التحكم",
-  [SystemPermissionsResources.Invoices]: "الفواتير",
-  [SystemPermissionsResources.Vouchers]: "السندات",
-  [SystemPermissionsResources.Accounts]: "الحسابات",
-  [SystemPermissionsResources.BalanceTransfers]: "تحويلات الرصيد",
-  [SystemPermissionsResources.PaymentMethods]: "طرق الدفع",
-  [SystemPermissionsResources.Items]: "المواد",
-  [SystemPermissionsResources.ItemTransfers]: "تحويلات المواد",
-  [SystemPermissionsResources.ItemsSettlements]: "تسويات المواد",
-  [SystemPermissionsResources.Stocktakings]: "الجرد",
-  [SystemPermissionsResources.Units]: "الوحدات",
-  [SystemPermissionsResources.PricingMethods]: "طرق التسعير",
-  [SystemPermissionsResources.Stores]: "المستودعات",
-  [SystemPermissionsResources.Taxes]: "الضرائب",
-  [SystemPermissionsResources.Obligations]: "الالتزامات",
-  [SystemPermissionsResources.PosTerminals]: "نقاط البيع",
+  [SystemPermissionsResources.Branches]: t("permissions.resources.branches"),
+  [SystemPermissionsResources.Settings]: t("permissions.resources.settings"),
+  [SystemPermissionsResources.Users]: t("permissions.resources.users"),
+  [SystemPermissionsResources.Roles]: t("permissions.resources.roles"),
+  [SystemPermissionsResources.Dashboard]: t("permissions.resources.dashboard"),
+  [SystemPermissionsResources.Invoices]: t("permissions.resources.invoices"),
+  [SystemPermissionsResources.Vouchers]: t("permissions.resources.vouchers"),
+  [SystemPermissionsResources.Accounts]: t("permissions.resources.accounts"),
+  [SystemPermissionsResources.BalanceTransfers]: t("permissions.resources.balanceTransfers"),
+  [SystemPermissionsResources.PaymentMethods]: t("permissions.resources.paymentMethods"),
+  [SystemPermissionsResources.Items]: t("permissions.resources.items"),
+  [SystemPermissionsResources.ItemTransfers]: t("permissions.resources.itemTransfers"),
+  [SystemPermissionsResources.ItemsSettlements]: t("permissions.resources.itemsSettlements"),
+  [SystemPermissionsResources.Stocktakings]: t("permissions.resources.stocktakings"),
+  [SystemPermissionsResources.Units]: t("permissions.resources.units"),
+  [SystemPermissionsResources.PricingMethods]: t("permissions.resources.pricingMethods"),
+  [SystemPermissionsResources.Stores]: t("permissions.resources.stores"),
+  [SystemPermissionsResources.Taxes]: t("permissions.resources.taxes"),
+  [SystemPermissionsResources.Obligations]: t("permissions.resources.obligations"),
+  [SystemPermissionsResources.PosTerminals]: t("permissions.resources.posTerminals"),
 
   // Invoice Permission Settings
-  [SystemPermissionsResources.InvoiceAddSettlement]: "إضافة تسوية للفاتورة",
-  [SystemPermissionsResources.InvoiceShowProfit]: "عرض ربح الفاتورة",
-  [SystemPermissionsResources.InvoiceShowItemProfit]: "عرض ربح المادة في الفاتورة",
-  [SystemPermissionsResources.InvoiceSellBelowSellingPrice]: "البيع بسعر أقل من سعر البيع",
-  [SystemPermissionsResources.InvoiceSellBeyondAvailableQuantity]: "البيع بكمية أكثر من الكمية المتوفرة",
+  [SystemPermissionsResources.InvoiceAddSettlement]: t("permissions.invoice.addSettlement"),
+  [SystemPermissionsResources.InvoiceShowProfit]: t("permissions.invoice.showProfit"),
+  [SystemPermissionsResources.InvoiceShowItemProfit]: t("permissions.invoice.showItemProfit"),
+  [SystemPermissionsResources.InvoiceSellBelowSellingPrice]: t("permissions.invoice.sellBelowSellingPrice"),
+  [SystemPermissionsResources.InvoiceSellBeyondAvailableQuantity]: t("permissions.invoice.sellBeyondAvailableQuantity"),
 
   // Allowed Invoice Types
-  [SystemPermissionsResources.InvoiceSell]: "فاتورة بيع",
-  [SystemPermissionsResources.InvoicePurchase]: "فاتورة شراء",
+  [SystemPermissionsResources.InvoiceSell]: t("permissions.invoice.sell"),
+  [SystemPermissionsResources.InvoicePurchase]: t("permissions.invoice.purchase"),
 
   // Allowed Account Types
-  [SystemPermissionsResources.AccountShowBalance]: "عرض الرصيد",
-  [SystemPermissionsResources.AccountClient]: "حساب عميل",
-  [SystemPermissionsResources.AccountSupplier]: "حساب مورد",
-  [SystemPermissionsResources.AccountEmployee]: "حساب موظف",
-  [SystemPermissionsResources.AccountBank]: "حساب بنك",
-  [SystemPermissionsResources.AccountBox]: "حساب صندوق",
+  [SystemPermissionsResources.AccountShowBalance]: t("permissions.account.showBalance"),
+  [SystemPermissionsResources.AccountClient]: t("permissions.account.client"),
+  [SystemPermissionsResources.AccountSupplier]: t("permissions.account.supplier"),
+  [SystemPermissionsResources.AccountEmployee]: t("permissions.account.employee"),
+  [SystemPermissionsResources.AccountBank]: t("permissions.account.bank"),
+  [SystemPermissionsResources.AccountBox]: t("permissions.account.box"),
 
   // Report Permissions
-  [SystemPermissionsResources.ReportInvoice]: "تقرير الفاتورة",
-  [SystemPermissionsResources.ReportInvoiceList]: "تقرير قائمة الفواتير",
-  [SystemPermissionsResources.ReportVoucher]: "تقرير السند",
-  [SystemPermissionsResources.ReportVoucherList]: "تقرير قائمة السندات",
-  [SystemPermissionsResources.ReportAccountStatement]: "تقرير كشف حساب",
-  [SystemPermissionsResources.ReportAccountList]: "تقرير قائمة الحسابات",
-  [SystemPermissionsResources.ReportBalanceTransfer]: "تقرير نقل رصيد",
-  [SystemPermissionsResources.ReportItemStatement]: "تقرير كشف مادة",
-  [SystemPermissionsResources.ReportItemList]: "تقرير قائمة المواد",
-  [SystemPermissionsResources.ReportItemMovement]: "تقرير حركة المواد",
-  [SystemPermissionsResources.ReportItemTaxStatement]: "تقرير كشف ضريبة مادة",
-  [SystemPermissionsResources.ReportItemTransfer]: "تقرير نقل مادة",
-  [SystemPermissionsResources.ReportBalanceSheet]: "تقرير الميزانية العمومية",
-  [SystemPermissionsResources.ReportTaxReturn]: "تقرير الإقرار الضريبي",
-  [SystemPermissionsResources.ReportProfitAndLoss]: "تقرير الربح والخسارة",
-  [SystemPermissionsResources.ReportStocktaking]: "تقرير جرد المواد",
-  [SystemPermissionsResources.ReportItemSettlement]: "تقرير تسوية المواد",
-  [SystemPermissionsResources.ReportItemBarcode]: "تقرير باركود المواد",
+  [SystemPermissionsResources.ReportInvoice]: t("permissions.report.invoice"),
+  [SystemPermissionsResources.ReportInvoiceList]: t("permissions.report.invoiceList"),
+  [SystemPermissionsResources.ReportVoucher]: t("permissions.report.voucher"),
+  [SystemPermissionsResources.ReportVoucherList]: t("permissions.report.voucherList"),
+  [SystemPermissionsResources.ReportAccountStatement]: t("permissions.report.accountStatement"),
+  [SystemPermissionsResources.ReportAccountList]: t("permissions.report.accountList"),
+  [SystemPermissionsResources.ReportBalanceTransfer]: t("permissions.report.balanceTransfer"),
+  [SystemPermissionsResources.ReportItemStatement]: t("permissions.report.itemStatement"),
+  [SystemPermissionsResources.ReportItemList]: t("permissions.report.itemList"),
+  [SystemPermissionsResources.ReportItemMovement]: t("permissions.report.itemMovement"),
+  [SystemPermissionsResources.ReportItemTaxStatement]: t("permissions.report.itemTaxStatement"),
+  [SystemPermissionsResources.ReportItemTransfer]: t("permissions.report.itemTransfer"),
+  [SystemPermissionsResources.ReportBalanceSheet]: t("permissions.report.balanceSheet"),
+  [SystemPermissionsResources.ReportTaxReturn]: t("permissions.report.taxReturn"),
+  [SystemPermissionsResources.ReportProfitAndLoss]: t("permissions.report.profitAndLoss"),
+  [SystemPermissionsResources.ReportStocktaking]: t("permissions.report.stocktaking"),
+  [SystemPermissionsResources.ReportItemSettlement]: t("permissions.report.itemSettlement"),
+  [SystemPermissionsResources.ReportItemBarcode]: t("permissions.report.itemBarcode"),
 
   // Actions
-  [SystemPermissionsActions.Add]: "إضافة",
-  [SystemPermissionsActions.Update]: "تعديل",
-  [SystemPermissionsActions.Delete]: "حذف"
-};
+  [SystemPermissionsActions.Add]: t("permissions.actions.add"),
+  [SystemPermissionsActions.Update]: t("permissions.actions.update"),
+  [SystemPermissionsActions.Delete]: t("permissions.actions.delete")
+});
 
-export const PERMISSION_SECTIONS = [{
+export const getPermissionSections = (t: TFunction<"erpCommon">) => [{
   id: "tables",
-  title: "بيانات النظام الأساسية",
+  title: t("permissions.sections.tables"),
   icon: Database,
   resources: [
     SystemPermissionsResources.Invoices,
@@ -91,13 +92,11 @@ export const PERMISSION_SECTIONS = [{
     SystemPermissionsResources.Users,
     SystemPermissionsResources.Roles,
     SystemPermissionsResources.Branches,
-    // SystemPermissionsResources.PosTerminals,
-    // SystemPermissionsResources.Obligations,
     SystemPermissionsResources.Settings
   ]
 }, {
   id: "invoices",
-  title: "صلاحيات الفواتير",
+  title: t("permissions.sections.invoices"),
   icon: ShoppingCart,
   resources: [
     SystemPermissionsResources.InvoiceAddSettlement,
@@ -110,7 +109,7 @@ export const PERMISSION_SECTIONS = [{
   ]
 }, {
   id: "accounts",
-  title: "صلاحيات الحسابات",
+  title: t("permissions.sections.accounts"),
   icon: Wallet,
   resources: [
     SystemPermissionsResources.AccountShowBalance,
@@ -122,7 +121,7 @@ export const PERMISSION_SECTIONS = [{
   ]
 }, {
   id: "reports",
-  title: "تقارير النظام",
+  title: t("permissions.sections.reports"),
   icon: FileBarChart,
   resources: [
     SystemPermissionsResources.ReportInvoice,

@@ -1,5 +1,6 @@
 import { Building } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPage } from "../../components/custom";
@@ -10,6 +11,7 @@ import { ChangeBranchDialog } from "./changeBranchDialog";
 
 export function BranchesPage()
 {
+  const { t } = useTranslation("commonEntities");
   const dispatch = useDispatch();
   const authState = useSelector((state: YusrRootState) => state.auth);
   const branchState = useSelector((state: YusrRootState) => state.branch);
@@ -21,9 +23,9 @@ export function BranchesPage()
 
   return (
     <CrudPage<Branch>
-      title="إدارة الفروع"
-      entityName="الفرع"
-      addNewItemTitle="إضافة فرع جديد"
+      title={ t("branches.title") }
+      entityName={ t("branches.entityName") }
+      addNewItemTitle={ t("branches.addNewTitle") }
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -34,15 +36,17 @@ export function BranchesPage()
       useSlice={ () => branchDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي الفروع",
+        title: t("branches.totalBranches"),
         data: (branchState.entities?.count ?? 0).toString(),
         icon: <Building className="h-4 w-4 text-muted-foreground" />
       }] }
       columnsToFilter={ BranchFilterColumns.columnsNames }
-      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, { rowName: "رقم الفرع", rowStyles: "w-30" }, {
-        rowName: "اسم الفرع",
-        rowStyles: ""
-      }, { rowName: "المدينة", rowStyles: "" }] }
+      tableHeadRows={ [
+        { rowName: "", rowStyles: "text-left w-12.5" },
+        { rowName: t("branches.branchId"), rowStyles: "w-30" },
+        { rowName: t("branches.branchName"), rowStyles: "" },
+        { rowName: t("branches.city"), rowStyles: "" }
+      ] }
       tableRowMapper={ (
         branch: Branch
       ) => [{ rowName: `#${branch.id}`, rowStyles: "" }, { rowName: branch.name, rowStyles: "font-semibold" }, {

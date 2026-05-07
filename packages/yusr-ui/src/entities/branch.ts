@@ -1,3 +1,4 @@
+import { type TFunction } from "i18next";
 import { BranchesApiService } from "../networking";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
 import type { ColumnName } from "../types";
@@ -29,27 +30,27 @@ export class BranchFilterColumns
 
 export class BranchValidationRules
 {
-  public static validationRules: ValidationRule<Partial<Branch>>[] = [{
+  public static validationRules = (t: TFunction<"commonEntities", undefined>): ValidationRule<Partial<Branch>>[] => [{
     field: "name",
     selector: (d) => d.name,
-    validators: [Validators.required("اسم الفرع مطلوب")]
+    validators: [Validators.required(t("branches.nameRequired"))]
   }, {
     field: "cityId",
     selector: (d) => d.cityId,
-    validators: [Validators.required("يرجى اختيار المدينة")]
+    validators: [Validators.required(t("branches.cityRequired"))]
   }, {
     field: "buildingNumber",
     selector: (d) => d.buildingNumber,
     validators: [Validators.optional(
-      Validators.exactLength(4, "رقم المبنى يجب أن يتكون من أربع أرقام"),
-      Validators.numeric()
+      Validators.exactLength(4, t("branches.buildingNumberLength")),
+      Validators.numeric(t("branches.buildingNumberNumeric"))
     )]
   }, {
     field: "postalCode",
     selector: (d) => d.postalCode,
     validators: [Validators.optional(
-      Validators.exactLength(5, "الرمز البريدي يجب أن يتكون من خمس أرقام"),
-      Validators.numeric()
+      Validators.exactLength(5, t("branches.postalCodeLength")),
+      Validators.numeric(t("branches.postalCodeNumeric"))
     )]
   }];
 }

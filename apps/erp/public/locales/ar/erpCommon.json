@@ -1,62 +1,4 @@
 {
-  "change_language": "تغيير اللغة",
-  "arabic": "العربية",
-  "english": "English",
-  "login": "تسجيل الدخول",
-  "logout": "تسجيل الخروج",
-  "register": "إبدأ الاستخدام مجانًا",
-  "changeTheme": "تغيير السمة",
-  "darkTheme": "داكن",
-  "lightTheme": "فاتح",
-  "systemTheme": "النظام",
-  "searchPlaceholder": "ابحث...",
-  "searchNullOption": "اختر العمود",
-  "yes": "نعم",
-  "no": "لا",
-
-  "searchableSelect": {
-    "placeholder": "اختر...",
-    "loading": "جاري التحميل...",
-    "noData": "لا توجد بيانات",
-    "allOption": "الكل",
-    "addOption": "إضافة \"{{value}}\""
-  },
-
-  "pagination": {
-    "previous": "السابق",
-    "next": "التالي",
-    "results": "نتائج {{start}} - {{end}} من {{total}}"
-  },
-
-  "crudRow": {
-    "actions": "الإجراءات",
-    "edit": "تعديل",
-    "delete": "حذف"
-  },
-
-  "changeDialog": {
-    "unauthorized": "غير مصرح",
-    "close": "إغلاق",
-    "cancel": "إلغاء"
-  },
-
-  "deleteDialog": {
-    "title": "حذف {{entityName}}",
-    "confirmMessage": "هل أنت متأكد من حذف {{entityName}} رقم {{id}}؟",
-    "warningMessage": "لا يمكن التراجع عن هذا الإجراء. سيؤدي ذلك إلى حذف {{entityName}} نهائياً وإزالته من خوادمنا.",
-    "cancel": "إلغاء",
-    "confirm": "تأكيد الحذف"
-  },
-
-  "saveButton": {
-    "save": "حفظ",
-    "saveChanges": "حفظ التغييرات",
-    "warnings": "تحذيرات",
-    "errors": "أخطاء",
-    "cancel": "إلغاء",
-    "ignoreWarnings": "تجاهل التحذيرات"
-  },
-
   "sidebar": {
     "dashboard": "لوحة المعلومات",
     "taxes": "الضرائب",
@@ -128,6 +70,80 @@
       "october": "أكتوبر",
       "november": "نوفمبر",
       "december": "ديسمبر"
+    }
+  },
+
+  "permissions": {
+    "resources": {
+      "branches": "الفروع",
+      "settings": "الإعدادات",
+      "users": "المستخدمين",
+      "roles": "الأدوار",
+      "dashboard": "لوحة التحكم",
+      "invoices": "الفواتير",
+      "vouchers": "السندات",
+      "accounts": "الحسابات",
+      "balanceTransfers": "تحويلات الرصيد",
+      "paymentMethods": "طرق الدفع",
+      "items": "المواد",
+      "itemTransfers": "تحويلات المواد",
+      "itemsSettlements": "تسويات المواد",
+      "stocktakings": "الجرد",
+      "units": "الوحدات",
+      "pricingMethods": "طرق التسعير",
+      "stores": "المستودعات",
+      "taxes": "الضرائب",
+      "obligations": "الالتزامات",
+      "posTerminals": "نقاط البيع",
+      "authorizedStores": "المستودعات المسموح بها"
+    },
+    "invoice": {
+      "addSettlement": "إضافة تسوية للفاتورة",
+      "showProfit": "عرض ربح الفاتورة",
+      "showItemProfit": "عرض ربح المادة في الفاتورة",
+      "sellBelowSellingPrice": "البيع بسعر أقل من سعر البيع",
+      "sellBeyondAvailableQuantity": "البيع بكمية أكثر من الكمية المتوفرة",
+      "sell": "فاتورة بيع",
+      "purchase": "فاتورة شراء"
+    },
+    "account": {
+      "showBalance": "عرض الرصيد",
+      "client": "حساب عميل",
+      "supplier": "حساب مورد",
+      "employee": "حساب موظف",
+      "bank": "حساب بنك",
+      "box": "حساب صندوق"
+    },
+    "report": {
+      "invoice": "تقرير الفاتورة",
+      "invoiceList": "تقرير قائمة الفواتير",
+      "voucher": "تقرير السند",
+      "voucherList": "تقرير قائمة السندات",
+      "accountStatement": "تقرير كشف حساب",
+      "accountList": "تقرير قائمة الحسابات",
+      "balanceTransfer": "تقرير نقل رصيد",
+      "itemStatement": "تقرير كشف مادة",
+      "itemList": "تقرير قائمة المواد",
+      "itemMovement": "تقرير حركة المواد",
+      "itemTaxStatement": "تقرير كشف ضريبة مادة",
+      "itemTransfer": "تقرير نقل مادة",
+      "balanceSheet": "تقرير الميزانية العمومية",
+      "taxReturn": "تقرير الإقرار الضريبي",
+      "profitAndLoss": "تقرير الربح والخسارة",
+      "stocktaking": "تقرير جرد المواد",
+      "itemSettlement": "تقرير تسوية المواد",
+      "itemBarcode": "تقرير باركود المواد"
+    },
+    "actions": {
+      "add": "إضافة",
+      "update": "تعديل",
+      "delete": "حذف"
+    },
+    "sections": {
+      "tables": "بيانات النظام الأساسية",
+      "invoices": "صلاحيات الفواتير",
+      "accounts": "صلاحيات الحسابات",
+      "reports": "تقارير النظام"
     }
   }
 }

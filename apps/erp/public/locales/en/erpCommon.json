@@ -1,62 +1,4 @@
 {
-  "change_language": "Change Language",
-  "arabic": "العربية",
-  "english": "English",
-  "login": "Login",
-  "logout": "Logout",
-  "register": "Get started for free",
-  "changeTheme": "Change Theme",
-  "darkTheme": "Dark",
-  "lightTheme": "Light",
-  "systemTheme": "System",
-  "searchPlaceholder": "Search...",
-  "searchNullOption": "Choose a column",
-  "yes": "Yes",
-  "no": "No",
-
-  "searchableSelect": {
-    "placeholder": "Select...",
-    "loading": "Loading...",
-    "noData": "No data found",
-    "allOption": "All",
-    "addOption": "Add \"{{value}}\""
-  },
-
-  "pagination": {
-    "previous": "Previous",
-    "next": "Next",
-    "results": "Results {{start}} - {{end}} of {{total}}"
-  },
-
-  "crudRow": {
-    "actions": "Actions",
-    "edit": "Edit",
-    "delete": "Delete"
-  },
-
-  "changeDialog": {
-    "unauthorized": "Unauthorized",
-    "close": "Close",
-    "cancel": "Cancel"
-  },
-
-  "deleteDialog": {
-    "title": "Delete {{entityName}}",
-    "confirmMessage": "Are you sure you want to delete {{entityName}} #{{id}}?",
-    "warningMessage": "This action cannot be undone. It will permanently delete the {{entityName}} and remove it from our servers.",
-    "cancel": "Cancel",
-    "confirm": "Confirm Delete"
-  },
-
-  "saveButton": {
-    "save": "Save",
-    "saveChanges": "Save Changes",
-    "warnings": "Warnings",
-    "errors": "Errors",
-    "cancel": "Cancel",
-    "ignoreWarnings": "Ignore Warnings"
-  },
-
   "sidebar": {
     "dashboard": "Dashboard",
     "taxes": "Taxes",
@@ -128,6 +70,80 @@
       "october": "October",
       "november": "November",
       "december": "December"
+    }
+  },
+
+  "permissions": {
+    "resources": {
+      "branches": "Branches",
+      "settings": "Settings",
+      "users": "Users",
+      "roles": "Roles",
+      "dashboard": "Dashboard",
+      "invoices": "Invoices",
+      "vouchers": "Vouchers",
+      "accounts": "Accounts",
+      "balanceTransfers": "Balance Transfers",
+      "paymentMethods": "Payment Methods",
+      "items": "Items",
+      "itemTransfers": "Item Transfers",
+      "itemsSettlements": "Stock Adjustments",
+      "stocktakings": "Stocktaking",
+      "units": "Units",
+      "pricingMethods": "Pricing Methods",
+      "stores": "Warehouses",
+      "taxes": "Taxes",
+      "obligations": "Obligations",
+      "posTerminals": "POS Terminals",
+      "authorizedStores": "Authorized Stores"
+    },
+    "invoice": {
+      "addSettlement": "Add settlement to invoice",
+      "showProfit": "Show invoice profit",
+      "showItemProfit": "Show item profit in invoice",
+      "sellBelowSellingPrice": "Sell below selling price",
+      "sellBeyondAvailableQuantity": "Sell more than available quantity",
+      "sell": "Sales Invoice",
+      "purchase": "Purchase Invoice"
+    },
+    "account": {
+      "showBalance": "Show balance",
+      "client": "Customer Account",
+      "supplier": "Supplier Account",
+      "employee": "Employee Account",
+      "bank": "Bank Account",
+      "box": "Cash Box Account"
+    },
+    "report": {
+      "invoice": "Invoice Report",
+      "invoiceList": "Invoice List Report",
+      "voucher": "Voucher Report",
+      "voucherList": "Voucher List Report",
+      "accountStatement": "Account Statement Report",
+      "accountList": "Account List Report",
+      "balanceTransfer": "Balance Transfer Report",
+      "itemStatement": "Item Statement Report",
+      "itemList": "Item List Report",
+      "itemMovement": "Item Movement Report",
+      "itemTaxStatement": "Item Tax Statement Report",
+      "itemTransfer": "Item Transfer Report",
+      "balanceSheet": "Balance Sheet Report",
+      "taxReturn": "Tax Return Report",
+      "profitAndLoss": "Profit and Loss Report",
+      "stocktaking": "Stocktaking Report",
+      "itemSettlement": "Stock Adjustment Report",
+      "itemBarcode": "Item Barcode Report"
+    },
+    "actions": {
+      "add": "Add",
+      "update": "Update",
+      "delete": "Delete"
+    },
+    "sections": {
+      "tables": "Core System Data",
+      "invoices": "Invoice Permissions",
+      "accounts": "Account Permissions",
+      "reports": "System Reports"
     }
   }
 }

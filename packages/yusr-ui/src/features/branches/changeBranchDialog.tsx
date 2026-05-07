@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ChangeDialog, type CommonChangeDialogProps, FieldsSection, FormField, SearchableSelect, TextField } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
@@ -8,6 +9,7 @@ import { useAppDispatch, type YusrRootState } from "../../state";
 
 export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Branch>)
 {
+  const { t } = useTranslation(["commonEntities", 'common']);
   const cityState = useSelector((state: YusrRootState) => state.city);
   const dispatch = useAppDispatch();
 
@@ -20,14 +22,16 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    BranchValidationRules.validationRules,
+    BranchValidationRules.validationRules(t),
     (errors) => dispatch(BranchSlice.formActions.setErrors(errors))
   );
   useFormInit(BranchSlice.formActions.setInitialData, entity ?? {});
 
+  const title = mode === "create" ? t("branches.addNewTitle") : `${t("common:crudRow.edit")} ${t("branches.entityName")}`;
+
   return (
     <ChangeDialog<Branch>
-      title={ `${mode === "create" ? "إضافة" : "تعديل"} فرع` }
+      title={ title }
       formData={ formData }
       dialogMode={ mode }
       service={ service }
@@ -37,7 +41,7 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
     >
       <FieldGroup className="py-2">
         <TextField
-          label="اسم الفرع"
+          label={ t("branches.branchName") }
           value={ formData.name || "" }
           onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ name: e.target.value })) }
           isInvalid={ isInvalid("name") }
@@ -45,12 +49,17 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
           required={ true }
         />
 
-        <FormField label="المدينة" required={ true } isInvalid={ isInvalid("cityId") } error={ getError("cityId") }>
+        <FormField
+          label={ t("branches.city") }
+          required={ true }
+          isInvalid={ isInvalid("cityId") }
+          error={ getError("cityId") }
+        >
           <SearchableSelect
             items={ cityState.entities.data ?? [] }
             itemLabelKey="name"
             itemValueKey="id"
-            placeholder="اختر المدينة"
+            placeholder={ t("common:searchableSelect.placeholder") }
             value={ formData.cityId?.toString() || "" }
             onValueChange={ (val) => dispatch(BranchSlice.formActions.updateFormData({ cityId: Number(val) })) }
             columnsNames={ CityFilterColumns.columnsNames }
@@ -63,24 +72,24 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
 
         <FieldsSection title="" columns={ 2 }>
           <TextField
-            label="الشارع"
+            label={ t("branches.street") }
             value={ formData.street || "" }
             onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ street: e.target.value })) }
           />
           <TextField
-            label="الحي"
+            label={ t("branches.district") }
             value={ formData.district || "" }
             onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ district: e.target.value })) }
           />
           <TextField
-            label="رقم المبنى"
+            label={ t("branches.buildingNumber") }
             value={ formData.buildingNumber || "" }
             onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ buildingNumber: e.target.value })) }
             isInvalid={ isInvalid("buildingNumber") }
             error={ getError("buildingNumber") }
           />
           <TextField
-            label="الرمز البريدي"
+            label={ t("branches.postalCode") }
             value={ formData.postalCode || "" }
             onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ postalCode: e.target.value })) }
             isInvalid={ isInvalid("postalCode") }
