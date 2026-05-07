@@ -1,5 +1,6 @@
 import { FileText } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { CrudPage, CurrencyIcon, FilterCondition, NumbertoWordsService, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -11,6 +12,7 @@ import ChangeVoucherDialog from "./changeVoucherDialog";
 
 export default function VouchersPage()
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const voucherState = useAppSelector((state) => state.voucher);
@@ -25,9 +27,9 @@ export default function VouchersPage()
 
   return (
     <CrudPage<Voucher>
-      title="السندات المالية"
-      entityName="سند"
-      addNewItemTitle="إضافة سند جديد"
+      title={ t("vouchers.title") }
+      entityName={ t("vouchers.entityName") }
+      addNewItemTitle={ t("vouchers.addNewTitle") }
       onConditionChange={ setCondition }
       actionButtons={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],
@@ -53,19 +55,19 @@ export default function VouchersPage()
       useSlice={ () => voucherDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي السندات",
+        title: t("vouchers.totalVouchers"),
         data: (voucherState.entities?.count ?? 0).toString(),
         icon: <FileText className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ VoucherFilterColumns.columnsNames }
+      columnsToFilter={ VoucherFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: "رقم السند", rowStyles: "w-24" },
-        { rowName: "نوع السند", rowStyles: "w-24" },
-        { rowName: "التاريخ", rowStyles: "w-24" },
-        { rowName: "الحساب", rowStyles: "w-40" },
-        { rowName: "المبلغ", rowStyles: "w-32" },
-        { rowName: "طريقة الدفع", rowStyles: "w-32" },
+        { rowName: t("vouchers.voucherId"), rowStyles: "w-24" },
+        { rowName: t("vouchers.voucherType"), rowStyles: "w-24" },
+        { rowName: t("vouchers.date"), rowStyles: "w-24" },
+        { rowName: t("vouchers.account"), rowStyles: "w-40" },
+        { rowName: t("vouchers.amount"), rowStyles: "w-32" },
+        { rowName: t("vouchers.paymentMethod"), rowStyles: "w-32" },
         ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
             SystemPermissionsResources.ReportVoucher,
@@ -77,7 +79,7 @@ export default function VouchersPage()
       tableRowMapper={ (voucher: Voucher) => [
         { rowName: `#${voucher.id}`, rowStyles: "" },
         {
-          rowName: voucher.type === VoucherType.Payment ? "سند صرف" : "سند قبض",
+          rowName: voucher.type === VoucherType.Payment ? t("vouchers.paymentVoucher") : t("vouchers.receiptVoucher"),
           rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
             voucher.type === VoucherType.Payment ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
           }`

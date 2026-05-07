@@ -1,5 +1,5 @@
-import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
+import { type TFunction } from "i18next";
+import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import VouchersApiService from "../networking/voucherApiService";
 import type PaymentMethod from "./paymentMethod";
 
@@ -38,33 +38,37 @@ export default class Voucher extends BaseEntity
 
 export class VoucherFilterColumns
 {
-  public static columnsNames: ColumnName<Voucher>[] = [{ label: "رقم السند", value: "id" }, {
-    label: "اسم الحساب",
+  public static columnsNames = (
+    t: TFunction<"accounting">
+  ): ColumnName<Voucher>[] => [{ label: t("vouchers.voucherId"), value: "id" }, {
+    label: t("vouchers.account"),
     value: "accountName"
-  }, { label: "البيان", value: "description" }];
+  }, { label: t("vouchers.description"), value: "description" }];
 }
 
 export class VoucherValidationRules
 {
-  public static validationRules: ValidationRule<Partial<Voucher>>[] = [
-    {
-      field: "type",
-      selector: (d) => d.type,
-      validators: [Validators.required("يرجى اختيار نوع السند")]
-    },
-    { field: "date", selector: (d) => d.date, validators: [Validators.required("يرجى اختيار التاريخ")] },
-    {
-      field: "amount",
-      selector: (d) => d.amount,
-      validators: [Validators.required("يرجى إدخال المبلغ")]
-    },
-    { field: "accountId", selector: (d) => d.accountId, validators: [Validators.required("يرجى اختيار الحساب")] },
-    {
-      field: "paymentMethodId",
-      selector: (d) => d.paymentMethodId,
-      validators: [Validators.required("يرجى اختيار طريقة الدفع")]
-    }
-  ];
+  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Voucher>>[] => [{
+    field: "type",
+    selector: (d) => d.type,
+    validators: [Validators.required(t("vouchers.typeRequired"))]
+  }, {
+    field: "date",
+    selector: (d) => d.date,
+    validators: [Validators.required(t("vouchers.dateRequired"))]
+  }, {
+    field: "amount",
+    selector: (d) => d.amount,
+    validators: [Validators.required(t("vouchers.amountRequired"))]
+  }, {
+    field: "accountId",
+    selector: (d) => d.accountId,
+    validators: [Validators.required(t("vouchers.accountRequired"))]
+  }, {
+    field: "paymentMethodId",
+    selector: (d) => d.paymentMethodId,
+    validators: [Validators.required(t("vouchers.paymentMethodRequired"))]
+  }];
 }
 
 export class VoucherSlice

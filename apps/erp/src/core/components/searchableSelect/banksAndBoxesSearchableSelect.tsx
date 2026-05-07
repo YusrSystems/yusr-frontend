@@ -1,6 +1,7 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import Account, { AccountType, BanksAndBoxesSlice } from "@/core/data/account";
 import { useAppSelector } from "@/core/state/store";
+import { useTranslation } from "react-i18next";
 import type { EntitySearchableSelectParams } from "yusr-ui";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import AccountsSearchableSelect from "./accountsSearchableSelect";
@@ -9,6 +10,7 @@ export default function BanksAndBoxesSearchableSelect(
   { id, isInvalid, items, onValueChange }: EntitySearchableSelectParams<Account> & { items?: Account[]; }
 )
 {
+  const { t } = useTranslation("accounting");
   const authState = useAppSelector((state) => state.auth);
 
   const hasBankPerm = SystemPermissions.hasAuth(
@@ -36,10 +38,10 @@ export default function BanksAndBoxesSearchableSelect(
       selectEntityState={ (state) => state.banksAndBoxes }
       selectFormState={ (state) => state.banksAndBoxesForm }
       selectTypes={ [
-        ...(hasBankPerm ? [{ label: "بنك", value: AccountType.Bank.toString() }] : []),
+        ...(hasBankPerm ? [{ label: t("accounts.bank"), value: AccountType.Bank.toString() }] : []),
         ...(hasBoxPerm
           ? [{
-            label: "صندوق",
+            label: t("accounts.box"),
             value: AccountType.Box.toString()
           }]
           : [])
