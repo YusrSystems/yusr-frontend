@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { FieldGroup, FieldsSection, FormField, SearchableSelect, SelectField, SelectInput, TextAreaField } from "yusr-ui";
 import { EInvoicingEnvironmentType, InvoicePrintSize } from "../../core/data/setting";
 import { TaxFilterColumns, TaxSlice } from "../../core/data/tax";
@@ -7,6 +8,8 @@ import { useSettingContext } from "./settingContext";
 
 export default function InvoiceSection()
 {
+  const { t } = useTranslation("erpCommon");
+
   const {
     formData,
     handleChange,
@@ -22,9 +25,9 @@ export default function InvoiceSection()
   return (
     <div className="space-y-10 animate-in fade-in">
       <FieldGroup>
-        <FieldsSection title="إعدادات الفواتير والضرائب" columns={ 2 }>
+        <FieldsSection title={ t("settings.invoiceAndTaxSettings") } columns={ 2 }>
           <FormField
-            label="العملة الافتراضية"
+            label={ t("settings.defaultCurrency") }
             required
             isInvalid={ isInvalid("currencyId") }
             error={ getError("currencyId") }
@@ -44,7 +47,7 @@ export default function InvoiceSection()
           </FormField>
 
           <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium">الضريبة الافتراضية</label>
+            <label className="text-sm font-medium">{ t("settings.defaultTax") }</label>
             <SearchableSelect
               items={ taxState.entities.data ?? [] }
               itemLabelKey="name"
@@ -59,11 +62,11 @@ export default function InvoiceSection()
           </div>
 
           <SelectField
-            label="حجم طباعة الفاتورة"
+            label={ t("settings.invoicePrintSize") }
             value={ formData.invoicePrintSize?.toString() || InvoicePrintSize.A4.toString() }
             onValueChange={ (val) => handleChange({ invoicePrintSize: Number(val) as InvoicePrintSize }) }
-            options={ [{ label: "ورق A4", value: InvoicePrintSize.A4.toString() }, {
-              label: "طابعة حرارية (Thermal)",
+            options={ [{ label: t("settings.a4Paper"), value: InvoicePrintSize.A4.toString() }, {
+              label: t("settings.thermalPrinter"),
               value: InvoicePrintSize.ThermalPrinter.toString()
             }] }
           />
@@ -71,11 +74,11 @@ export default function InvoiceSection()
 
         <FieldsSection columns={ 1 }>
           <TextAreaField
-            label="سياسة الفواتير (تظهر أسفل الفاتورة)"
+            label={ t("settings.invoicePolicy") }
             value={ formData.invoicePolicy || "" }
             onChange={ (e) => handleChange({ invoicePolicy: e.target.value }) }
             rows={ 3 }
-            placeholder="مثال: البضاعة المباعة لا ترد ولا تستبدل بعد 3 أيام..."
+            placeholder={ t("settings.invoicePolicyPlaceholder") }
           />
         </FieldsSection>
       </FieldGroup>
@@ -90,7 +93,7 @@ export default function InvoiceSection()
 
       <EInvoicingRegisterButton
         title="Fatoora Simulation"
-        subtitle="تجربة الربط مع الهيئة"
+        subtitle={ t("settings.simulationSubtitle") }
         linkType={ EInvoicingEnvironmentType.Simulation }
         linked={ formData.eInvoicingEnvironmentType === EInvoicingEnvironmentType.Simulation }
         onFinish={ () => handleChange({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Simulation }) }
@@ -98,7 +101,7 @@ export default function InvoiceSection()
 
       <EInvoicingRegisterButton
         title="Fatoora Portal"
-        subtitle="الربط مع الهيئة وإرسال المستندات بشكل رسمي"
+        subtitle={ t("settings.productionSubtitle") }
         linkType={ EInvoicingEnvironmentType.Production }
         linked={ formData.eInvoicingEnvironmentType === EInvoicingEnvironmentType.Production }
         onFinish={ () => handleChange({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Production }) }

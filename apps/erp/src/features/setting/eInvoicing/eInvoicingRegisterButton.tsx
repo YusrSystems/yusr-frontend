@@ -2,6 +2,7 @@ import ZatcaLogo from "@/assets/Zatca_logo.png";
 import type { EInvoicingEnvironmentType } from "@/core/data/setting";
 import { CircleCheck } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogContent } from "yusr-ui";
 import { EInvoicingRegister } from "./eInvoicingRegister";
 
@@ -22,6 +23,7 @@ export function EInvoicingRegisterButton({
   onFinish
 }: EInvoicingRegisterButtonProps)
 {
+  const { t } = useTranslation("erpCommon");
   const [open, setOpen] = useState(false);
 
   const handleFinish = () =>
@@ -45,7 +47,7 @@ export function EInvoicingRegisterButton({
         <div className="ms-auto">
           { linked
             ? <CircleCheck className="text-green-600 dark:text-green-400" />
-            : <Button onClick={ () => setOpen(true) }>ابدأ الربط</Button> }
+            : <Button onClick={ () => setOpen(true) }>{t("settings.startLinking")}</Button> }
         </div>
       </div>
 

@@ -8,6 +8,9 @@ import { useSettingContext } from "./settingContext";
 
 export default function DefaultsSection()
 {
+  const { t } = useTranslation("erpCommon");
+  const { t: tStocking } = useTranslation("stocking");
+  const { t: tAccounting } = useTranslation("accounting");
   const {
     formData,
     handleChange
@@ -17,15 +20,13 @@ export default function DefaultsSection()
   const storeState = useAppSelector((state) => state.store);
   const paymentMethodState = useAppSelector((state) => state.paymentMethod);
   const accountState = useAppSelector((state) => state.clientsAndSuppliers);
-  const { t: tStocking } = useTranslation("stocking");
-  const { t: tAccounting } = useTranslation("accounting");
 
   return (
     <div className="space-y-10 animate-in fade-in">
       <FieldGroup>
-        <FieldsSection title="الحسابات والمستودعات الافتراضية" columns={ 2 }>
+        <FieldsSection title={t("settings.defaultAccountsAndWarehouses")} columns={ 2 }>
           <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium">المستودع الافتراضي</label>
+            <label className="text-sm font-medium">{t("settings.defaultWarehouse")}</label>
             <SearchableSelect
               items={ storeState.entities.data ?? [] }
               itemLabelKey="name"
@@ -44,7 +45,7 @@ export default function DefaultsSection()
           </div>
 
           <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium">طريقة الدفع الافتراضية</label>
+            <label className="text-sm font-medium">{t("settings.defaultPaymentMethod")}</label>
             <SearchableSelect
               items={ paymentMethodState.entities.data ?? [] }
               itemLabelKey="name"
@@ -63,7 +64,7 @@ export default function DefaultsSection()
           </div>
 
           <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium">حساب المبيعات الافتراضي</label>
+            <label className="text-sm font-medium">{t("settings.defaultSalesAccount")}</label>
             <SearchableSelect
               items={ accountState.entities.data ?? [] }
               itemLabelKey="name"
@@ -82,7 +83,7 @@ export default function DefaultsSection()
           </div>
 
           <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium">حساب المشتريات الافتراضي</label>
+            <label className="text-sm font-medium">{t("settings.defaultPurchaseAccount")}</label>
             <SearchableSelect
               items={ accountState.entities.data ?? [] }
               itemLabelKey="name"

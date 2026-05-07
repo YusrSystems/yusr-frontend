@@ -3,6 +3,7 @@ import EInvoicingApiService from "@/core/networking/eInvoicingApiService";
 import { updateSetting, useAppDispatch } from "@/core/state/store";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Card, CardContent, OtpInput } from "yusr-ui";
 
 interface EInvoicingRegisterProps
@@ -13,6 +14,7 @@ interface EInvoicingRegisterProps
 
 export function EInvoicingRegister({ linkType, onFinish }: EInvoicingRegisterProps)
 {
+  const { t } = useTranslation("erpCommon");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
@@ -39,18 +41,16 @@ export function EInvoicingRegister({ linkType, onFinish }: EInvoicingRegisterPro
 
   return (
     <div dir="rtl" className="flex flex-col items-center gap-8 py-6">
-      { /* Icon + heading */ }
       <div className="flex flex-col items-center gap-3 text-center">
         <div className="flex items-center justify-center w-14 h-14 rounded-full bg-green-50 dark:bg-green-950">
           <ShieldCheck className="w-7 h-7 text-green-600 dark:text-green-400" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-foreground">ربط هيئة الزكاة والضريبة والجمارك</h2>
-          <p className="text-sm text-muted-foreground mt-1">أدخل رمز التحقق المكوّن من 6 أرقام</p>
+          <h2 className="text-xl font-semibold text-foreground">{t("settings.linkZatca")}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t("settings.enterVerificationCode")}</p>
         </div>
       </div>
 
-      { /* OTP + button */ }
       <Card className="w-full">
         <CardContent className="flex flex-col items-center gap-6 pt-6">
           <OtpInput value={ otp } onChange={ setOtp } disabled={ loading } />
@@ -64,18 +64,17 @@ export function EInvoicingRegister({ linkType, onFinish }: EInvoicingRegisterPro
             { loading
               ? (
                 <>
-                  <Loader2 className="ml-2 h-4 w-4 animate-spin" /> جاري الربط...
+                  <Loader2 className="ml-2 h-4 w-4 animate-spin" /> {t("settings.linking")}
                 </>
               )
-              : "بدء الربط" }
+              : t("settings.startLinking") }
           </Button>
         </CardContent>
       </Card>
 
-      { /* Help */ }
       <div className="flex flex-col items-center gap-1 text-center text-sm text-muted-foreground">
-        <p>لم تحصل على رمز التحقق؟</p>
-        <p>زُر موقع الهيئة للحصول على رمز التحقق</p>
+        <p>{t("settings.noCode")}</p>
+        <p>{t("settings.visitZatca")}</p>
         <a
           href="https://login.zatca.gov.sa"
           target="_blank"
