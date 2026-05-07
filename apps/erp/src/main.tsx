@@ -8,15 +8,20 @@ import "./index.css";
 function revealApp()
 {
   const loader = document.getElementById("initial-loader");
-  if (!loader)
-  {
-    return;
-  }
+
+  if (!loader) return;
 
   loader.classList.add("hiding");
-  loader.addEventListener("transitionend", () => loader.remove(), { once: true });
+  loader.addEventListener("transitionend", () =>
+  {
+    loader.remove();
 
-  document.body.style.animation = "_app-pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards";
+    // Animate all children of root except the background
+    document.querySelectorAll("#root > * > *:not([data-background])").forEach((el) =>
+    {
+      (el as HTMLElement).style.animation = "content-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both";
+    });
+  }, { once: true });
 }
 
 createRoot(document.getElementById("root")!).render(
