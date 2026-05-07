@@ -1,5 +1,5 @@
-import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
+import { type TFunction } from "i18next";
+import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import PricingMethodsApiService from "../networking/PricingMethodsApiService";
 
 export default class PricingMethod extends BaseEntity
@@ -15,18 +15,18 @@ export default class PricingMethod extends BaseEntity
 
 export class PricingMethodFilterColumns
 {
-  public static columnsNames: ColumnName<PricingMethod>[] = [{
-    label: "اسم طريقة التسعير",
+  public static columnsNames = (t: TFunction<"accounting">): ColumnName<PricingMethod>[] => [{
+    label: t("pricingMethods.methodName"),
     value: "name"
   }];
 }
 
 export class PricingMethodValidationRules
 {
-  public static validationRules: ValidationRule<Partial<PricingMethod>>[] = [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<PricingMethod>>[] => [{
     field: "name",
     selector: (d) => d.name,
-    validators: [Validators.required("يرجى إدخال اسم طريقة التسعير")]
+    validators: [Validators.required(t("pricingMethods.nameRequired"))]
   }];
 }
 

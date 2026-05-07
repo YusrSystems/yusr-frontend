@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import type PricingMethod from "../../core/data/pricingMethod";
@@ -12,6 +13,7 @@ export default function ChangePricingMethodDialog({
   onSuccess
 }: CommonChangeDialogProps<PricingMethod>)
 {
+  const { t } = useTranslation(["accounting", "common"]);
   const initialValues = useMemo(
     () => ({
       ...entity,
@@ -25,14 +27,18 @@ export default function ChangePricingMethodDialog({
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    PricingMethodValidationRules.validationRules,
+    PricingMethodValidationRules.validationRules(t),
     (errors) => dispatch(PricingMethodSlice.formActions.setErrors(errors))
   );
   useFormInit(PricingMethodSlice.formActions.setInitialData, initialValues);
 
+  const title = mode === "create"
+    ? t("pricingMethods.addNewTitle")
+    : `${t("common:crudRow.edit")} ${t("pricingMethods.entityName")}`;
+
   return (
     <ChangeDialog<PricingMethod>
-      title={ `${mode === "create" ? "إضافة" : "تعديل"} طريقة تسعير` }
+      title={ title }
       className="sm:max-w-md"
       formData={ formData }
       dialogMode={ mode }
@@ -43,7 +49,7 @@ export default function ChangePricingMethodDialog({
     >
       <FieldGroup>
         <TextField
-          label="اسم طريقة التسعير"
+          label={ t("pricingMethods.methodName") }
           required
           value={ formData.name || "" }
           onChange={ (e) => dispatch(PricingMethodSlice.formActions.updateFormData({ name: e.target.value })) }

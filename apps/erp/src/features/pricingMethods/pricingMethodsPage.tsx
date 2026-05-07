@@ -1,5 +1,6 @@
 import { TagIcon } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type PricingMethod from "../../core/data/pricingMethod";
@@ -10,6 +11,7 @@ import ChangePricingMethodDialog from "./changePricingMethodDialog";
 
 export default function PricingMethodsPage()
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const pricingMethodState = useAppSelector((state) => state.pricingMethod);
@@ -17,7 +19,6 @@ export default function PricingMethodsPage()
     (state) => state.pricingMethodDialog
   );
 
-  // تأكد من إضافة PricingMethods إلى SystemPermissionsResources في مشروعك
   const permissions = useAppSelector((state) =>
     selectPermissionsByResource(
       state,
@@ -29,9 +30,9 @@ export default function PricingMethodsPage()
 
   return (
     <CrudPage<PricingMethod>
-      title="إدارة طرق التسعير"
-      entityName="طريقة التسعير"
-      addNewItemTitle="إضافة طريقة تسعير جديدة"
+      title={ t("pricingMethods.title") }
+      entityName={ t("pricingMethods.entityName") }
+      addNewItemTitle={ t("pricingMethods.addNewTitle") }
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -42,16 +43,18 @@ export default function PricingMethodsPage()
       useSlice={ () => pricingMethodDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي طرق التسعير",
+        title: t("pricingMethods.totalMethods"),
         data: (pricingMethodState.entities?.count ?? 0).toString(),
         icon: <TagIcon className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ PricingMethodFilterColumns.columnsNames }
-      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, { rowName: "رقم الطريقة", rowStyles: "w-30" }, {
-        rowName: "اسم طريقة التسعير",
-        rowStyles: "w-70"
-      }] }
-      tableRowMapper={ (pricingMethod: PricingMethod) => [{ rowName: `#${pricingMethod.id}`, rowStyles: "" }, {
+      columnsToFilter={ PricingMethodFilterColumns.columnsNames(t) }
+      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
+        rowName: t("pricingMethods.methodId"),
+        rowStyles: "w-30"
+      }, { rowName: t("pricingMethods.methodName"), rowStyles: "w-70" }] }
+      tableRowMapper={ (
+        pricingMethod: PricingMethod
+      ) => [{ rowName: `#${pricingMethod.id}`, rowStyles: "" }, {
         rowName: pricingMethod.name,
         rowStyles: "font-semibold"
       }] }

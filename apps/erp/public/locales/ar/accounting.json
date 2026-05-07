@@ -159,5 +159,15 @@
     "unitId": "رقم الوحدة",
     "unitName": "اسم الوحدة",
     "nameRequired": "يرجى إدخال اسم الوحدة"
+  },
+
+  "pricingMethods": {
+    "title": "إدارة طرق التسعير",
+    "entityName": "طريقة التسعير",
+    "addNewTitle": "إضافة طريقة تسعير جديدة",
+    "totalMethods": "إجمالي طرق التسعير",
+    "methodId": "رقم الطريقة",
+    "methodName": "اسم طريقة التسعير",
+    "nameRequired": "يرجى إدخال اسم طريقة التسعير"
   }
 }

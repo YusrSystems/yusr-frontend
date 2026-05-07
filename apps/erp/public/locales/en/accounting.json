@@ -159,5 +159,15 @@
     "unitId": "Unit Id",
     "unitName": "Unit Name",
     "nameRequired": "Please enter unit name"
+  },
+
+  "pricingMethods": {
+    "title": "Pricing Methods Management",
+    "entityName": "Pricing Method",
+    "addNewTitle": "Add New Pricing Method",
+    "totalMethods": "Total Pricing Methods",
+    "methodId": "Method Id",
+    "methodName": "Pricing Method Name",
+    "nameRequired": "Please enter pricing method name"
   }
 }
