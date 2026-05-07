@@ -3,8 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import type Store from "../../core/data/store";
-import { StoreValidationRules } from "../../core/data/store";
-import { UnitSlice } from "../../core/data/unit";
+import { StoreSlice, StoreValidationRules } from "../../core/data/store";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
 export default function ChangeStoreDialog({
@@ -14,7 +13,7 @@ export default function ChangeStoreDialog({
   onSuccess
 }: CommonChangeDialogProps<Store>)
 {
-  const { t } = useTranslation(["accounting", "common"]);
+  const { t } = useTranslation(["stocking", "common"]);
   const dispatch = useAppDispatch();
   const initialValues = useMemo(
     () => ({
@@ -29,9 +28,9 @@ export default function ChangeStoreDialog({
   const { validate } = useValidate(
     formData,
     StoreValidationRules.validationRules(t),
-    (errors) => dispatch(UnitSlice.formActions.setErrors(errors))
+    (errors) => dispatch(StoreSlice.formActions.setErrors(errors))
   );
-  useFormInit(UnitSlice.formActions.setInitialData, initialValues);
+  useFormInit(StoreSlice.formActions.setInitialData, initialValues);
 
   const title = mode === "create" ? t("stores.addNewTitle") : `${t("common:crudRow.edit")} ${t("stores.entityName")}`;
 
@@ -51,7 +50,7 @@ export default function ChangeStoreDialog({
           label={ t("stores.storeName") }
           required
           value={ formData.name || "" }
-          onChange={ (e) => dispatch(UnitSlice.formActions.updateFormData({ name: e.target.value })) }
+          onChange={ (e) => dispatch(StoreSlice.formActions.updateFormData({ name: e.target.value })) }
           isInvalid={ isInvalid("name") }
           error={ getError("name") }
         />

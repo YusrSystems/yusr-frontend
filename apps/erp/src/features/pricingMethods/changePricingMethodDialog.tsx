@@ -13,7 +13,7 @@ export default function ChangePricingMethodDialog({
   onSuccess
 }: CommonChangeDialogProps<PricingMethod>)
 {
-  const { t } = useTranslation(["accounting", "common"]);
+  const { t } = useTranslation(["stocking", "common"]);
   const initialValues = useMemo(
     () => ({
       ...entity,

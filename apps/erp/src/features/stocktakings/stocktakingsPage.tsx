@@ -12,7 +12,7 @@ import ChangeStocktakingDialog from "./changeStocktakingDialog";
 
 export default function StocktakingsPage()
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const stocktakingState = useAppSelector((state) => state.stocktaking);

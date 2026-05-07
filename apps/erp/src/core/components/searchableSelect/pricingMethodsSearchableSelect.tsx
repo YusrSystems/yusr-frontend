@@ -5,6 +5,7 @@ import { SystemPermissionsResources } from "../../auth/systemPermissionsResource
 import type PricingMethod from "../../data/pricingMethod";
 import { PricingMethodFilterColumns, PricingMethodSlice } from "../../data/pricingMethod";
 import { useAppSelector } from "../../state/store";
+import { useTranslation } from "react-i18next";
 
 export default function PricingMethodsSearchableSelect(
   { id, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<PricingMethod>
@@ -12,6 +13,7 @@ export default function PricingMethodsSearchableSelect(
 {
   const pricingMethodState = useAppSelector((state) => state.pricingMethod);
   const authState = useAppSelector((state) => state.auth);
+  const {t} = useTranslation("stocking");
 
   return (
     <ChangableSearchableSelect<PricingMethod>
@@ -21,7 +23,7 @@ export default function PricingMethodsSearchableSelect(
       itemValueKey="id"
       state={ pricingMethodState }
       apiService={ new PricingMethodsApiService() }
-      columnsNames={ PricingMethodFilterColumns.columnsNames }
+      columnsNames={ PricingMethodFilterColumns.columnsNames(t) }
       disabled={ disabled }
       isInvalid={ isInvalid }
       systemPermissionsResources={ SystemPermissionsResources.PricingMethods }

@@ -14,7 +14,7 @@ export default function ChangeStocktakingDialog(
   { entity, mode, service, onSuccess }: CommonChangeDialogProps<Stocktaking>
 )
 {
-  const { t } = useTranslation(["accounting", "common"]);
+  const { t } = useTranslation(["stocking", "common"]);
   const dispatch = useAppDispatch();
   const [initLoading, setInitLoading] = useState(false);
   const storeState = useAppSelector((state) => state.store);

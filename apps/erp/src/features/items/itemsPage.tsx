@@ -14,7 +14,7 @@ import ChangeItemDialog from "./changeItemDialog";
 
 export default function ItemsPage()
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const itemState = useAppSelector((state) => state.item);

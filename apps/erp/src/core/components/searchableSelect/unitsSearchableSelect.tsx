@@ -1,5 +1,6 @@
 import UnitsApiService from "@/core/networking/unitApiService";
 import ChangeUnitDialog from "@/features/units/changeUnitDialog";
+import { useTranslation } from "react-i18next";
 import { ChangableSearchableSelect, type EntitySearchableSelectParams } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type Unit from "../../data/unit";
@@ -12,6 +13,7 @@ export default function UnitsSearchableSelect(
 {
   const unitState = useAppSelector((state) => state.unit);
   const authState = useAppSelector((state) => state.auth);
+  const { t } = useTranslation("stocking");
 
   return (
     <ChangableSearchableSelect<Unit>
@@ -21,7 +23,7 @@ export default function UnitsSearchableSelect(
       itemValueKey="id"
       state={ unitState }
       apiService={ new UnitsApiService() }
-      columnsNames={ UnitFilterColumns.columnsNames }
+      columnsNames={ UnitFilterColumns.columnsNames(t) }
       disabled={ disabled }
       isInvalid={ isInvalid }
       systemPermissionsResources={ SystemPermissionsResources.Units }

@@ -133,7 +133,7 @@ export class BarcodeResult
 export class ItemFilterColumns
 {
   public static columnsNames = (
-    t: TFunction<"accounting">
+    t: TFunction<"stocking">
   ): ColumnName<Item>[] => [{ label: t("items.itemId"), value: "id" }, { label: t("items.itemName"), value: "name" }, {
     label: t("items.class"),
     value: "class"
@@ -142,7 +142,7 @@ export class ItemFilterColumns
 
 export class ItemValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Item>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<Item>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("items.nameRequired"))]

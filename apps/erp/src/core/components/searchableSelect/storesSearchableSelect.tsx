@@ -5,6 +5,7 @@ import { SystemPermissionsResources } from "../../auth/systemPermissionsResource
 import type Store from "../../data/store";
 import { StoreFilterColumns, StoreSlice } from "../../data/store";
 import { useAppSelector } from "../../state/store";
+import { useTranslation } from "react-i18next";
 
 export default function StoresSearchableSelect(
   { id, items, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<Store> & { items?: Store[]; }
@@ -12,6 +13,7 @@ export default function StoresSearchableSelect(
 {
   const storeState = useAppSelector((state) => state.store);
   const authState = useAppSelector((state) => state.auth);
+  const {t} = useTranslation("stocking");
 
   return (
     <ChangableSearchableSelect<Store>
@@ -22,7 +24,7 @@ export default function StoresSearchableSelect(
       itemValueKey="id"
       state={ storeState }
       apiService={ new StoresApiService() }
-      columnsNames={ StoreFilterColumns.columnsNames }
+      columnsNames={ StoreFilterColumns.columnsNames(t) }
       disabled={ disabled }
       isInvalid={ isInvalid }
       systemPermissionsResources={ SystemPermissionsResources.Stores }

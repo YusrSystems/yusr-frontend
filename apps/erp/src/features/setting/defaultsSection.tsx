@@ -17,7 +17,8 @@ export default function DefaultsSection()
   const storeState = useAppSelector((state) => state.store);
   const paymentMethodState = useAppSelector((state) => state.paymentMethod);
   const accountState = useAppSelector((state) => state.clientsAndSuppliers);
-  const { t } = useTranslation("accounting");
+  const { t: tStocking } = useTranslation("stocking");
+  const { t: tAccounting } = useTranslation("accounting");
 
   return (
     <div className="space-y-10 animate-in fade-in">
@@ -35,7 +36,7 @@ export default function DefaultsSection()
                 const selected = storeState.entities.data?.find((s) => s.id.toString() === val);
                 handleChange({ mainStoreId: selected?.id, mainStoreName: selected?.name });
               } }
-              columnsNames={ StoreFilterColumns.columnsNames }
+              columnsNames={ StoreFilterColumns.columnsNames(tStocking) }
               onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
               isLoading={ storeState.isLoading }
               disabled={ storeState.isLoading }
@@ -73,7 +74,7 @@ export default function DefaultsSection()
                 const selected = accountState.entities.data?.find((a) => a.id.toString() === val);
                 handleChange({ sellAccountId: selected?.id, sellAccountName: selected?.name });
               } }
-              columnsNames={ AccountFilterColumns.columnsNames(t) }
+              columnsNames={ AccountFilterColumns.columnsNames(tAccounting) }
               onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
               isLoading={ accountState.isLoading }
               disabled={ accountState.isLoading }
@@ -92,7 +93,7 @@ export default function DefaultsSection()
                 const selected = accountState.entities.data?.find((a) => a.id.toString() === val);
                 handleChange({ purchaseAccountId: selected?.id, purchaseAccountName: selected?.name });
               } }
-              columnsNames={ AccountFilterColumns.columnsNames(t) }
+              columnsNames={ AccountFilterColumns.columnsNames(tAccounting) }
               onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
               isLoading={ accountState.isLoading }
               disabled={ accountState.isLoading }

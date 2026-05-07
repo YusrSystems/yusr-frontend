@@ -13,7 +13,7 @@ export default function ChangeUnitDialog({
   onSuccess
 }: CommonChangeDialogProps<Unit>)
 {
-  const { t } = useTranslation(["accounting", "common"]);
+  const { t } = useTranslation(["stocking", "common"]);
   const dispatch = useAppDispatch();
   const initialValues = useMemo(() => ({ ...entity, name: entity?.name || "" }), [entity]);
 

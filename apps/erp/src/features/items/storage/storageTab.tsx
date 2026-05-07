@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 
 export default function StorageTab({ mode }: { mode: DialogMode; })
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
 
   const { formData, errors } = useAppSelector((state) => state.itemForm);

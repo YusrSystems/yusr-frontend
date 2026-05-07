@@ -7,7 +7,7 @@ import type { TransferRowItem } from "./logic/itemTransferSlice";
 
 export default function SelectedItemsTable({ mode }: { mode: DialogMode; })
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const { items, errors } = useAppSelector((state) => state.itemTransferUI);
 

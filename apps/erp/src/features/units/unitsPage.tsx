@@ -11,7 +11,7 @@ import ChangeUnitDialog from "./changeUnitDialog";
 
 export default function UnitsPage()
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const unitState = useAppSelector((state) => state.unit);

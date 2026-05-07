@@ -46,7 +46,7 @@ export default class ItemsSettlement extends BaseEntity implements IStocktaking
 export class ItemsSettlementFilterColumns
 {
   public static columnsNames = (
-    t: TFunction<"accounting">
+    t: TFunction<"stocking">
   ): ColumnName<ItemsSettlement>[] => [{ label: t("itemsSettlements.settlementId"), value: "id" }, {
     label: t("itemsSettlements.store"),
     value: "storeName"
@@ -55,7 +55,7 @@ export class ItemsSettlementFilterColumns
 
 export class ItemsSettlementValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<ItemsSettlement>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<ItemsSettlement>>[] => [{
     field: "storeId",
     selector: (d) => d.storeId,
     validators: [Validators.required(t("itemsSettlements.storeRequired"))]

@@ -64,7 +64,7 @@ export default class Stocktaking extends BaseEntity implements IStocktaking
 export class StocktakingFilterColumns
 {
   public static columnsNames = (
-    t: TFunction<"accounting">
+    t: TFunction<"stocking">
   ): ColumnName<Stocktaking>[] => [{ label: t("stocktakings.stocktakingId"), value: "id" }, {
     label: t("stocktakings.store"),
     value: "storeName"
@@ -73,7 +73,7 @@ export class StocktakingFilterColumns
 
 export class StocktakingValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Stocktaking>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<Stocktaking>>[] => [{
     field: "storeId",
     selector: (d) => d.storeId,
     validators: [Validators.required(t("stocktakings.storeRequired"))]

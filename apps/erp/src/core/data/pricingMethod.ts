@@ -15,7 +15,7 @@ export default class PricingMethod extends BaseEntity
 
 export class PricingMethodFilterColumns
 {
-  public static columnsNames = (t: TFunction<"accounting">): ColumnName<PricingMethod>[] => [{
+  public static columnsNames = (t: TFunction<"stocking">): ColumnName<PricingMethod>[] => [{
     label: t("pricingMethods.methodName"),
     value: "name"
   }];
@@ -23,7 +23,7 @@ export class PricingMethodFilterColumns
 
 export class PricingMethodValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<PricingMethod>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<PricingMethod>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("pricingMethods.nameRequired"))]

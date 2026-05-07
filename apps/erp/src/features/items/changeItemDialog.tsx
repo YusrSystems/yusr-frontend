@@ -25,7 +25,7 @@ export default function ChangeItemDialog({
   onSuccess
 }: CommonChangeDialogProps<Item>)
 {
-  const { t } = useTranslation(["accounting", "common"]);
+  const { t } = useTranslation(["stocking", "common"]);
   const dispatch = useAppDispatch();
   const [initLoading, setInitLoading] = useState(false);
 

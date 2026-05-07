@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField, SearchableSelect, SelectField } from "yusr-ui";
 import { AccountFilterColumns, ClientsAndSuppliersSlice } from "../../core/data/account";
 import { ItemFilterColumns, ItemSlice } from "../../core/data/item";
@@ -7,7 +8,6 @@ import ReportConstants from "../../core/data/report/reportConstants";
 import { StoreFilterColumns, StoreSlice } from "../../core/data/store";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "./reportButton";
-import { useTranslation } from "react-i18next";
 
 export default function ItemsMovementDialog()
 {
@@ -15,7 +15,8 @@ export default function ItemsMovementDialog()
   const itemState = useAppSelector((state) => state.item);
   const accountState = useAppSelector((state) => state.clientsAndSuppliers);
   const storeState = useAppSelector((state) => state.store);
-  const {t} = useTranslation("accounting");
+  const { t } = useTranslation("accounting");
+  const { t: tStocking } = useTranslation("stocking");
 
   const [isOpen, setIsOpen] = useState(false);
   const [transTypeId, setTransTypeId] = useState<ItemsMovementReportTransType | undefined>(undefined);
@@ -63,7 +64,7 @@ export default function ItemsMovementDialog()
                 showAllOption
                 value={ itemId?.toString() ?? "" }
                 onValueChange={ (val) => setItemId(val ? Number(val) : undefined) }
-                columnsNames={ ItemFilterColumns.columnsNames }
+                columnsNames={ ItemFilterColumns.columnsNames(tStocking) }
                 onSearch={ (condition) => dispatch(ItemSlice.entityActions.filter(condition)) }
                 isLoading={ itemState.isLoading }
                 disabled={ itemState.isLoading }
@@ -124,7 +125,7 @@ export default function ItemsMovementDialog()
                   showAllOption
                   value={ fromStoreId?.toString() ?? "" }
                   onValueChange={ (val) => setFromStoreId(val ? Number(val) : undefined) }
-                  columnsNames={ StoreFilterColumns.columnsNames }
+                  columnsNames={ StoreFilterColumns.columnsNames(tStocking) }
                   onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
                   isLoading={ storeState.isLoading }
                   disabled={ storeState.isLoading }
@@ -139,7 +140,7 @@ export default function ItemsMovementDialog()
                   showAllOption
                   value={ toStoreId?.toString() ?? "" }
                   onValueChange={ (val) => setToStoreId(val ? Number(val) : undefined) }
-                  columnsNames={ StoreFilterColumns.columnsNames }
+                  columnsNames={ StoreFilterColumns.columnsNames(tStocking) }
                   onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
                   isLoading={ storeState.isLoading }
                   disabled={ storeState.isLoading }

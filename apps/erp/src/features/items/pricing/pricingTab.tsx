@@ -7,7 +7,7 @@ import PricingMethodsTable from "./pricingMethodsTable";
 
 export default function PricingTab({ mode }: { mode: DialogMode; })
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const { formData, errors } = useAppSelector((state) => state.itemForm);
   const { getError, isInvalid } = useFormErrors(errors);
   const dispatch = useAppDispatch();

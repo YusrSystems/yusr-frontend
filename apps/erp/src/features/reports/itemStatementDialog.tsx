@@ -1,5 +1,6 @@
 // accountStatementDialog.tsx
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField, SearchableSelect } from "yusr-ui";
 import type Item from "../../core/data/item";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -11,6 +12,7 @@ export default function ItemStatementButton({ item }: { item: Item; })
 {
   const dispatch = useAppDispatch();
   const storeState = useAppSelector((state) => state.store);
+  const { t } = useTranslation("stocking");
 
   const [isOpen, setIsOpen] = useState(false);
   const [storeId, setStoreId] = useState<number | undefined>(undefined);
@@ -37,7 +39,7 @@ export default function ItemStatementButton({ item }: { item: Item; })
                 showAllOption
                 value={ storeId?.toString() || "" }
                 onValueChange={ (val) => setStoreId(Number(val)) }
-                columnsNames={ StoreFilterColumns.columnsNames }
+                columnsNames={ StoreFilterColumns.columnsNames(t) }
                 onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
                 isLoading={ storeState.isLoading }
                 disabled={ storeState.isLoading }

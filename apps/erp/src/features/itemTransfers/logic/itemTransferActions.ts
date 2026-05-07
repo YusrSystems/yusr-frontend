@@ -35,7 +35,7 @@ export class ItemTransferActions
     dispatch(removeItem(id));
   }
 
-  public static validate(dispatch: AppDispatch, items: TransferRowItem[], t: TFunction<"accounting">): boolean
+  public static validate(dispatch: AppDispatch, items: TransferRowItem[], t: TFunction<"stocking">): boolean
   {
     const errors: Record<string, string> = {};
     let isValid = true;

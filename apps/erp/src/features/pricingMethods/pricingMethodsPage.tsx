@@ -11,7 +11,7 @@ import ChangePricingMethodDialog from "./changePricingMethodDialog";
 
 export default function PricingMethodsPage()
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const pricingMethodState = useAppSelector((state) => state.pricingMethod);

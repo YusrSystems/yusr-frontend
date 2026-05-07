@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField, SearchableSelect, SelectField } from "yusr-ui";
 import { ItemFilterColumns, ItemSlice } from "../../core/data/item";
 import { ItemsTaxStatementReportRequest, ItemsTaxStatementReportType } from "../../core/data/report/itemsTaxStatementReportRequest";
@@ -8,6 +9,7 @@ import ReportButton from "./reportButton";
 
 export default function ItemsTaxStatementDialog()
 {
+  const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const itemState = useAppSelector((state) => state.item);
   const [isOpen, setIsOpen] = useState(false);
@@ -47,7 +49,7 @@ export default function ItemsTaxStatementDialog()
                 showAllOption
                 value={ itemId?.toString() || "" }
                 onValueChange={ (val) => setItemId(Number(val)) }
-                columnsNames={ ItemFilterColumns.columnsNames }
+                columnsNames={ ItemFilterColumns.columnsNames(t) }
                 onSearch={ (condition) => dispatch(ItemSlice.entityActions.filter(condition)) }
                 isLoading={ itemState.isLoading }
                 disabled={ itemState.isLoading }

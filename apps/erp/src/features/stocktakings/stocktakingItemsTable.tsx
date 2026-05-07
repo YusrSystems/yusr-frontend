@@ -20,7 +20,7 @@ export default function StocktakingItemsTable(
   { formData, errors, handleChange, createInstance, mode }: StocktakingItemsTableProps
 )
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const storeItemsState = useAppSelector((state) => state.storeItems);
   const { getError, isInvalid } = useFormErrors(errors);
   const groupedItems = useMemo(() =>

@@ -48,7 +48,7 @@ export default class ItemTransfer extends BaseEntity
 export class ItemTransferFilterColumns
 {
   public static columnsNames = (
-    t: TFunction<"accounting">
+    t: TFunction<"stocking">
   ): ColumnName<ItemTransfer>[] => [
     { label: t("itemTransfers.transferId"), value: "id" },
     { label: t("itemTransfers.fromStore"), value: "fromStoreName" },
@@ -59,7 +59,7 @@ export class ItemTransferFilterColumns
 
 export class ItemTransferValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<ItemTransfer>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<ItemTransfer>>[] => [{
     field: "transferDate",
     selector: (d) => d.transferDate,
     validators: [Validators.required(t("itemTransfers.transferDateRequired"))]

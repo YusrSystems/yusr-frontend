@@ -18,7 +18,7 @@ export default class Store extends BaseEntity
 
 export class StoreFilterColumns
 {
-  public static columnsNames = (t: TFunction<"accounting">): ColumnName<Store>[] => [{
+  public static columnsNames = (t: TFunction<"stocking">): ColumnName<Store>[] => [{
     label: t("stores.storeName"),
     value: "name"
   }];
@@ -26,7 +26,7 @@ export class StoreFilterColumns
 
 export class StoreValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Store>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<Store>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("stores.nameRequired"))]

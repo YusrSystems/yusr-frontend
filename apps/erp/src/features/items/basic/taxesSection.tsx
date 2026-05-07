@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 
 export default function TaxesSection({ mode }: { mode: DialogMode; })
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const taxState = useAppSelector((state) => state.tax);
   const { formData, isDirty } = useAppSelector((state) => state.itemForm);

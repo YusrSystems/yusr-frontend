@@ -17,6 +17,7 @@ interface StoreItemSelectorProps
 export default function StoreItemSelector({ storeId, itemTypes, onSelect }: StoreItemSelectorProps)
 {
   const { t } = useTranslation("erpCommon");
+  const { t: tStocking } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const [barcode, setBarcode] = useState("");
   const storeItemsState = useAppSelector((state) => state.storeItems);
@@ -69,7 +70,7 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
           itemLabelKey="name"
           itemValueKey="id"
           placeholder={ t("storeItemSelector.selectItem") }
-          columnsNames={ ItemFilterColumns.columnsNames }
+          columnsNames={ ItemFilterColumns.columnsNames(tStocking) }
           onSearch={ (condition) =>
           {
             if (itemTypes?.length && storeId)

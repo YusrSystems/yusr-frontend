@@ -6,7 +6,7 @@ import TaxesSection from "./taxesSection";
 
 export default function BasicTab({ mode }: { mode: DialogMode; })
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const {
     fileInputRef,

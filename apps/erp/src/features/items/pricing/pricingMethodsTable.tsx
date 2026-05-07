@@ -11,7 +11,7 @@ import usePricingMethodsTable from "./usePricingMethodsTable";
 
 export default function PricingMethodsTable()
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const {
     formData,
     addPricingMethod,

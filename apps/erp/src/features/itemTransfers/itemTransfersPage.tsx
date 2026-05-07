@@ -13,7 +13,7 @@ import ChangeItemTransferDialog from "./changeItemTransferDialog";
 
 export default function ItemTransfersPage()
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const itemTransferState = useAppSelector((state) => state.itemTransfer);

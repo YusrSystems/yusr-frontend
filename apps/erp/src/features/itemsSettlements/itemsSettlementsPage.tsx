@@ -12,7 +12,7 @@ import ChangeItemsSettlementDialog from "./changeItemsSettlementDialog";
 
 export default function ItemsSettlementsPage()
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const itemsSettlementState = useAppSelector((state) => state.itemsSettlement);

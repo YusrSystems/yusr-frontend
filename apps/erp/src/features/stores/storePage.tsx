@@ -11,7 +11,7 @@ import ChangeStoreDialog from "./changeStoreDialog";
 
 export default function StoresPage()
 {
-  const { t } = useTranslation("accounting");
+  const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const storeState = useAppSelector((state) => state.store);

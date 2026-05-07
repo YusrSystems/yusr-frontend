@@ -15,7 +15,7 @@ export default class Unit extends BaseEntity
 
 export class UnitFilterColumns
 {
-  public static columnsNames = (t: TFunction<"accounting">): ColumnName<Unit>[] => [{
+  public static columnsNames = (t: TFunction<"stocking">): ColumnName<Unit>[] => [{
     label: t("units.unitName"),
     value: "name"
   }];
@@ -23,7 +23,7 @@ export class UnitFilterColumns
 
 export class UnitValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Unit>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<Unit>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("units.nameRequired"))]
