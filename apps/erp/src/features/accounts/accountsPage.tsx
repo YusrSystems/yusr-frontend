@@ -1,7 +1,8 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import { CurrencyIcon, WalletIcon } from "lucide-react";
+import { WalletIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-import { CrudPage, FilterCondition, type IDialogState, type IEntityState, type IFormState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { useTranslation } from "react-i18next";
+import { CrudPage, CurrencyIcon, FilterCondition, type IDialogState, type IEntityState, type IFormState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import Account, { AccountFilterColumns, AccountSlice, AccountType } from "../../core/data/account";
 import ReportConstants from "../../core/data/report/reportConstants";
 import AccountsApiService from "../../core/networking/accountApiService";
@@ -28,6 +29,7 @@ export default function AccountsPage({
   hasPagePermission: boolean;
 })
 {
+  const { t } = useTranslation("accounting");
   const [condition, setCondition] = useState<FilterCondition<Account> | undefined>(undefined);
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
@@ -49,8 +51,8 @@ export default function AccountsPage({
   return (
     <CrudPage<Account>
       title={ title }
-      entityName="الحساب"
-      addNewItemTitle="إضافة حساب جديد"
+      entityName={ t("accounts.entityName") }
+      addNewItemTitle={ t("accounts.addNewTitle") }
       onConditionChange={ setCondition }
       actionButtons={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],
@@ -70,19 +72,19 @@ export default function AccountsPage({
       useSlice={ () => accountDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي الحسابات",
+        title: t("accounts.totalAccounts"),
         data: (accountState.entities?.count ?? 0).toString(),
         icon: <WalletIcon className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ AccountFilterColumns.columnsNames }
+      columnsToFilter={ AccountFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: "رقم الحساب", rowStyles: "w-24" },
+        { rowName: t("accounts.accountId"), rowStyles: "w-24" },
         {
-          rowName: "اسم الحساب",
+          rowName: t("accounts.accountName"),
           rowStyles: "w-40"
         },
-        ...(canShowBalance ? [{ rowName: "الرصيد", rowStyles: "w-32" }] : []),
+        ...(canShowBalance ? [{ rowName: t("accounts.balance"), rowStyles: "w-32" }] : []),
         ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
             SystemPermissionsResources.ReportAccountStatement,
@@ -97,7 +99,7 @@ export default function AccountsPage({
       ) =>
       {
         const isCredit = account.balance <= 0;
-        const label = isCredit ? "مدين" : "دائن";
+        const label = isCredit ? t("accounts.debit") : t("accounts.credit");
         const colorStyle = isCredit ? "text-red-600" : "text-green-600";
 
         return [

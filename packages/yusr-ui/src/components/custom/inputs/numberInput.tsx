@@ -28,7 +28,7 @@ export function NumberInput({ value, onChange, min, max, isInvalid, className, c
       value={ localValue }
       className={ cn(
         className,
-        currency && "pl-8",
+        currency && "pe-8",
         isInvalid && "border-red-600 ring-red-600 text-red-900"
       ) }
       onChange={ (e) =>
@@ -96,7 +96,7 @@ export function NumberInput({ value, onChange, min, max, isInvalid, className, c
 
   return (
     <div className="relative flex items-center">
-      <div className="absolute left-3 flex items-center pointer-events-none text-muted-foreground">
+      <div className="absolute end-3 flex items-center pointer-events-none text-muted-foreground">
         { currency }
       </div>
       { input }

@@ -12,5 +12,74 @@
     "percentageRequired": "يرجى إدخال نسبة الضريبة",
     "percentageMin": "الحد الادنى هو 0%",
     "percentageMax": "الحد الاقصى هو 100%"
+  },
+
+  "accounts": {
+    "title": "إدارة الحسابات",
+    "entityName": "حساب",
+    "addNewTitle": "إضافة حساب جديد",
+    "totalAccounts": "إجمالي الحسابات",
+    "accountId": "رقم الحساب",
+    "accountName": "اسم الحساب",
+    "balance": "الرصيد",
+    "debit": "مدين",
+    "credit": "دائن",
+    "basicInfo": "المعلومات الأساسية",
+    "accountType": "نوع الحساب",
+    "parentAccount": "الحساب الأب",
+    "openingBalance": "الرصيد الافتتاحي",
+    "bankingInfo": "المعلومات البنكية",
+    "taxCommercialInfo": "المعلومات الضريبية والتجارية",
+    "vatNumber": "الرقم الضريبي (VAT)",
+    "crn": "السجل التجاري (CRN)",
+    "bankAccountNumber": "رقم الحساب البنكي",
+    "addressInfo": "معلومات العنوان",
+    "city": "المدينة",
+    "district": "الحي",
+    "street": "الشارع",
+    "buildingNumber": "رقم المبنى",
+    "postalCode": "الرمز البريدي",
+    "contactNumbers": "أرقام التواصل",
+    "addContact": "إضافة رقم تواصل",
+    "additionalInfo": "معلومات إضافية",
+    "notes": "ملاحظات",
+    "client": "عميل",
+    "supplier": "مورد",
+    "employee": "موظف",
+    "bank": "بنك",
+    "box": "صندوق",
+    "nameRequired": "يرجى إدخال اسم الحساب",
+    "typeRequired": "يرجى اختيار نوع الحساب",
+    "buildingNumberLength": "رقم المبنى يجب أن يتكون من أربع أرقام",
+    "buildingNumberNumeric": "رقم المبنى يجب أن يكون أرقاماً فقط",
+    "postalCodeLength": "الرمز البريدي يجب أن يتكون من خمس أرقام",
+    "postalCodeNumeric": "الرمز البريدي يجب أن يكون أرقاماً فقط"
+  },
+
+  "clients": {
+    "title": "إدارة حسابات العملاء"
+  },
+
+  "suppliers": {
+    "title": "إدارة حسابات الموردين"
+  },
+
+  "employees": {
+    "title": "إدارة حسابات الموظفين"
+  },
+
+  "banks": {
+    "title": "إدارة حسابات البنوك"
+  },
+
+  "boxes": {
+    "title": "إدارة حسابات الصناديق"
+  },
+
+  "accountStatement": {
+    "button": "كشف حساب",
+    "title": "كشف حساب",
+    "fromDate": "من تاريخ",
+    "toDate": "إلى تاريخ"
   }
 }

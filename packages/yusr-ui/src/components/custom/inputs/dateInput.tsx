@@ -1,7 +1,8 @@
 import { format } from "date-fns";
-import { arSA } from "date-fns/locale";
+import { arSA, enUS } from "date-fns/locale";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
 import { Calendar } from "../../pure/calendar";
@@ -25,7 +26,7 @@ export function DateInput({
   onChange,
   isInvalid,
   placeholder = "اختر تاريخا",
-  locale = arSA,
+  locale,
   startYear = new Date().getFullYear() - 100,
   endYear = new Date().getFullYear() + 10,
   minDate,
@@ -33,6 +34,9 @@ export function DateInput({
 }: DateInputProps)
 {
   const [isOpen, setIsOpen] = useState(false);
+  const { t, i18n } = useTranslation("common");
+  const defaultPlaceholder = placeholder || t("dateInput.placeholder");
+  const dateFnsLocale = locale || i18n.language === "ar" ? arSA : enUS;
 
   const disabledDays = [];
   if (minDate)
@@ -57,9 +61,9 @@ export function DateInput({
         >
           { value
             ? (
-              format(value, "PPP", { locale })
+              format(value, "PPP", { locale: dateFnsLocale })
             )
-            : <span>{ placeholder }</span> }
+            : <span>{ defaultPlaceholder }</span> }
           <ChevronDownIcon className="h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -72,7 +76,7 @@ export function DateInput({
             onChange(date);
             setIsOpen(false);
           } }
-          locale={ locale }
+          locale={ dateFnsLocale }
           captionLayout="dropdown"
           disabled={ disabledDays }
           startMonth={ minDate || new Date(startYear, 0) }

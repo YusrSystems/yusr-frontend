@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { AccountType, SuppliersSlice } from "../../core/data/account";
@@ -6,11 +7,12 @@ import AccountsPage from "./accountsPage";
 
 export default function SuppliersAccountsPage()
 {
+  const { t } = useTranslation("accounting");
   const authState = useAppSelector((state) => state.auth);
 
   return (
     <AccountsPage
-      title="إدارة حسابات الموردين"
+      title={ t("suppliers.title") }
       slice={ SuppliersSlice }
       fixedType={ AccountType.Supplier }
       selectEntityState={ (state) => state.suppliers }

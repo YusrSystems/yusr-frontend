@@ -64,5 +64,9 @@
     "errors": "أخطاء",
     "cancel": "إلغاء",
     "ignoreWarnings": "تجاهل التحذيرات"
+  },
+
+  "dateInput": {
+    "placeholder": "اختر تاريخا"
   }
 }

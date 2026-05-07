@@ -4,7 +4,7 @@
     "entityName": "Tax",
     "addNewTitle": "Add New Tax",
     "totalTaxes": "Total Taxes",
-    "taxNumber": "Tax ID",
+    "taxNumber": "Tax Id",
     "taxName": "Tax Name",
     "percentage": "Percentage",
     "isPrimary": "Primary Tax",
@@ -12,5 +12,74 @@
     "percentageRequired": "Please enter tax percentage",
     "percentageMin": "Minimum value is 0%",
     "percentageMax": "Maximum value is 100%"
+  },
+
+  "accounts": {
+    "title": "Account Management",
+    "entityName": "Account",
+    "addNewTitle": "Add New Account",
+    "totalAccounts": "Total Accounts",
+    "accountId": "Account Id",
+    "accountName": "Account Name",
+    "balance": "Balance",
+    "debit": "Debit",
+    "credit": "Credit",
+    "basicInfo": "Basic Information",
+    "accountType": "Account Type",
+    "parentAccount": "Parent Account",
+    "openingBalance": "Opening Balance",
+    "bankingInfo": "Banking Information",
+    "taxCommercialInfo": "Tax & Commercial Information",
+    "vatNumber": "Tax Number (VAT)",
+    "crn": "Commercial Registration (CRN)",
+    "bankAccountNumber": "Bank Account Number",
+    "addressInfo": "Address Information",
+    "city": "City",
+    "district": "District",
+    "street": "Street",
+    "buildingNumber": "Building Number",
+    "postalCode": "Postal Code",
+    "contactNumbers": "Contact Numbers",
+    "addContact": "Add Contact Number",
+    "additionalInfo": "Additional Information",
+    "notes": "Notes",
+    "client": "Customer",
+    "supplier": "Supplier",
+    "employee": "Employee",
+    "bank": "Bank",
+    "box": "Cash Box",
+    "nameRequired": "Please enter account name",
+    "typeRequired": "Please select account type",
+    "buildingNumberLength": "Building number must consist of 4 digits",
+    "buildingNumberNumeric": "Building number must be numeric only",
+    "postalCodeLength": "Postal code must consist of 5 digits",
+    "postalCodeNumeric": "Postal code must be numeric only"
+  },
+
+  "clients": {
+    "title": "Customer Accounts Management"
+  },
+
+  "suppliers": {
+    "title": "Supplier Accounts Management"
+  },
+
+  "employees": {
+    "title": "Employee Accounts Management"
+  },
+
+  "banks": {
+    "title": "Bank Accounts Management"
+  },
+
+  "boxes": {
+    "title": "Cash Box Accounts Management"
+  },
+
+  "accountStatement": {
+    "button": "Account Statement",
+    "title": "Account Statement",
+    "fromDate": "From Date",
+    "toDate": "To Date"
   }
 }

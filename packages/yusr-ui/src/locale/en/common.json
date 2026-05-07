@@ -64,5 +64,9 @@
     "errors": "Errors",
     "cancel": "Cancel",
     "ignoreWarnings": "Ignore Warnings"
+  },
+
+  "dateInput": {
+    "placeholder": "Select a date"
   }
 }

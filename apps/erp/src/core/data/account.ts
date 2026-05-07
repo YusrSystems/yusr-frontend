@@ -1,3 +1,4 @@
+import { type TFunction } from "i18next";
 import { BaseEntity, City, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, type ValidationRule, Validators } from "yusr-ui";
 import { SystemPermissionsResources } from "../auth/systemPermissionsResources";
 import AccountsApiService from "../networking/accountApiService";
@@ -67,35 +68,37 @@ export default class Account extends BaseEntity
 
 export class AccountFilterColumns
 {
-  public static columnsNames: ColumnName<Account>[] = [{ label: "اسم الحساب", value: "name" }, {
-    label: "رقم الحساب البنكي",
+  public static columnsNames = (
+    t: TFunction<"accounting">
+  ): ColumnName<Account>[] => [{ label: t("accounts.accountName"), value: "name" }, {
+    label: t("accounts.bankAccountNumber"),
     value: "bankAccountNumber"
-  }, { label: "الرقم الضريبي", value: "vatNumber" }];
+  }, { label: t("accounts.vatNumber"), value: "vatNumber" }];
 }
 
 export class AccountValidationRules
 {
-  public static validationRules: ValidationRule<Partial<Account>>[] = [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Account>>[] => [{
     field: "name",
     selector: (d) => d.name,
-    validators: [Validators.required("يرجى إدخال اسم الحساب")]
+    validators: [Validators.required(t("accounts.nameRequired"))]
   }, {
     field: "type",
     selector: (d) => d.type,
-    validators: [Validators.required("يرجى اختيار نوع الحساب")]
+    validators: [Validators.required(t("accounts.typeRequired"))]
   }, {
     field: "buildingNumber",
     selector: (d) => d.buildingNumber,
     validators: [Validators.optional(
-      Validators.exactLength(4, "رقم المبنى يجب أن يتكون من أربع أرقام"),
-      Validators.numeric()
+      Validators.exactLength(4, t("accounts.buildingNumberLength")),
+      Validators.numeric(t("accounts.buildingNumberNumeric"))
     )]
   }, {
     field: "postalCode",
     selector: (d) => d.postalCode,
     validators: [Validators.optional(
-      Validators.exactLength(5, "الرمز البريدي يجب أن يتكون من خمس أرقام"),
-      Validators.numeric()
+      Validators.exactLength(5, t("accounts.postalCodeLength")),
+      Validators.numeric(t("accounts.postalCodeNumeric"))
     )]
   }];
 }

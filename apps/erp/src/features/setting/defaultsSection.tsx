@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { FieldGroup, FieldsSection, SearchableSelect } from "yusr-ui";
 import { AccountFilterColumns, ClientsAndSuppliersSlice } from "../../core/data/account";
 import { PaymentMethodFilterColumns, PaymentMethodSlice } from "../../core/data/paymentMethod";
@@ -16,6 +17,7 @@ export default function DefaultsSection()
   const storeState = useAppSelector((state) => state.store);
   const paymentMethodState = useAppSelector((state) => state.paymentMethod);
   const accountState = useAppSelector((state) => state.clientsAndSuppliers);
+  const { t } = useTranslation("accounting");
 
   return (
     <div className="space-y-10 animate-in fade-in">
@@ -71,7 +73,7 @@ export default function DefaultsSection()
                 const selected = accountState.entities.data?.find((a) => a.id.toString() === val);
                 handleChange({ sellAccountId: selected?.id, sellAccountName: selected?.name });
               } }
-              columnsNames={ AccountFilterColumns.columnsNames }
+              columnsNames={ AccountFilterColumns.columnsNames(t) }
               onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
               isLoading={ accountState.isLoading }
               disabled={ accountState.isLoading }
@@ -90,7 +92,7 @@ export default function DefaultsSection()
                 const selected = accountState.entities.data?.find((a) => a.id.toString() === val);
                 handleChange({ purchaseAccountId: selected?.id, purchaseAccountName: selected?.name });
               } }
-              columnsNames={ AccountFilterColumns.columnsNames }
+              columnsNames={ AccountFilterColumns.columnsNames(t) }
               onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
               isLoading={ accountState.isLoading }
               disabled={ accountState.isLoading }

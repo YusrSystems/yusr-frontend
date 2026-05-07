@@ -19,7 +19,7 @@ export default function ReportButton({ reportName, request }: ReportButtonProps)
   return (
     <div>
       <Button
-        className="rounded-l-none!"
+        className="rounded-e-none!"
         variant="secondary"
         disabled={ isPrinting || isSharing }
         onClick={ async () =>
@@ -32,7 +32,7 @@ export default function ReportButton({ reportName, request }: ReportButtonProps)
         { isSharing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Share2 className="h-4 w-4 " /> }
       </Button>
       <Button
-        className="rounded-r-none!"
+        className="rounded-s-none!"
         disabled={ isPrinting || isSharing }
         onClick={ async () =>
         {

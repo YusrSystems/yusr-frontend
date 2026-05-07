@@ -7,6 +7,7 @@ import ReportConstants from "../../core/data/report/reportConstants";
 import { StoreFilterColumns, StoreSlice } from "../../core/data/store";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "./reportButton";
+import { useTranslation } from "react-i18next";
 
 export default function ItemsMovementDialog()
 {
@@ -14,6 +15,7 @@ export default function ItemsMovementDialog()
   const itemState = useAppSelector((state) => state.item);
   const accountState = useAppSelector((state) => state.clientsAndSuppliers);
   const storeState = useAppSelector((state) => state.store);
+  const {t} = useTranslation("accounting");
 
   const [isOpen, setIsOpen] = useState(false);
   const [transTypeId, setTransTypeId] = useState<ItemsMovementReportTransType | undefined>(undefined);
@@ -90,7 +92,7 @@ export default function ItemsMovementDialog()
                   showAllOption
                   value={ fromAccountId?.toString() ?? "" }
                   onValueChange={ (val) => setFromAccountId(val ? Number(val) : undefined) }
-                  columnsNames={ AccountFilterColumns.columnsNames }
+                  columnsNames={ AccountFilterColumns.columnsNames(t) }
                   onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
                   isLoading={ accountState.isLoading }
                   disabled={ accountState.isLoading }
@@ -105,7 +107,7 @@ export default function ItemsMovementDialog()
                   showAllOption
                   value={ toAccountId?.toString() ?? "" }
                   onValueChange={ (val) => setToAccountId(val ? Number(val) : undefined) }
-                  columnsNames={ AccountFilterColumns.columnsNames }
+                  columnsNames={ AccountFilterColumns.columnsNames(t) }
                   onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
                   isLoading={ accountState.isLoading }
                   disabled={ accountState.isLoading }

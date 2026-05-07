@@ -5,6 +5,7 @@ import { ChangableSearchableSelect, type EntitySearchableSelectParams, type IEnt
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type Account from "../../data/account";
 import { AccountFilterColumns, type AccountSliceType, AccountType } from "../../data/account";
+import { useTranslation } from "react-i18next";
 
 export default function AccountsSearchableSelect(
   {
@@ -39,6 +40,7 @@ export default function AccountsSearchableSelect(
 {
   const accountState = useAppSelector(selectEntityState) as IEntityState<Account>;
   const authState = useAppSelector((state) => state.auth);
+  const { t } = useTranslation("accounting");
 
   return (
     <ChangableSearchableSelect<Account, {
@@ -58,7 +60,7 @@ export default function AccountsSearchableSelect(
       itemValueKey="id"
       state={ accountState }
       apiService={ new AccountsApiService() }
-      columnsNames={ AccountFilterColumns.columnsNames }
+      columnsNames={ AccountFilterColumns.columnsNames(t) }
       disabled={ disabled }
       isInvalid={ isInvalid }
       systemPermissionsResources={ SystemPermissionsResources.Accounts }

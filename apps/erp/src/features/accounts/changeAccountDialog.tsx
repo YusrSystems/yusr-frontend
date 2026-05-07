@@ -2,6 +2,7 @@ import ClientsSearchableSelect from "@/core/components/searchableSelect/clientsS
 import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps, IEntityState, IFormState } from "yusr-ui";
 import { Button, ChangeDialog, CityFilterColumns, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
@@ -31,6 +32,7 @@ export default function ChangeAccountDialog({
   selectFormState: (state: RootState) => IFormState<Account>;
 })
 {
+  const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
   const cityState = useAppSelector((state) => state.city);
   const authState = useAppSelector((state) => state.auth);
@@ -50,7 +52,7 @@ export default function ChangeAccountDialog({
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    AccountValidationRules.validationRules,
+    AccountValidationRules.validationRules(t),
     (errors) => dispatch(slice.formActions.setErrors(errors))
   );
   useFormInit(slice.formActions.setInitialData, initialValues);
@@ -124,15 +126,15 @@ export default function ChangeAccountDialog({
     switch (formData.type)
     {
       case AccountType.Client:
-        return "عميل";
+        return t("accounts.client");
       case AccountType.Supplier:
-        return "مورد";
+        return t("accounts.supplier");
       case AccountType.Employee:
-        return "موظف";
+        return t("accounts.employee");
       case AccountType.Bank:
-        return "بنك";
+        return t("accounts.bank");
       case AccountType.Box:
-        return "صندوق";
+        return t("accounts.box");
     }
   };
 
@@ -158,7 +160,9 @@ export default function ChangeAccountDialog({
 
   return (
     <ChangeDialog<Account>
-      title={ `${mode === "create" ? "إضافة" : "تعديل"} حساب ${getTypeName()}` }
+      title={ `${
+        mode === "create" ? t("accounts.addNewTitle") : `${t("common:crudRow.edit")} ${t("accounts.entityName")}`
+      } ${getTypeName()}` }
       className="sm:max-w-4xl"
       formData={ formData }
       dialogMode={ mode }
@@ -170,10 +174,10 @@ export default function ChangeAccountDialog({
     >
       <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
         <FieldGroup className="gap-10">
-          <FieldsSection title="المعلومات الأساسية" columns={ 2 }>
+          <FieldsSection title={ t("accounts.basicInfo") } columns={ 2 }>
             { selectTypes.length > 0 && (
               <SelectField
-                label="نوع الحساب"
+                label={ t("accounts.accountType") }
                 required
                 disabled={ mode === "update" }
                 value={ formData.type?.toString() || "" }
@@ -186,7 +190,7 @@ export default function ChangeAccountDialog({
             ) }
 
             <TextField
-              label="اسم الحساب"
+              label={ t("accounts.accountName") }
               required
               value={ formData.name || "" }
               onChange={ (e) => dispatch(slice.formActions.updateFormData({ name: e.target.value })) }
@@ -195,7 +199,7 @@ export default function ChangeAccountDialog({
             />
 
             { (formData.type === AccountType.Client || formData.type === AccountType.Supplier) && (
-              <FormField label="الحساب الأب">
+              <FormField label={ t("accounts.parentAccount") }>
                 { formData.type === AccountType.Supplier && (
                   <SuppliersSearchableSelect
                     id={ formData.parentId }
@@ -229,14 +233,14 @@ export default function ChangeAccountDialog({
             ) }
 
             <NumberField
-              label="الرصيد الافتتاحي"
+              label={ t("accounts.openingBalance") }
               value={ canShowBalance ? (formData.initialBalance || "") : "" }
               onChange={ (val) => dispatch(slice.formActions.updateFormData({ initialBalance: val })) }
               currency={ <CurrencyIcon /> }
             />
 
             <NumberField
-              label="الرصيد"
+              label={ t("accounts.balance") }
               disabled
               value={ canShowBalance ? (formData.balance || "") : "" }
               onChange={ (val) => dispatch(slice.formActions.updateFormData({ initialBalance: val })) }
@@ -246,19 +250,19 @@ export default function ChangeAccountDialog({
 
           { (requiresTaxInfo || isBank) && (
             <FieldsSection
-              title={ isBank ? "المعلومات البنكية" : "المعلومات الضريبية والتجارية" }
+              title={ isBank ? t("accounts.bankingInfo") : t("accounts.taxCommercialInfo") }
               columns={ 2 }
             >
               { requiresTaxInfo && (
                 <>
                   <TextField
-                    label="الرقم الضريبي (VAT)"
+                    label={ t("accounts.vatNumber") }
                     value={ formData.vatNumber || "" }
                     onChange={ (e) => dispatch(slice.formActions.updateFormData({ vatNumber: e.target.value })) }
                     dir="ltr"
                   />
                   <TextField
-                    label="السجل التجاري (CRN)"
+                    label={ t("accounts.crn") }
                     value={ formData.crn || "" }
                     onChange={ (e) => dispatch(slice.formActions.updateFormData({ crn: e.target.value })) }
                     dir="ltr"
@@ -268,7 +272,7 @@ export default function ChangeAccountDialog({
 
               { isBank && (
                 <TextField
-                  label="رقم الحساب البنكي"
+                  label={ t("accounts.bankAccountNumber") }
                   value={ formData.bankAccountNumber || "" }
                   onChange={ (e) => dispatch(slice.formActions.updateFormData({ bankAccountNumber: e.target.value })) }
                   dir="ltr"
@@ -286,14 +290,14 @@ export default function ChangeAccountDialog({
               }` }
             >
               { requiresAddress && (
-                <FieldsSection title="معلومات العنوان" columns={ 1 }>
+                <FieldsSection title={ t("accounts.addressInfo") } columns={ 1 }>
                   <div className="flex flex-col gap-1.5 w-full">
-                    <label className="text-sm font-medium">المدينة</label>
+                    <label className="text-sm font-medium">{ t("accounts.city") }</label>
                     <SearchableSelect
                       items={ cityState.entities.data ?? [] }
                       itemLabelKey="name"
                       itemValueKey="id"
-                      placeholder="اختر المدينة"
+                      placeholder={ t("common:searchableSelect.placeholder") }
                       value={ formData.cityId?.toString() || "" }
                       columnsNames={ CityFilterColumns.columnsNames }
                       onSearch={ (condition) => dispatch(CitySlice.entityActions.filter(condition)) }
@@ -310,26 +314,26 @@ export default function ChangeAccountDialog({
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <TextField
-                      label="الحي"
+                      label={ t("accounts.district") }
                       value={ formData.district || "" }
                       onChange={ (e) => dispatch(slice.formActions.updateFormData({ district: e.target.value })) }
                     />
                     <TextField
-                      label="الشارع"
+                      label={ t("accounts.street") }
                       value={ formData.street || "" }
                       onChange={ (e) => dispatch(slice.formActions.updateFormData({ street: e.target.value })) }
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <TextField
-                      label="رقم المبنى"
+                      label={ t("accounts.buildingNumber") }
                       value={ formData.buildingNumber || "" }
                       onChange={ (e) => dispatch(slice.formActions.updateFormData({ buildingNumber: e.target.value })) }
                       isInvalid={ isInvalid("buildingNumber") }
                       error={ getError("buildingNumber") }
                     />
                     <TextField
-                      label="الرمز البريدي"
+                      label={ t("accounts.postalCode") }
                       value={ formData.postalCode || "" }
                       onChange={ (e) => dispatch(slice.formActions.updateFormData({ postalCode: e.target.value })) }
                       isInvalid={ isInvalid("postalCode") }
@@ -340,7 +344,7 @@ export default function ChangeAccountDialog({
               ) }
 
               { requiresContacts && (
-                <FieldsSection title="أرقام التواصل" columns={ 1 }>
+                <FieldsSection title={ t("accounts.contactNumbers") } columns={ 1 }>
                   <div className="relative flex flex-col max-h-50 border rounded-md">
                     <div className="space-y-3 overflow-y-auto p-3 flex-1">
                       { formData.accountContacts?.map((contact, index) => (
@@ -376,7 +380,7 @@ export default function ChangeAccountDialog({
                         className="w-full border-dashed"
                       >
                         <Plus className="h-4 w-4 ml-2" />
-                        إضافة رقم تواصل
+                        { t("accounts.addContact") }
                       </Button>
                     </div>
                   </div>
@@ -385,9 +389,9 @@ export default function ChangeAccountDialog({
             </div>
           ) }
 
-          <FieldsSection title="معلومات إضافية" columns={ 1 }>
+          <FieldsSection title={ t("accounts.additionalInfo") } columns={ 1 }>
             <TextAreaField
-              label="ملاحظات"
+              label={ t("accounts.notes") }
               value={ formData.notes || "" }
               onChange={ (e) => dispatch(slice.formActions.updateFormData({ notes: e.target.value })) }
               rows={ 3 }
