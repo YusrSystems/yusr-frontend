@@ -1,5 +1,6 @@
 import { Package } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { CrudPage, FilterCondition, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Item, { ItemFilterColumns, ItemSlice, ItemType } from "../../core/data/item";
@@ -10,8 +11,10 @@ import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ItemStatementButton from "../reports/itemStatementDialog";
 import ReportButton from "../reports/reportButton";
 import ChangeItemDialog from "./changeItemDialog";
+
 export default function ItemsPage()
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const itemState = useAppSelector((state) => state.item);
@@ -29,9 +32,9 @@ export default function ItemsPage()
 
   return (
     <CrudPage<Item>
-      title="إدارة المواد"
-      entityName="مادة"
-      addNewItemTitle="إضافة مادة جديدة"
+      title={ t("items.title") }
+      entityName={ t("items.entityName") }
+      addNewItemTitle={ t("items.addNewTitle") }
       onConditionChange={ setCondition }
       actionButtons={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],
@@ -57,19 +60,19 @@ export default function ItemsPage()
       useSlice={ () => itemDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي المواد",
+        title: t("items.totalItems"),
         data: (itemState.entities?.count ?? 0).toString(),
         icon: <Package className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ ItemFilterColumns.columnsNames }
+      columnsToFilter={ ItemFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: "رقم المادة", rowStyles: "w-12.5" },
-        { rowName: "النوع", rowStyles: "w-24" },
-        { rowName: "اسم المادة", rowStyles: "w-48" },
-        { rowName: "الصنف", rowStyles: "w-32" },
-        { rowName: "الكمية", rowStyles: "w-24" },
-        { rowName: "التكلفة", rowStyles: "w-24" },
+        { rowName: t("items.itemId"), rowStyles: "w-12.5" },
+        { rowName: t("items.itemType"), rowStyles: "w-24" },
+        { rowName: t("items.itemName"), rowStyles: "w-48" },
+        { rowName: t("items.class"), rowStyles: "w-32" },
+        { rowName: t("items.quantity"), rowStyles: "w-24" },
+        { rowName: t("items.cost"), rowStyles: "w-24" },
         ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
             SystemPermissionsResources.ReportItemStatement,
@@ -81,7 +84,7 @@ export default function ItemsPage()
       tableRowMapper={ (item: Item) => [
         { rowName: `#${item.id}`, rowStyles: "" },
         {
-          rowName: item.type === ItemType.Product ? "منتج" : "خدمة",
+          rowName: item.type === ItemType.Product ? t("items.product") : t("items.service"),
           rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
             item.type === ItemType.Product
               ? "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400"

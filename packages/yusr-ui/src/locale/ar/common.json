@@ -150,5 +150,17 @@
       "8": "ثمانمائة",
       "9": "تسعمائة"
     }
+  },
+
+  "storageFileField": {
+    "pdfDocument": "PDF Document",
+    "filePreview": "File preview",
+    "pdfPreview": "PDF Preview",
+    "fullView": "Full view",
+    "removeFile": "Remove file",
+    "downloadFile": "Download file",
+    "changeOrAddImage": "تغيير / إضافة صورة",
+    "uploadFiles": "ارفع الملفات",
+    "uploadHint": "يمكنك اختيار ملفات (صور ، PDF)"
   }
 }

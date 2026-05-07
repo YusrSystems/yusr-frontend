@@ -1,11 +1,13 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button, type DialogMode, FormField, NumberField, TextField, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemStore, ItemType } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 
 export default function StorageTab({ mode }: { mode: DialogMode; })
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
 
   const { formData, errors } = useAppSelector((state) => state.itemForm);
@@ -18,7 +20,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
   const updateStore = (index: number, updates: Partial<ItemStore>) =>
   {
     const list = [...(formData.itemStores || [])];
-    list[index] = { ...list[index], ...updates }; // دمج التحديثات الجديدة
+    list[index] = { ...list[index], ...updates };
 
     if (updates.initialQuantity !== undefined)
     {
@@ -52,28 +54,28 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
     <div className="space-y-6 animate-in fade-in">
       <div className="grid grid-cols-3 gap-6">
         <NumberField
-          label="الحد الأدنى للكمية"
+          label={ t("items.minQuantity") }
           value={ formData.minQuantity || "" }
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ minQuantity: val })) }
         />
         <NumberField
-          label="الحد الأعلى للكمية"
+          label={ t("items.maxQuantity") }
           value={ formData.maxQuantity || "" }
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ maxQuantity: val })) }
         />
         <TextField
-          label="موقع المادة في المستودع"
+          label={ t("items.locationInStore") }
           value={ formData.location || "" }
           onChange={ (e) => dispatch(ItemSlice.formActions.updateFormData({ location: e.target.value })) }
         />
         <NumberField
-          label="الكمية الافتتاحية الإجمالية"
+          label={ t("items.totalInitialQuantity") }
           value={ formData.initialQuantity || "0" }
           disabled={ true }
           className="bg-muted font-bold"
         />
         <NumberField
-          label="الكمية الحالية الإجمالية"
+          label={ t("items.totalCurrentQuantity") }
           value={ formData.quantity || "0" }
           disabled={ true }
           className="bg-muted font-bold"
@@ -82,9 +84,9 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
 
       <div className="pt-4">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="font-bold">طرق التخزين</h3>
+          <h3 className="font-bold">{ t("items.storageMethods") }</h3>
           <Button type="button" size="sm" onClick={ addStore }>
-            <Plus className="w-4 h-4 ml-2" /> إضافة طريقة تخزين
+            <Plus className="w-4 h-4 me-2" /> { t("items.addStorageMethod") }
           </Button>
         </div>
 
@@ -92,17 +94,17 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
           <table className="w-full text-sm text-right">
             <thead className="bg-muted/50 text-muted-foreground">
               <tr>
-                <th className="p-3 w-16">الرقم</th>
-                <th className="p-3 w-48">المستودع</th>
-                <th className="p-3 w-48">الكمية الافتتاحية</th>
-                <th className="p-3 w-48">الكمية الحالية</th>
+                <th className="p-3 w-16 text-start">{ t("items.number") }</th>
+                <th className="p-3 w-48 text-start">{ t("items.store") }</th>
+                <th className="p-3 w-48 text-start">{ t("items.initialQuantity") }</th>
+                <th className="p-3 w-48 text-start">{ t("items.currentQuantity") }</th>
                 <th className="p-3 w-16 text-center"></th>
               </tr>
             </thead>
             <tbody>
               { formData.itemStores?.map((store, index) => (
                 <tr key={ index } className="border-t border-muted">
-                  <td className="p-3 font-bold">{ index + 1 }</td>
+                  <td className="p-3 font-bold text-start">{ index + 1 }</td>
                   <td className="p-3">
                     <FormField
                       label=""
@@ -157,7 +159,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
           </table>
           { formData.itemStores?.length === 0 && (
             <div className="p-4 text-center text-muted-foreground">
-              لا توجد مستودعات مضافة
+              { t("items.noStores") }
             </div>
           ) }
         </div>

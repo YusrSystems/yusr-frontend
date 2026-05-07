@@ -1,6 +1,7 @@
 import PricingMethodsSearchableSelect from "@/core/components/searchableSelect/pricingMethodsSearchableSelect";
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button, CurrencyIcon, FormField, NumberField, SystemPermissions, SystemPermissionsActions, TextField } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../core/auth/systemPermissionsResources";
 import Item, { ItemType } from "../../../core/data/item";
@@ -10,6 +11,7 @@ import usePricingMethodsTable from "./usePricingMethodsTable";
 
 export default function PricingMethodsTable()
 {
+  const { t } = useTranslation("accounting");
   const {
     formData,
     addPricingMethod,
@@ -27,10 +29,10 @@ export default function PricingMethodsTable()
   return (
     <div className="pt-4">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-bold">طرق التسعير</h3>
+        <h3 className="font-bold">{ t("items.pricingMethods") }</h3>
         { !isService && (
           <Button type="button" size="sm" onClick={ addPricingMethod }>
-            <Plus className="w-4 h-4 ml-2" /> إضافة طريقة تسعير
+            <Plus className="w-4 h-4 me-2" /> { t("items.addPricingMethod") }
           </Button>
         ) }
       </div>
@@ -43,13 +45,13 @@ export default function PricingMethodsTable()
         <table className="w-full text-sm text-right min-w-200">
           <thead className="bg-muted/50 text-muted-foreground">
             <tr>
-              <th className="p-3 w-12">الرقم</th>
-              <th className="p-3 w-32">الوحدة</th>
-              <th className="p-3 w-40">طريقة التسعير</th>
-              <th className="p-3 w-32">الكمية في الوحدة</th>
-              <th className="p-3 w-32">سعر البيع</th>
-              <th className="p-3 w-40">الباركود</th>
-              <th className="p-3 w-40">الاسم</th>
+              <th className="p-3 w-12 text-start">{ t("items.number") }</th>
+              <th className="p-3 w-32 text-start">{ t("items.unit") }</th>
+              <th className="p-3 w-40 text-start">{ t("items.pricingMethod") }</th>
+              <th className="p-3 w-32 text-start">{ t("items.quantityInUnit") }</th>
+              <th className="p-3 w-32 text-start">{ t("items.sellingPrice") }</th>
+              <th className="p-3 w-40 text-start">{ t("items.barcode") }</th>
+              <th className="p-3 w-40 text-start">{ t("items.name") }</th>
               { SystemPermissions.hasAuth(
                 authState.loggedInUser?.role?.permissions ?? [],
                 SystemPermissionsResources.ReportItemBarcode,
@@ -166,7 +168,7 @@ export default function PricingMethodsTable()
         </table>
         { formData.itemUnitPricingMethods?.length === 0 && (
           <div className="p-4 text-center text-muted-foreground">
-            لا توجد طرق تسعير مضافة
+            { t("items.noPricingMethods") }
           </div>
         ) }
       </div>

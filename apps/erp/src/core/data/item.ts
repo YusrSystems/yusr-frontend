@@ -1,5 +1,5 @@
-import { BaseEntity, type ColumnName, type StorageFile, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
+import { type TFunction } from "i18next";
+import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type StorageFile, type ValidationRule, Validators } from "yusr-ui";
 import ItemsApiService from "../networking/itemApiService";
 
 export const ItemType = {
@@ -132,27 +132,29 @@ export class BarcodeResult
 
 export class ItemFilterColumns
 {
-  public static columnsNames: ColumnName<Item>[] = [{ label: "رقم المادة", value: "id" }, {
-    label: "اسم المادة",
-    value: "name"
-  }, { label: "الصنف", value: "class" }];
+  public static columnsNames = (
+    t: TFunction<"accounting">
+  ): ColumnName<Item>[] => [{ label: t("items.itemId"), value: "id" }, { label: t("items.itemName"), value: "name" }, {
+    label: t("items.class"),
+    value: "class"
+  }];
 }
 
 export class ItemValidationRules
 {
-  public static validationRules: ValidationRule<Partial<Item>>[] = [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Item>>[] => [{
     field: "name",
     selector: (d) => d.name,
-    validators: [Validators.required("يرجى إدخال اسم المادة")]
+    validators: [Validators.required(t("items.nameRequired"))]
   }, {
     field: "type",
     selector: (d) => d.type,
-    validators: [Validators.required("يرجى اختيار نوع المادة")]
+    validators: [Validators.required(t("items.typeRequired"))]
   }, {
     field: "itemUnitPricingMethods",
     selector: (d) => d.itemUnitPricingMethods,
     validators: [
-      Validators.arrayMinLength(1, "يرجى إضافة طريقة تسعير واحدة على الأقل"),
+      Validators.arrayMinLength(1, t("items.pricingMethodsRequired")),
       Validators.custom(
         (methods: any[], form) =>
         {
@@ -186,14 +188,14 @@ export class ItemValidationRules
           }
           return true;
         },
-        "يرجى تعبئة جميع الحقول المطلوبة في جدول طرق التسعير (الوحدة، طريقة التسعير، الكمية، السعر)"
+        t("items.pricingMethodsValidationError")
       )
     ]
   }, {
     field: "itemStores",
     selector: (d) => d.itemStores,
     validators: [
-      Validators.arrayMinLength(1, "يرجى إضافة مستودع واحد على الأقل"),
+      Validators.arrayMinLength(1, t("items.storesRequired")),
       Validators.custom(
         (stores: any[], form) =>
         {
@@ -219,7 +221,7 @@ export class ItemValidationRules
 
           return true;
         },
-        "يرجى تعبئة جميع الحقول المطلوبة في الجدول (المستودع، الكمية الافتتاحية)"
+        t("items.storesValidationError")
       )
     ]
   }, {
@@ -227,12 +229,12 @@ export class ItemValidationRules
     selector: (d) => d.sellUnitId,
     validators: [Validators.custom(
       (val, form) => form.type === ItemType.Service || (val !== null && val !== undefined && val !== ""),
-      "يرجى اختيار الوحدة الأساسية للمادة"
+      t("items.baseUnitRequired")
     )]
   }, {
     field: "initialCost",
     selector: (d) => d.initialCost,
-    validators: [Validators.required("يرجى إدخال التكلفة المبدئية")]
+    validators: [Validators.required(t("items.initialCostRequired"))]
   }];
 }
 

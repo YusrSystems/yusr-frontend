@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { type DialogMode, SelectField, StorageFileField, TextAreaField, TextField, useFormErrors, useStorageFile } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemUnitPricingMethod } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
@@ -5,6 +6,7 @@ import TaxesSection from "./taxesSection";
 
 export default function BasicTab({ mode }: { mode: DialogMode; })
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const {
     fileInputRef,
@@ -26,7 +28,7 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
         <div className="flex-1 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <TextField
-              label="اسم المادة"
+              label={ t("items.itemName") }
               required
               value={ formData.name || "" }
               isInvalid={ isInvalid("name") }
@@ -38,7 +40,7 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
               } }
             />
             <SelectField
-              label="نوع المادة"
+              label={ t("items.itemType") }
               required
               disabled={ mode === "update" }
               value={ formData.type?.toString() || "" }
@@ -50,22 +52,22 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
                   sellUnitId: val === ItemType.Service.toString()
                     ? serviceIdsState.serviceIds?.unitId || 0
                     : undefined,
-                  sellUnitName: val === ItemType.Service.toString() ? "خدمة" : undefined,
+                  sellUnitName: val === ItemType.Service.toString() ? t("items.service") : undefined,
                   itemUnitPricingMethods: val === ItemType.Service.toString()
                     ? [
                       new ItemUnitPricingMethod({
                         unitId: serviceIdsState.serviceIds?.unitId || 0,
                         pricingMethodId: serviceIdsState.serviceIds?.pricingMethodId || 0,
-                        unitName: "خدمة",
-                        pricingMethodName: "خدمة",
+                        unitName: t("items.service"),
+                        pricingMethodName: t("items.service"),
                         quantityMultiplier: 1,
-                        itemUnitPricingMethodName: "خدمة"
+                        itemUnitPricingMethodName: t("items.service")
                       })
                     ]
                     : []
                 })) }
-              options={ [{ label: "منتج", value: ItemType.Product.toString() }, {
-                label: "خدمة",
+              options={ [{ label: t("items.product"), value: ItemType.Product.toString() }, {
+                label: t("items.service"),
                 value: ItemType.Service.toString()
               }] }
             />
@@ -73,28 +75,28 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
 
           <div className="grid grid-cols-2 gap-4">
             <TextField
-              label="الصنف"
+              label={ t("items.class") }
               value={ formData.class || "" }
               onChange={ (e) => dispatch(ItemSlice.formActions.updateFormData({ class: e.target.value })) }
             />
             <SelectField
-              label="الحالة"
+              label={ t("items.status") }
               required
               value={ formData.statusId?.toString() || "1" }
               onValueChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ statusId: Number(val) })) }
-              options={ [{ label: "مفعل", value: "1" }, { label: "غير مفعل", value: "0" }] }
+              options={ [{ label: t("items.active"), value: "1" }, { label: t("items.inactive"), value: "0" }] }
             />
           </div>
 
           <TextAreaField
-            label="وصف المادة"
+            label={ t("items.description") }
             value={ formData.description || "" }
             onChange={ (e) => dispatch(ItemSlice.formActions.updateFormData({ description: e.target.value })) }
             rows={ 2 }
           />
 
           <TextAreaField
-            label="ملاحظات"
+            label={ t("items.notes") }
             value={ formData.notes || "" }
             onChange={ (e) => dispatch(ItemSlice.formActions.updateFormData({ notes: e.target.value })) }
             rows={ 2 }
@@ -103,7 +105,7 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
 
         <div className="w-full lg:w-108 shrink-0 bg-muted/10 p-4 rounded-lg border">
           <StorageFileField
-            label="صور المادة"
+            label={ t("items.itemImages") }
             file={ formData.itemImages }
             fileInputRef={ fileInputRef }
             onFileChange={ handleFileChange }

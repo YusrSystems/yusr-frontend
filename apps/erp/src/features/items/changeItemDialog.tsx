@@ -1,5 +1,6 @@
 import { Box, Database, DollarSign } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialogTabbed, DialogContent, DialogDescription, DialogHeader, DialogTitle, Loading, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemValidationRules } from "../../core/data/item";
@@ -24,6 +25,7 @@ export default function ChangeItemDialog({
   onSuccess
 }: CommonChangeDialogProps<Item>)
 {
+  const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
   const [initLoading, setInitLoading] = useState(false);
 
@@ -47,7 +49,7 @@ export default function ChangeItemDialog({
   const { isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    ItemValidationRules.validationRules,
+    ItemValidationRules.validationRules(t),
     (errors) => dispatch(ItemSlice.formActions.setErrors(errors))
   );
   useFormInit(ItemSlice.formActions.setInitialData, initialValues);
@@ -91,11 +93,11 @@ export default function ChangeItemDialog({
       <DialogContent dir="rtl">
         <DialogHeader>
           <DialogTitle>
-            { mode === "create" ? "إضافة" : "تعديل" } مادة
+            { mode === "create" ? t("items.addNewTitle") : `${t("common:crudRow.edit")} ${t("items.entityName")}` }
           </DialogTitle>
           <DialogDescription />
         </DialogHeader>
-        <Loading entityName="المادة" />
+        <Loading entityName={ t("items.entityName") } />
       </DialogContent>
     );
   }
@@ -103,7 +105,7 @@ export default function ChangeItemDialog({
   return (
     <ChangeDialogTabbed<Item>
       changeDialogProps={ {
-        title: `${mode === "create" ? "إضافة" : "تعديل"} مادة`,
+        title: mode === "create" ? t("items.addNewTitle") : `${t("common:crudRow.edit")} ${t("items.entityName")}`,
         className: "sm:max-w-7xl",
         formData,
         dialogMode: mode,
@@ -113,7 +115,7 @@ export default function ChangeItemDialog({
       } }
       tabs={ [
         {
-          label: "المعلومات الأساسية",
+          label: t("items.basicInfo"),
           icon: Box,
           active: true,
           hasError: basicHasError,
@@ -121,7 +123,7 @@ export default function ChangeItemDialog({
         },
         ...(formData.type !== ItemType.Service
           ? [{
-            label: "التخزين",
+            label: t("items.storage"),
             icon: Database,
             active: false,
             hasError: storageHasError,
@@ -129,7 +131,7 @@ export default function ChangeItemDialog({
           }]
           : []),
         {
-          label: "التسعير",
+          label: t("items.pricing"),
           icon: DollarSign,
           active: false,
           hasError: pricingHasError,

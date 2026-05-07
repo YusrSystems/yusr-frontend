@@ -150,5 +150,17 @@
       "8": "eight hundred",
       "9": "nine hundred"
     }
+  },
+
+  "storageFileField": {
+    "pdfDocument": "PDF Document",
+    "filePreview": "File preview",
+    "pdfPreview": "PDF Preview",
+    "fullView": "Full view",
+    "removeFile": "Remove file",
+    "downloadFile": "Download file",
+    "changeOrAddImage": "Change / Add Image",
+    "uploadFiles": "Upload files",
+    "uploadHint": "You can select files (images, PDF)"
   }
 }

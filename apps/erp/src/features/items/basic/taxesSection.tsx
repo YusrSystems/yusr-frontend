@@ -1,6 +1,7 @@
 import TaxesSearchableSelect from "@/core/components/searchableSelect/taxesSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Checkbox, type DialogMode, NumberField, TextField } from "yusr-ui";
 import { ItemSlice, ItemTax } from "../../../core/data/item";
 import { type Tax } from "../../../core/data/tax";
@@ -8,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 
 export default function TaxesSection({ mode }: { mode: DialogMode; })
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const taxState = useAppSelector((state) => state.tax);
   const { formData, isDirty } = useAppSelector((state) => state.itemForm);
@@ -78,13 +80,13 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
             onCheckedChange={ (checked) => handleTaxableChange(checked as boolean) }
           />
           <label htmlFor="taxable" className="text-sm font-bold">
-            خاضعة للضريبة
+            { t("items.taxable") }
           </label>
         </div>
 
         { formData.taxable && (
-          <Button type="button" size="sm" onClick={ addTax }>
-            <Plus className="w-4 h-4 ml-2" /> إضافة ضريبة
+          <Button type="button" size="sm" onClick={ addTax } className="flex items-center justify-center">
+            <Plus className="w-4 h-4 me-2" /> { t("items.addTax") }
           </Button>
         ) }
       </div>
@@ -93,8 +95,8 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
         ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 bg-muted/10 p-4 rounded-lg border">
             <TextField
-              label="رمز سبب الإعفاء"
-              placeholder="أدخل رمز الإعفاء (مثال: VATEX-SA-29)"
+              label={ t("items.exemptionReasonCode") }
+              placeholder={ t("items.exemptionReasonCodePlaceholder") }
               value={ formData.exemptionReasonCode || "" }
               onChange={ (e) =>
                 dispatch(ItemSlice.formActions.updateFormData((prev) => ({
@@ -103,8 +105,8 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
                 }))) }
             />
             <TextField
-              label="سبب الإعفاء"
-              placeholder="أدخل سبب الإعفاء من الضريبة"
+              label={ t("items.exemptionReason") }
+              placeholder={ t("items.exemptionReasonPlaceholder") }
               value={ formData.exemptionReason || "" }
               onChange={ (e) =>
                 dispatch(ItemSlice.formActions.updateFormData((prev) => ({
@@ -120,9 +122,9 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
               <table className="w-full text-sm text-right">
                 <thead className="bg-muted/50 text-muted-foreground">
                   <tr>
-                    <th className="p-3 w-16">الرقم</th>
-                    <th className="p-3">الضريبة</th>
-                    <th className="p-3 w-32">نسبة الضريبة (%)</th>
+                    <th className="p-3 w-16">{ t("items.number") }</th>
+                    <th className="p-3 text-start">{ t("items.tax") }</th>
+                    <th className="p-3 w-50 text-start">{ t("items.taxPercentage") }</th>
                     <th className="p-3 w-16 text-center"></th>
                   </tr>
                 </thead>
@@ -171,7 +173,7 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
               </table>
               { (!formData.itemTaxes || formData.itemTaxes.length === 0) && (
                 <div className="p-4 text-center text-muted-foreground">
-                  لا توجد ضرائب مضافة
+                  { t("items.noTaxes") }
                 </div>
               ) }
             </div>

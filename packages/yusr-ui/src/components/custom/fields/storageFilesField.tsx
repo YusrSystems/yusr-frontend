@@ -1,5 +1,6 @@
 import { Download, FileText, Maximize2, UploadCloud, X } from "lucide-react";
 import React, { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { StorageFile } from "../../../entities";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
@@ -13,7 +14,6 @@ interface StorageFileFieldProps
   label: string;
   file: StorageFile | StorageFile[] | undefined;
   onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  // Passes index and file, but perfectly accepts your hook's () => void
   onRemove: (index: number, file: StorageFile) => void;
   onDownload: (e: React.MouseEvent, file: StorageFile | undefined) => void;
   getFileSrc: (file: StorageFile | undefined) => string;
@@ -45,6 +45,8 @@ export function StorageFileField(
   }: StorageFileFieldProps
 )
 {
+  const { t } = useTranslation("common");
+
   // 1. Normalize to array
   const filesArray = useMemo(() =>
   {
@@ -80,7 +82,7 @@ export function StorageFileField(
         <div className="flex flex-col items-center justify-center w-full h-full bg-muted/30">
           <FileText className="h-12 w-12 text-red-500 mb-2" />
           <span className="text-[10px] font-medium text-muted-foreground px-2 truncate w-full text-center">
-            PDF Document
+            { t("storageFileField.pdfDocument") }
           </span>
         </div>
       );
@@ -89,12 +91,12 @@ export function StorageFileField(
     return (
       <img
         src={ src }
-        alt="File preview"
+        alt={ t("storageFileField.filePreview") }
         loading="lazy"
         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
     );
-  }, [getFileSrc]);
+  }, [getFileSrc, t]);
 
   return (
     <div className="space-y-3">
@@ -130,14 +132,14 @@ export function StorageFileField(
                                   ? (
                                     <iframe
                                       src={ getFileSrc(f) }
-                                      title="PDF Preview"
+                                      title={ t("storageFileField.pdfPreview") }
                                       className="w-full h-full border-none bg-white"
                                     />
                                   )
                                   : (
                                     <div className="relative w-full h-full flex items-center justify-center p-4">
                                       <img
-                                        alt="Full view"
+                                        alt={ t("storageFileField.fullView") }
                                         src={ getFileSrc(f) }
                                         className="max-w-full max-h-full object-contain shadow-lg rounded-sm"
                                       />
@@ -157,7 +159,7 @@ export function StorageFileField(
                                   e.stopPropagation();
                                   onRemove(originalIndex, f);
                                 } }
-                                aria-label="Remove file"
+                                aria-label={ t("storageFileField.removeFile") }
                               >
                                 <X className="h-4 w-4" />
                               </Button>
@@ -171,7 +173,7 @@ export function StorageFileField(
                                   e.stopPropagation();
                                   onDownload(e, f);
                                 } }
-                                aria-label="Download file"
+                                aria-label={ t("storageFileField.downloadFile") }
                               >
                                 <Download className="h-4 w-4" />
                               </Button>
@@ -200,7 +202,7 @@ export function StorageFileField(
               onClick={ () => fileInputRef.current?.click() }
             >
               <UploadCloud className="ml-2 h-4 w-4" />
-              تغيير / إضافة صورة
+              { t("storageFileField.changeOrAddImage") }
             </Button>
           </div>
         )
@@ -214,8 +216,8 @@ export function StorageFileField(
             ) }
           >
             <UploadCloud className="h-8 w-8 text-muted-foreground mb-2" />
-            <span className="text-xs text-muted-foreground font-medium">ارفع الملفات</span>
-            <span className="text-[10px] text-muted-foreground/60 mt-1">يمكنك اختيار ملفات (صور ، PDF)</span>
+            <span className="text-xs text-muted-foreground font-medium">{ t("storageFileField.uploadFiles") }</span>
+            <span className="text-[10px] text-muted-foreground/60 mt-1">{ t("storageFileField.uploadHint") }</span>
           </div>
         ) }
 
@@ -227,7 +229,7 @@ export function StorageFileField(
         className="hidden"
         accept="image/jpeg,image/png,image/gif,application/pdf"
         onChange={ handleFileChange }
-        multiple={ true } // Left as true so it works if you upgrade your hook to arrays later
+        multiple={ true }
       />
     </div>
   );
