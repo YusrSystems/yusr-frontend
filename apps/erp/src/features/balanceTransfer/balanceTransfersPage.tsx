@@ -1,5 +1,6 @@
 import { ArrowRightLeft } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CrudPage, CurrencyIcon, NumbertoWordsService, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import BalanceTransfer, { BalanceTransferFilterColumns, BalanceTransferSlice } from "../../core/data/balanceTransfer";
@@ -11,6 +12,7 @@ import ChangeBalanceTransferDialog from "./changeBalanceTransferDialog";
 
 export default function BalanceTransfersPage()
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const transferState = useAppSelector((state) => state.balanceTransfer);
@@ -24,9 +26,9 @@ export default function BalanceTransfersPage()
 
   return (
     <CrudPage<BalanceTransfer>
-      title="تحويلات الأرصدة"
-      entityName="تحويل"
-      addNewItemTitle="إضافة تحويل جديد"
+      title={ t("balanceTransfers.title") }
+      entityName={ t("balanceTransfers.entityName") }
+      addNewItemTitle={ t("balanceTransfers.addNewTitle") }
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -37,19 +39,19 @@ export default function BalanceTransfersPage()
       useSlice={ () => transferDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي التحويلات",
+        title: t("balanceTransfers.totalTransfers"),
         data: (transferState.entities?.count ?? 0).toString(),
         icon: <ArrowRightLeft className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ BalanceTransferFilterColumns.columnsNames }
+      columnsToFilter={ BalanceTransferFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: "رقم التحويل", rowStyles: "w-24" },
-        { rowName: "التاريخ", rowStyles: "w-24" },
-        { rowName: "من حساب", rowStyles: "w-40" },
-        { rowName: "إلى حساب", rowStyles: "w-40" },
-        { rowName: "المبلغ", rowStyles: "w-32" },
-        { rowName: "البيان", rowStyles: "w-48" },
+        { rowName: t("balanceTransfers.transferId"), rowStyles: "w-24" },
+        { rowName: t("balanceTransfers.date"), rowStyles: "w-24" },
+        { rowName: t("balanceTransfers.fromAccount"), rowStyles: "w-40" },
+        { rowName: t("balanceTransfers.toAccount"), rowStyles: "w-40" },
+        { rowName: t("balanceTransfers.amount"), rowStyles: "w-32" },
+        { rowName: t("balanceTransfers.description"), rowStyles: "w-48" },
         ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
             SystemPermissionsResources.ReportBalanceTransfer,

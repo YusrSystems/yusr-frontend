@@ -81,5 +81,28 @@
     "title": "Account Statement",
     "fromDate": "From Date",
     "toDate": "To Date"
+  },
+
+  "balanceTransfers": {
+    "title": "Balance Transfers",
+    "entityName": "Transfer",
+    "addNewTitle": "Add New Transfer",
+    "totalTransfers": "Total Transfers",
+    "transferId": "Transfer Id",
+    "date": "Date",
+    "fromAccount": "From Account",
+    "toAccount": "To Account",
+    "amount": "Amount",
+    "description": "Description",
+    "transferDate": "Transfer Date",
+    "amountInWords": "Amount in Words",
+    "transferDetails": "Transfer Details",
+    "transferParties": "Transfer Parties",
+    "additionalInfo": "Additional Information",
+    "descriptionPlaceholder": "Write the reason for transfer or any other notes...",
+    "amountRequired": "Please enter the amount",
+    "dateRequired": "Please select the date",
+    "fromAccountRequired": "Please select the account to transfer from",
+    "toAccountRequired": "Please select the account to transfer to"
   }
 }

@@ -1,5 +1,5 @@
-import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
+import { type TFunction } from "i18next";
+import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import BalanceTransfersApiService from "../networking/balanceTransferApiService";
 
 export default class BalanceTransfer extends BaseEntity
@@ -21,30 +21,32 @@ export default class BalanceTransfer extends BaseEntity
 
 export class BalanceTransferFilterColumns
 {
-  public static columnsNames: ColumnName<BalanceTransfer>[] = [{ label: "رقم التحويل", value: "id" }, {
-    label: "البيان",
+  public static columnsNames = (
+    t: TFunction<"accounting">
+  ): ColumnName<BalanceTransfer>[] => [{ label: t("balanceTransfers.transferId"), value: "id" }, {
+    label: t("balanceTransfers.description"),
     value: "description"
   }];
 }
 
 export class BalanceTransferValidationRules
 {
-  public static validationRules: ValidationRule<Partial<BalanceTransfer>>[] = [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<BalanceTransfer>>[] => [{
     field: "amount",
     selector: (d) => d.amount,
-    validators: [Validators.required("يرجى إدخال المبلغ")]
+    validators: [Validators.required(t("balanceTransfers.amountRequired"))]
   }, {
     field: "date",
     selector: (d) => d.date,
-    validators: [Validators.required("يرجى اختيار التاريخ")]
+    validators: [Validators.required(t("balanceTransfers.dateRequired"))]
   }, {
     field: "fromAccountId",
     selector: (d) => d.fromAccountId,
-    validators: [Validators.required("يرجى اختيار الحساب المحول منه")]
+    validators: [Validators.required(t("balanceTransfers.fromAccountRequired"))]
   }, {
     field: "toAccountId",
     selector: (d) => d.toAccountId,
-    validators: [Validators.required("يرجى اختيار الحساب المحول إليه")]
+    validators: [Validators.required(t("balanceTransfers.toAccountRequired"))]
   }];
 }
 

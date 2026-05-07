@@ -1,8 +1,8 @@
 import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/banksAndBoxesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
-import { CurrencyIcon, NumbertoWordsService } from "yusr-ui";
+import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, DateField, FieldGroup, FieldsSection, FormField, NumberField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormField, NumberField, NumbertoWordsService, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BanksAndBoxesSlice } from "../../core/data/account";
 import type BalanceTransfer from "../../core/data/balanceTransfer";
 import { BalanceTransferSlice, BalanceTransferValidationRules } from "../../core/data/balanceTransfer";
@@ -12,6 +12,7 @@ export default function ChangeBalanceTransferDialog(
   { entity, mode, service, onSuccess }: CommonChangeDialogProps<BalanceTransfer>
 )
 {
+  const { t } = useTranslation(["accounting", "common"]);
   const [amountToWords, setAmountToWords] = useState("");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
@@ -27,7 +28,7 @@ export default function ChangeBalanceTransferDialog(
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    BalanceTransferValidationRules.validationRules,
+    BalanceTransferValidationRules.validationRules(t),
     (errors) => dispatch(BalanceTransferSlice.formActions.setErrors(errors))
   );
   useFormInit(BalanceTransferSlice.formActions.setInitialData, initialValues);
@@ -57,7 +58,9 @@ export default function ChangeBalanceTransferDialog(
 
   return (
     <ChangeDialog<BalanceTransfer>
-      title={ `${mode === "create" ? "إضافة" : "تعديل"} تحويل رصيد` }
+      title={ mode === "create"
+        ? t("balanceTransfers.addNewTitle")
+        : `${t("common:crudRow.edit")} ${t("balanceTransfers.entityName")}` }
       className="sm:max-w-2xl"
       formData={ formData }
       dialogMode={ mode }
@@ -68,9 +71,9 @@ export default function ChangeBalanceTransferDialog(
     >
       <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
         <FieldGroup>
-          <FieldsSection title="تفاصيل التحويل" columns={ 2 }>
+          <FieldsSection title={ t("balanceTransfers.transferDetails") } columns={ 2 }>
             <DateField
-              label="تاريخ التحويل"
+              label={ t("balanceTransfers.transferDate") }
               required
               value={ formData.date ? new Date(formData.date) : undefined }
               onChange={ (date) => dispatch(BalanceTransferSlice.formActions.updateFormData({ date: date })) }
@@ -79,7 +82,7 @@ export default function ChangeBalanceTransferDialog(
             />
 
             <NumberField
-              label="المبلغ"
+              label={ t("balanceTransfers.amount") }
               required
               value={ formData.amount || 0 }
               onChange={ (val) => dispatch(BalanceTransferSlice.formActions.updateFormData({ amount: val })) }
@@ -89,16 +92,17 @@ export default function ChangeBalanceTransferDialog(
             />
             <div className="col-span-full">
               <TextField
-                label={ "التفقيط" }
+                label={ t("balanceTransfers.amountInWords") }
                 value={ amountToWords }
                 onChange={ () => undefined }
+                disabled
               />
             </div>
           </FieldsSection>
 
-          <FieldsSection title="أطراف التحويل" columns={ 2 }>
+          <FieldsSection title={ t("balanceTransfers.transferParties") } columns={ 2 }>
             <FormField
-              label="من حساب"
+              label={ t("balanceTransfers.fromAccount") }
               required
               isInvalid={ isInvalid("fromAccountId") }
               error={ getError("fromAccountId") }
@@ -120,7 +124,7 @@ export default function ChangeBalanceTransferDialog(
             </FormField>
 
             <FormField
-              label="إلى حساب"
+              label={ t("balanceTransfers.toAccount") }
               required
               isInvalid={ isInvalid("toAccountId") }
               error={ getError("toAccountId") }
@@ -142,14 +146,14 @@ export default function ChangeBalanceTransferDialog(
             </FormField>
           </FieldsSection>
 
-          <FieldsSection title="معلومات إضافية" columns={ 1 }>
+          <FieldsSection title={ t("balanceTransfers.additionalInfo") } columns={ 1 }>
             <TextAreaField
-              label="البيان / الوصف"
+              label={ t("balanceTransfers.description") }
               value={ formData.description || "" }
               onChange={ (e) =>
                 dispatch(BalanceTransferSlice.formActions.updateFormData({ description: e.target.value })) }
               rows={ 3 }
-              placeholder="اكتب سبب التحويل أو أي ملاحظات أخرى..."
+              placeholder={ t("balanceTransfers.descriptionPlaceholder") }
             />
           </FieldsSection>
         </FieldGroup>

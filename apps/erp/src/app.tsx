@@ -1,5 +1,7 @@
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { BranchesPage, NotFoundPage, ProtectedRoute, ThemeProvider, Toaster, TooltipProvider, UsersPage } from "yusr-ui";
+import { BranchesPage, NotFoundPage, NumbertoWordsService, ProtectedRoute, ThemeProvider, Toaster, TooltipProvider, UsersPage } from "yusr-ui";
 import AppLayout from "./appLayout";
 import { useAppSelector } from "./core/state/store";
 import BanksAccountsPage from "./features/accounts/banksAccountsPage";
@@ -30,6 +32,13 @@ import VouchersPage from "./features/vouchers/vouchersPage";
 
 function App()
 {
+  const { t, i18n } = useTranslation("common");
+
+  useEffect(() =>
+  {
+    NumbertoWordsService.init(t, i18n.language);
+  }, [t]);
+
   return <AppBody />;
 }
 

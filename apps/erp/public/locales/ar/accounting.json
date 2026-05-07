@@ -81,5 +81,28 @@
     "title": "كشف حساب",
     "fromDate": "من تاريخ",
     "toDate": "إلى تاريخ"
+  },
+
+  "balanceTransfers": {
+    "title": "تحويلات الأرصدة",
+    "entityName": "تحويل",
+    "addNewTitle": "إضافة تحويل جديد",
+    "totalTransfers": "إجمالي التحويلات",
+    "transferId": "رقم التحويل",
+    "date": "التاريخ",
+    "fromAccount": "من حساب",
+    "toAccount": "إلى حساب",
+    "amount": "المبلغ",
+    "description": "البيان",
+    "transferDate": "تاريخ التحويل",
+    "amountInWords": "التفقيط",
+    "transferDetails": "تفاصيل التحويل",
+    "transferParties": "أطراف التحويل",
+    "additionalInfo": "معلومات إضافية",
+    "descriptionPlaceholder": "اكتب سبب التحويل أو أي ملاحظات أخرى...",
+    "amountRequired": "يرجى إدخال المبلغ",
+    "dateRequired": "يرجى اختيار التاريخ",
+    "fromAccountRequired": "يرجى اختيار الحساب المحول منه",
+    "toAccountRequired": "يرجى اختيار الحساب المحول إليه"
   }
 }
