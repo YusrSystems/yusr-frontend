@@ -34,6 +34,15 @@
     "delete": "Delete"
   },
 
+  "crudEmptyTable": {
+    "loadingTitle": "Please wait",
+    "loadingDescription": "Loading requested data",
+    "emptyTitle": "No data to display",
+    "emptyDescription": "This table is empty and contains no data to display",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "An error occurred while fetching data. Please check your internet connection or contact our customer support if this persists"
+  },
+
   "changeDialog": {
     "unauthorized": "Unauthorized",
     "close": "Close",

@@ -34,6 +34,15 @@
     "delete": "حذف"
   },
 
+  "crudEmptyTable": {
+    "loadingTitle": "فضلا انتظر",
+    "loadingDescription": "يتم تحميل البيانات المطلوبة",
+    "emptyTitle": "لا توجد بيانات لعرضها",
+    "emptyDescription": "هذا الجدول فارغ ولا يحتوي على بيانات للعرض",
+    "errorTitle": "حدث خطأ ما",
+    "errorDescription": "حدث خطأ اثناء جلب البيانات الرجاء التحقق من اتصالك الانترنت او اتصل بخدمة العملاء لدينا في حال تكراره"
+  },
+
   "changeDialog": {
     "unauthorized": "غير مصرح",
     "close": "إغلاق",

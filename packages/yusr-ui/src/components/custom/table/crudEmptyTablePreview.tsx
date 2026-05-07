@@ -1,10 +1,13 @@
 "use client";
 
 import { LoaderPinwheelIcon, RefreshCwOff, Table } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../status/empty";
+
 type EmptyTableMode = "empty" | "loading" | "error";
 
 type EmptyTablePreviewProps = { mode: EmptyTableMode; };
+
 export function CrudEmptyTablePreview({ mode }: EmptyTablePreviewProps)
 {
   if (mode === "loading")
@@ -20,14 +23,16 @@ export function CrudEmptyTablePreview({ mode }: EmptyTablePreviewProps)
 
 function LoadingMode()
 {
+  const { t } = useTranslation("common");
+
   return (
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <Table />
         </EmptyMedia>
-        <EmptyTitle>فضلا انتظر</EmptyTitle>
-        <EmptyDescription>يتم تحميل البيانات المطلوبة</EmptyDescription>
+        <EmptyTitle>{ t("crudEmptyTable.loadingTitle") }</EmptyTitle>
+        <EmptyDescription>{ t("crudEmptyTable.loadingDescription") }</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <LoaderPinwheelIcon className="animate-spin duration-700" />
@@ -38,14 +43,16 @@ function LoadingMode()
 
 function EmptyMode()
 {
+  const { t } = useTranslation("common");
+
   return (
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <Table />
         </EmptyMedia>
-        <EmptyTitle>لا توجد بيانات لعرضها</EmptyTitle>
-        <EmptyDescription>هذا الجدول فارغ ولا يحتوي على بيانات للعرض</EmptyDescription>
+        <EmptyTitle>{ t("crudEmptyTable.emptyTitle") }</EmptyTitle>
+        <EmptyDescription>{ t("crudEmptyTable.emptyDescription") }</EmptyDescription>
       </EmptyHeader>
     </Empty>
   );
@@ -53,16 +60,16 @@ function EmptyMode()
 
 function ErrorMode()
 {
+  const { t } = useTranslation("common");
+
   return (
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <Table />
         </EmptyMedia>
-        <EmptyTitle>حدث خطأ ما</EmptyTitle>
-        <EmptyDescription>
-          حدث خطأ اثناء جلب البيانات الرجاء التحقق من اتصالك الانترنت او اتصل بخدمة العملاء لدينا في حال تكراره
-        </EmptyDescription>
+        <EmptyTitle>{ t("crudEmptyTable.errorTitle") }</EmptyTitle>
+        <EmptyDescription>{ t("crudEmptyTable.errorDescription") }</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <RefreshCwOff />
