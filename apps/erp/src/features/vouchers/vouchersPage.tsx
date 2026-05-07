@@ -84,7 +84,7 @@ export default function VouchersPage()
             voucher.type === VoucherType.Payment ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
           }`
         },
-        { rowName: new Date(voucher.date).toLocaleDateString("ar-SA"), rowStyles: "" },
+        { rowName: new Date(voucher.date).toLocaleDateString("en-CA"), rowStyles: "" },
         { rowName: voucher.accountName ?? "-", rowStyles: "font-semibold" },
         {
           rowName: (

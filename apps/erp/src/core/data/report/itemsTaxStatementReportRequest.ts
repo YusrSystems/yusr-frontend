@@ -10,8 +10,8 @@ export type ItemsTaxStatementReportType = typeof ItemsTaxStatementReportType[key
 export class ItemsTaxStatementReportRequest implements BaseReportRequest
 {
   type!: ItemsTaxStatementReportType;
-  fromDate?: Date | null;
-  toDate?: Date | null;
+  fromDate?: string | null;
+  toDate?: string | null;
   itemId?: number | null;
 
   constructor(init?: Partial<ItemsTaxStatementReportRequest>)

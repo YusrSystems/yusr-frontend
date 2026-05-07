@@ -23,7 +23,7 @@ export class ItemTransfersItem extends BaseEntity
 export default class ItemTransfer extends BaseEntity
 {
   public description?: string;
-  public transferDate: Date = new Date();
+  public transferDate!: string | Date;
   public fromStoreId!: number;
   public fromStoreName: string = "";
   public toStoreId!: number;

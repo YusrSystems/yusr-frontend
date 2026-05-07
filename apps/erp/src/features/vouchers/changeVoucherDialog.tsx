@@ -21,7 +21,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
   const initialValues = useMemo(() => ({
     type: entity?.type || VoucherType.Receipt,
     ...entity,
-    date: entity?.date ? new Date(entity.date) : new Date(),
+    date: entity?.date ? new Date(entity.date).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
     amount: entity?.amount || 0,
     commissionAmount: entity?.commissionAmount || 0
   }), [entity]);

@@ -67,8 +67,8 @@ export default function ChangeInvoiceDialog({
       storeName: entity?.storeName ?? authState.setting?.mainStoreName,
       statusId: entity?.statusId ?? InvoiceStatus.Valid,
       date: entity?.date
-        ? new Date(entity.date).toISOString().split("T")[0]
-        : new Date().toISOString().split("T")[0],
+        ? new Date(entity.date).toLocaleDateString("en-CA")
+        : new Date().toLocaleDateString("en-CA"),
       settlementAmount: entity?.settlementAmount ?? 0,
       settlementPercent: entity?.settlementPercent ?? 0,
       paidAmount: entity?.paidAmount ?? 0,

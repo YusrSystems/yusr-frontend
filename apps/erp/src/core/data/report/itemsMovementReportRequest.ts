@@ -28,8 +28,8 @@ export class ItemsMovementReportRequest implements BaseReportRequest
 {
   transTypeId?: ItemsMovementReportTransType | null;
   itemId?: number | null;
-  fromDate?: Date | null;
-  toDate?: Date | null;
+  fromDate?: string | null;
+  toDate?: string | null;
   fromAccountId?: number | null;
   toAccountId?: number | null;
   fromStoreId?: number | null;

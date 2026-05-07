@@ -62,7 +62,7 @@ export default function StocktakingsPage()
         stocktaking: Stocktaking
       ) => [
         { rowName: `#${stocktaking.id}`, rowStyles: "" },
-        { rowName: new Date(stocktaking.date).toLocaleDateString(), rowStyles: "font-mono" },
+        { rowName: new Date(stocktaking.date).toLocaleDateString("en-CA"), rowStyles: "font-mono" },
         { rowName: stocktaking.storeName, rowStyles: "font-semibold" },
         { rowName: stocktaking.description ?? "-", rowStyles: "text-sm text-gray-500" },
         ...(SystemPermissions.hasAuth(

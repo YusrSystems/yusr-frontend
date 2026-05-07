@@ -64,7 +64,7 @@ export default function ItemTransfersPage()
         transfer: ItemTransfer
       ) => [
         { rowName: `#${transfer.id}` },
-        { rowName: new Date(transfer.transferDate).toLocaleDateString(), rowStyles: "" },
+        { rowName: new Date(transfer.transferDate).toLocaleDateString("en-CA"), rowStyles: "" },
         { rowName: transfer.fromStoreName, rowStyles: "font-semibold" },
         { rowName: transfer.toStoreName, rowStyles: "font-semibold" },
         { rowName: transfer.description || "-", rowStyles: "text-muted-foreground" },

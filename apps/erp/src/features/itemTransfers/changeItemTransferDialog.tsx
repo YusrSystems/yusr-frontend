@@ -28,7 +28,7 @@ export default function ChangeItemTransferDialog({
   const initialValues = useMemo(
     () => ({
       ...entity,
-      transferDate: entity?.transferDate ? new Date(entity.transferDate) : new Date(),
+      transferDate: entity?.transferDate ? new Date(entity.transferDate).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
       itemTransfersItems: entity?.itemTransfersItems || []
     }),
     [entity]
@@ -168,7 +168,7 @@ export default function ChangeItemTransferDialog({
           <TextField
             label={ t("itemTransfers.stocktakingDate") }
             required
-            value={ formData.transferDate ? new Date(formData.transferDate).toISOString().split("T")[0] : "" }
+            value={ formData.transferDate ? new Date(formData.transferDate).toLocaleDateString("en-CA") : "" }
             isInvalid={ isInvalid("date") }
             error={ getError("date") }
             disabled

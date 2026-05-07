@@ -44,8 +44,8 @@ export default function ProfitAndLossDialog()
             <ReportButton
               reportName={ ReportConstants.InvoicesList }
               request={ new InvoicesListReportRequest({
-                fromDate,
-                toDate,
+                fromDate: fromDate?.toLocaleDateString("en-CA") ?? null,
+                toDate: toDate?.toLocaleDateString("en-CA") ?? null,
                 reportType: InvoicesListReportType.ProfitAndLoss
               }) }
             />

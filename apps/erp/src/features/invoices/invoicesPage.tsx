@@ -270,7 +270,7 @@ export default function InvoicesPage({
           rowStyles: "font-semibold"
         },
         {
-          rowName: new Date(invoice.date).toLocaleDateString(),
+          rowName: new Date(invoice.date).toLocaleDateString("en-CA"),
           rowStyles: ""
         },
         { rowName: invoice.actionAccountName || "-", rowStyles: "" },

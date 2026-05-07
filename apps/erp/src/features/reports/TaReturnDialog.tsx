@@ -43,7 +43,10 @@ export default function TaxReturnDialog()
           <DialogFooter>
             <ReportButton
               reportName={ ReportConstants.TaxReturn }
-              request={ new TaxReturnReportRequest({ fromDate, toDate }) }
+              request={ new TaxReturnReportRequest({
+                fromDate: fromDate?.toLocaleDateString("en-CA") ?? null,
+                toDate: toDate?.toLocaleDateString("en-CA") ?? null
+              }) }
             />
           </DialogFooter>
         </DialogContent>

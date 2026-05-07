@@ -71,8 +71,8 @@ export default function ItemsTaxStatementDialog()
             <ReportButton
               reportName={ ReportConstants.ItemTaxStatement }
               request={ new ItemsTaxStatementReportRequest({
-                fromDate: fromDate,
-                toDate: toDate,
+                fromDate: fromDate?.toLocaleDateString("en-CA") ?? null,
+                toDate: toDate?.toLocaleDateString("en-CA") ?? null,
                 itemId: itemId,
                 type: type
               }) }

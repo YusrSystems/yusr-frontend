@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { arSA, enUS } from "date-fns/locale";
 import { ChevronDownIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
@@ -22,7 +22,7 @@ export interface DateInputProps
 }
 
 export function DateInput({
-  value,
+  value: comingValue,
   onChange,
   isInvalid,
   placeholder = "اختر تاريخا",
@@ -33,10 +33,11 @@ export function DateInput({
   maxDate
 }: DateInputProps)
 {
+  const [value, setValue] = useState<Date | undefined>(comingValue);
   const [isOpen, setIsOpen] = useState(false);
   const { t, i18n } = useTranslation("common");
   const defaultPlaceholder = placeholder || t("dateInput.placeholder");
-  const dateFnsLocale = locale || i18n.language === "ar" ? arSA : enUS;
+  const dateFnsLocale = locale ?? (i18n.language === "ar" ? arSA : enUS);
 
   const disabledDays = [];
   if (minDate)
@@ -47,6 +48,19 @@ export function DateInput({
   {
     disabledDays.push({ after: maxDate });
   }
+
+  useEffect(() =>
+  {
+    if (comingValue)
+    {
+      const local = new Date(comingValue.getFullYear(), comingValue.getMonth(), comingValue.getDate());
+      setValue(local);
+    }
+    else
+    {
+      setValue(undefined);
+    }
+  }, [comingValue]);
 
   return (
     <Popover open={ isOpen } onOpenChange={ setIsOpen }>
@@ -73,7 +87,17 @@ export function DateInput({
           selected={ value }
           onSelect={ (date) =>
           {
-            onChange(date);
+            if (date)
+            {
+              const local = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+              onChange(local);
+              setValue(local);
+            }
+            else
+            {
+              onChange(undefined);
+              setValue(undefined);
+            }
             setIsOpen(false);
           } }
           locale={ dateFnsLocale }

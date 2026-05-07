@@ -64,7 +64,7 @@ export default function BalanceTransfersPage()
         transfer: BalanceTransfer
       ) => [
         { rowName: `#${transfer.id}`, rowStyles: "" },
-        { rowName: new Date(transfer.date).toLocaleDateString().replace(/\//g, "-"), rowStyles: "" },
+        { rowName: new Date(transfer.date).toLocaleDateString("en-CA"), rowStyles: "" },
         { rowName: transfer.fromAccountName ?? "-", rowStyles: "font-semibold text-red-600" },
         { rowName: transfer.toAccountName ?? "-", rowStyles: "font-semibold text-green-600" },
         {

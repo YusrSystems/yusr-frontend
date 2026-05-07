@@ -12,8 +12,8 @@ export type InvoicesListReportType = typeof InvoicesListReportType[keyof typeof 
 export class InvoicesListReportRequest implements BaseReportRequest
 {
   condition?: FilterCondition<Invoice>;
-  fromDate?: Date | null;
-  toDate?: Date | null;
+  fromDate?: string | null;
+  toDate?: string | null;
   reportType: InvoicesListReportType;
 
   constructor(init?: Partial<InvoicesListReportRequest>)

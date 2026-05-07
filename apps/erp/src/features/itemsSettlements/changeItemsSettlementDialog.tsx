@@ -22,7 +22,7 @@ export default function ChangeItemsSettlementDialog(
 
   const initialValues = useMemo(() => ({
     ...entity,
-    date: entity?.date ? new Date(entity.date) : new Date(),
+    date: entity?.date ? new Date(entity.date).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
     itemsSettlementItems: entity?.itemsSettlementItems || []
   }), [entity]);
 
@@ -151,7 +151,9 @@ export default function ChangeItemsSettlementDialog(
             <TextField
               label={ t("itemsSettlements.settlementDate") }
               required
-              value={ formData.date ? new Date(formData.date).toISOString().split("T")[0] : "" }
+              value={ formData.date
+                ? new Date(formData.date).toLocaleDateString("en-CA")
+                : "" }
               isInvalid={ isInvalid("date") }
               error={ getError("date") }
               disabled

@@ -20,7 +20,7 @@ export default function ChangeBalanceTransferDialog(
 
   const initialValues = useMemo(() => ({
     ...entity,
-    date: entity?.date || new Date(),
+    date: entity?.date || new Date().toLocaleDateString("en-CA"),
     amount: entity?.amount || 0
   }), [entity]);
 

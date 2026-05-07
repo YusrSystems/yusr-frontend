@@ -169,8 +169,8 @@ export default function ItemsMovementDialog()
               request={ new ItemsMovementReportRequest({
                 transTypeId: transTypeId ?? null,
                 itemId: itemId ?? null,
-                fromDate: fromDate ?? null,
-                toDate: toDate ?? null,
+                fromDate: fromDate?.toLocaleDateString("en-CA") ?? null,
+                toDate: toDate?.toLocaleDateString("en-CA") ?? null,
                 fromAccountId: fromAccountId ?? null,
                 toAccountId: toAccountId ?? null,
                 fromStoreId: fromStoreId ?? null,

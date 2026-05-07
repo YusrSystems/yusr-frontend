@@ -21,7 +21,7 @@ export default function ChangeStocktakingDialog(
 
   const initialValues = useMemo(() => ({
     ...entity,
-    date: entity?.date ? new Date(entity.date) : new Date(),
+    date: entity?.date ? new Date(entity.date).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
     stocktakingItems: entity?.stocktakingItems || []
   }), [entity]);
 
@@ -116,7 +116,9 @@ export default function ChangeStocktakingDialog(
             <TextField
               label={ t("stocktakings.stocktakingDate") }
               required
-              value={ formData.date ? new Date(formData.date).toISOString().split("T")[0] : "" }
+              value={ formData.date
+                ? new Date(formData.date).toLocaleDateString("en-CA")
+                : "" }
               isInvalid={ isInvalid("date") }
               error={ getError("date") }
               disabled

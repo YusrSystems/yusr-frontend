@@ -62,7 +62,7 @@ export default function ItemsSettlementsPage()
         settlement: ItemsSettlement
       ) => [
         { rowName: `#${settlement.id}`, rowStyles: "" },
-        { rowName: new Date(settlement.date).toLocaleDateString("ar-SA"), rowStyles: "font-mono" },
+        { rowName: new Date(settlement.date).toLocaleDateString("en-CA"), rowStyles: "font-mono" },
         { rowName: settlement.storeName, rowStyles: "font-semibold" },
         { rowName: settlement.description ?? "-", rowStyles: "text-sm text-gray-500" },
         ...(SystemPermissions.hasAuth(
