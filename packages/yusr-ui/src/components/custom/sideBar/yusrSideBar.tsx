@@ -1,25 +1,13 @@
 "use client";
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarProvider,
-} from "../../pure/sidebar";
-import {
-  SidebarContext,
-  useSidebarContext,
-  type YusrSidBarProps,
-} from "../../../hooks/useSidebarContext";
 import type { PropsWithChildren } from "react";
-import { SidebarLogo } from "./sidebarLogo";
+import { SidebarContext, useSidebarContext, type YusrSidBarProps } from "../../../hooks/useSidebarContext";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarProvider } from "../../pure/sidebar";
 import { SideBarCompanyData } from "./sideBarCompanyData";
-import { YusrSideBarMainMenu } from "./yusrSideBarMainMenu";
+import { SidebarLogo } from "./sidebarLogo";
 import { SideBarSecondaryMenu } from "./sideBarSecondaryMenu";
 import { SideBarUserData } from "./sideBarUserData";
+import { YusrSideBarMainMenu } from "./yusrSideBarMainMenu";
 
 /**
  * A sidebar component for Yusuf UI.
@@ -43,20 +31,21 @@ export function YusrSideBar({
   logos,
   displayCompany = {
     name: "Yusr UI",
-    logo: "/yusr-logo.png",
+    logo: "/yusr-logo.png"
   },
   navMain,
   navSecondary,
   children,
   ...props
-}: React.ComponentProps<typeof Sidebar> & YusrSidBarProps & PropsWithChildren) {
+}: React.ComponentProps<typeof Sidebar> & YusrSidBarProps & PropsWithChildren)
+{
   return (
     <SidebarContext.Provider
-      value={{ LinkComponent, logos, displayCompany, navMain, navSecondary }}
+      value={ { LinkComponent, logos, displayCompany, navMain, navSecondary } }
     >
       <SidebarProvider>
-        <Sidebar collapsible="icon" side="right" {...props}>
-          {children}
+        <Sidebar collapsible="icon" side="right" { ...props }>
+          { children }
         </Sidebar>
       </SidebarProvider>
     </SidebarContext.Provider>
@@ -68,27 +57,28 @@ export function YusrSideBar({
  * It displays the logo and company information.
  * @returns {React.ReactElement} The header component.
  */
-YusrSideBar.Header = function () {
+YusrSideBar.Header = function()
+{
   const { displayCompany, logos } = useSidebarContext();
   const logoConfig: {
-    full: { light: string; dark: string };
-    collapsed: { light: string; dark: string };
+    full: { light: string; dark: string; };
+    collapsed: { light: string; dark: string; };
   } = {
     full: {
       light: logos.logoFullLight,
-      dark: logos.logoFullDark,
+      dark: logos.logoFullDark
     },
     collapsed: {
       light: logos.logoOnlyLight,
-      dark: logos.logoOnlyDark,
-    },
+      dark: logos.logoOnlyDark
+    }
   };
   return (
     <SidebarHeader>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarLogo logos={logoConfig} />
-          {displayCompany && <SideBarCompanyData company={displayCompany} />}
+          <SidebarLogo logos={ logoConfig } />
+          { displayCompany && <SideBarCompanyData company={ displayCompany } /> }
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarHeader>
@@ -101,36 +91,41 @@ YusrSideBar.Header = function () {
  * @param {LogoutHandler?: () => Promise<void>} [LogoutHandler] A function to be called when the logout button is clicked.
  * @return {React.ReactElement} The content component.
  */
-YusrSideBar.Content = function ({
-  LogoutHandler,
+YusrSideBar.Content = function({
+  LogoutHandler
 }: {
   LogoutHandler?: () => Promise<void>;
-}) {
+})
+{
   const { navMain, navSecondary, LinkComponent } = useSidebarContext();
-  if (!navMain || !navSecondary) return <SidebarContent></SidebarContent>;
+  if (!navMain || !navSecondary)
+  {
+    return <SidebarContent></SidebarContent>;
+  }
   return (
     <SidebarContent>
-      <YusrSideBarMainMenu items={navMain} LinkComponent={LinkComponent} />
-      {LogoutHandler !== undefined && (
+      <YusrSideBarMainMenu items={ navMain } LinkComponent={ LinkComponent } />
+      { LogoutHandler !== undefined && (
         <SideBarSecondaryMenu
-          items={navSecondary}
+          items={ navSecondary }
           className="pt-10 mt-auto text-center"
-          onLogout={LogoutHandler}
-          LinkComponent={LinkComponent}
+          onLogout={ LogoutHandler }
+          LinkComponent={ LinkComponent }
         />
-      )}
+      ) }
     </SidebarContent>
   );
 };
 
-YusrSideBar.Footer = function ({
-  loggedInUser = undefined,
+YusrSideBar.Footer = function({
+  loggedInUser = undefined
 }: {
   loggedInUser?: any;
-}) {
+})
+{
   return (
     <SidebarFooter>
-      <SideBarUserData user={loggedInUser} />
+      <SideBarUserData user={ loggedInUser } />
     </SidebarFooter>
   );
 };

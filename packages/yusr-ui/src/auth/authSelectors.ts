@@ -1,5 +1,5 @@
-import type { YusrRootState } from "../state";
 import { createSelector } from "@reduxjs/toolkit";
+import type { YusrRootState } from "../state";
 import type { PermissionSelector } from "./permissionSelector";
 import { SystemPermissions } from "./systemPermissions";
 import { SystemPermissionsActions } from "./systemPermissionsActions";

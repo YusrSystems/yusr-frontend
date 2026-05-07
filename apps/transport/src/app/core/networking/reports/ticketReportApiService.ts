@@ -1,4 +1,4 @@
-import { ApiConstants, YusrApiHelper, type RequestResult } from "yusr-ui";
+import { ApiConstants, type RequestResult, YusrApiHelper } from "yusr-ui";
 import { ReportHelper } from "./reportHelper";
 
 export default class TicketReportApiService

@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../../pure/card";
 import type { ReactNode } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../../pure/card";
 
 export type CardProps = { title: string; data: string; icon: ReactNode; };
 

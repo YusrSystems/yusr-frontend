@@ -1,7 +1,7 @@
 import type { FilterCondition } from "yusr-ui";
 import type { AccountType } from "../account";
-import type { BaseReportRequest } from "./baseReportRequest";
 import type Account from "../account";
+import type { BaseReportRequest } from "./baseReportRequest";
 
 export class AccountsListReportRequest implements BaseReportRequest
 {

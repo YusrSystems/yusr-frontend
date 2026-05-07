@@ -1,6 +1,6 @@
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { SystemApiService } from "../../networking";
 import type { SystemPermissionsState } from "../../types";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export const fetchSystemPermissions = createAsyncThunk(
   "system/fetchPermissions",

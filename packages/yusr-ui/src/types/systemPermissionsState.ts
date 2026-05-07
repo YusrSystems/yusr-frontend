@@ -1,5 +1,4 @@
-export type SystemPermissionsState =
-{
+export type SystemPermissionsState = {
   permissions: string[];
   isLoading: boolean;
-}
+};

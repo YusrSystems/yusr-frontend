@@ -1,5 +1,5 @@
-import type { BaseEntity } from "../../../entities";
 import { useState } from "react";
+import type { BaseEntity } from "../../../entities";
 import { FieldGroup } from "../../pure/field";
 import { TabButton } from "../buttons/tabButton";
 import { ChangeDialog, type ChangeDialogProps } from "./changeDialog";

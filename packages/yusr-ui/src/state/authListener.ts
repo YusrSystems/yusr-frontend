@@ -1,5 +1,5 @@
-import { AuthConstants } from "../auth";
 import type { Dispatch, UnknownAction } from "@reduxjs/toolkit";
+import { AuthConstants } from "../auth";
 
 interface AuthActions
 {

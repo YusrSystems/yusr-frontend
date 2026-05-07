@@ -1,5 +1,5 @@
-import { YusrBusBackground, Lightbox, useLightBox, Separator } from "yusr-ui";
 import { Bus, Clock, Layers, LayoutDashboard, LayoutDashboardIcon, Lock, Map, Settings, ShieldCheck, Users } from "lucide-react";
+import { Lightbox, Separator, useLightBox, YusrBusBackground } from "yusr-ui";
 import LandingFeatures from "./landingFeatures";
 import LandingFooter from "./landingFooter";
 import LandingHeader from "./landingHeader";
@@ -123,21 +123,22 @@ const whyUs = [{
   desc: "أتمتة المهام المتكررة وتقليص الأخطاء اليدوية يمنحك وقتاً للتركيز على ما يهم."
 }, { icon: Lock, title: "أمان وموثوقية", desc: "صلاحيات دقيقة وسجل نشاط كامل يضمن حماية بياناتك وتتبع كل تغيير." }];
 
-const Landing = () => {
+const Landing = () =>
+{
   const { lightbox, openLightbox, closeLightbox } = useLightBox();
 
   return (
     <div dir="rtl" className="relative min-h-svh text-foreground">
       <YusrBusBackground />
 
-      {lightbox && (
+      { lightbox && (
         <Lightbox
-          srcLight={lightbox.srcLight}
-          srcDark={lightbox.srcDark}
-          alt={lightbox.alt}
-          onClose={closeLightbox}
+          srcLight={ lightbox.srcLight }
+          srcDark={ lightbox.srcDark }
+          alt={ lightbox.alt }
+          onClose={ closeLightbox }
         />
-      )}
+      ) }
 
       <LandingHeader />
 
@@ -145,15 +146,15 @@ const Landing = () => {
 
       <Separator className="mx-auto max-w-6xl" />
 
-      <LandingFeatures openLightbox={openLightbox} features={features} />
+      <LandingFeatures openLightbox={ openLightbox } features={ features } />
 
       <Separator className="mx-auto max-w-6xl" />
 
-      <LandingSystemPreview openLightbox={openLightbox} features={features} />
+      <LandingSystemPreview openLightbox={ openLightbox } features={ features } />
 
       <Separator className="mx-auto max-w-6xl" />
 
-      <LandingWhyUs whyUs={whyUs} />
+      <LandingWhyUs whyUs={ whyUs } />
 
       <LandingFooter />
     </div>

@@ -10,8 +10,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "yusr-ui": path.resolve(__dirname, "../../packages/yusr-ui/src/index.ts"),
+      "yusr-ui": path.resolve(__dirname, "../../packages/yusr-ui/src/index.ts")
     },
-    dedupe: ["react", "react-dom", "react/jsx-runtime"],
-  },
+    dedupe: ["react", "react-dom", "react/jsx-runtime"]
+  }
 });

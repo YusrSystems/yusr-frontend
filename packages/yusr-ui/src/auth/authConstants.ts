@@ -4,7 +4,8 @@ export class AuthConstants
   public static AuthCheckStorageItemName = "IsLoggedIn";
   public static SettingStorageItemName = "Setting";
   public static UnauthorizedEventName = "ApiUnauthorized";
-  public static FormatFunc = (resource: string, action: string) => {
+  public static FormatFunc = (resource: string, action: string) =>
+  {
     return `${resource}.${action}`;
   };
 

@@ -58,14 +58,14 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ initialCost: val })) }
           isInvalid={ isInvalid("initialCost") }
           error={ getError("initialCost") }
-          currency={<CurrencyIcon />}
+          currency={ <CurrencyIcon /> }
         />
         <NumberField
           label="التكلفة"
           disabled
           value={ formData.cost || "0" }
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ cost: val })) }
-          currency={<CurrencyIcon />}
+          currency={ <CurrencyIcon /> }
         />
       </div>
 

@@ -1,10 +1,10 @@
 import { Moon, Sun } from "lucide-react";
 
+import { useTranslation } from "react-i18next";
 import { Button } from "../../pure/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../pure/dropdown-menu";
 import { SidebarMenuButton } from "../../pure/sidebar";
 import { useTheme } from "./themeProvider";
-import { useTranslation } from "react-i18next";
 
 export function ThemeToggle({ variant = "icon" }: { variant?: "icon" | "sidebar"; })
 {
@@ -12,7 +12,7 @@ export function ThemeToggle({ variant = "icon" }: { variant?: "icon" | "sidebar"
   const { t, i18n } = useTranslation("common");
 
   return (
-    <DropdownMenu dir={i18n.dir()}>
+    <DropdownMenu dir={ i18n.dir() }>
       <DropdownMenuTrigger asChild>
         { variant === "sidebar"
           ? (

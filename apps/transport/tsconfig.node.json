@@ -24,7 +24,7 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@/*": ["./src/*"],
-      "yusr-ui": ["../../packages/yusr-ui/src/index.ts"],
+      "yusr-ui": ["../../packages/yusr-ui/src/index.ts"]
     }
   },
   "include": ["vite.config.ts"]

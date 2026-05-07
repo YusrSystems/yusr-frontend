@@ -1,6 +1,6 @@
 import type { FilterCondition } from "yusr-ui";
-import type { BaseReportRequest } from "./baseReportRequest";
 import type Invoice from "../invoice";
+import type { BaseReportRequest } from "./baseReportRequest";
 
 export const InvoicesListReportType = {
   InvoicesList: 0,

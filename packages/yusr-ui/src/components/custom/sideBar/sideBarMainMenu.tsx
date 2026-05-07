@@ -29,7 +29,7 @@ export function SideBarMainMenu({ items }: { items: MainMenuItem[]; })
   return (
     <SidebarGroup>
       <SidebarGroupContent>
-        <SidebarMenu className={isCollapsed? "space-y-2" : ""}>
+        <SidebarMenu className={ isCollapsed ? "space-y-2" : "" }>
           { items.map((item) =>
           {
             if (!item.hasAuth)

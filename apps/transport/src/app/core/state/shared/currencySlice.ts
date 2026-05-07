@@ -1,4 +1,4 @@
-import { Currency, CurrenciesApiService } from "yusr-ui";
+import { CurrenciesApiService, Currency } from "yusr-ui";
 import { createGenericEntitySlice } from "yusr-ui";
 
 const citySlice = createGenericEntitySlice<Currency>("currency", new CurrenciesApiService());

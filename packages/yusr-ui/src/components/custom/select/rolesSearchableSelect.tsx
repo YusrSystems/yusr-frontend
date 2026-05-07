@@ -1,6 +1,6 @@
+import { useSelector } from "react-redux";
 import { Role, RoleFilterColumns, RoleSlice } from "../../../entities";
 import { useAppDispatch, type YusrRootState } from "../../../state";
-import { useSelector } from "react-redux";
 import { type EntitySearchableSelectParams, SearchableSelect } from "./searchableSelect";
 
 export function RolesSearchableSelect(

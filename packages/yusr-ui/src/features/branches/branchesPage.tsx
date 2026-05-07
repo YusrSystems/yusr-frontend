@@ -1,8 +1,8 @@
-import { CrudPage } from "../../components/custom";
 import { Building } from "lucide-react";
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
+import { CrudPage } from "../../components/custom";
 import { Branch, BranchFilterColumns, BranchSlice } from "../../entities";
 import { BranchesApiService } from "../../networking";
 import type { YusrRootState } from "../../state";

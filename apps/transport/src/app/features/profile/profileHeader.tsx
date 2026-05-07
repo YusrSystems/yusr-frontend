@@ -1,7 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent } from "yusr-ui";
 import { Calendar, Camera, Mail, MapPin } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent } from "yusr-ui";
 
-export default function ProfileHeader() {
+export default function ProfileHeader()
+{
   return (
     <Card>
       <CardContent>

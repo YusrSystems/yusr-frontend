@@ -1,5 +1,5 @@
-import type { ValidationRule } from "../validation";
 import { useCallback } from "react";
+import type { ValidationRule } from "../validation";
 
 export function useValidate<T>(
   data: Partial<T>,

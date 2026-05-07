@@ -1,11 +1,13 @@
-import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "yusr-ui";
 import { AlertTriangle, Home, RotateCcw } from "lucide-react";
+import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "yusr-ui";
 
-interface ErrorFallbackProps {
+interface ErrorFallbackProps
+{
   reset: () => void;
 }
 
-export default function ErrorFallback({ reset }: ErrorFallbackProps) {
+export default function ErrorFallback({ reset }: ErrorFallbackProps)
+{
   return (
     <div className="flex min-h-screen w-full items-center justify-center p-6">
       <Card className="max-w-md border-destructive/20 bg-destructive/5 text-center shadow-lg backdrop-blur-sm">
@@ -21,7 +23,7 @@ export default function ErrorFallback({ reset }: ErrorFallbackProps) {
           </p>
         </CardContent>
         <CardFooter className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Button variant="default" onClick={() => reset()} className="gap-2 px-8">
+          <Button variant="default" onClick={ () => reset() } className="gap-2 px-8">
             <RotateCcw className="h-4 w-4" />
             إعادة المحاولة
           </Button>

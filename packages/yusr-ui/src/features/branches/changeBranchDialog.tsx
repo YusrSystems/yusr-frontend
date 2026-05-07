@@ -1,10 +1,10 @@
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { ChangeDialog, type CommonChangeDialogProps, FieldsSection, FormField, SearchableSelect, TextField } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
 import { Branch, BranchSlice, BranchValidationRules, CityFilterColumns, CitySlice } from "../../entities";
 import { useFormErrors, useFormInit, useValidate } from "../../hooks";
 import { useAppDispatch, type YusrRootState } from "../../state";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
 
 export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Branch>)
 {

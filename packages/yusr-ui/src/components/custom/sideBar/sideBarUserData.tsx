@@ -1,11 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../../pure/avatar";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../../pure/sidebar";
 
-interface UsernameObject {
+interface UsernameObject
+{
   username?: string;
 }
 
-export function SideBarUserData<T extends UsernameObject>({ user }: { user: T | undefined })
+export function SideBarUserData<T extends UsernameObject>({ user }: { user: T | undefined; })
 {
   return (
     <SidebarMenu>

@@ -8,8 +8,10 @@ export interface TextAreaInputProps extends React.TextareaHTMLAttributes<HTMLTex
 
 export function TextAreaInput({ isInvalid, className, ...props }: TextAreaInputProps)
 {
-  return <Textarea
-    { ...props }
-    className={ cn(className, isInvalid && "border-red-600 focus-visible:ring-red-600") }
-  />;
+  return (
+    <Textarea
+      { ...props }
+      className={ cn(className, isInvalid && "border-red-600 focus-visible:ring-red-600") }
+    />
+  );
 }

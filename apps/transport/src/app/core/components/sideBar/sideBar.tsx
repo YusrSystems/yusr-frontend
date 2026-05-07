@@ -1,7 +1,7 @@
-import { ApiConstants, SystemPermissions, YusrApiHelper } from "yusr-ui";
-import { Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SideBarUserData } from "yusr-ui";
 import { Building2Icon, BusFrontIcon, BusIcon, LayoutDashboardIcon, MapPinnedIcon, SettingsIcon, ShieldCheck, UserCogIcon, UsersIcon } from "lucide-react";
 import * as React from "react";
+import { ApiConstants, SystemPermissions, YusrApiHelper } from "yusr-ui";
+import { Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SideBarUserData } from "yusr-ui";
 import { SystemPermissionsActions } from "../../auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import ApplicationLang from "../../services/langService/applicationLang";
@@ -15,7 +15,8 @@ import logoOnlyLight from "@/assets/yusrLogoOnly_Light.png";
 const appLang = ApplicationLang.getAppLangText();
 const appLangSections = appLang.sections;
 
-export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
+{
   const authState = useAppSelector((state) => state.auth);
   const permissions: string[] = authState.loggedInUser?.role?.permissions || [];
   const dispatch = useAppDispatch();
@@ -26,57 +27,63 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   const data = {
-    navMain: [{
-      title: appLangSections.dashboard,
-      url: "/dashboard",
-      icon: <LayoutDashboardIcon />,
-      hasAuth: SystemPermissions.hasAuth(
-        permissions,
-        SystemPermissionsResources.Dashboard,
-        SystemPermissionsActions.Get
-      )
-    },
-    {
-      title: appLangSections.vehicles,
-      url: "/vehicles",
-      icon: <BusIcon />,
-      hasAuth: true
-    },
-    {
-      title: appLangSections.trips,
-      url: "/trips",
-      icon: <BusFrontIcon />,
-      hasAuth: SystemPermissions.hasAuth(permissions, SystemPermissionsResources.Trips, SystemPermissionsActions.Get)
-    }, {
-      title: appLangSections.passengers,
-      url: "/passengers",
-      icon: <UsersIcon />,
-      hasAuth: SystemPermissions.hasAuth(
-        permissions,
-        SystemPermissionsResources.Passengers,
-        SystemPermissionsActions.Get
-      )
-    }, {
-      title: appLangSections.routes,
-      url: "/routes",
-      icon: <MapPinnedIcon />,
-      hasAuth: SystemPermissions.hasAuth(permissions, SystemPermissionsResources.Routes, SystemPermissionsActions.Get)
-    }, {
-      title: appLangSections.branches,
-      url: "/branches",
-      icon: <Building2Icon />,
-      hasAuth: SystemPermissions.hasAuth(permissions, SystemPermissionsResources.Branches, SystemPermissionsActions.Get)
-    }, {
-      title: appLangSections.users,
-      url: "/users",
-      icon: <UserCogIcon />,
-      hasAuth: SystemPermissions.hasAuth(permissions, SystemPermissionsResources.Users, SystemPermissionsActions.Get)
-    }, {
-      title: appLangSections.roles,
-      url: "/roles",
-      icon: <ShieldCheck />,
-      hasAuth: SystemPermissions.hasAuth(permissions, SystemPermissionsResources.Roles, SystemPermissionsActions.Get)
-    }],
+    navMain: [
+      {
+        title: appLangSections.dashboard,
+        url: "/dashboard",
+        icon: <LayoutDashboardIcon />,
+        hasAuth: SystemPermissions.hasAuth(
+          permissions,
+          SystemPermissionsResources.Dashboard,
+          SystemPermissionsActions.Get
+        )
+      },
+      { title: appLangSections.vehicles, url: "/vehicles", icon: <BusIcon />, hasAuth: true },
+      {
+        title: appLangSections.trips,
+        url: "/trips",
+        icon: <BusFrontIcon />,
+        hasAuth: SystemPermissions.hasAuth(permissions, SystemPermissionsResources.Trips, SystemPermissionsActions.Get)
+      },
+      {
+        title: appLangSections.passengers,
+        url: "/passengers",
+        icon: <UsersIcon />,
+        hasAuth: SystemPermissions.hasAuth(
+          permissions,
+          SystemPermissionsResources.Passengers,
+          SystemPermissionsActions.Get
+        )
+      },
+      {
+        title: appLangSections.routes,
+        url: "/routes",
+        icon: <MapPinnedIcon />,
+        hasAuth: SystemPermissions.hasAuth(permissions, SystemPermissionsResources.Routes, SystemPermissionsActions.Get)
+      },
+      {
+        title: appLangSections.branches,
+        url: "/branches",
+        icon: <Building2Icon />,
+        hasAuth: SystemPermissions.hasAuth(
+          permissions,
+          SystemPermissionsResources.Branches,
+          SystemPermissionsActions.Get
+        )
+      },
+      {
+        title: appLangSections.users,
+        url: "/users",
+        icon: <UserCogIcon />,
+        hasAuth: SystemPermissions.hasAuth(permissions, SystemPermissionsResources.Users, SystemPermissionsActions.Get)
+      },
+      {
+        title: appLangSections.roles,
+        url: "/roles",
+        icon: <ShieldCheck />,
+        hasAuth: SystemPermissions.hasAuth(permissions, SystemPermissionsResources.Roles, SystemPermissionsActions.Get)
+      }
+    ],
     navSecondary: [{ title: appLangSections.settings, url: "/settings", icon: <SettingsIcon /> }]
   };
 
@@ -85,35 +92,37 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     logo: authState.setting?.logo?.url || "/default-avatar.jpg"
   };
 
-  const LogoutHandler = async () => {
+  const LogoutHandler = async () =>
+  {
     const result = await YusrApiHelper.Post(`${ApiConstants.baseUrl}/Logout`);
 
-    if (result.status === 200 || result.status === 204) {
+    if (result.status === 200 || result.status === 204)
+    {
       dispatch(logout());
     }
   };
 
   return (
-    <Sidebar collapsible="icon" side="right" {...props}>
+    <Sidebar collapsible="icon" side="right" { ...props }>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarLogo logos={logoConfig} />
+            <SidebarLogo logos={ logoConfig } />
 
-            <SideBarCompanyData company={displayCompany} />
+            <SideBarCompanyData company={ displayCompany } />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SideBarMainMenu items={data.navMain} />
+        <SideBarMainMenu items={ data.navMain } />
         <SideBarSecondaryMenu
-          items={data.navSecondary}
+          items={ data.navSecondary }
           className="pt-10 mt-auto text-center"
-          onLogout={LogoutHandler}
+          onLogout={ LogoutHandler }
         />
       </SidebarContent>
       <SidebarFooter>
-        <SideBarUserData user={authState.loggedInUser} />
+        <SideBarUserData user={ authState.loggedInUser } />
       </SidebarFooter>
     </Sidebar>
   );

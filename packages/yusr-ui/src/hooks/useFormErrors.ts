@@ -1,4 +1,5 @@
-export function useFormErrors(errors: Record<string, string>) {
+export function useFormErrors(errors: Record<string, string>)
+{
   const getError = (field: string) => errors[field];
   const isInvalid = (field: string) => !!errors[field];
 

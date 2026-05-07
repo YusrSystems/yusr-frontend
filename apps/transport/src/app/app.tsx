@@ -1,5 +1,5 @@
-import { ProtectedRoute, Skeleton, ThemeProvider, Toaster, TooltipProvider } from "yusr-ui";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { ProtectedRoute, Skeleton, ThemeProvider, Toaster, TooltipProvider } from "yusr-ui";
 import useAppInitialization from "./core/hooks/useAppInitialization";
 import RoutesService from "./core/services/constants/routesService";
 import { useAppSelector } from "./core/state/store";
@@ -9,6 +9,7 @@ import LandingPage from "./features/landing/landingPage";
 import LoginPage from "./features/login/loginPage";
 import MainPage from "./features/main/mainPage";
 import NotFoundPage from "./features/notFound/notFoundPage";
+import PassengerSelfRegisterPage from "./features/passengers/presentation/passengerSelfRegisterPage";
 import PassengersPage from "./features/passengers/presentation/passengersPage";
 import PrfilePage from "./features/profile/prfilePage";
 import TicketRedirect from "./features/redirection/ticketRedirect";
@@ -18,19 +19,21 @@ import SettingPage from "./features/setting/settingPage";
 import TripsPage from "./features/trips/presentation/tripsPage";
 import UsersPage from "./features/users/presentation/usersPage";
 import VehiclesPage from "./features/vehicles/vehiclesPage";
-import PassengerSelfRegisterPage from "./features/passengers/presentation/passengerSelfRegisterPage";
 
-function App() {
+function App()
+{
   const { isLoading } = useAppInitialization();
 
-  if (isLoading) {
+  if (isLoading)
+  {
     return <Apploading />;
   }
 
   return <AppBody />;
 }
 
-function AppBody() {
+function AppBody()
+{
   return (
     <TooltipProvider>
       <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
@@ -41,7 +44,8 @@ function AppBody() {
   );
 }
 
-function Apploading() {
+function Apploading()
+{
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="flex w-full max-w-xs flex-col gap-2">
@@ -51,35 +55,36 @@ function Apploading() {
   );
 }
 
-function AppRoutes() {
+function AppRoutes()
+{
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/passreg" element={<PassengerSelfRegisterPage />} />
+        <Route path="/" element={ <LandingPage /> } />
+        <Route path="/login" element={ <LoginPage /> } />
+        <Route path="/passreg" element={ <PassengerSelfRegisterPage /> } />
 
-        <Route path="/t/:accessKey" element={<TicketRedirect />} />
+        <Route path="/t/:accessKey" element={ <TicketRedirect /> } />
 
-        <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
-          <Route element={<MainPage />}>
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/vehicles" element={<VehiclesPage />} />
-            <Route path="/trips" element={<TripsPage />} />
-            <Route path="/passengers" element={<PassengersPage />} />
-            <Route path="/routes" element={<RoutesPage />} />
-            <Route path="/branches" element={<BranchesPage />} />
-            <Route path="/users" element={<UsersPage />} />
-            <Route path="/settings" element={<SettingPage />} />
-            <Route path="/roles" element={<RolesPage />} />
+        <Route element={ <ProtectedRoute isAuthenticated={ isAuthenticated } /> }>
+          <Route element={ <MainPage /> }>
+            <Route path="/dashboard" element={ <DashboardPage /> } />
+            <Route path="/vehicles" element={ <VehiclesPage /> } />
+            <Route path="/trips" element={ <TripsPage /> } />
+            <Route path="/passengers" element={ <PassengersPage /> } />
+            <Route path="/routes" element={ <RoutesPage /> } />
+            <Route path="/branches" element={ <BranchesPage /> } />
+            <Route path="/users" element={ <UsersPage /> } />
+            <Route path="/settings" element={ <SettingPage /> } />
+            <Route path="/roles" element={ <RolesPage /> } />
 
-            <Route path={RoutesService.Profile} element={<PrfilePage />} />
+            <Route path={ RoutesService.Profile } element={ <PrfilePage /> } />
           </Route>
         </Route>
 
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="*" element={ <NotFoundPage /> } />
       </Routes>
     </Router>
   );

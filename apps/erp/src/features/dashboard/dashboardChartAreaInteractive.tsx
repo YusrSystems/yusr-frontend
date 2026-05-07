@@ -62,8 +62,8 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
   return (
     <Card className="@container/card m-6">
       <CardHeader>
-        <CardTitle>{t("dashborad.salesAndPurchases")}</CardTitle>
-        <CardDescription>{t("dashborad.salesPurchasesDescription")}</CardDescription>
+        <CardTitle>{ t("dashborad.salesAndPurchases") }</CardTitle>
+        <CardDescription>{ t("dashborad.salesPurchasesDescription") }</CardDescription>
         <CardAction>
           <ToggleGroup
             type="single"
@@ -72,8 +72,8 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
             variant="outline"
             className="hidden *:data-[slot=toggle-group-item]:px-4! @[767px]/card:flex"
           >
-            <ToggleGroupItem value="yearly">{t("dashborad.yearly")}</ToggleGroupItem>
-            <ToggleGroupItem value="weekly">{t("dashborad.weekly")}</ToggleGroupItem>
+            <ToggleGroupItem value="yearly">{ t("dashborad.yearly") }</ToggleGroupItem>
+            <ToggleGroupItem value="weekly">{ t("dashborad.weekly") }</ToggleGroupItem>
           </ToggleGroup>
           <Select value={ timeRange } onValueChange={ (val) => setTimeRange(val as "weekly" | "yearly") }>
             <SelectTrigger
@@ -81,11 +81,11 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
               size="sm"
               aria-label="Select a value"
             >
-              <SelectValue placeholder={t("dashborad.yearly")} />
+              <SelectValue placeholder={ t("dashborad.yearly") } />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value="yearly" className="rounded-lg">{t("dashborad.yearly")}</SelectItem>
-              <SelectItem value="weekly" className="rounded-lg">{t("dashborad.weekly")}</SelectItem>
+              <SelectItem value="yearly" className="rounded-lg">{ t("dashborad.yearly") }</SelectItem>
+              <SelectItem value="weekly" className="rounded-lg">{ t("dashborad.weekly") }</SelectItem>
             </SelectContent>
           </Select>
         </CardAction>
@@ -111,7 +111,7 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
               tickMargin={ 8 }
               interval={ 0 }
               tick={ { fontSize: 11 } }
-              padding={{ left: 20, right: 20 }}
+              padding={ { left: 20, right: 20 } }
             />
             <ChartTooltip
               cursor={ false }

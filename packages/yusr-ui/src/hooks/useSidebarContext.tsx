@@ -1,4 +1,4 @@
-import { createContext, useContext, type JSX } from "react";
+import { createContext, type JSX, useContext } from "react";
 
 export type YusrSidBarProps = {
   LinkComponent?: React.ElementType;
@@ -33,9 +33,11 @@ export const SidebarContext = createContext<YusrSidBarProps | null>(null);
  * Must be used within a SidebarProvider.
  * @returns {YusrSidBarProps} The props of the nearest SidebarProvider.
  */
-export const useSidebarContext = (): YusrSidBarProps => {
+export const useSidebarContext = (): YusrSidBarProps =>
+{
   const sidebarContext = useContext(SidebarContext);
-  if (!sidebarContext) {
+  if (!sidebarContext)
+  {
     throw new Error("useSidebarContext must be used within a SidebarProvider");
   }
   return sidebarContext;

@@ -85,7 +85,7 @@ export default function ChangeBalanceTransferDialog(
               onChange={ (val) => dispatch(BalanceTransferSlice.formActions.updateFormData({ amount: val })) }
               isInvalid={ isInvalid("amount") }
               error={ getError("amount") }
-              currency={<CurrencyIcon />}
+              currency={ <CurrencyIcon /> }
             />
             <div className="col-span-full">
               <TextField

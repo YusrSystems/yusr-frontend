@@ -1,5 +1,5 @@
-import type { ValidationRule } from "../validation";
 import { useCallback, useState } from "react";
+import type { ValidationRule } from "../validation";
 import { useFormValidation } from "./useFormValidation";
 
 export function useEntityForm<T>(initialData: Partial<T> | undefined, rules: ValidationRule<Partial<T>>[])
