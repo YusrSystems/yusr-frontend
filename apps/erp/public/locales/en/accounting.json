@@ -169,5 +169,41 @@
     "methodId": "Method Id",
     "methodName": "Pricing Method Name",
     "nameRequired": "Please enter pricing method name"
+  },
+
+  "stocktakings": {
+    "title": "Stocktaking",
+    "entityName": "Stocktaking",
+    "addNewTitle": "Add New Stocktaking",
+    "totalStocktakings": "Total Stocktakings",
+    "stocktakingId": "Stocktaking Id",
+    "date": "Date",
+    "store": "Store",
+    "description": "Description",
+    "item": "Item",
+    "systemQuantity": "System Quantity (Base Unit)",
+    "variance": "Variance (Base Unit)",
+    "actualQuantity": "Actual Quantity (Units)",
+    "stocktakingDate": "Stocktaking Date",
+    "noItems": "No items added yet.",
+    "noItemsHint": "Select an item from the list or use barcode to add it to the table.",
+    "storeRequired": "Please select a store",
+    "dateRequired": "Please select the date",
+    "itemsRequired": "Please add at least one item to the stocktaking"
+  },
+
+  "itemsSettlements": {
+    "title": "Stock Settlements",
+    "entityName": "Settlement",
+    "addNewTitle": "Add New Settlement",
+    "totalSettlements": "Total Settlements",
+    "settlementId": "Settlement Id",
+    "date": "Date",
+    "store": "Store",
+    "description": "Description",
+    "settlementDate": "Settlement Date",
+    "storeRequired": "Please select a store",
+    "dateRequired": "Please select the date",
+    "itemsRequired": "Please add at least one item to the settlement"
   }
 }

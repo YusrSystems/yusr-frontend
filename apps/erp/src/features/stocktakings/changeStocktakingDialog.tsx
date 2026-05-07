@@ -1,5 +1,6 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormField, Loading, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ItemType } from "../../core/data/item";
@@ -13,6 +14,7 @@ export default function ChangeStocktakingDialog(
   { entity, mode, service, onSuccess }: CommonChangeDialogProps<Stocktaking>
 )
 {
+  const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
   const [initLoading, setInitLoading] = useState(false);
   const storeState = useAppSelector((state) => state.store);
@@ -27,7 +29,7 @@ export default function ChangeStocktakingDialog(
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    StocktakingValidationRules.validationRules,
+    StocktakingValidationRules.validationRules(t),
     (errors) => dispatch(StocktakingSlice.formActions.setErrors(errors))
   );
   useFormInit(StocktakingSlice.formActions.setInitialData, initialValues);
@@ -84,19 +86,23 @@ export default function ChangeStocktakingDialog(
       <DialogContent dir="rtl">
         <DialogHeader>
           <DialogTitle>
-            { mode === "create" ? "إضافة" : "تعديل" } جرد مواد
+            { mode === "create"
+              ? t("stocktakings.addNewTitle")
+              : `${t("common:crudRow.edit")} ${t("stocktakings.entityName")}` }
           </DialogTitle>
           <DialogDescription />
         </DialogHeader>
-        <Loading entityName="المادة" />
+        <Loading entityName={ t("stocktakings.entityName") } />
       </DialogContent>
     );
   }
 
   return (
     <ChangeDialog<Stocktaking>
-      title={ `${mode === "create" ? "إضافة" : "تعديل"} جرد مواد` }
-      className="sm:max-w-6xl"
+      title={ mode === "create"
+        ? t("stocktakings.addNewTitle")
+        : `${t("common:crudRow.edit")} ${t("stocktakings.entityName")}` }
+      className="sm:max-w-7xl"
       formData={ formData }
       dialogMode={ mode }
       service={ service }
@@ -108,7 +114,7 @@ export default function ChangeStocktakingDialog(
         <FieldGroup>
           <FieldsSection columns={ 2 }>
             <TextField
-              label="تاريخ الجرد"
+              label={ t("stocktakings.stocktakingDate") }
               required
               value={ formData.date ? new Date(formData.date).toISOString().split("T")[0] : "" }
               isInvalid={ isInvalid("date") }
@@ -117,7 +123,7 @@ export default function ChangeStocktakingDialog(
             />
 
             <FormField
-              label="المستودع"
+              label={ t("stocktakings.store") }
               required
               isInvalid={ isInvalid("storeId") }
               error={ getError("storeId") }
@@ -131,7 +137,7 @@ export default function ChangeStocktakingDialog(
           </FieldsSection>
 
           <TextField
-            label="الوصف"
+            label={ t("stocktakings.description") }
             value={ formData.description || "" }
             onChange={ (e) => dispatch(StocktakingSlice.formActions.updateFormData({ description: e.target.value })) }
           />

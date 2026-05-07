@@ -169,5 +169,41 @@
     "methodId": "رقم الطريقة",
     "methodName": "اسم طريقة التسعير",
     "nameRequired": "يرجى إدخال اسم طريقة التسعير"
+  },
+
+  "stocktakings": {
+    "title": "جرد المواد",
+    "entityName": "جرد",
+    "addNewTitle": "إضافة جرد جديد",
+    "totalStocktakings": "إجمالي عمليات الجرد",
+    "stocktakingId": "رقم الجرد",
+    "date": "التاريخ",
+    "store": "المستودع",
+    "description": "الوصف",
+    "item": "المادة",
+    "systemQuantity": "الكمية في النظام (بالوحدة الأساسية)",
+    "variance": "الفرق (بالوحدة الأساسية)",
+    "actualQuantity": "الكمية الفعلية (الوحدات)",
+    "stocktakingDate": "تاريخ الجرد",
+    "noItems": "لا توجد مواد مضافة حالياً.",
+    "noItemsHint": "قم باختيار مادة من القائمة أو باستخدام الباركود لإضافتها للجدول.",
+    "storeRequired": "يرجى اختيار المستودع",
+    "dateRequired": "يرجى اختيار التاريخ",
+    "itemsRequired": "يرجى إضافة مادة واحدة على الأقل للجرد"
+  },
+
+  "itemsSettlements": {
+    "title": "تسوية المواد",
+    "entityName": "تسوية",
+    "addNewTitle": "إضافة تسوية جديدة",
+    "totalSettlements": "إجمالي عمليات التسوية",
+    "settlementId": "رقم التسوية",
+    "date": "التاريخ",
+    "store": "المستودع",
+    "description": "الوصف",
+    "settlementDate": "تاريخ التسوية",
+    "storeRequired": "يرجى اختيار المستودع",
+    "dateRequired": "يرجى اختيار التاريخ",
+    "itemsRequired": "يرجى إضافة مادة واحدة على الأقل للتسوية"
   }
 }

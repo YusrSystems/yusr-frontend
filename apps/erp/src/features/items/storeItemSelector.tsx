@@ -1,5 +1,6 @@
 import { ScanBarcode, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { FilterByTypeRequest, SearchableSelect } from "yusr-ui";
 import { ItemFilterColumns, ItemType, ItemUnitPricingMethod, type StoreItem } from "../../core/data/item";
 import { clearBarcodeResult, GetItemByBarcode } from "../../core/state/shared/itemBarcodeSlice";
@@ -15,6 +16,7 @@ interface StoreItemSelectorProps
 
 export default function StoreItemSelector({ storeId, itemTypes, onSelect }: StoreItemSelectorProps)
 {
+  const { t } = useTranslation("erpCommon");
   const dispatch = useAppDispatch();
   const [barcode, setBarcode] = useState("");
   const storeItemsState = useAppSelector((state) => state.storeItems);
@@ -44,13 +46,13 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
     <div className="flex items-center justify-start gap-6 p-4 rounded-lg border border-border bg-muted/10 shadow-sm">
       <div className="flex items-center gap-2 font-bold text-lg text-foreground">
         <ShoppingCart className="h-5 w-5" />
-        <span>إضافة مواد:</span>
+        <span>{ t("storeItemSelector.addItems") }</span>
       </div>
 
       <div className="relative w-64">
         <input
           type="text"
-          placeholder="اقرأ الباركود..."
+          placeholder={ t("storeItemSelector.scanBarcode") }
           value={ barcode }
           onChange={ (e) => setBarcode(e.target.value) }
           onKeyDown={ handleKeyDown }
@@ -66,7 +68,7 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
           items={ items() }
           itemLabelKey="name"
           itemValueKey="id"
-          placeholder="اختر مادة..."
+          placeholder={ t("storeItemSelector.selectItem") }
           columnsNames={ ItemFilterColumns.columnsNames }
           onSearch={ (condition) =>
           {

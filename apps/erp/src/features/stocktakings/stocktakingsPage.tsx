@@ -1,5 +1,6 @@
 import { ClipboardCheck } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -11,6 +12,7 @@ import ChangeStocktakingDialog from "./changeStocktakingDialog";
 
 export default function StocktakingsPage()
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const stocktakingState = useAppSelector((state) => state.stocktaking);
@@ -24,9 +26,9 @@ export default function StocktakingsPage()
 
   return (
     <CrudPage<Stocktaking>
-      title="جرد المواد"
-      entityName="جرد"
-      addNewItemTitle="إضافة جرد جديد"
+      title={ t("stocktakings.title") }
+      entityName={ t("stocktakings.entityName") }
+      addNewItemTitle={ t("stocktakings.addNewTitle") }
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -37,17 +39,17 @@ export default function StocktakingsPage()
       useSlice={ () => stocktakingDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي عمليات الجرد",
+        title: t("stocktakings.totalStocktakings"),
         data: (stocktakingState.entities?.count ?? 0).toString(),
         icon: <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ StocktakingFilterColumns.columnsNames }
+      columnsToFilter={ StocktakingFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: "رقم الجرد", rowStyles: "w-32" },
-        { rowName: "التاريخ", rowStyles: "w-32" },
-        { rowName: "المستودع", rowStyles: "w-48" },
-        { rowName: "الوصف", rowStyles: "" },
+        { rowName: t("stocktakings.stocktakingId"), rowStyles: "w-32" },
+        { rowName: t("stocktakings.date"), rowStyles: "w-32" },
+        { rowName: t("stocktakings.store"), rowStyles: "w-48" },
+        { rowName: t("stocktakings.description"), rowStyles: "" },
         ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
             SystemPermissionsResources.ReportStocktaking,
@@ -60,7 +62,7 @@ export default function StocktakingsPage()
         stocktaking: Stocktaking
       ) => [
         { rowName: `#${stocktaking.id}`, rowStyles: "" },
-        { rowName: new Date(stocktaking.date).toLocaleDateString("ar-SA"), rowStyles: "font-mono" },
+        { rowName: new Date(stocktaking.date).toLocaleDateString(), rowStyles: "font-mono" },
         { rowName: stocktaking.storeName, rowStyles: "font-semibold" },
         { rowName: stocktaking.description ?? "-", rowStyles: "text-sm text-gray-500" },
         ...(SystemPermissions.hasAuth(

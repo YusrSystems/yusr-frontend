@@ -1,5 +1,6 @@
 import { Scale } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import ItemsSettlement, { ItemsSettlementFilterColumns, ItemsSettlementSlice } from "../../core/data/itemsSettlement";
@@ -11,6 +12,7 @@ import ChangeItemsSettlementDialog from "./changeItemsSettlementDialog";
 
 export default function ItemsSettlementsPage()
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const itemsSettlementState = useAppSelector((state) => state.itemsSettlement);
@@ -24,9 +26,9 @@ export default function ItemsSettlementsPage()
 
   return (
     <CrudPage<ItemsSettlement>
-      title="تسوية المواد"
-      entityName="تسوية"
-      addNewItemTitle="إضافة تسوية جديدة"
+      title={ t("itemsSettlements.title") }
+      entityName={ t("itemsSettlements.entityName") }
+      addNewItemTitle={ t("itemsSettlements.addNewTitle") }
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -37,17 +39,17 @@ export default function ItemsSettlementsPage()
       useSlice={ () => itemsSettlementDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي عمليات التسوية",
+        title: t("itemsSettlements.totalSettlements"),
         data: (itemsSettlementState.entities?.count ?? 0).toString(),
         icon: <Scale className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ ItemsSettlementFilterColumns.columnsNames }
+      columnsToFilter={ ItemsSettlementFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: "رقم التسوية", rowStyles: "w-32" },
-        { rowName: "التاريخ", rowStyles: "w-32" },
-        { rowName: "المستودع", rowStyles: "w-48" },
-        { rowName: "الوصف", rowStyles: "" },
+        { rowName: t("itemsSettlements.settlementId"), rowStyles: "w-32" },
+        { rowName: t("itemsSettlements.date"), rowStyles: "w-32" },
+        { rowName: t("itemsSettlements.store"), rowStyles: "w-48" },
+        { rowName: t("itemsSettlements.description"), rowStyles: "" },
         ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
             SystemPermissionsResources.ReportItemSettlement,

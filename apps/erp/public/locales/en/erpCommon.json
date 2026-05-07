@@ -145,5 +145,11 @@
       "accounts": "Account Permissions",
       "reports": "System Reports"
     }
+  },
+
+  "storeItemSelector": {
+    "addItems": "Add Items:",
+    "scanBarcode": "Scan barcode...",
+    "selectItem": "Select item..."
   }
 }

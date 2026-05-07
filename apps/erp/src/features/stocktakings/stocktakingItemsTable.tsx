@@ -1,5 +1,6 @@
 import { AlertCircle, Trash2, X } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, type DialogMode, NumberField, SearchableSelect, useFormErrors } from "yusr-ui";
 import { ItemType, ItemUnitPricingMethod, StoreItem } from "../../core/data/item";
 import type { IStocktaking, IStocktakingItem } from "../../core/data/stocktaking";
@@ -19,6 +20,7 @@ export default function StocktakingItemsTable(
   { formData, errors, handleChange, createInstance, mode }: StocktakingItemsTableProps
 )
 {
+  const { t } = useTranslation("accounting");
   const storeItemsState = useAppSelector((state) => state.storeItems);
   const { getError, isInvalid } = useFormErrors(errors);
   const groupedItems = useMemo(() =>
@@ -182,10 +184,10 @@ export default function StocktakingItemsTable(
               <thead className="bg-muted/50 text-muted-foreground border-b">
                 <tr>
                   <th className="p-3 w-12 text-center">#</th>
-                  <th className="p-3 w-1/4">المادة</th>
-                  <th className="p-3 w-1/6 text-center">الكمية في النظام (بالوحدة الأساسية)</th>
-                  <th className="p-3 w-1/6 text-center">الفرق (بالوحدة الأساسية)</th>
-                  <th className="p-3 w-1/4">الكمية الفعلية (الوحدات)</th>
+                  <th className="p-3 w-1/4 text-start">{t("stocktakings.item")}</th>
+                  <th className="p-3 w-1/4 text-center">{t("stocktakings.systemQuantity")}</th>
+                  <th className="p-3 w-1/6 text-center">{t("stocktakings.variance")}</th>
+                  <th className="p-3 w-1/4">{t("stocktakings.actualQuantity")}</th>
                   <th className="p-3 w-12 text-center"></th>
                 </tr>
               </thead>
@@ -201,7 +203,7 @@ export default function StocktakingItemsTable(
                     <tr key={ itemId } className="hover:bg-muted/10 transition-colors">
                       <td className="p-3 font-bold text-center align-top pt-5">{ index + 1 }</td>
 
-                      <td className="p-3 align-top pt-5 font-semibold">
+                      <td className="p-3 align-top pt-5 font-semibold text-start">
                         { group[0].itemName }
                       </td>
 
@@ -258,10 +260,9 @@ export default function StocktakingItemsTable(
                                 items={ availableUnits }
                                 itemLabelKey="itemUnitPricingMethodName"
                                 itemValueKey="id"
-                                placeholder="إضافة وحدة أخرى..."
                                 value=""
                                 onValueChange={ (val) => addUnitToItem(itemId, val) }
-                                columnsNames={ [{ label: "الوحدة", value: "itemUnitPricingMethodName" }] }
+                                columnsNames={ [{ label: t("units.unitName"), value: "itemUnitPricingMethodName" }] }
                                 onSearch={ () =>
                                 {} }
                               />
@@ -282,7 +283,7 @@ export default function StocktakingItemsTable(
                             <Trash2 className="w-5 h-5" />
                           </Button>
                         </td>
-                      ) }
+                      )}
                     </tr>
                   );
                 }) }
@@ -292,8 +293,8 @@ export default function StocktakingItemsTable(
         )
         : (
           <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground border border-dashed border-border rounded-lg bg-background/50">
-            <p>لا توجد مواد مضافة حالياً.</p>
-            <p className="text-xs mt-1">قم باختيار مادة من القائمة أو باستخدام الباركود لإضافتها للجدول.</p>
+            <p>{t("stocktakings.noItems")}</p>
+            <p className="text-xs mt-1">{t("stocktakings.noItemsHint")}</p>
             { isInvalid("items") && (
               <div className="flex items-center gap-1 text-red-500 mt-3 text-sm font-medium bg-red-500/10 px-3 py-1.5 rounded-md">
                 <AlertCircle className="h-4 w-4" />

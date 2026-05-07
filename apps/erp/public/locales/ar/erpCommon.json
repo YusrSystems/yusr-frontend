@@ -145,5 +145,11 @@
       "accounts": "صلاحيات الحسابات",
       "reports": "تقارير النظام"
     }
+  },
+
+  "storeItemSelector": {
+    "addItems": "إضافة مواد:",
+    "scanBarcode": "اقرأ الباركود...",
+    "selectItem": "اختر مادة..."
   }
 }

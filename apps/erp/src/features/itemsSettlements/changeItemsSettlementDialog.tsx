@@ -1,5 +1,6 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormField, Loading, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ItemType } from "../../core/data/item";
@@ -14,6 +15,7 @@ export default function ChangeItemsSettlementDialog(
   { entity, mode, service, onSuccess }: CommonChangeDialogProps<ItemsSettlement>
 )
 {
+  const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
   const [initLoading, setInitLoading] = useState(false);
   const storeState = useAppSelector((state) => state.store);
@@ -28,7 +30,7 @@ export default function ChangeItemsSettlementDialog(
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    ItemsSettlementValidationRules.validationRules,
+    ItemsSettlementValidationRules.validationRules(t),
     (errors) => dispatch(ItemsSettlementSlice.formActions.setErrors(errors))
   );
   useFormInit(ItemsSettlementSlice.formActions.setInitialData, initialValues);
@@ -119,18 +121,22 @@ export default function ChangeItemsSettlementDialog(
       <DialogContent dir="rtl">
         <DialogHeader>
           <DialogTitle>
-            { mode === "create" ? "إضافة" : "تعديل" } تسوية مواد
+            { mode === "create"
+              ? t("itemsSettlements.addNewTitle")
+              : `${t("common:crudRow.edit")} ${t("itemsSettlements.entityName")}` }
           </DialogTitle>
           <DialogDescription />
         </DialogHeader>
-        <Loading entityName="التسوية" />
+        <Loading entityName={ t("itemsSettlements.entityName") } />
       </DialogContent>
     );
   }
 
   return (
     <ChangeDialog<ItemsSettlement>
-      title={ `${mode === "create" ? "إضافة" : "تعديل"} تسوية مواد` }
+      title={ mode === "create"
+        ? t("itemsSettlements.addNewTitle")
+        : `${t("common:crudRow.edit")} ${t("itemsSettlements.entityName")}` }
       className="sm:max-w-6xl"
       formData={ formData }
       dialogMode={ mode }
@@ -143,7 +149,7 @@ export default function ChangeItemsSettlementDialog(
         <FieldGroup>
           <FieldsSection columns={ 2 }>
             <TextField
-              label="تاريخ التسوية"
+              label={ t("itemsSettlements.settlementDate") }
               required
               value={ formData.date ? new Date(formData.date).toISOString().split("T")[0] : "" }
               isInvalid={ isInvalid("date") }
@@ -152,7 +158,7 @@ export default function ChangeItemsSettlementDialog(
             />
 
             <FormField
-              label="المستودع"
+              label={ t("itemsSettlements.store") }
               required
               isInvalid={ isInvalid("storeId") }
               error={ getError("storeId") }
@@ -166,19 +172,18 @@ export default function ChangeItemsSettlementDialog(
           </FieldsSection>
 
           <TextField
-            label="الوصف"
+            label={ t("itemsSettlements.description") }
             value={ formData.description || "" }
             onChange={ (e) =>
               dispatch(ItemsSettlementSlice.formActions.updateFormData({ description: e.target.value })) }
           />
 
-          { /* استدعاء الجدول المشترك مع تمرير الـ Adapter والـ Factory */ }
           { formData.storeId && (
             <StocktakingItemsTable
               formData={ tableFormData as Partial<IStocktaking> }
               errors={ errors }
               handleChange={ handleTableChange }
-              createInstance={ () => new ItemsSettlementItem() } // إنشاء كائن تسوية جديد
+              createInstance={ () => new ItemsSettlementItem() }
               mode={ mode }
             />
           ) }

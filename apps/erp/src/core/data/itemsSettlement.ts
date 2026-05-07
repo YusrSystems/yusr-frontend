@@ -1,5 +1,5 @@
-import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
+import { type TFunction } from "i18next";
+import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import ItemsSettlementsApiService from "../networking/itemsSettlementsApiService";
 import type { IStocktaking, IStocktakingItem } from "./stocktaking";
 
@@ -45,27 +45,29 @@ export default class ItemsSettlement extends BaseEntity implements IStocktaking
 
 export class ItemsSettlementFilterColumns
 {
-  public static columnsNames: ColumnName<ItemsSettlement>[] = [{ label: "رقم التسوية", value: "id" }, {
-    label: "المستودع",
+  public static columnsNames = (
+    t: TFunction<"accounting">
+  ): ColumnName<ItemsSettlement>[] => [{ label: t("itemsSettlements.settlementId"), value: "id" }, {
+    label: t("itemsSettlements.store"),
     value: "storeName"
-  }, { label: "الوصف", value: "description" }];
+  }, { label: t("itemsSettlements.description"), value: "description" }];
 }
 
 export class ItemsSettlementValidationRules
 {
-  public static validationRules: ValidationRule<Partial<ItemsSettlement>>[] = [
-    {
-      field: "storeId",
-      selector: (d) => d.storeId,
-      validators: [Validators.required("يرجى اختيار المستودع")]
-    },
-    { field: "date", selector: (d) => d.date, validators: [Validators.required("يرجى اختيار التاريخ")] },
-    {
-      field: "items",
-      selector: (d) => d.itemsSettlementItems,
-      validators: [Validators.arrayMinLength(1, "يرجى إضافة مادة واحدة على الأقل للتسوية")]
-    }
-  ];
+  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<ItemsSettlement>>[] => [{
+    field: "storeId",
+    selector: (d) => d.storeId,
+    validators: [Validators.required(t("itemsSettlements.storeRequired"))]
+  }, {
+    field: "date",
+    selector: (d) => d.date,
+    validators: [Validators.required(t("itemsSettlements.dateRequired"))]
+  }, {
+    field: "items",
+    selector: (d) => d.itemsSettlementItems,
+    validators: [Validators.arrayMinLength(1, t("itemsSettlements.itemsRequired"))]
+  }];
 }
 
 export class ItemsSettlementSlice
