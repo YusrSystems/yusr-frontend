@@ -124,6 +124,7 @@ export function CrudPage<T extends BaseEntity>(
         columnsNames={ columnsToFilter }
         onSearch={ (condition) =>
         {
+          dispatch(actions.setCurrentPage(1));
           onConditionChange?.(condition);
           dispatch(actions.filter(condition) as any);
         } }
@@ -167,7 +168,11 @@ export function CrudPage<T extends BaseEntity>(
           pageSize={ entityState.rowsPerPage }
           totalNumber={ entityState.entities?.count ?? 0 }
           currentPage={ entityState.currentPage || 1 }
-          onPageChanged={ (newPage) => dispatch(actions.setCurrentPage(newPage)) }
+          onPageChanged={ (newPage) =>
+          {
+            dispatch(actions.setCurrentPage(newPage));
+            dispatch(actions.filter() as any);
+          } }
         />
 
         { isChangeDialogOpen && permissions.updatePermission && (
