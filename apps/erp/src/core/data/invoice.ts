@@ -1,3 +1,4 @@
+import { type TFunction } from "i18next";
 import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, StorageFile, type ValidationRule, Validators } from "yusr-ui";
 import InvoiceItemsActions from "../../features/invoices/logic/invoiceItemsActions";
 import InvoiceVouchersActions from "../../features/invoices/logic/invoiceVouchersActions";
@@ -138,31 +139,33 @@ export default class Invoice extends BaseEntity
 
 export class InvoiceFilterColumns
 {
-  public static columnsNames: ColumnName<Invoice>[] = [{ label: "رقم الفاتورة", value: "id" }];
+  public static columnsNames = (
+    t: TFunction<"accounting">
+  ): ColumnName<Invoice>[] => [{ label: t("invoices.invoiceId"), value: "id" }];
 }
 
 export class InvoiceValidationRules
 {
-  public static validationRules: ValidationRule<Partial<Invoice>>[] = [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Invoice>>[] => [{
     field: "type",
     selector: (d) => d.type,
-    validators: [Validators.required("يرجى اختيار نوع الفاتورة")]
+    validators: [Validators.required(t("invoices.typeRequired"))]
   }, {
     field: "date",
     selector: (d) => d.date,
-    validators: [Validators.required("يرجى إدخال تاريخ الفاتورة")]
+    validators: [Validators.required(t("invoices.dateRequired"))]
   }, {
     field: "storeId",
     selector: (d) => d.storeId,
-    validators: [Validators.required("يرجى تحديد المستودع")]
+    validators: [Validators.required(t("invoices.storeRequired"))]
   }, {
     field: "actionAccountId",
     selector: (d) => d.actionAccountId,
-    validators: [Validators.required("يرجى تحديد الحساب")]
+    validators: [Validators.required(t("invoices.accountRequired"))]
   }, {
     field: "invoiceItems",
     selector: (d) => d.invoiceItems,
-    validators: [Validators.arrayMinLength(1, "يرجى إضافة بند واحد على الأقل للفاتورة")]
+    validators: [Validators.arrayMinLength(1, t("invoices.itemsRequired"))]
   }];
 }
 

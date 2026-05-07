@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function EmptyTable()
 {
+  const { t } = useTranslation("accounting");
   const {
     isInvalid,
     getError
@@ -13,8 +15,8 @@ export default function EmptyTable()
       ${isInvalid("invoiceItems") ? "error" : ""}
     ` }
     >
-      <p>لا توجد مواد مضافة حالياً.</p>
-      <p className="text-xs mt-1">قم باختيار مادة من القائمة أو باستخدام الباركود لإضافتها للجدول.</p>
+      <p>{ t("invoices.emptyTable") }</p>
+      <p className="text-xs mt-1">{ t("invoices.emptyTableHint") }</p>
       { isInvalid("invoiceItems") && (
         <div className="text-base font-medium text-red-500 mt-8 animate-in fade-in slide-in-from-top-1">
           { getError("invoiceItems") }

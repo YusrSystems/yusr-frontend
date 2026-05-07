@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { cn, CurrencyIcon } from "yusr-ui";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
@@ -90,6 +91,7 @@ function StatCell({ label, value, icon, variant = "default" }: StatCellProps)
 
 export default function InvoiceItemsSummary()
 {
+  const { t } = useTranslation("accounting");
   const { formData } = useInvoiceContext();
   const taxExclusive = InvoiceItemsMath.CalcInvoiceTaxExclusivePrice(formData.invoiceItems ?? []);
   const taxInclusive = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(formData.invoiceItems ?? []);
@@ -97,12 +99,12 @@ export default function InvoiceItemsSummary()
   const unpaid = InvoiceItemsMath.CalcInvoiceUnpaidPrice(formData.invoiceItems ?? [], formData.invoiceVouchers ?? []);
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 border border-border rounded-lg overflow-hidden bg-background rtl flex-1 divide-x divide-y divide-border [direction:rtl]">
-      <StatCell label="الإجمالي قبل الضريبة" value={ taxExclusive } icon="Σ" />
-      <StatCell label="إجمالي الضرائب" value={ taxInclusive - taxExclusive } icon="%" />
-      <StatCell label="الإجمالي بعد الضريبة" value={ taxInclusive } icon="Σ" />
-      <StatCell label="المبلغ المدفوع" value={ paid } icon="✓" variant="paid" />
-      <StatCell label="المبلغ المتبقي" value={ unpaid } icon="△" variant="remaining" />
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 border border-border rounded-lg overflow-hidden bg-background flex-1 divide-x divide-y divide-border">
+      <StatCell label={ t("invoices.totalBeforeTax") } value={ taxExclusive } icon="Σ" />
+      <StatCell label={ t("invoices.totalTaxes") } value={ taxInclusive - taxExclusive } icon="%" />
+      <StatCell label={ t("invoices.totalAfterTax") } value={ taxInclusive } icon="Σ" />
+      <StatCell label={ t("invoices.paidAmount") } value={ paid } icon="✓" variant="paid" />
+      <StatCell label={ t("invoices.remainingAmount") } value={ unpaid } icon="△" variant="remaining" />
     </div>
   );
 }

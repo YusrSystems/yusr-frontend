@@ -2,6 +2,7 @@ import ClientsSearchableSelect from "@/core/components/searchableSelect/clientsS
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Checkbox, DateField, FieldsSection, FormField, SelectField, TextField } from "yusr-ui";
 import Account from "../../../../core/data/account";
 import { ImportExportType, InvoiceType } from "../../../../core/data/invoice";
@@ -9,6 +10,7 @@ import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function InvoiceBasicInfo()
 {
+  const { t } = useTranslation("accounting");
   const {
     mode,
     formData,
@@ -76,18 +78,18 @@ export default function InvoiceBasicInfo()
     formData.type === InvoiceType.Purchase || formData.type === InvoiceType.PurchaseReturn;
 
   return (
-    <FieldsSection title="البيانات الأساسية" columns={ { base: 1, md: 2, lg: 4 } }>
+    <FieldsSection columns={ { base: 1, md: 2, lg: 4 } }>
       { (formData.type === InvoiceType.Sell || formData.type === InvoiceType.Quotation) && (
         <SelectField
-          label="نوع الفاتورة"
+          label={ t("invoices.invoiceType") }
           required
           value={ formData.type?.toString() || "" }
           onValueChange={ (val) => dispatch(slice.formActions.updateFormData({ type: Number(val) as InvoiceType })) }
           isInvalid={ isInvalid("type") }
           error={ getError("type") }
           disabled={ mode === "update" || mode === "return" }
-          options={ [{ label: "مبيعات", value: InvoiceType.Sell.toString() }, {
-            label: "عرض سعر",
+          options={ [{ label: t("invoices.sellInvoice"), value: InvoiceType.Sell.toString() }, {
+            label: t("invoices.quotation"),
             value: InvoiceType.Quotation.toString()
           }] }
         />
@@ -95,7 +97,7 @@ export default function InvoiceBasicInfo()
 
       { (mode === "update" || mode === "return") && (
         <TextField
-          label="تاريخ الفاتورة"
+          label={ t("invoices.invoiceDate") }
           required
           value={ formData.date ? new Date(formData.date).toISOString().split("T")[0] : "" }
           isInvalid={ isInvalid("date") }
@@ -106,7 +108,7 @@ export default function InvoiceBasicInfo()
 
       { mode === "create" && (
         <DateField
-          label="تاريخ الفاتورة"
+          label={ t("invoices.invoiceDate") }
           required
           value={ formData.date ? new Date(formData.date) : undefined }
           onChange={ (e) => dispatch(slice.formActions.updateFormData({ date: e })) }
@@ -116,7 +118,7 @@ export default function InvoiceBasicInfo()
       ) }
 
       <FormField
-        label="المستودع"
+        label={ t("invoices.store") }
         required
         isInvalid={ isInvalid("storeId") }
         error={ getError("storeId") }
@@ -134,7 +136,7 @@ export default function InvoiceBasicInfo()
       </FormField>
 
       <FormField
-        label="الحساب"
+        label={ t("invoices.account") }
         required
         isInvalid={ isInvalid("actionAccountId") }
         error={ getError("actionAccountId") }
@@ -169,7 +171,7 @@ export default function InvoiceBasicInfo()
       </FormField>
 
       <TextField
-        label="رقم الفاتورة المرتبطة"
+        label={ t("invoices.relatedInvoiceNumber") }
         disabled
         value={ formData.originalInvoiceId || "" }
         onChange={ () =>
@@ -177,14 +179,14 @@ export default function InvoiceBasicInfo()
       />
 
       <TextField
-        label="الموظف المندوب"
+        label={ t("invoices.delegateEmployee") }
         value={ formData.delegateEmp || "" }
         onChange={ (e) => dispatch(slice.formActions.updateFormData({ delegateEmp: e.target.value })) }
       />
 
       { canBeExportInvoice() && (
         <SelectField
-          label="فاتورة استيراد"
+          label={ t("invoices.importInvoice") }
           required
           disabled={ mode === "return" }
           value={ formData.importExportType?.toString() || "" }
@@ -192,8 +194,8 @@ export default function InvoiceBasicInfo()
             dispatch(slice.formActions.updateFormData({ importExportType: Number(val) as ImportExportType })) }
           isInvalid={ isInvalid("importExportType") }
           error={ getError("importExportType") }
-          options={ [{ label: "استيراد وفق آلية الاحتساب العكسي", value: "2" }, {
-            label: "استيراد خاضع للضريبة ومسدد للجمارك",
+          options={ [{ label: t("invoices.importReverseCharge"), value: "2" }, {
+            label: t("invoices.importCustomsPaid"),
             value: "3"
           }] }
         />
@@ -203,14 +205,14 @@ export default function InvoiceBasicInfo()
         <div className="flex items-center gap-2 mt-6 border bg-primary/5 rounded-lg px-2">
           <Checkbox id="importInvoice" checked disabled />
           <label htmlFor="importInvoice" className="text-sm font-bold">
-            فاتورة تصدير
+            { t("invoices.exportInvoice") }
           </label>
         </div>
       ) }
 
       <div className="col-span-1 md:col-span-2 lg:col-span-4">
         <TextField
-          label="ملاحظات"
+          label={ t("invoices.notes") }
           value={ formData.notes || "" }
           onChange={ (e) => dispatch(slice.formActions.updateFormData({ notes: e.target.value })) }
         />

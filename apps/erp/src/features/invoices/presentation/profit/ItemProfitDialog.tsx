@@ -1,6 +1,6 @@
 import { Banknote } from "lucide-react";
 import { useState } from "react";
-
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
 import { InvoiceItem } from "../../../../core/data/invoice";
 import type { InvoiceItemProfitResult } from "../../../../core/data/InvoiceItemProfitResult";
@@ -14,6 +14,7 @@ interface ItemProfitDialogProps
 
 export function ItemProfitDialog({ item }: ItemProfitDialogProps)
 {
+  const { t, i18n } = useTranslation("accounting");
   const [open, setOpen] = useState(false);
 
   const profit: InvoiceItemProfitResult = InvoiceItemsMath.CalcInvoiceItemProfit(item);
@@ -24,25 +25,25 @@ export function ItemProfitDialog({ item }: ItemProfitDialogProps)
         type="button"
         onClick={ () => setOpen(true) }
         className="p-2 text-emerald-500 hover:text-emerald-700 hover:bg-emerald-500/10 rounded-md transition-colors"
-        aria-label="عرض ربح المادة"
+        aria-label={ t("invoices.viewItemProfit") }
       >
         <Banknote className="h-5 w-5" />
       </button>
 
       <Dialog open={ open } onOpenChange={ setOpen }>
-        <DialogContent className="max-w-sm rtl" dir="rtl">
+        <DialogContent className="max-w-sm" dir={ i18n.dir() }>
           <DialogHeader>
-            <DialogTitle>ربح المادة</DialogTitle>
+            <DialogTitle>{ t("invoices.itemProfit") }</DialogTitle>
             <DialogDescription>{ item.itemName }</DialogDescription>
           </DialogHeader>
 
           <div className="mt-2">
-            <ProfitRow label="السعر شامل الضريبة" value={ profit.taxInclusivePrice } />
-            <ProfitRow label="التكلفة" value={ profit.cost } />
-            <ProfitRow label="إجمالي الضرائب" value={ profit.totalTaxesAmount } />
-            <ProfitRow label="الكمية" value={ profit.quantity } showCurrency={ false } />
-            <ProfitRow label="الربح لكل وحدة" value={ profit.profit } variant="profit" />
-            <ProfitRow label="إجمالي الربح" value={ profit.totalProfit } variant="profit" />
+            <ProfitRow label={ t("invoices.priceIncludingTax") } value={ profit.taxInclusivePrice } />
+            <ProfitRow label={ t("invoices.cost") } value={ profit.cost } />
+            <ProfitRow label={ t("invoices.totalTaxesAmount") } value={ profit.totalTaxesAmount } />
+            <ProfitRow label={ t("invoices.quantity") } value={ profit.quantity } showCurrency={ false } />
+            <ProfitRow label={ t("invoices.profitPerUnit") } value={ profit.profit } variant="profit" />
+            <ProfitRow label={ t("invoices.totalProfit") } value={ profit.totalProfit } variant="profit" />
           </div>
         </DialogContent>
       </Dialog>

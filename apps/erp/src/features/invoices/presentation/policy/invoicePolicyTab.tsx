@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import { TextAreaField } from "yusr-ui";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function InvoicePolicyTab()
 {
+  const { t } = useTranslation("accounting");
   const {
     formData,
     slice,
@@ -13,7 +15,7 @@ export default function InvoicePolicyTab()
 
   return (
     <TextAreaField
-      label="السياسة / الشروط (تظهر في أسفل الفاتورة)"
+      label={ t("invoices.policyTerms") }
       value={ formData.policy || authState.setting?.invoicePolicy || "" }
       onChange={ (e) => dispatch(slice.formActions.updateFormData({ policy: e.target.value })) }
       disabled={ disabled }

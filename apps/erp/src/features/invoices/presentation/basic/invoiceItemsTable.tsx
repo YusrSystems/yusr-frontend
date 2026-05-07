@@ -1,5 +1,6 @@
 import { PercentIcon, Trash2 } from "lucide-react";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { CurrencyIcon, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextField } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
 import { InvoiceType } from "../../../../core/data/invoice";
@@ -10,6 +11,7 @@ import EmptyTable from "./emptyTable";
 
 export default function InvoiceItemsTable()
 {
+  const { t } = useTranslation("accounting");
   const {
     mode,
     formData,
@@ -71,23 +73,23 @@ export default function InvoiceItemsTable()
         <table className="relative w-full text-sm text-right">
           <thead className="sticky top-0 bg-muted z-50 border-b border-border">
             <tr>
-              <th className="p-3 font-semibold w-16 text-center text-muted-foreground">الرقم</th>
-              <th className="p-3 font-semibold w-40 ">المادة</th>
-              <th className="p-3 font-semibold w-20">طريقة التسعير</th>
-              <th className="p-3 font-semibold w-25 ">التكلفة</th>
-              <th className="p-3 font-semibold w-25">الكمية</th>
-              <th className="p-3 font-semibold w-30 ">السعر بدون ضريبة</th>
-              <th className="p-3 font-semibold w-30 ">نسبة الضريبة</th>
-              <th className="p-3 font-semibold w-30 ">السعر بعد الضريبة</th>
+              <th className="p-3 font-semibold w-16 text-center text-muted-foreground">{ t("invoices.number") }</th>
+              <th className="p-3 font-semibold text-start w-40 ">{ t("invoices.item") }</th>
+              <th className="p-3 font-semibold text-start w-20">{ t("invoices.pricingMethod") }</th>
+              <th className="p-3 font-semibold text-start w-25 ">{ t("invoices.cost") }</th>
+              <th className="p-3 font-semibold text-start w-25">{ t("invoices.quantity") }</th>
+              <th className="p-3 font-semibold text-start w-30 ">{ t("invoices.priceWithoutTax") }</th>
+              <th className="p-3 font-semibold text-start w-30 ">{ t("invoices.taxPercentage") }</th>
+              <th className="p-3 font-semibold text-start w-30 ">{ t("invoices.priceAfterTax") }</th>
               { SystemPermissions.hasAuth(
                 authState.loggedInUser?.role?.permissions ?? [],
                 SystemPermissionsResources.InvoiceAddSettlement,
                 SystemPermissionsActions.Get
-              ) && <th className="p-3 font-semibold w-25 ">التسوية</th> }
+              ) && <th className="p-3 font-semibold text-start w-25 ">{ t("invoices.settlement") }</th> }
 
-              <th className="p-3 font-semibold w-30 ">التكلفة النهائية</th>
-              <th className="p-3 font-semibold w-30 ">السعر النهائي بدون ضريبة</th>
-              <th className="p-3 font-semibold w-30 ">السعر النهائي مع ضريبة</th>
+              <th className="p-3 font-semibold text-start w-30 ">{ t("invoices.finalCost") }</th>
+              <th className="p-3 font-semibold text-start w-30 ">{ t("invoices.finalPriceWithoutTax") }</th>
+              <th className="p-3 font-semibold text-start w-30 ">{ t("invoices.finalPriceWithTax") }</th>
               { SystemPermissions.hasAuth(
                 authState.loggedInUser?.role?.permissions ?? [],
                 SystemPermissionsResources.InvoiceShowItemProfit,
@@ -109,7 +111,7 @@ export default function InvoiceItemsTable()
                   <td className="px-2 pt-2 text-center font-bold text-muted-foreground">{ index + 1 }</td>
 
                   <td className="px-2 pt-2">
-                    <div className="font-semibold text-foreground">{ row.itemName }</div>
+                    <div className="font-semibold text-start text-foreground">{ row.itemName }</div>
                   </td>
 
                   <td className="px-2 pt-2">
@@ -123,10 +125,12 @@ export default function InvoiceItemsTable()
                         onValueChange={ (val: string) =>
                           dispatch(slice.formActions.onInvoiceItemIupmChange({ index: index, iupmId: Number(val) })) }
                         options={ row.itemUnitPricingMethods?.map((m) => ({
-                          label: `${m.pricingMethodName || "بدون"} ${m.unitName || "بدون"}`,
+                          label: `${m.pricingMethodName || t("invoices.without")} ${
+                            m.unitName || t("invoices.without")
+                          }`,
                           value: m.id.toString()
                         })) || [] }
-                        placeholder="اختر طريقة التسعير"
+                        placeholder={ t("invoices.selectPricingMethod") }
                         isInvalid={ !!errors[`${row.id}_method`] }
                         disabled={ disabled }
                       />
@@ -258,7 +262,7 @@ export default function InvoiceItemsTable()
                             dispatch(slice.formActions.removeItem(index));
                           } }
                           className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
-                          aria-label="حذف المادة"
+                          aria-label={ t("invoices.deleteItem") }
                         >
                           <Trash2 className="h-5 w-5" />
                         </button>
@@ -269,7 +273,7 @@ export default function InvoiceItemsTable()
                   <td colSpan={ 14 } className="px-5 pt-1 pb-3">
                     <TextField
                       label=""
-                      placeholder="أضف ملاحظات..."
+                      placeholder={ t("invoices.addNotes") }
                       value={ row.notes || "" }
                       disabled={ disabled || mode === "return" }
                       onChange={ (val) =>

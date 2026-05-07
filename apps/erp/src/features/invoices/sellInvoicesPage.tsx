@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { ClientsSlice } from "../../core/data/account";
@@ -7,6 +8,7 @@ import InvoicesPage from "./invoicesPage";
 
 export default function SellInvoicesPage()
 {
+  const { t } = useTranslation("accounting");
   const authState = useAppSelector((state) => state.auth);
   const clientsState = useAppSelector((state) => state.clients);
 
@@ -16,7 +18,7 @@ export default function SellInvoicesPage()
       slice={ SalesSlice }
       stateKey="sales"
       dialogStateKey="salesDialog"
-      title="إدارة المبيعات"
+      title={ t("invoices.salesManagement") }
       fixedType={ InvoiceType.Sell }
       selectFormState={ (state) => state.salesForm }
       accountSlice={ ClientsSlice }

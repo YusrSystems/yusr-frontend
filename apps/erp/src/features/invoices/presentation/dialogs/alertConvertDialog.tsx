@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, Button, SaveButton } from "yusr-ui";
 import type Invoice from "../../../../core/data/invoice";
 import type { InvoiceVoucher } from "../../../../core/data/invoice";
@@ -14,6 +15,7 @@ export default function AlertConvertDialog(
   { invoiceId, createInitialPaymentVoucher, onSuccess }: AlertConvertDialogProps
 )
 {
+  const { t, i18n } = useTranslation("accounting");
   const [showConfirm, setShowConfirm] = useState(false);
 
   return (
@@ -23,22 +25,22 @@ export default function AlertConvertDialog(
         className="ml-10"
         onClick={ () => setShowConfirm(true) }
       >
-        تحويل لفاتورة بيع
+        { t("invoices.convertToSell") }
       </Button>
 
       <AlertDialog open={ showConfirm } onOpenChange={ setShowConfirm }>
-        <AlertDialogContent dir="rtl">
+        <AlertDialogContent dir={ i18n.dir() }>
           <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد التحويل</AlertDialogTitle>
+            <AlertDialogTitle>{ t("invoices.confirmConversion") }</AlertDialogTitle>
             <AlertDialogDescription>
-              هل أنت متأكد من تحويل عرض السعر إلى فاتورة بيع؟ لا يمكن التراجع عن هذا الإجراء.
+              { t("invoices.conversionWarning") }
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel>{ t("invoices.cancel") }</AlertDialogCancel>
             <SaveButton<Invoice>
               formData={ {} }
-              label="تأكيد"
+              label={ t("invoices.confirm") }
               variant="destructive"
               onExecute={ async (_, ignoreWarnings) =>
               {

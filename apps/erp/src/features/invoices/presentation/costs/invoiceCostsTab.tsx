@@ -1,12 +1,14 @@
 import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button, CurrencyIcon, FormField, NumberField, TextField } from "yusr-ui";
 import { InvoiceRelationType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function InvoiceCostsTab()
 {
+  const { t } = useTranslation("accounting");
   const {
     formData,
     authState,
@@ -21,7 +23,7 @@ export default function InvoiceCostsTab()
     <div className="flex flex-col gap-2 items-end">
       <Button
         type="button"
-        className="max-w-40"
+        className="max-w-45"
         size="lg"
         onClick={ () =>
           dispatch(slice.formActions.addVoucher(
@@ -39,19 +41,19 @@ export default function InvoiceCostsTab()
             }
           )) }
       >
-        <Plus className="w-4 h-4 ml-2" /> إضافة سند تكلفة
+        <Plus className="w-4 h-4 me-2" /> { t("invoices.addCostVoucher") }
       </Button>
 
-      <div className="w-full overflow-x-auto border border-border rounded-lg shadow-sm bg-background" dir="rtl">
+      <div className="w-full overflow-x-auto border border-border rounded-lg shadow-sm bg-background">
         <table className="w-full text-sm text-right">
           <thead className="bg-muted/40 border-b border-border">
             <tr>
-              <th className="p-3 font-semibold w-16 text-center text-muted-foreground">الرقم</th>
-              <th className="p-3 font-semibold">الحساب</th>
-              <th className="p-3 font-semibold">طريقة الدفع</th>
-              <th className="p-3 font-semibold text-center">المبلغ</th>
-              <th className="p-3 font-semibold text-center">الوصف</th>
-              <th className="p-4 font-semibold w-16 text-center"></th>
+              <th className="p-3 font-semibold w-16 text-center text-muted-foreground">{ t("invoices.number") }</th>
+              <th className="p-3 text-start font-semibold">{ t("invoices.account") }</th>
+              <th className="p-3 text-start font-semibold">{ t("invoices.paymentMethod") }</th>
+              <th className="p-3 text-start font-semibold">{ t("invoices.amount") }</th>
+              <th className="p-3 text-start font-semibold">{ t("invoices.description") }</th>
+              <th className="p-4 text-start font-semibold w-16"></th>
             </tr>
           </thead>
           <tbody>
@@ -126,7 +128,7 @@ export default function InvoiceCostsTab()
                       dispatch(slice.formActions.removeVoucher(row.voucherId));
                     } }
                     className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
-                    aria-label="حذف السند"
+                    aria-label={ t("invoices.deleteVoucher") }
                   >
                     <Trash2 className="h-5 w-5" />
                   </button>

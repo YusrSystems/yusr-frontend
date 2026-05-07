@@ -1,5 +1,6 @@
 import { Banknote } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, cn, CurrencyIcon, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
 import { InvoiceRelationType } from "../../../../core/data/invoice";
 import type { InvoiceProfitResult } from "../../../../core/data/InvoiceProfitResult";
@@ -36,6 +37,7 @@ export function ProfitRow({ label, value, showCurrency = true, variant = "defaul
 
 export default function InvoiceProfitDialog()
 {
+  const { t, i18n } = useTranslation("accounting");
   const [open, setOpen] = useState(false);
   const {
     formData
@@ -54,22 +56,22 @@ export default function InvoiceProfitDialog()
         className="gap-2 p-6.5 text-green-500 h-full"
       >
         <Banknote className="h-4 w-4" />
-        ربح الفاتورة
+        { t("invoices.invoiceProfit") }
       </Button>
 
       <Dialog open={ open } onOpenChange={ setOpen }>
-        <DialogContent className="max-w-sm rtl" dir="rtl">
+        <DialogContent className="max-w-sm" dir={ i18n.dir() }>
           <DialogHeader>
-            <DialogTitle>ربح الفاتورة</DialogTitle>
-            <DialogDescription>ملخص الربح الإجمالي للفاتورة</DialogDescription>
+            <DialogTitle>{ t("invoices.invoiceProfit") }</DialogTitle>
+            <DialogDescription>{ t("invoices.profitSummary") }</DialogDescription>
           </DialogHeader>
 
           <div className="mt-2">
-            <ProfitRow label="إجمالي السعر شامل الضريبة" value={ profit.taxInclusiveTotalPrice } />
-            <ProfitRow label="إجمالي التكاليف" value={ profit.totalCost } />
-            <ProfitRow label="إجمالي الضرائب" value={ profit.totalTaxesAmount } />
-            <ProfitRow label="تكاليف الفاتورة" value={ profit.invoiceCosts } />
-            <ProfitRow label="صافي الربح" value={ profit.profit } variant="profit" />
+            <ProfitRow label={ t("invoices.totalPriceIncludingTax") } value={ profit.taxInclusiveTotalPrice } />
+            <ProfitRow label={ t("invoices.totalCosts") } value={ profit.totalCost } />
+            <ProfitRow label={ t("invoices.totalTaxesAmount") } value={ profit.totalTaxesAmount } />
+            <ProfitRow label={ t("invoices.invoiceCosts") } value={ profit.invoiceCosts } />
+            <ProfitRow label={ t("invoices.netProfit") } value={ profit.profit } variant="profit" />
           </div>
         </DialogContent>
       </Dialog>

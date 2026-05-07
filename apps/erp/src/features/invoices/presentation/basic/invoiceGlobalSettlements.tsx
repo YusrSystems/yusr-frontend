@@ -1,9 +1,11 @@
 import { Minus, Percent } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { NumberInput } from "yusr-ui";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function InvoiceGlobalSettlements()
 {
+  const { t } = useTranslation("accounting");
   const {
     mode,
     formData,
@@ -13,9 +15,9 @@ export default function InvoiceGlobalSettlements()
   } = useInvoiceContext();
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-4 py-2.5 border border-border rounded-lg bg-background rtl shrink-0">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-4 py-2.5 border border-border rounded-lg bg-background shrink-0">
       <span className="text-xs text-muted-foreground whitespace-nowrap">
-        مبلغ التسوية العام شامل الضريبة
+        { t("invoices.globalSettlement") }
       </span>
 
       <div className="hidden sm:block w-px h-7 bg-border shrink-0" />

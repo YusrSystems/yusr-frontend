@@ -1,5 +1,6 @@
 import { BanknoteArrowDown, BanknoteArrowUp, Box, CheckCircle2, FolderKanban, Siren } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps, DialogMode, IEntityState } from "yusr-ui";
 import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import Account, { type AccountSliceType } from "../../core/data/account";
@@ -44,6 +45,7 @@ export default function ChangeInvoiceDialog({
   accountState: IEntityState<Account>;
 })
 {
+  const { t, i18n } = useTranslation("accounting");
   const [initLoading, setInitLoading] = useState(false);
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
@@ -85,7 +87,7 @@ export default function ChangeInvoiceDialog({
     formData.invoiceVouchers?.filter((v) => v.invoiceRelationType == InvoiceRelationType.Payment) ?? [];
   const { validate } = useValidate(
     formData,
-    InvoiceValidationRules.validationRules,
+    InvoiceValidationRules.validationRules(t),
     (errors) => dispatch(slice.formActions.setErrors(errors))
   );
   useFormInit(slice.formActions.setInitialData, initialValues);
@@ -208,21 +210,28 @@ export default function ChangeInvoiceDialog({
 
   const isReturn = formData.type === InvoiceType.SellReturn || formData.type === InvoiceType.PurchaseReturn;
 
-  const dialogTitle = mode === "return"
-    ? "إضافة مرتجع فاتورة"
-    : ((mode === "create" ? "إضافة" : "تعديل") + (isReturn ? " مرتجع فاتورة" : " الفاتورة"));
+  const getDialogTitle = () =>
+  {
+    if (mode === "return")
+    {
+      return t("invoices.addReturnInvoice");
+    }
+    if (mode === "create")
+    {
+      return isReturn ? t("invoices.addReturnInvoice") : t("invoices.addInvoice");
+    }
+    return isReturn ? t("invoices.editReturnInvoice") : t("invoices.editInvoice");
+  };
 
   if (initLoading)
   {
     return (
-      <DialogContent dir="rtl">
+      <DialogContent dir={ i18n.dir() }>
         <DialogHeader>
-          <DialogTitle>
-            { dialogTitle }
-          </DialogTitle>
+          <DialogTitle>{ getDialogTitle() }</DialogTitle>
           <DialogDescription />
         </DialogHeader>
-        <Loading entityName="الفاتورة" />
+        <Loading entityName={ t("invoices.entityName") } />
       </DialogContent>
     );
   }
@@ -230,11 +239,9 @@ export default function ChangeInvoiceDialog({
   if (fullyReturned)
   {
     return (
-      <DialogContent dir="rtl">
+      <DialogContent dir={ i18n.dir() }>
         <DialogHeader>
-          <DialogTitle>
-            { dialogTitle }
-          </DialogTitle>
+          <DialogTitle>{ getDialogTitle() }</DialogTitle>
           <DialogDescription />
         </DialogHeader>
 
@@ -242,13 +249,13 @@ export default function ChangeInvoiceDialog({
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
             <CheckCircle2 className="h-8 w-8 text-green-600" />
           </div>
-          <h3 className="text-lg font-semibold">تم الاسترجاع بالكامل</h3>
-          <p className="text-sm text-muted-foreground">تم استرجاع جميع بنود هذه الفاتورة مسبقاً</p>
+          <h3 className="text-lg font-semibold">{ t("invoices.fullyReturned") }</h3>
+          <p className="text-sm text-muted-foreground">{ t("invoices.fullyReturnedMessage") }</p>
         </div>
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">إغلاق</Button>
+            <Button variant="outline">{ t("invoices.close") }</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
@@ -275,7 +282,7 @@ export default function ChangeInvoiceDialog({
     >
       <ChangeDialogTabbed<Invoice>
         changeDialogProps={ {
-          title: dialogTitle,
+          title: getDialogTitle(),
           className: "sm:max-w-[100vw] sm:w-screen sm:h-screen",
           formData,
           dialogMode: mode as DialogMode,
@@ -299,14 +306,14 @@ export default function ChangeInvoiceDialog({
         } }
         tabs={ [
           {
-            label: "المعلومات الأساسية",
+            label: t("invoices.basicInfo"),
             icon: Box,
             active: true,
             content: <InvoiceBasicTab />
           },
           ...(formData.type !== InvoiceType.Quotation
             ? [{
-              label: "سندات الدفع",
+              label: t("invoices.paymentVouchers"),
               icon: BanknoteArrowDown,
               active: false,
               content: <InvoicePaymentsTab />
@@ -314,20 +321,20 @@ export default function ChangeInvoiceDialog({
             : []),
           ...(formData.type !== InvoiceType.Quotation
             ? [{
-              label: "تكاليف الفاتورة",
+              label: t("invoices.invoiceCosts"),
               icon: BanknoteArrowUp,
               active: false,
               content: <InvoiceCostsTab />
             }]
             : []),
           {
-            label: "سياسة الفاتورة",
+            label: t("invoices.invoicePolicy"),
             icon: Siren,
             active: false,
             content: <InvoicePolicyTab />
           },
           {
-            label: "مرفقات الفاتورة",
+            label: t("invoices.invoiceAttachments"),
             icon: FolderKanban,
             active: false,
             content: <InvoiceFilesTab />

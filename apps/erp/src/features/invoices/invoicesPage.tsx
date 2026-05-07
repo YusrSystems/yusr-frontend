@@ -1,5 +1,7 @@
+import type { TFunction } from "i18next";
 import { FileTextIcon, RotateCw } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button, ContextMenuItem, CrudPage, CurrencyIcon, DropdownMenuItem, FilterCondition, type IDialogState, type IEntityState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, Tooltip, TooltipContent, TooltipTrigger } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
@@ -38,6 +40,7 @@ export default function InvoicesPage({
   basePath?: string;
 })
 {
+  const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
   const [condition, setCondition] = useState<FilterCondition<Invoice> | undefined>(undefined);
   const [isAddReturn, setIsAddReturn] = useState<boolean>(false);
@@ -46,7 +49,6 @@ export default function InvoicesPage({
   const invoiceDialogState = useAppSelector((state) => state[dialogStateKey] as IDialogState<Invoice>);
   const [resendingEInvoice, setResendingEInvoice] = useState(false);
 
-  // Update with your actual permission resource enum
   const permissions = useAppSelector((state) =>
     selectPermissionsByResource(state, SystemPermissionsResources.Invoices)
   );
@@ -55,21 +57,21 @@ export default function InvoicesPage({
   {
     if (invoice.paidAmount === 0)
     {
-      return { message: "غير مدفوعة", styles: "bg-red-100 text-red-800" };
+      return { message: t("invoices.notPaid"), styles: "bg-red-100 text-red-800" };
     }
 
     if (invoice.paidAmount === invoice.fullAmount)
     {
-      return { message: "مدفوعة بالكامل", styles: "bg-green-100 text-green-800" };
+      return { message: t("invoices.fullyPaid"), styles: "bg-green-100 text-green-800" };
     }
 
     if (invoice.paidAmount > invoice.fullAmount)
     {
-      return { message: "مدفوعة أكثر من اللازم", styles: "bg-red-100 text-red-800" };
+      return { message: t("invoices.overpaid"), styles: "bg-red-100 text-red-800" };
     }
 
     return {
-      message: `مدفوعة جزئيا (${invoice.paidAmount} ${authState.setting?.currency?.code})`,
+      message: t("invoices.partiallyPaid", { amount: invoice.paidAmount, currency: authState.setting?.currency?.code }),
       styles: "bg-orange-100 text-orange-800"
     };
   };
@@ -87,17 +89,17 @@ export default function InvoicesPage({
 
     if (invoice.eInvoiceStatus === EInvoiceStatus.NotSent)
     {
-      return { message: "لم ترسل", styles: "bg-red-100 text-red-800" };
+      return { message: t("invoices.notSent"), styles: "bg-red-100 text-red-800" };
     }
 
     if (invoice.eInvoiceStatus === EInvoiceStatus.SentWithWarnings)
     {
-      return { message: "أرسلت مع تحذيرات", styles: "bg-orange-100 text-orange-800" };
+      return { message: t("invoices.sentWithWarnings"), styles: "bg-orange-100 text-orange-800" };
     }
 
     if (invoice.eInvoiceStatus === EInvoiceStatus.SentCorrectly)
     {
-      return { message: "أرسلت", styles: "bg-green-100 text-green-800" };
+      return { message: t("invoices.sent"), styles: "bg-green-100 text-green-800" };
     }
 
     return { message: "", styles: "" };
@@ -129,7 +131,7 @@ export default function InvoicesPage({
             dispatch(slice.dialogActions.openDeleteDialog(entity));
           } }
         >
-          حذف
+          { t("common:crudRow.delete") }
         </ItemComponent>
       );
     }
@@ -144,7 +146,7 @@ export default function InvoicesPage({
             dispatch(slice.dialogActions.openChangeDialog(entity));
           } }
         >
-          إرجاع
+          { t("invoices.return") }
         </ItemComponent>
       );
     }
@@ -160,11 +162,11 @@ export default function InvoicesPage({
     {
       if (res.data === EInvoiceStatus.NotSent)
       {
-        toast.error("لم يتم إرسال الفاتورة بنجاح");
+        toast.error(t("invoices.resendFailed"));
       }
       else
       {
-        toast.success("تم إرسال الفاتورة بنجاح");
+        toast.success(t("invoices.resendSuccess"));
       }
       dispatch(slice.entityActions.refresh({ data: { ...invoice, eInvoiceStatus: res.data } }));
     }
@@ -196,15 +198,15 @@ export default function InvoicesPage({
             && (invoice.type === InvoiceType.Purchase || invoice.type === InvoiceType.PurchaseReturn))
         )
         {
-          toast.error("الفاتورة غير موجودة");
+          toast.error(t("invoices.invoiceNotFound"));
           return;
         }
 
         dispatch(slice.dialogActions.openChangeDialog(invoice));
       } }
       title={ title }
-      entityName="الفاتورة"
-      addNewItemTitle="إنشاء فاتورة جديدة"
+      entityName={ t("invoices.entityName") }
+      addNewItemTitle={ t("invoices.addNewTitle") }
       onConditionChange={ setCondition }
       actionButtons={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],
@@ -235,23 +237,23 @@ export default function InvoicesPage({
       useSlice={ () => invoiceDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي الفواتير",
+        title: t("invoices.totalInvoices"),
         data: (invoiceState.entities?.count ?? 0).toString(),
         icon: <FileTextIcon className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ InvoiceFilterColumns.columnsNames }
+      columnsToFilter={ InvoiceFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: "رقم الفاتورة", rowStyles: "w-24" },
-        { rowName: "النوع", rowStyles: "w-32" },
-        { rowName: "التاريخ", rowStyles: "w-32" },
-        { rowName: "الحساب", rowStyles: "w-48" },
-        { rowName: "المستودع", rowStyles: "w-32" },
-        { rowName: "الإجمالي", rowStyles: "w-32" },
-        { rowName: "الحالة", rowStyles: "w-32" },
+        { rowName: t("invoices.invoiceId"), rowStyles: "w-24" },
+        { rowName: t("invoices.type"), rowStyles: "w-32" },
+        { rowName: t("invoices.date"), rowStyles: "w-32" },
+        { rowName: t("invoices.account"), rowStyles: "w-48" },
+        { rowName: t("invoices.store"), rowStyles: "w-32" },
+        { rowName: t("invoices.total"), rowStyles: "w-32" },
+        { rowName: t("invoices.status"), rowStyles: "w-32" },
         { rowName: "", rowStyles: "w-32" },
         ...(authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
-          ? [{ rowName: "حالة الفاتورة الإلكترونية", rowStyles: "w-50" }]
+          ? [{ rowName: t("invoices.eInvoiceStatus"), rowStyles: "w-50" }]
           : []),
         ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
@@ -264,11 +266,11 @@ export default function InvoicesPage({
       tableRowMapper={ (invoice: Invoice) => [
         { rowName: `#${invoice.id}`, rowStyles: "" },
         {
-          rowName: getInvoiceTypeName(invoice.type),
+          rowName: getInvoiceTypeName(invoice.type, t),
           rowStyles: "font-semibold"
         },
         {
-          rowName: new Date(invoice.date).toLocaleDateString("ar-SA"),
+          rowName: new Date(invoice.date).toLocaleDateString(),
           rowStyles: ""
         },
         { rowName: invoice.actionAccountName || "-", rowStyles: "" },
@@ -283,7 +285,7 @@ export default function InvoicesPage({
           rowStyles: "font-bold text-blue-600"
         },
         {
-          rowName: invoice.statusId === InvoiceStatus.Valid ? "صالحة" : "محذوفة",
+          rowName: invoice.statusId === InvoiceStatus.Valid ? t("invoices.valid") : t("invoices.deleted"),
           rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
             invoice.statusId === InvoiceStatus.Valid
               ? "bg-green-100 text-green-800"
@@ -326,7 +328,7 @@ export default function InvoicesPage({
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="top">
-                      <p>إعادة إرسال الفاتورة الإلكترونية</p>
+                      <p>{ t("invoices.resendTooltip") }</p>
                     </TooltipContent>
                   </Tooltip>
                 ) }
@@ -394,21 +396,21 @@ export default function InvoicesPage({
   );
 }
 
-const getInvoiceTypeName = (type: InvoiceType) =>
+const getInvoiceTypeName = (type: InvoiceType, t: TFunction<"accounting">) =>
 {
   switch (type)
   {
     case InvoiceType.Sell:
-      return "مبيعات";
+      return t("invoices.sellInvoice");
     case InvoiceType.Purchase:
-      return "مشتريات";
+      return t("invoices.purchaseInvoice");
     case InvoiceType.SellReturn:
-      return "مرتجع مبيعات";
+      return t("invoices.sellReturn");
     case InvoiceType.Quotation:
-      return "عرض سعر";
+      return t("invoices.quotation");
     case InvoiceType.PurchaseReturn:
-      return "مرتجع مشتريات";
+      return t("invoices.purchaseReturn");
     default:
-      return "غير معروف";
+      return t("invoices.unknown");
   }
 };

@@ -144,7 +144,7 @@ export function SaveButton<T extends BaseEntity>(
           <DialogHeader>
             <DialogTitle>{ t("saveButton.warnings") }</DialogTitle>
             <DialogDescription asChild>
-              <ul className="mt-2 space-y-1 text-sm text-right">
+              <ul className="mt-2 space-y-1 text-sm text-start">
                 { warnings.map((w, i) => <li key={ i } className="text-orange-600">• { w }</li>) }
               </ul>
             </DialogDescription>
@@ -165,7 +165,7 @@ export function SaveButton<T extends BaseEntity>(
           <DialogHeader>
             <DialogTitle>{ t("saveButton.errors") }</DialogTitle>
             <DialogDescription asChild>
-              <ul className="mt-2 space-y-1 text-sm text-right">
+              <ul className="mt-2 space-y-1 text-sm text-start">
                 { errors.map((w, i) => <li key={ i } className="text-red-600">• { w }</li>) }
               </ul>
             </DialogDescription>
