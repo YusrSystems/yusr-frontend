@@ -1,5 +1,6 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChangeDialog, type CommonChangeDialogProps, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormField, Loading, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ItemType } from "../../core/data/item";
 import ItemTransfer, { ItemTransfersItem, ItemTransferSlice, ItemTransferValidationRules } from "../../core/data/itemTransfer";
@@ -18,6 +19,7 @@ export default function ChangeItemTransferDialog({
   onSuccess
 }: CommonChangeDialogProps<ItemTransfer>)
 {
+  const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
   const [initLoading, setInitLoading] = useState(false);
   const storeState = useAppSelector((state) => state.store);
@@ -36,7 +38,7 @@ export default function ChangeItemTransferDialog({
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    ItemTransferValidationRules.validationRules,
+    ItemTransferValidationRules.validationRules(t),
     (errors) => dispatch(ItemTransferSlice.formActions.setErrors(errors))
   );
   useFormInit(ItemTransferSlice.formActions.setInitialData, initialValues);
@@ -91,7 +93,7 @@ export default function ChangeItemTransferDialog({
   const handleValidate = () =>
   {
     const isFormValid = validate();
-    const isTableValid = ItemTransferActions.validate(dispatch, items);
+    const isTableValid = ItemTransferActions.validate(dispatch, items, t);
     return isFormValid && isTableValid;
   };
 
@@ -137,18 +139,22 @@ export default function ChangeItemTransferDialog({
       <DialogContent dir="rtl">
         <DialogHeader>
           <DialogTitle>
-            { mode === "create" ? "إضافة" : "تعديل" } نقل مواد
+            { mode === "create"
+              ? t("itemTransfers.addNewTitle")
+              : `${t("common:crudRow.edit")} ${t("itemTransfers.entityName")}` }
           </DialogTitle>
           <DialogDescription />
         </DialogHeader>
-        <Loading entityName="المادة" />
+        <Loading entityName={ t("items.entityName") } />
       </DialogContent>
     );
   }
 
   return (
     <ChangeDialog<ItemTransfer>
-      title={ `${mode === "create" ? "إضافة" : "تعديل"} عملية تحويل` }
+      title={ mode === "create"
+        ? t("itemTransfers.addNewTitle")
+        : `${t("common:crudRow.edit")} ${t("itemTransfers.entityName")}` }
       className="sm:max-w-5xl"
       formData={ formData }
       dialogMode={ mode }
@@ -158,9 +164,9 @@ export default function ChangeItemTransferDialog({
       validate={ handleValidate }
     >
       <FieldGroup>
-        <FieldsSection title="بيانات التحويل" columns={ 3 }>
+        <FieldsSection columns={ 3 }>
           <TextField
-            label="تاريخ الجرد"
+            label={ t("itemTransfers.stocktakingDate") }
             required
             value={ formData.transferDate ? new Date(formData.transferDate).toISOString().split("T")[0] : "" }
             isInvalid={ isInvalid("date") }
@@ -168,7 +174,7 @@ export default function ChangeItemTransferDialog({
             disabled
           />
           <FormField
-            label="من مستودع"
+            label={ t("itemTransfers.fromStore") }
             required
             isInvalid={ isInvalid("fromStoreId") }
             error={ getError("fromStoreId") }
@@ -191,7 +197,7 @@ export default function ChangeItemTransferDialog({
           </FormField>
 
           <FormField
-            label="إلى مستودع"
+            label={ t("itemTransfers.toStore") }
             required
             isInvalid={ isInvalid("toStoreId") }
             error={ getError("toStoreId") }
@@ -212,7 +218,7 @@ export default function ChangeItemTransferDialog({
 
         <FieldsSection columns={ 1 }>
           <TextField
-            label="الوصف"
+            label={ t("itemTransfers.description") }
             value={ formData.description || "" }
             onChange={ (e) => dispatch(ItemTransferSlice.formActions.updateFormData({ description: e.target.value })) }
           />

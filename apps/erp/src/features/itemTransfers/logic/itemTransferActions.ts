@@ -1,3 +1,4 @@
+import { type TFunction } from "i18next";
 import type { ItemUnitPricingMethod, StoreItem } from "../../../core/data/item";
 import type { ItemTransfersItem } from "../../../core/data/itemTransfer";
 import type { AppDispatch } from "../../../core/state/store";
@@ -34,14 +35,14 @@ export class ItemTransferActions
     dispatch(removeItem(id));
   }
 
-  public static validate(dispatch: AppDispatch, items: TransferRowItem[]): boolean
+  public static validate(dispatch: AppDispatch, items: TransferRowItem[], t: TFunction<"accounting">): boolean
   {
     const errors: Record<string, string> = {};
     let isValid = true;
 
     if (items.length === 0)
     {
-      errors["general"] = "يرجى إضافة مادة واحدة على الأقل للتحويل";
+      errors["general"] = t("itemTransfers.itemsRequired");
       isValid = false;
     }
 
@@ -49,18 +50,18 @@ export class ItemTransferActions
     {
       if (!item.quantity || item.quantity <= 0)
       {
-        errors[item.id] = "الكمية يجب أن تكون أكبر من 0";
+        errors[item.id] = t("itemTransfers.quantityGreaterThanZero");
         isValid = false;
       }
       else if (item.maxQuantity > 0 && item.quantity > item.maxQuantity)
       {
-        errors[item.id] = `الكمية تتجاوز المتوفر (${item.maxQuantity})`;
+        errors[item.id] = t("itemTransfers.quantityExceedsAvailable", { maxQuantity: item.maxQuantity });
         isValid = false;
       }
 
       if (!item.selectedPricingMethodId || item.selectedPricingMethodId === 0)
       {
-        errors[`${item.id}_method`] = "يرجى اختيار طريقة التسعير";
+        errors[`${item.id}_method`] = t("itemTransfers.pricingMethodRequired");
         isValid = false;
       }
     });

@@ -205,5 +205,40 @@
     "storeRequired": "Please select a store",
     "dateRequired": "Please select the date",
     "itemsRequired": "Please add at least one item to the settlement"
+  },
+
+  "itemTransfers": {
+    "title": "Item Transfers",
+    "entityName": "Item Transfer",
+    "addNewTitle": "Add New Item Transfer",
+    "totalTransfers": "Total Transfers",
+    "transferId": "Transfer Id",
+    "date": "Date",
+    "fromStore": "From Store",
+    "toStore": "To Store",
+    "description": "Description",
+    "stocktakingDate": "Stocktaking Date",
+    "number": "Number",
+    "itemName": "Item Name",
+    "pricingMethodAndUnit": "Pricing Method & Unit",
+    "quantity": "Quantity",
+    "available": "Available",
+    "without": "Without",
+    "selectPricingMethod": "Select pricing method",
+    "deleteItem": "Delete item",
+    "noItems": "No items added yet.",
+    "noItemsHint": "Select an item from the list or use barcode to add it to the table.",
+    "itemsRequired": "Please add at least one item to the transfer",
+    "quantityGreaterThanZero": "Quantity must be greater than 0",
+    "quantityExceedsAvailable": "Quantity exceeds available ({{maxQuantity}})",
+    "pricingMethodRequired": "Please select a pricing method",
+    "transferDateRequired": "Please enter transfer date",
+    "fromStoreRequired": "Please select the source store",
+    "toStoreRequired": "Please select the destination store",
+    "sameStoreError": "Cannot transfer to the same store"
+  },
+
+  "items": {
+    "entityName": "Item"
   }
 }

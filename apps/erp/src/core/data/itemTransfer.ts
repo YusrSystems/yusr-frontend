@@ -1,5 +1,5 @@
-import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
+import { type TFunction } from "i18next";
+import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import ItemTransferApiService from "../networking/itemTransferApiService";
 import type { ItemUnitPricingMethod } from "./item";
 
@@ -47,38 +47,40 @@ export default class ItemTransfer extends BaseEntity
 
 export class ItemTransferFilterColumns
 {
-  public static columnsNames: ColumnName<ItemTransfer>[] = [
-    { label: "رقم التحويل", value: "id" },
-    { label: "المستودع المحول منه", value: "fromStoreName" },
-    { label: "المستودع المحول إليه", value: "toStoreName" },
-    { label: "الوصف", value: "description" }
+  public static columnsNames = (
+    t: TFunction<"accounting">
+  ): ColumnName<ItemTransfer>[] => [
+    { label: t("itemTransfers.transferId"), value: "id" },
+    { label: t("itemTransfers.fromStore"), value: "fromStoreName" },
+    { label: t("itemTransfers.toStore"), value: "toStoreName" },
+    { label: t("itemTransfers.description"), value: "description" }
   ];
 }
 
 export class ItemTransferValidationRules
 {
-  public static validationRules: ValidationRule<Partial<ItemTransfer>>[] = [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<ItemTransfer>>[] => [{
     field: "transferDate",
     selector: (d) => d.transferDate,
-    validators: [Validators.required("يرجى إدخال تاريخ التحويل")]
+    validators: [Validators.required(t("itemTransfers.transferDateRequired"))]
   }, {
     field: "fromStoreId",
     selector: (d) => d.fromStoreId,
-    validators: [Validators.required("يرجى اختيار المستودع المحول منه")]
+    validators: [Validators.required(t("itemTransfers.fromStoreRequired"))]
   }, {
     field: "toStoreId",
     selector: (d) => d.toStoreId,
     validators: [
-      Validators.required("يرجى اختيار المستودع المحول إليه"),
+      Validators.required(t("itemTransfers.toStoreRequired")),
       Validators.custom(
         (val, formData) => val !== formData.fromStoreId,
-        "لا يمكن التحويل لنفس المستودع"
+        t("itemTransfers.sameStoreError")
       )
     ]
   }, {
     field: "itemTransfersItems",
     selector: (d) => d.itemTransfersItems,
-    validators: [Validators.arrayMinLength(1, "يرجى إضافة مادة واحدة على الأقل للتحويل")]
+    validators: [Validators.arrayMinLength(1, t("itemTransfers.itemsRequired"))]
   }];
 }
 

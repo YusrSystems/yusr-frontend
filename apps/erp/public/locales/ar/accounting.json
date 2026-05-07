@@ -205,5 +205,40 @@
     "storeRequired": "يرجى اختيار المستودع",
     "dateRequired": "يرجى اختيار التاريخ",
     "itemsRequired": "يرجى إضافة مادة واحدة على الأقل للتسوية"
+  },
+
+  "itemTransfers": {
+    "title": "نقل المواد",
+    "entityName": "نقل مواد",
+    "addNewTitle": "إضافة نقل مواد جديد",
+    "totalTransfers": "إجمالي عمليات النقل",
+    "transferId": "رقم النقل",
+    "date": "التاريخ",
+    "fromStore": "من مستودع",
+    "toStore": "إلى مستودع",
+    "description": "الوصف",
+    "stocktakingDate": "تاريخ الجرد",
+    "number": "الرقم",
+    "itemName": "اسم المادة",
+    "pricingMethodAndUnit": "طريقة التسعير والوحدة",
+    "quantity": "الكمية",
+    "available": "المتوفر",
+    "without": "بدون",
+    "selectPricingMethod": "اختر طريقة التسعير",
+    "deleteItem": "حذف المادة",
+    "noItems": "لا توجد مواد مضافة حالياً.",
+    "noItemsHint": "قم باختيار مادة من القائمة أو باستخدام الباركود لإضافتها للجدول.",
+    "itemsRequired": "يرجى إضافة مادة واحدة على الأقل للتحويل",
+    "quantityGreaterThanZero": "الكمية يجب أن تكون أكبر من 0",
+    "quantityExceedsAvailable": "الكمية تتجاوز المتوفر ({{maxQuantity}})",
+    "pricingMethodRequired": "يرجى اختيار طريقة التسعير",
+    "transferDateRequired": "يرجى إدخال تاريخ التحويل",
+    "fromStoreRequired": "يرجى اختيار المستودع المحول منه",
+    "toStoreRequired": "يرجى اختيار المستودع المحول إليه",
+    "sameStoreError": "لا يمكن التحويل لنفس المستودع"
+  },
+
+  "items": {
+    "entityName": "مادة"
   }
 }

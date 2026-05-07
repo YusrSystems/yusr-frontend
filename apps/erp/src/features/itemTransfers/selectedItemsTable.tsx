@@ -1,4 +1,5 @@
 import { AlertCircle, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { cn, type DialogMode, InputField, SelectField } from "yusr-ui";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import { ItemTransferActions } from "./logic/itemTransferActions";
@@ -6,6 +7,7 @@ import type { TransferRowItem } from "./logic/itemTransferSlice";
 
 export default function SelectedItemsTable({ mode }: { mode: DialogMode; })
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const { items, errors } = useAppSelector((state) => state.itemTransferUI);
 
@@ -23,8 +25,8 @@ export default function SelectedItemsTable({ mode }: { mode: DialogMode; })
   {
     return (
       <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground border border-dashed border-border rounded-lg bg-background/50">
-        <p>لا توجد مواد مضافة حالياً.</p>
-        <p className="text-xs mt-1">قم باختيار مادة من القائمة أو باستخدام الباركود لإضافتها للجدول.</p>
+        <p>{ t("itemTransfers.noItems") }</p>
+        <p className="text-xs mt-1">{ t("itemTransfers.noItemsHint") }</p>
         { errors["general"] && (
           <div className="flex items-center gap-1 text-red-500 mt-3 text-sm font-medium bg-red-500/10 px-3 py-1.5 rounded-md">
             <AlertCircle className="h-4 w-4" />
@@ -36,14 +38,14 @@ export default function SelectedItemsTable({ mode }: { mode: DialogMode; })
   }
 
   return (
-    <div className="w-full overflow-x-auto border border-border rounded-lg shadow-sm bg-background" dir="rtl">
+    <div className="w-full overflow-x-auto border border-border rounded-lg shadow-sm bg-background">
       <table className="w-full text-sm text-right">
         <thead className="bg-muted/40 border-b border-border">
           <tr>
-            <th className="p-4 font-semibold w-16 text-center text-muted-foreground">الرقم</th>
-            <th className="p-4 font-semibold">اسم المادة</th>
-            <th className="p-4 font-semibold text-center w-72">طريقة التسعير والوحدة</th>
-            <th className="p-4 font-semibold text-center w-40">الكمية</th>
+            <th className="p-4 font-semibold w-16 text-center text-muted-foreground">{ t("itemTransfers.number") }</th>
+            <th className="p-4 font-semibold text-start">{ t("itemTransfers.itemName") }</th>
+            <th className="p-4 font-semibold text-center w-72">{ t("itemTransfers.pricingMethodAndUnit") }</th>
+            <th className="p-4 font-semibold text-center w-40">{ t("itemTransfers.quantity") }</th>
             <th className="p-4 font-semibold w-16 text-center"></th>
           </tr>
         </thead>
@@ -55,27 +57,27 @@ export default function SelectedItemsTable({ mode }: { mode: DialogMode; })
             >
               <td className="p-4 text-center font-bold text-muted-foreground">{ index + 1 }</td>
 
-              { /* العمود الأول: اسم المادة */ }
-              <td className="p-4">
+              <td className="p-4 text-start">
                 <div className="font-semibold text-foreground">{ row.itemName }</div>
                 { row.quantity > 0 && row.selectedPricingMethodId && (
                   <div className="text-xs text-muted-foreground mt-1">
-                    المتوفر: { getAvailableQuantity(row) }
+                    { t("itemTransfers.available") }: { getAvailableQuantity(row) }
                   </div>
                 ) }
               </td>
 
-              { /* العمود الثاني: طريقة التسعير (Select) */ }
               <td className="p-4 text-center align-top">
                 <SelectField
                   label=""
                   value={ row.selectedPricingMethodId?.toString() || "" }
                   onValueChange={ (val) => ItemTransferActions.updatePricingMethod(dispatch, row.id, Number(val)) }
                   options={ row.itemUnitPricingMethods?.map((m) => ({
-                    label: `${m.pricingMethodName || "بدون"} - ${m.unitName || "بدون"}`,
+                    label: `${m.pricingMethodName || t("itemTransfers.without")} - ${
+                      m.unitName || t("itemTransfers.without")
+                    }`,
                     value: m.id.toString()
                   })) || [] }
-                  placeholder="اختر طريقة التسعير"
+                  placeholder={ t("itemTransfers.selectPricingMethod") }
                   isInvalid={ !!errors[`${row.id}_method`] }
                   disabled={ mode === "update" }
                 />
@@ -86,7 +88,6 @@ export default function SelectedItemsTable({ mode }: { mode: DialogMode; })
                 ) }
               </td>
 
-              { /* العمود الثالث: الكمية (Number) */ }
               <td className="p-4 text-center align-top">
                 <div className="flex flex-col items-center justify-center gap-1">
                   <InputField
@@ -108,14 +109,13 @@ export default function SelectedItemsTable({ mode }: { mode: DialogMode; })
                 </div>
               </td>
 
-              { /* زر الحذف */ }
               <td className="p-4 text-center align-top pt-5">
                 { mode === "create" && (
                   <button
                     type="button"
                     onClick={ () => ItemTransferActions.removeItem(dispatch, row.id) }
                     className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
-                    aria-label="حذف المادة"
+                    aria-label={ t("itemTransfers.deleteItem") }
                   >
                     <Trash2 className="h-5 w-5" />
                   </button>
