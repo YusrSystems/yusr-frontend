@@ -1,4 +1,4 @@
-import { Lightbox, Separator, useLightBox, YusrBusBackground } from "yusr-ui";
+import { Lightbox, Separator, useLightBox, YusrBackground } from "yusr-ui";
 import LandingFeatures from "./landingFeatures";
 import LandingFooter from "./landingFooter";
 import LandingHeader from "./landingHeader";
@@ -12,7 +12,7 @@ const Landing = () =>
 
   return (
     <div dir="rtl" className="relative min-h-svh text-foreground">
-      <YusrBusBackground />
+      <YusrBackground />
 
       { lightbox && (
         <Lightbox

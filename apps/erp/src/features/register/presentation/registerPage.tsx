@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { ApiConstants, CitySlice, CurrencySlice, ResultStatus, useValidate, YusrApiHelper, YusrBusBackground } from "yusr-ui";
+import { ApiConstants, CitySlice, CurrencySlice, ResultStatus, useValidate, YusrApiHelper, YusrBackground } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import { logout, useAppDispatch, useAppSelector } from "../../../core/state/store";
 import { nextStep, prevStep, registerAsync, reset, setErrors, setStep, validationRules } from "../logic/registerSlice";
@@ -67,7 +67,7 @@ export default function RegisterPage()
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-      <YusrBusBackground />
+      <YusrBackground />
       { !successed && (
         <div className="w-full max-w-sm md:max-w-4xl">
           <RegisterForm

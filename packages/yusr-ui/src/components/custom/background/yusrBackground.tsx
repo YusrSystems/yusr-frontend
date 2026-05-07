@@ -1,4 +1,4 @@
-export function YusrBusBackground()
+export function YusrBackground()
 {
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-slate-50 dark:bg-background transition-colors duration-500">
