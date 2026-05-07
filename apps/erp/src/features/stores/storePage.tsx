@@ -1,5 +1,6 @@
 import { Warehouse } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type Store from "../../core/data/store";
@@ -10,6 +11,7 @@ import ChangeStoreDialog from "./changeStoreDialog";
 
 export default function StoresPage()
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const storeState = useAppSelector((state) => state.store);
@@ -19,9 +21,9 @@ export default function StoresPage()
 
   return (
     <CrudPage<Store>
-      title="إدارة المستودعات"
-      entityName="المستودع"
-      addNewItemTitle="إضافة مستودع جديد"
+      title={ t("stores.title") }
+      entityName={ t("stores.entityName") }
+      addNewItemTitle={ t("stores.addNewTitle") }
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -32,15 +34,15 @@ export default function StoresPage()
       useSlice={ () => storeDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي المستودعات",
+        title: t("stores.totalStores"),
         data: (storeState.entities?.count ?? 0).toString(),
         icon: <Warehouse className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ StoreFilterColumns.columnsNames }
-      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, { rowName: "رقم المستودع", rowStyles: "w-30" }, {
-        rowName: "اسم المستودع",
-        rowStyles: "w-70"
-      }] }
+      columnsToFilter={ StoreFilterColumns.columnsNames(t) }
+      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
+        rowName: t("stores.storeId"),
+        rowStyles: "w-30"
+      }, { rowName: t("stores.storeName"), rowStyles: "w-70" }] }
       tableRowMapper={ (
         store: Store
       ) => [{ rowName: `#${store.id}`, rowStyles: "" }, { rowName: store.name, rowStyles: "font-semibold" }] }

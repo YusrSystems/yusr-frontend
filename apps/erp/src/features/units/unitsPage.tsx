@@ -1,5 +1,6 @@
 import { BoxIcon } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type Unit from "../../core/data/unit";
@@ -10,6 +11,7 @@ import ChangeUnitDialog from "./changeUnitDialog";
 
 export default function UnitsPage()
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const unitState = useAppSelector((state) => state.unit);
@@ -19,9 +21,9 @@ export default function UnitsPage()
 
   return (
     <CrudPage<Unit>
-      title="إدارة الوحدات"
-      entityName="الوحدة"
-      addNewItemTitle="إضافة وحدة جديدة"
+      title={ t("units.title") }
+      entityName={ t("units.entityName") }
+      addNewItemTitle={ t("units.addNewTitle") }
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -32,15 +34,15 @@ export default function UnitsPage()
       useSlice={ () => unitDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي الوحدات",
+        title: t("units.totalUnits"),
         data: (unitState.entities?.count ?? 0).toString(),
         icon: <BoxIcon className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ UnitFilterColumns.columnsNames }
-      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, { rowName: "رقم الوحدة", rowStyles: "w-30" }, {
-        rowName: "اسم الوحدة",
-        rowStyles: "w-70"
-      }] }
+      columnsToFilter={ UnitFilterColumns.columnsNames(t) }
+      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
+        rowName: t("units.unitId"),
+        rowStyles: "w-30"
+      }, { rowName: t("units.unitName"), rowStyles: "w-70" }] }
       tableRowMapper={ (
         unit: Unit
       ) => [{ rowName: `#${unit.id}`, rowStyles: "" }, { rowName: unit.name, rowStyles: "font-semibold" }] }

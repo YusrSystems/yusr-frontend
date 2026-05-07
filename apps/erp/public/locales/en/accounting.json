@@ -139,5 +139,25 @@
     "amountRequired": "Please enter the amount",
     "accountRequired": "Please select the account",
     "paymentMethodRequired": "Please select the payment method"
+  },
+
+  "stores": {
+    "title": "Store Management",
+    "entityName": "Store",
+    "addNewTitle": "Add New Store",
+    "totalStores": "Total Stores",
+    "storeId": "Store Id",
+    "storeName": "Store Name",
+    "nameRequired": "Please enter store name"
+  },
+
+  "units": {
+    "title": "Units Management",
+    "entityName": "Unit",
+    "addNewTitle": "Add New Unit",
+    "totalUnits": "Total Units",
+    "unitId": "Unit Id",
+    "unitName": "Unit Name",
+    "nameRequired": "Please enter unit name"
   }
 }

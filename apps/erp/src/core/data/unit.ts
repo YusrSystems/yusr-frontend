@@ -1,5 +1,5 @@
-import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
+import { type TFunction } from "i18next";
+import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import UnitsApiService from "../networking/unitApiService";
 
 export default class Unit extends BaseEntity
@@ -15,18 +15,18 @@ export default class Unit extends BaseEntity
 
 export class UnitFilterColumns
 {
-  public static columnsNames: ColumnName<Unit>[] = [{
-    label: "اسم الوحدة",
+  public static columnsNames = (t: TFunction<"accounting">): ColumnName<Unit>[] => [{
+    label: t("units.unitName"),
     value: "name"
   }];
 }
 
 export class UnitValidationRules
 {
-  public static validationRules: ValidationRule<Partial<Unit>>[] = [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Unit>>[] => [{
     field: "name",
     selector: (d) => d.name,
-    validators: [Validators.required("يرجى إدخال اسم الوحدة")]
+    validators: [Validators.required(t("units.nameRequired"))]
   }];
 }
 

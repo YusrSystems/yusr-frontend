@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import type Unit from "../../core/data/unit";
@@ -12,6 +13,7 @@ export default function ChangeUnitDialog({
   onSuccess
 }: CommonChangeDialogProps<Unit>)
 {
+  const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
   const initialValues = useMemo(() => ({ ...entity, name: entity?.name || "" }), [entity]);
 
@@ -19,14 +21,16 @@ export default function ChangeUnitDialog({
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    UnitValidationRules.validationRules,
+    UnitValidationRules.validationRules(t),
     (errors) => dispatch(UnitSlice.formActions.setErrors(errors))
   );
   useFormInit(UnitSlice.formActions.setInitialData, initialValues);
 
+  const title = mode === "create" ? t("units.addNewTitle") : `${t("common:crudRow.edit")} ${t("units.entityName")}`;
+
   return (
     <ChangeDialog<Unit>
-      title={ `${mode === "create" ? "إضافة" : "تعديل"} وحدة` }
+      title={ title }
       className="sm:max-w-md"
       formData={ formData }
       dialogMode={ mode }
@@ -37,7 +41,7 @@ export default function ChangeUnitDialog({
     >
       <FieldGroup>
         <TextField
-          label="اسم الوحدة"
+          label={ t("units.unitName") }
           required
           value={ formData.name || "" }
           onChange={ (e) => dispatch(UnitSlice.formActions.updateFormData({ name: e.target.value })) }

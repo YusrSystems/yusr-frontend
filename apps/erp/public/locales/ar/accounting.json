@@ -139,5 +139,25 @@
     "amountRequired": "يرجى إدخال المبلغ",
     "accountRequired": "يرجى اختيار الحساب",
     "paymentMethodRequired": "يرجى اختيار طريقة الدفع"
+  },
+
+  "stores": {
+    "title": "إدارة المستودعات",
+    "entityName": "المستودع",
+    "addNewTitle": "إضافة مستودع جديد",
+    "totalStores": "إجمالي المستودعات",
+    "storeId": "رقم المستودع",
+    "storeName": "اسم المستودع",
+    "nameRequired": "يرجى إدخال اسم المستودع"
+  },
+
+  "units": {
+    "title": "إدارة الوحدات",
+    "entityName": "الوحدة",
+    "addNewTitle": "إضافة وحدة جديدة",
+    "totalUnits": "إجمالي الوحدات",
+    "unitId": "رقم الوحدة",
+    "unitName": "اسم الوحدة",
+    "nameRequired": "يرجى إدخال اسم الوحدة"
   }
 }

@@ -1,9 +1,12 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import type Store from "../../core/data/store";
-import { UnitSlice, UnitValidationRules } from "../../core/data/unit";
+import { StoreValidationRules } from "../../core/data/store";
+import { UnitSlice } from "../../core/data/unit";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
+
 export default function ChangeStoreDialog({
   entity,
   mode,
@@ -11,6 +14,7 @@ export default function ChangeStoreDialog({
   onSuccess
 }: CommonChangeDialogProps<Store>)
 {
+  const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
   const initialValues = useMemo(
     () => ({
@@ -24,14 +28,16 @@ export default function ChangeStoreDialog({
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    UnitValidationRules.validationRules,
+    StoreValidationRules.validationRules(t),
     (errors) => dispatch(UnitSlice.formActions.setErrors(errors))
   );
   useFormInit(UnitSlice.formActions.setInitialData, initialValues);
 
+  const title = mode === "create" ? t("stores.addNewTitle") : `${t("common:crudRow.edit")} ${t("stores.entityName")}`;
+
   return (
     <ChangeDialog<Store>
-      title={ `${mode === "create" ? "إضافة" : "تعديل"} مستودع` }
+      title={ title }
       className="sm:max-w-md"
       formData={ formData }
       dialogMode={ mode }
@@ -42,7 +48,7 @@ export default function ChangeStoreDialog({
     >
       <FieldGroup>
         <TextField
-          label="اسم المستودع"
+          label={ t("stores.storeName") }
           required
           value={ formData.name || "" }
           onChange={ (e) => dispatch(UnitSlice.formActions.updateFormData({ name: e.target.value })) }

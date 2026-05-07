@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { type TFunction } from "i18next";
 import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterCondition, type IEntityState, type ValidationRule, Validators } from "yusr-ui";
 import StoresApiService from "../networking/storeApiService";
 
@@ -17,18 +18,18 @@ export default class Store extends BaseEntity
 
 export class StoreFilterColumns
 {
-  public static columnsNames: ColumnName<Store>[] = [{
-    label: "اسم المستودع",
+  public static columnsNames = (t: TFunction<"accounting">): ColumnName<Store>[] => [{
+    label: t("stores.storeName"),
     value: "name"
   }];
 }
 
 export class StoreValidationRules
 {
-  public static validationRules: ValidationRule<Partial<Store>>[] = [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Store>>[] => [{
     field: "name",
     selector: (d) => d.name,
-    validators: [Validators.required("يرجى إدخال اسم المستودع")]
+    validators: [Validators.required(t("stores.nameRequired"))]
   }];
 }
 
