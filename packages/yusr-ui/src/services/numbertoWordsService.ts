@@ -122,7 +122,7 @@ export class NumbertoWordsService
     {
       // Use library for English
       let result = "";
-      
+
       if (integerPart > 0)
       {
         result += numberToWords.toWords(integerPart) + " " + this.getCurrencyWord(integerPart, currency, false);
@@ -196,14 +196,20 @@ export class NumbertoWordsService
     if (num >= 1_000_000_000)
     {
       const billions = Math.floor(num / 1_000_000_000);
-      parts.push(this.convertHundredsArabic(billions, false) + " " + (billions > 2 ? t("numberToWords.billions") : t("numberToWords.billion")));
+      parts.push(
+        this.convertHundredsArabic(billions, false) + " "
+          + (billions > 2 ? t("numberToWords.billions") : t("numberToWords.billion"))
+      );
       num %= 1_000_000_000;
     }
 
     if (num >= 1_000_000)
     {
       const millions = Math.floor(num / 1_000_000);
-      parts.push(this.convertHundredsArabic(millions, false) + " " + (millions > 2 ? t("numberToWords.millions") : t("numberToWords.million")));
+      parts.push(
+        this.convertHundredsArabic(millions, false) + " "
+          + (millions > 2 ? t("numberToWords.millions") : t("numberToWords.million"))
+      );
       num %= 1_000_000;
     }
 

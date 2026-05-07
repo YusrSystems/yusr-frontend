@@ -1,7 +1,7 @@
 import type { TFunction } from "i18next";
+import { Database, FileBarChart, ShoppingCart, Wallet } from "lucide-react";
 import { SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { Database, FileBarChart, ShoppingCart, Wallet } from "lucide-react";
 
 export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => ({
   // Resources

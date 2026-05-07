@@ -1,11 +1,11 @@
 import PricingMethodsApiService from "@/core/networking/PricingMethodsApiService";
 import ChangePricingMethodDialog from "@/features/pricingMethods/changePricingMethodDialog";
+import { useTranslation } from "react-i18next";
 import { ChangableSearchableSelect, type EntitySearchableSelectParams } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type PricingMethod from "../../data/pricingMethod";
 import { PricingMethodFilterColumns, PricingMethodSlice } from "../../data/pricingMethod";
 import { useAppSelector } from "../../state/store";
-import { useTranslation } from "react-i18next";
 
 export default function PricingMethodsSearchableSelect(
   { id, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<PricingMethod>
@@ -13,7 +13,7 @@ export default function PricingMethodsSearchableSelect(
 {
   const pricingMethodState = useAppSelector((state) => state.pricingMethod);
   const authState = useAppSelector((state) => state.auth);
-  const {t} = useTranslation("stocking");
+  const { t } = useTranslation("stocking");
 
   return (
     <ChangableSearchableSelect<PricingMethod>

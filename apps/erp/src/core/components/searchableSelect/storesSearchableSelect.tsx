@@ -1,11 +1,11 @@
 import StoresApiService from "@/core/networking/storeApiService";
 import ChangeStoreDialog from "@/features/stores/changeStoreDialog";
+import { useTranslation } from "react-i18next";
 import { ChangableSearchableSelect, type EntitySearchableSelectParams } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type Store from "../../data/store";
 import { StoreFilterColumns, StoreSlice } from "../../data/store";
 import { useAppSelector } from "../../state/store";
-import { useTranslation } from "react-i18next";
 
 export default function StoresSearchableSelect(
   { id, items, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<Store> & { items?: Store[]; }
@@ -13,7 +13,7 @@ export default function StoresSearchableSelect(
 {
   const storeState = useAppSelector((state) => state.store);
   const authState = useAppSelector((state) => state.auth);
-  const {t} = useTranslation("stocking");
+  const { t } = useTranslation("stocking");
 
   return (
     <ChangableSearchableSelect<Store>

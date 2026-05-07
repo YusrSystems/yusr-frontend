@@ -9,7 +9,7 @@ import { useAppDispatch, type YusrRootState } from "../../state";
 
 export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Branch>)
 {
-  const { t } = useTranslation(["commonEntities", 'common']);
+  const { t } = useTranslation(["commonEntities", "common"]);
   const cityState = useSelector((state: YusrRootState) => state.city);
   const dispatch = useAppDispatch();
 
@@ -27,7 +27,9 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
   );
   useFormInit(BranchSlice.formActions.setInitialData, entity ?? {});
 
-  const title = mode === "create" ? t("branches.addNewTitle") : `${t("common:crudRow.edit")} ${t("branches.entityName")}`;
+  const title = mode === "create"
+    ? t("branches.addNewTitle")
+    : `${t("common:crudRow.edit")} ${t("branches.entityName")}`;
 
   return (
     <ChangeDialog<Branch>

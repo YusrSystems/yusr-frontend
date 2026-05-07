@@ -9,7 +9,10 @@ function revealApp()
 {
   const loader = document.getElementById("initial-loader");
 
-  if (!loader) return;
+  if (!loader)
+  {
+    return;
+  }
 
   loader.classList.add("hiding");
   loader.addEventListener("transitionend", () =>

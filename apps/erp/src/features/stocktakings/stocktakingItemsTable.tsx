@@ -184,10 +184,10 @@ export default function StocktakingItemsTable(
               <thead className="bg-muted/50 text-muted-foreground border-b">
                 <tr>
                   <th className="p-3 w-12 text-center">#</th>
-                  <th className="p-3 w-1/4 text-start">{t("stocktakings.item")}</th>
-                  <th className="p-3 w-1/4 text-center">{t("stocktakings.systemQuantity")}</th>
-                  <th className="p-3 w-1/6 text-center">{t("stocktakings.variance")}</th>
-                  <th className="p-3 w-1/4">{t("stocktakings.actualQuantity")}</th>
+                  <th className="p-3 w-1/4 text-start">{ t("stocktakings.item") }</th>
+                  <th className="p-3 w-1/4 text-center">{ t("stocktakings.systemQuantity") }</th>
+                  <th className="p-3 w-1/6 text-center">{ t("stocktakings.variance") }</th>
+                  <th className="p-3 w-1/4">{ t("stocktakings.actualQuantity") }</th>
                   <th className="p-3 w-12 text-center"></th>
                 </tr>
               </thead>
@@ -283,7 +283,7 @@ export default function StocktakingItemsTable(
                             <Trash2 className="w-5 h-5" />
                           </Button>
                         </td>
-                      )}
+                      ) }
                     </tr>
                   );
                 }) }
@@ -293,8 +293,8 @@ export default function StocktakingItemsTable(
         )
         : (
           <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground border border-dashed border-border rounded-lg bg-background/50">
-            <p>{t("stocktakings.noItems")}</p>
-            <p className="text-xs mt-1">{t("stocktakings.noItemsHint")}</p>
+            <p>{ t("stocktakings.noItems") }</p>
+            <p className="text-xs mt-1">{ t("stocktakings.noItemsHint") }</p>
             { isInvalid("items") && (
               <div className="flex items-center gap-1 text-red-500 mt-3 text-sm font-medium bg-red-500/10 px-3 py-1.5 rounded-md">
                 <AlertCircle className="h-4 w-4" />
