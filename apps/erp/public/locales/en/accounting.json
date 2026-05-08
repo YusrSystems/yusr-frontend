@@ -251,5 +251,25 @@
     "selectPricingMethod": "Select pricing method",
     "deleteItem": "Delete item",
     "deleteVoucher": "Delete voucher"
+  },
+
+  "paymentMethods": {
+    "title": "Payment Methods Management",
+    "entityName": "Payment Method",
+    "addNewTitle": "Add New Payment Method",
+    "totalMethods": "Total Payment Methods",
+    "methodId": "Method Id",
+    "name": "Name",
+    "account": "Account",
+    "commissionType": "Commission Type",
+    "commissionValue": "Commission Value",
+    "methodName": "Payment Method Name",
+    "responsibleAccount": "Responsible Account",
+    "percentage": "Percentage (%)",
+    "fixedAmount": "Fixed Amount",
+    "nameRequired": "Please enter payment method name",
+    "accountRequired": "Please select the account",
+    "commissionTypeRequired": "Please select commission type",
+    "commissionValueRequired": "Please enter commission value"
   }
 }

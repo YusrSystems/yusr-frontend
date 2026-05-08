@@ -1,3 +1,4 @@
+import { type TFunction } from "i18next";
 import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
 import PaymentMethodsApiService from "../networking/paymentMethodApiService";
@@ -25,30 +26,30 @@ export default class PaymentMethod extends BaseEntity
 
 export class PaymentMethodFilterColumns
 {
-  public static columnsNames: ColumnName<PaymentMethod>[] = [{
-    label: "الاسم",
+  public static columnsNames = (t: TFunction<"accounting">): ColumnName<PaymentMethod>[] => [{
+    label: t("paymentMethods.name"),
     value: "name"
   }];
 }
 
 export class PaymentMethodValidationRules
 {
-  public static validationRules: ValidationRule<Partial<PaymentMethod>>[] = [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<PaymentMethod>>[] => [{
     field: "name",
     selector: (d) => d.name,
-    validators: [Validators.required("يرجى إدخال اسم طريقة الدفع")]
+    validators: [Validators.required(t("paymentMethods.nameRequired"))]
   }, {
     field: "accountId",
     selector: (d) => d.accountId,
-    validators: [Validators.required("يرجى اختيار الحساب")]
+    validators: [Validators.required(t("paymentMethods.accountRequired"))]
   }, {
     field: "commissionType",
     selector: (d) => d.commissionType,
-    validators: [Validators.required("يرجى اختيار نوع العمولة")]
+    validators: [Validators.required(t("paymentMethods.commissionTypeRequired"))]
   }, {
     field: "commissionAmount",
     selector: (d) => d.commissionAmount,
-    validators: [Validators.required("يرجى إدخال قيمة العمولة")]
+    validators: [Validators.required(t("paymentMethods.commissionValueRequired"))]
   }];
 }
 

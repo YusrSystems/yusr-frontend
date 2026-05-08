@@ -251,5 +251,25 @@
     "selectPricingMethod": "اختر طريقة التسعير",
     "deleteItem": "حذف المادة",
     "deleteVoucher": "حذف السند"
+  },
+
+  "paymentMethods": {
+    "title": "إدارة طرق الدفع",
+    "entityName": "طريقة الدفع",
+    "addNewTitle": "إضافة طريقة دفع جديدة",
+    "totalMethods": "إجمالي طرق الدفع",
+    "methodId": "رقم الطريقة",
+    "name": "الاسم",
+    "account": "الحساب",
+    "commissionType": "نوع العمولة",
+    "commissionValue": "قيمة العمولة",
+    "methodName": "اسم طريقة الدفع",
+    "responsibleAccount": "الحساب المسؤول",
+    "percentage": "نسبة مئوية (%)",
+    "fixedAmount": "مبلغ ثابت",
+    "nameRequired": "يرجى إدخال اسم طريقة الدفع",
+    "accountRequired": "يرجى اختيار الحساب",
+    "commissionTypeRequired": "يرجى اختيار نوع العمولة",
+    "commissionValueRequired": "يرجى إدخال قيمة العمولة"
   }
 }

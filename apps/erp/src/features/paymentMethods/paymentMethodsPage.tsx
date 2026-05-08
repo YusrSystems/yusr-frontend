@@ -1,5 +1,6 @@
 import { CreditCardIcon } from "lucide-react";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type PaymentMethod from "../../core/data/paymentMethod";
@@ -10,6 +11,7 @@ import ChangePaymentMethodDialog from "./changePaymentMethodDialog";
 
 export default function PaymentMethodsPage()
 {
+  const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const paymentMethodState = useAppSelector((state) => state.paymentMethod);
@@ -28,9 +30,9 @@ export default function PaymentMethodsPage()
 
   return (
     <CrudPage<PaymentMethod>
-      title="إدارة طرق الدفع"
-      entityName="طريقة الدفع"
-      addNewItemTitle="إضافة طريقة دفع جديدة"
+      title={t("paymentMethods.title")}
+      entityName={t("paymentMethods.entityName")}
+      addNewItemTitle={t("paymentMethods.addNewTitle")}
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -41,18 +43,18 @@ export default function PaymentMethodsPage()
       useSlice={ () => paymentMethodDialogState }
       service={ service }
       cards={ [{
-        title: "إجمالي طرق الدفع",
+        title: t("paymentMethods.totalMethods"),
         data: (paymentMethodState.entities?.count ?? 0).toString(),
         icon: <CreditCardIcon className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ PaymentMethodFilterColumns.columnsNames }
+      columnsToFilter={ PaymentMethodFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: "رقم الطريقة", rowStyles: "w-20" },
-        { rowName: "الاسم", rowStyles: "w-40" },
-        { rowName: "الحساب", rowStyles: "w-40" },
-        { rowName: "نوع العمولة", rowStyles: "w-30" },
-        { rowName: "قيمة العمولة", rowStyles: "w-30" }
+        { rowName: t("paymentMethods.methodId"), rowStyles: "w-20" },
+        { rowName: t("paymentMethods.name"), rowStyles: "w-40" },
+        { rowName: t("paymentMethods.account"), rowStyles: "w-40" },
+        { rowName: t("paymentMethods.commissionType"), rowStyles: "w-30" },
+        { rowName: t("paymentMethods.commissionValue"), rowStyles: "w-30" }
       ] }
       tableRowMapper={ (
         paymentMethod: PaymentMethod
@@ -64,8 +66,8 @@ export default function PaymentMethodsPage()
         rowStyles: ""
       }, {
         rowName: paymentMethod.commissionType === CommissionType.Percent
-          ? "نسبة مئوية (%)"
-          : "مبلغ ثابت",
+          ? t("paymentMethods.percentage")
+          : t("paymentMethods.fixedAmount"),
         rowStyles: "text-sm text-muted-foreground"
       }, {
         rowName: paymentMethod.commissionAmount.toString(),
