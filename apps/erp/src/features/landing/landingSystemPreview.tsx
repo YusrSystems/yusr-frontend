@@ -1,6 +1,7 @@
 import dashboardDark from "@/assets/dashboard_dark.webp";
 import dashboardLight from "@/assets/dashboard_light.webp";
 import type { LucideProps } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { ZoomableImage } from "yusr-ui";
 
 export default function LandingSystemPreview(
@@ -22,12 +23,14 @@ export default function LandingSystemPreview(
   }
 )
 {
+  const { t } = useTranslation("landing");
+
   return (
     <section className="mx-auto max-w-6xl px-6 py-20">
       <div className="mb-12 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold">استعرض البرنامج</h2>
+        <h2 className="text-3xl md:text-4xl font-bold">{ t("systemPreview.title") }</h2>
         <p className="mt-5 text-base text-muted-foreground">
-          لوحة تحكم مركزية تجمع كل بياناتك في واجهة واضحة وسهلة الاستخدام
+          { t("systemPreview.subtitle") }
         </p>
       </div>
 
@@ -39,13 +42,13 @@ export default function LandingSystemPreview(
           <div className="h-3 w-3 rounded-full bg-yellow-400/60" />
           <div className="h-3 w-3 rounded-full bg-green-500/60" />
           <span className="mx-auto text-xs text-muted-foreground/60">
-            يُسر — لوحة التحكم الرئيسية
+            { t("systemPreview.browserTitle") }
           </span>
         </div>
         <ZoomableImage
           srcLight={ dashboardLight }
           srcDark={ dashboardDark }
-          alt="لوحة التحكم الرئيسية"
+          alt={ t("systemPreview.dashboardAlt") }
           className="w-full object-cover object-top"
           onOpen={ openLightbox }
         />
@@ -68,7 +71,7 @@ export default function LandingSystemPreview(
               <ZoomableImage
                 srcLight={ f.screenshotLight }
                 srcDark={ f.screenshotDark }
-                alt={ `معاينة ${f.title}` }
+                alt={ t("systemPreview.previewAlt", { title: f.title }) }
                 className="h-24 w-full object-cover object-top"
                 onOpen={ openLightbox }
               />

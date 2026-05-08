@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { type TFunction } from "i18next";
 import { type ValidationRule, Validators } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import RegisterApiService from "../../../core/networking/registerApiService";
@@ -13,56 +14,56 @@ export interface RegisterState
   acceptPolicies?: boolean;
 }
 
-export const validationRules: ValidationRule<Partial<Registration>>[] = [{
+export const getValidationRules = (t: TFunction<"loginRegister">): ValidationRule<Partial<Registration>>[] => [{
   field: "username",
   selector: (d) => d.username,
-  validators: [Validators.required("يرجى إدخال اسم المستخدم")]
+  validators: [Validators.required(t("register.accountInfo.username.required"))]
 }, {
   field: "userPassword",
   selector: (d) => d.userPassword,
-  validators: [Validators.required("يرجى إدخال كلمة المرور")]
+  validators: [Validators.required(t("register.accountInfo.password.required"))]
 }, {
   field: "cityId",
   selector: (d) => d.cityId,
-  validators: [Validators.required("يرجى اختيار المدينة")]
+  validators: [Validators.required(t("register.addressInfo.city.required"))]
 }, {
   field: "companyName",
   selector: (d) => d.companyName,
-  validators: [Validators.required("يرجى إدخال اسم الشركة")]
+  validators: [Validators.required(t("register.companyInfo.companyName.required"))]
 }, {
   field: "email",
   selector: (d) => d.email,
   validators: [
-    Validators.required("يرجى إدخال البريد الإلكتروني"),
+    Validators.required(t("register.companyInfo.email.required")),
     Validators.custom(
       (val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val as string),
-      "صيغة البريد الإلكتروني غير صحيحة"
+      t("register.companyInfo.email.invalid")
     )
   ]
 }, {
   field: "branchName",
   selector: (d) => d.branchName,
-  validators: [Validators.required("يرجى إدخال اسم الفرع")]
+  validators: [Validators.required(t("register.companyInfo.branchName.required"))]
 }, {
   field: "companyBusinessCategory",
   selector: (d) => d.companyBusinessCategory,
-  validators: [Validators.required("يرجى إدخال نشاط الشركة")]
+  validators: [Validators.required(t("register.companyInfo.companyBusinessCategory.required"))]
 }, {
   field: "companyPhone",
   selector: (d) => d.companyPhone,
-  validators: [Validators.required("يرجى إدخال رقم هاتف الشركة")]
+  validators: [Validators.required(t("register.companyInfo.companyPhone.required"))]
 }, {
   field: "crn",
   selector: (d) => d.crn,
-  validators: [Validators.required("يرجى إدخال السجل التجاري")]
+  validators: [Validators.required(t("register.companyInfo.crn.required"))]
 }, {
   field: "vatNumber",
   selector: (d) => d.vatNumber,
-  validators: [Validators.required("يرجى إدخال الرقم الضريبي")]
+  validators: [Validators.required(t("register.companyInfo.vatNumber.required"))]
 }, {
   field: "currencyId",
   selector: (d) => d.currencyId,
-  validators: [Validators.required("يرجى اختيار العملة")]
+  validators: [Validators.required(t("register.companyInfo.currency.required"))]
 }];
 
 const initialState: RegisterState = {

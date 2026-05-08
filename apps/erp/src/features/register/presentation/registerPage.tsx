@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { ApiConstants, CitySlice, CurrencySlice, ResultStatus, useValidate, YusrApiHelper, YusrBackground } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import { logout, useAppDispatch, useAppSelector } from "../../../core/state/store";
-import { nextStep, prevStep, registerAsync, reset, setErrors, setStep, validationRules } from "../logic/registerSlice";
+import { getValidationRules, nextStep, prevStep, registerAsync, reset, setErrors, setStep } from "../logic/registerSlice";
 import { RegisterForm } from "./registerForm";
 import Welcome from "./wellcome";
 
@@ -15,6 +15,8 @@ export default function RegisterPage()
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { formData, acceptPolicies, successed } = useAppSelector((state) => state.register);
+
+  const validationRules = getValidationRules(t);
 
   const handleSetErrors = useCallback((errors: Record<string, string>) =>
   {
@@ -51,7 +53,7 @@ export default function RegisterPage()
 
     if (!isValid)
     {
-      toast.error("خطأ في المدخلات، يرجى مراجعة الحقول المطلوبة");
+      toast.error(t("register.validationError"));
       dispatch(setStep(0));
       return;
     }

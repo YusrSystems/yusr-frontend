@@ -27,7 +27,7 @@ export default function AddressInfo()
           items={ cityState.entities?.data ?? [] }
           value={ formData.cityId?.toString() ?? "" }
           isInvalid={ !!errors.cityId }
-          columnsNames={ [{ label: "اسم المدينة", value: "name" }] }
+          columnsNames={ [{ label: t("register.addressInfo.city.label"), value: "name" }] }
           itemLabelKey="name"
           itemValueKey="id"
           disabled={ cityState.isLoading }

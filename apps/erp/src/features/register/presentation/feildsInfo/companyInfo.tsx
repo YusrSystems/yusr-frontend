@@ -111,7 +111,7 @@ export default function CompanyInfo()
           items={ currencyState.entities?.data ?? [] }
           value={ formData.currencyId?.toString() ?? "" }
           isInvalid={ !!errors.currencyId }
-          columnsNames={ [{ label: "اسم العملة", value: "name" }] }
+          columnsNames={ [{ label: t("register.companyInfo.currency.label"), value: "name" }] }
           itemLabelKey="name"
           itemValueKey="id"
           disabled={ currencyState.isLoading }

@@ -14,12 +14,12 @@ export default function LandingHeader()
         <div className="flex items-center w-10">
           <img
             src={ logoLight }
-            alt="يُسر"
+            alt="YusrLogo"
             className="block dark:hidden h-auto w-full object-contain"
           />
           <img
             src={ logoDark }
-            alt="يُسر"
+            alt="YusrLogo"
             className="hidden dark:block h-auto w-full object-contain"
           />
         </div>

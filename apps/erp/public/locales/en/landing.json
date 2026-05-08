@@ -89,6 +89,14 @@
     ]
   },
 
+  "systemPreview": {
+    "title": "Explore the Software",
+    "subtitle": "A central dashboard that brings all your data together in a clear and easy-to-use interface",
+    "browserTitle": "Yusr — Main Dashboard",
+    "dashboardAlt": "Main Dashboard",
+    "previewAlt": "{{title}} Preview"
+  },
+
   "whyUs": {
     "title": "Why is Yusr the perfect partner for your business?",
     "description": "A system designed specifically for business needs — no complexity and no compromise on quality",
