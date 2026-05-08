@@ -48,6 +48,8 @@
     "weekReceipts": "مقبوضات الأسبوع",
     "weekPayments": "مدفوعات الأسبوع",
     "valueTitle": "القيمة: {{value}}",
+    "sales": "مبيعات",
+    "purchases": "مشتريات",
     "days": {
       "sunday": "الأحد",
       "monday": "الاثنين",

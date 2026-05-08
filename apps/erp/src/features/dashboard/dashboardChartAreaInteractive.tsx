@@ -1,13 +1,8 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, CurrencyIcon, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, ToggleGroup, ToggleGroupItem } from "yusr-ui";
+import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, type ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent, CurrencyIcon, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, ToggleGroup, ToggleGroupItem } from "yusr-ui";
 import type DashboardData from "../../core/data/dashboardData";
-
-const chartConfig = {
-  sales: { label: "المبيعات", color: "var(--primary)" },
-  purchases: { label: "المشتريات", color: "hsl(var(--destructive))" }
-} satisfies ChartConfig;
 
 type ChartAreaInteractiveProps = { data: DashboardData; };
 
@@ -15,6 +10,17 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
 {
   const { t } = useTranslation("erpCommon");
   const [timeRange, setTimeRange] = React.useState<"weekly" | "yearly">("yearly");
+
+  const chartConfig = {
+    sales: {
+      label: t("dashborad.sales"),
+      color: "#22c55e"
+    },
+    purchases: {
+      label: t("dashborad.purchases"),
+      color: "#ef4444"
+    }
+  } satisfies ChartConfig;
 
   const chartData = React.useMemo(() =>
   {
@@ -93,6 +99,7 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer config={ chartConfig } className="aspect-auto h-62.5 w-full">
           <AreaChart data={ chartData }>
+            <ChartLegend content={ <ChartLegendContent /> } />
             <defs>
               <linearGradient id="fillSales" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--color-sales)" stopOpacity={ 0.8 } />

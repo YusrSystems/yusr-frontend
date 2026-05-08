@@ -48,6 +48,8 @@
     "weekReceipts": "Week Receipts",
     "weekPayments": "Week Payments",
     "valueTitle": "Value: {{value}}",
+    "sales": "Sales",
+    "purchases": "Purchases",
     "days": {
       "sunday": "Sunday",
       "monday": "Monday",
