@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "yusr-ui";
 import { BalanceSheetReportRequest } from "../../core/data/report/balanceSheetReportRequest";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -6,24 +7,25 @@ import ReportButton from "./reportButton";
 
 export default function BalanceSheetDialog()
 {
+  const { t, i18n } = useTranslation("erpCommon");
   const [isOpen, setIsOpen] = useState(false);
   const [toDate, setToDate] = useState<Date>(new Date());
 
   return (
     <>
       <Button variant="outline" size="sm" onClick={ () => setIsOpen(true) }>
-        إنشاء
+        { t("reports.create") }
       </Button>
       <Dialog open={ isOpen } onOpenChange={ setIsOpen }>
-        <DialogContent dir="rtl" className="sm:max-w-sm">
+        <DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>الميزانية العمومية</DialogTitle>
-            <DialogDescription>عرض الأصول والخصوم وحقوق الملكية</DialogDescription>
+            <DialogTitle>{ t("reports.balanceSheet") }</DialogTitle>
+            <DialogDescription>{ t("reports.balanceSheetDescription") }</DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-2">
             <DateField
-              label="حتى تاريخ"
+              label={ t("reports.toDate") }
               value={ toDate }
               onChange={ (date) => date && setToDate(date) }
             />

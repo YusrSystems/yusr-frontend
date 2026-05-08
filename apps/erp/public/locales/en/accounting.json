@@ -76,13 +76,6 @@
     "title": "Cash Box Accounts Management"
   },
 
-  "accountStatement": {
-    "button": "Account Statement",
-    "title": "Account Statement",
-    "fromDate": "From Date",
-    "toDate": "To Date"
-  },
-
   "balanceTransfers": {
     "title": "Balance Transfers",
     "entityName": "Transfer",

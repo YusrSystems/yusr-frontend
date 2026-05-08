@@ -1,5 +1,6 @@
 import { ArrowRightLeft, BarChart2, FileText, type LucideIcon, Percent, TrendingUp } from "lucide-react";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
@@ -10,7 +11,7 @@ import BalanceSheetDialog from "./BalanceSheetDialog";
 import ItemsMovementDialog from "./ItemsMovementDialog";
 import ItemsTaxStatementDialog from "./ItemsTaxStatementDialog";
 import ProfitAndLossDialog from "./ProfitAndLossDialog";
-import TaxReturnDialog from "./TaReturnDialog";
+import TaxReturnDialog from "./taxReturnDialog";
 
 interface Report
 {
@@ -93,6 +94,7 @@ function ReportGroupSection({ group }: ReportGroupSectionProps)
 
 export default function ReportsPage()
 {
+  const { t } = useTranslation("erpCommon");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
 
@@ -104,13 +106,13 @@ export default function ReportsPage()
   }, []);
 
   const reportGroups: ReportGroup[] = [{
-    label: "مالي",
+    label: t("reports.financial"),
     icon: BarChart2,
     iconColor: "text-blue-600",
     reports: [{
       comp: <BalanceSheetDialog />,
-      name: "الميزانية العمومية",
-      description: "الأصول والخصوم وحقوق الملكية",
+      name: t("reports.balanceSheet"),
+      description: t("reports.balanceSheetDescription"),
       icon: FileText,
       hasAuth: SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -119,8 +121,8 @@ export default function ReportsPage()
       )
     }, {
       comp: <ProfitAndLossDialog />,
-      name: "الأرباح والخسائر",
-      description: "الإيرادات والمصروفات وصافي الربح",
+      name: t("reports.profitAndLoss"),
+      description: t("reports.profitAndLossDescription"),
       icon: TrendingUp,
       hasAuth: SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -129,13 +131,13 @@ export default function ReportsPage()
       )
     }]
   }, {
-    label: "ضريبي",
+    label: t("reports.tax"),
     icon: Percent,
     iconColor: "text-amber-600",
     reports: [{
       comp: <TaxReturnDialog />,
-      name: "الإقرار الضريبي",
-      description: "تقرير ضريبة القيمة المضافة الدوري",
+      name: t("reports.taxReturn"),
+      description: t("reports.taxReturnDescription"),
       icon: FileText,
       hasAuth: SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -144,8 +146,8 @@ export default function ReportsPage()
       )
     }, {
       comp: <ItemsTaxStatementDialog />,
-      name: "كشف ضريبة المواد",
-      description: "تفاصيل الضريبة لكل مادة",
+      name: t("reports.itemsTaxStatement"),
+      description: t("reports.itemsTaxStatementDescription"),
       icon: Percent,
       hasAuth: SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -154,13 +156,13 @@ export default function ReportsPage()
       )
     }]
   }, {
-    label: "مخزون",
+    label: t("reports.inventory"),
     icon: ArrowRightLeft,
     iconColor: "text-green-700",
     reports: [{
       comp: <ItemsMovementDialog />,
-      name: "حركة المواد",
-      description: "حركات المخزون للمواد",
+      name: t("reports.itemsMovement"),
+      description: t("reports.itemsMovementDescription"),
       icon: ArrowRightLeft,
       hasAuth: SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -171,10 +173,10 @@ export default function ReportsPage()
   }];
 
   return (
-    <div dir="rtl" className="flex flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8 p-6">
       <div>
-        <h1 className="text-xl font-medium text-foreground">التقارير</h1>
-        <p className="mt-1 text-sm text-muted-foreground">إنشاء وتصدير تقارير الأعمال</p>
+        <h1 className="text-xl font-medium text-foreground">{ t("reports.title") }</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{ t("reports.subtitle") }</p>
       </div>
 
       { reportGroups.map((group) => (

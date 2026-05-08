@@ -7,7 +7,7 @@ import ReportButton from "./reportButton";
 
 export default function AccountStatementButton({ account }: { account: Account; })
 {
-  const { t, i18n } = useTranslation("accounting");
+  const { t, i18n } = useTranslation("erpCommon");
   const [isOpen, setIsOpen] = useState(false);
   const [fromDate, setFromDate] = useState<Date>(new Date());
   const [toDate, setToDate] = useState<Date>(new Date());
@@ -27,13 +27,13 @@ export default function AccountStatementButton({ account }: { account: Account; 
 
           <div className="flex flex-col gap-4 py-2">
             <DateField
-              label={ t("accountStatement.fromDate") }
+              label={ t("reports.fromDate") }
               value={ fromDate }
               onChange={ (date) => date && setFromDate(date) }
             />
 
             <DateField
-              label={ t("accountStatement.toDate") }
+              label={ t("reports.toDate") }
               value={ toDate }
               onChange={ (date) => date && setToDate(date) }
             />

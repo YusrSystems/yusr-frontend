@@ -9,7 +9,8 @@ import ReportButton from "./reportButton";
 
 export default function ItemsTaxStatementDialog()
 {
-  const { t } = useTranslation("stocking");
+  const { t, i18n } = useTranslation("erpCommon");
+  const { t: tStocking } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const itemState = useAppSelector((state) => state.item);
   const [isOpen, setIsOpen] = useState(false);
@@ -21,27 +22,27 @@ export default function ItemsTaxStatementDialog()
   return (
     <>
       <Button variant="outline" size="sm" onClick={ () => setIsOpen(true) }>
-        إنشاء
+        { t("reports.create") }
       </Button>
       <Dialog open={ isOpen } onOpenChange={ setIsOpen }>
-        <DialogContent dir="rtl" className="sm:max-w-sm">
+        <DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>كشف ضريبة المواد</DialogTitle>
-            <DialogDescription>تفاصيل الضريبة لكل مادة</DialogDescription>
+            <DialogTitle>{ t("reports.itemsTaxStatement") }</DialogTitle>
+            <DialogDescription>{ t("reports.itemsTaxStatementDescription") }</DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-2">
             <SelectField
-              label="نوع الفاتورة"
+              label={ t("reports.invoiceType") }
               required
               value={ type.toString() || "" }
               onValueChange={ (val) => setType(Number(val) as ItemsTaxStatementReportType) }
-              options={ [{ label: "تقرير ضرائب المبيعات", value: ItemsTaxStatementReportType.Sales.toString() }, {
-                label: "تقرير ضرائب المشتريات",
+              options={ [{ label: t("reports.salesTaxReport"), value: ItemsTaxStatementReportType.Sales.toString() }, {
+                label: t("reports.purchasesTaxReport"),
                 value: ItemsTaxStatementReportType.Purchases.toString()
               }] }
             />
-            <FormField label="المادة" required={ true }>
+            <FormField label={ t("reports.item") } required={ true }>
               <SearchableSelect
                 items={ itemState.entities.data ?? [] }
                 itemLabelKey="name"
@@ -49,19 +50,19 @@ export default function ItemsTaxStatementDialog()
                 showAllOption
                 value={ itemId?.toString() || "" }
                 onValueChange={ (val) => setItemId(Number(val)) }
-                columnsNames={ ItemFilterColumns.columnsNames(t) }
+                columnsNames={ ItemFilterColumns.columnsNames(tStocking) }
                 onSearch={ (condition) => dispatch(ItemSlice.entityActions.filter(condition)) }
                 isLoading={ itemState.isLoading }
                 disabled={ itemState.isLoading }
               />
             </FormField>
             <DateField
-              label="من تاريخ"
+              label={ t("reports.fromDate") }
               value={ fromDate ?? undefined }
               onChange={ (date) => setFromDate(date ?? undefined) }
             />
             <DateField
-              label="إلى تاريخ"
+              label={ t("reports.toDate") }
               value={ toDate ?? undefined }
               onChange={ (date) => setToDate(date ?? undefined) }
             />

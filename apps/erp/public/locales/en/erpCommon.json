@@ -208,5 +208,61 @@
     "startLinking": "Start Linking",
     "noCode": "Didn't receive a verification code?",
     "visitZatca": "Visit the authority's website to get a verification code"
+  },
+
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Create and export business reports",
+    "create": "Create",
+    "financial": "Financial",
+    "tax": "Tax",
+    "inventory": "Inventory",
+    "balanceSheet": "Balance Sheet",
+    "balanceSheetDescription": "Assets, liabilities and equity",
+    "profitAndLoss": "Profit and Loss",
+    "profitAndLossDescription": "Revenue, expenses and net profit",
+    "taxReturn": "Tax Return",
+    "taxReturnDescription": "Periodic VAT return report",
+    "itemsTaxStatement": "Item Tax Statement",
+    "itemsTaxStatementDescription": "Tax details per item",
+    "itemsMovement": "Items Movement",
+    "itemsMovementDescription": "Inventory movements for items",
+    "toDate": "To Date",
+    "fromDate": "From Date",
+    "movementType": "Movement Type",
+    "item": "Item",
+    "fromAccount": "From Account",
+    "toAccount": "To Account",
+    "fromStore": "From Store",
+    "toStore": "To Store",
+    "groupBy": "Group By",
+    "sell": "Sell",
+    "purchase": "Purchase",
+    "sellReturn": "Sales Return",
+    "purchaseReturn": "Purchase Return",
+    "transfer": "Transfer",
+    "settlement": "Settlement",
+    "from": "From",
+    "to": "To",
+    "day": "Day",
+    "month": "Month",
+    "year": "Year",
+    "invoiceType": "Invoice Type",
+    "salesTaxReport": "Sales Tax Report",
+    "purchasesTaxReport": "Purchases Tax Report",
+    "itemBarcode": "Item Barcode",
+    "barcodeCount": "Barcode Count",
+    "pagesCount": "Pages Count"
+  },
+
+  "accountStatement": {
+    "button": "Account Statement",
+    "title": "Account Statement"
+  },
+
+  "itemStatement": {
+    "button": "Item Statement",
+    "title": "Item Statement",
+    "store": "Store"
   }
 }

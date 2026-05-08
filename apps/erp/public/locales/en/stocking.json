@@ -159,11 +159,5 @@
     "storesValidationError": "Please fill all required fields in the table (Store, Initial Quantity)",
     "baseUnitRequired": "Please select the base unit for the item",
     "initialCostRequired": "Please enter the initial cost"
-  },
-
-  "itemStatement": {
-    "button": "Item Statement",
-    "title": "Item Statement",
-    "store": "Store"
   }
 }

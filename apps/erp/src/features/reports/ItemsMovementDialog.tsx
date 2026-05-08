@@ -15,8 +15,9 @@ export default function ItemsMovementDialog()
   const itemState = useAppSelector((state) => state.item);
   const accountState = useAppSelector((state) => state.clientsAndSuppliers);
   const storeState = useAppSelector((state) => state.store);
-  const { t } = useTranslation("accounting");
+  const { t, i18n } = useTranslation("erpCommon");
   const { t: tStocking } = useTranslation("stocking");
+  const { t: tAccounting } = useTranslation("accounting");
 
   const [isOpen, setIsOpen] = useState(false);
   const [transTypeId, setTransTypeId] = useState<ItemsMovementReportTransType | undefined>(undefined);
@@ -32,31 +33,31 @@ export default function ItemsMovementDialog()
   return (
     <>
       <Button variant="outline" size="sm" onClick={ () => setIsOpen(true) }>
-        إنشاء
+        { t("reports.create") }
       </Button>
       <Dialog open={ isOpen } onOpenChange={ setIsOpen }>
-        <DialogContent dir="rtl" className="sm:max-w-md">
+        <DialogContent dir={ i18n.dir() } className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>حركة المواد</DialogTitle>
-            <DialogDescription>حركات المخزون للمواد</DialogDescription>
+            <DialogTitle>{ t("reports.itemsMovement") }</DialogTitle>
+            <DialogDescription>{ t("reports.itemsMovementDescription") }</DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-2">
             <SelectField
-              label="نوع الحركة"
+              label={ t("reports.movementType") }
               value={ transTypeId?.toString() ?? "" }
               onValueChange={ (val) => setTransTypeId(val ? Number(val) as ItemsMovementReportTransType : undefined) }
               options={ [
-                { label: "بيع", value: ItemsMovementReportTransType.Sell.toString() },
-                { label: "شراء", value: ItemsMovementReportTransType.Purchase.toString() },
-                { label: "مرتجع مبيعات", value: ItemsMovementReportTransType.SellReturn.toString() },
-                { label: "مرتجع مشتريات", value: ItemsMovementReportTransType.PurchaseReturn.toString() },
-                { label: "تحويل", value: ItemsMovementReportTransType.Transfer.toString() },
-                { label: "تسوية", value: ItemsMovementReportTransType.Settlement.toString() }
+                { label: t("reports.sell"), value: ItemsMovementReportTransType.Sell.toString() },
+                { label: t("reports.purchase"), value: ItemsMovementReportTransType.Purchase.toString() },
+                { label: t("reports.sellReturn"), value: ItemsMovementReportTransType.SellReturn.toString() },
+                { label: t("reports.purchaseReturn"), value: ItemsMovementReportTransType.PurchaseReturn.toString() },
+                { label: t("reports.transfer"), value: ItemsMovementReportTransType.Transfer.toString() },
+                { label: t("reports.settlement"), value: ItemsMovementReportTransType.Settlement.toString() }
               ] }
             />
 
-            <FormField label="المادة">
+            <FormField label={ t("reports.item") }>
               <SearchableSelect
                 items={ itemState.entities.data ?? [] }
                 itemLabelKey="name"
@@ -73,19 +74,19 @@ export default function ItemsMovementDialog()
 
             <div className="grid grid-cols-2 gap-3">
               <DateField
-                label="من تاريخ"
+                label={ t("reports.fromDate") }
                 value={ fromDate }
                 onChange={ (date) => setFromDate(date ?? undefined) }
               />
               <DateField
-                label="إلى تاريخ"
+                label={ t("reports.toDate") }
                 value={ toDate }
                 onChange={ (date) => setToDate(date ?? undefined) }
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <FormField label="من حساب">
+              <FormField label={ t("reports.fromAccount") }>
                 <SearchableSelect
                   items={ accountState.entities.data ?? [] }
                   itemLabelKey="name"
@@ -93,14 +94,14 @@ export default function ItemsMovementDialog()
                   showAllOption
                   value={ fromAccountId?.toString() ?? "" }
                   onValueChange={ (val) => setFromAccountId(val ? Number(val) : undefined) }
-                  columnsNames={ AccountFilterColumns.columnsNames(t) }
+                  columnsNames={ AccountFilterColumns.columnsNames(tAccounting) }
                   onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
                   isLoading={ accountState.isLoading }
                   disabled={ accountState.isLoading }
                 />
               </FormField>
 
-              <FormField label="إلى حساب">
+              <FormField label={ t("reports.toAccount") }>
                 <SearchableSelect
                   items={ accountState.entities.data ?? [] }
                   itemLabelKey="name"
@@ -108,7 +109,7 @@ export default function ItemsMovementDialog()
                   showAllOption
                   value={ toAccountId?.toString() ?? "" }
                   onValueChange={ (val) => setToAccountId(val ? Number(val) : undefined) }
-                  columnsNames={ AccountFilterColumns.columnsNames(t) }
+                  columnsNames={ AccountFilterColumns.columnsNames(tAccounting) }
                   onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
                   isLoading={ accountState.isLoading }
                   disabled={ accountState.isLoading }
@@ -117,7 +118,7 @@ export default function ItemsMovementDialog()
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <FormField label="من مستودع">
+              <FormField label={ t("reports.fromStore") }>
                 <SearchableSelect
                   items={ storeState.entities.data ?? [] }
                   itemLabelKey="name"
@@ -132,7 +133,7 @@ export default function ItemsMovementDialog()
                 />
               </FormField>
 
-              <FormField label="إلى مستودع">
+              <FormField label={ t("reports.toStore") }>
                 <SearchableSelect
                   items={ storeState.entities.data ?? [] }
                   itemLabelKey="name"
@@ -149,16 +150,16 @@ export default function ItemsMovementDialog()
             </div>
 
             <SelectField
-              label="تجميع حسب"
+              label={ t("reports.groupBy") }
               value={ groupOption?.toString() ?? "" }
               onValueChange={ (val) => setGroupOption(val ? Number(val) as ItemsMovementReportGroupOption : undefined) }
               options={ [
-                { label: "مادة", value: ItemsMovementReportGroupOption.Item.toString() },
-                { label: "من", value: ItemsMovementReportGroupOption.From.toString() },
-                { label: "إلى", value: ItemsMovementReportGroupOption.To.toString() },
-                { label: "يوم", value: ItemsMovementReportGroupOption.Day.toString() },
-                { label: "شهر", value: ItemsMovementReportGroupOption.Month.toString() },
-                { label: "سنة", value: ItemsMovementReportGroupOption.Year.toString() }
+                { label: t("reports.item"), value: ItemsMovementReportGroupOption.Item.toString() },
+                { label: t("reports.from"), value: ItemsMovementReportGroupOption.From.toString() },
+                { label: t("reports.to"), value: ItemsMovementReportGroupOption.To.toString() },
+                { label: t("reports.day"), value: ItemsMovementReportGroupOption.Day.toString() },
+                { label: t("reports.month"), value: ItemsMovementReportGroupOption.Month.toString() },
+                { label: t("reports.year"), value: ItemsMovementReportGroupOption.Year.toString() }
               ] }
             />
           </div>

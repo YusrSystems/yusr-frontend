@@ -76,13 +76,6 @@
     "title": "إدارة حسابات الصناديق"
   },
 
-  "accountStatement": {
-    "button": "كشف حساب",
-    "title": "كشف حساب",
-    "fromDate": "من تاريخ",
-    "toDate": "إلى تاريخ"
-  },
-
   "balanceTransfers": {
     "title": "تحويلات الأرصدة",
     "entityName": "تحويل",

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "yusr-ui";
 import { InvoicesListReportRequest, InvoicesListReportType } from "../../core/data/report/invoicesListReportType";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -6,6 +7,7 @@ import ReportButton from "./reportButton";
 
 export default function ProfitAndLossDialog()
 {
+  const { t, i18n } = useTranslation("erpCommon");
   const [isOpen, setIsOpen] = useState(false);
   const [fromDate, setFromDate] = useState<Date>(() =>
   {
@@ -18,23 +20,23 @@ export default function ProfitAndLossDialog()
   return (
     <>
       <Button variant="outline" size="sm" onClick={ () => setIsOpen(true) }>
-        إنشاء
+        { t("reports.create") }
       </Button>
       <Dialog open={ isOpen } onOpenChange={ setIsOpen }>
-        <DialogContent dir="rtl" className="sm:max-w-sm">
+        <DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle>الأرباح والخسائر</DialogTitle>
-            <DialogDescription>ملخص الإيرادات والمصروفات وصافي الربح</DialogDescription>
+            <DialogTitle>{ t("reports.profitAndLoss") }</DialogTitle>
+            <DialogDescription>{ t("reports.profitAndLossDescription") }</DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-2">
             <DateField
-              label="من تاريخ"
+              label={ t("reports.fromDate") }
               value={ fromDate }
               onChange={ (date) => date && setFromDate(date) }
             />
             <DateField
-              label="إلى تاريخ"
+              label={ t("reports.toDate") }
               value={ toDate }
               onChange={ (date) => date && setToDate(date) }
             />

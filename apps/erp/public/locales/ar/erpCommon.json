@@ -208,5 +208,61 @@
     "startLinking": "ابدأ الربط",
     "noCode": "لم تحصل على رمز التحقق؟",
     "visitZatca": "زُر موقع الهيئة للحصول على رمز التحقق"
+  },
+
+  "reports": {
+    "title": "التقارير",
+    "subtitle": "إنشاء وتصدير تقارير الأعمال",
+    "create": "إنشاء",
+    "financial": "مالي",
+    "tax": "ضريبي",
+    "inventory": "مخزون",
+    "balanceSheet": "الميزانية العمومية",
+    "balanceSheetDescription": "الأصول والخصوم وحقوق الملكية",
+    "profitAndLoss": "الأرباح والخسائر",
+    "profitAndLossDescription": "الإيرادات والمصروفات وصافي الربح",
+    "taxReturn": "الإقرار الضريبي",
+    "taxReturnDescription": "تقرير ضريبة القيمة المضافة الدوري",
+    "itemsTaxStatement": "كشف ضريبة المواد",
+    "itemsTaxStatementDescription": "تفاصيل الضريبة لكل مادة",
+    "itemsMovement": "حركة المواد",
+    "itemsMovementDescription": "حركات المخزون للمواد",
+    "fromDate": "من تاريخ",
+    "toDate": "إلى تاريخ",
+    "movementType": "نوع الحركة",
+    "item": "المادة",
+    "fromAccount": "من حساب",
+    "toAccount": "إلى حساب",
+    "fromStore": "من مستودع",
+    "toStore": "إلى مستودع",
+    "groupBy": "تجميع حسب",
+    "sell": "بيع",
+    "purchase": "شراء",
+    "sellReturn": "مرتجع مبيعات",
+    "purchaseReturn": "مرتجع مشتريات",
+    "transfer": "تحويل",
+    "settlement": "تسوية",
+    "from": "من",
+    "to": "إلى",
+    "day": "يوم",
+    "month": "شهر",
+    "year": "سنة",
+    "invoiceType": "نوع الفاتورة",
+    "salesTaxReport": "تقرير ضرائب المبيعات",
+    "purchasesTaxReport": "تقرير ضرائب المشتريات",
+    "itemBarcode": "باركود المادة",
+    "barcodeCount": "عدد الباركودات",
+    "pagesCount": "عدد الصفحات"
+  },
+
+  "accountStatement": {
+    "button": "كشف حساب",
+    "title": "كشف حساب"
+  },
+
+  "itemStatement": {
+    "button": "كشف المادة",
+    "title": "كشف مادة",
+    "store": "المستودع"
   }
 }
