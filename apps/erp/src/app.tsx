@@ -1,3 +1,4 @@
+import type { i18n } from "i18next";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -42,16 +43,16 @@ function App()
     Validators.init(t);
   }, [t, i18n.language]);
 
-  return <AppBody />;
+  return <AppBody i18n={ i18n } />;
 }
 
-function AppBody()
+function AppBody({ i18n }: { i18n: i18n; })
 {
   return (
     <TooltipProvider>
       <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
         <AppRoutes />
-        <Toaster richColors closeButton position="top-center" dir="rtl" />
+        <Toaster richColors closeButton position="top-center" dir={ i18n.dir() } />
       </ThemeProvider>
     </TooltipProvider>
   );
