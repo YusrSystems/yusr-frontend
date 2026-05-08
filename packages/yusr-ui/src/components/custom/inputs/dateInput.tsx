@@ -25,7 +25,7 @@ export function DateInput({
   value: comingValue,
   onChange,
   isInvalid,
-  placeholder = "اختر تاريخا",
+  placeholder,
   locale,
   startYear = new Date().getFullYear() - 100,
   endYear = new Date().getFullYear() + 10,

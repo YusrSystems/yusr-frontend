@@ -1,8 +1,13 @@
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { StorageFile, StorageFileStatus } from "../entities";
 
-export function useStorageFile<T>(setFormData: React.Dispatch<React.SetStateAction<T>>, fieldName: keyof T)
+export function useStorageFile<T>(
+  setFormData: React.Dispatch<React.SetStateAction<T>>,
+  fieldName: keyof T
+)
 {
+  const { t } = useTranslation("common");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -23,12 +28,12 @@ export function useStorageFile<T>(setFormData: React.Dispatch<React.SetStateActi
     {
       if (file.size > maxSizeInBytes)
       {
-        errorMessages.push(`الملف "${file.name}" كبير جداً.`);
+        errorMessages.push(t("storageFile.fileTooLarge", { name: file.name }));
         continue;
       }
       if (!allowedTypes.includes(file.type))
       {
-        errorMessages.push(`نوع الملف "${file.name}" غير مدعوم.`);
+        errorMessages.push(t("storageFile.fileTypeNotSupported", { name: file.name }));
         continue;
       }
       validFiles.push(file);
@@ -43,7 +48,6 @@ export function useStorageFile<T>(setFormData: React.Dispatch<React.SetStateActi
       return;
     }
 
-    // قراءة الملفات وتحويلها لـ StorageFile
     const filePromises = validFiles.map((file) =>
     {
       return new Promise<StorageFile>((resolve) =>
@@ -72,7 +76,6 @@ export function useStorageFile<T>(setFormData: React.Dispatch<React.SetStateActi
     {
       const existingData = prev[fieldName];
 
-      // المنطق الجوهري: إذا كان الحقل مصفوفة، أضف الملفات. إذا لم يكن، خذ أول ملف فقط.
       let newValue: any;
       if (Array.isArray(existingData))
       {
@@ -115,7 +118,6 @@ export function useStorageFile<T>(setFormData: React.Dispatch<React.SetStateActi
       }
       else
       {
-        // إذا كان ملفاً واحداً
         const currentFile = existingData as unknown as StorageFile;
         return {
           ...prev,

@@ -56,7 +56,7 @@ export default function DefaultsSection()
                 const selected = paymentMethodState.entities.data?.find((p) => p.id.toString() === val);
                 handleChange({ mainPaymentMethodId: selected?.id, mainPaymentMethodName: selected?.name });
               } }
-              columnsNames={ PaymentMethodFilterColumns.columnsNames }
+              columnsNames={ PaymentMethodFilterColumns.columnsNames(tAccounting) }
               onSearch={ (condition) => dispatch(PaymentMethodSlice.entityActions.filter(condition)) }
               isLoading={ paymentMethodState.isLoading }
               disabled={ paymentMethodState.isLoading }

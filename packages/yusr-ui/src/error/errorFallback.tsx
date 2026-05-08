@@ -1,4 +1,6 @@
 import { AlertTriangle, Home, RotateCcw } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "../components/pure";
 
 interface ErrorFallbackProps
@@ -6,8 +8,10 @@ interface ErrorFallbackProps
   reset: () => void;
 }
 
-export default function ErrorFallback({ reset }: ErrorFallbackProps)
+export function ErrorFallback({ reset }: ErrorFallbackProps)
 {
+  const { t } = useTranslation("common");
+
   return (
     <div className="flex min-h-screen w-full items-center justify-center p-6">
       <Card className="max-w-md border-destructive/20 bg-destructive/5 text-center shadow-lg backdrop-blur-sm">
@@ -15,23 +19,25 @@ export default function ErrorFallback({ reset }: ErrorFallbackProps)
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 text-destructive">
             <AlertTriangle className="h-10 w-10" />
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight text-foreground">حدث خطأ غير متوقع</CardTitle>
+          <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
+            { t("errorFallback.title") }
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground leading-relaxed">
-            نعتذر عن ذلك، واجه النظام مشكلة تقنية أثناء تحميل هذه الصفحة. يرجى محاولة تحديث الصفحة أو العودة للرئيسية.
+            { t("errorFallback.description") }
           </p>
         </CardContent>
         <CardFooter className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Button variant="default" onClick={ () => reset() } className="gap-2 px-8">
             <RotateCcw className="h-4 w-4" />
-            إعادة المحاولة
+            { t("errorFallback.retry") }
           </Button>
           <Button variant="outline" asChild className="gap-2 border-destructive/20 hover:bg-destructive/10">
-            <a href="/">
-              <Home className="h-4 w-4" />
-              الرئيسية
-            </a>
+            <Link to="/">
+              <Home className="ml-2 h-4 w-4" />
+              { t("errorFallback.goHome") }
+            </Link>
           </Button>
         </CardFooter>
       </Card>

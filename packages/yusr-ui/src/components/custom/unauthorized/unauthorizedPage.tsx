@@ -1,9 +1,11 @@
 import { ArrowRight, Home, ShieldOff } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../pure/button";
 
 export function UnauthorizedPage({ showButtons = true }: { showButtons?: boolean; })
 {
+  const { t } = useTranslation("common");
   const navigate = useNavigate();
 
   return (
@@ -16,10 +18,10 @@ export function UnauthorizedPage({ showButtons = true }: { showButtons?: boolean
         <ShieldOff className="h-12 w-12" />
       </div>
 
-      <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">غير مصرح بالدخول</h1>
+      <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">{ t("unauthorized.title") }</h1>
 
       <p className="mt-6 max-w-md text-lg text-muted-foreground leading-relaxed">
-        عذراً، ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة. تواصل مع مدير النظام إذا كنت تعتقد أن هذا خطأ.
+        { t("unauthorized.description") }
       </p>
 
       { showButtons && (
@@ -27,7 +29,7 @@ export function UnauthorizedPage({ showButtons = true }: { showButtons?: boolean
           <Button asChild size="lg" className="h-12 rounded-full px-8 shadow-lg shadow-primary/20">
             <Link to="/dashboard">
               <Home className="ml-2 h-4 w-4" />
-              العودة للرئيسية
+              { t("unauthorized.goHome") }
             </Link>
           </Button>
           <Button
@@ -52,7 +54,7 @@ export function UnauthorizedPage({ showButtons = true }: { showButtons?: boolean
             } }
           >
             <ArrowRight className="ml-2 h-4 w-4" />
-            العودة للخلف
+            { t("unauthorized.goBack") }
           </Button>
         </div>
       ) }

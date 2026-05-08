@@ -25,7 +25,7 @@ export class Branch extends BaseEntity
 
 export class BranchFilterColumns
 {
-  public static columnsNames: ColumnName<Branch>[] = [{ label: "اسم الفرع", value: "name" }];
+  public static columnsNames: ColumnName<Branch>[] = [{ label: "", value: "name" }];
 }
 
 export class BranchValidationRules

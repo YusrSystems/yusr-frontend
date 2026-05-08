@@ -162,5 +162,64 @@
     "changeOrAddImage": "Change / Add Image",
     "uploadFiles": "Upload files",
     "uploadHint": "You can select files (images, PDF)"
+  },
+
+  "errorFallback": {
+    "title": "An unexpected error occurred",
+    "description": "We apologize, the system encountered a technical issue while loading this page. Please try refreshing the page or return to the homepage.",
+    "retry": "Retry",
+    "goHome": "Go to Homepage"
+  },
+
+  "notFound": {
+    "title": "Oops, this page is missing!",
+    "description": "It seems you've taken a path that doesn't exist, or the page has been moved to another address. Don't worry, you can always return to the right path.",
+    "goHome": "Go to Homepage",
+    "goBack": "Go Back"
+  },
+
+  "loading": {
+    "message": "Loading {{entityName}} data..."
+  },
+
+  "unauthorized": {
+    "title": "Unauthorized Access",
+    "description": "Sorry, you don't have sufficient permissions to access this page. Contact your system administrator if you believe this is an error.",
+    "goHome": "Go to Dashboard",
+    "goBack": "Go Back"
+  },
+
+  "storageFile": {
+    "fileTooLarge": "File \"{{name}}\" is too large.",
+    "fileTypeNotSupported": "File type \"{{name}}\" is not supported."
+  },
+
+  "zoomableImage": {
+    "title": "Click to zoom",
+    "zoom": "Zoom"
+  },
+
+  "api": {
+    "sessionExpired": "Session expired",
+    "loginAgain": "Please log in again.",
+    "notFound": "Your request was not found",
+    "tooManyRequests": "You have exceeded the limit. Please try again later.",
+    "anErrorOccurred": "An error occurred",
+    "reportLoadError": "An error occurred while loading the report",
+    "tryAgainLater": "Please try again later",
+    "saveSuccess": "Data saved successfully",
+    "updateSuccess": "Information updated successfully",
+    "deleteSuccess": "Record removed successfully"
+  },
+
+  "validators": {
+    "required": "This field is required",
+    "min": "Value must be greater than {{min}}",
+    "max": "Value must be less than {{max}}",
+    "minLength": "Text length must be greater than {{min}}",
+    "maxLength": "Text length must be less than {{max}}",
+    "exactLength": "Text length must be exactly {{length}} characters",
+    "numeric": "Field must contain only numbers",
+    "arrayMinLength": "Please select at least one item"
   }
 }

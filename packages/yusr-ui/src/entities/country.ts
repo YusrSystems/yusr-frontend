@@ -17,7 +17,7 @@ export class Country extends BaseEntity
 
 export class CountryFilterColumns
 {
-  public static columnsNames: ColumnName<Country>[] = [{ label: "اسم الدولة", value: "name" }];
+  public static columnsNames: ColumnName<Country>[] = [{ label: "", value: "name" }];
 }
 
 export class CountrySlice

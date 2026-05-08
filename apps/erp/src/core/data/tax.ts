@@ -1,3 +1,4 @@
+import { type TFunction } from "i18next";
 import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
 import TaxesApiService from "../networking/taxesApiService";
@@ -17,22 +18,24 @@ export class Tax extends BaseEntity
 
 export class TaxFilterColumns
 {
-  public static columnsNames: ColumnName<Tax>[] = [{ label: "اسم الضريبة", value: "name" }];
+  public static columnsNames = (t: TFunction<"accounting">): ColumnName<Tax>[] => [
+    { label: t("taxes.taxName"), value: "name" }
+  ];
 }
 
 export class TaxValidationRules
 {
-  public static validationRules: ValidationRule<Partial<Tax>>[] = [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Tax>>[] => [{
     field: "name",
     selector: (d) => d.name,
-    validators: [Validators.required("يرجى إدخال اسم الضريبة")]
+    validators: [Validators.required(t("taxes.nameRequired"))]
   }, {
     field: "percentage",
     selector: (d) => d.percentage,
     validators: [
-      Validators.required("يرجى إدخال نسبة الضريبة"),
-      Validators.min(0, "الحد الادنى هو 0%"),
-      Validators.max(100, "الحد الاقصى هو 100%")
+      Validators.required(t("taxes.percentageRequired")),
+      Validators.min(0, t("taxes.percentageMin")),
+      Validators.max(100, t("taxes.percentageMax"))
     ]
   }];
 }

@@ -20,7 +20,7 @@ export class Role extends BaseEntity
 
 export class RoleFilterColumns
 {
-  public static columnsNames: ColumnName<Role>[] = [{ label: "اسم الدور", value: "name" }];
+  public static columnsNames: ColumnName<Role>[] = [{ label: "", value: "name" }];
 }
 
 export class RoleValidationRules

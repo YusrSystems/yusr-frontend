@@ -9,6 +9,7 @@ import { useSettingContext } from "./settingContext";
 export default function InvoiceSection()
 {
   const { t } = useTranslation("erpCommon");
+  const { t: tAccounting } = useTranslation("accounting");
 
   const {
     formData,
@@ -54,7 +55,7 @@ export default function InvoiceSection()
               itemValueKey="id"
               value={ formData.mainTaxId?.toString() || "" }
               onValueChange={ (val) => handleChange({ mainTaxId: Number(val) }) }
-              columnsNames={ TaxFilterColumns.columnsNames }
+              columnsNames={ TaxFilterColumns.columnsNames(tAccounting) }
               onSearch={ (condition) => dispatch(TaxSlice.entityActions.filter(condition)) }
               isLoading={ taxState.isLoading }
               disabled={ taxState.isLoading }

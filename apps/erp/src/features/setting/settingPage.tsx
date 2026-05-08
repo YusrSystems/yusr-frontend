@@ -17,6 +17,7 @@ import { SettingContext } from "./settingContext";
 export default function SettingPage()
 {
   const { t } = useTranslation("erpCommon");
+  const { t: tCommon } = useTranslation("common");
 
   const validationRules: ValidationRule<Partial<Setting>>[] = useMemo(
     () => [{
@@ -92,7 +93,7 @@ export default function SettingPage()
     }
 
     setLoading(true);
-    const result = await new SettingsApiService().Update(formData as Setting);
+    const result = await new SettingsApiService().Update(formData as Setting, tCommon);
     setLoading(false);
 
     if (result.status === 200)

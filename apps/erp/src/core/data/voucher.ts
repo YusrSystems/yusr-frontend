@@ -4,8 +4,8 @@ import VouchersApiService from "../networking/voucherApiService";
 import type PaymentMethod from "./paymentMethod";
 
 export const VoucherType = {
-  Payment: 1, // سند صرف
-  Receipt: 2 // سند قبض
+  Payment: 1,
+  Receipt: 2
 } as const;
 
 export type VoucherType = (typeof VoucherType)[keyof typeof VoucherType];

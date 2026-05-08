@@ -15,7 +15,7 @@ export default function ChangeTaxDialog({ entity, mode, service, onSuccess }: Co
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
-    TaxValidationRules.validationRules,
+    TaxValidationRules.validationRules(t),
     (errors) => dispatch(TaxSlice.formActions.setErrors(errors))
   );
   useFormInit(TaxSlice.formActions.setInitialData, initialValues);

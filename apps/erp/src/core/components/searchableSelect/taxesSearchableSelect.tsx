@@ -4,6 +4,7 @@ import { SystemPermissionsResources } from "../../auth/systemPermissionsResource
 import { Tax, TaxFilterColumns, TaxSlice } from "../../data/tax";
 import TaxesApiService from "../../networking/taxesApiService";
 import { useAppSelector } from "../../state/store";
+import { useTranslation } from "react-i18next";
 
 export default function TaxesSearchableSelect(
   { id, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<Tax>
@@ -11,6 +12,7 @@ export default function TaxesSearchableSelect(
 {
   const taxState = useAppSelector((state) => state.tax);
   const authState = useAppSelector((state) => state.auth);
+  const { t } = useTranslation("accounting");
 
   return (
     <ChangableSearchableSelect<Tax>
@@ -19,7 +21,7 @@ export default function TaxesSearchableSelect(
       itemValueKey="id"
       state={ taxState }
       apiService={ new TaxesApiService() }
-      columnsNames={ TaxFilterColumns.columnsNames }
+      columnsNames={ TaxFilterColumns.columnsNames(t) }
       disabled={ disabled }
       isInvalid={ isInvalid }
       systemPermissionsResources={ SystemPermissionsResources.Taxes }

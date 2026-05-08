@@ -77,7 +77,6 @@ export function DateTimeInput({
           onChange={ handleDateSelect }
           isInvalid={ isInvalid }
           locale={ locale }
-          placeholder="إختر تاريخا"
           minDate={ minDate }
           maxDate={ maxDate }
         />

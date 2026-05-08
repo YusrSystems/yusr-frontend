@@ -28,79 +28,79 @@ export class NumbertoWordsService
   private static initArabic(t: TFunction)
   {
     this.masculineUnits = [
-      t("numberToWords.masculineUnits.0", ""),
-      t("numberToWords.masculineUnits.1", "واحد"),
-      t("numberToWords.masculineUnits.2", "اثنان"),
-      t("numberToWords.masculineUnits.3", "ثلاثة"),
-      t("numberToWords.masculineUnits.4", "أربعة"),
-      t("numberToWords.masculineUnits.5", "خمسة"),
-      t("numberToWords.masculineUnits.6", "ستة"),
-      t("numberToWords.masculineUnits.7", "سبعة"),
-      t("numberToWords.masculineUnits.8", "ثمانية"),
-      t("numberToWords.masculineUnits.9", "تسعة")
+      t("numberToWords.masculineUnits.0"),
+      t("numberToWords.masculineUnits.1"),
+      t("numberToWords.masculineUnits.2"),
+      t("numberToWords.masculineUnits.3"),
+      t("numberToWords.masculineUnits.4"),
+      t("numberToWords.masculineUnits.5"),
+      t("numberToWords.masculineUnits.6"),
+      t("numberToWords.masculineUnits.7"),
+      t("numberToWords.masculineUnits.8"),
+      t("numberToWords.masculineUnits.9")
     ];
 
     this.feminineUnits = [
-      t("numberToWords.feminineUnits.0", ""),
-      t("numberToWords.feminineUnits.1", "واحدة"),
-      t("numberToWords.feminineUnits.2", "اثنتان"),
-      t("numberToWords.feminineUnits.3", "ثلاث"),
-      t("numberToWords.feminineUnits.4", "أربع"),
-      t("numberToWords.feminineUnits.5", "خمس"),
-      t("numberToWords.feminineUnits.6", "ست"),
-      t("numberToWords.feminineUnits.7", "سبع"),
-      t("numberToWords.feminineUnits.8", "ثمان"),
-      t("numberToWords.feminineUnits.9", "تسع")
+      t("numberToWords.feminineUnits.0"),
+      t("numberToWords.feminineUnits.1"),
+      t("numberToWords.feminineUnits.2"),
+      t("numberToWords.feminineUnits.3"),
+      t("numberToWords.feminineUnits.4"),
+      t("numberToWords.feminineUnits.5"),
+      t("numberToWords.feminineUnits.6"),
+      t("numberToWords.feminineUnits.7"),
+      t("numberToWords.feminineUnits.8"),
+      t("numberToWords.feminineUnits.9")
     ];
 
     this.tens = [
-      t("numberToWords.tens.0", ""),
-      t("numberToWords.tens.1", "عشرة"),
-      t("numberToWords.tens.2", "عشرون"),
-      t("numberToWords.tens.3", "ثلاثون"),
-      t("numberToWords.tens.4", "أربعون"),
-      t("numberToWords.tens.5", "خمسون"),
-      t("numberToWords.tens.6", "ستون"),
-      t("numberToWords.tens.7", "سبعون"),
-      t("numberToWords.tens.8", "ثمانون"),
-      t("numberToWords.tens.9", "تسعون")
+      t("numberToWords.tens.0"),
+      t("numberToWords.tens.1"),
+      t("numberToWords.tens.2"),
+      t("numberToWords.tens.3"),
+      t("numberToWords.tens.4"),
+      t("numberToWords.tens.5"),
+      t("numberToWords.tens.6"),
+      t("numberToWords.tens.7"),
+      t("numberToWords.tens.8"),
+      t("numberToWords.tens.9")
     ];
 
     this.teens = [
-      t("numberToWords.teens.11", "أحد عشر"),
-      t("numberToWords.teens.12", "اثنا عشر"),
-      t("numberToWords.teens.13", "ثلاثة عشر"),
-      t("numberToWords.teens.14", "أربعة عشر"),
-      t("numberToWords.teens.15", "خمسة عشر"),
-      t("numberToWords.teens.16", "ستة عشر"),
-      t("numberToWords.teens.17", "سبعة عشر"),
-      t("numberToWords.teens.18", "ثمانية عشر"),
-      t("numberToWords.teens.19", "تسعة عشر")
+      t("numberToWords.teens.11"),
+      t("numberToWords.teens.12"),
+      t("numberToWords.teens.13"),
+      t("numberToWords.teens.14"),
+      t("numberToWords.teens.15"),
+      t("numberToWords.teens.16"),
+      t("numberToWords.teens.17"),
+      t("numberToWords.teens.18"),
+      t("numberToWords.teens.19")
     ];
 
     this.feminineTeens = [
-      t("numberToWords.feminineTeens.11", "إحدى عشرة"),
-      t("numberToWords.feminineTeens.12", "اثنتا عشرة"),
-      t("numberToWords.feminineTeens.13", "ثلاث عشرة"),
-      t("numberToWords.feminineTeens.14", "أربع عشرة"),
-      t("numberToWords.feminineTeens.15", "خمس عشرة"),
-      t("numberToWords.feminineTeens.16", "ست عشرة"),
-      t("numberToWords.feminineTeens.17", "سبع عشرة"),
-      t("numberToWords.feminineTeens.18", "ثماني عشرة"),
-      t("numberToWords.feminineTeens.19", "تسع عشرة")
+      t("numberToWords.feminineTeens.11"),
+      t("numberToWords.feminineTeens.12"),
+      t("numberToWords.feminineTeens.13"),
+      t("numberToWords.feminineTeens.14"),
+      t("numberToWords.feminineTeens.15"),
+      t("numberToWords.feminineTeens.16"),
+      t("numberToWords.feminineTeens.17"),
+      t("numberToWords.feminineTeens.18"),
+      t("numberToWords.feminineTeens.19")
     ];
 
     this.hundreds = [
-      t("numberToWords.hundreds.0", ""),
-      t("numberToWords.hundreds.1", "مائة"),
-      t("numberToWords.hundreds.2", "مئتان"),
-      t("numberToWords.hundreds.3", "ثلاثمائة"),
-      t("numberToWords.hundreds.4", "أربعمائة"),
-      t("numberToWords.hundreds.5", "خمسمائة"),
-      t("numberToWords.hundreds.6", "ستمائة"),
-      t("numberToWords.hundreds.7", "سبعمائة"),
-      t("numberToWords.hundreds.8", "ثمانمائة"),
-      t("numberToWords.hundreds.9", "تسعمائة")
+      t("numberToWords.hundreds.0"),
+      t("numberToWords.hundreds.1"),
+      t("numberToWords.hundreds.2"),
+      t("numberToWords.hundreds.3"),
+      t("numberToWords.hundreds.4"),
+      t("numberToWords.hundreds.5"),
+      t("numberToWords.hundreds.6"),
+      t("numberToWords.hundreds.7"),
+      t("numberToWords.hundreds.8"),
+      t("numberToWords.hundreds.9")
     ];
   }
 

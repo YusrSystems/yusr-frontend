@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { BranchesPage, NotFoundPage, NumbertoWordsService, ProtectedRoute, ThemeProvider, Toaster, TooltipProvider, UsersPage } from "yusr-ui";
+import { BaseApiService, BranchesPage, NotFoundPage, NumbertoWordsService, ProtectedRoute, ThemeProvider, Toaster, TooltipProvider, UsersPage, Validators, YusrApiHelper } from "yusr-ui";
 import AppLayout from "./appLayout";
 import { useAppSelector } from "./core/state/store";
 import BanksAccountsPage from "./features/accounts/banksAccountsPage";
@@ -37,7 +37,10 @@ function App()
   useEffect(() =>
   {
     NumbertoWordsService.init(t, i18n.language);
-  }, [t]);
+    YusrApiHelper.init(t);
+    BaseApiService.init(t);
+    Validators.init(t);
+  }, [t, i18n.language]);
 
   return <AppBody />;
 }
