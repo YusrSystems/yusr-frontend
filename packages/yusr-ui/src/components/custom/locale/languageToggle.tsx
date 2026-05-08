@@ -4,6 +4,11 @@ import { Button } from "../../pure/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../pure/dropdown-menu";
 import { SidebarMenuButton } from "../../pure/sidebar";
 
+const LANGUAGES = [{ code: "ar", label: "arabic" }, { code: "ur", label: "urdu" }, {
+  code: "en",
+  label: "english"
+}] as const;
+
 export function LanguageToggle({ variant = "icon" }: { variant?: "icon" | "sidebar"; })
 {
   const { t, i18n } = useTranslation("common");
@@ -14,9 +19,7 @@ export function LanguageToggle({ variant = "icon" }: { variant?: "icon" | "sideb
         { variant === "sidebar"
           ? (
             <SidebarMenuButton className="w-full justify-start gap-3 px-3 h-12">
-              <div className="relative flex items-center justify-center shrink-0 size-4">
-                <Globe className="h-4 w-4" />
-              </div>
+              <Globe className="h-4 w-4 shrink-0" />
               <span className="font-medium text-base ps-2">{ t("change_language") }</span>
             </SidebarMenuButton>
           )
@@ -29,19 +32,15 @@ export function LanguageToggle({ variant = "icon" }: { variant?: "icon" | "sideb
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          onClick={ () => i18n.changeLanguage("ar") }
-          className={ i18n.language === "ar" ? "bg-accent text-accent-foreground" : "" }
-        >
-          { t("arabic") }
-        </DropdownMenuItem>
-
-        <DropdownMenuItem
-          onClick={ () => i18n.changeLanguage("en") }
-          className={ i18n.language === "en" ? "bg-accent text-accent-foreground" : "" }
-        >
-          { t("english") }
-        </DropdownMenuItem>
+        { LANGUAGES.map(({ code, label }) => (
+          <DropdownMenuItem
+            key={ code }
+            onClick={ () => i18n.changeLanguage(code) }
+            className={ `flex items-center gap-2 ${i18n.language === code ? "bg-accent text-accent-foreground" : ""}` }
+          >
+            { t(label) }
+          </DropdownMenuItem>
+        )) }
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1,0 +1,51 @@
+{
+  "users": {
+    "title": "صارفین کا نظم",
+    "entityName": "صارف",
+    "addNewTitle": "نیا صارف شامل کریں",
+    "totalUsers": "کل صارفین",
+    "userId": "صارف نمبر",
+    "username": "صارف کا نام",
+    "isActive": "کیا صارف فعال ہے",
+    "active": "فعال",
+    "inactive": "غیر فعال",
+    "password": "پاس ورڈ",
+    "role": "کردار",
+    "branch": "برانچ",
+    "userStatus": "صارف کی حالت",
+    "usernameRequired": "براہ کرم صارف کا نام درج کریں",
+    "passwordRequired": "براہ کرم پاس ورڈ درج کریں",
+    "roleRequired": "براہ کرم کردار منتخب کریں",
+    "branchRequired": "براہ کرم برانچ منتخب کریں"
+  },
+
+  "roles": {
+    "title": "کرداروں کا نظم",
+    "entityName": "کردار",
+    "addNewTitle": "نیا کردار شامل کریں",
+    "totalRoles": "کل کردار",
+    "roleId": "کردار نمبر",
+    "roleName": "کردار کا نام",
+    "nameRequired": "براہ کرم کردار کے لیے نام منتخب کریں"
+  },
+
+  "branches": {
+    "title": "برانچوں کا نظم",
+    "entityName": "برانچ",
+    "addNewTitle": "نئی برانچ شامل کریں",
+    "totalBranches": "کل برانچیں",
+    "branchId": "برانچ نمبر",
+    "branchName": "برانچ کا نام",
+    "city": "شہر",
+    "street": "گلی",
+    "district": "علاقہ",
+    "buildingNumber": "عمارت نمبر",
+    "postalCode": "پوسٹل کوڈ",
+    "nameRequired": "برانچ کا نام درکار ہے",
+    "cityRequired": "براہ کرم شہر منتخب کریں",
+    "buildingNumberLength": "عمارت نمبر چار ہندسوں پر مشتمل ہونا چاہیے",
+    "buildingNumberNumeric": "عمارت نمبر صرف عددی ہونا چاہیے",
+    "postalCodeLength": "پوسٹل کوڈ پانچ ہندسوں پر مشتمل ہونا چاہیے",
+    "postalCodeNumeric": "پوسٹل کوڈ صرف عددی ہونا چاہیے"
+  }
+}

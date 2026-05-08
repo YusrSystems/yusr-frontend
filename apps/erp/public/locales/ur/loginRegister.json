@@ -1,0 +1,130 @@
+{
+  "login": {
+    "title": "خوش آمدید",
+    "subtitle": "اپنے اکاؤنٹ میں لاگ ان کریں",
+    "email": {
+      "label": "ای میل",
+      "placeholder": "m@example.com",
+      "required": "ای میل درکار ہے"
+    },
+    "username": {
+      "label": "صارف کا نام",
+      "placeholder": "صارف کا نام درج کریں",
+      "required": "صارف کا نام درکار ہے"
+    },
+    "password": {
+      "label": "پاس ورڈ",
+      "placeholder": "••••••••",
+      "required": "پاس ورڈ درکار ہے"
+    },
+    "rememberMe": "مجھے یاد رکھیں",
+    "button": "لاگ ان کریں",
+    "noAccount": "کیا آپ کے پاس اکاؤنٹ نہیں ہے؟",
+    "registerLink": "رجسٹر کریں"
+  },
+
+  "register": {
+    "title": "نیا اکاؤنٹ بنائیں",
+    "subtitle": "شروع کرنے کے لیے اپنی کمپنی کی تفصیلات درج کریں",
+    "steps": [
+      "کمپنی کی معلومات",
+      "پتہ",
+      "اکاؤنٹ کی معلومات"
+    ],
+    "buttons": {
+      "previous": "پچھلا",
+      "next": "اگلا",
+      "create": "اکاؤنٹ بنائیں",
+      "login": "لاگ ان کریں"
+    },
+    "alreadyHaveAccount": "پہلے سے اکاؤنٹ ہے؟",
+    "validationError": "ان پٹ میں خرابی، براہ کرم مطلوبہ فیلڈز کا جائزہ لیں",
+    "companyInfo": {
+      "title": "کمپنی کی معلومات",
+      "companyName": {
+        "label": "کمپنی کا نام",
+        "placeholder": "کمپنی کا نام درج کریں",
+        "required": "کمپنی کا نام درکار ہے"
+      },
+      "email": {
+        "label": "کمپنی ای میل",
+        "placeholder": "company@example.com",
+        "required": "ای میل درکار ہے",
+        "invalid": "غلط ای میل فارمیٹ"
+      },
+      "branchName": {
+        "label": "برانچ کا نام",
+        "placeholder": "برانچ کا نام درج کریں",
+        "required": "برانچ کا نام درکار ہے"
+      },
+      "companyBusinessCategory": {
+        "label": "کاروباری سرگرمی",
+        "placeholder": "مثال: خوردہ، ریستوران، ٹیکنالوجی...",
+        "required": "کاروباری سرگرمی درکار ہے"
+      },
+      "companyPhone": {
+        "label": "کمپنی فون نمبر",
+        "placeholder": "05xxxxxxxx",
+        "required": "کمپنی فون نمبر درکار ہے"
+      },
+      "crn": {
+        "label": "تجارتی رجسٹریشن (CRN)",
+        "placeholder": "تجارتی رجسٹریشن نمبر درج کریں",
+        "required": "تجارتی رجسٹریشن درکار ہے"
+      },
+      "vatNumber": {
+        "label": "ٹیکس نمبر (VAT)",
+        "placeholder": "ٹیکس نمبر درج کریں",
+        "required": "ٹیکس نمبر درکار ہے"
+      },
+      "currency": {
+        "label": "کرنسی",
+        "required": "کرنسی درکار ہے"
+      }
+    },
+    "addressInfo": {
+      "title": "پتہ",
+      "city": {
+        "label": "شہر",
+        "required": "شہر درکار ہے"
+      },
+      "street": {
+        "label": "گلی",
+        "placeholder": "گلی کا نام"
+      },
+      "district": {
+        "label": "علاقہ",
+        "placeholder": "علاقے کا نام"
+      },
+      "buildingNumber": {
+        "label": "عمارت نمبر",
+        "placeholder": "عمارت نمبر"
+      },
+      "postalCode": {
+        "label": "پوسٹل کوڈ",
+        "placeholder": "پوسٹل کوڈ"
+      }
+    },
+    "accountInfo": {
+      "title": "اکاؤنٹ کی معلومات",
+      "username": {
+        "label": "صارف کا نام",
+        "placeholder": "صارف کا نام درج کریں",
+        "required": "صارف کا نام درکار ہے"
+      },
+      "password": {
+        "label": "صارف پاس ورڈ",
+        "placeholder": "••••••••",
+        "required": "پاس ورڈ درکار ہے"
+      },
+      "acceptPolicies": "میں اتفاق کرتا ہوں",
+      "termsAndPrivacy": "خدمات کی شرائط اور رازداری کی پالیسی",
+      "acceptPoliciesError": "جاری رکھنے کے لیے آپ کو خدمات کی شرائط اور رازداری کی پالیسی سے اتفاق کرنا ہوگا"
+    },
+    "welcome": {
+      "title": "یُسْر میں خوش آمدید",
+      "subtitle": "آپ کا اکاؤنٹ کامیابی سے بن گیا ہے۔ سب کچھ تیار ہے۔",
+      "button": "لاگ ان کریں"
+    }
+  }
+}
