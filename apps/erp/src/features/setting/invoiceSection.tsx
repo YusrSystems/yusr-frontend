@@ -85,8 +85,8 @@ export default function InvoiceSection()
       </FieldGroup>
 
       <EInvoicingRegisterButton
-        title="test"
-        subtitle="test"
+        title="Testing"
+        subtitle="sandbox"
         linkType={ EInvoicingEnvironmentType.Test }
         linked={ formData.eInvoicingEnvironmentType === EInvoicingEnvironmentType.Test }
         onFinish={ () => handleChange({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Test }) }

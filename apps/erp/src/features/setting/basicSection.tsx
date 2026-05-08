@@ -60,7 +60,7 @@ export default function BasicSection()
         </Avatar>
 
         <div className="flex flex-col gap-3 text-center md:text-right">
-          <h3 className="text-lg font-bold">{t("settings.companyLogo")}</h3>
+          <h3 className="text-lg font-bold text-start">{t("settings.companyLogo")}</h3>
           <p className="text-sm text-muted-foreground">{t("settings.companyLogoDescription")}</p>
 
           <div className="flex flex-wrap gap-2 justify-center md:justify-start mt-2">
