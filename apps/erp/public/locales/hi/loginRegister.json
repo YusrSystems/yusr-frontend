@@ -1,0 +1,130 @@
+{
+  "login": {
+    "title": "फिर से स्वागत है",
+    "subtitle": "अपने खाते में लॉगिन करें",
+    "email": {
+      "label": "ईमेल",
+      "placeholder": "m@example.com",
+      "required": "ईमेल आवश्यक है"
+    },
+    "username": {
+      "label": "उपयोगकर्ता नाम",
+      "placeholder": "उपयोगकर्ता नाम दर्ज करें",
+      "required": "उपयोगकर्ता नाम आवश्यक है"
+    },
+    "password": {
+      "label": "पासवर्ड",
+      "placeholder": "••••••••",
+      "required": "पासवर्ड आवश्यक है"
+    },
+    "rememberMe": "मुझे याद रखें",
+    "button": "लॉगिन करें",
+    "noAccount": "अभी तक कोई खाता नहीं है?",
+    "registerLink": "पंजीकरण करें"
+  },
+
+  "register": {
+    "title": "नया खाता बनाएँ",
+    "subtitle": "शुरू करने के लिए अपनी कंपनी का विवरण दर्ज करें",
+    "steps": [
+      "कंपनी की जानकारी",
+      "पता",
+      "खाते की जानकारी"
+    ],
+    "buttons": {
+      "previous": "पिछला",
+      "next": "अगला",
+      "create": "खाता बनाएँ",
+      "login": "लॉगिन करें"
+    },
+    "alreadyHaveAccount": "पहले से खाता है?",
+    "validationError": "इनपुट त्रुटि, कृपया आवश्यक फ़ील्ड की समीक्षा करें",
+    "companyInfo": {
+      "title": "कंपनी की जानकारी",
+      "companyName": {
+        "label": "कंपनी का नाम",
+        "placeholder": "कंपनी का नाम दर्ज करें",
+        "required": "कंपनी का नाम आवश्यक है"
+      },
+      "email": {
+        "label": "कंपनी ईमेल",
+        "placeholder": "company@example.com",
+        "required": "ईमेल आवश्यक है",
+        "invalid": "गलत ईमेल प्रारूप"
+      },
+      "branchName": {
+        "label": "शाखा का नाम",
+        "placeholder": "शाखा का नाम दर्ज करें",
+        "required": "शाखा का नाम आवश्यक है"
+      },
+      "companyBusinessCategory": {
+        "label": "व्यावसायिक गतिविधि",
+        "placeholder": "उदाहरण: खुदरा, रेस्तरां, प्रौद्योगिकी...",
+        "required": "व्यावसायिक गतिविधि आवश्यक है"
+      },
+      "companyPhone": {
+        "label": "कंपनी फोन नंबर",
+        "placeholder": "05xxxxxxxx",
+        "required": "कंपनी फोन नंबर आवश्यक है"
+      },
+      "crn": {
+        "label": "वाणिज्यिक पंजीकरण (सीआरएन)",
+        "placeholder": "वाणिज्यिक पंजीकरण संख्या दर्ज करें",
+        "required": "वाणिज्यिक पंजीकरण आवश्यक है"
+      },
+      "vatNumber": {
+        "label": "कर संख्या (वैट)",
+        "placeholder": "कर संख्या दर्ज करें",
+        "required": "कर संख्या आवश्यक है"
+      },
+      "currency": {
+        "label": "मुद्रा",
+        "required": "मुद्रा आवश्यक है"
+      }
+    },
+    "addressInfo": {
+      "title": "पता",
+      "city": {
+        "label": "शहर",
+        "required": "शहर आवश्यक है"
+      },
+      "street": {
+        "label": "गली",
+        "placeholder": "गली का नाम"
+      },
+      "district": {
+        "label": "क्षेत्र",
+        "placeholder": "क्षेत्र का नाम"
+      },
+      "buildingNumber": {
+        "label": "भवन संख्या",
+        "placeholder": "भवन संख्या"
+      },
+      "postalCode": {
+        "label": "पोस्टल कोड",
+        "placeholder": "पोस्टल कोड"
+      }
+    },
+    "accountInfo": {
+      "title": "खाते की जानकारी",
+      "username": {
+        "label": "उपयोगकर्ता नाम",
+        "placeholder": "उपयोगकर्ता नाम दर्ज करें",
+        "required": "उपयोगकर्ता नाम आवश्यक है"
+      },
+      "password": {
+        "label": "उपयोगकर्ता पासवर्ड",
+        "placeholder": "••••••••",
+        "required": "पासवर्ड आवश्यक है"
+      },
+      "acceptPolicies": "मैं सहमति देता हूँ",
+      "termsAndPrivacy": "सेवा की शर्तें और गोपनीयता नीति",
+      "acceptPoliciesError": "जारी रखने के लिए आपको सेवा की शर्तों और गोपनीयता नीति से सहमत होना होगा"
+    },
+    "welcome": {
+      "title": "Yusr में आपका स्वागत है",
+      "subtitle": "आपका खाता सफलतापूर्वक बन गया है। सब कुछ तैयार है।",
+      "button": "लॉगिन करें"
+    }
+  }
+}

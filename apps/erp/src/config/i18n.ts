@@ -10,7 +10,7 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: "ar",
-    supportedLngs: ["ar", "en", "ur"],
+    supportedLngs: ["ar", "en", "ur", "bn", "hi"],
     ns: [...yusrNamespaces, "landing"],
     defaultNS: "common",
 

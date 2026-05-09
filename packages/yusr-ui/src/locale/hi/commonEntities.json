@@ -1,0 +1,51 @@
+{
+  "users": {
+    "title": "उपयोगकर्ता प्रबंधन",
+    "entityName": "उपयोगकर्ता",
+    "addNewTitle": "नया उपयोगकर्ता जोड़ें",
+    "totalUsers": "कुल उपयोगकर्ता",
+    "userId": "उपयोगकर्ता आईडी",
+    "username": "उपयोगकर्ता नाम",
+    "isActive": "क्या उपयोगकर्ता सक्रिय है",
+    "active": "सक्रिय",
+    "inactive": "निष्क्रिय",
+    "password": "पासवर्ड",
+    "role": "भूमिका",
+    "branch": "शाखा",
+    "userStatus": "उपयोगकर्ता की स्थिति",
+    "usernameRequired": "कृपया उपयोगकर्ता नाम दर्ज करें",
+    "passwordRequired": "कृपया पासवर्ड दर्ज करें",
+    "roleRequired": "कृपया एक भूमिका चुनें",
+    "branchRequired": "कृपया एक शाखा चुनें"
+  },
+
+  "roles": {
+    "title": "भूमिका प्रबंधन",
+    "entityName": "भूमिका",
+    "addNewTitle": "नई भूमिका जोड़ें",
+    "totalRoles": "कुल भूमिकाएँ",
+    "roleId": "भूमिका आईडी",
+    "roleName": "भूमिका का नाम",
+    "nameRequired": "कृपया भूमिका के लिए एक नाम चुनें"
+  },
+
+  "branches": {
+    "title": "शाखा प्रबंधन",
+    "entityName": "शाखा",
+    "addNewTitle": "नई शाखा जोड़ें",
+    "totalBranches": "कुल शाखाएँ",
+    "branchId": "शाखा आईडी",
+    "branchName": "शाखा का नाम",
+    "city": "शहर",
+    "street": "गली",
+    "district": "क्षेत्र",
+    "buildingNumber": "भवन संख्या",
+    "postalCode": "पोस्टल कोड",
+    "nameRequired": "शाखा का नाम आवश्यक है",
+    "cityRequired": "कृपया एक शहर चुनें",
+    "buildingNumberLength": "भवन संख्या 4 अंकों की होनी चाहिए",
+    "buildingNumberNumeric": "भवन संख्या केवल संख्यात्मक होनी चाहिए",
+    "postalCodeLength": "पोस्टल कोड 5 अंकों का होना चाहिए",
+    "postalCodeNumeric": "पोस्टल कोड केवल संख्यात्मक होना चाहिए"
+  }
+}

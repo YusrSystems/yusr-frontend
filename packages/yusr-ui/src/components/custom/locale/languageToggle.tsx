@@ -7,6 +7,12 @@ import { SidebarMenuButton } from "../../pure/sidebar";
 const LANGUAGES = [{ code: "ar", label: "arabic" }, { code: "ur", label: "urdu" }, {
   code: "en",
   label: "english"
+}, {
+  code: "bn",
+  label: "bengali"
+}, {
+  code: "hi",
+  label: "hindi"
 }] as const;
 
 export function LanguageToggle({ variant = "icon" }: { variant?: "icon" | "sidebar"; })

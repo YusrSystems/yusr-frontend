@@ -1,0 +1,130 @@
+{
+  "login": {
+    "title": "আবারও স্বাগতম",
+    "subtitle": "আপনার অ্যাকাউন্টে লগইন করুন",
+    "email": {
+      "label": "ইমেল",
+      "placeholder": "m@example.com",
+      "required": "ইমেল প্রয়োজন"
+    },
+    "username": {
+      "label": "ব্যবহারকারীর নাম",
+      "placeholder": "ব্যবহারকারীর নাম লিখুন",
+      "required": "ব্যবহারকারীর নাম প্রয়োজন"
+    },
+    "password": {
+      "label": "পাসওয়ার্ড",
+      "placeholder": "••••••••",
+      "required": "পাসওয়ার্ড প্রয়োজন"
+    },
+    "rememberMe": "আমাকে মনে রাখুন",
+    "button": "লগইন করুন",
+    "noAccount": "এখনও কি অ্যাকাউন্ট নেই?",
+    "registerLink": "নিবন্ধন করুন"
+  },
+
+  "register": {
+    "title": "নতুন অ্যাকাউন্ট তৈরি করুন",
+    "subtitle": "শুরু করতে আপনার কোম্পানির তথ্য লিখুন",
+    "steps": [
+      "কোম্পানির তথ্য",
+      "ঠিকানা",
+      "অ্যাকাউন্টের তথ্য"
+    ],
+    "buttons": {
+      "previous": "পূর্ববর্তী",
+      "next": "পরবর্তী",
+      "create": "অ্যাকাউন্ট তৈরি করুন",
+      "login": "লগইন করুন"
+    },
+    "alreadyHaveAccount": "ইতিমধ্যে একটি অ্যাকাউন্ট আছে?",
+    "validationError": "ইনপুট ত্রুটি, অনুগ্রহ করে প্রয়োজনীয় ফিল্ডগুলো পর্যালোচনা করুন",
+    "companyInfo": {
+      "title": "কোম্পানির তথ্য",
+      "companyName": {
+        "label": "কোম্পানির নাম",
+        "placeholder": "কোম্পানির নাম লিখুন",
+        "required": "কোম্পানির নাম প্রয়োজন"
+      },
+      "email": {
+        "label": "কোম্পানির ইমেল",
+        "placeholder": "company@example.com",
+        "required": "ইমেল প্রয়োজন",
+        "invalid": "ভুল ইমেল ফরম্যাট"
+      },
+      "branchName": {
+        "label": "শাখার নাম",
+        "placeholder": "শাখার নাম লিখুন",
+        "required": "শাখার নাম প্রয়োজন"
+      },
+      "companyBusinessCategory": {
+        "label": "ব্যবসায়িক কার্যকলাপ",
+        "placeholder": "উদাহরণ: খুচরা, রেস্তোরাঁ, প্রযুক্তি...",
+        "required": "ব্যবসায়িক কার্যকলাপ প্রয়োজন"
+      },
+      "companyPhone": {
+        "label": "কোম্পানির ফোন নম্বর",
+        "placeholder": "05xxxxxxxx",
+        "required": "কোম্পানির ফোন নম্বর প্রয়োজন"
+      },
+      "crn": {
+        "label": "বাণিজ্যিক নিবন্ধন (CRN)",
+        "placeholder": "বাণিজ্যিক নিবন্ধন নম্বর লিখুন",
+        "required": "বাণিজ্যিক নিবন্ধন প্রয়োজন"
+      },
+      "vatNumber": {
+        "label": "ট্যাক্স নম্বর (VAT)",
+        "placeholder": "ট্যাক্স নম্বর লিখুন",
+        "required": "ট্যাক্স নম্বর প্রয়োজন"
+      },
+      "currency": {
+        "label": "মুদ্রা",
+        "required": "মুদ্রা প্রয়োজন"
+      }
+    },
+    "addressInfo": {
+      "title": "ঠিকানা",
+      "city": {
+        "label": "শহর",
+        "required": "শহর প্রয়োজন"
+      },
+      "street": {
+        "label": "রাস্তা",
+        "placeholder": "রাস্তার নাম"
+      },
+      "district": {
+        "label": "এলাকা",
+        "placeholder": "এলাকার নাম"
+      },
+      "buildingNumber": {
+        "label": "বিল্ডিং নম্বর",
+        "placeholder": "বিল্ডিং নম্বর"
+      },
+      "postalCode": {
+        "label": "পোস্টাল কোড",
+        "placeholder": "পোস্টাল কোড"
+      }
+    },
+    "accountInfo": {
+      "title": "অ্যাকাউন্টের তথ্য",
+      "username": {
+        "label": "ব্যবহারকারীর নাম",
+        "placeholder": "ব্যবহারকারীর নাম লিখুন",
+        "required": "ব্যবহারকারীর নাম প্রয়োজন"
+      },
+      "password": {
+        "label": "ব্যবহারকারীর পাসওয়ার্ড",
+        "placeholder": "••••••••",
+        "required": "পাসওয়ার্ড প্রয়োজন"
+      },
+      "acceptPolicies": "আমি সম্মতি জানাচ্ছি",
+      "termsAndPrivacy": "সেবার শর্তাবলী ও গোপনীয়তা নীতি",
+      "acceptPoliciesError": "চালিয়ে যেতে আপনাকে সেবার শর্তাবলী ও গোপনীয়তা নীতিতে সম্মতি জানাতে হবে"
+    },
+    "welcome": {
+      "title": "Yusr-এ স্বাগতম",
+      "subtitle": "আপনার অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে। সবকিছু প্রস্তুত।",
+      "button": "লগইন করুন"
+    }
+  }
+}
