@@ -25,7 +25,9 @@ export function LanguageToggle({ variant = "icon" }: { variant?: "icon" | "sideb
         { variant === "sidebar"
           ? (
             <SidebarMenuButton className="w-full justify-start gap-3 px-3 h-12">
-              <Globe className="h-4 w-4 shrink-0" />
+              <div className="relative flex items-center justify-center shrink-0 size-4">
+                <Globe className="h-4 w-4" />
+              </div>
               <span className="font-medium text-base ps-2">{ t("change_language") }</span>
             </SidebarMenuButton>
           )
