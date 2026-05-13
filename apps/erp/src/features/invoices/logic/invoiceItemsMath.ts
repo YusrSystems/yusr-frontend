@@ -73,7 +73,7 @@ export default class InvoiceItemsMath
 
   public static CalcInvoiceTaxInclusivePrice(invoiceItems: InvoiceItem[])
   {
-    return invoiceItems.reduce(
+    let price = invoiceItems.reduce(
       (sum, i) =>
         sum
         + InvoiceItemsMath.CalcTaxInclusiveTotalPrice(
@@ -82,7 +82,9 @@ export default class InvoiceItemsMath
           i.quantity ?? 0
         ),
       0
-    ) ?? 0;
+    );
+    price = price == undefined? 0 : Number(price.toFixed(2));
+    return price;
   }
 
   public static CalcInvoiceItemProfit(invoiceItem: InvoiceItem): InvoiceItemProfitResult
