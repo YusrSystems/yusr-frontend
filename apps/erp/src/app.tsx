@@ -38,7 +38,7 @@ function App()
   useEffect(() =>
   {
     NumbertoWordsService.init(t, i18n.language);
-    YusrApiHelper.init(t);
+    YusrApiHelper.init(t, i18n.language);
     BaseApiService.init(t);
     Validators.init(t);
   }, [t, i18n.language]);
