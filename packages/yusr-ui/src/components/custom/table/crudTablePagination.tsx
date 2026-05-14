@@ -35,7 +35,7 @@ export function CrudTablePagination({ pageSize, totalNumber, currentPage, onPage
   };
 
   return (
-    <div className="p-4 border-t bg-muted flex items-center justify-between text-sm text-muted-foreground">
+    <div className="p-4 border-t bg-muted flex items-center justify-between text-sm text-muted-foreground sticky bottom-0">
       <span className="w-50">
         { " " }
         { t("pagination.results", { start, end, total: totalNumber }) }
