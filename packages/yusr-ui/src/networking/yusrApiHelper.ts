@@ -6,10 +6,12 @@ import { type RequestResult, ResultStatus } from "../types/requestResult";
 export class YusrApiHelper
 {
   private static t: TFunction<"common"> | null = null;
+  private static currentLanguage: string = "ar";
 
-  public static init(t: TFunction<"common">)
+  public static init(t: TFunction, language: string)
   {
     this.t = t;
+    this.currentLanguage = language;
   }
 
   private static getT(): TFunction<"common">
@@ -21,9 +23,23 @@ export class YusrApiHelper
     return this.t;
   }
 
+  private static getLanguage(): string
+  {
+    if (!this.currentLanguage)
+    {
+      throw new Error("YusrApiHelper not initialized. Call YusrApiHelper.init(t, i18n.language) first.");
+    }
+    return this.currentLanguage;
+  }
+
   static async Get<T>(url: string, options?: RequestInit): Promise<RequestResult<T>>
   {
-    const response = await fetch(url, { method: "GET", credentials: "include", ...options });
+    const response = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+      ...options,
+      headers: this.getHeaders(options?.headers)
+    });
     return YusrApiHelper.handleResponse<T>(response);
   }
 
@@ -35,17 +51,15 @@ export class YusrApiHelper
   ): Promise<RequestResult<T>>
   {
     const isFormData = body instanceof FormData;
-    const headers = {
-      ...(options?.headers || {}),
-      ...(!isFormData && body ? { "Content-Type": "application/json" } : {})
-    };
-
     const response = await fetch(url, {
       method: "POST",
       credentials: "include",
-      headers,
-      body: isFormData ? body : JSON.stringify(body),
-      ...options
+      ...options,
+      headers: this.getHeaders({
+        ...(options?.headers || {}),
+        ...(!isFormData && body ? { "Content-Type": "application/json" } : {})
+      }),
+      body: isFormData ? body : JSON.stringify(body)
     });
     return YusrApiHelper.handleResponse<T>(response, successMessage);
   }
@@ -58,24 +72,27 @@ export class YusrApiHelper
   ): Promise<RequestResult<T>>
   {
     const isFormData = body instanceof FormData;
-    const headers = {
-      ...(options?.headers || {}),
-      ...(!isFormData && body ? { "Content-Type": "application/json" } : {})
-    };
-
     const response = await fetch(url, {
       method: "PUT",
       credentials: "include",
-      headers,
-      body: isFormData ? body : JSON.stringify(body),
-      ...options
+      ...options,
+      headers: this.getHeaders({
+        ...(options?.headers || {}),
+        ...(!isFormData && body ? { "Content-Type": "application/json" } : {})
+      }),
+      body: isFormData ? body : JSON.stringify(body)
     });
     return YusrApiHelper.handleResponse<T>(response, successMessage);
   }
 
   static async Delete<T>(url: string, options?: RequestInit, successMessage?: string): Promise<RequestResult<T>>
   {
-    const response = await fetch(url, { method: "DELETE", credentials: "include", ...options });
+    const response = await fetch(url, {
+      method: "DELETE",
+      credentials: "include",
+      ...options,
+      headers: this.getHeaders(options?.headers)
+    });
     return YusrApiHelper.handleResponse<T>(response, successMessage);
   }
 
@@ -83,17 +100,15 @@ export class YusrApiHelper
   {
     const t = this.getT();
     const isFormData = body instanceof FormData;
-    const headers = {
-      ...(options?.headers || {}),
-      ...(!isFormData && body ? { "Content-Type": "application/json" } : {})
-    };
-
     const response = await fetch(url, {
       method: "POST",
       credentials: "include",
-      headers,
-      body: isFormData ? body : JSON.stringify(body),
-      ...options
+      ...options,
+      headers: this.getHeaders({
+        ...(options?.headers || {}),
+        ...(!isFormData && body ? { "Content-Type": "application/json" } : {})
+      }),
+      body: isFormData ? body : JSON.stringify(body)
     });
 
     if (!response.ok)
@@ -106,6 +121,14 @@ export class YusrApiHelper
     }
 
     return await response.blob();
+  }
+
+  private static getHeaders(extra?: HeadersInit): HeadersInit
+  {
+    return {
+      "Accept-Language": this.getLanguage() || document.documentElement.lang || "ar",
+      ...(extra || {})
+    };
   }
 
   private static async handleResponse<T>(response: Response, successMessage?: string): Promise<RequestResult<T>>
