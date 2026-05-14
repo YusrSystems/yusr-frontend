@@ -243,7 +243,8 @@
     "without": "Without",
     "selectPricingMethod": "Select pricing method",
     "deleteItem": "Delete item",
-    "deleteVoucher": "Delete voucher"
+    "deleteVoucher": "Delete voucher",
+    "invoiceSummary": "Invoice Summary"
   },
 
   "paymentMethods": {

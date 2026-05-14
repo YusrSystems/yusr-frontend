@@ -243,7 +243,8 @@
     "without": "ছাড়া",
     "selectPricingMethod": "মূল্য নির্ধারণের পদ্ধতি নির্বাচন করুন",
     "deleteItem": "আইটেম মুছুন",
-    "deleteVoucher": "ভাউচার মুছুন"
+    "deleteVoucher": "ভাউচার মুছুন",
+    "invoiceSummary": "চালানের সারাংশ"
   },
 
   "paymentMethods": {

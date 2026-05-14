@@ -243,7 +243,8 @@
     "without": "بدون",
     "selectPricingMethod": "اختر طريقة التسعير",
     "deleteItem": "حذف المادة",
-    "deleteVoucher": "حذف السند"
+    "deleteVoucher": "حذف السند",
+    "invoiceSummary": "ملخص الفاتورة"
   },
 
   "paymentMethods": {

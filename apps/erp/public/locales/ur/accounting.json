@@ -197,7 +197,7 @@
     "importCustomsPaid": "کسٹمز ادا شدہ ٹیکس قابل درآمد",
     "exportInvoice": "ایکسپورٹ انوائس",
     "notes": "نوٹس",
-    "globalSettlement":"ٹیکس سمیت عالمی تصفیہ کی رقم",
+    "globalSettlement": "ٹیکس سمیت عالمی تصفیہ کی رقم",
     "totalBeforeTax": "ٹیکس سے پہلے کل",
     "totalTaxes": "کل ٹیکسز",
     "totalAfterTax": "ٹیکس کے بعد کل",
@@ -243,7 +243,8 @@
     "without": "بغیر",
     "selectPricingMethod": "قیمت کا طریقہ منتخب کریں",
     "deleteItem": "آئٹم حذف کریں",
-    "deleteVoucher": "واؤچر حذف کریں"
+    "deleteVoucher": "واؤچر حذف کریں",
+    "invoiceSummary": "انوائس کا خلاصہ"
   },
 
   "paymentMethods": {

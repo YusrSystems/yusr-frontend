@@ -53,7 +53,7 @@ export default function InvoiceProfitDialog()
         type="button"
         variant="outline"
         onClick={ () => setOpen(true) }
-        className="gap-2 p-6.5 text-green-500 h-full"
+        className="text-green-700 dark:text-green-400 bg-green-500/20 dark:bg-green-500/20 w-full"
       >
         <Banknote className="h-4 w-4" />
         { t("invoices.invoiceProfit") }

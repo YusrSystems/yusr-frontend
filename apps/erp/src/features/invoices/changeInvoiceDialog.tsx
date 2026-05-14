@@ -1,4 +1,4 @@
-import { BanknoteArrowDown, BanknoteArrowUp, Box, CheckCircle2, FolderKanban, Siren } from "lucide-react";
+import { BanknoteArrowUp, Box, CheckCircle2, FolderKanban, Siren } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps, DialogMode, IEntityState } from "yusr-ui";
@@ -18,7 +18,6 @@ import InvoiceBasicTab from "./presentation/basic/invoiceBasicTab";
 import InvoiceCostsTab from "./presentation/costs/invoiceCostsTab";
 import AlertConvertDialog from "./presentation/dialogs/alertConvertDialog";
 import InvoiceFilesTab from "./presentation/files/invoiceFilesTab";
-import InvoicePaymentsTab from "./presentation/payments/invoicePaymentsTab";
 import InvoicePolicyTab from "./presentation/policy/invoicePolicyTab";
 
 export type InvoiceSliceType = ReturnType<typeof InvoiceSlice.create>;
@@ -311,14 +310,6 @@ export default function ChangeInvoiceDialog({
             active: true,
             content: <InvoiceBasicTab />
           },
-          ...(formData.type !== InvoiceType.Quotation
-            ? [{
-              label: t("invoices.paymentVouchers"),
-              icon: BanknoteArrowDown,
-              active: false,
-              content: <InvoicePaymentsTab />
-            }]
-            : []),
           ...(formData.type !== InvoiceType.Quotation
             ? [{
               label: t("invoices.invoiceCosts"),

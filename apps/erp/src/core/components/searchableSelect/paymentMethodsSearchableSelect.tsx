@@ -33,6 +33,8 @@ export default function PaymentMethodsSearchableSelect(
         filter: PaymentMethodSlice.entityActions.filter,
         refresh: PaymentMethodSlice.entityActions.refresh
       } }
+      allowAdd={ false }
+      allowUpdate={ false }
       changeDialog={ ChangePaymentMethodDialog }
       changeDialogProps={ {
         filterDataOutside: true

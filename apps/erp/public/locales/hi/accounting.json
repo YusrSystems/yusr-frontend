@@ -243,7 +243,8 @@
     "without": "बिना",
     "selectPricingMethod": "मूल्य निर्धारण विधि चुनें",
     "deleteItem": "वस्तु हटाएँ",
-    "deleteVoucher": "वाउचर हटाएँ"
+    "deleteVoucher": "वाउचर हटाएँ",
+    "invoiceSummary": "चालान सारांश"
   },
 
   "paymentMethods": {

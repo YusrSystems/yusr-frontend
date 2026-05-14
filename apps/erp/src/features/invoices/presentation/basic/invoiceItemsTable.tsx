@@ -1,7 +1,7 @@
-import { PercentIcon, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { CurrencyIcon, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextField } from "yusr-ui";
+import { NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextField } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
 import { InvoiceType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
@@ -65,31 +65,27 @@ export default function InvoiceItemsTable()
   }
   return (
     <div className="w-full border border-border rounded-lg shadow-sm bg-background">
-      <div className="max-h-100 overflow-y-auto overflow-x-auto 
-        [&::-webkit-scrollbar]:w-1.5
-        [&::-webkit-scrollbar-thumb]:bg-muted-foreground/50
-        [&::-webkit-scrollbar-thumb]:rounded-full
-      ">
+      <div className="max-h-100 overflow-y-auto overflow-x-auto">
         <table className="relative w-full text-sm text-right">
           <thead className="sticky top-0 bg-muted z-50 border-b border-border">
             <tr>
               <th className="p-3 font-semibold w-16 text-center text-muted-foreground">{ t("invoices.number") }</th>
               <th className="p-3 font-semibold text-start w-40 ">{ t("invoices.item") }</th>
-              <th className="p-3 font-semibold text-start w-20">{ t("invoices.pricingMethod") }</th>
-              <th className="p-3 font-semibold text-start w-25 ">{ t("invoices.cost") }</th>
-              <th className="p-3 font-semibold text-start w-25">{ t("invoices.quantity") }</th>
-              <th className="p-3 font-semibold text-start w-30 ">{ t("invoices.priceWithoutTax") }</th>
-              <th className="p-3 font-semibold text-start w-30 ">{ t("invoices.taxPercentage") }</th>
-              <th className="p-3 font-semibold text-start w-30 ">{ t("invoices.priceAfterTax") }</th>
+              <th className="p-3 font-semibold text-start w-20 min-w-20">{ t("invoices.pricingMethod") }</th>
+              <th className="p-3 font-semibold text-start w-25 min-w-25">{ t("invoices.cost") }</th>
+              <th className="p-3 font-semibold text-start w-25 min-w-25">{ t("invoices.quantity") }</th>
+              <th className="p-3 font-semibold text-start w-30 min-w-30">{ t("invoices.priceWithoutTax") }</th>
+              <th className="p-3 font-semibold text-start w-18 min-w-18">{ t("invoices.taxPercentage") }</th>
+              <th className="p-3 font-semibold text-start w-30 min-w-30">{ t("invoices.priceAfterTax") }</th>
               { SystemPermissions.hasAuth(
                 authState.loggedInUser?.role?.permissions ?? [],
                 SystemPermissionsResources.InvoiceAddSettlement,
                 SystemPermissionsActions.Get
-              ) && <th className="p-3 font-semibold text-start w-25 ">{ t("invoices.settlement") }</th> }
+              ) && <th className="p-3 font-semibold text-start w-25 min-w-25">{ t("invoices.settlement") }</th> }
 
-              <th className="p-3 font-semibold text-start w-30 ">{ t("invoices.finalCost") }</th>
-              <th className="p-3 font-semibold text-start w-30 ">{ t("invoices.finalPriceWithoutTax") }</th>
-              <th className="p-3 font-semibold text-start w-30 ">{ t("invoices.finalPriceWithTax") }</th>
+              <th className="p-3 font-semibold text-start w-35 min-w-35">{ t("invoices.finalCost") }</th>
+              <th className="p-3 font-semibold text-start w-35 min-w-35">{ t("invoices.finalPriceWithoutTax") }</th>
+              <th className="p-3 font-semibold text-start w-35 min-w-35">{ t("invoices.finalPriceWithTax") }</th>
               { SystemPermissions.hasAuth(
                 authState.loggedInUser?.role?.permissions ?? [],
                 SystemPermissionsResources.InvoiceShowItemProfit,
@@ -138,7 +134,7 @@ export default function InvoiceItemsTable()
                   </td>
 
                   <td className="px-2 pt-2">
-                    <NumberField disabled label="" value={ row.cost || "0" } currency={ <CurrencyIcon /> } />
+                    <NumberField disabled label="" value={ row.cost || "0" } />
                   </td>
 
                   <td className="px-2 pt-2">
@@ -161,7 +157,6 @@ export default function InvoiceItemsTable()
                       value={ row.taxExclusivePrice || "0" }
                       onChange={ () =>
                       {} }
-                      currency={ <CurrencyIcon /> }
                     />
                   </td>
 
@@ -170,7 +165,6 @@ export default function InvoiceItemsTable()
                       label=""
                       value={ row.totalTaxesPerc || "0" }
                       disabled
-                      currency={ <PercentIcon className="w-4 h-4" /> }
                     />
                   </td>
 
@@ -187,7 +181,6 @@ export default function InvoiceItemsTable()
                             newPrice: Number(newVal)
                           })
                         ) }
-                      currency={ <CurrencyIcon /> }
                     />
                   </td>
 
@@ -210,7 +203,6 @@ export default function InvoiceItemsTable()
                             })
                           );
                         } }
-                        currency={ <CurrencyIcon /> }
                       />
                     </td>
                   ) }
@@ -220,7 +212,6 @@ export default function InvoiceItemsTable()
                       label=""
                       value={ InvoiceItemsMath.CalcTotalCost(row.cost, row.quantity) || "0" }
                       disabled
-                      currency={ <CurrencyIcon /> }
                     />
                   </td>
 
@@ -229,7 +220,6 @@ export default function InvoiceItemsTable()
                       label=""
                       value={ row.taxExclusiveTotalPrice || "0" }
                       disabled
-                      currency={ <CurrencyIcon /> }
                     />
                   </td>
 
@@ -238,7 +228,6 @@ export default function InvoiceItemsTable()
                       label=""
                       value={ row.taxInclusiveTotalPrice || "0" }
                       disabled
-                      currency={ <CurrencyIcon /> }
                     />
                   </td>
 
