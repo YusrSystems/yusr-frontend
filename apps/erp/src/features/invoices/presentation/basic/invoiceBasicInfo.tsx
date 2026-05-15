@@ -126,6 +126,7 @@ export default function InvoiceBasicInfo()
         <StoresSearchableSelect
           id={ formData.storeId }
           isInvalid={ isInvalid("storeId") }
+          disabled={  mode !== "create" && formData.type !== InvoiceType.Quotation }
           onValueChange={ (store) =>
           {
             dispatch(
@@ -145,6 +146,7 @@ export default function InvoiceBasicInfo()
           <SuppliersSearchableSelect
             id={ formData.actionAccountId }
             isInvalid={ isInvalid("actionAccountId") }
+            disabled={  mode !== "create" && formData.type !== InvoiceType.Quotation }
             onValueChange={ (account) =>
             {
               selectedAccount = account;
@@ -159,6 +161,7 @@ export default function InvoiceBasicInfo()
           <ClientsSearchableSelect
             id={ formData.actionAccountId }
             isInvalid={ isInvalid("actionAccountId") }
+            disabled={  mode !== "create" && formData.type !== InvoiceType.Quotation }
             onValueChange={ (account) =>
             {
               selectedAccount = account;

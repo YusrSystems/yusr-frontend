@@ -64,8 +64,8 @@ export default function AccountsSearchableSelect(
       disabled={ disabled }
       isInvalid={ isInvalid }
       systemPermissionsResources={ SystemPermissionsResources.Accounts }
-      allowAdd={ allowAdd }
-      allowUpdate={ allowUpdate }
+      allowAdd={ allowAdd && !disabled }
+      allowUpdate={ allowUpdate && !disabled }
       onValueChange={ onValueChange }
       entityActions={ {
         filter: slice.entityActions.filter,

@@ -3,13 +3,14 @@ import type { EntitySearchableSelectParams } from "yusr-ui";
 import AccountsSearchableSelect from "./accountsSearchableSelect";
 
 export default function ClientsSearchableSelect(
-  { id, isInvalid, onValueChange }: EntitySearchableSelectParams<Account>
+  { id, isInvalid, disabled, onValueChange }: EntitySearchableSelectParams<Account>
 )
 {
   return (
     <AccountsSearchableSelect
       id={ id }
       isInvalid={ isInvalid }
+      disabled={ disabled }
       onValueChange={ onValueChange }
       slice={ ClientsSlice }
       selectEntityState={ (state) => state.clients }
