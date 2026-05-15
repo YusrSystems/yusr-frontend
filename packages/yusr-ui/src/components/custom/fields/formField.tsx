@@ -2,7 +2,7 @@ import { Label } from "../../pure/label";
 
 interface FormFieldProps
 {
-  label: string;
+  label?: string;
   error?: string;
   isInvalid?: boolean;
   children: React.ReactNode;
@@ -13,11 +13,13 @@ export function FormField({ label, error, isInvalid, children, required }: FormF
 {
   return (
     <div className="flex flex-col gap-1.5 w-full">
-      <div className="flex items-center gap-1">
-        <Label className="text-sm font-medium">{ label }</Label>
-        { required && <span className="text-red-500">*</span> }
-      </div>
-
+      { label
+        && (
+          <div className="flex items-center gap-1">
+            <Label className="text-sm font-medium">{ label }</Label>
+            { required && <span className="text-red-500">*</span> }
+          </div>
+        ) }
       { children }
 
       { isInvalid && error && (

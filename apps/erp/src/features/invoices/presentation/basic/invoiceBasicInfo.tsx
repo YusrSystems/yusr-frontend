@@ -181,11 +181,11 @@ export default function InvoiceBasicInfo()
         {} }
       />
 
-      <TextField
+      {/* <TextField
         label={ t("invoices.delegateEmployee") }
         value={ formData.delegateEmp || "" }
         onChange={ (e) => dispatch(slice.formActions.updateFormData({ delegateEmp: e.target.value })) }
-      />
+      /> */}
 
       { canBeExportInvoice() && (
         <SelectField

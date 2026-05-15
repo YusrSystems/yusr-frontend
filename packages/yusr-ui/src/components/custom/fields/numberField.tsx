@@ -3,7 +3,7 @@ import { FormField } from "./formField";
 
 interface NumberFieldProps extends NumberInputProps
 {
-  label: string;
+  label?: string;
   error?: string;
   required?: boolean;
   currency?: React.ReactNode;

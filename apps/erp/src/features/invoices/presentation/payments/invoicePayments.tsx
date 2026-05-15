@@ -104,7 +104,6 @@ export default function invoicePayments()
                 { /* Amount — label-free */ }
                 <div className="w-36 shrink-0">
                   <NumberField
-                    label=""
                     min={ 0 }
                     max={ unpaidPrice + (row.amount ?? 0) }
                     value={ row.amount || "0" }
