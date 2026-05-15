@@ -5,7 +5,7 @@ import type { CommonChangeDialogProps, DialogMode, IEntityState } from "yusr-ui"
 import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import Account, { type AccountSliceType } from "../../core/data/account";
 import type Invoice from "../../core/data/invoice";
-import { InvoiceRelationType, InvoiceSlice, InvoiceStatus, InvoiceType, InvoiceValidationRules, InvoiceVoucher } from "../../core/data/invoice";
+import { InvoiceRelationType, InvoiceSlice, InvoiceStatus, InvoiceType, InvoiceValidationRules } from "../../core/data/invoice";
 import { ItemType } from "../../core/data/item";
 import { PaymentMethodSlice } from "../../core/data/paymentMethod";
 import { StoreSlice } from "../../core/data/store";
@@ -14,6 +14,7 @@ import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
 import { InvoiceContext } from "./logic/invoiceContext";
 import InvoiceItemsMath from "./logic/invoiceItemsMath";
+import { useInvoiceLogic } from "./logic/useInvoiceLogic";
 import InvoiceBasicTab from "./presentation/basic/invoiceBasicTab";
 import InvoiceCostsTab from "./presentation/costs/invoiceCostsTab";
 import AlertConvertDialog from "./presentation/dialogs/alertConvertDialog";
@@ -48,6 +49,7 @@ export default function ChangeInvoiceDialog({
   const [initLoading, setInitLoading] = useState(false);
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
+  const { createInitialPaymentVoucher } = useInvoiceLogic(authState);
   const invoiceTaxInclusivePrice = () => InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(formData?.invoiceItems ?? []);
 
   const initialValues = useMemo(
@@ -121,7 +123,9 @@ export default function ChangeInvoiceDialog({
     if (paymentVouchers().length === 0)
     {
       dispatch(slice.formActions.resetPaymentVouchers({}));
-      dispatch(slice.formActions.addVoucher(createInitialPaymentVoucher()));
+      dispatch(
+        slice.formActions.addVoucher(createInitialPaymentVoucher(formData as Invoice, invoiceTaxInclusivePrice()))
+      );
     }
     else if (paymentVouchers().length === 1)
     {
@@ -174,22 +178,6 @@ export default function ChangeInvoiceDialog({
       getInvoice();
     }
   }, [dispatch, entity?.id]);
-
-  const createInitialPaymentVoucher = (): InvoiceVoucher =>
-  {
-    return {
-      voucherId: 0,
-      invoiceId: formData.id ?? 0,
-      paymentMethodId: authState.setting?.mainPaymentMethodId ?? 0,
-      paymentMethodName: authState.setting?.mainPaymentMethodName ?? "",
-      accountId: formData.actionAccountId ?? 0,
-      accountName: formData.actionAccountName ?? "",
-      invoiceRelationType: InvoiceRelationType.Payment,
-      amount: invoiceTaxInclusivePrice(),
-      amountReceived: invoiceTaxInclusivePrice(),
-      description: undefined
-    } as InvoiceVoucher;
-  };
 
   const onBeforeSave = async (): Promise<{ handled: boolean; data?: Invoice; }> =>
   {
@@ -293,7 +281,8 @@ export default function ChangeInvoiceDialog({
             ? (
               <AlertConvertDialog
                 invoiceId={ formData.id }
-                createInitialPaymentVoucher={ createInitialPaymentVoucher }
+                createInitialPaymentVoucher={ () =>
+                  createInitialPaymentVoucher(formData as Invoice, invoiceTaxInclusivePrice()) }
                 onSuccess={ (data) =>
                 {
                   dispatch(slice.formActions.updateFormData(data));

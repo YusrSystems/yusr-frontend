@@ -15,6 +15,8 @@ import InvoicesApiService from "../../core/networking/invoiceApiService";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "../reports/reportButton";
 import ChangeInvoiceDialog from "./changeInvoiceDialog";
+import { useInvoiceLogic } from "./logic/useInvoiceLogic";
+import AlertConvertDialog from "./presentation/dialogs/alertConvertDialog";
 
 export default function InvoicesPage({
   title,
@@ -48,6 +50,7 @@ export default function InvoicesPage({
   const authState = useAppSelector((state) => state.auth);
   const invoiceDialogState = useAppSelector((state) => state[dialogStateKey] as IDialogState<Invoice>);
   const [resendingEInvoice, setResendingEInvoice] = useState(false);
+  const { createInitialPaymentVoucher } = useInvoiceLogic(authState);
 
   const permissions = useAppSelector((state) =>
     selectPermissionsByResource(state, SystemPermissionsResources.Invoices)
@@ -252,6 +255,7 @@ export default function InvoicesPage({
         { rowName: t("invoices.total"), rowStyles: "w-32" },
         { rowName: t("invoices.status"), rowStyles: "w-32" },
         { rowName: "", rowStyles: "w-32" },
+        { rowName: "", rowStyles: "w-32" },
         ...(authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
           ? [{ rowName: t("invoices.eInvoiceStatus"), rowStyles: "w-50" }]
           : []),
@@ -297,6 +301,25 @@ export default function InvoicesPage({
           rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
             getPaymentStatus(invoice).styles
           }`
+        },
+        {
+          rowName: (
+            <div>
+              { invoice.type === InvoiceType.Quotation
+                && (
+                  <AlertConvertDialog
+                    invoiceId={ invoice.id }
+                    createInitialPaymentVoucher={ () => createInitialPaymentVoucher(invoice) }
+                    onSuccess={ (data) =>
+                    {
+                      dispatch(slice.formActions.updateFormData(data));
+                      dispatch(slice.entityActions.refresh({ data: data }));
+                    } }
+                  />
+                ) }
+            </div>
+          ),
+          rowStyles: ""
         },
         ...(authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
           ? [{
