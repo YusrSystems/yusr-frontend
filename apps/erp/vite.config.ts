@@ -11,5 +11,14 @@ export default defineConfig({
       "yusr-ui": path.resolve(__dirname, "../../packages/yusr-ui/src/index.ts")
     },
     dedupe: ["react", "react-dom", "react/jsx-runtime"]
+  },
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://yusrerp.runasp.net",
+        changeOrigin: true,
+        secure: true
+      }
+    }
   }
 });
