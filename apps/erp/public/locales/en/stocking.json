@@ -105,6 +105,7 @@
     "itemName": "Item Name",
     "itemType": "Type",
     "class": "Class",
+    "brand": "Brand",
     "quantity": "Quantity",
     "cost": "Cost",
     "product": "Product",

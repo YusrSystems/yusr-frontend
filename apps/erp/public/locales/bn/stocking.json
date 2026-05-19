@@ -105,6 +105,7 @@
     "itemName": "আইটেমের নাম",
     "itemType": "ধরন",
     "class": "শ্রেণী",
+    "brand": "ব্র্যান্ড",
     "quantity": "পরিমাণ",
     "cost": "খরচ",
     "product": "পণ্য",
