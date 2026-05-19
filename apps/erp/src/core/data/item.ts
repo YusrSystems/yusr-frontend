@@ -62,6 +62,7 @@ export default class Item extends BaseEntity
   public name!: string;
   public description?: string;
   public class?: string;
+  public brand?: string;
   public sellUnitId!: number;
   public sellUnitName?: string;
   public minQuantity?: number;
@@ -213,7 +214,7 @@ export class ItemValidationRules
             {
               return false;
             }
-            if (!isService && !s.initialQuantity)
+            if (!isService && (s.initialQuantity == undefined || s.initialQuantity < 0))
             {
               return false;
             }

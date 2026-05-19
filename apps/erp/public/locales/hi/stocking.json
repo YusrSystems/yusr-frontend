@@ -105,6 +105,7 @@
     "itemName": "वस्तु का नाम",
     "itemType": "प्रकार",
     "class": "वर्ग",
+    "brand": "ब्रांड",
     "quantity": "मात्रा",
     "cost": "लागत",
     "product": "उत्पाद",

@@ -126,7 +126,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                   <td className="p-3">
                     <NumberField
                       label=""
-                      value={ store.initialQuantity || "0" }
+                      value={ store.initialQuantity || 0 }
                       disabled={ mode === "update" }
                       isInvalid={ hasError && !isService && !store.initialQuantity }
                       onChange={ (val) =>

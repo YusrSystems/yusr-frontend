@@ -30,8 +30,7 @@ function revealApp()
 createRoot(document.getElementById("root")!).render(
   <YusrApp
     store={ store }
-    backendUrl="https://yusrerp.runasp.net/api"
-    // backendUrl="https://localhost:7142/api"
+    backendUrl="/api"
     onReady={ revealApp }
   >
     <App />

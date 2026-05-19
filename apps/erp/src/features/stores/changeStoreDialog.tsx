@@ -23,7 +23,7 @@ export default function ChangeStoreDialog({
     [entity]
   );
 
-  const { formData, errors } = useAppSelector((state) => state.unitForm);
+  const { formData, errors } = useAppSelector((state) => state.storeForm);
   const { getError, isInvalid } = useFormErrors(errors);
   const { validate } = useValidate(
     formData,
