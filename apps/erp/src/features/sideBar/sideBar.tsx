@@ -3,7 +3,7 @@ import logoOnlyLight from "@/assets/yusrLogoOnly_Light.png";
 import { Building2, FileChartColumnIncreasing, LayoutDashboardIcon, Package, ReceiptText, ScrollText, SettingsIcon, UsersIcon, WalletCards } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { ApiConstants, Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SidebarTrigger, SideBarUserData, SystemPermissions, SystemPermissionsActions, useSidebar, YusrApiHelper } from "yusr-ui";
+import { ApiConstants, Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SideBarUserData, SystemPermissions, SystemPermissionsActions, useSidebar, YusrApiHelper } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { logout, useAppDispatch, useAppSelector } from "../../core/state/store";
 
@@ -299,11 +299,10 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
             <div
               className={ `gap-2 ${
                 state === "collapsed"
-                  ? "flex flex-col justify-between items-center"
-                  : "flex flex-row-reverse justify-between items-center"
+                  ? "flex flex-col justify-end items-center"
+                  : "flex flex-row-reverse justify-end items-center"
               }` }
             >
-              <SidebarTrigger />
               <SidebarLogo logos={ logoConfig } />
             </div>
             <SideBarCompanyData company={ displayCompany } />
