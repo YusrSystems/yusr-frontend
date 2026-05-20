@@ -120,9 +120,16 @@ export default function ChangeInvoiceDialog({
       return;
     }
 
+    const taxInclusivePrice = invoiceTaxInclusivePrice();
+
     if (formData.type === InvoiceType.Quotation)
     {
       dispatch(slice.formActions.resetPaymentVouchers({}));
+      dispatch(
+        slice.formActions.updateFormData({
+          fullAmount: taxInclusivePrice
+        })
+      );
       return;
     }
 
@@ -130,7 +137,7 @@ export default function ChangeInvoiceDialog({
     {
       dispatch(slice.formActions.resetPaymentVouchers({}));
       dispatch(
-        slice.formActions.addVoucher(createInitialPaymentVoucher(formData as Invoice, invoiceTaxInclusivePrice()))
+        slice.formActions.addVoucher(createInitialPaymentVoucher(formData as Invoice, taxInclusivePrice))
       );
     }
     else if (paymentVouchers().length === 1)
@@ -139,8 +146,8 @@ export default function ChangeInvoiceDialog({
       const isVoucherAccountIdValid = voucher.accountId != undefined && voucher.accountId !== 0;
       const updatedVoucher = {
         ...voucher,
-        amount: invoiceTaxInclusivePrice(),
-        amountReceived: invoiceTaxInclusivePrice(),
+        amount: taxInclusivePrice,
+        amountReceived: taxInclusivePrice,
         accountId: isVoucherAccountIdValid ? voucher.accountId : formData.actionAccountId,
         accountName: isVoucherAccountIdValid ? voucher.accountName : formData.actionAccountName
       };
@@ -149,8 +156,8 @@ export default function ChangeInvoiceDialog({
 
     dispatch(
       slice.formActions.updateFormData({
-        fullAmount: invoiceTaxInclusivePrice(),
-        paidAmount: invoiceTaxInclusivePrice()
+        fullAmount: taxInclusivePrice,
+        paidAmount: taxInclusivePrice
       })
     );
   }, [formData.invoiceItems, formData.actionAccountId, formData.type, accountState.entities.data?.length]);
