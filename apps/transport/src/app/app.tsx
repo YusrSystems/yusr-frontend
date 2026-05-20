@@ -1,6 +1,7 @@
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { ProtectedRoute, Skeleton, ThemeProvider, Toaster, TooltipProvider } from "yusr-ui";
-import useAppInitialization from "./core/hooks/useAppInitialization";
+import { BaseApiService, NumbertoWordsService, ProtectedRoute, Skeleton, ThemeProvider, Toaster, TooltipProvider, Validators, YusrApiHelper } from "yusr-ui";
 import RoutesService from "./core/services/constants/routesService";
 import { useAppSelector } from "./core/state/store";
 import BranchesPage from "./features/branches/presentation/branchesPage";
@@ -22,12 +23,15 @@ import VehiclesPage from "./features/vehicles/vehiclesPage";
 
 function App()
 {
-  const { isLoading } = useAppInitialization();
+  const { t, i18n } = useTranslation("common");
 
-  if (isLoading)
+  useEffect(() =>
   {
-    return <Apploading />;
-  }
+    NumbertoWordsService.init(t, i18n.language);
+    YusrApiHelper.init(t, i18n.language);
+    BaseApiService.init(t);
+    Validators.init(t);
+  }, [t, i18n.language]);
 
   return <AppBody />;
 }
