@@ -115,7 +115,7 @@ export default function ChangeInvoiceDialog({
 
   useEffect(() =>
   {
-    if (paymentVouchers().length > 1 && mode === "update")
+    if (mode === "update")
     {
       return;
     }
