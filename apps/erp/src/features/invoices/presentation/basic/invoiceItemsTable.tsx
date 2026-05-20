@@ -24,14 +24,14 @@ export default function InvoiceItemsTable()
 
   const getMaxAllowedQuantity = (qtn: number) =>
   {
-    if (formData.type !== InvoiceType.Sell && formData.type !== InvoiceType.Quotation)
-    {
-      return Number.MAX_SAFE_INTEGER;
-    }
-
     if (mode === "return")
     {
       return qtn;
+    }
+
+    if (formData.type !== InvoiceType.Sell && formData.type !== InvoiceType.Quotation)
+    {
+      return Number.MAX_SAFE_INTEGER;
     }
 
     return SystemPermissions.hasAuth(

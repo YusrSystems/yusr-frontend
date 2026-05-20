@@ -39,6 +39,7 @@ export type CrudPageProps<T extends BaseEntity> = PropsWithChildren & {
   useSlice: () => IDialogState<T>;
   actions: CrudActions<T>;
   permissions: ResourcePermissions;
+  perRowPermissions?: (entity: T) => ResourcePermissions;
   hasPagePermission?: boolean;
   entityName: string;
   title: string;
@@ -61,6 +62,7 @@ export type CrudPageProps<T extends BaseEntity> = PropsWithChildren & {
 export function CrudPage<T extends BaseEntity>(
   {
     permissions,
+    perRowPermissions,
     hasPagePermission = true,
     useSlice,
     entityName,
@@ -141,7 +143,7 @@ export function CrudPage<T extends BaseEntity>(
                 tableRows={ tableRowMapper(entity) }
                 dropdownMenu={ 
                   <CrudTableRowActionsMenu
-                    permissions={ permissions }
+                    permissions={ perRowPermissions? perRowPermissions(entity) : permissions }
                     type="dropdown"
                     onEditClicked={ () => handleOpenChangeDialog(entity) }
                     onDeleteClicked={ () => dispatch(actions.openDeleteDialog(entity)) }
@@ -151,7 +153,7 @@ export function CrudPage<T extends BaseEntity>(
                  }
                 contextMenuContent={ 
                   <CrudTableRowActionsMenu
-                    permissions={ permissions }
+                    permissions={ perRowPermissions? perRowPermissions(entity) : permissions }
                     type="context"
                     onEditClicked={ () => handleOpenChangeDialog(entity) }
                     onDeleteClicked={ () => dispatch(actions.openDeleteDialog(entity)) }
@@ -184,7 +186,7 @@ export function CrudPage<T extends BaseEntity>(
           </Dialog>
         ) }
 
-        { isDeleteDialogOpen && permissions.deletePermission && (
+        { isDeleteDialogOpen && (
           <Dialog
             open={ isDeleteDialogOpen }
             onOpenChange={ (open) => dispatch(actions.setIsDeleteDialogOpen(open)) }

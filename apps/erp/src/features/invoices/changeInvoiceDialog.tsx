@@ -120,6 +120,12 @@ export default function ChangeInvoiceDialog({
       return;
     }
 
+    if (formData.type === InvoiceType.Quotation)
+    {
+      dispatch(slice.formActions.resetPaymentVouchers({}));
+      return;
+    }
+
     if (paymentVouchers().length === 0)
     {
       dispatch(slice.formActions.resetPaymentVouchers({}));
@@ -147,7 +153,7 @@ export default function ChangeInvoiceDialog({
         paidAmount: invoiceTaxInclusivePrice()
       })
     );
-  }, [formData.invoiceItems, formData.actionAccountId, accountState.entities.data?.length]);
+  }, [formData.invoiceItems, formData.actionAccountId, formData.type, accountState.entities.data?.length]);
 
   useEffect(() =>
   {

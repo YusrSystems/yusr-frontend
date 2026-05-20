@@ -117,28 +117,6 @@ export default function InvoicesPage({
   {
     const items: React.ReactNode[] = [];
 
-    if (
-      entity.type === InvoiceType.Quotation
-      && SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.Invoices,
-        SystemPermissionsActions.Delete
-      )
-    )
-    {
-      items.push(
-        <ItemComponent
-          className="text-red-600!"
-          onSelect={ () =>
-          {
-            dispatch(slice.dialogActions.openDeleteDialog(entity));
-          } }
-        >
-          { t("common:crudRow.delete") }
-        </ItemComponent>
-      );
-    }
-
     if (entity.type === InvoiceType.Sell || entity.type === InvoiceType.Purchase)
     {
       items.push(
@@ -234,6 +212,15 @@ export default function InvoicesPage({
         addPermission: permissions.addPermission,
         updatePermission: permissions.updatePermission,
         deletePermission: false
+      } }
+      perRowPermissions={ (entity) =>
+      {
+        return {
+          getPermission: permissions.getPermission,
+          addPermission: permissions.addPermission,
+          updatePermission: permissions.updatePermission,
+          deletePermission: entity.type === InvoiceType.Quotation ? permissions.deletePermission: false
+        };
       } }
       hasPagePermission={ hasPagePermission }
       entityState={ invoiceState }
