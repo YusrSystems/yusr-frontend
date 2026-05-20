@@ -130,12 +130,13 @@ export default function ChangeInvoiceDialog({
     else if (paymentVouchers().length === 1)
     {
       const voucher = paymentVouchers()[0];
+      const isVoucherAccountIdValid = voucher.accountId != undefined && voucher.accountId !== 0;
       const updatedVoucher = {
         ...voucher,
         amount: invoiceTaxInclusivePrice(),
         amountReceived: invoiceTaxInclusivePrice(),
-        accountId: voucher.accountId === 0 ? formData.actionAccountId : voucher.accountId,
-        accountName: voucher.accountId === 0 ? formData.actionAccountName : voucher.accountName
+        accountId: isVoucherAccountIdValid ? voucher.accountId : formData.actionAccountId,
+        accountName: isVoucherAccountIdValid ? voucher.accountName : formData.actionAccountName
       };
       dispatch(slice.formActions.updateVoucher(updatedVoucher));
     }

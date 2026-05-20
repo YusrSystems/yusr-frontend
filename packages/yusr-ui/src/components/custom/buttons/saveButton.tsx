@@ -20,6 +20,7 @@ export interface SaveButtonProps<T extends BaseEntity>
   onSuccess?: (newData: T) => void;
   validate?: () => boolean;
   onBeforeSave?: () => Promise<{ handled: boolean; data?: T; }>;
+  transformData?: (data: T | Partial<T>) => T | Partial<T>;
   onExecute?: (
     formData: T | Partial<T>,
     ignoreWarnings: boolean
@@ -38,6 +39,7 @@ export function SaveButton<T extends BaseEntity>(
     onSuccess,
     validate = () => true,
     onBeforeSave,
+    transformData,
     onExecute
   }: SaveButtonProps<T>
 )
@@ -75,17 +77,18 @@ export function SaveButton<T extends BaseEntity>(
     setLoading(true);
 
     let result: RequestResult<T>;
+    const payload = transformData ? transformData(formData) : formData;
 
     if (onExecute)
     {
-      result = await onExecute(formData, ignoreWarnings);
+      result = await onExecute(payload, ignoreWarnings);
     }
     else if (service)
     {
-      const payload = ignoreWarnings ? { ...formData, ignoreWarnings: true } : formData;
+      const finalPayload = ignoreWarnings ? { ...payload, ignoreWarnings: true } : payload;
       result = dialogMode === "create"
-        ? await service.Add(payload as T)
-        : await service.Update(payload as T);
+        ? await service.Add(finalPayload as T)
+        : await service.Update(finalPayload as T);
     }
     else
     {

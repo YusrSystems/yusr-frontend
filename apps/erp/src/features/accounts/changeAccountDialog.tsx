@@ -168,6 +168,10 @@ export default function ChangeAccountDialog({
       dialogMode={ mode }
       service={ service }
       disable={ () => cityState.isLoading || accountState.isLoading }
+      transformData={ (data) => ({
+        ...data,
+        accountContacts: data.accountContacts?.filter((c) => c.number?.trim())
+      }) }
       onSuccess={ (data) => onSuccess?.(data, mode) }
       validate={ validate }
       authorized={ authorized() }

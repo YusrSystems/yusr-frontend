@@ -13,12 +13,19 @@ export default defineConfig({
     dedupe: ["react", "react-dom", "react/jsx-runtime"]
   },
   server: {
+    // proxy: {
+    //   "/api": {
+    //     target: "https://yusrerp.runasp.net",
+    //     changeOrigin: true,
+    //     secure: true
+    //   }
+    // }
     proxy: {
-      "/api": {
-        target: "https://yusrerp.runasp.net",
-        changeOrigin: true,
-        secure: true
-      }
+    "/api": {
+      target: "https://localhost:7142",
+      changeOrigin: true,
+      secure: false 
     }
+  }
   }
 });
