@@ -5,7 +5,6 @@ import { useDebouncedCallback } from "use-debounce";
 import type { FilterCondition } from "../../../entities";
 import type { ColumnName } from "../../../types";
 import { Input } from "../../pure/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../pure/select";
 
 type SearchInputParams<T> = {
   columnsNames: ColumnName<T>[];
@@ -15,7 +14,7 @@ type SearchInputParams<T> = {
 
 export function SearchInput<T>({ columnsNames, onSearch, onType }: SearchInputParams<T>)
 {
-  const { t, i18n } = useTranslation("common");
+  const { t } = useTranslation("common");
   const [filterCondition, setFilterCondition] = useState<FilterCondition<T>>({
     value: "",
     columnName: columnsNames[0]?.value
@@ -50,39 +49,9 @@ export function SearchInput<T>({ columnsNames, onSearch, onType }: SearchInputPa
     }
   };
 
-  const handleColumnChange = (value: string) =>
-  {
-    const column = value as keyof T;
-
-    setFilterCondition((prev) => ({ ...prev, columnName: column }));
-
-    if (filterCondition.value.trim())
-    {
-      debouncedAction(filterCondition.value, column);
-    }
-  };
-
   return (
     <div className="p-3 rounded-t-xl border-x border-t flex flex-col sm:flex-row gap-4 bg-muted z-0">
       <div className="relative w-full flex gap-2">
-        { /* Shadcn Select for Columns */ }
-        { columnsNames.length > 1 && (
-          <Select
-            dir={ i18n.dir() }
-            value={ filterCondition.columnName.toString() }
-            onValueChange={ handleColumnChange }
-          >
-            <SelectTrigger className="bg-secondary border-none">
-              <SelectValue placeholder={ t("searchNullOption") } />
-            </SelectTrigger>
-            <SelectContent>
-              { columnsNames.map((col) => (
-                <SelectItem key={ col.value.toString() } value={ col.value.toString() }>{ col.label }</SelectItem>
-              )) }
-            </SelectContent>
-          </Select>
-        ) }
-
         { /* Search Icon & Input */ }
         <div className="relative flex-1 z-10">
           <Search className="absolute left-3 rtl:right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
