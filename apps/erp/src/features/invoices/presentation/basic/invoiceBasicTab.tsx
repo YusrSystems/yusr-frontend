@@ -1,4 +1,5 @@
 import { InvoiceType } from "@/core/data/invoice";
+import { ItemType } from "@/core/data/item";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
 import StoreItemSelector from "../../../items/storeItemSelector";
@@ -28,6 +29,8 @@ export default function InvoiceBasicTab()
 
         { !(disabled || mode === "return") && (
           <StoreItemSelector
+            storeId={ formData.storeId }
+            itemTypes={ [ItemType.Product, ItemType.Service] }
             onSelect={ (item) => dispatch(slice.formActions.addItem(item)) }
           />
         ) }
