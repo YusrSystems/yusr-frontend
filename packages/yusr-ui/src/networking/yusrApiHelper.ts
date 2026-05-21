@@ -150,8 +150,17 @@ export class YusrApiHelper
 
     if (response.status === ResultStatus.NotFound)
     {
-      toast.error(t("api.notFound"));
-      return { data: undefined, status: 404, title: "Not Found", errors: [], warnings: [] };
+      const errorData = await response.json() as RequestResult<any>;
+      toast.error(errorData.title || t("api.notFound"), {
+        description: errorData.errors?.join("\n") || errorData.warnings?.join("\n")
+      });
+      return {
+        data: undefined,
+        status: ResultStatus.NotFound,
+        title: errorData.title,
+        errors: errorData.errors,
+        warnings: errorData.warnings
+      };
     }
 
     if (response.status === ResultStatus.TooManyRequests)
