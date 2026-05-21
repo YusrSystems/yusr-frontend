@@ -8,7 +8,6 @@
     "storeName": "Store Name",
     "nameRequired": "Please enter store name"
   },
-
   "units": {
     "title": "Units Management",
     "entityName": "Unit",
@@ -18,7 +17,6 @@
     "unitName": "Unit Name",
     "nameRequired": "Please enter unit name"
   },
-
   "pricingMethods": {
     "title": "Pricing Methods Management",
     "entityName": "Pricing Method",
@@ -28,7 +26,6 @@
     "methodName": "Pricing Method Name",
     "nameRequired": "Please enter pricing method name"
   },
-
   "stocktakings": {
     "title": "Stocktaking",
     "entityName": "Stocktaking",
@@ -49,7 +46,6 @@
     "dateRequired": "Please select the date",
     "itemsRequired": "Please add at least one item to the stocktaking"
   },
-
   "itemsSettlements": {
     "title": "Stock Settlements",
     "entityName": "Settlement",
@@ -64,7 +60,6 @@
     "dateRequired": "Please select the date",
     "itemsRequired": "Please add at least one item to the settlement"
   },
-
   "itemTransfers": {
     "title": "Item Transfers",
     "entityName": "Item Transfer",
@@ -95,7 +90,6 @@
     "toStoreRequired": "Please select the destination store",
     "sameStoreError": "Cannot transfer to the same store"
   },
-
   "items": {
     "title": "Items Management",
     "entityName": "Item",
@@ -111,8 +105,8 @@
     "product": "Product",
     "service": "Service",
     "itemImages": "Item Images",
-    "description": "Description",
-    "notes": "Notes",
+    "description": "Description (External)",
+    "notes": "Notes (Internal)",
     "status": "Status",
     "active": "Active",
     "inactive": "Inactive",

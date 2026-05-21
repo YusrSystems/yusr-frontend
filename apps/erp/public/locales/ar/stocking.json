@@ -8,7 +8,6 @@
     "storeName": "اسم المستودع",
     "nameRequired": "يرجى إدخال اسم المستودع"
   },
-
   "units": {
     "title": "إدارة الوحدات",
     "entityName": "الوحدة",
@@ -18,7 +17,6 @@
     "unitName": "اسم الوحدة",
     "nameRequired": "يرجى إدخال اسم الوحدة"
   },
-
   "pricingMethods": {
     "title": "إدارة طرق التسعير",
     "entityName": "طريقة التسعير",
@@ -28,7 +26,6 @@
     "methodName": "اسم طريقة التسعير",
     "nameRequired": "يرجى إدخال اسم طريقة التسعير"
   },
-
   "stocktakings": {
     "title": "جرد المواد",
     "entityName": "جرد",
@@ -49,7 +46,6 @@
     "dateRequired": "يرجى اختيار التاريخ",
     "itemsRequired": "يرجى إضافة مادة واحدة على الأقل للجرد"
   },
-
   "itemsSettlements": {
     "title": "تسوية المواد",
     "entityName": "تسوية",
@@ -64,7 +60,6 @@
     "dateRequired": "يرجى اختيار التاريخ",
     "itemsRequired": "يرجى إضافة مادة واحدة على الأقل للتسوية"
   },
-
   "itemTransfers": {
     "title": "نقل المواد",
     "entityName": "نقل مواد",
@@ -95,7 +90,6 @@
     "toStoreRequired": "يرجى اختيار المستودع المحول إليه",
     "sameStoreError": "لا يمكن التحويل لنفس المستودع"
   },
-
   "items": {
     "title": "إدارة المواد",
     "entityName": "مادة",
@@ -111,8 +105,8 @@
     "product": "منتج",
     "service": "خدمة",
     "itemImages": "صور المادة",
-    "description": "وصف المادة",
-    "notes": "ملاحظات",
+    "description": "وصف المادة (خارجي)",
+    "notes": "ملاحظات (داخلية)",
     "status": "الحالة",
     "active": "مفعل",
     "inactive": "غير مفعل",

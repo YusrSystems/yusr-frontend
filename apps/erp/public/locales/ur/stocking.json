@@ -8,7 +8,6 @@
     "storeName": "گودام کا نام",
     "nameRequired": "براہ کرم گودام کا نام درج کریں"
   },
-
   "units": {
     "title": "یونٹس کا نظم",
     "entityName": "یونٹ",
@@ -18,7 +17,6 @@
     "unitName": "یونٹ کا نام",
     "nameRequired": "براہ کرم یونٹ کا نام درج کریں"
   },
-
   "pricingMethods": {
     "title": "قیمتوں کے طریقوں کا نظم",
     "entityName": "قیمت کا طریقہ",
@@ -28,7 +26,6 @@
     "methodName": "قیمت کے طریقہ کا نام",
     "nameRequired": "براہ کرم قیمت کے طریقہ کا نام درج کریں"
   },
-
   "stocktakings": {
     "title": "اسٹک لینے",
     "entityName": "اسٹک لینے",
@@ -49,7 +46,6 @@
     "dateRequired": "براہ کرم تاریخ منتخب کریں",
     "itemsRequired": "براہ کرم اسٹک لینے کے لیے کم از کم ایک آئٹم شامل کریں"
   },
-
   "itemsSettlements": {
     "title": "اسٹک ایڈجسٹمنٹس",
     "entityName": "ایڈجسٹمنٹ",
@@ -64,7 +60,6 @@
     "dateRequired": "براہ کرم تاریخ منتخب کریں",
     "itemsRequired": "براہ کرم ایڈجسٹمنٹ کے لیے کم از کم ایک آئٹم شامل کریں"
   },
-
   "itemTransfers": {
     "title": "آئٹم ٹرانسفرز",
     "entityName": "آئٹم ٹرانسفر",
@@ -95,7 +90,6 @@
     "toStoreRequired": "براہ کرم منزل گودام منتخب کریں",
     "sameStoreError": "ایک ہی گودام میں ٹرانسفر نہیں کر سکتے"
   },
-
   "items": {
     "title": "آئٹمز کا نظم",
     "entityName": "آئٹم",
@@ -111,8 +105,8 @@
     "product": "پروڈکٹ",
     "service": "سروس",
     "itemImages": "آئٹم کی تصاویر",
-    "description": "تفصیل",
-    "notes": "نوٹس",
+    "description": "تفصیل (خارجی)",
+    "notes": "نوٹس (اندرونی)",
     "status": "حالت",
     "active": "فعال",
     "inactive": "غیر فعال",

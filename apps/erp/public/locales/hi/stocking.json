@@ -8,7 +8,6 @@
     "storeName": "गोदाम का नाम",
     "nameRequired": "कृपया गोदाम का नाम दर्ज करें"
   },
-
   "units": {
     "title": "इकाई प्रबंधन",
     "entityName": "इकाई",
@@ -18,7 +17,6 @@
     "unitName": "इकाई का नाम",
     "nameRequired": "कृपया इकाई का नाम दर्ज करें"
   },
-
   "pricingMethods": {
     "title": "मूल्य निर्धारण विधि प्रबंधन",
     "entityName": "मूल्य निर्धारण विधि",
@@ -28,7 +26,6 @@
     "methodName": "मूल्य निर्धारण विधि का नाम",
     "nameRequired": "कृपया मूल्य निर्धारण विधि का नाम दर्ज करें"
   },
-
   "stocktakings": {
     "title": "स्टॉक लेना",
     "entityName": "स्टॉक लेना",
@@ -49,7 +46,6 @@
     "dateRequired": "कृपया तारीख चुनें",
     "itemsRequired": "कृपया स्टॉक लेने के लिए कम से कम एक वस्तु जोड़ें"
   },
-
   "itemsSettlements": {
     "title": "स्टॉक समायोजन",
     "entityName": "समायोजन",
@@ -64,7 +60,6 @@
     "dateRequired": "कृपया तारीख चुनें",
     "itemsRequired": "कृपया समायोजन के लिए कम से कम एक वस्तु जोड़ें"
   },
-
   "itemTransfers": {
     "title": "वस्तु स्थानांतरण",
     "entityName": "वस्तु स्थानांतरण",
@@ -95,7 +90,6 @@
     "toStoreRequired": "कृपया गंतव्य गोदाम चुनें",
     "sameStoreError": "एक ही गोदाम में स्थानांतरण नहीं कर सकते"
   },
-
   "items": {
     "title": "वस्तु प्रबंधन",
     "entityName": "वस्तु",
@@ -111,8 +105,8 @@
     "product": "उत्पाद",
     "service": "सेवा",
     "itemImages": "वस्तु की छवियाँ",
-    "description": "विवरण",
-    "notes": "नोट्स",
+    "description": "विवरण (बाहरी)",
+    "notes": "नोट्स (आंतरिक)",
     "status": "स्थिति",
     "active": "सक्रिय",
     "inactive": "निष्क्रिय",
