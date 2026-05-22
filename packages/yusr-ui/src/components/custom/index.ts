@@ -25,7 +25,6 @@ export * from "./currency/currencyIcon";
 export * from "./fields/dateField";
 export * from "./fields/dateTimeField";
 export * from "./fields/fieldsSection";
-export * from "./fields/Filegallery";
 export * from "./fields/formField";
 export * from "./fields/inputField";
 export * from "./fields/numberField";
