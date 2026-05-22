@@ -22,6 +22,7 @@ interface StorageFileFieldProps
   error?: string;
   isInvalid?: boolean;
   dir?: "rtl" | "ltr";
+  mode?: "show" | "edit";
 }
 
 export function isPDF(file?: StorageFile): boolean
@@ -41,7 +42,8 @@ export function StorageFileField(
     fileInputRef,
     error,
     isInvalid,
-    dir = "rtl"
+    dir = "rtl",
+    mode = "edit"
   }: StorageFileFieldProps
 )
 {
@@ -223,14 +225,16 @@ export function StorageFileField(
 
       { isInvalid && error && <p className="text-[10px] text-red-500 font-medium mr-1">{ error }</p> }
 
-      <Input
-        type="file"
-        ref={ fileInputRef }
-        className="hidden"
-        accept="image/jpeg,image/png,image/gif,application/pdf"
-        onChange={ handleFileChange }
-        multiple={ true }
-      />
+      { mode === "edit" && (
+        <Input
+          type="file"
+          ref={ fileInputRef }
+          className="hidden"
+          accept="image/jpeg,image/png,image/gif,application/pdf"
+          onChange={ handleFileChange }
+          multiple={ true }
+        />
+      ) }
     </div>
   );
 }

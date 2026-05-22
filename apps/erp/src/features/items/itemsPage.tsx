@@ -1,7 +1,7 @@
 import { Package } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, FilterCondition, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { CrudPage, FileGallery, FilterCondition, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Item, { ItemFilterColumns, ItemSlice, ItemType } from "../../core/data/item";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -30,6 +30,7 @@ export default function ItemsPage()
     dispatch(StoreSlice.entityActions.filter());
   }, []);
 
+  console.log(itemState.entities);
   return (
     <CrudPage<Item>
       title={ t("items.title") }
@@ -44,9 +45,7 @@ export default function ItemsPage()
         ? [
           <ReportButton
             reportName={ ReportConstants.ItemsList }
-            request={ {
-              condition: condition
-            } }
+            request={ { condition: condition } }
           />
         ]
         : [] }
@@ -68,6 +67,7 @@ export default function ItemsPage()
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: t("items.itemId"), rowStyles: "w-12.5" },
+        { rowName: "", rowStyles: "w-12.5" },
         { rowName: t("items.itemType"), rowStyles: "w-24" },
         { rowName: t("items.itemName"), rowStyles: "w-48" },
         { rowName: t("items.class"), rowStyles: "w-32" },
@@ -84,6 +84,10 @@ export default function ItemsPage()
       ] }
       tableRowMapper={ (item: Item) => [
         { rowName: `#${item.id}`, rowStyles: "" },
+        {
+          rowName: <FileGallery file={ item.itemImages } />,
+          rowStyles: "w-12.5"
+        },
         {
           rowName: item.type === ItemType.Product ? t("items.product") : t("items.service"),
           rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -102,10 +106,7 @@ export default function ItemsPage()
             SystemPermissionsResources.ReportAccountStatement,
             SystemPermissionsActions.Get
           )
-          ? [{
-            rowName: <ItemStatementButton item={ item } />,
-            rowStyles: "w-32"
-          }]
+          ? [{ rowName: <ItemStatementButton item={ item } />, rowStyles: "w-32" }]
           : [])
       ] }
       actions={ {
