@@ -22,7 +22,7 @@ import InvoiceFilesTab from "./presentation/files/invoiceFilesTab";
 import InvoicePolicyTab from "./presentation/policy/invoicePolicyTab";
 
 export type InvoiceSliceType = ReturnType<typeof InvoiceSlice.create>;
-export type InvoiceDialogMode = DialogMode | "return";
+export type InvoiceDialogMode = DialogMode | "return" | "copy";
 
 export default function ChangeInvoiceDialog({
   entity,
@@ -46,6 +46,7 @@ export default function ChangeInvoiceDialog({
 })
 {
   const { t, i18n } = useTranslation("accounting");
+  const [currentMode, setCurrentMode] = useState<InvoiceDialogMode>(mode);
   const [initLoading, setInitLoading] = useState(false);
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
@@ -115,7 +116,7 @@ export default function ChangeInvoiceDialog({
 
   useEffect(() =>
   {
-    if (mode === "update")
+    if (currentMode === "update")
     {
       return;
     }
@@ -164,7 +165,7 @@ export default function ChangeInvoiceDialog({
 
   useEffect(() =>
   {
-    if ((mode === "update" || mode === "return") && entity?.id != undefined)
+    if ((currentMode === "update" || currentMode === "return" || currentMode === "copy") && entity?.id != undefined)
     {
       setInitLoading(true);
 
@@ -172,11 +173,11 @@ export default function ChangeInvoiceDialog({
       {
         let res = undefined;
 
-        if (mode === "update")
+        if (currentMode === "update" || currentMode === "copy")
         {
           res = await service.Get(entity.id);
         }
-        else if (mode === "return")
+        else if (currentMode === "return")
         {
           res = await new InvoicesApiService().GetReturnInvoiceInitialDetails(entity.id);
         }
@@ -190,12 +191,18 @@ export default function ChangeInvoiceDialog({
       };
 
       getInvoice();
+
+      if (currentMode === "copy")
+      {
+        dispatch(slice.formActions.updateFormData({ ...entity, id: 0, date: new Date().toLocaleDateString("en-CA") }));
+        setCurrentMode("create");
+      }
     }
   }, [dispatch, entity?.id]);
 
   const onBeforeSave = async (): Promise<{ handled: boolean; data?: Invoice; }> =>
   {
-    if (mode === "return")
+    if (currentMode === "return")
     {
       const res = await new InvoicesApiService().Add({
         ...formData,
@@ -213,11 +220,11 @@ export default function ChangeInvoiceDialog({
 
   const getDialogTitle = () =>
   {
-    if (mode === "return")
+    if (currentMode === "return")
     {
       return t("invoices.addReturnInvoice");
     }
-    if (mode === "create")
+    if (currentMode === "create")
     {
       return isReturn ? t("invoices.addReturnInvoice") : t("invoices.addInvoice");
     }
@@ -263,7 +270,7 @@ export default function ChangeInvoiceDialog({
     );
   }
 
-  const disabled = mode === "update" && formData.type !== InvoiceType.Quotation;
+  const disabled = currentMode === "update" && formData.type !== InvoiceType.Quotation;
 
   return (
     <InvoiceContext.Provider
@@ -273,7 +280,7 @@ export default function ChangeInvoiceDialog({
         getError,
         isInvalid,
         slice,
-        mode,
+        mode: currentMode,
         authState,
         dispatch,
         disabled,
@@ -286,12 +293,12 @@ export default function ChangeInvoiceDialog({
           title: getDialogTitle(),
           className: "sm:max-w-[100vw] sm:w-screen sm:h-screen",
           formData,
-          dialogMode: mode as DialogMode,
+          dialogMode: currentMode as DialogMode,
           service,
-          onSuccess: (data) => onSuccess?.(data, mode),
+          onSuccess: (data) => onSuccess?.(data, currentMode),
           validate,
           onBeforeSave: onBeforeSave,
-          actionButtons: formData.type === InvoiceType.Quotation && mode === "update" && formData?.id != undefined
+          actionButtons: formData.type === InvoiceType.Quotation && currentMode === "update" && formData?.id != undefined
             ? (
               <AlertConvertDialog
                 invoiceId={ formData.id }
@@ -300,7 +307,7 @@ export default function ChangeInvoiceDialog({
                 onSuccess={ (data) =>
                 {
                   dispatch(slice.formActions.updateFormData(data));
-                  onSuccess?.(data, mode);
+                  onSuccess?.(data, currentMode);
                 } }
               />
             )
