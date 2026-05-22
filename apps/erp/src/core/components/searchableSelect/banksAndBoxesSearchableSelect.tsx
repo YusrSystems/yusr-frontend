@@ -7,7 +7,7 @@ import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import AccountsSearchableSelect from "./accountsSearchableSelect";
 
 export default function BanksAndBoxesSearchableSelect(
-  { id, isInvalid, items, onValueChange }: EntitySearchableSelectParams<Account> & { items?: Account[]; }
+  { id, isInvalid, items, onValueChange, ...props }: EntitySearchableSelectParams<Account> & { items?: Account[]; }
 )
 {
   const { t } = useTranslation("accounting");
@@ -27,6 +27,7 @@ export default function BanksAndBoxesSearchableSelect(
 
   return (
     <AccountsSearchableSelect
+      { ...props }
       id={ id }
       items={ items }
       isInvalid={ isInvalid }

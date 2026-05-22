@@ -52,76 +52,80 @@ export default function ChangePaymentMethodDialog({
     dispatch(BanksAndBoxesSlice.entityActions.filter());
   }, []);
 
-  const title = mode === "create" ? t("paymentMethods.addNewTitle") : `${t("common:crudRow.edit")} ${t("paymentMethods.entityName")}`;
+  const title = mode === "create"
+    ? t("paymentMethods.addNewTitle")
+    : `${t("common:crudRow.edit")} ${t("paymentMethods.entityName")}`;
+  console.log(mode);
 
   return (
     <ChangeDialog<PaymentMethod>
-      title={title}
+      title={ title }
       className="sm:max-w-xl"
-      formData={formData}
-      dialogMode={mode}
-      service={service}
-      disable={() => accountState.isLoading}
-      onSuccess={(data) => onSuccess?.(data, mode)}
-      validate={validate}
+      formData={ formData }
+      dialogMode={ mode }
+      service={ service }
+      disable={ () => accountState.isLoading }
+      onSuccess={ (data) => onSuccess?.(data, mode) }
+      validate={ validate }
     >
       <FieldGroup>
         <div className="grid grid-cols-2 gap-4">
           <TextField
-            label={t("paymentMethods.methodName")}
+            label={ t("paymentMethods.methodName") }
             required
-            value={formData.name || ""}
-            onChange={(e) => dispatch(PaymentMethodSlice.formActions.updateFormData({ name: e.target.value }))}
-            isInvalid={isInvalid("name")}
-            error={getError("name")}
+            value={ formData.name || "" }
+            onChange={ (e) => dispatch(PaymentMethodSlice.formActions.updateFormData({ name: e.target.value })) }
+            isInvalid={ isInvalid("name") }
+            error={ getError("name") }
           />
 
           <FormField
-            label={t("paymentMethods.responsibleAccount")}
+            label={ t("paymentMethods.responsibleAccount") }
             required
-            isInvalid={isInvalid("accountId")}
-            error={getError("accountId")}
+            isInvalid={ isInvalid("accountId") }
+            error={ getError("accountId") }
           >
             <BanksAndBoxesSearchableSelect
-              id={formData.accountId}
-              isInvalid={isInvalid("accountId")}
-              onValueChange={(account) =>
+              disabled={ mode === "update" }
+              id={ formData.accountId }
+              isInvalid={ isInvalid("accountId") }
+              onValueChange={ (account) =>
               {
                 dispatch(PaymentMethodSlice.formActions.updateFormData({
                   accountId: account.id,
                   accountName: account.name
                 }));
-              }}
+              } }
             />
           </FormField>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <SelectField
-            label={t("paymentMethods.commissionType")}
+            label={ t("paymentMethods.commissionType") }
             required
-            disabled={mode === "update"}
-            value={formData.commissionType?.toString() || CommissionType.Percent.toString()}
-            onValueChange={(val) =>
+            disabled={ mode === "update" }
+            value={ formData.commissionType?.toString() || CommissionType.Percent.toString() }
+            onValueChange={ (val) =>
               dispatch(
                 PaymentMethodSlice.formActions.updateFormData({ commissionType: Number(val) as CommissionType })
-              )}
-            isInvalid={isInvalid("commissionType")}
-            error={getError("commissionType")}
-            options={[
-              { label: t("paymentMethods.percentage"), value: CommissionType.Percent.toString() },
-              { label: t("paymentMethods.fixedAmount"), value: CommissionType.Amount.toString() }
-            ]}
+              ) }
+            isInvalid={ isInvalid("commissionType") }
+            error={ getError("commissionType") }
+            options={ [{ label: t("paymentMethods.percentage"), value: CommissionType.Percent.toString() }, {
+              label: t("paymentMethods.fixedAmount"),
+              value: CommissionType.Amount.toString()
+            }] }
           />
 
           <NumberField
-            label={t("paymentMethods.commissionValue")}
+            label={ t("paymentMethods.commissionValue") }
             required
-            disabled={mode === "update"}
-            value={formData.commissionAmount || ""}
-            onChange={(e) => dispatch(PaymentMethodSlice.formActions.updateFormData({ commissionAmount: Number(e) }))}
-            isInvalid={isInvalid("commissionAmount")}
-            error={getError("commissionAmount")}
+            disabled={ mode === "update" }
+            value={ formData.commissionAmount || "" }
+            onChange={ (e) => dispatch(PaymentMethodSlice.formActions.updateFormData({ commissionAmount: Number(e) })) }
+            isInvalid={ isInvalid("commissionAmount") }
+            error={ getError("commissionAmount") }
           />
         </div>
       </FieldGroup>
