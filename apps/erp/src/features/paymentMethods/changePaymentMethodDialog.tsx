@@ -55,7 +55,6 @@ export default function ChangePaymentMethodDialog({
   const title = mode === "create"
     ? t("paymentMethods.addNewTitle")
     : `${t("common:crudRow.edit")} ${t("paymentMethods.entityName")}`;
-  console.log(mode);
 
   return (
     <ChangeDialog<PaymentMethod>
