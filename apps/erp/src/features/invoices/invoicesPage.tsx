@@ -120,6 +120,7 @@ export default function InvoicesPage({
     {
       items.push(
         <ItemComponent
+          className="text-orange-700 font-semibold"
           onSelect={ () =>
           {
             setCustomMode("return");
@@ -127,12 +128,13 @@ export default function InvoicesPage({
           } }
         >
           <Undo2 className="h-4 w-4 me-2" />
-          { t("invoices.return") }
+          <h4 className="text-sm">{ t("invoices.return") }</h4>
         </ItemComponent>
       );
 
       items.push(
         <ItemComponent
+          className="text-blue-600 font-semibold"
           onSelect={ () =>
           {
             setCustomMode("copy");
