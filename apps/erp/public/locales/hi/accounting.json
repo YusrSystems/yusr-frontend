@@ -13,7 +13,6 @@
     "percentageMin": "न्यूनतम मान 0% है",
     "percentageMax": "अधिकतम मान 100% है"
   },
-
   "accounts": {
     "title": "खाता प्रबंधन",
     "entityName": "खाता",
@@ -55,27 +54,21 @@
     "postalCodeLength": "पोस्टल कोड 5 अंकों का होना चाहिए",
     "postalCodeNumeric": "पोस्टल कोड केवल संख्यात्मक होना चाहिए"
   },
-
   "clients": {
     "title": "ग्राहक खाता प्रबंधन"
   },
-
   "suppliers": {
     "title": "आपूर्तिकर्ता खाता प्रबंधन"
   },
-
   "employees": {
     "title": "कर्मचारी खाता प्रबंधन"
   },
-
   "banks": {
     "title": "बैंक खाता प्रबंधन"
   },
-
   "boxes": {
     "title": "कैश बॉक्स खाता प्रबंधन"
   },
-
   "balanceTransfers": {
     "title": "शेष राशि स्थानांतरण",
     "entityName": "स्थानांतरण",
@@ -98,7 +91,6 @@
     "fromAccountRequired": "कृपया वह खाता चुनें जहाँ से स्थानांतरण करना है",
     "toAccountRequired": "कृपया वह खाता चुनें जहाँ स्थानांतरण करना है"
   },
-
   "vouchers": {
     "title": "वित्तीय वाउचर",
     "entityName": "वाउचर",
@@ -133,7 +125,6 @@
     "accountRequired": "कृपया खाता चुनें",
     "paymentMethodRequired": "कृपया भुगतान विधि चुनें"
   },
-
   "invoices": {
     "entityName": "चालान",
     "addNewTitle": "नया चालान बनाएँ",
@@ -244,9 +235,9 @@
     "selectPricingMethod": "मूल्य निर्धारण विधि चुनें",
     "deleteItem": "वस्तु हटाएँ",
     "deleteVoucher": "वाउचर हटाएँ",
-    "invoiceSummary": "चालान सारांश"
+    "invoiceSummary": "चालान सारांश",
+    "copyInvoice": "चालान कॉपी करें"
   },
-
   "paymentMethods": {
     "title": "भुगतान विधि प्रबंधन",
     "entityName": "भुगतान विधि",

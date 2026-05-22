@@ -13,7 +13,6 @@
     "percentageMin": "Minimum value is 0%",
     "percentageMax": "Maximum value is 100%"
   },
-
   "accounts": {
     "title": "Account Management",
     "entityName": "Account",
@@ -55,27 +54,21 @@
     "postalCodeLength": "Postal code must consist of 5 digits",
     "postalCodeNumeric": "Postal code must be numeric only"
   },
-
   "clients": {
     "title": "Customer Accounts Management"
   },
-
   "suppliers": {
     "title": "Supplier Accounts Management"
   },
-
   "employees": {
     "title": "Employee Accounts Management"
   },
-
   "banks": {
     "title": "Bank Accounts Management"
   },
-
   "boxes": {
     "title": "Cash Box Accounts Management"
   },
-
   "balanceTransfers": {
     "title": "Balance Transfers",
     "entityName": "Transfer",
@@ -98,7 +91,6 @@
     "fromAccountRequired": "Please select the account to transfer from",
     "toAccountRequired": "Please select the account to transfer to"
   },
-
   "vouchers": {
     "title": "Financial Vouchers",
     "entityName": "Voucher",
@@ -133,7 +125,6 @@
     "accountRequired": "Please select the account",
     "paymentMethodRequired": "Please select the payment method"
   },
-
   "invoices": {
     "entityName": "Invoice",
     "addNewTitle": "Create New Invoice",
@@ -244,9 +235,9 @@
     "selectPricingMethod": "Select pricing method",
     "deleteItem": "Delete item",
     "deleteVoucher": "Delete voucher",
-    "invoiceSummary": "Invoice Summary"
+    "invoiceSummary": "Invoice Summary",
+    "copyInvoice": "Copy Invoice"
   },
-
   "paymentMethods": {
     "title": "Payment Methods Management",
     "entityName": "Payment Method",

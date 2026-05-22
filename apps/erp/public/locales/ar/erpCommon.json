@@ -28,7 +28,6 @@
     "settings": "الإعدادات",
     "account": "الحساب"
   },
-
   "dashborad": {
     "income": "مجموع الدخل",
     "totalPassengers": "مجموع الركاب",
@@ -74,7 +73,6 @@
       "december": "ديسمبر"
     }
   },
-
   "permissions": {
     "resources": {
       "branches": "الفروع",
@@ -148,13 +146,11 @@
       "reports": "تقارير النظام"
     }
   },
-
   "storeItemSelector": {
     "addItems": "إضافة مواد:",
     "scanBarcode": "اقرأ الباركود...",
     "selectItem": "اختر مادة..."
   },
-
   "settings": {
     "loading": "جاري تحميل الإعدادات...",
     "title": "إعدادات النظام",
@@ -209,7 +205,6 @@
     "noCode": "لم تحصل على رمز التحقق؟",
     "visitZatca": "زُر موقع الهيئة للحصول على رمز التحقق"
   },
-
   "reports": {
     "title": "التقارير",
     "subtitle": "إنشاء وتصدير تقارير الأعمال",
@@ -254,12 +249,10 @@
     "barcodeCount": "عدد الباركودات",
     "pagesCount": "عدد الصفحات"
   },
-
   "accountStatement": {
     "button": "كشف حساب",
     "title": "كشف حساب"
   },
-
   "itemStatement": {
     "button": "كشف المادة",
     "title": "كشف مادة",

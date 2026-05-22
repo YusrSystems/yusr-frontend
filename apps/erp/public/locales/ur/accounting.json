@@ -13,7 +13,6 @@
     "percentageMin": "کم از کم قیمت 0% ہے",
     "percentageMax": "زیادہ سے زیادہ قیمت 100% ہے"
   },
-
   "accounts": {
     "title": "اکاؤنٹس کا نظم",
     "entityName": "اکاؤنٹ",
@@ -55,27 +54,21 @@
     "postalCodeLength": "پوسٹل کوڈ پانچ ہندسوں پر مشتمل ہونا چاہیے",
     "postalCodeNumeric": "پوسٹل کوڈ صرف عددی ہونا چاہیے"
   },
-
   "clients": {
     "title": "گاہک اکاؤنٹس کا نظم"
   },
-
   "suppliers": {
     "title": "سپلائر اکاؤنٹس کا نظم"
   },
-
   "employees": {
     "title": "ملازم اکاؤنٹس کا نظم"
   },
-
   "banks": {
     "title": "بینک اکاؤنٹس کا نظم"
   },
-
   "boxes": {
     "title": "کیش باکس اکاؤنٹس کا نظم"
   },
-
   "balanceTransfers": {
     "title": "بیلنس ٹرانسفرز",
     "entityName": "ٹرانسفر",
@@ -98,7 +91,6 @@
     "fromAccountRequired": "براہ کرم وہ اکاؤنٹ منتخب کریں جس سے ٹرانسفر کرنا ہے",
     "toAccountRequired": "براہ کرم وہ اکاؤنٹ منتخب کریں جس میں ٹرانسفر کرنا ہے"
   },
-
   "vouchers": {
     "title": "مالی واؤچرز",
     "entityName": "واؤچر",
@@ -133,7 +125,6 @@
     "accountRequired": "براہ کرم اکاؤنٹ منتخب کریں",
     "paymentMethodRequired": "براہ کرم ادائیگی کا طریقہ منتخب کریں"
   },
-
   "invoices": {
     "entityName": "انوائس",
     "addNewTitle": "نیا انوائس بنائیں",
@@ -244,9 +235,9 @@
     "selectPricingMethod": "قیمت کا طریقہ منتخب کریں",
     "deleteItem": "آئٹم حذف کریں",
     "deleteVoucher": "واؤچر حذف کریں",
-    "invoiceSummary": "انوائس کا خلاصہ"
+    "invoiceSummary": "انوائس کا خلاصہ",
+    "copyInvoice": "انوائس کاپی کریں"
   },
-
   "paymentMethods": {
     "title": "ادائیگی کے طریقوں کا نظم",
     "entityName": "ادائیگی کا طریقہ",

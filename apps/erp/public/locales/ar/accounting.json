@@ -13,7 +13,6 @@
     "percentageMin": "الحد الادنى هو 0%",
     "percentageMax": "الحد الاقصى هو 100%"
   },
-
   "accounts": {
     "title": "إدارة الحسابات",
     "entityName": "حساب",
@@ -55,27 +54,21 @@
     "postalCodeLength": "الرمز البريدي يجب أن يتكون من خمس أرقام",
     "postalCodeNumeric": "الرمز البريدي يجب أن يكون أرقاماً فقط"
   },
-
   "clients": {
     "title": "إدارة حسابات العملاء"
   },
-
   "suppliers": {
     "title": "إدارة حسابات الموردين"
   },
-
   "employees": {
     "title": "إدارة حسابات الموظفين"
   },
-
   "banks": {
     "title": "إدارة حسابات البنوك"
   },
-
   "boxes": {
     "title": "إدارة حسابات الصناديق"
   },
-
   "balanceTransfers": {
     "title": "تحويلات الأرصدة",
     "entityName": "تحويل",
@@ -98,7 +91,6 @@
     "fromAccountRequired": "يرجى اختيار الحساب المحول منه",
     "toAccountRequired": "يرجى اختيار الحساب المحول إليه"
   },
-
   "vouchers": {
     "title": "السندات المالية",
     "entityName": "سند",
@@ -133,7 +125,6 @@
     "accountRequired": "يرجى اختيار الحساب",
     "paymentMethodRequired": "يرجى اختيار طريقة الدفع"
   },
-
   "invoices": {
     "entityName": "الفاتورة",
     "addNewTitle": "إنشاء فاتورة جديدة",
@@ -244,9 +235,9 @@
     "selectPricingMethod": "اختر طريقة التسعير",
     "deleteItem": "حذف المادة",
     "deleteVoucher": "حذف السند",
-    "invoiceSummary": "ملخص الفاتورة"
+    "invoiceSummary": "ملخص الفاتورة",
+    "copyInvoice": "نسخ الفاتورة"
   },
-
   "paymentMethods": {
     "title": "إدارة طرق الدفع",
     "entityName": "طريقة الدفع",

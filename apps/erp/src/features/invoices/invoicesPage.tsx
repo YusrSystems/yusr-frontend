@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { FileTextIcon, RotateCw } from "lucide-react";
+import { Copy, FileTextIcon, RotateCw, Undo2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -17,6 +17,25 @@ import ReportButton from "../reports/reportButton";
 import ChangeInvoiceDialog from "./changeInvoiceDialog";
 import { useInvoiceLogic } from "./logic/useInvoiceLogic";
 import AlertConvertDialog from "./presentation/dialogs/alertConvertDialog";
+
+// ─── helper ──────────────────────────────────────────────────────────────────
+
+function buildCopyEntity(source: Invoice): Invoice
+{
+  return {
+    ...source,
+    id: 0,
+    date: new Date().toLocaleDateString("en-CA"),
+    statusId: InvoiceStatus.Valid,
+    eInvoiceStatus: EInvoiceStatus.NotSent,
+    paidAmount: source.paidAmount,
+    fullAmount: source.fullAmount,
+    invoiceItems: (source.invoiceItems ?? []).map((item) => ({ ...item, id: 0, invoiceId: 0 })),
+    invoiceVouchers: (source.invoiceVouchers ?? []).map((voucher) => ({ ...voucher, voucherId: 0, invoiceId: 0 }))
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function InvoicesPage({
   title,
@@ -46,6 +65,7 @@ export default function InvoicesPage({
   const dispatch = useAppDispatch();
   const [condition, setCondition] = useState<FilterCondition<Invoice> | undefined>(undefined);
   const [isAddReturn, setIsAddReturn] = useState<boolean>(false);
+  const [copiedEntity, setCopiedEntity] = useState<Invoice | undefined>(undefined);
   const invoiceState = useAppSelector((state) => state[stateKey] as IEntityState<Invoice>);
   const authState = useAppSelector((state) => state.auth);
   const invoiceDialogState = useAppSelector((state) => state[dialogStateKey] as IDialogState<Invoice>);
@@ -55,6 +75,8 @@ export default function InvoicesPage({
   const permissions = useAppSelector((state) =>
     selectPermissionsByResource(state, SystemPermissionsResources.Invoices)
   );
+
+  const isCopy = copiedEntity !== undefined;
 
   const getPaymentStatus = (invoice: Invoice): { message: string; styles: string; } =>
   {
@@ -121,13 +143,52 @@ export default function InvoicesPage({
     {
       items.push(
         <ItemComponent
+          key="return"
           onSelect={ () =>
           {
             setIsAddReturn(true);
+            setCopiedEntity(undefined);
             dispatch(slice.dialogActions.openChangeDialog(entity));
           } }
         >
+          <Undo2 className="h-4 w-4 ml-2" />
           { t("invoices.return") }
+        </ItemComponent>
+      );
+    }
+
+    if (permissions.addPermission)
+    {
+      items.push(
+        <ItemComponent
+          key="copy"
+          onSelect={ async () =>
+          {
+            try
+            {
+              // Fetch full entity from backend because the table row might not have all details
+              const res = await service.Get(entity.id);
+
+              if (res?.data)
+              {
+                setIsAddReturn(false);
+                setCopiedEntity(buildCopyEntity(res.data));
+                dispatch(slice.dialogActions.setIsChangeDialogOpen(true));
+              }
+              else
+              {
+                toast.error(t("invoices.invoiceNotFound"));
+              }
+            }
+            catch (error)
+            {
+              console.error("Failed to fetch full invoice for copying", error);
+              toast.error(t("invoices.invoiceNotFound"));
+            }
+          } }
+        >
+          <Copy className="h-4 w-4 ml-2" />
+          { t("invoices.copyInvoice") }
         </ItemComponent>
       );
     }
@@ -153,6 +214,12 @@ export default function InvoicesPage({
     }
     setResendingEInvoice(false);
   };
+
+  // Resolve which entity to pass to the dialog
+  const dialogEntity = isCopy ? copiedEntity : (invoiceDialogState.selectedRow || undefined);
+
+  // Resolve the dialog mode
+  const dialogMode = isAddReturn ? "return" : (isCopy || !invoiceDialogState.selectedRow) ? "create" : "update";
 
   return (
     <CrudPage<Invoice>
@@ -211,7 +278,7 @@ export default function InvoicesPage({
         getPermission: permissions.getPermission,
         addPermission: permissions.addPermission,
         updatePermission: permissions.updatePermission,
-        deletePermission: false
+        deletePermission: permissions.deletePermission
       } }
       perRowPermissions={ (entity) =>
       {
@@ -219,7 +286,7 @@ export default function InvoicesPage({
           getPermission: permissions.getPermission,
           addPermission: permissions.addPermission,
           updatePermission: permissions.updatePermission,
-          deletePermission: entity.type === InvoiceType.Quotation ? permissions.deletePermission: false
+          deletePermission: entity.type === InvoiceType.Quotation ? permissions.deletePermission : false
         };
       } }
       hasPagePermission={ hasPagePermission }
@@ -254,16 +321,12 @@ export default function InvoicesPage({
           ? [{ rowName: "", rowStyles: "w-32" }]
           : [])
       ] }
-      tableRowMapper={ (invoice: Invoice) => [
+      tableRowMapper={ (
+        invoice: Invoice
+      ) => [
         { rowName: `#${invoice.id}`, rowStyles: "" },
-        {
-          rowName: getInvoiceTypeName(invoice.type, t),
-          rowStyles: "font-semibold"
-        },
-        {
-          rowName: new Date(invoice.date).toLocaleDateString("en-CA"),
-          rowStyles: ""
-        },
+        { rowName: getInvoiceTypeName(invoice.type, t), rowStyles: "font-semibold" },
+        { rowName: new Date(invoice.date).toLocaleDateString("en-CA"), rowStyles: "" },
         { rowName: invoice.actionAccountName || "-", rowStyles: "" },
         { rowName: invoice.storeName || "-", rowStyles: "" },
         {
@@ -292,18 +355,17 @@ export default function InvoicesPage({
         {
           rowName: (
             <div>
-              { invoice.type === InvoiceType.Quotation
-                && (
-                  <AlertConvertDialog
-                    invoiceId={ invoice.id }
-                    createInitialPaymentVoucher={ () => createInitialPaymentVoucher(invoice) }
-                    onSuccess={ (data) =>
-                    {
-                      dispatch(slice.formActions.updateFormData(data));
-                      dispatch(slice.entityActions.refresh({ data: data }));
-                    } }
-                  />
-                ) }
+              { invoice.type === InvoiceType.Quotation && (
+                <AlertConvertDialog
+                  invoiceId={ invoice.id }
+                  createInitialPaymentVoucher={ () => createInitialPaymentVoucher(invoice) }
+                  onSuccess={ (data) =>
+                  {
+                    dispatch(slice.formActions.updateFormData(data));
+                    dispatch(slice.entityActions.refresh({ data: data }));
+                  } }
+                />
+              ) }
             </div>
           ),
           rowStyles: ""
@@ -363,6 +425,7 @@ export default function InvoicesPage({
         openChangeDialog: (entity) =>
         {
           setIsAddReturn(false);
+          setCopiedEntity(undefined);
           return dispatch(slice.dialogActions.openChangeDialog(entity));
         },
         openDeleteDialog: (entity) => slice.dialogActions.openDeleteDialog(entity),
@@ -371,6 +434,7 @@ export default function InvoicesPage({
           if (!open)
           {
             setIsAddReturn(false);
+            setCopiedEntity(undefined);
           }
           return slice.dialogActions.setIsChangeDialogOpen(open);
         },
@@ -380,8 +444,8 @@ export default function InvoicesPage({
       } }
       ChangeDialog={ 
         <ChangeInvoiceDialog
-          entity={ invoiceDialogState.selectedRow || undefined }
-          mode={ isAddReturn ? "return" : invoiceDialogState.selectedRow ? "update" : "create" }
+          entity={ dialogEntity }
+          mode={ dialogMode }
           service={ service }
           slice={ slice }
           stateKey={ stateKey }
@@ -395,6 +459,7 @@ export default function InvoicesPage({
             if (mode === "create" || mode === "return")
             {
               setIsAddReturn(false);
+              setCopiedEntity(undefined);
               dispatch(slice.dialogActions.setIsChangeDialogOpen(false));
             }
           } }
