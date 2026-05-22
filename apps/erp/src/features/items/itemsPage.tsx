@@ -71,7 +71,6 @@ export default function ItemsPage()
         { rowName: t("items.class"), rowStyles: "w-32" },
         { rowName: t("items.brand"), rowStyles: "w-32" },
         { rowName: t("items.quantity"), rowStyles: "w-24" },
-        { rowName: t("items.cost"), rowStyles: "w-24" },
         ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
             SystemPermissionsResources.ReportItemStatement,
@@ -94,7 +93,6 @@ export default function ItemsPage()
         { rowName: item.class ?? "-", rowStyles: "text-sm text-gray-500" },
         { rowName: item.brand ?? "-", rowStyles: "text-sm text-gray-500" },
         { rowName: item.quantity?.toString() ?? "0", rowStyles: "font-mono" },
-        { rowName: item.cost?.toLocaleString() ?? "0", rowStyles: "font-mono text-green-600" },
         ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
             SystemPermissionsResources.ReportAccountStatement,
