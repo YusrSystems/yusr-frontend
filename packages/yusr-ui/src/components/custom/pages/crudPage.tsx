@@ -141,9 +141,10 @@ export function CrudPage<T extends BaseEntity>(
               <CrudTableBodyRow
                 key={ i }
                 tableRows={ tableRowMapper(entity) }
+                onDoubleClick={ permissions.updatePermission ? () => handleOpenChangeDialog(entity) : undefined }
                 dropdownMenu={ 
                   <CrudTableRowActionsMenu
-                    permissions={ perRowPermissions? perRowPermissions(entity) : permissions }
+                    permissions={ perRowPermissions ? perRowPermissions(entity) : permissions }
                     type="dropdown"
                     onEditClicked={ () => handleOpenChangeDialog(entity) }
                     onDeleteClicked={ () => dispatch(actions.openDeleteDialog(entity)) }
@@ -153,7 +154,7 @@ export function CrudPage<T extends BaseEntity>(
                  }
                 contextMenuContent={ 
                   <CrudTableRowActionsMenu
-                    permissions={ perRowPermissions? perRowPermissions(entity) : permissions }
+                    permissions={ perRowPermissions ? perRowPermissions(entity) : permissions }
                     type="context"
                     onEditClicked={ () => handleOpenChangeDialog(entity) }
                     onDeleteClicked={ () => dispatch(actions.openDeleteDialog(entity)) }

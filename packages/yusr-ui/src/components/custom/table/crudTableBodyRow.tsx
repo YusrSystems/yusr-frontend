@@ -10,16 +10,20 @@ interface GenericRowProps
   tableRows: TableBodyRowInfo[];
   dropdownMenu: ReactNode;
   contextMenuContent: ReactNode;
+  onDoubleClick?: () => void;
 }
 
-export function CrudTableBodyRow({ tableRows, dropdownMenu, contextMenuContent }: GenericRowProps)
+export function CrudTableBodyRow({ tableRows, dropdownMenu, contextMenuContent, onDoubleClick }: GenericRowProps)
 {
   const { i18n } = useTranslation();
   return (
     <>
       <ContextMenu dir={ i18n.dir() }>
         <ContextMenuTrigger asChild>
-          <TableRow className="hover:bg-secondary/50 transition-colors">
+          <TableRow
+            onDoubleClick={ onDoubleClick }
+            className="hover:bg-secondary/50 transition-colors cursor-pointer"
+          >
             <TableCell>{ dropdownMenu }</TableCell>
 
             { tableRows.map((row, i) => (
