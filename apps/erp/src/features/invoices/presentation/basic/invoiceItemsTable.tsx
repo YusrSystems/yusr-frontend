@@ -1,7 +1,7 @@
 import { Trash2 } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextField } from "yusr-ui";
+import { NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
 import { InvoiceType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
@@ -260,7 +260,9 @@ export default function InvoiceItemsTable()
                 </tr>
                 <tr className="bg-muted/10 border-b">
                   <td colSpan={ 14 } className="px-5 pt-1 pb-3">
-                    <TextField
+                    <TextAreaField
+                      collapsedHeight={ 36 }
+                      expandedHeight={ 150 }
                       label=""
                       placeholder={ t("invoices.addNotes") }
                       value={ row.notes || "" }

@@ -1,17 +1,58 @@
+import { ChevronDown } from "lucide-react";
+import React from "react";
 import { cn } from "../../../utils/cn";
 import { Textarea } from "../../pure/textarea";
 
 export interface TextAreaInputProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement>
 {
   isInvalid?: boolean;
+  collapsedHeight?: number;
+  expandedHeight?: number;
 }
 
-export function TextAreaInput({ isInvalid, className, ...props }: TextAreaInputProps)
+export function TextAreaInput({
+  isInvalid,
+  className,
+  collapsedHeight = 36,
+  expandedHeight = 120,
+  style,
+  onFocus,
+  onBlur,
+  ...props
+}: TextAreaInputProps)
 {
+  const [isFocused, setIsFocused] = React.useState(false);
+
   return (
-    <Textarea
-      { ...props }
-      className={ cn(className, isInvalid && "border-red-600 focus-visible:ring-red-600") }
-    />
+    <div className="relative w-full">
+      <Textarea
+        { ...props }
+        style={ {
+          ...style,
+          height: isFocused ? expandedHeight : collapsedHeight,
+          transition: "height 0.2s ease",
+          resize: "none",
+          overflowY: isFocused ? "auto" : "hidden",
+          paddingBottom: isFocused ? undefined : "0.5rem"
+        } }
+        onFocus={ (e) =>
+        {
+          setIsFocused(true);
+          onFocus?.(e);
+        } }
+        onBlur={ (e) =>
+        {
+          setIsFocused(false);
+          onBlur?.(e);
+        } }
+        className={ cn(className, "min-h-0", isInvalid && "border-red-600 focus-visible:ring-red-600") }
+      />
+      { !isFocused && (
+        <ChevronDown
+          size={ 20 }
+          className="absolute end-2 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+        />
+      ) }
+    </div>
   );
 }
