@@ -4,7 +4,8 @@ import { StorageFile, StorageFileStatus } from "../entities";
 
 export function useStorageFile<T>(
   setFormData: React.Dispatch<React.SetStateAction<T>>,
-  fieldName: keyof T
+  fieldName: keyof T,
+  multiple: boolean = true
 )
 {
   const { t } = useTranslation("common");
@@ -77,14 +78,16 @@ export function useStorageFile<T>(
       const existingData = prev[fieldName];
 
       let newValue: any;
-      if (Array.isArray(existingData))
-      {
-        newValue = [...existingData, ...newStorageFiles];
-      }
-      else
-      {
-        newValue = newStorageFiles[0];
-      }
+
+      const existingArray: StorageFile[] = Array.isArray(existingData)
+        ? existingData
+        : existingData
+        ? [existingData as unknown as StorageFile]
+        : [];
+
+      newValue = multiple
+        ? [...existingArray, ...newStorageFiles]
+        : newStorageFiles[0];
 
       return { ...prev, [fieldName]: newValue };
     });
