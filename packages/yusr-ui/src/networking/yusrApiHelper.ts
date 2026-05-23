@@ -173,12 +173,9 @@ export class YusrApiHelper
     {
       const errorData = await response.json() as RequestResult<any>;
 
-      if (response.status !== ResultStatus.UnprocessableEntity && response.status !== ResultStatus.PreconditionFailed)
-      {
-        toast.error(errorData.title || t("api.anErrorOccurred"), {
-          description: errorData.errors.join("\n") || errorData.warnings.join("\n")
-        });
-      }
+      toast.error(errorData.title || t("api.anErrorOccurred"), {
+        description: errorData.errors.join("\n") || errorData.warnings.join("\n")
+      });
 
       return {
         data: undefined,
