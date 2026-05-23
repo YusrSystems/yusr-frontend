@@ -6,6 +6,7 @@ import { Textarea } from "../../pure/textarea";
 export interface TextAreaInputProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement>
 {
   isInvalid?: boolean;
+  collapsible?: boolean;
   collapsedHeight?: number;
   expandedHeight?: number;
 }
@@ -13,6 +14,7 @@ export interface TextAreaInputProps extends React.TextareaHTMLAttributes<HTMLTex
 export function TextAreaInput({
   isInvalid,
   className,
+  collapsible = false,
   collapsedHeight = 36,
   expandedHeight = 120,
   style,
@@ -22,6 +24,7 @@ export function TextAreaInput({
 }: TextAreaInputProps)
 {
   const [isFocused, setIsFocused] = React.useState(false);
+  const isCollapsed = collapsible && !isFocused;
 
   return (
     <div className="relative w-full">
@@ -29,11 +32,13 @@ export function TextAreaInput({
         { ...props }
         style={ {
           ...style,
-          height: isFocused ? expandedHeight : collapsedHeight,
-          transition: "height 0.2s ease",
-          resize: "none",
-          overflowY: isFocused ? "auto" : "hidden",
-          paddingBottom: isFocused ? undefined : "0.5rem"
+          ...(collapsible && {
+            height: isCollapsed ? collapsedHeight : expandedHeight,
+            transition: "height 0.2s ease",
+            overflowY: isCollapsed ? "hidden" : "auto",
+            paddingBottom: isCollapsed ? "0.5rem" : undefined
+          }),
+          resize: "none"
         } }
         onFocus={ (e) =>
         {
@@ -47,7 +52,7 @@ export function TextAreaInput({
         } }
         className={ cn(className, "min-h-0", isInvalid && "border-red-600 focus-visible:ring-red-600") }
       />
-      { !isFocused && (
+      { collapsible && isCollapsed && (
         <ChevronDown
           size={ 20 }
           className="absolute end-2 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"

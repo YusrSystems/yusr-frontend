@@ -261,6 +261,7 @@ export default function InvoiceItemsTable()
                 <tr className="bg-muted/10 border-b">
                   <td colSpan={ 14 } className="px-5 pt-1 pb-3">
                     <TextAreaField
+                      collapsible
                       collapsedHeight={ 36 }
                       expandedHeight={ 150 }
                       label=""
