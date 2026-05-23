@@ -39,7 +39,7 @@ export default function InvoiceGlobalSettlements()
                   Number(newValue) ?? 0
                 )
               ) }
-            disabled={ disabled || mode === "return" }
+            disabled={ disabled || mode === "return" || formData.invoiceItems?.length === 0 }
           />
         </div>
 
@@ -59,7 +59,7 @@ export default function InvoiceGlobalSettlements()
                   Number(newValue) ?? 0
                 )
               ) }
-            disabled={ disabled || mode === "return" }
+            disabled={ disabled || mode === "return" || formData.invoiceItems?.length === 0 }
           />
         </div>
       </div>

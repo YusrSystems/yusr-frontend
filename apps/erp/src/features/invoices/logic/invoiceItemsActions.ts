@@ -10,6 +10,11 @@ export default class InvoiceItemsActions
   {
     const index = action.payload;
     state.formData.invoiceItems?.splice(index, 1);
+    if (state.formData.invoiceItems?.length === 0)
+    {
+      state.formData.settlementAmount = 0;
+      state.formData.settlementPercent = 0;
+    }
   }
 
   public static updateItem(
@@ -204,6 +209,7 @@ export default class InvoiceItemsActions
   public static onInvoiceSettlementAmountChange(state: IFormState<Invoice>, action: PayloadAction<number>)
   {
     state.formData.settlementAmount = action.payload || 0;
+    state.formData.settlementPercent = 0;
     state.formData.invoiceItems?.forEach((_, i) =>
       InvoiceItemsActions.onInvoiceItemSettlementChange(state, {
         payload: { index: i, newSettlement: state.formData.settlementAmount },
@@ -215,6 +221,7 @@ export default class InvoiceItemsActions
   public static onInvoiceSettlementPercentChange(state: IFormState<Invoice>, action: PayloadAction<number>)
   {
     state.formData.settlementPercent = action.payload || 0;
+    state.formData.settlementAmount = 0;
     state.formData.invoiceItems?.forEach((item, i) =>
     {
       const newSettlement = Number(
