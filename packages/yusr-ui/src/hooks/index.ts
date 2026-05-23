@@ -1,4 +1,5 @@
 export * from "./use-mobile";
+export * from "./useColumnVisibility";
 export * from "./useDynamicList";
 export * from "./useEntityForm";
 export * from "./useFormErrors";

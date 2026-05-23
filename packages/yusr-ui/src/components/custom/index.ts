@@ -90,6 +90,7 @@ export * from "./table/crudTableHeader";
 export * from "./table/crudTableHeaderRows";
 export * from "./table/crudTablePagination";
 export * from "./table/crudTableRowActionsMenu";
+export * from "./table/columnVisibilityToggle";
 
 // Theme
 export * from "./theme/themeProvider";

@@ -31,6 +31,10 @@
     "results": "Results {{start}} - {{end}} of {{total}}"
   },
 
+  "table": {
+    "columns": "Columns"
+  },
+
   "crudRow": {
     "actions": "Actions",
     "edit": "Edit",

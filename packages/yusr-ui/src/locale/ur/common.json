@@ -31,6 +31,10 @@
     "results": "نتیجہ {{start}} - {{end}} کل {{total}} میں سے"
   },
 
+  "table": {
+    "columns": "کالم"
+  },
+
   "crudRow": {
     "actions": "اعمال",
     "edit": "ترمیم کریں",

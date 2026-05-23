@@ -37,6 +37,10 @@
     "delete": "حذف"
   },
 
+  "table": {
+    "columns": "الأعمدة"
+  },
+
   "crudEmptyTable": {
     "loadingTitle": "فضلا انتظر",
     "loadingDescription": "يتم تحميل البيانات المطلوبة",

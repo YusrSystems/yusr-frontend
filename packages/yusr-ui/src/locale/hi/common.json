@@ -31,6 +31,10 @@
     "results": "परिणाम {{start}} - {{end}} कुल {{total}} में से"
   },
 
+  "table": {
+    "columns": "कॉलम"
+  },
+
   "crudRow": {
     "actions": "क्रियाएँ",
     "edit": "संपादित करें",

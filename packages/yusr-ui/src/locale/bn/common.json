@@ -31,6 +31,10 @@
     "results": "ফলাফল {{start}} - {{end}} মোট {{total}} এর মধ্যে"
   },
 
+  "table": {
+    "columns": "কলামসমূহ"
+  },
+
   "crudRow": {
     "actions": "ক্রিয়া",
     "edit": "সম্পাদনা করুন",
