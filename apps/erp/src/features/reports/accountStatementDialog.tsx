@@ -9,7 +9,12 @@ export default function AccountStatementButton({ account }: { account: Account; 
 {
   const { t, i18n } = useTranslation("erpCommon");
   const [isOpen, setIsOpen] = useState(false);
-  const [fromDate, setFromDate] = useState<Date>(new Date());
+  const [fromDate, setFromDate] = useState<Date>(() =>
+  {
+    const date = new Date();
+    date.setMonth(date.getMonth() - 1);
+    return date;
+  });
   const [toDate, setToDate] = useState<Date>(new Date());
 
   return (
