@@ -125,7 +125,7 @@
     "unit": "الوحدة",
     "pricingMethod": "طريقة التسعير",
     "quantityInUnit": "الكمية في الوحدة",
-    "sellingPrice": "سعر البيع",
+    "sellingPrice": "سعر البيع لكل {{ unit }}",
     "barcode": "الباركود",
     "name": "الاسم",
     "noPricingMethods": "لا توجد طرق تسعير مضافة",

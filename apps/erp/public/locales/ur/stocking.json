@@ -125,7 +125,7 @@
     "unit": "یونٹ",
     "pricingMethod": "قیمت کا طریقہ",
     "quantityInUnit": "یونٹ میں مقدار",
-    "sellingPrice": "فروخت کی قیمت",
+    "sellingPrice": "فی {{ unit }} فروخت قیمت",
     "barcode": "بارکوڈ",
     "name": "نام",
     "noPricingMethods": "کوئی قیمت کا طریقہ شامل نہیں",

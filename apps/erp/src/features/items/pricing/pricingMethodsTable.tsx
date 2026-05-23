@@ -49,7 +49,7 @@ export default function PricingMethodsTable()
               <th className="p-3 w-32 text-start">{ t("items.unit") }</th>
               <th className="p-3 w-40 text-start">{ t("items.pricingMethod") }</th>
               <th className="p-3 w-32 text-start">{ t("items.quantityInUnit") }</th>
-              <th className="p-3 w-32 text-start">{ t("items.sellingPrice") }</th>
+              <th className="p-3 w-32 text-start">{ t("items.sellingPrice", { unit: formData.sellUnitName }) }</th>
               <th className="p-3 w-40 text-start">{ t("items.barcode") }</th>
               <th className="p-3 w-40 text-start">{ t("items.name") }</th>
               { SystemPermissions.hasAuth(
@@ -61,111 +61,118 @@ export default function PricingMethodsTable()
             </tr>
           </thead>
           <tbody>
-            { formData.itemUnitPricingMethods?.map((method, index) => (
-              <tr key={ index } className="border-t border-muted">
-                <td className="p-3 font-bold">{ index + 1 }</td>
-                <td className="p-3">
-                  <FormField
-                    label=""
-                    isInvalid={ hasError && !isService && !method.unitId }
-                  >
-                    <UnitsSearchableSelect
-                      selectedId={ formData.itemUnitPricingMethods?.[index].unitId }
-                      selectedLabel={ formData.itemUnitPricingMethods?.[index].unitName }
-                      disabled={ isService }
+            { formData.itemUnitPricingMethods?.map((method, index) =>
+            {
+              const multiplier = method.quantityMultiplier && method.quantityMultiplier !== 0
+                ? method.quantityMultiplier
+                : 1;
+
+              return (
+                <tr key={ index } className="border-t border-muted">
+                  <td className="p-3 font-bold">{ index + 1 }</td>
+                  <td className="p-3">
+                    <FormField
+                      label=""
                       isInvalid={ hasError && !isService && !method.unitId }
-                      onValueChange={ (unit) =>
-                      {
-                        updatePricingMethod(index, {
-                          unitId: unit?.id,
-                          unitName: unit?.name
-                        });
-                      } }
-                    />
-                  </FormField>
-                </td>
-                <td className="p-3">
-                  <FormField
-                    label=""
-                    isInvalid={ hasError && !isService && !method.pricingMethodId }
-                  >
-                    <PricingMethodsSearchableSelect
-                      selectedId={ formData.itemUnitPricingMethods?.[index].pricingMethodId }
-                      selectedLabel={ formData.itemUnitPricingMethods?.[index].pricingMethodName }
-                      disabled={ isService }
-                      isInvalid={ hasError && !isService && !method.pricingMethodId }
-                      onValueChange={ (pricingMethod) =>
-                      {
-                        updatePricingMethod(index, {
-                          pricingMethodId: pricingMethod?.id,
-                          pricingMethodName: pricingMethod?.name
-                        });
-                      } }
-                    />
-                  </FormField>
-                </td>
-                <td className="p-3">
-                  <NumberField
-                    label=""
-                    min={ 0 }
-                    disabled={ method.unitId === formData.sellUnitId }
-                    value={ method.quantityMultiplier ?? "0" }
-                    onChange={ (val) =>
-                      updatePricingMethod(index, { quantityMultiplier: val }) }
-                    isInvalid={ hasError && (method.quantityMultiplier == undefined || method.quantityMultiplier <= 0) }
-                  />
-                </td>
-                <td className="p-3">
-                  <NumberField
-                    label=""
-                    min={ 0 }
-                    value={ method.price ?? "0" }
-                    onChange={ (val) =>
-                      updatePricingMethod(index, { price: val }) }
-                    isInvalid={ hasError && (method.price == undefined || method.price <= 0) }
-                    currency={ <CurrencyIcon /> }
-                  />
-                </td>
-                <td className="p-3">
-                  <TextField
-                    label=""
-                    value={ method.barcode || "" }
-                    onChange={ (e) => updatePricingMethod(index, { barcode: e.target.value }) }
-                  />
-                </td>
-                <td className="p-3">
-                  <TextField
-                    label=""
-                    value={ method.itemUnitPricingMethodName || "" }
-                    onChange={ (e) => updatePricingMethod(index, { itemUnitPricingMethodName: e.target.value }) }
-                  />
-                </td>
-
-                { SystemPermissions.hasAuth(
-                  authState.loggedInUser?.role?.permissions ?? [],
-                  SystemPermissionsResources.ReportItemBarcode,
-                  SystemPermissionsActions.Get
-                ) && (
-                  <td className="p-3 text-center">
-                    <ItemBarcodeButton item={ formData as Item } iupm={ method } />
-                  </td>
-                ) }
-
-                { !isService && (
-                  <td className="p-3 text-center">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="text-red-500 hover:text-red-700 hover:bg-red-100"
-                      onClick={ () => removePricingMethod(index) }
                     >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                      <UnitsSearchableSelect
+                        selectedId={ formData.itemUnitPricingMethods?.[index].unitId }
+                        selectedLabel={ formData.itemUnitPricingMethods?.[index].unitName }
+                        disabled={ isService }
+                        isInvalid={ hasError && !isService && !method.unitId }
+                        onValueChange={ (unit) =>
+                        {
+                          updatePricingMethod(index, {
+                            unitId: unit?.id,
+                            unitName: unit?.name
+                          });
+                        } }
+                      />
+                    </FormField>
                   </td>
-                ) }
-              </tr>
-            )) }
+                  <td className="p-3">
+                    <FormField
+                      label=""
+                      isInvalid={ hasError && !isService && !method.pricingMethodId }
+                    >
+                      <PricingMethodsSearchableSelect
+                        selectedId={ formData.itemUnitPricingMethods?.[index].pricingMethodId }
+                        selectedLabel={ formData.itemUnitPricingMethods?.[index].pricingMethodName }
+                        disabled={ isService }
+                        isInvalid={ hasError && !isService && !method.pricingMethodId }
+                        onValueChange={ (pricingMethod) =>
+                        {
+                          updatePricingMethod(index, {
+                            pricingMethodId: pricingMethod?.id,
+                            pricingMethodName: pricingMethod?.name
+                          });
+                        } }
+                      />
+                    </FormField>
+                  </td>
+                  <td className="p-3">
+                    <NumberField
+                      label=""
+                      min={ 1 }
+                      disabled={ method.unitId === formData.sellUnitId }
+                      value={ method.quantityMultiplier ?? 1 }
+                      onChange={ (val) => updatePricingMethod(index, { quantityMultiplier: val }) }
+                      isInvalid={ hasError
+                        && (method.quantityMultiplier == undefined || method.quantityMultiplier <= 0) }
+                    />
+                  </td>
+                  <td className="p-3">
+                    <NumberField
+                      label=""
+                      min={ 0 }
+                      value={ parseFloat((method.price / multiplier).toFixed(2)) }
+                      onChange={ (val) =>
+                        updatePricingMethod(index, { price: parseFloat(((val ?? 0) * multiplier).toFixed(2)) }) }
+                      isInvalid={ hasError && (method.price == undefined || method.price <= 0) }
+                      currency={ <CurrencyIcon /> }
+                    />
+                  </td>
+                  <td className="p-3">
+                    <TextField
+                      label=""
+                      value={ method.barcode || "" }
+                      onChange={ (e) => updatePricingMethod(index, { barcode: e.target.value }) }
+                    />
+                  </td>
+                  <td className="p-3">
+                    <TextField
+                      label=""
+                      value={ method.itemUnitPricingMethodName || "" }
+                      onChange={ (e) => updatePricingMethod(index, { itemUnitPricingMethodName: e.target.value }) }
+                    />
+                  </td>
+
+                  { SystemPermissions.hasAuth(
+                    authState.loggedInUser?.role?.permissions ?? [],
+                    SystemPermissionsResources.ReportItemBarcode,
+                    SystemPermissionsActions.Get
+                  ) && (
+                    <td className="p-3 text-center">
+                      <ItemBarcodeButton item={ formData as Item } iupm={ method } />
+                    </td>
+                  ) }
+
+                  { !isService && (
+                    <td className="p-3 text-center">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                        onClick={ () => removePricingMethod(index) }
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </td>
+                  ) }
+                </tr>
+              );
+            }) }
           </tbody>
         </table>
         { formData.itemUnitPricingMethods?.length === 0 && (
