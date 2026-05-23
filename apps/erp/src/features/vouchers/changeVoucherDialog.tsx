@@ -223,11 +223,6 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
               value={ formData.recipient || "" }
               onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ recipient: e.target.value })) }
             />
-            <TextField
-              label={ t("vouchers.paymentReason") }
-              value={ formData.paymentReason || "" }
-              onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ paymentReason: e.target.value })) }
-            />
           </FieldsSection>
 
           { formData.invoiceId && (
@@ -241,18 +236,12 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
             </FieldsSection>
           ) }
 
-          <FieldsSection title={ t("vouchers.descriptionAndNotes") } columns={ 1 }>
+          <FieldsSection columns={ 1 }>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <TextAreaField
                 label={ t("vouchers.description") }
                 value={ formData.description || "" }
                 onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ description: e.target.value })) }
-                rows={ 3 }
-              />
-              <TextAreaField
-                label={ t("vouchers.additionalNotes") }
-                value={ formData.notes || "" }
-                onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ notes: e.target.value })) }
                 rows={ 3 }
               />
             </div>
