@@ -157,6 +157,7 @@
     "addReturnInvoice": "إضافة مرتجع فاتورة",
     "addInvoice": "إضافة الفاتورة",
     "editInvoice": "تعديل الفاتورة",
+    "editQuotation": "تعديل عرض السعر",
     "editReturnInvoice": "تعديل مرتجع فاتورة",
     "fullyReturned": "تم الاسترجاع بالكامل",
     "fullyReturnedMessage": "تم استرجاع جميع بنود هذه الفاتورة مسبقاً",

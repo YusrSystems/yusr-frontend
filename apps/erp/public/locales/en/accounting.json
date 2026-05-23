@@ -154,6 +154,7 @@
     "addReturnInvoice": "Add Invoice Return",
     "addInvoice": "Add Invoice",
     "editInvoice": "Edit Invoice",
+    "editQuotation": "Edit Quotation",
     "editReturnInvoice": "Edit Return Invoice",
     "fullyReturned": "Fully Returned",
     "fullyReturnedMessage": "All items of this invoice have been returned previously",

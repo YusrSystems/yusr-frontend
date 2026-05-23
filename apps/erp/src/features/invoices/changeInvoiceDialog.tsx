@@ -254,9 +254,17 @@ export default function ChangeInvoiceDialog({
     }
     if (currentMode === "create")
     {
-      return isReturn ? t("invoices.addReturnInvoice") : fixedType === InvoiceType.Quotation ? t("invoices.addNewQuotationTitle") : t("invoices.addInvoice");
+      return isReturn
+        ? t("invoices.addReturnInvoice")
+        : fixedType === InvoiceType.Quotation
+        ? t("invoices.addNewQuotationTitle")
+        : t("invoices.addInvoice");
     }
-    return isReturn ? t("invoices.editReturnInvoice") : t("invoices.editInvoice");
+    return isReturn
+      ? t("invoices.editReturnInvoice")
+      : fixedType === InvoiceType.Quotation
+      ? t("invoices.editQuotation")
+      : t("invoices.editInvoice");
   };
 
   const resolvedDialogMode = (): DialogMode =>
