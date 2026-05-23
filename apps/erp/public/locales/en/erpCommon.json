@@ -26,7 +26,8 @@
     "stocktakings": "Stocktaking",
     "itemsSettlements": "Stock Settlements",
     "settings": "Settings",
-    "account": "Account"
+    "account": "Account",
+    "quotationInvoices": "Quotations"
   },
 
   "dashborad": {

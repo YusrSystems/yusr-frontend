@@ -6,7 +6,7 @@ import { itemTransferReducer } from "../../features/itemTransfers/logic/itemTran
 import registerReducer from "../../features/register/logic/registerSlice";
 import { BanksAndBoxesSlice, BanksSlice, BoxesSlice, ClientsAndSuppliersSlice, ClientsSlice, EmployeesSlice, SuppliersSlice } from "../data/account";
 import { BalanceTransferSlice } from "../data/balanceTransfer";
-import { PurchasesSlice, SalesSlice } from "../data/invoice";
+import { PurchasesSlice, QuotationSlice, SalesSlice } from "../data/invoice";
 import { ItemSlice } from "../data/item";
 import { ItemsSettlementSlice } from "../data/itemsSettlement";
 import { ItemTransferSlice } from "../data/itemTransfer";
@@ -81,6 +81,9 @@ export const store = configureStore({
     sales: SalesSlice.entityReducer,
     salesForm: SalesSlice.formReducer,
     salesDialog: SalesSlice.dialogReducer,
+    quotations: QuotationSlice.entityReducer,
+    quotationsForm: QuotationSlice.formReducer,
+    quotationsDialog: QuotationSlice.dialogReducer,
     purchases: PurchasesSlice.entityReducer,
     purchasesForm: PurchasesSlice.formReducer,
     purchasesDialog: PurchasesSlice.dialogReducer,

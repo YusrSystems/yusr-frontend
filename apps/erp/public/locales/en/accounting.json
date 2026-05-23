@@ -234,7 +234,10 @@
     "deleteItem": "Delete item",
     "deleteVoucher": "Delete voucher",
     "invoiceSummary": "Invoice Summary",
-    "copyInvoice": "Copy Invoice"
+    "copyInvoice": "Copy Invoice",
+    "addNewQuotationTitle": "Create Quotation",
+    "totalQuotations": "Total Quotations",
+    "convertToSales": "Convert to Sales Invoice"
   },
   "paymentMethods": {
     "title": "Payment Methods Management",

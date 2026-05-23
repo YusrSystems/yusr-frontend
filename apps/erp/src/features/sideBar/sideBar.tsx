@@ -63,6 +63,18 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
           SystemPermissionsResources.Invoices,
           SystemPermissionsActions.Get
         )
+      }, {
+        title: t("sidebar.quotationInvoices"),
+        url: "/quotations",
+        hasAuth: SystemPermissions.hasAuth(
+          permissions,
+          SystemPermissionsResources.InvoiceSell,
+          SystemPermissionsActions.Get
+        ) && SystemPermissions.hasAuth(
+          authState.loggedInUser?.role?.permissions ?? [],
+          SystemPermissionsResources.Invoices,
+          SystemPermissionsActions.Get
+        )
       }]
     }, {
       title: t("sidebar.vouchers"),

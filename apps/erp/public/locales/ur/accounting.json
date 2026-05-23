@@ -234,7 +234,10 @@
     "deleteItem": "آئٹم حذف کریں",
     "deleteVoucher": "واؤچر حذف کریں",
     "invoiceSummary": "انوائس کا خلاصہ",
-    "copyInvoice": "انوائس کاپی کریں"
+    "copyInvoice": "انوائس کاپی کریں",
+    "addNewQuotationTitle": "کوٹیشن بنائیں",
+    "totalQuotations": "کل کوٹیشنز",
+    "convertToSales": "سیلز انوائس میں تبدیل کریں"
   },
   "paymentMethods": {
     "title": "ادائیگی کے طریقوں کا نظم",

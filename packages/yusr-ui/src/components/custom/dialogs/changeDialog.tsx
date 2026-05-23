@@ -30,7 +30,6 @@ export function ChangeDialog<T extends BaseEntity>(
     disable,
     onSuccess,
     validate = () => true,
-    onBeforeSave,
     transformData,
     children
   }: ChangeDialogProps<T>
@@ -79,7 +78,6 @@ export function ChangeDialog<T extends BaseEntity>(
           disable={ disable }
           onSuccess={ onSuccess }
           validate={ validate }
-          onBeforeSave={ onBeforeSave }
           transformData={ transformData }
         />
       </DialogFooter>

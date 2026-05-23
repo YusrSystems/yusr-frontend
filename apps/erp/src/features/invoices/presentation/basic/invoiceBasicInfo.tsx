@@ -79,22 +79,6 @@ export default function InvoiceBasicInfo()
 
   return (
     <FieldsSection columns={ { base: 1, md: 2, lg: 4 } }>
-      { (formData.type === InvoiceType.Sell || formData.type === InvoiceType.Quotation) && (
-        <SelectField
-          label={ t("invoices.invoiceType") }
-          required
-          value={ formData.type?.toString() || "" }
-          onValueChange={ (val) => dispatch(slice.formActions.updateFormData({ type: Number(val) as InvoiceType })) }
-          isInvalid={ isInvalid("type") }
-          error={ getError("type") }
-          disabled={ mode === "update" || mode === "return" }
-          options={ [{ label: t("invoices.sellInvoice"), value: InvoiceType.Sell.toString() }, {
-            label: t("invoices.quotation"),
-            value: InvoiceType.Quotation.toString()
-          }] }
-        />
-      ) }
-
       { (mode === "update" || mode === "return") && (
         <TextField
           label={ t("invoices.invoiceDate") }

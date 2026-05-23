@@ -215,9 +215,6 @@ export class InvoiceSlice
   }
 }
 
-export const SalesSlice = InvoiceSlice.create("sales", [
-  InvoiceType.Sell,
-  InvoiceType.SellReturn,
-  InvoiceType.Quotation
-]);
+export const SalesSlice = InvoiceSlice.create("sales", [InvoiceType.Sell, InvoiceType.SellReturn]);
+export const QuotationSlice = InvoiceSlice.create("quotations", [InvoiceType.Quotation]);
 export const PurchasesSlice = InvoiceSlice.create("purchases", [InvoiceType.Purchase, InvoiceType.PurchaseReturn]);

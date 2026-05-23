@@ -13,6 +13,7 @@ import SuppliersAccountsPage from "./features/accounts/suppliersAccountsPage";
 import BalanceTransfersPage from "./features/balanceTransfer/balanceTransfersPage";
 import DashboardPage from "./features/dashboard/dashboardPage";
 import PurchaseInvoicesPage from "./features/invoices/purchaseInvoices";
+import QuotationInvoicesPage from "./features/invoices/quotationInvoicesPage";
 import SellInvoicesPage from "./features/invoices/sellInvoicesPage";
 import ItemsPage from "./features/items/itemsPage";
 import ItemsSettlementsPage from "./features/itemsSettlements/itemsSettlementsPage";
@@ -90,6 +91,8 @@ function AppRoutes()
             <Route path="/sales/:id" element={ <SellInvoicesPage /> } />
             <Route path="/purchases" element={ <PurchaseInvoicesPage /> } />
             <Route path="/purchases/:id" element={ <PurchaseInvoicesPage /> } />
+            <Route path="/quotations" element={ <QuotationInvoicesPage /> } />
+            <Route path="/quotations/:id" element={ <QuotationInvoicesPage /> } />
             <Route path="/vouchers" element={ <VouchersPage /> } />
             <Route path="/items" element={ <ItemsPage /> } />
             <Route path="/pricingMethods" element={ <PricingMethodsPage /> } />

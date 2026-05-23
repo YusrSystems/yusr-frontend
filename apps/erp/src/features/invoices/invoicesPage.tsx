@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { Copy, FileTextIcon, RotateCw, Undo2 } from "lucide-react";
+import { Copy, FilePlusCorner, FileTextIcon, RotateCw, Undo2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -14,11 +14,12 @@ import { EInvoicingEnvironmentType } from "../../core/data/setting";
 import InvoicesApiService from "../../core/networking/invoiceApiService";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "../reports/reportButton";
-import ChangeInvoiceDialog from "./changeInvoiceDialog";
-import { useInvoiceLogic } from "./logic/useInvoiceLogic";
-import AlertConvertDialog from "./presentation/dialogs/alertConvertDialog";
+import ChangeInvoiceDialog, { type InvoiceDialogMode } from "./changeInvoiceDialog";
 
 export default function InvoicesPage({
+  entityName,
+  addNewItemTitle,
+  totalInvoicesTitle,
   title,
   slice,
   stateKey,
@@ -30,6 +31,9 @@ export default function InvoicesPage({
   hasPagePermission,
   basePath
 }: {
+  entityName?: string;
+  addNewItemTitle?: string;
+  totalInvoicesTitle?: string;
   title: string;
   slice: ReturnType<typeof InvoiceSlice.create>;
   stateKey: keyof RootState;
@@ -45,12 +49,11 @@ export default function InvoicesPage({
   const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
   const [condition, setCondition] = useState<FilterCondition<Invoice> | undefined>(undefined);
-  const [customMode, setCustomMode] = useState<"return" | "copy" | "none">("none");
+  const [customMode, setCustomMode] = useState<InvoiceDialogMode | undefined>(undefined);
   const invoiceState = useAppSelector((state) => state[stateKey] as IEntityState<Invoice>);
   const authState = useAppSelector((state) => state.auth);
   const invoiceDialogState = useAppSelector((state) => state[dialogStateKey] as IDialogState<Invoice>);
   const [resendingEInvoice, setResendingEInvoice] = useState(false);
-  const { createInitialPaymentVoucher } = useInvoiceLogic(authState);
 
   const permissions = useAppSelector((state) =>
     selectPermissionsByResource(state, SystemPermissionsResources.Invoices)
@@ -148,6 +151,24 @@ export default function InvoicesPage({
       );
     }
 
+    if (entity.type === InvoiceType.Quotation)
+    {
+      items.push(
+        <ItemComponent
+          className="text-green-600 font-semibold"
+          onSelect={ () =>
+          {
+            setCustomMode("quotationToSales");
+
+            dispatch(slice.dialogActions.openChangeDialog(entity));
+          } }
+        >
+          <FilePlusCorner className="h-4 w-4 me-2" />
+          { t("invoices.convertToSales") }
+        </ItemComponent>
+      );
+    }
+
     return items;
   };
 
@@ -202,8 +223,8 @@ export default function InvoicesPage({
         dispatch(slice.dialogActions.openChangeDialog(invoice));
       } }
       title={ title }
-      entityName={ t("invoices.entityName") }
-      addNewItemTitle={ t("invoices.addNewTitle") }
+      entityName={ entityName ?? t("invoices.entityName") }
+      addNewItemTitle={ addNewItemTitle ?? t("invoices.addNewTitle") }
       onConditionChange={ setCondition }
       actionButtons={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],
@@ -243,7 +264,7 @@ export default function InvoicesPage({
       useSlice={ () => invoiceDialogState }
       service={ service }
       cards={ [{
-        title: t("invoices.totalInvoices"),
+        title: totalInvoicesTitle ?? t("invoices.totalInvoices"),
         data: (invoiceState.entities?.count ?? 0).toString(),
         icon: <FileTextIcon className="h-4 w-4 text-muted-foreground" />
       }] }
@@ -256,10 +277,12 @@ export default function InvoicesPage({
         { rowName: t("invoices.account"), rowStyles: "w-48" },
         { rowName: t("invoices.store"), rowStyles: "w-32" },
         { rowName: t("invoices.total"), rowStyles: "w-32" },
-        { rowName: t("invoices.status"), rowStyles: "w-32" },
-        { rowName: "", rowStyles: "w-32" },
-        { rowName: "", rowStyles: "w-32" },
+
+        ...(fixedType === InvoiceType.Sell
+          ? [{ rowName: t("invoices.status"), rowStyles: "w-32" }, { rowName: "", rowStyles: "w-32" }]
+          : []),
         ...(authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
+            && fixedType === InvoiceType.Sell
           ? [{ rowName: t("invoices.eInvoiceStatus"), rowStyles: "w-50" }]
           : []),
         ...(SystemPermissions.hasAuth(
@@ -291,40 +314,23 @@ export default function InvoicesPage({
           ),
           rowStyles: "font-bold text-blue-600"
         },
-        {
-          rowName: invoice.statusId === InvoiceStatus.Valid ? t("invoices.valid") : t("invoices.deleted"),
-          rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            invoice.statusId === InvoiceStatus.Valid
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`
-        },
-        {
-          rowName: getPaymentStatus(invoice).message,
-          rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            getPaymentStatus(invoice).styles
-          }`
-        },
-        {
-          rowName: (
-            <div>
-              { invoice.type === InvoiceType.Quotation
-                && (
-                  <AlertConvertDialog
-                    invoiceId={ invoice.id }
-                    createInitialPaymentVoucher={ () => createInitialPaymentVoucher(invoice) }
-                    onSuccess={ (data) =>
-                    {
-                      dispatch(slice.formActions.updateFormData(data));
-                      dispatch(slice.entityActions.refresh({ data: data }));
-                    } }
-                  />
-                ) }
-            </div>
-          ),
-          rowStyles: ""
-        },
+        ...(fixedType === InvoiceType.Sell
+          ? [{
+            rowName: invoice.statusId === InvoiceStatus.Valid ? t("invoices.valid") : t("invoices.deleted"),
+            rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              invoice.statusId === InvoiceStatus.Valid
+                ? "bg-green-100 text-green-800"
+                : "bg-red-100 text-red-800"
+            }`
+          }, {
+            rowName: getPaymentStatus(invoice).message,
+            rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              getPaymentStatus(invoice).styles
+            }`
+          }]
+          : []),
         ...(authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
+            && fixedType === InvoiceType.Sell
           ? [{
             rowName: (
               <div className="flex items-center gap-2">
@@ -378,7 +384,7 @@ export default function InvoicesPage({
         filter: slice.entityActions.filter,
         openChangeDialog: (entity) =>
         {
-          setCustomMode("none");
+          setCustomMode(undefined);
           return dispatch(slice.dialogActions.openChangeDialog(entity));
         },
         openDeleteDialog: (entity) => slice.dialogActions.openDeleteDialog(entity),
@@ -386,7 +392,7 @@ export default function InvoicesPage({
         {
           if (!open)
           {
-            setCustomMode("none");
+            setCustomMode(undefined);
           }
           return slice.dialogActions.setIsChangeDialogOpen(open);
         },
@@ -396,19 +402,15 @@ export default function InvoicesPage({
       } }
       ChangeDialog={ 
         <ChangeInvoiceDialog
-          entity={ invoiceDialogState.selectedRow || undefined }
-          mode={ customMode === "return"
-            ? "return"
-            : customMode === "copy"
-            ? "copy"
-            : invoiceDialogState.selectedRow
-            ? "update"
-            : "create" }
+          entity={ customMode === "quotationToSales"
+            ? ({ ...invoiceDialogState.selectedRow, type: InvoiceType.Sell } as Invoice)
+            : (invoiceDialogState.selectedRow || undefined) }
+          mode={ customMode ?? (invoiceDialogState.selectedRow ? "update" : "create") }
           service={ service }
           slice={ slice }
           stateKey={ stateKey }
           selectFormState={ selectFormState }
-          fixedType={ fixedType }
+          fixedType={ customMode === "quotationToSales" ? InvoiceType.Sell : fixedType }
           accountSlice={ accountSlice }
           accountState={ accountState }
           onSuccess={ (data, mode) =>
@@ -416,7 +418,7 @@ export default function InvoicesPage({
             dispatch(slice.entityActions.refresh({ data: data }));
             if (mode === "create" || mode === "return")
             {
-              setCustomMode("none");
+              setCustomMode(undefined);
               dispatch(slice.dialogActions.setIsChangeDialogOpen(false));
             }
           } }

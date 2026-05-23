@@ -19,7 +19,6 @@ export interface SaveButtonProps<T extends BaseEntity>
   disable?: () => boolean;
   onSuccess?: (newData: T) => void;
   validate?: () => boolean;
-  onBeforeSave?: () => Promise<{ handled: boolean; data?: T; }>;
   transformData?: (data: T | Partial<T>) => T | Partial<T>;
   onExecute?: (
     formData: T | Partial<T>,
@@ -38,7 +37,6 @@ export function SaveButton<T extends BaseEntity>(
     disable,
     onSuccess,
     validate = () => true,
-    onBeforeSave,
     transformData,
     onExecute
   }: SaveButtonProps<T>
@@ -57,21 +55,6 @@ export function SaveButton<T extends BaseEntity>(
     if (!validate())
     {
       return;
-    }
-
-    if (onBeforeSave)
-    {
-      setLoading(true);
-      const { handled, data } = await onBeforeSave();
-      setLoading(false);
-      if (handled)
-      {
-        if (data)
-        {
-          onSuccess?.(data);
-        }
-        return;
-      }
     }
 
     setLoading(true);

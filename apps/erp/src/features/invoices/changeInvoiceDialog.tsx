@@ -1,6 +1,7 @@
 import { BanknoteArrowUp, Box, CheckCircle2, FolderKanban, Siren } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import type { CommonChangeDialogProps, DialogMode, IEntityState } from "yusr-ui";
 import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import Account, { type AccountSliceType } from "../../core/data/account";
@@ -17,12 +18,11 @@ import InvoiceItemsMath from "./logic/invoiceItemsMath";
 import { useInvoiceLogic } from "./logic/useInvoiceLogic";
 import InvoiceBasicTab from "./presentation/basic/invoiceBasicTab";
 import InvoiceCostsTab from "./presentation/costs/invoiceCostsTab";
-import AlertConvertDialog from "./presentation/dialogs/alertConvertDialog";
 import InvoiceFilesTab from "./presentation/files/invoiceFilesTab";
 import InvoicePolicyTab from "./presentation/policy/invoicePolicyTab";
 
 export type InvoiceSliceType = ReturnType<typeof InvoiceSlice.create>;
-export type InvoiceDialogMode = DialogMode | "return" | "copy";
+export type InvoiceDialogMode = DialogMode | "return" | "copy" | "quotationToSales";
 
 export default function ChangeInvoiceDialog({
   entity,
@@ -47,8 +47,10 @@ export default function ChangeInvoiceDialog({
 {
   const { t, i18n } = useTranslation("accounting");
   const [currentMode, setCurrentMode] = useState<InvoiceDialogMode>(mode);
+  const originalMode = React.useRef<InvoiceDialogMode>(mode);
   const [initLoading, setInitLoading] = useState(false);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const authState = useAppSelector((state) => state.auth);
   const { createInitialPaymentVoucher } = useInvoiceLogic(authState);
   const invoiceTaxInclusivePrice = () => InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(formData?.invoiceItems ?? []);
@@ -92,7 +94,13 @@ export default function ChangeInvoiceDialog({
     InvoiceValidationRules.validationRules(t),
     (errors) => dispatch(slice.formActions.setErrors(errors))
   );
+
   useFormInit(slice.formActions.setInitialData, initialValues);
+
+  useEffect(() =>
+  {
+    originalMode.current = mode;
+  }, [mode]);
 
   useEffect(() =>
   {
@@ -165,7 +173,7 @@ export default function ChangeInvoiceDialog({
 
   useEffect(() =>
   {
-    if ((currentMode === "update" || currentMode === "return" || currentMode === "copy") && entity?.id != undefined)
+    if (entity?.id != undefined && currentMode !== "create")
     {
       setInitLoading(true);
 
@@ -173,47 +181,63 @@ export default function ChangeInvoiceDialog({
       {
         let res = undefined;
 
-        if (currentMode === "update" || currentMode === "copy")
+        if (currentMode !== "return")
         {
           res = await service.Get(entity.id);
         }
-        else if (currentMode === "return")
+        else
         {
           res = await new InvoicesApiService().GetReturnInvoiceInitialDetails(entity.id);
         }
 
         if (res?.data != undefined)
         {
-          dispatch(slice.formActions.updateFormData(res.data));
+          dispatch(slice.formActions.updateFormData({
+            ...res.data,
+            // override date and id for copy
+            ...(currentMode === "copy" && {
+              id: 0,
+              date: new Date().toLocaleDateString("en-CA")
+            }),
+            // override type and id for quotationToSales
+            ...(currentMode === "quotationToSales" && {
+              type: InvoiceType.Sell,
+              id: 0,
+              date: new Date().toLocaleDateString("en-CA")
+            })
+          }));
           setFullyReturned(res.data.invoiceItems.length === 0);
         }
+
+        if (currentMode === "copy")
+        {
+          setCurrentMode("create");
+        }
+
+        if (currentMode === "quotationToSales")
+        {
+          setCurrentMode("create");
+        }
+
         setInitLoading(false);
       };
 
       getInvoice();
-
-      if (currentMode === "copy")
-      {
-        dispatch(slice.formActions.updateFormData({ ...entity, id: 0, date: new Date().toLocaleDateString("en-CA") }));
-        setCurrentMode("create");
-      }
     }
   }, [dispatch, entity?.id]);
 
-  const onBeforeSave = async (): Promise<{ handled: boolean; data?: Invoice; }> =>
+  const transformDataBeforeSave = (data: Invoice | Partial<Invoice>): Invoice | Partial<Invoice> =>
   {
     if (currentMode === "return")
     {
-      const res = await new InvoicesApiService().Add({
-        ...formData,
-        type: formData.type === InvoiceType.Sell ? InvoiceType.SellReturn : InvoiceType.PurchaseReturn,
-        originalInvoiceId: formData.id,
+      return {
+        ...data,
+        type: (data as Invoice).type === InvoiceType.Sell ? InvoiceType.SellReturn : InvoiceType.PurchaseReturn,
+        originalInvoiceId: (data as Invoice).id,
         id: 0
-      } as Invoice);
-      return { handled: true, data: res.data as Invoice ?? undefined };
+      };
     }
-
-    return { handled: false };
+    return data;
   };
 
   const isReturn = formData.type === InvoiceType.SellReturn || formData.type === InvoiceType.PurchaseReturn;
@@ -224,11 +248,24 @@ export default function ChangeInvoiceDialog({
     {
       return t("invoices.addReturnInvoice");
     }
+    if (currentMode === "quotationToSales")
+    {
+      return t("invoices.convertToSales");
+    }
     if (currentMode === "create")
     {
       return isReturn ? t("invoices.addReturnInvoice") : t("invoices.addInvoice");
     }
     return isReturn ? t("invoices.editReturnInvoice") : t("invoices.editInvoice");
+  };
+
+  const resolvedDialogMode = (): DialogMode =>
+  {
+    if (currentMode === "copy" || currentMode === "quotationToSales" || currentMode === "return")
+    {
+      return "create";
+    }
+    return currentMode as DialogMode;
   };
 
   if (initLoading)
@@ -293,25 +330,18 @@ export default function ChangeInvoiceDialog({
           title: getDialogTitle(),
           className: "sm:max-w-[100vw] sm:w-screen sm:h-screen",
           formData,
-          dialogMode: currentMode as DialogMode,
+          dialogMode: resolvedDialogMode(),
           service,
-          onSuccess: (data) => onSuccess?.(data, currentMode),
+          onSuccess: (data) =>
+          {
+            if (originalMode.current === "quotationToSales")
+            {
+              navigate("/sales");
+            }
+            onSuccess?.(data, currentMode);
+          },
           validate,
-          onBeforeSave: onBeforeSave,
-          actionButtons: formData.type === InvoiceType.Quotation && currentMode === "update" && formData?.id != undefined
-            ? (
-              <AlertConvertDialog
-                invoiceId={ formData.id }
-                createInitialPaymentVoucher={ () =>
-                  createInitialPaymentVoucher(formData as Invoice, invoiceTaxInclusivePrice()) }
-                onSuccess={ (data) =>
-                {
-                  dispatch(slice.formActions.updateFormData(data));
-                  onSuccess?.(data, currentMode);
-                } }
-              />
-            )
-            : undefined
+          transformData: transformDataBeforeSave
         } }
         tabs={ [
           {

@@ -234,7 +234,10 @@
     "deleteItem": "वस्तु हटाएँ",
     "deleteVoucher": "वाउचर हटाएँ",
     "invoiceSummary": "चालान सारांश",
-    "copyInvoice": "चालान कॉपी करें"
+    "copyInvoice": "चालान कॉपी करें",
+    "addNewQuotationTitle": "कोटेशन बनाएँ",
+    "totalQuotations": "कुल कोटेशन",
+    "convertToSales": "सेल्स इनवॉइस में बदलें"
   },
   "paymentMethods": {
     "title": "भुगतान विधि प्रबंधन",
