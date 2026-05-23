@@ -1,5 +1,5 @@
 import { useFormErrors } from "yusr-ui";
-import { ItemSlice, ItemUnitPricingMethod } from "../../../core/data/item";
+import { generateBarcode, ItemSlice, ItemUnitPricingMethod } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 
 export default function usePricingMethodsTable()
@@ -37,8 +37,10 @@ export default function usePricingMethodsTable()
 
   const addPricingMethod = () =>
   {
+    const newItem = new ItemUnitPricingMethod();
+    newItem.barcode = generateBarcode();
     dispatch(ItemSlice.formActions.updateFormData((prev) => ({
-      itemUnitPricingMethods: [...(prev.itemUnitPricingMethods || []), new ItemUnitPricingMethod()]
+      itemUnitPricingMethods: [...(prev.itemUnitPricingMethods || []), newItem]
     })));
   };
 

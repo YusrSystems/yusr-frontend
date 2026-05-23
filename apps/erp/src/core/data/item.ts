@@ -253,3 +253,12 @@ export class ItemSlice
   public static formActions = ItemSlice.formSliceInstance.actions;
   public static formReducer = ItemSlice.formSliceInstance.reducer;
 }
+
+export function generateBarcode(length = 12)
+{
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  return Array.from(
+    { length },
+    () => chars[Math.floor(Math.random() * chars.length)]
+  ).join("");
+}

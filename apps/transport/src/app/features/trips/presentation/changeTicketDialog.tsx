@@ -127,7 +127,6 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
                 className="flex-1 gap-2"
                 onClick={ () =>
                 {
-                  console.log(formData.passenger);
                   onPassengerDialogClicked?.(formData.passenger!);
                 } }
               >

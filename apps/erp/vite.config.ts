@@ -20,7 +20,7 @@ export default defineConfig({
         secure: true
       }
     }
-    //   proxy: {
+    // proxy: {
     //   "/api": {
     //     target: "https://localhost:7142",
     //     changeOrigin: true,

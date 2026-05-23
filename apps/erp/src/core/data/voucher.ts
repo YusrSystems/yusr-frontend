@@ -21,10 +21,8 @@ export default class Voucher extends BaseEntity
   public paymentMethodId!: number;
   public description?: string;
   public invoiceId?: number;
-  public paymentReason?: string;
   public giver?: string;
   public recipient?: string;
-  public notes?: string;
 
   public accountName?: string;
   public paymentMethod?: PaymentMethod;
