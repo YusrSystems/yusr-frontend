@@ -153,7 +153,7 @@ export default function ChangeBalanceTransferDialog(
               onChange={ (e) =>
                 dispatch(BalanceTransferSlice.formActions.updateFormData({ description: e.target.value })) }
               rows={ 3 }
-              placeholder={ t("balanceTransfers.descriptionPlaceholder") }
+              placeholder={ ". . ." }
             />
           </FieldsSection>
         </FieldGroup>
