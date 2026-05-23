@@ -125,7 +125,7 @@
     "unit": "इकाई",
     "pricingMethod": "मूल्य निर्धारण विधि",
     "quantityInUnit": "इकाई में मात्रा",
-    "sellingPrice": "विक्रय मूल्य",
+    "sellingPrice": "{{ unit }} प्रति विक्रय मूल्य",
     "barcode": "बारकोड",
     "name": "नाम",
     "noPricingMethods": "कोई मूल्य निर्धारण विधि नहीं जोड़ी गई",

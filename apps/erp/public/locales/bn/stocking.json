@@ -125,7 +125,7 @@
     "unit": "ইউনিট",
     "pricingMethod": "মূল্য নির্ধারণের পদ্ধতি",
     "quantityInUnit": "ইউনিটে পরিমাণ",
-    "sellingPrice": "বিক্রয় মূল্য",
+    "sellingPrice": "{{ unit }} প্রতি বিক্রয় মূল্য",
     "barcode": "বারকোড",
     "name": "নাম",
     "noPricingMethods": "কোন মূল্য নির্ধারণের পদ্ধতি যোগ করা হয়নি",

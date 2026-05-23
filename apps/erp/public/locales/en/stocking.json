@@ -125,7 +125,7 @@
     "unit": "Unit",
     "pricingMethod": "Pricing Method",
     "quantityInUnit": "Quantity in Unit",
-    "sellingPrice": "Selling Price",
+    "sellingPrice": "Selling price per {{ unit }}",
     "barcode": "Barcode",
     "name": "Name",
     "noPricingMethods": "No pricing methods added",
