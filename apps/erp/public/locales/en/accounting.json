@@ -224,7 +224,6 @@
     "profitPerUnit": "Profit Per Unit",
     "totalProfit": "Total Profit",
     "viewItemProfit": "View item profit",
-    "convertToSell": "Convert to Sales Invoice",
     "confirmConversion": "Confirm Conversion",
     "conversionWarning": "Are you sure you want to convert this quotation to a sales invoice? This action cannot be undone.",
     "cancel": "Cancel",
