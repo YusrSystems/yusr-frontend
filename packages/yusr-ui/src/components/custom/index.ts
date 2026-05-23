@@ -61,6 +61,8 @@ export * from "./permissions/permissionSkeleton";
 // Select
 export * from "./select/branchesSearchableSelect";
 export * from "./select/changableSearchableSelect";
+export * from "./select/citiesSearchableSelect";
+export * from "./select/currenciesSearchableSelect";
 export * from "./select/rolesSearchableSelect";
 export * from "./select/searchableSelect";
 

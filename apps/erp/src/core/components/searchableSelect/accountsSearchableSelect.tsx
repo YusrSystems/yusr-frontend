@@ -1,16 +1,16 @@
 import AccountsApiService from "@/core/networking/accountApiService";
 import { type RootState, useAppSelector } from "@/core/state/store";
 import ChangeAccountDialog from "@/features/accounts/changeAccountDialog";
-import { useTranslation } from "react-i18next";
-import { ChangableSearchableSelect, type EntitySearchableSelectParams, type IEntityState, type IFormState } from "yusr-ui";
+import { type BasicSearchableSelectParams, ChangableSearchableSelect, type IEntityState, type IFormState } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type Account from "../../data/account";
-import { AccountFilterColumns, type AccountSliceType, AccountType } from "../../data/account";
+import { type AccountSliceType, AccountType } from "../../data/account";
 
 export default function AccountsSearchableSelect(
   {
-    id,
     slice,
+    selectedId,
+    selectedLabel,
     selectEntityState,
     selectFormState,
     selectTypes,
@@ -20,9 +20,9 @@ export default function AccountsSearchableSelect(
     onValueChange,
     allowAdd = true,
     allowUpdate = true,
-    items = undefined
+    items
   }:
-    & EntitySearchableSelectParams<Account>
+    & BasicSearchableSelectParams<Account>
     & {
       slice: AccountSliceType;
       selectEntityState: (state: RootState) => IEntityState<Account>;
@@ -40,7 +40,6 @@ export default function AccountsSearchableSelect(
 {
   const accountState = useAppSelector(selectEntityState) as IEntityState<Account>;
   const authState = useAppSelector((state) => state.auth);
-  const { t } = useTranslation("accounting");
 
   return (
     <ChangableSearchableSelect<Account, {
@@ -54,13 +53,12 @@ export default function AccountsSearchableSelect(
       fixedType?: AccountType;
       filterDataOutside?: boolean;
     }>
-      id={ id }
+      labelKey="name"
+      selectedId={ selectedId }
+      selectedLabel={ selectedLabel }
       items={ items }
-      itemLabelKey="name"
-      itemValueKey="id"
       state={ accountState }
       apiService={ new AccountsApiService() }
-      columnsNames={ AccountFilterColumns.columnsNames(t) }
       disabled={ disabled }
       isInvalid={ isInvalid }
       systemPermissionsResources={ SystemPermissionsResources.Accounts }

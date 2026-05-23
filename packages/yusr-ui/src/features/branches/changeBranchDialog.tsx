@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { ChangeDialog, type CommonChangeDialogProps, FieldsSection, FormField, SearchableSelect, TextField } from "../../components/custom";
+import { ChangeDialog, CitiesSearchableSelect, type CommonChangeDialogProps, FieldsSection, FormField, TextField } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
-import { Branch, BranchSlice, BranchValidationRules, CityFilterColumns, CitySlice } from "../../entities";
+import { Branch, BranchSlice, BranchValidationRules, CitySlice } from "../../entities";
 import { useFormErrors, useFormInit, useValidate } from "../../hooks";
 import { useAppDispatch, type YusrRootState } from "../../state";
 
@@ -57,18 +57,11 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
           isInvalid={ isInvalid("cityId") }
           error={ getError("cityId") }
         >
-          <SearchableSelect
-            items={ cityState.entities.data ?? [] }
-            itemLabelKey="name"
-            itemValueKey="id"
-            placeholder={ t("common:searchableSelect.placeholder") }
-            value={ formData.cityId?.toString() || "" }
-            onValueChange={ (val) => dispatch(BranchSlice.formActions.updateFormData({ cityId: Number(val) })) }
-            columnsNames={ CityFilterColumns.columnsNames }
-            onSearch={ (condition) => dispatch(CitySlice.entityActions.filter(condition)) }
-            isLoading={ cityState.isLoading }
+          <CitiesSearchableSelect
+            selectedId={ formData.cityId }
+            selectedLabel={ formData.city?.name }
+            onValueChange={ (city) => dispatch(BranchSlice.formActions.updateFormData({ cityId: city?.id, city: city })) }
             isInvalid={ isInvalid("cityId") }
-            disabled={ cityState.isLoading }
           />
         </FormField>
 

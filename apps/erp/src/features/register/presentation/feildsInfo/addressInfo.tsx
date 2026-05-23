@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { CitySlice, SearchableSelect, TextField } from "yusr-ui";
+import { CitiesSearchableSelect, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import { updateField } from "../../logic/registerSlice";
@@ -9,7 +9,6 @@ export default function AddressInfo()
   const { t } = useTranslation("loginRegister");
   const dispatch = useAppDispatch();
   const { formData, errors } = useAppSelector((state) => state.register);
-  const cityState = useAppSelector((state) => state.city);
 
   function onFieldChange(field: Partial<Registration>)
   {
@@ -23,17 +22,11 @@ export default function AddressInfo()
           { t("register.addressInfo.city.label") } <span className="text-red-500">*</span>
         </label>
 
-        <SearchableSelect
-          items={ cityState.entities?.data ?? [] }
-          value={ formData.cityId?.toString() ?? "" }
+        <CitiesSearchableSelect
+          selectedId={ formData.cityId }
+          selectedLabel={ formData.cityId?.toString() }
           isInvalid={ !!errors.cityId }
-          columnsNames={ [{ label: t("register.addressInfo.city.label"), value: "name" }] }
-          itemLabelKey="name"
-          itemValueKey="id"
-          disabled={ cityState.isLoading }
-          onSearch={ (condition) => dispatch(CitySlice.entityActions.filter(condition)) }
-          isLoading={ cityState.isLoading }
-          onValueChange={ (val) => onFieldChange({ cityId: val ? parseInt(val) : undefined }) }
+          onValueChange={ (city) => onFieldChange({ cityId: city?.id }) }
         />
         { !!errors.cityId && (
           <span className="text-xs text-red-500 animate-in fade-in slide-in-from-top-1">

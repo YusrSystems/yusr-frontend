@@ -28,7 +28,9 @@ export default function ChangeItemTransferDialog({
   const initialValues = useMemo(
     () => ({
       ...entity,
-      transferDate: entity?.transferDate ? new Date(entity.transferDate).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
+      transferDate: entity?.transferDate
+        ? new Date(entity.transferDate).toLocaleDateString("en-CA")
+        : new Date().toLocaleDateString("en-CA"),
       itemTransfersItems: entity?.itemTransfersItems || []
     }),
     [entity]
@@ -180,16 +182,18 @@ export default function ChangeItemTransferDialog({
             error={ getError("fromStoreId") }
           >
             <StoresSearchableSelect
-              id={ formData.fromStoreId }
+              selectedId={ formData.fromStoreId }
+              selectedLabel={ formData.fromStoreName }
               items={ availableFromStores }
+              disabled={ mode === "update" }
               isInvalid={ isInvalid("fromStoreId") }
               onValueChange={ (store) =>
               {
                 ItemTransferActions.clear(dispatch);
                 dispatch(
                   ItemTransferSlice.formActions.updateFormData({
-                    fromStoreId: store.id,
-                    fromStoreName: store.name
+                    fromStoreId: store?.id,
+                    fromStoreName: store?.name
                   })
                 );
               } }
@@ -203,13 +207,15 @@ export default function ChangeItemTransferDialog({
             error={ getError("toStoreId") }
           >
             <StoresSearchableSelect
-              id={ formData.toStoreId }
+              selectedId={ formData.toStoreId }
+              selectedLabel={ formData.toStoreName }
               items={ availableToStores }
+              disabled={ mode === "update" }
               isInvalid={ isInvalid("toStoreId") }
               onValueChange={ (store) =>
               {
                 dispatch(
-                  ItemTransferSlice.formActions.updateFormData({ toStoreId: store.id, toStoreName: store.name })
+                  ItemTransferSlice.formActions.updateFormData({ toStoreId: store?.id, toStoreName: store?.name })
                 );
               } }
             />

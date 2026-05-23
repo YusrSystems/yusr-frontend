@@ -4,7 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps, IEntityState, IFormState } from "yusr-ui";
-import { Button, ChangeDialog, CityFilterColumns, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { Button, ChangeDialog, CitiesSearchableSelect, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormField, Input, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Account, { AccountContact, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/account";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -34,7 +34,6 @@ export default function ChangeAccountDialog({
 {
   const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
-  const cityState = useAppSelector((state) => state.city);
   const authState = useAppSelector((state) => state.auth);
   const accountState = useAppSelector(selectEntityState);
 
@@ -167,7 +166,7 @@ export default function ChangeAccountDialog({
       formData={ formData }
       dialogMode={ mode }
       service={ service }
-      disable={ () => cityState.isLoading || accountState.isLoading }
+      disable={ () => accountState.isLoading }
       transformData={ (data) => ({
         ...data,
         accountContacts: data.accountContacts?.filter((c) => c.number?.trim())
@@ -206,7 +205,6 @@ export default function ChangeAccountDialog({
               <FormField label={ t("accounts.parentAccount") }>
                 { formData.type === AccountType.Supplier && (
                   <SuppliersSearchableSelect
-                    id={ formData.parentId }
                     isInvalid={ isInvalid("parentId") }
                     disabled={ mode === "update" }
                     onValueChange={ (account) =>
@@ -221,7 +219,8 @@ export default function ChangeAccountDialog({
 
                 { formData.type === AccountType.Client && (
                   <ClientsSearchableSelect
-                    id={ formData.parentId }
+                    selectedId={ formData.parentId }
+                    selectedLabel={ formData.parentName }
                     isInvalid={ isInvalid("parentId") }
                     disabled={ mode === "update" }
                     onValueChange={ (account) =>
@@ -297,23 +296,12 @@ export default function ChangeAccountDialog({
                 <FieldsSection title={ t("accounts.addressInfo") } columns={ 1 }>
                   <div className="flex flex-col gap-1.5 w-full">
                     <label className="text-sm font-medium">{ t("accounts.city") }</label>
-                    <SearchableSelect
-                      items={ cityState.entities.data ?? [] }
-                      itemLabelKey="name"
-                      itemValueKey="id"
-                      placeholder={ t("common:searchableSelect.placeholder") }
-                      value={ formData.cityId?.toString() || "" }
-                      columnsNames={ CityFilterColumns.columnsNames }
-                      onSearch={ (condition) => dispatch(CitySlice.entityActions.filter(condition)) }
-                      isLoading={ cityState.isLoading }
-                      disabled={ cityState.isLoading }
-                      onValueChange={ (val) =>
-                      {
-                        const selected = cityState.entities.data?.find(
-                          (c) => c.id.toString() === val
-                        );
-                        dispatch(slice.formActions.updateFormData({ cityId: selected?.id, city: selected }));
-                      } }
+                    <CitiesSearchableSelect
+                      selectedId={ formData.cityId }
+                      selectedLabel={ formData.city?.name }
+                      isInvalid={ !!errors.cityId }
+                      onValueChange={ (selected) =>
+                        dispatch(slice.formActions.updateFormData({ cityId: selected?.id, city: selected })) }
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-2">

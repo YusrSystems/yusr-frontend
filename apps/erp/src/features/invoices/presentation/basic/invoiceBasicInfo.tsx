@@ -124,9 +124,10 @@ export default function InvoiceBasicInfo()
         error={ getError("storeId") }
       >
         <StoresSearchableSelect
-          id={ formData.storeId }
+          selectedId={ formData.storeId }
+          selectedLabel={ formData.storeName }
           isInvalid={ isInvalid("storeId") }
-          disabled={  mode !== "create" && formData.type !== InvoiceType.Quotation }
+          disabled={ mode !== "create" && formData.type !== InvoiceType.Quotation }
           onValueChange={ (store) =>
           {
             dispatch(
@@ -144,9 +145,10 @@ export default function InvoiceBasicInfo()
       >
         { isPurchaseInvoice() && (
           <SuppliersSearchableSelect
-            id={ formData.actionAccountId }
+            selectedId={ formData.actionAccountId }
+            selectedLabel={ formData.actionAccountName }
             isInvalid={ isInvalid("actionAccountId") }
-            disabled={  mode !== "create" && formData.type !== InvoiceType.Quotation }
+            disabled={ mode !== "create" && formData.type !== InvoiceType.Quotation }
             onValueChange={ (account) =>
             {
               selectedAccount = account;
@@ -159,9 +161,10 @@ export default function InvoiceBasicInfo()
 
         { !isPurchaseInvoice() && (
           <ClientsSearchableSelect
-            id={ formData.actionAccountId }
+            selectedId={ formData.actionAccountId }
+            selectedLabel={ formData.actionAccountName }
             isInvalid={ isInvalid("actionAccountId") }
-            disabled={  mode !== "create" && formData.type !== InvoiceType.Quotation }
+            disabled={ mode !== "create" && formData.type !== InvoiceType.Quotation }
             onValueChange={ (account) =>
             {
               selectedAccount = account;
@@ -181,11 +184,13 @@ export default function InvoiceBasicInfo()
         {} }
       />
 
-      {/* <TextField
+      {
+        /* <TextField
         label={ t("invoices.delegateEmployee") }
         value={ formData.delegateEmp || "" }
         onChange={ (e) => dispatch(slice.formActions.updateFormData({ delegateEmp: e.target.value })) }
-      /> */}
+      /> */
+      }
 
       { canBeExportInvoice() && (
         <SelectField

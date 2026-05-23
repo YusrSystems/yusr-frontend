@@ -91,10 +91,10 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
     }));
   };
 
-  const handlePaymentMethodChange = (paymentMethod: PaymentMethod) =>
+  const handlePaymentMethodChange = (paymentMethod?: PaymentMethod) =>
   {
     dispatch(VoucherSlice.formActions.updateFormData({
-      paymentMethodId: paymentMethod.id,
+      paymentMethodId: paymentMethod?.id,
       paymentMethod: paymentMethod,
       commissionAmount: calculateCommission(formData.type, formData.amount, paymentMethod)
     }));
@@ -168,7 +168,8 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
               error={ getError("accountId") }
             >
               <ClientsAndSuppliersSearchableSelect
-                id={ formData.accountId }
+                selectedId={ formData.accountId }
+                selectedLabel={ formData.accountName }
                 isInvalid={ isInvalid("accountId") }
                 onValueChange={ (account) =>
                 {
@@ -186,7 +187,8 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
               error={ getError("paymentMethodId") }
             >
               <PaymentMethodsSearchableSelect
-                id={ formData.paymentMethodId }
+                selectedId={ formData.paymentMethodId }
+                selectedLabel={ formData.paymentMethod?.name }
                 isInvalid={ isInvalid("paymentMethodId") }
                 onValueChange={ handlePaymentMethodChange }
               />

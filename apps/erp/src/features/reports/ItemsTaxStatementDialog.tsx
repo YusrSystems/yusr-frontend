@@ -1,21 +1,18 @@
+import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField, SearchableSelect, SelectField } from "yusr-ui";
-import { ItemFilterColumns, ItemSlice } from "../../core/data/item";
+import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField, SelectField } from "yusr-ui";
+import Item from "../../core/data/item";
 import { ItemsTaxStatementReportRequest, ItemsTaxStatementReportType } from "../../core/data/report/itemsTaxStatementReportRequest";
 import ReportConstants from "../../core/data/report/reportConstants";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "./reportButton";
 
 export default function ItemsTaxStatementDialog()
 {
   const { t, i18n } = useTranslation("erpCommon");
-  const { t: tStocking } = useTranslation("stocking");
-  const dispatch = useAppDispatch();
-  const itemState = useAppSelector((state) => state.item);
   const [isOpen, setIsOpen] = useState(false);
   const [type, setType] = useState<ItemsTaxStatementReportType>(ItemsTaxStatementReportType.Sales);
-  const [itemId, setItemId] = useState<number | undefined>(undefined);
+  const [item, setItem] = useState<Item | undefined>(undefined);
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   const [toDate, setToDate] = useState<Date | undefined>(undefined);
 
@@ -43,17 +40,11 @@ export default function ItemsTaxStatementDialog()
               }] }
             />
             <FormField label={ t("reports.item") } required={ true }>
-              <SearchableSelect
-                items={ itemState.entities.data ?? [] }
-                itemLabelKey="name"
-                itemValueKey="id"
+              <ItemsSearchableSelect
                 showAllOption
-                value={ itemId?.toString() || "" }
-                onValueChange={ (val) => setItemId(Number(val)) }
-                columnsNames={ ItemFilterColumns.columnsNames(tStocking) }
-                onSearch={ (condition) => dispatch(ItemSlice.entityActions.filter(condition)) }
-                isLoading={ itemState.isLoading }
-                disabled={ itemState.isLoading }
+                selectedId={ item?.id }
+                selectedLabel={ item?.name }
+                onValueChange={ (item) => setItem(item) }
               />
             </FormField>
             <DateField
@@ -74,7 +65,7 @@ export default function ItemsTaxStatementDialog()
               request={ new ItemsTaxStatementReportRequest({
                 fromDate: fromDate?.toLocaleDateString("en-CA") ?? null,
                 toDate: toDate?.toLocaleDateString("en-CA") ?? null,
-                itemId: itemId,
+                itemId: item?.id ?? null,
                 type: type
               }) }
             />

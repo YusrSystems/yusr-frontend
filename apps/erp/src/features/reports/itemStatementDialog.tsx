@@ -1,21 +1,18 @@
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField, SearchableSelect } from "yusr-ui";
+import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField } from "yusr-ui";
 import type Item from "../../core/data/item";
 import ReportConstants from "../../core/data/report/reportConstants";
-import { StoreFilterColumns, StoreSlice } from "../../core/data/store";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import Store from "../../core/data/store";
 import ReportButton from "./reportButton";
 
 export default function ItemStatementButton({ item }: { item: Item; })
 {
-  const dispatch = useAppDispatch();
-  const storeState = useAppSelector((state) => state.store);
   const { t, i18n } = useTranslation("erpCommon");
-  const { t: tStocking } = useTranslation("stocking");
 
   const [isOpen, setIsOpen] = useState(false);
-  const [storeId, setStoreId] = useState<number | undefined>(undefined);
+  const [store, setStore] = useState<Store | undefined>(undefined);
 
   return (
     <>
@@ -32,24 +29,18 @@ export default function ItemStatementButton({ item }: { item: Item; })
 
           <div className="flex flex-col gap-4 py-2">
             <FormField label={ t("itemStatement.store") }>
-              <SearchableSelect
-                items={ storeState.entities.data ?? [] }
-                itemLabelKey="name"
-                itemValueKey="id"
+              <StoresSearchableSelect
                 showAllOption
-                value={ storeId?.toString() || "" }
-                onValueChange={ (val) => setStoreId(Number(val)) }
-                columnsNames={ StoreFilterColumns.columnsNames(tStocking) }
-                onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
-                isLoading={ storeState.isLoading }
-                disabled={ storeState.isLoading }
+                selectedId={ store?.id }
+                selectedLabel={ store?.name }
+                onValueChange={ (store) => setStore(store) }
               />
             </FormField>
           </div>
           <DialogFooter>
             <ReportButton
               reportName={ ReportConstants.ItemStatement }
-              request={ { itemId: item.id, storeId: storeId } }
+              request={ { itemId: item.id, storeId: store?.id } }
             />
           </DialogFooter>
         </DialogContent>

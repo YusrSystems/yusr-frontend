@@ -1,31 +1,31 @@
 import { useSelector } from "react-redux";
 import { YusrSystemPermissionsResources } from "../../../auth";
-import { Branch, BranchSlice } from "../../../entities";
-import { ChangeBranchDialog } from "../../../features/branches/changeBranchDialog";
-import { BranchesApiService } from "../../../networking";
+import { Currency, CurrencySlice } from "../../../entities";
+import { BaseApiService, CurrenciesApiService } from "../../../networking";
 import type { YusrRootState } from "../../../state";
 import { ChangableSearchableSelect } from "./changableSearchableSelect";
 import type { BasicSearchableSelectParams } from "./searchableSelect";
 
-export function BranchesSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<Branch>
+export function CurrenciesSearchableSelect(
+  { ...props }: BasicSearchableSelectParams<Currency>
 )
 {
-  const branchState = useSelector((state: YusrRootState) => state.branch);
+  const currencyState = useSelector((state: YusrRootState) => state.currency);
   const authState = useSelector((state: YusrRootState) => state.auth);
 
   return (
-    <ChangableSearchableSelect<Branch>
+    <ChangableSearchableSelect<Currency>
       labelKey="name"
-      state={ branchState }
-      apiService={ new BranchesApiService() }
+      state={ currencyState }
+      apiService={ new CurrenciesApiService() as unknown as BaseApiService<Currency> }
       systemPermissionsResources={ YusrSystemPermissionsResources.Branches }
       entityActions={ {
-        filter: BranchSlice.entityActions.filter,
-        refresh: BranchSlice.entityActions.refresh
+        filter: CurrencySlice.entityActions.filter,
+        refresh: CurrencySlice.entityActions.refresh
       } }
-      changeDialog={ ChangeBranchDialog }
       authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
+      allowAdd={ false }
+      allowUpdate={ false }
       { ...props }
     />
   );

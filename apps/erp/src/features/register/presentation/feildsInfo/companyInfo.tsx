@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { CurrencySlice, SearchableSelect, TextField } from "yusr-ui";
+import { CurrenciesSearchableSelect, TextField } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import { updateField } from "../../logic/registerSlice";
@@ -9,7 +9,6 @@ export default function CompanyInfo()
   const { t } = useTranslation("loginRegister");
   const dispatch = useAppDispatch();
   const { formData, errors } = useAppSelector((state) => state.register);
-  const currencyState = useAppSelector((state) => state.currency);
 
   function onFieldChange(field: Partial<Registration>)
   {
@@ -107,16 +106,10 @@ export default function CompanyInfo()
           { t("register.companyInfo.currency.label") } <span className="text-red-500">*</span>
         </label>
 
-        <SearchableSelect
-          items={ currencyState.entities?.data ?? [] }
-          value={ formData.currencyId?.toString() ?? "" }
+        <CurrenciesSearchableSelect
+          selectedId={ formData.currencyId }
+          selectedLabel={ formData.currencyId?.toString() }
           isInvalid={ !!errors.currencyId }
-          columnsNames={ [{ label: t("register.companyInfo.currency.label"), value: "name" }] }
-          itemLabelKey="name"
-          itemValueKey="id"
-          disabled={ currencyState.isLoading }
-          onSearch={ (condition) => dispatch(CurrencySlice.entityActions.filter(condition)) }
-          isLoading={ currencyState.isLoading }
           onValueChange={ (val) => onFieldChange({ currencyId: Number(val) }) }
         />
         { !!errors.currencyId && (

@@ -1,31 +1,31 @@
 import { useSelector } from "react-redux";
 import { YusrSystemPermissionsResources } from "../../../auth";
-import { Branch, BranchSlice } from "../../../entities";
-import { ChangeBranchDialog } from "../../../features/branches/changeBranchDialog";
-import { BranchesApiService } from "../../../networking";
+import { City, CitySlice } from "../../../entities";
+import { BaseApiService, CitiesApiService } from "../../../networking";
 import type { YusrRootState } from "../../../state";
 import { ChangableSearchableSelect } from "./changableSearchableSelect";
 import type { BasicSearchableSelectParams } from "./searchableSelect";
 
-export function BranchesSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<Branch>
+export function CitiesSearchableSelect(
+  { ...props }: BasicSearchableSelectParams<City>
 )
 {
-  const branchState = useSelector((state: YusrRootState) => state.branch);
+  const cityState = useSelector((state: YusrRootState) => state.city);
   const authState = useSelector((state: YusrRootState) => state.auth);
 
   return (
-    <ChangableSearchableSelect<Branch>
+    <ChangableSearchableSelect<City>
       labelKey="name"
-      state={ branchState }
-      apiService={ new BranchesApiService() }
+      state={ cityState }
+      apiService={ new CitiesApiService() as unknown as BaseApiService<City> }
       systemPermissionsResources={ YusrSystemPermissionsResources.Branches }
       entityActions={ {
-        filter: BranchSlice.entityActions.filter,
-        refresh: BranchSlice.entityActions.refresh
+        filter: CitySlice.entityActions.filter,
+        refresh: CitySlice.entityActions.refresh
       } }
-      changeDialog={ ChangeBranchDialog }
       authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
+      allowAdd={ false }
+      allowUpdate={ false }
       { ...props }
     />
   );

@@ -68,7 +68,7 @@ export default function ChangeItemsSettlementDialog(
     }
   }, [entity?.id, mode]);
 
-  const handleStoreChange = (store: Store) =>
+  const handleStoreChange = (store?: Store) =>
   {
     dispatch(ItemsSettlementSlice.formActions.updateFormData({
       storeId: store?.id,
@@ -166,9 +166,11 @@ export default function ChangeItemsSettlementDialog(
               error={ getError("storeId") }
             >
               <StoresSearchableSelect
-                id={ formData.storeId }
+                disabled={ mode === "update" }
                 isInvalid={ isInvalid("storeId") }
                 onValueChange={ handleStoreChange }
+                selectedId={ formData.storeId }
+                selectedLabel={ formData.storeName }
               />
             </FormField>
           </FieldsSection>

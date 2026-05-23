@@ -67,7 +67,8 @@ export default function InvoiceCostsTab()
                 <td className="p-2">
                   <FormField label="">
                     <ClientsAndSuppliersSearchableSelect
-                      id={ row.accountId }
+                      selectedId={ row.accountId }
+                      selectedLabel={ row.accountName }
                       onValueChange={ (account) =>
                       {
                         dispatch(slice.formActions.updateVoucher({
@@ -83,7 +84,8 @@ export default function InvoiceCostsTab()
                 <td className="p-2">
                   <FormField label="">
                     <PaymentMethodsSearchableSelect
-                      id={ row.paymentMethodId }
+                      selectedId={ row.paymentMethodId }
+                      selectedLabel={ row.paymentMethodName }
                       onValueChange={ (pm) =>
                       {
                         dispatch(slice.formActions.updateVoucher({

@@ -1,49 +1,42 @@
 import { Check, ChevronsUpDown, Loader2, Trash2 } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import type { FilterCondition } from "../../../entities";
-import type { ColumnName } from "../../../types";
+import type { BaseEntity } from "../../../entities";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "../../pure/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../../pure/popover";
 import { SearchInput } from "../inputs/searchInput";
 
-export type EntitySearchableSelectParams<T> = {
-  id?: number;
-  disabled?: boolean;
-  isInvalid?: boolean;
-  onValueChange: (value: T) => void;
-};
-
-type SearchableSelectParams<T> = {
-  items: T[];
-  itemLabelKey: keyof T;
-  itemValueKey: keyof T;
-  value: string | undefined;
+export type BasicSearchableSelectParams<T extends BaseEntity> = {
+  items?: T[];
+  selectedId?: number;
+  selectedLabel?: string;
   disabled?: boolean;
   isInvalid?: boolean;
   placeholder?: string;
-  columnsNames: ColumnName<T>[];
   isLoading?: boolean;
   showAllOption?: boolean;
   buttonClassName?: string;
-  onSearch: (condition: FilterCondition<T> | undefined) => void;
-  onValueChange: (value: string | undefined) => void;
-  onNotFound?: (condition: FilterCondition<T>) => void;
-  onDelete?: (id: number) => Promise<boolean>;
+  onValueChange: (value?: T) => void;
 };
 
-export function SearchableSelect<T>(
+type SearchableSelectParams<T extends BaseEntity> = BasicSearchableSelectParams<T> & {
+  labelKey: keyof T;
+  onSearch: (searchInput: string) => void;
+  onNotFound?: (searchInput: string) => void;
+  onDelete?: (entity: T) => Promise<boolean>;
+};
+
+export function SearchableSelect<T extends BaseEntity>(
   {
-    items,
-    itemLabelKey,
-    itemValueKey,
-    value,
+    items = [],
+    selectedId,
+    selectedLabel,
+    labelKey,
     disabled,
     isInvalid,
     placeholder: customPlaceholder,
-    columnsNames,
     isLoading = false,
     showAllOption = false,
     buttonClassName,
@@ -56,59 +49,50 @@ export function SearchableSelect<T>(
 {
   const { t, i18n } = useTranslation("common");
   const [open, setOpen] = React.useState(false);
-  const [typedCondition, setTypedCondition] = React.useState<FilterCondition<T>>({
-    value: "",
-    columnName: columnsNames[0]?.value
-  });
-  const [deletingId, setDeletingId] = React.useState<string | null>(null);
+  const [searchInput, setSearchInput] = React.useState<string>("");
+  const [deletingItem, setDeletingItem] = React.useState<T | undefined>(undefined);
 
-  // Find the selected item's label to display in the button
-  const selectedItem = items.find((item) => String(item[itemValueKey]) === value);
   const placeholder = customPlaceholder || t("searchableSelect.placeholder");
-  const selectedLabel = selectedItem ? String(selectedItem[itemLabelKey]) : placeholder;
+  const displayLabel = selectedId ? (selectedLabel ?? placeholder) : placeholder;
 
-  const showCreateOption = onNotFound
-    && typedCondition.value.trim() !== ""
-    && !items.some(
-      (item) => String(item[itemLabelKey]).toLowerCase() === typedCondition.value.trim().toLowerCase()
-    );
+  const showCreateOption = onNotFound && searchInput.trim() !== "";
 
-  function handleOpenChange(next: boolean)
+  function onOpenChange(open: boolean)
   {
-    setOpen(next);
-    if (!next)
+    setOpen(open);
+    if (!open)
     {
-      setTypedCondition({ ...typedCondition, value: "" }); // clear typed text on close
+      setSearchInput(""); // clear typed text on close
     }
   }
 
   function handleCreate()
   {
-    onNotFound?.(typedCondition);
-    setTypedCondition({ ...typedCondition, value: "" });
+    onNotFound?.(searchInput);
+    setSearchInput("");
     setOpen(false);
   }
 
-  async function handleDelete(e: React.MouseEvent, itemValue: string)
+  async function handleDelete(e: React.MouseEvent, item: T)
   {
     e.stopPropagation(); // prevent triggering onSelect
-    setDeletingId(itemValue);
+    setDeletingItem(item);
 
-    const success = await onDelete?.(Number(itemValue));
+    const success = await onDelete?.(item);
 
     if (!success)
     {
-      setDeletingId(null); // reset spinner on failure
+      setDeletingItem(undefined); // reset spinner on failure
     }
     // If deleted item was selected, clear selection
-    else if (value === itemValue)
+    else if (selectedId === item.id)
     {
       onValueChange(undefined);
     }
   }
 
   return (
-    <Popover open={ open } onOpenChange={ handleOpenChange } modal={ true }>
+    <Popover open={ open } onOpenChange={ onOpenChange } modal={ true }>
       <PopoverTrigger asChild>
         <Button
           dir={ i18n.dir() }
@@ -119,11 +103,11 @@ export function SearchableSelect<T>(
           className={ cn(
             "w-full justify-between px-3 font-normal",
             buttonClassName,
-            !value && "text-muted-foreground",
+            !selectedId && "text-muted-foreground",
             isInvalid ? "error" : ""
           ) }
         >
-          <span className="truncate text-start">{ selectedLabel }</span>
+          <span className="truncate text-start">{ displayLabel }</span>
           <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50 ltr:ml-2 rtl:mr-2" />
         </Button>
       </PopoverTrigger>
@@ -137,17 +121,17 @@ export function SearchableSelect<T>(
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start" dir={ i18n.dir() }>
         { /* Search Input Header */ }
         <SearchInput<T>
-          columnsNames={ columnsNames }
+          columnsNames={ [] }
           onSearch={ (con) =>
           {
-            onSearch(con);
+            onSearch(con?.value ?? "");
             if (onNotFound)
             {
               // Only update typedValue when there's an actual value
               // Don't reset it when con is undefined (that just means "fetch all")
               if (con?.value !== undefined)
               {
-                setTypedCondition(con);
+                setSearchInput(con.value);
               }
             }
           } }
@@ -155,7 +139,7 @@ export function SearchableSelect<T>(
           {
             if (onNotFound)
             {
-              setTypedCondition({ ...typedCondition, value: val });
+              setSearchInput(val);
             }
           } }
         />
@@ -193,7 +177,7 @@ export function SearchableSelect<T>(
                           <Check
                             className={ cn(
                               "h-4 w-4 ltr:mr-2 rtl:ml-2",
-                              (value === undefined || value === "") ? "opacity-100" : "opacity-0"
+                              (selectedId === undefined) ? "opacity-100" : "opacity-0"
                             ) }
                           />
                           { t("searchableSelect.allOption") }
@@ -202,18 +186,17 @@ export function SearchableSelect<T>(
 
                       { items.map((item) =>
                       {
-                        const itemValue = String(item[itemValueKey]);
-                        const itemLabel = String(item[itemLabelKey]);
-                        const isSelected = value === itemValue;
-                        const isDeleting = deletingId === itemValue;
+                        const isSelected = selectedId === item.id;
+                        const isDeleting = deletingItem && selectedId === deletingItem?.id;
 
                         return (
                           <CommandItem
-                            key={ itemValue }
-                            value={ itemValue }
+                            key={ item.id }
+                            value={ String(item[labelKey]) }
                             onSelect={ () =>
                             {
-                              onValueChange(itemValue);
+                              console.log("onSelect", item);
+                              onValueChange(item);
                               setOpen(false);
                             } }
                             className="cursor-pointer group"
@@ -225,7 +208,7 @@ export function SearchableSelect<T>(
                               ) }
                             />
 
-                            <span className="flex-1 truncate">{ itemLabel }</span>
+                            <span className="flex-1 truncate">{ String(item[labelKey]) }</span>
 
                             { onDelete && (
                               <div className="flex items-center justify-center min-w-[32px]">
@@ -235,7 +218,7 @@ export function SearchableSelect<T>(
                                   )
                                   : (
                                     <Button
-                                      onClick={ (e) => handleDelete(e, itemValue) }
+                                      onClick={ (e) => handleDelete(e, item) }
                                       variant="destructive"
                                       size="sm"
                                       className={ "shrink-0 rounded-lg px-1.5 opacity-0 group-hover:opacity-100 transition-opacity" }
@@ -251,12 +234,12 @@ export function SearchableSelect<T>(
 
                       { items.length <= 0 && showCreateOption && (
                         <CommandItem
-                          value={ `__create__${typedCondition.value}` }
+                          value={ `__create__${searchInput}` }
                           onSelect={ handleCreate }
                           className="cursor-pointer text-primary"
                         >
                           <span className="ltr:mr-2 rtl:ml-2">+</span>
-                          { t("searchableSelect.addOption", { value: typedCondition.value.trim() }) }
+                          { t("searchableSelect.addOption", { value: searchInput.trim() }) }
                         </CommandItem>
                       ) }
                     </CommandGroup>

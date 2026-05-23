@@ -136,13 +136,14 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
                         <td className="p-3 font-bold">{ index + 1 }</td>
                         <td className="p-3">
                           <TaxesSearchableSelect
-                            id={ tax.taxId }
+                            selectedId={ formData.itemTaxes?.[index].taxId }
+                            selectedLabel={ formData.itemTaxes?.[index].taxName }
                             onValueChange={ (tax) =>
                             {
                               updateTax(index, {
-                                taxId: tax.id,
-                                taxName: tax.name,
-                                taxPercentage: tax.percentage
+                                taxId: tax?.id,
+                                taxName: tax?.name,
+                                taxPercentage: tax?.percentage
                               });
                             } }
                           />

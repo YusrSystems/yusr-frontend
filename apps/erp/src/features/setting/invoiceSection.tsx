@@ -1,15 +1,14 @@
 import { useTranslation } from "react-i18next";
-import { FieldGroup, FieldsSection, FormField, SearchableSelect, SelectField, SelectInput, TextAreaField } from "yusr-ui";
+import { FieldGroup, FieldsSection, FormField, SelectField, SelectInput, TextAreaField } from "yusr-ui";
+import TaxesSearchableSelect from "../../core/components/searchableSelect/taxesSearchableSelect";
 import { EInvoicingEnvironmentType, InvoicePrintSize } from "../../core/data/setting";
-import { TaxFilterColumns, TaxSlice } from "../../core/data/tax";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import { useAppSelector } from "../../core/state/store";
 import { EInvoicingRegisterButton } from "./eInvoicing/eInvoicingRegisterButton";
 import { useSettingContext } from "./settingContext";
 
 export default function InvoiceSection()
 {
   const { t } = useTranslation("erpCommon");
-  const { t: tAccounting } = useTranslation("accounting");
 
   const {
     formData,
@@ -19,9 +18,7 @@ export default function InvoiceSection()
     clearError
   } = useSettingContext();
 
-  const dispatch = useAppDispatch();
   const currencyState = useAppSelector((state) => state.currency);
-  const taxState = useAppSelector((state) => state.tax);
 
   return (
     <div className="space-y-10 animate-in fade-in">
@@ -49,16 +46,10 @@ export default function InvoiceSection()
 
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium">{ t("settings.defaultTax") }</label>
-            <SearchableSelect
-              items={ taxState.entities.data ?? [] }
-              itemLabelKey="name"
-              itemValueKey="id"
-              value={ formData.mainTaxId?.toString() || "" }
-              onValueChange={ (val) => handleChange({ mainTaxId: Number(val) }) }
-              columnsNames={ TaxFilterColumns.columnsNames(tAccounting) }
-              onSearch={ (condition) => dispatch(TaxSlice.entityActions.filter(condition)) }
-              isLoading={ taxState.isLoading }
-              disabled={ taxState.isLoading }
+            <TaxesSearchableSelect
+              selectedId={ formData.mainTaxId }
+              selectedLabel={ formData.mainTax?.name }
+              onValueChange={ (tax) => handleChange({ mainTaxId: tax?.id }) }
             />
           </div>
 

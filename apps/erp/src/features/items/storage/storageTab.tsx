@@ -111,7 +111,8 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                       isInvalid={ hasError && !isService && !store.storeId }
                     >
                       <StoresSearchableSelect
-                        id={ store.storeId }
+                        selectedId={ formData.itemStores?.[index]?.storeId }
+                        selectedLabel={ formData.itemStores?.[index]?.storeName }
                         isInvalid={ hasError && !isService && !store.storeId }
                         onValueChange={ (store) =>
                         {

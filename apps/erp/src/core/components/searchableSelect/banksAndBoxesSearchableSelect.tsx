@@ -2,12 +2,11 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import Account, { AccountType, BanksAndBoxesSlice } from "@/core/data/account";
 import { useAppSelector } from "@/core/state/store";
 import { useTranslation } from "react-i18next";
-import type { EntitySearchableSelectParams } from "yusr-ui";
-import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { type BasicSearchableSelectParams, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import AccountsSearchableSelect from "./accountsSearchableSelect";
 
 export default function BanksAndBoxesSearchableSelect(
-  { id, isInvalid, items, onValueChange }: EntitySearchableSelectParams<Account> & { items?: Account[]; }
+  { ...props }: BasicSearchableSelectParams<Account> & { items?: Account[]; }
 )
 {
   const { t } = useTranslation("accounting");
@@ -27,13 +26,6 @@ export default function BanksAndBoxesSearchableSelect(
 
   return (
     <AccountsSearchableSelect
-      id={ id }
-      items={ items }
-      isInvalid={ isInvalid }
-      onValueChange={ (account) =>
-      {
-        onValueChange(account);
-      } }
       slice={ BanksAndBoxesSlice }
       selectEntityState={ (state) => state.banksAndBoxes }
       selectFormState={ (state) => state.banksAndBoxesForm }
@@ -48,6 +40,7 @@ export default function BanksAndBoxesSearchableSelect(
       ] }
       allowAdd={ hasBankPerm || hasBoxPerm }
       allowUpdate={ hasBankPerm || hasBoxPerm }
+      { ...props }
     />
   );
 }

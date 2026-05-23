@@ -108,7 +108,8 @@ export default function ChangeBalanceTransferDialog(
               error={ getError("fromAccountId") }
             >
               <BanksAndBoxesSearchableSelect
-                id={ formData.fromAccountId }
+                selectedId={ formData.fromAccountId }
+                selectedLabel={ formData.fromAccountName }
                 items={ availableFromAccounts }
                 isInvalid={ isInvalid("fromAccountId") }
                 onValueChange={ (account) =>
@@ -130,7 +131,8 @@ export default function ChangeBalanceTransferDialog(
               error={ getError("toAccountId") }
             >
               <BanksAndBoxesSearchableSelect
-                id={ formData.toAccountId }
+                selectedId={ formData.toAccountId }
+                selectedLabel={ formData.toAccountName }
                 items={ availableToAccounts }
                 isInvalid={ isInvalid("toAccountId") }
                 onValueChange={ (account) =>

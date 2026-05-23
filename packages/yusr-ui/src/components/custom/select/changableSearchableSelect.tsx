@@ -3,13 +3,13 @@ import { Edit, PlusCircle } from "lucide-react";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { SystemPermissions, SystemPermissionsActions } from "../../../auth";
-import type { BaseEntity, FilterCondition } from "../../../entities";
+import { BaseEntity, FilterCondition } from "../../../entities";
 import type { BaseApiService } from "../../../networking";
 import type { IEntityState } from "../../../state";
-import { type ColumnName, type FilterResult, ResultStatus } from "../../../types";
+import { type FilterResult, ResultStatus } from "../../../types";
 import { Button, Dialog } from "../../pure";
 import type { DialogMode } from "../dialogs/dialogType";
-import { SearchableSelect } from "./searchableSelect";
+import { type BasicSearchableSelectParams, SearchableSelect } from "./searchableSelect";
 
 type BaseDialogProps<T extends BaseEntity> = {
   entity?: T;
@@ -18,40 +18,34 @@ type BaseDialogProps<T extends BaseEntity> = {
   onSuccess: (data: T) => void;
 };
 
-export type ChangableSearchableSelectParams<T extends BaseEntity, TDialogProps extends object = {}> = {
-  mode?: "dialog" | "inline";
-  id?: number;
-  items?: T[];
-  itemLabelKey: keyof T;
-  itemValueKey: keyof T;
-  state: IEntityState<T>;
-  apiService: BaseApiService<T>;
-  columnsNames: ColumnName<T>[];
-  disabled?: boolean;
-  isInvalid?: boolean;
-  systemPermissionsResources: string;
-  allowAdd?: boolean;
-  allowUpdate?: boolean;
-  onValueChange: (value: T) => void;
-  entityActions: {
-    filter: AsyncThunk<FilterResult<T> | undefined, FilterCondition<T> | undefined, object>;
-    refresh: ActionCreatorWithPayload<{ data?: T; deletedId?: number; }>;
+export type ChangableSearchableSelectParams<T extends BaseEntity, TDialogProps extends object = {}> =
+  & BasicSearchableSelectParams<T>
+  & {
+    mode?: "dialog" | "inline";
+    labelKey: keyof T;
+    state: IEntityState<T>;
+    apiService: BaseApiService<T>;
+    systemPermissionsResources: string;
+    allowAdd?: boolean;
+    allowUpdate?: boolean;
+    entityActions: {
+      filter: AsyncThunk<FilterResult<T> | undefined, FilterCondition<T> | undefined, object>;
+      refresh: ActionCreatorWithPayload<{ data?: T; deletedId?: number; }>;
+    };
+    changeDialog?: React.ComponentType<BaseDialogProps<T> & TDialogProps>;
+    changeDialogProps?: TDialogProps;
+    authPermissions: string[];
   };
-  changeDialog: React.ComponentType<BaseDialogProps<T> & TDialogProps>;
-  changeDialogProps?: TDialogProps;
-  authPermissions: string[];
-};
 
 export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps extends object = {}>(
   {
     mode = "dialog",
-    id,
+    labelKey,
     items,
-    itemLabelKey,
-    itemValueKey,
+    selectedId,
+    selectedLabel,
     state,
     apiService,
-    columnsNames,
     disabled,
     isInvalid,
     systemPermissionsResources,
@@ -59,38 +53,33 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
     allowUpdate = true,
     onValueChange,
     entityActions,
-    changeDialog,
+    changeDialog = undefined,
     changeDialogProps,
-    authPermissions
+    authPermissions,
+    ...props
   }: ChangableSearchableSelectParams<T, TDialogProps>
 )
 {
   const [openDialog, setOpenDialog] = React.useState(false);
   const [dialogMode, setDialogMode] = React.useState<DialogMode>("create");
-  const [selected, setSelected] = React.useState<T | undefined>(
-    (items ?? state.entities?.data)?.find(
-      (t: T) => t.id === id
-    )
-  );
-  const [typedCondition, setTypedCondition] = React.useState<FilterCondition<T>>({
-    value: "",
-    columnName: columnsNames[0]?.value
-  });
+  const [searchInput, setSearchInput] = React.useState<string>("");
+
   const dispatch = useDispatch();
 
   const ChangeDialog = changeDialog;
 
-  const showAddButton = SystemPermissions.hasAuth(
-    authPermissions ?? [],
-    systemPermissionsResources,
-    SystemPermissionsActions.Add
-  ) && allowAdd;
+  // Derive from items first, fall back to constructing a minimal entity from selectedId/selectedLabel
+  // This ensures the Edit button always shows when there's a selectedId,
+  // even if the item isn't in the current page (e.g. update mode initial load)
+  const allItems = items ?? state.entities?.data ?? [];
+  const selectedEntity = allItems.find((t: T) => t.id === selectedId)
+    ?? (selectedId ? { id: selectedId, [labelKey]: selectedLabel } as unknown as T : undefined);
 
-  const showUpdateButton = SystemPermissions.hasAuth(
-    authPermissions ?? [],
-    systemPermissionsResources,
-    SystemPermissionsActions.Update
-  ) && allowUpdate;
+  const hasAuth = (action: string) =>
+    SystemPermissions.hasAuth(authPermissions ?? [], systemPermissionsResources, action);
+
+  const showAddButton = hasAuth(SystemPermissionsActions.Add) && allowAdd;
+  const showUpdateButton = hasAuth(SystemPermissionsActions.Update) && allowUpdate;
 
   const createEntity = (con: FilterCondition<T>): T =>
   {
@@ -101,38 +90,24 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
     <div className="flex w-full">
       <div className="flex-9">
         <SearchableSelect
-          items={ items ?? state.entities?.data ?? [] }
-          itemLabelKey={ itemLabelKey }
-          itemValueKey={ itemValueKey }
-          value={ id?.toString() || "" }
-          columnsNames={ columnsNames }
+          labelKey={ labelKey }
+          selectedId={ selectedId }
+          selectedLabel={ selectedLabel }
+          items={ allItems }
           buttonClassName={ showAddButton ? "rounded-e-none" : "" }
-          onSearch={ (condition) => dispatch(entityActions.filter(condition) as any) }
+          onSearch={ (searchInput) =>
+            dispatch(entityActions.filter(new FilterCondition({ value: searchInput })) as any) }
           isLoading={ state.isLoading }
           disabled={ state.isLoading || disabled }
           isInvalid={ isInvalid }
-          onValueChange={ (val) =>
-          {
-            const selected = (items ?? state.entities?.data)?.find(
-              (t: T) => t.id.toString() === val
-            );
-            if (selected)
-            {
-              setSelected(selected);
-              onValueChange(selected);
-            }
-          } }
-          onNotFound={ SystemPermissions.hasAuth(
-              authPermissions ?? [],
-              systemPermissionsResources,
-              SystemPermissionsActions.Add
-            )
-            ? async (con) =>
+          onValueChange={ onValueChange }
+          onNotFound={ hasAuth(SystemPermissionsActions.Add)
+            ? async (searchInput) =>
             {
               if (mode === "inline")
               {
                 // create directly, no dialog
-                const res = await apiService.Add(createEntity(con));
+                const res = await apiService.Add(createEntity(new FilterCondition({ value: searchInput })));
                 if (res.status === ResultStatus.Ok && res.data)
                 {
                   dispatch(entityActions.refresh({ data: res.data }));
@@ -142,40 +117,37 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
               }
               else
               {
-                setTypedCondition(con);
+                setSearchInput(searchInput);
                 setDialogMode("create");
                 dispatch(entityActions.filter() as any);
                 setOpenDialog(true);
               }
             }
             : undefined }
-          onDelete={ SystemPermissions.hasAuth(
-              authPermissions ?? [],
-              systemPermissionsResources,
-              SystemPermissionsActions.Delete
-            )
-            ? async (id) =>
+          onDelete={ hasAuth(SystemPermissionsActions.Delete)
+            ? async (entity) =>
             {
-              const res = await apiService.Delete(id);
+              const res = await apiService.Delete(entity.id);
               if (res.status === ResultStatus.Ok)
               {
-                dispatch(entityActions.refresh({ deletedId: id }));
+                dispatch(entityActions.refresh({ deletedId: entity.id }));
                 return true;
               }
               return false;
             }
             : undefined }
+          { ...props }
         />
       </div>
 
       { showAddButton && (
         <Button
           variant="outline"
-          className={ `flex-1 ${selected && showUpdateButton ? "rounded-none" : "rounded-s-none"}` }
+          className={ `flex-1 ${selectedEntity && showUpdateButton ? "rounded-none" : "rounded-s-none"}` }
           onClick={ () =>
           {
             setDialogMode("create");
-            setTypedCondition({ ...typedCondition, value: "" });
+            setSearchInput("");
             setOpenDialog(true);
           } }
         >
@@ -183,7 +155,7 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
         </Button>
       ) }
 
-      { selected && showUpdateButton && (
+      { selectedEntity && showUpdateButton && (
         <Button
           variant="secondary"
           className="flex-1 rounded-s-none border-border"
@@ -197,28 +169,26 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
         </Button>
       ) }
 
-      { openDialog
-        && (
-          <Dialog open={ openDialog } onOpenChange={ setOpenDialog }>
-            <ChangeDialog
-              { ...({
-                entity: dialogMode === "create"
-                  ? createEntity(typedCondition)
-                  : selected,
-                mode: dialogMode,
-                service: apiService,
-                onSuccess: (data: T) =>
-                {
-                  dispatch(entityActions.refresh({ data }));
-                  setSelected(data);
-                  onValueChange(data);
-                  setOpenDialog(false);
-                },
-                ...(changeDialogProps ?? {})
-              } as BaseDialogProps<T> & TDialogProps) }
-            />
-          </Dialog>
-        ) }
+      { openDialog && ChangeDialog && (
+        <Dialog open={ openDialog } onOpenChange={ setOpenDialog }>
+          <ChangeDialog
+            { ...({
+              entity: dialogMode === "create"
+                ? createEntity(new FilterCondition({ value: searchInput }))
+                : selectedEntity,
+              mode: dialogMode,
+              service: apiService,
+              onSuccess: (data: T) =>
+              {
+                dispatch(entityActions.refresh({ data }));
+                onValueChange(data);
+                setOpenDialog(false);
+              },
+              ...(changeDialogProps ?? {})
+            } as BaseDialogProps<T> & TDialogProps) }
+          />
+        </Dialog>
+      ) }
     </div>
   );
 }

@@ -91,7 +91,8 @@ export default function invoicePayments()
                 { /* Payment Method — label-free, column header above */ }
                 <div className="flex-1 min-w-0">
                   <PaymentMethodsSearchableSelect
-                    id={ row.paymentMethodId }
+                    selectedId={ row.paymentMethodId }
+                    selectedLabel={ row.paymentMethodName }
                     onValueChange={ (pm) =>
                       dispatch(slice.formActions.updateVoucher({
                         ...row,

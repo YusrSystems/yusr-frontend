@@ -22,7 +22,8 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
           error={ getError("sellUnitId") }
         >
           <UnitsSearchableSelect
-            id={ formData.sellUnitId }
+            selectedId={ formData.sellUnitId }
+            selectedLabel={ formData.sellUnitName }
             disabled={ formData.type === ItemType.Service || mode === "update" }
             isInvalid={ isInvalid("sellUnitId") }
             onValueChange={ (unit) =>

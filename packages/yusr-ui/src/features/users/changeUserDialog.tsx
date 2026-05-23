@@ -67,11 +67,12 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
 
         <FormField label={ t("users.role") } required isInvalid={ isInvalid("roleId") } error={ getError("roleId") }>
           <RolesSearchableSelect
-            id={ formData.roleId }
+            selectedId={ formData.roleId }
+            selectedLabel={ "must be set" }
             isInvalid={ isInvalid("roleId") }
             onValueChange={ (role) =>
             {
-              dispatch(UserSlice.formActions.updateFormData({ roleId: role.id }));
+              dispatch(UserSlice.formActions.updateFormData({ roleId: role?.id }));
               dispatch(UserSlice.formActions.updateFormData({ role: role }));
             } }
           />
@@ -84,11 +85,12 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
           error={ getError("branchId") }
         >
           <BranchesSearchableSelect
-            id={ formData.branchId }
+            selectedId={ formData.branchId }
+            selectedLabel={ formData.branch?.name }
             isInvalid={ isInvalid("branchId") }
             onValueChange={ (branch) =>
             {
-              dispatch(UserSlice.formActions.updateFormData({ branchId: branch.id }));
+              dispatch(UserSlice.formActions.updateFormData({ branchId: branch?.id }));
               dispatch(UserSlice.formActions.updateFormData({ branch: branch }));
             } }
           />

@@ -1,41 +1,34 @@
 import UnitsApiService from "@/core/networking/unitApiService";
 import ChangeUnitDialog from "@/features/units/changeUnitDialog";
-import { useTranslation } from "react-i18next";
-import { ChangableSearchableSelect, type EntitySearchableSelectParams } from "yusr-ui";
+import { type BasicSearchableSelectParams, ChangableSearchableSelect } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type Unit from "../../data/unit";
-import { UnitFilterColumns, UnitSlice } from "../../data/unit";
+import { UnitSlice } from "../../data/unit";
 import { useAppSelector } from "../../state/store";
 
 export default function UnitsSearchableSelect(
-  { id, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<Unit>
+  { ...props }: BasicSearchableSelectParams<Unit>
 )
 {
   const unitState = useAppSelector((state) => state.unit);
   const authState = useAppSelector((state) => state.auth);
-  const { t } = useTranslation("stocking");
 
   return (
     <ChangableSearchableSelect<Unit>
+      labelKey="name"
       mode="inline"
-      id={ id }
-      itemLabelKey="name"
-      itemValueKey="id"
       state={ unitState }
       apiService={ new UnitsApiService() }
-      columnsNames={ UnitFilterColumns.columnsNames(t) }
-      disabled={ disabled }
-      isInvalid={ isInvalid }
       systemPermissionsResources={ SystemPermissionsResources.Units }
       allowAdd={ false }
       allowUpdate={ false }
-      onValueChange={ onValueChange }
       entityActions={ {
         filter: UnitSlice.entityActions.filter,
         refresh: UnitSlice.entityActions.refresh
       } }
       changeDialog={ ChangeUnitDialog }
       authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
+      { ...props }
     />
   );
 }

@@ -1,33 +1,29 @@
+import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
+import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import type Account from "@/core/data/account";
+import type Item from "@/core/data/item";
+import type Store from "@/core/data/store";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField, SearchableSelect, SelectField } from "yusr-ui";
-import { AccountFilterColumns, ClientsAndSuppliersSlice } from "../../core/data/account";
-import { ItemFilterColumns, ItemSlice } from "../../core/data/item";
+import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField, SelectField } from "yusr-ui";
 import { ItemsMovementReportGroupOption, ItemsMovementReportRequest, ItemsMovementReportTransType } from "../../core/data/report/itemsMovementReportRequest";
 import ReportConstants from "../../core/data/report/reportConstants";
-import { StoreFilterColumns, StoreSlice } from "../../core/data/store";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "./reportButton";
 
 export default function ItemsMovementDialog()
 {
-  const dispatch = useAppDispatch();
-  const itemState = useAppSelector((state) => state.item);
-  const accountState = useAppSelector((state) => state.clientsAndSuppliers);
-  const storeState = useAppSelector((state) => state.store);
   const { t, i18n } = useTranslation("erpCommon");
-  const { t: tStocking } = useTranslation("stocking");
-  const { t: tAccounting } = useTranslation("accounting");
 
   const [isOpen, setIsOpen] = useState(false);
   const [transTypeId, setTransTypeId] = useState<ItemsMovementReportTransType | undefined>(undefined);
-  const [itemId, setItemId] = useState<number | undefined>(undefined);
+  const [item, setItem] = useState<Item | undefined>(undefined);
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   const [toDate, setToDate] = useState<Date | undefined>(undefined);
-  const [fromAccountId, setFromAccountId] = useState<number | undefined>(undefined);
-  const [toAccountId, setToAccountId] = useState<number | undefined>(undefined);
-  const [fromStoreId, setFromStoreId] = useState<number | undefined>(undefined);
-  const [toStoreId, setToStoreId] = useState<number | undefined>(undefined);
+  const [fromAccount, setFromAccount] = useState<Account | undefined>(undefined);
+  const [toAccount, setToAccount] = useState<Account | undefined>(undefined);
+  const [fromStore, setFromStore] = useState<Store | undefined>(undefined);
+  const [toStore, setToStore] = useState<Store | undefined>(undefined);
   const [groupOption, setGroupOption] = useState<ItemsMovementReportGroupOption | undefined>(undefined);
 
   return (
@@ -58,17 +54,11 @@ export default function ItemsMovementDialog()
             />
 
             <FormField label={ t("reports.item") }>
-              <SearchableSelect
-                items={ itemState.entities.data ?? [] }
-                itemLabelKey="name"
-                itemValueKey="id"
+              <ItemsSearchableSelect
                 showAllOption
-                value={ itemId?.toString() ?? "" }
-                onValueChange={ (val) => setItemId(val ? Number(val) : undefined) }
-                columnsNames={ ItemFilterColumns.columnsNames(tStocking) }
-                onSearch={ (condition) => dispatch(ItemSlice.entityActions.filter(condition)) }
-                isLoading={ itemState.isLoading }
-                disabled={ itemState.isLoading }
+                selectedId={ item?.id }
+                selectedLabel={ item?.name }
+                onValueChange={ (item) => setItem(item) }
               />
             </FormField>
 
@@ -87,64 +77,40 @@ export default function ItemsMovementDialog()
 
             <div className="grid grid-cols-2 gap-3">
               <FormField label={ t("reports.fromAccount") }>
-                <SearchableSelect
-                  items={ accountState.entities.data ?? [] }
-                  itemLabelKey="name"
-                  itemValueKey="id"
+                <ClientsAndSuppliersSearchableSelect
                   showAllOption
-                  value={ fromAccountId?.toString() ?? "" }
-                  onValueChange={ (val) => setFromAccountId(val ? Number(val) : undefined) }
-                  columnsNames={ AccountFilterColumns.columnsNames(tAccounting) }
-                  onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
-                  isLoading={ accountState.isLoading }
-                  disabled={ accountState.isLoading }
+                  selectedId={ fromAccount?.id }
+                  selectedLabel={ fromAccount?.name }
+                  onValueChange={ (account) => setFromAccount(account) }
                 />
               </FormField>
 
               <FormField label={ t("reports.toAccount") }>
-                <SearchableSelect
-                  items={ accountState.entities.data ?? [] }
-                  itemLabelKey="name"
-                  itemValueKey="id"
+                <ClientsAndSuppliersSearchableSelect
                   showAllOption
-                  value={ toAccountId?.toString() ?? "" }
-                  onValueChange={ (val) => setToAccountId(val ? Number(val) : undefined) }
-                  columnsNames={ AccountFilterColumns.columnsNames(tAccounting) }
-                  onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
-                  isLoading={ accountState.isLoading }
-                  disabled={ accountState.isLoading }
+                  selectedId={ toAccount?.id }
+                  selectedLabel={ toAccount?.name }
+                  onValueChange={ (account) => setToAccount(account) }
                 />
               </FormField>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <FormField label={ t("reports.fromStore") }>
-                <SearchableSelect
-                  items={ storeState.entities.data ?? [] }
-                  itemLabelKey="name"
-                  itemValueKey="id"
+                <StoresSearchableSelect
                   showAllOption
-                  value={ fromStoreId?.toString() ?? "" }
-                  onValueChange={ (val) => setFromStoreId(val ? Number(val) : undefined) }
-                  columnsNames={ StoreFilterColumns.columnsNames(tStocking) }
-                  onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
-                  isLoading={ storeState.isLoading }
-                  disabled={ storeState.isLoading }
+                  selectedId={ fromStore?.id }
+                  selectedLabel={ fromStore?.name }
+                  onValueChange={ (store) => setFromStore(store) }
                 />
               </FormField>
 
               <FormField label={ t("reports.toStore") }>
-                <SearchableSelect
-                  items={ storeState.entities.data ?? [] }
-                  itemLabelKey="name"
-                  itemValueKey="id"
+                <StoresSearchableSelect
                   showAllOption
-                  value={ toStoreId?.toString() ?? "" }
-                  onValueChange={ (val) => setToStoreId(val ? Number(val) : undefined) }
-                  columnsNames={ StoreFilterColumns.columnsNames(tStocking) }
-                  onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
-                  isLoading={ storeState.isLoading }
-                  disabled={ storeState.isLoading }
+                  selectedId={ toStore?.id }
+                  selectedLabel={ toStore?.name }
+                  onValueChange={ (store) => setToStore(store) }
                 />
               </FormField>
             </div>
@@ -169,13 +135,13 @@ export default function ItemsMovementDialog()
               reportName={ ReportConstants.ItemsMovement }
               request={ new ItemsMovementReportRequest({
                 transTypeId: transTypeId ?? null,
-                itemId: itemId ?? null,
+                itemId: item?.id ?? null,
                 fromDate: fromDate?.toLocaleDateString("en-CA") ?? null,
                 toDate: toDate?.toLocaleDateString("en-CA") ?? null,
-                fromAccountId: fromAccountId ?? null,
-                toAccountId: toAccountId ?? null,
-                fromStoreId: fromStoreId ?? null,
-                toStoreId: toStoreId ?? null,
+                fromAccountId: fromAccount?.id ?? null,
+                toAccountId: toAccount?.id ?? null,
+                fromStoreId: fromStore?.id ?? null,
+                toStoreId: toStore?.id ?? null,
                 groupOption: groupOption ?? null
               }) }
             />

@@ -1,8 +1,8 @@
 import { ScanBarcode, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FilterByTypeRequest, SearchableSelect } from "yusr-ui";
-import { ItemFilterColumns, ItemType, ItemUnitPricingMethod, type StoreItem } from "../../core/data/item";
+import { FilterByTypeRequest, FilterCondition, SearchableSelect } from "yusr-ui";
+import { ItemType, ItemUnitPricingMethod, type StoreItem } from "../../core/data/item";
 import { clearBarcodeResult, GetItemByBarcode } from "../../core/state/shared/itemBarcodeSlice";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -17,7 +17,6 @@ interface StoreItemSelectorProps
 export default function StoreItemSelector({ storeId, itemTypes, onSelect }: StoreItemSelectorProps)
 {
   const { t } = useTranslation("erpCommon");
-  const { t: tStocking } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const [barcode, setBarcode] = useState("");
   const storeItemsState = useAppSelector((state) => state.storeItems);
@@ -65,13 +64,10 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
 
       <div className="w-80">
         <SearchableSelect
-          value={ "" }
           items={ items() }
-          itemLabelKey="name"
-          itemValueKey="id"
+          labelKey="name"
           placeholder={ t("storeItemSelector.selectItem") }
-          columnsNames={ ItemFilterColumns.columnsNames(tStocking) }
-          onSearch={ (condition) =>
+          onSearch={ (searchInput) =>
           {
             if (itemTypes?.length && storeId)
             {
@@ -80,7 +76,10 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
                   pageNumber: 1,
                   rowsPerPage: 10,
                   storeId: storeId,
-                  request: new FilterByTypeRequest({ condition: condition, types: itemTypes })
+                  request: new FilterByTypeRequest({
+                    condition: new FilterCondition({ value: searchInput }),
+                    types: itemTypes
+                  })
                 })
               );
             }
@@ -89,7 +88,7 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
           disabled={ storeItemsState.isLoading }
           onValueChange={ (val) =>
           {
-            const selected = storeItemsState.storeItems.find((di) => di.item.id.toString() === val);
+            const selected = storeItemsState.storeItems.find((di) => di.item.id === val?.id);
             if (selected)
             {
               onSelect?.(selected);

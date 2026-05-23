@@ -70,7 +70,7 @@ export default function ChangeStocktakingDialog(
     }
   }, [entity?.id, mode]);
 
-  const handleStoreChange = (store: Store) =>
+  const handleStoreChange = (store?: Store) =>
   {
     dispatch(StocktakingSlice.formActions.updateFormData({
       storeId: store?.id,
@@ -131,7 +131,9 @@ export default function ChangeStocktakingDialog(
               error={ getError("storeId") }
             >
               <StoresSearchableSelect
-                id={ formData.storeId }
+                selectedId={ formData.storeId }
+                selectedLabel={ formData.storeName }
+                disabled={ mode === "update" }
                 isInvalid={ isInvalid("storeId") }
                 onValueChange={ handleStoreChange }
               />

@@ -2,12 +2,12 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import Account, { AccountType, ClientsAndSuppliersSlice } from "@/core/data/account";
 import { useAppSelector } from "@/core/state/store";
 import { useTranslation } from "react-i18next";
-import type { EntitySearchableSelectParams } from "yusr-ui";
+import type { BasicSearchableSelectParams } from "yusr-ui";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import AccountsSearchableSelect from "./accountsSearchableSelect";
 
 export default function ClientsAndSuppliersSearchableSelect(
-  { id, isInvalid, onValueChange }: EntitySearchableSelectParams<Account>
+  { ...props }: BasicSearchableSelectParams<Account>
 )
 {
   const { t } = useTranslation("accounting");
@@ -27,12 +27,6 @@ export default function ClientsAndSuppliersSearchableSelect(
 
   return (
     <AccountsSearchableSelect
-      id={ id }
-      isInvalid={ isInvalid }
-      onValueChange={ (account) =>
-      {
-        onValueChange(account);
-      } }
       slice={ ClientsAndSuppliersSlice }
       selectEntityState={ (state) => state.clientsAndSuppliers }
       selectFormState={ (state) => state.clientsAndSuppliersForm }
@@ -47,6 +41,7 @@ export default function ClientsAndSuppliersSearchableSelect(
       ] }
       allowAdd={ hasClientPerm || hasSupplierPerm }
       allowUpdate={ hasClientPerm || hasSupplierPerm }
+      { ...props }
     />
   );
 }

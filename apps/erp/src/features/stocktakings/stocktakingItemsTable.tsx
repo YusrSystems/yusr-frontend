@@ -101,9 +101,8 @@ export default function StocktakingItemsTable(
     handleChange({ stocktakingItems: list });
   };
 
-  const addUnitToItem = (itemId: number, unitIdStr: string | undefined) =>
+  const addUnitToItem = (itemId: number, unitId: number | undefined) =>
   {
-    const unitId = Number(unitIdStr);
     const storeItem = storeItemsState.storeItems.find((si) => si.item.id === itemId);
     const unitDetails = storeItem?.itemUnitPricingMethods?.find((u) => u.id === unitId);
 
@@ -256,13 +255,10 @@ export default function StocktakingItemsTable(
 
                           { mode === "create" && availableUnits.length > 0 && (
                             <div className="mt-1">
-                              <SearchableSelect
+                              <SearchableSelect<ItemUnitPricingMethod>
                                 items={ availableUnits }
-                                itemLabelKey="itemUnitPricingMethodName"
-                                itemValueKey="id"
-                                value=""
-                                onValueChange={ (val) => addUnitToItem(itemId, val) }
-                                columnsNames={ [{ label: t("units.unitName"), value: "itemUnitPricingMethodName" }] }
+                                labelKey="itemUnitPricingMethodName"
+                                onValueChange={ (iupm) => addUnitToItem(itemId, iupm?.id) }
                                 onSearch={ () =>
                                 {} }
                               />

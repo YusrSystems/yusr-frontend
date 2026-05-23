@@ -1,36 +1,33 @@
 import { useSelector } from "react-redux";
-import { Role, RoleFilterColumns, RoleSlice } from "../../../entities";
-import { useAppDispatch, type YusrRootState } from "../../../state";
-import { type EntitySearchableSelectParams, SearchableSelect } from "./searchableSelect";
+import { YusrSystemPermissionsResources } from "../../../auth";
+import { Role, RoleSlice } from "../../../entities";
+import { RolesApiService } from "../../../networking";
+import { type YusrRootState } from "../../../state";
+import { ChangableSearchableSelect } from "./changableSearchableSelect";
+import { type BasicSearchableSelectParams } from "./searchableSelect";
 
 export function RolesSearchableSelect(
-  { id, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<Role>
+  { ...props }: BasicSearchableSelectParams<Role>
 )
 {
   const roleState = useSelector((state: YusrRootState) => state.role);
-  const dispatch = useAppDispatch();
+  const authState = useSelector((state: YusrRootState) => state.auth);
 
   return (
-    <SearchableSelect<Role>
-      items={ roleState.entities?.data ?? [] }
-      itemLabelKey="name"
-      itemValueKey="id"
-      value={ id?.toString() || "" }
-      columnsNames={ RoleFilterColumns.columnsNames }
-      onSearch={ (condition) => dispatch(RoleSlice.entityActions.filter(condition)) }
-      isLoading={ roleState.isLoading }
-      disabled={ roleState.isLoading || disabled }
-      isInvalid={ isInvalid }
-      onValueChange={ (val) =>
-      {
-        const selected = (roleState.entities?.data)?.find(
-          (t: Role) => t.id.toString() === val
-        );
-        if (selected)
-        {
-          onValueChange(selected);
-        }
+    <ChangableSearchableSelect<Role>
+      labelKey="name"
+      mode="inline"
+      state={ roleState }
+      apiService={ new RolesApiService() }
+      systemPermissionsResources={ YusrSystemPermissionsResources.Roles }
+      allowAdd={ false }
+      allowUpdate={ false }
+      entityActions={ {
+        filter: RoleSlice.entityActions.filter,
+        refresh: RoleSlice.entityActions.refresh
       } }
+      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
+      { ...props }
     />
   );
 }

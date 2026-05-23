@@ -70,14 +70,15 @@ export default function PricingMethodsTable()
                     isInvalid={ hasError && !isService && !method.unitId }
                   >
                     <UnitsSearchableSelect
-                      id={ method.unitId }
+                      selectedId={ formData.itemUnitPricingMethods?.[index].unitId }
+                      selectedLabel={ formData.itemUnitPricingMethods?.[index].unitName }
                       disabled={ isService }
                       isInvalid={ hasError && !isService && !method.unitId }
                       onValueChange={ (unit) =>
                       {
                         updatePricingMethod(index, {
-                          unitId: unit.id,
-                          unitName: unit.name
+                          unitId: unit?.id,
+                          unitName: unit?.name
                         });
                       } }
                     />
@@ -89,14 +90,15 @@ export default function PricingMethodsTable()
                     isInvalid={ hasError && !isService && !method.pricingMethodId }
                   >
                     <PricingMethodsSearchableSelect
-                      id={ method.pricingMethodId }
+                      selectedId={ formData.itemUnitPricingMethods?.[index].pricingMethodId }
+                      selectedLabel={ formData.itemUnitPricingMethods?.[index].pricingMethodName }
                       disabled={ isService }
                       isInvalid={ hasError && !isService && !method.pricingMethodId }
                       onValueChange={ (pricingMethod) =>
                       {
                         updatePricingMethod(index, {
-                          pricingMethodId: pricingMethod.id,
-                          pricingMethodName: pricingMethod.name
+                          pricingMethodId: pricingMethod?.id,
+                          pricingMethodName: pricingMethod?.name
                         });
                       } }
                     />
