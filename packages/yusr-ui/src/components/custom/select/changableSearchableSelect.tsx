@@ -96,7 +96,7 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
           items={ allItems }
           buttonClassName={ showAddButton ? "rounded-e-none" : "" }
           onSearch={ (searchInput) =>
-            dispatch(entityActions.filter(new FilterCondition({ value: searchInput })) as any) }
+            dispatch(entityActions.filter(new FilterCondition({ value: searchInput, columnName: labelKey })) as any) }
           isLoading={ state.isLoading }
           disabled={ state.isLoading || disabled }
           isInvalid={ isInvalid }
@@ -107,7 +107,7 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
               if (mode === "inline")
               {
                 // create directly, no dialog
-                const res = await apiService.Add(createEntity(new FilterCondition({ value: searchInput })));
+                const res = await apiService.Add(createEntity(new FilterCondition({ value: searchInput, columnName: labelKey })));
                 if (res.status === ResultStatus.Ok && res.data)
                 {
                   dispatch(entityActions.refresh({ data: res.data }));
@@ -174,7 +174,7 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
           <ChangeDialog
             { ...({
               entity: dialogMode === "create"
-                ? createEntity(new FilterCondition({ value: searchInput }))
+                ? createEntity(new FilterCondition({ value: searchInput, columnName: labelKey }))
                 : selectedEntity,
               mode: dialogMode,
               service: apiService,

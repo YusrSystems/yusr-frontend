@@ -77,7 +77,7 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
                   rowsPerPage: 10,
                   storeId: storeId,
                   request: new FilterByTypeRequest({
-                    condition: new FilterCondition({ value: searchInput }),
+                    condition: new FilterCondition({ value: searchInput, columnName: "name" }),
                     types: itemTypes
                   })
                 })
