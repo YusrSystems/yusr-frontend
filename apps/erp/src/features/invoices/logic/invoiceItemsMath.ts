@@ -83,7 +83,7 @@ export default class InvoiceItemsMath
         ),
       0
     );
-    price = price == undefined? 0 : Number(price.toFixed(2));
+    price = price == undefined ? 0 : Number(price.toFixed(2));
     return price;
   }
 
@@ -117,10 +117,11 @@ export default class InvoiceItemsMath
     invoiceItems.forEach((i) =>
     {
       const itemProfit = InvoiceItemsMath.CalcInvoiceItemProfit(i);
-      taxInclusiveTotalPrice += itemProfit.taxInclusivePrice;
-      totalCost += itemProfit.cost;
-      totalTaxesAmount += itemProfit.totalTaxesAmount;
-      profit += itemProfit.profit;
+      console.log("Item profit: ", itemProfit);
+      taxInclusiveTotalPrice += itemProfit.taxInclusivePrice * (itemProfit.quantity ?? 0);
+      totalCost += itemProfit.cost * (itemProfit.quantity ?? 0);
+      totalTaxesAmount += itemProfit.totalTaxesAmount * (itemProfit.quantity ?? 0);
+      profit += itemProfit.profit * (itemProfit.quantity ?? 0);
     });
 
     return {

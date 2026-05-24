@@ -40,7 +40,12 @@ export default class InvoiceItemsActions
     {
       state.formData.invoiceItems = state.formData.invoiceItems?.map((item) =>
         item.itemId === baseItem.id
-          ? { ...item, quantity: item.quantity + 1 }
+          ? {
+            ...item,
+            quantity: item.quantity + 1,
+            taxExclusiveTotalPrice: item.taxExclusiveTotalPrice + item.taxExclusivePrice,
+            taxInclusiveTotalPrice: item.taxInclusiveTotalPrice + item.taxInclusivePrice
+          }
           : item
       );
 

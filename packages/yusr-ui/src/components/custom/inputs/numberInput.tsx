@@ -41,7 +41,6 @@ export function NumberInput({ value, onChange, min, max, isInvalid, className, c
       ) }
       onChange={ (e) =>
       {
-        console.log("Raw input value:", e.target.value);
         let rawValue = e.target.value;
 
         // 1. (Optional but recommended) Convert Arabic/Persian numbers to English numbers automatically
