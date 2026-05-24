@@ -31,12 +31,10 @@ export function NumberInput({ value, onChange, min, max, isInvalid, className, c
       { ...props }
       type="text"
       inputMode="decimal"
-      dir="ltr"
       min={ min }
       max={ max }
       value={ localValue }
       className={ cn(
-        "text-right",
         className,
         currency && "pe-8",
         isInvalid && "border-red-600 ring-red-600 text-red-900"
