@@ -1,3 +1,4 @@
+import type { PayloadAction } from "@reduxjs/toolkit/react";
 import { type TFunction } from "i18next";
 import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, StorageFile, type ValidationRule, Validators } from "yusr-ui";
 import InvoiceItemsActions from "../../features/invoices/logic/invoiceItemsActions";
@@ -196,7 +197,10 @@ export class InvoiceSlice
       onInvoiceItemSettlementChange: InvoiceItemsActions.onInvoiceItemSettlementChange,
       onInvoiceSettlementAmountChange: InvoiceItemsActions.onInvoiceSettlementAmountChange,
       onInvoiceSettlementPercentChange: InvoiceItemsActions.onInvoiceSettlementPercentChange,
-
+      reorderItems: (state, action: PayloadAction<InvoiceItem[]>) =>
+      {
+        state.formData.invoiceItems = action.payload;
+      },
       // vouchers
       addVoucher: InvoiceVouchersActions.addVoucher,
       removeVoucher: InvoiceVouchersActions.removeVoucher,

@@ -1,5 +1,5 @@
-import { Trash2 } from "lucide-react";
-import React from "react";
+import { GripVertical, Trash2 } from "lucide-react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { type ColumnDef, ColumnVisibilityToggle, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, useColumnVisibility } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
@@ -8,6 +8,7 @@ import { useInvoiceContext } from "../../logic/invoiceContext";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 import { ItemProfitDialog } from "../profit/ItemProfitDialog";
 import EmptyTable from "./emptyTable";
+import type { DragState } from "./invoiceTableTypes";
 
 export default function InvoiceItemsTable()
 {
@@ -87,6 +88,35 @@ export default function InvoiceItemsTable()
       : originaltaxInclusivePrice;
   };
 
+  // Move Hooks BEFORE the early return to comply with the Rules of Hooks
+  const [dragState, setDragState] = useState<DragState>({ draggedIndex: null, dragOverIndex: null });
+
+  const handleDragStart = useCallback((index: number) =>
+  {
+    setDragState({ draggedIndex: index, dragOverIndex: null });
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent, index: number) =>
+  {
+    e.preventDefault(); // required to allow the drop
+    setDragState((prev) => prev.dragOverIndex === index ? prev : { ...prev, dragOverIndex: index });
+  }, []);
+
+  const handleDrop = useCallback(
+    (reorderedItems: any[]) =>
+    {
+      dispatch(slice.formActions.reorderItems(reorderedItems));
+      setDragState({ draggedIndex: null, dragOverIndex: null });
+    },
+    [dispatch, slice]
+  );
+
+  const handleDragEnd = useCallback(() =>
+  {
+    // Runs when drag is cancelled (e.g. Escape key) without a valid drop
+    setDragState({ draggedIndex: null, dragOverIndex: null });
+  }, []);
+
   if (formData.invoiceItems?.length === 0)
   {
     return <EmptyTable />;
@@ -96,6 +126,22 @@ export default function InvoiceItemsTable()
   const actionColCount = (showProfit ? 1 : 0) + 1; // profit + delete
   const visibleCount = COLUMNS.filter((c) => isVisible(c.key)).length;
   const totalColSpan = fixedColCount + visibleCount + actionColCount;
+
+  const handleRowDrop = () =>
+  {
+    const { draggedIndex, dragOverIndex } = dragState;
+
+    if (draggedIndex === null || dragOverIndex === null || draggedIndex === dragOverIndex)
+    {
+      return;
+    }
+
+    const items = [...(formData.invoiceItems ?? [])];
+    const [removed] = items.splice(draggedIndex, 1);
+    items.splice(dragOverIndex, 0, removed);
+
+    handleDrop(items);
+  };
 
   return (
     <div className="w-full border border-border rounded-lg shadow-sm bg-background">
@@ -107,6 +153,7 @@ export default function InvoiceItemsTable()
         <table className="relative w-full text-sm text-right">
           <thead className="sticky top-0 bg-muted z-50 border-b border-border">
             <tr>
+              <th className="p-3 w-10" /> { /* drag handle spacer */ }
               <th className="p-3 font-semibold w-16 text-center text-muted-foreground">{ t("invoices.number") }</th>
               <th className="p-3 font-semibold text-start w-40">{ t("invoices.item") }</th>
               <th className="p-3 font-semibold text-start w-20 min-w-20">{ t("invoices.pricingMethod") }</th>
@@ -136,161 +183,200 @@ export default function InvoiceItemsTable()
             </tr>
           </thead>
           <tbody>
-            { formData.invoiceItems?.map((row, index) => (
-              <React.Fragment key={ row.id }>
-                <tr className="border-border last:border-0 hover:bg-muted/20 transition-colors">
-                  <td className="px-2 pt-2 text-center font-bold text-muted-foreground">{ index + 1 }</td>
+            { formData.invoiceItems?.map((row, index) =>
+            {
+              const isDragging = dragState.draggedIndex === index;
+              const isDraggingOver = dragState.dragOverIndex === index;
 
-                  <td className="px-2 pt-2">
-                    <div className="font-semibold text-start text-foreground">{ row.itemName }</div>
-                  </td>
-
-                  <td className="px-2 pt-2">
-                    { (disabled || mode === "return")
-                      ? <div className="font-semibold text-foreground">{ row.itemUnitPricingMethodName }</div>
-                      : (
-                        <SelectField
-                          label=""
-                          value={ row.itemUnitPricingMethodId?.toString() || "" }
-                          onValueChange={ (val: string) =>
-                            dispatch(slice.formActions.onInvoiceItemIupmChange({ index, iupmId: Number(val) })) }
-                          options={ row.itemUnitPricingMethods?.map((m) => ({
-                            label: `${m.pricingMethodName || t("invoices.without")} ${
-                              m.unitName || t("invoices.without")
-                            }`,
-                            value: m.id.toString()
-                          })) || [] }
-                          placeholder={ t("invoices.selectPricingMethod") }
-                          isInvalid={ !!errors[`${row.id}_method`] }
-                          disabled={ disabled }
-                        />
-                      ) }
-                  </td>
-
-                  { isVisible("cost") && (
-                    <td className="px-2 pt-2">
-                      <NumberField disabled label="" value={ row.cost || "0" } />
+              return (
+                <React.Fragment key={ `${row.id}-${index}` }>
+                  { /* ── Data Row ── */ }
+                  <tr
+                    draggable={ !disabled }
+                    onDragStart={ () => handleDragStart(index) }
+                    onDragOver={ (e) => handleDragOver(e, index) }
+                    onDrop={ handleRowDrop }
+                    onDragEnd={ handleDragEnd }
+                    className={ [
+                      "border-border last:border-0 transition-colors",
+                      isDragging ? "opacity-40" : "hover:bg-muted/20",
+                      isDraggingOver ? "border-t-2 border-t-primary" : ""
+                    ].join(" ") }
+                  >
+                    { /* Drag Handle */ }
+                    <td className={ `px-2 pt-2 ${disabled ? "invisible" : "cursor-grab active:cursor-grabbing"}` }>
+                      <GripVertical className="h-4 w-4 text-muted-foreground" />
                     </td>
-                  ) }
 
-                  <td className="px-2 pt-2">
-                    <NumberField
-                      label=""
-                      min={ 0 }
-                      step={ 0.1 }
-                      max={ getMaxAllowedQuantity(row.originalQuantity) }
-                      value={ row.quantity ?? 1 }
-                      onChange={ (newValue) =>
-                        dispatch(slice.formActions.onInvoiceItemQuantityChange({ index, newQtn: newValue })) }
-                      disabled={ mode === "return" ? false : disabled }
-                    />
-                  </td>
+                    { /* Index */ }
+                    <td className="px-2 pt-2 text-center font-bold text-muted-foreground">
+                      { index + 1 }
+                    </td>
 
-                  { isVisible("priceWithoutTax") && (
+                    { /* Item Name */ }
+                    <td className="px-2 pt-2">
+                      <div className="font-semibold text-start text-foreground">{ row.itemName }</div>
+                    </td>
+
+                    { /* Pricing Method */ }
+                    <td className="px-2 pt-2">
+                      { (disabled || mode === "return")
+                        ? <div className="font-semibold text-foreground">{ row.itemUnitPricingMethodName }</div>
+                        : (
+                          <SelectField
+                            label=""
+                            value={ row.itemUnitPricingMethodId?.toString() || "" }
+                            onValueChange={ (val: string) =>
+                              dispatch(slice.formActions.onInvoiceItemIupmChange({ index, iupmId: Number(val) })) }
+                            options={ row.itemUnitPricingMethods?.map((m) => ({
+                              label: `${m.pricingMethodName || t("invoices.without")} ${
+                                m.unitName || t("invoices.without")
+                              }`,
+                              value: m.id.toString()
+                            })) || [] }
+                            placeholder={ t("invoices.selectPricingMethod") }
+                            isInvalid={ !!errors[`${row.id}_method`] }
+                            disabled={ disabled }
+                          />
+                        ) }
+                    </td>
+
+                    { isVisible("cost") && (
+                      <td className="px-2 pt-2">
+                        <NumberField disabled label="" value={ row.cost || "0" } />
+                      </td>
+                    ) }
+
+                    { /* Quantity */ }
                     <td className="px-2 pt-2">
                       <NumberField
                         label=""
-                        disabled
-                        value={ row.taxExclusivePrice || "0" }
-                        onChange={ () =>
-                        {} }
+                        min={ 0 }
+                        step={ 0.1 }
+                        max={ getMaxAllowedQuantity(row.originalQuantity) }
+                        value={ row.quantity ?? 1 }
+                        onChange={ (newValue) =>
+                          dispatch(slice.formActions.onInvoiceItemQuantityChange({ index, newQtn: newValue })) }
+                        disabled={ mode === "return" ? false : disabled }
                       />
                     </td>
-                  ) }
 
-                  { isVisible("taxPercentage") && (
-                    <td className="px-2 pt-2">
-                      <NumberField label="" value={ row.totalTaxesPerc || "0" } disabled />
-                    </td>
-                  ) }
+                    { isVisible("priceWithoutTax") && (
+                      <td className="px-2 pt-2">
+                        <NumberField
+                          label=""
+                          disabled
+                          value={ row.taxExclusivePrice || "0" }
+                          onChange={ () =>
+                          {} }
+                        />
+                      </td>
+                    ) }
 
-                  <td className="px-2 pt-2">
-                    <NumberField
-                      label=""
-                      min={ getMinAllowedTaxInclusivePrice(row.originaltaxInclusivePrice) }
-                      value={ row.taxInclusivePrice || "0" }
-                      disabled={ disabled || mode === "return" }
-                      onChange={ (newVal) =>
-                        dispatch(
-                          slice.formActions.onInvoiceItemTaxInclusivePriceChange({ index, newPrice: Number(newVal) })
-                        ) }
-                    />
-                  </td>
+                    { isVisible("taxPercentage") && (
+                      <td className="px-2 pt-2">
+                        <NumberField label="" value={ row.totalTaxesPerc || "0" } disabled />
+                      </td>
+                    ) }
 
-                  { hasSettlementPerm && isVisible("settlement") && (
+                    { /* Price After Tax */ }
                     <td className="px-2 pt-2">
                       <NumberField
                         label=""
-                        value={ row.settlement || "0" }
+                        min={ getMinAllowedTaxInclusivePrice(row.originaltaxInclusivePrice) }
+                        value={ row.taxInclusivePrice || "0" }
                         disabled={ disabled || mode === "return" }
-                        onChange={ (newValue) =>
+                        onChange={ (newVal) =>
                           dispatch(
-                            slice.formActions.onInvoiceItemSettlementChange({ index, newSettlement: Number(newValue) })
+                            slice.formActions.onInvoiceItemTaxInclusivePriceChange({ index, newPrice: Number(newVal) })
                           ) }
                       />
                     </td>
-                  ) }
 
-                  { isVisible("finalCost") && (
+                    { hasSettlementPerm && isVisible("settlement") && (
+                      <td className="px-2 pt-2">
+                        <NumberField
+                          label=""
+                          value={ row.settlement || "0" }
+                          disabled={ disabled || mode === "return" }
+                          onChange={ (newValue) =>
+                            dispatch(
+                              slice.formActions.onInvoiceItemSettlementChange({
+                                index,
+                                newSettlement: Number(newValue)
+                              })
+                            ) }
+                        />
+                      </td>
+                    ) }
+
+                    { isVisible("finalCost") && (
+                      <td className="px-2 pt-2">
+                        <NumberField
+                          label=""
+                          value={ InvoiceItemsMath.CalcTotalCost(row.cost, row.quantity) || "0" }
+                          disabled
+                        />
+                      </td>
+                    ) }
+
+                    { isVisible("finalPriceWithoutTax") && (
+                      <td className="px-2 pt-2">
+                        <NumberField label="" value={ row.taxExclusiveTotalPrice || "0" } disabled />
+                      </td>
+                    ) }
+
+                    { /* Final Price with Tax */ }
                     <td className="px-2 pt-2">
-                      <NumberField
+                      <NumberField label="" value={ row.taxInclusiveTotalPrice || "0" } disabled />
+                    </td>
+
+                    { showProfit && (
+                      <td className="px-2 pt-2">
+                        <ItemProfitDialog item={ row } />
+                      </td>
+                    ) }
+
+                    <td className="px-2 pt-2">
+                      { !disabled && (
+                        <button
+                          type="button"
+                          onClick={ () => dispatch(slice.formActions.removeItem(index)) }
+                          className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
+                          aria-label={ t("invoices.deleteItem") }
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      ) }
+                    </td>
+                  </tr>
+
+                  { /* ── Notes Row ── */ }
+                  <tr
+                    className="bg-muted/10 border-b"
+                    onDragOver={ (e) => handleDragOver(e, index) }
+                    onDrop={ handleRowDrop }
+                  >
+                    <td colSpan={ totalColSpan } className="px-5 pt-1 pb-3">
+                      <TextAreaField
+                        collapsible
+                        collapsedHeight={ 36 }
+                        expandedHeight={ 150 }
                         label=""
-                        value={ InvoiceItemsMath.CalcTotalCost(row.cost, row.quantity) || "0" }
-                        disabled
+                        placeholder={ t("invoices.addNotes") }
+                        value={ row.notes || "" }
+                        disabled={ disabled || mode === "return" }
+                        onChange={ (val) =>
+                          dispatch(slice.formActions.updateItem({
+                            index,
+                            item: { ...row, notes: typeof val === "string" ? val : val.target.value }
+                          })) }
                       />
                     </td>
-                  ) }
-
-                  { isVisible("finalPriceWithoutTax") && (
-                    <td className="px-2 pt-2">
-                      <NumberField label="" value={ row.taxExclusiveTotalPrice || "0" } disabled />
-                    </td>
-                  ) }
-
-                  <td className="px-2 pt-2">
-                    <NumberField label="" value={ row.taxInclusiveTotalPrice || "0" } disabled />
-                  </td>
-
-                  { showProfit && (
-                    <td className="px-2 pt-2">
-                      <ItemProfitDialog item={ row } />
-                    </td>
-                  ) }
-
-                  <td className="px-2 pt-2">
-                    { !disabled && (
-                      <button
-                        type="button"
-                        onClick={ () => dispatch(slice.formActions.removeItem(index)) }
-                        className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
-                        aria-label={ t("invoices.deleteItem") }
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    ) }
-                  </td>
-                </tr>
-
-                <tr className="bg-muted/10 border-b">
-                  <td colSpan={ totalColSpan } className="px-5 pt-1 pb-3">
-                    <TextAreaField
-                      collapsible
-                      collapsedHeight={ 36 }
-                      expandedHeight={ 150 }
-                      label=""
-                      placeholder={ t("invoices.addNotes") }
-                      value={ row.notes || "" }
-                      disabled={ disabled || mode === "return" }
-                      onChange={ (val) =>
-                        dispatch(slice.formActions.updateItem({
-                          index,
-                          item: { ...row, notes: typeof val === "string" ? val : val.target.value }
-                        })) }
-                    />
-                  </td>
-                </tr>
-              </React.Fragment>
-            )) }
+                  </tr>
+                </React.Fragment>
+              );
+            }) }
           </tbody>
         </table>
       </div>
