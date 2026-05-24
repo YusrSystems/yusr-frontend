@@ -229,6 +229,11 @@ export default function ChangeInvoiceDialog({
   const transformDataBeforeSave = (data: Invoice | Partial<Invoice>): Invoice | Partial<Invoice> =>
   {
     let transformedData = { ...data, fullAmount: invoiceTaxInclusivePrice() };
+    // sent items index
+    transformedData.invoiceItems = transformedData.invoiceItems?.map((item, index) => ({
+      ...item,
+      index
+    }));
     if (currentMode === "return")
     {
       return {

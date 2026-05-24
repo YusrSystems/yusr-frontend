@@ -52,6 +52,7 @@ export type InvoiceRelationType = (typeof InvoiceRelationType)[keyof typeof Invo
 
 export class InvoiceItem extends BaseEntity
 {
+  public index!: number;
   public invoiceId!: number;
   public itemId!: number;
   public itemUnitPricingMethodId!: number;
