@@ -1,22 +1,22 @@
+import { useAppSelector } from "@/core/state/store";
 import { differenceInDays, format } from "date-fns";
 import { Camera, Trash2, Upload } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelect, Button, FieldGroup, FieldsSection, FormField, Label, StorageFileStatus, TextField, useStorageFile } from "yusr-ui";
-import type { Setting } from "../../core/data/setting";
-import { useSettingContext } from "./settingContext";
+import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelect, Button, FieldGroup, FieldsSection, FormField, Label, StorageFileStatus, TextField, useAppDispatch, useFormErrors, useStorageFile } from "yusr-ui";
+import { type Setting, SettingSlice } from "../../core/data/setting";
 
 export default function BasicSection()
 {
   const { t } = useTranslation("erpCommon");
-  const {
-    formData,
-    handleChange,
-    isInvalid,
-    getError,
-    clearError
-  } = useSettingContext();
+  const { formData, errors } = useAppSelector((state) => state.settingForm);
+  const { getError, isInvalid } = useFormErrors(errors);
+  const dispatch = useAppDispatch();
 
-  const { fileInputRef, handleFileChange, handleRemoveFile } = useStorageFile<Partial<Setting>>(handleChange, "logo");
+  const { fileInputRef, handleFileChange, handleRemoveFile } = useStorageFile(
+    (updater) =>
+      dispatch(SettingSlice.formActions.updateFormData(updater as (prev: Partial<Setting>) => Partial<Setting>)),
+    "logo"
+  );
 
   const getDaysLeftText = (daysLeft: number) =>
   {
@@ -115,16 +115,13 @@ export default function BasicSection()
             value={ formData.companyName || "" }
             isInvalid={ isInvalid("companyName") }
             error={ getError("companyName") }
-            onChange={ (e) =>
-            {
-              handleChange({ companyName: e.target.value });
-              clearError("companyName");
-            } }
+            onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ companyName: e.target.value })) }
           />
           <TextField
             label={ t("settings.businessActivity") }
             value={ formData.companyBusinessCategory || "" }
-            onChange={ (e) => handleChange({ companyBusinessCategory: e.target.value }) }
+            onChange={ (e) =>
+              dispatch(SettingSlice.formActions.updateFormData({ companyBusinessCategory: e.target.value })) }
           />
           <TextField
             label={ t("settings.companyPhone") }
@@ -132,11 +129,7 @@ export default function BasicSection()
             value={ formData.companyPhone || "" }
             isInvalid={ isInvalid("companyPhone") }
             error={ getError("companyPhone") }
-            onChange={ (e) =>
-            {
-              handleChange({ companyPhone: e.target.value });
-              clearError("companyPhone");
-            } }
+            onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ companyPhone: e.target.value })) }
           />
           <TextField
             label={ t("settings.email") }
@@ -145,33 +138,29 @@ export default function BasicSection()
             value={ formData.email || "" }
             isInvalid={ isInvalid("email") }
             error={ getError("email") }
-            onChange={ (e) =>
-            {
-              handleChange({ email: e.target.value });
-              clearError("email");
-            } }
+            onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ email: e.target.value })) }
           />
           <FormField label={ t("settings.mainBranch") } required>
             <BranchesSearchableSelect
               selectedId={ formData.branchId }
               selectedLabel={ formData.branch?.name }
               onValueChange={ (selected) =>
-                handleChange({
+                dispatch(SettingSlice.formActions.updateFormData({
                   branchId: selected?.id,
                   branch: selected
-                }) }
+                })) }
             />
           </FormField>
 
           <TextField
             label={ t("settings.commercialRegistration") }
             value={ formData.crn || "" }
-            onChange={ (e) => handleChange({ crn: e.target.value }) }
+            onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ crn: e.target.value })) }
           />
           <TextField
             label={ t("settings.taxNumber") }
             value={ formData.vatNumber || "" }
-            onChange={ (e) => handleChange({ vatNumber: e.target.value }) }
+            onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ vatNumber: e.target.value })) }
           />
         </FieldsSection>
       </FieldGroup>

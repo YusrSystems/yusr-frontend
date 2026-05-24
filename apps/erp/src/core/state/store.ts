@@ -12,7 +12,7 @@ import { ItemsSettlementSlice } from "../data/itemsSettlement";
 import { ItemTransferSlice } from "../data/itemTransfer";
 import { PaymentMethodSlice } from "../data/paymentMethod";
 import { PricingMethodSlice } from "../data/pricingMethod";
-import type { Setting } from "../data/setting";
+import { type Setting, SettingSlice } from "../data/setting";
 import { StocktakingSlice } from "../data/stocktaking";
 import { StoreSlice } from "../data/store";
 import { TaxSlice } from "../data/tax";
@@ -50,6 +50,7 @@ export const store = configureStore({
     storeItems: storeItemsReducer,
     itemBarcode: itemBarcodeReducer,
     serviceIds: serviceIdsReducer,
+    settingForm: SettingSlice.formReducer,
     tax: TaxSlice.entityReducer,
     taxForm: TaxSlice.formReducer,
     taxDialog: TaxSlice.dialogReducer,
