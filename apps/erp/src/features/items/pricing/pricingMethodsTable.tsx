@@ -125,7 +125,7 @@ export default function PricingMethodsTable()
                     <NumberField
                       label=""
                       min={ 0 }
-                      value={ parseFloat((method.price / multiplier).toFixed(2)) }
+                      value={ parseFloat((method.price / multiplier).toFixed(2)) ?? 0 }
                       onChange={ (val) =>
                         updatePricingMethod(index, { price: parseFloat(((val ?? 0) * multiplier).toFixed(2)) }) }
                       isInvalid={ hasError && (method.price == undefined || method.price <= 0) }

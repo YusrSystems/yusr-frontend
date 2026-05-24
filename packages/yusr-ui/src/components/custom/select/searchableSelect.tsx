@@ -194,7 +194,6 @@ export function SearchableSelect<T extends BaseEntity>(
                             key={ item.id }
                             onSelect={ () =>
                             {
-                              console.log("onSelect", item);
                               onValueChange(item);
                               setOpen(false);
                             } }

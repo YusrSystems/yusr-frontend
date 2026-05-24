@@ -228,16 +228,19 @@ export default function ChangeInvoiceDialog({
 
   const transformDataBeforeSave = (data: Invoice | Partial<Invoice>): Invoice | Partial<Invoice> =>
   {
+    let transformedData = { ...data, fullAmount: invoiceTaxInclusivePrice() };
     if (currentMode === "return")
     {
       return {
-        ...data,
-        type: (data as Invoice).type === InvoiceType.Sell ? InvoiceType.SellReturn : InvoiceType.PurchaseReturn,
-        originalInvoiceId: (data as Invoice).id,
+        ...transformedData,
+        type: (transformedData as Invoice).type === InvoiceType.Sell
+          ? InvoiceType.SellReturn
+          : InvoiceType.PurchaseReturn,
+        originalInvoiceId: (transformedData as Invoice).id,
         id: 0
       };
     }
-    return data;
+    return transformedData;
   };
 
   const isReturn = formData.type === InvoiceType.SellReturn || formData.type === InvoiceType.PurchaseReturn;

@@ -16,13 +16,21 @@ export function NumberInput({ value, onChange, min, max, isInvalid, className, c
 
   useEffect(() =>
   {
-    setLocalValue(value ?? "");
+    if (typeof value === "number" && isNaN(value))
+    {
+      setLocalValue("");
+    }
+    else
+    {
+      setLocalValue(value ?? "");
+    }
   }, [value]);
 
   const input = (
     <Input
       { ...props }
-      type="number"
+      type="text"
+      inputMode="decimal"
       min={ min }
       max={ max }
       value={ localValue }
@@ -33,8 +41,21 @@ export function NumberInput({ value, onChange, min, max, isInvalid, className, c
       ) }
       onChange={ (e) =>
       {
-        const rawValue = e.target.value;
+        let rawValue = e.target.value;
 
+        // 1. (Optional but recommended) Convert Arabic/Persian numbers to English numbers automatically
+        rawValue = rawValue
+          .replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d).toString())
+          .replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d).toString());
+
+        // 2. Prevent letters and invalid characters from being typed
+        // This regex only allows: optional minus sign, numbers, and an optional single decimal point
+        if (!/^-?\d*\.?\d*$/.test(rawValue))
+        {
+          return; // Stop here! Do NOT update localValue.
+        }
+
+        // 3. Now it is safe to update the UI
         setLocalValue(rawValue);
 
         if (rawValue === "")

@@ -67,8 +67,6 @@ export default function SettingPage()
       return;
     }
 
-    console.log(formData);
-
     setLoading(true);
     const result = await new SettingsApiService().Update(formData as Setting, tCommon);
     setLoading(false);

@@ -184,36 +184,36 @@ export class ItemValidationRules
   }, {
     field: "itemStores",
     selector: (d) => d.itemStores,
-    validators: [
-      Validators.arrayMinLength(1, t("items.storesRequired")),
-      Validators.custom(
-        (stores: any[], form) =>
+    validators: [Validators.custom(
+      (stores: any[], form) =>
+      {
+        if (form.type === ItemType.Service || (!stores || stores.length === 0))
         {
-          if (form.type === ItemType.Service || (!stores || stores.length === 0))
-          {
-            return true;
-          }
-
-          const isService = form.type === ItemType.Service;
-
-          for (let i = 0; i < stores.length; i++)
-          {
-            const s = stores[i];
-            if (!isService && !s.storeId)
-            {
-              return false;
-            }
-            if (!isService && (s.initialQuantity == undefined || s.initialQuantity < 0))
-            {
-              return false;
-            }
-          }
-
           return true;
-        },
-        t("items.storesValidationError")
-      )
-    ]
+        }
+
+        if (stores.length < 0)
+        {
+          return false;
+        }
+
+        for (let i = 0; i < stores.length; i++)
+        {
+          const s = stores[i];
+          if (!s.storeId)
+          {
+            return false;
+          }
+          if ((s.initialQuantity == undefined || s.initialQuantity < 0))
+          {
+            return false;
+          }
+        }
+
+        return true;
+      },
+      t("items.storesValidationError")
+    )]
   }, {
     field: "sellUnitId",
     selector: (d) => d.sellUnitId,
