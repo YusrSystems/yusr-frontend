@@ -1,24 +1,18 @@
 import { useTranslation } from "react-i18next";
-import { FieldGroup, FieldsSection, FormField, SelectField, SelectInput, TextAreaField } from "yusr-ui";
+import { FieldGroup, FieldsSection, FormField, SelectField, SelectInput, TextAreaField, useAppDispatch, useFormErrors } from "yusr-ui";
 import TaxesSearchableSelect from "../../core/components/searchableSelect/taxesSearchableSelect";
-import { EInvoicingEnvironmentType, InvoicePrintSize } from "../../core/data/setting";
+import { EInvoicingEnvironmentType, InvoicePrintSize, SettingSlice } from "../../core/data/setting";
 import { useAppSelector } from "../../core/state/store";
 import { EInvoicingRegisterButton } from "./eInvoicing/eInvoicingRegisterButton";
-import { useSettingContext } from "./settingContext";
 
 export default function InvoiceSection()
 {
   const { t } = useTranslation("erpCommon");
-
-  const {
-    formData,
-    handleChange,
-    isInvalid,
-    getError,
-    clearError
-  } = useSettingContext();
+  const { formData, errors } = useAppSelector((state) => state.settingForm);
+  const { getError, isInvalid } = useFormErrors(errors);
 
   const currencyState = useAppSelector((state) => state.currency);
+  const dispatch = useAppDispatch();
 
   return (
     <div className="space-y-10 animate-in fade-in">
@@ -36,11 +30,7 @@ export default function InvoiceSection()
               isInvalid={ isInvalid("currencyId") }
               options={ currencyState.entities.data?.map((c) => ({ label: c.name, value: c.id.toString() }))
                 || [] }
-              onValueChange={ (val) =>
-              {
-                handleChange({ currencyId: Number(val) });
-                clearError("currencyId");
-              } }
+              onValueChange={ (val) => dispatch(SettingSlice.formActions.updateFormData({ currencyId: Number(val) })) }
             />
           </FormField>
 
@@ -49,14 +39,16 @@ export default function InvoiceSection()
             <TaxesSearchableSelect
               selectedId={ formData.mainTaxId }
               selectedLabel={ formData.mainTax?.name }
-              onValueChange={ (tax) => handleChange({ mainTaxId: tax?.id }) }
+              onValueChange={ (tax) =>
+                dispatch(SettingSlice.formActions.updateFormData({ mainTaxId: tax?.id, mainTax: tax })) }
             />
           </div>
 
           <SelectField
             label={ t("settings.invoicePrintSize") }
             value={ formData.invoicePrintSize?.toString() || InvoicePrintSize.A4.toString() }
-            onValueChange={ (val) => handleChange({ invoicePrintSize: Number(val) as InvoicePrintSize }) }
+            onValueChange={ (val) =>
+              dispatch(SettingSlice.formActions.updateFormData({ invoicePrintSize: Number(val) as InvoicePrintSize })) }
             options={ [{ label: t("settings.a4Paper"), value: InvoicePrintSize.A4.toString() }, {
               label: t("settings.thermalPrinter"),
               value: InvoicePrintSize.ThermalPrinter.toString()
@@ -68,7 +60,7 @@ export default function InvoiceSection()
           <TextAreaField
             label={ t("settings.invoicePolicy") }
             value={ formData.invoicePolicy || "" }
-            onChange={ (e) => handleChange({ invoicePolicy: e.target.value }) }
+            onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ invoicePolicy: e.target.value })) }
             rows={ 3 }
             placeholder={ t("settings.invoicePolicyPlaceholder") }
           />
@@ -80,7 +72,10 @@ export default function InvoiceSection()
         subtitle="sandbox"
         linkType={ EInvoicingEnvironmentType.Test }
         linked={ formData.eInvoicingEnvironmentType === EInvoicingEnvironmentType.Test }
-        onFinish={ () => handleChange({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Test }) }
+        onFinish={ () =>
+          dispatch(
+            SettingSlice.formActions.updateFormData({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Test })
+          ) }
       />
 
       <EInvoicingRegisterButton
@@ -88,7 +83,10 @@ export default function InvoiceSection()
         subtitle={ t("settings.simulationSubtitle") }
         linkType={ EInvoicingEnvironmentType.Simulation }
         linked={ formData.eInvoicingEnvironmentType === EInvoicingEnvironmentType.Simulation }
-        onFinish={ () => handleChange({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Simulation }) }
+        onFinish={ () =>
+          dispatch(
+            SettingSlice.formActions.updateFormData({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Simulation })
+          ) }
       />
 
       <EInvoicingRegisterButton
@@ -96,7 +94,10 @@ export default function InvoiceSection()
         subtitle={ t("settings.productionSubtitle") }
         linkType={ EInvoicingEnvironmentType.Production }
         linked={ formData.eInvoicingEnvironmentType === EInvoicingEnvironmentType.Production }
-        onFinish={ () => handleChange({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Production }) }
+        onFinish={ () =>
+          dispatch(
+            SettingSlice.formActions.updateFormData({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Production })
+          ) }
       />
     </div>
   );

@@ -1,4 +1,5 @@
-import type { Branch, Currency, StorageFile } from "yusr-ui";
+import type { TFunction } from "i18next";
+import { type Branch, createGenericFormSlice, type Currency, type StorageFile, type ValidationRule, Validators } from "yusr-ui";
 import type { Tax } from "./tax";
 
 export const EInvoicingEnvironmentType = {
@@ -69,4 +70,36 @@ export class Setting
       this.endDate = new Date(this.endDate);
     }
   }
+}
+
+export class SettingValidationRules
+{
+  public static validationRules = (t: TFunction<"erpCommon">): ValidationRule<Partial<Setting>>[] => [{
+    field: "companyName",
+    selector: (d) => d.companyName,
+    validators: [Validators.required(t("settings.companyNameRequired"))]
+  }, {
+    field: "companyPhone",
+    selector: (d) => d.companyPhone,
+    validators: [Validators.required(t("settings.companyPhoneRequired"))]
+  }, {
+    field: "branchId",
+    selector: (d) => d.branchId,
+    validators: [Validators.required(t("settings.branchRequired"))]
+  }, {
+    field: "email",
+    selector: (d) => d.email,
+    validators: [Validators.required(t("settings.emailRequired"))]
+  }, {
+    field: "currencyId",
+    selector: (d) => d.currencyId,
+    validators: [Validators.required(t("settings.currencyRequired"))]
+  }];
+}
+
+export class SettingSlice
+{
+  private static formSliceInstance = createGenericFormSlice<Setting>("settingForm");
+  public static formActions = SettingSlice.formSliceInstance.actions;
+  public static formReducer = SettingSlice.formSliceInstance.reducer;
 }
