@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { FilterByTypeRequest, FilterResult } from "yusr-ui";
 import type Item from "../../data/item";
-import type { StoreItem } from "../../data/item";
 import ItemsApiService from "../../networking/itemApiService";
 
 export interface FetchStoreItemsProps
@@ -11,7 +10,7 @@ export interface FetchStoreItemsProps
   storeId: number | undefined;
   request: FilterByTypeRequest<Item>;
 }
-export const fetchStoreItems = createAsyncThunk<FilterResult<StoreItem>, FetchStoreItemsProps>(
+export const fetchStoreItems = createAsyncThunk<FilterResult<Item>, FetchStoreItemsProps>(
   "storeItems/fetch",
   async (
     storeItemsProps: FetchStoreItemsProps
@@ -29,7 +28,7 @@ export const fetchStoreItems = createAsyncThunk<FilterResult<StoreItem>, FetchSt
 
 interface StoreItemsState
 {
-  storeItems: StoreItem[];
+  storeItems: Item[];
   isLoading: boolean;
 }
 

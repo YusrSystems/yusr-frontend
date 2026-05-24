@@ -22,7 +22,7 @@ export type BasicSearchableSelectParams<T extends BaseEntity> = {
 };
 
 type SearchableSelectParams<T extends BaseEntity> = BasicSearchableSelectParams<T> & {
-  labelKey: keyof T;
+  renderContent: (item: T) => React.ReactNode;
   onSearch: (searchInput: string) => void;
   onNotFound?: (searchInput: string) => void;
   onDelete?: (entity: T) => Promise<boolean>;
@@ -33,7 +33,7 @@ export function SearchableSelect<T extends BaseEntity>(
     items = [],
     selectedId,
     selectedLabel,
-    labelKey,
+    renderContent,
     disabled,
     isInvalid,
     placeholder: customPlaceholder,
@@ -192,7 +192,6 @@ export function SearchableSelect<T extends BaseEntity>(
                         return (
                           <CommandItem
                             key={ item.id }
-                            value={ String(item[labelKey]) }
                             onSelect={ () =>
                             {
                               console.log("onSelect", item);
@@ -208,7 +207,7 @@ export function SearchableSelect<T extends BaseEntity>(
                               ) }
                             />
 
-                            <span className="flex-1 truncate">{ String(item[labelKey]) }</span>
+                            { renderContent(item) }
 
                             { onDelete && (
                               <div className="flex items-center justify-center min-w-[32px]">

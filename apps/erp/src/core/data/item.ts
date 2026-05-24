@@ -69,6 +69,7 @@ export default class Item extends BaseEntity
   public maxQuantity?: number;
   public initialQuantity!: number;
   public quantity!: number;
+  public storeQuantity!: number;
   public initialCost!: number;
   public cost!: number;
   public taxIncluded!: boolean;
@@ -108,21 +109,9 @@ export default class Item extends BaseEntity
   }
 }
 
-export class StoreItem
-{
-  public item!: Item;
-  public itemUnitPricingMethods!: ItemUnitPricingMethod[];
-  public storeQuantity!: number;
-
-  constructor(init?: Partial<StoreItem>)
-  {
-    Object.assign(this, init);
-  }
-}
-
 export class BarcodeResult
 {
-  public storeItem!: StoreItem;
+  public item!: Item;
   public selectedIupm!: ItemUnitPricingMethod;
 
   constructor(init?: Partial<BarcodeResult>)

@@ -1,5 +1,5 @@
 import { ApiConstants, BaseApiService, FilterByTypeRequest, type FilterResult, type RequestResult, YusrApiHelper } from "yusr-ui";
-import Item, { BarcodeResult, StoreItem } from "../data/item";
+import Item, { BarcodeResult } from "../data/item";
 
 export default class ItemsApiService extends BaseApiService<Item>
 {
@@ -10,7 +10,7 @@ export default class ItemsApiService extends BaseApiService<Item>
     rowsPerPage: number,
     storeId: number | undefined,
     request: FilterByTypeRequest<Item>
-  ): Promise<RequestResult<FilterResult<StoreItem>>>
+  ): Promise<RequestResult<FilterResult<Item>>>
   {
     return await YusrApiHelper.Post(
       `${ApiConstants.baseUrl}/${this.routeName}/FilterStoreItems?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}&${

@@ -23,6 +23,7 @@ export type ChangableSearchableSelectParams<T extends BaseEntity, TDialogProps e
   & {
     mode?: "dialog" | "inline";
     labelKey: keyof T;
+    renderContent?: (item: T) => React.ReactNode;
     state: IEntityState<T>;
     apiService: BaseApiService<T>;
     systemPermissionsResources: string;
@@ -41,6 +42,7 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
   {
     mode = "dialog",
     labelKey,
+    renderContent,
     items,
     selectedId,
     selectedLabel,
@@ -90,7 +92,8 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
     <div className="flex w-full">
       <div className="flex-9">
         <SearchableSelect
-          labelKey={ labelKey }
+          renderContent={ renderContent
+            ?? ((item) => <span className="flex-1 truncate">{ String(item[labelKey]) }</span>) }
           selectedId={ selectedId }
           selectedLabel={ selectedLabel }
           items={ allItems }
@@ -107,7 +110,9 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
               if (mode === "inline")
               {
                 // create directly, no dialog
-                const res = await apiService.Add(createEntity(new FilterCondition({ value: searchInput, columnName: labelKey })));
+                const res = await apiService.Add(
+                  createEntity(new FilterCondition({ value: searchInput, columnName: labelKey }))
+                );
                 if (res.status === ResultStatus.Ok && res.data)
                 {
                   dispatch(entityActions.refresh({ data: res.data }));

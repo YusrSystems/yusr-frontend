@@ -1,7 +1,7 @@
+import type Item from "@/core/data/item";
 import { type PayloadAction } from "@reduxjs/toolkit";
 import type { IFormState } from "yusr-ui";
 import Invoice, { InvoiceItem } from "../../../core/data/invoice";
-import type { StoreItem } from "../../../core/data/item";
 import InvoiceItemsMath from "./invoiceItemsMath";
 
 export default class InvoiceItemsActions
@@ -29,17 +29,16 @@ export default class InvoiceItemsActions
     }
   }
 
-  public static addItem(state: IFormState<Invoice>, action: PayloadAction<StoreItem>)
+  public static addItem(state: IFormState<Invoice>, action: PayloadAction<Item>)
   {
     const storeItem = action.payload;
-    const baseItem = storeItem.item;
 
-    const existingItem = state.formData.invoiceItems?.find((item) => item.itemId === baseItem.id);
+    const existingItem = state.formData.invoiceItems?.find((item) => item.itemId === storeItem.id);
 
     if (existingItem)
     {
       state.formData.invoiceItems = state.formData.invoiceItems?.map((item) =>
-        item.itemId === baseItem.id
+        item.itemId === storeItem.id
           ? { ...item, quantity: item.quantity + 1 }
           : item
       );
@@ -47,20 +46,20 @@ export default class InvoiceItemsActions
       return;
     }
 
-    const defaultPricingMethod = storeItem.itemUnitPricingMethods?.find((p) => p.unitId === baseItem.sellUnitId)
+    const defaultPricingMethod = storeItem.itemUnitPricingMethods?.find((p) => p.unitId === storeItem.sellUnitId)
       || storeItem.itemUnitPricingMethods?.[0];
 
     const { taxExclusivePrice, taxInclusivePrice } = InvoiceItemsMath.GetPrices(
-      baseItem.taxIncluded,
+      storeItem.taxIncluded,
       defaultPricingMethod?.price || 0,
-      baseItem.totalTaxes || 0
+      storeItem.totalTaxes || 0
     );
 
     state.formData.invoiceItems?.push({
       id: 0,
       invoiceId: 0,
-      itemId: baseItem.id!,
-      itemName: baseItem.name,
+      itemId: storeItem.id!,
+      itemName: storeItem.name,
 
       // Pricing Method Details
       itemUnitPricingMethodId: defaultPricingMethod?.id || 0,
@@ -70,7 +69,7 @@ export default class InvoiceItemsActions
       // Financials
       quantity: 1,
       originalQuantity: storeItem.storeQuantity || 0,
-      cost: baseItem.cost || 0,
+      cost: storeItem.cost || 0,
       taxExclusivePrice: taxExclusivePrice,
       taxInclusivePrice: taxInclusivePrice,
       originaltaxInclusivePrice: taxInclusivePrice,
@@ -79,12 +78,12 @@ export default class InvoiceItemsActions
       taxInclusiveTotalPrice: taxInclusivePrice,
 
       // Taxes
-      taxable: baseItem.taxable || false,
-      taxIncluded: baseItem.taxIncluded || false,
-      totalTaxesPerc: baseItem.totalTaxes || 0,
+      taxable: storeItem.taxable || false,
+      taxIncluded: storeItem.taxIncluded || false,
+      totalTaxesPerc: storeItem.totalTaxes || 0,
 
       // Misc
-      notes: baseItem.description
+      notes: storeItem.description
     });
   }
 

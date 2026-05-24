@@ -2,7 +2,7 @@ import { AlertCircle, Trash2, X } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, type DialogMode, NumberField, SearchableSelect, useFormErrors } from "yusr-ui";
-import { ItemType, ItemUnitPricingMethod, StoreItem } from "../../core/data/item";
+import Item, { ItemType, ItemUnitPricingMethod } from "../../core/data/item";
 import type { IStocktaking, IStocktakingItem } from "../../core/data/stocktaking";
 import { useAppSelector } from "../../core/state/store";
 import StoreItemSelector from "../items/storeItemSelector";
@@ -49,7 +49,7 @@ export default function StocktakingItemsTable(
 
   const getAvailableUnits = (itemId: number) =>
   {
-    const storeItem = storeItemsState.storeItems.find((si) => si.item.id === itemId);
+    const storeItem = storeItemsState.storeItems.find((si) => si.id === itemId);
     const usedUnitIds =
       formData.stocktakingItems?.filter((i) => i.itemId === itemId).map((i) => i.itemUnitPricingMethodId) || [];
     return storeItem?.itemUnitPricingMethods?.filter((u) => !usedUnitIds.includes(u.id)) || [];
@@ -103,7 +103,7 @@ export default function StocktakingItemsTable(
 
   const addUnitToItem = (itemId: number, unitId: number | undefined) =>
   {
-    const storeItem = storeItemsState.storeItems.find((si) => si.item.id === itemId);
+    const storeItem = storeItemsState.storeItems.find((si) => si.id === itemId);
     const unitDetails = storeItem?.itemUnitPricingMethods?.find((u) => u.id === unitId);
 
     if (!storeItem || !unitDetails)
@@ -114,8 +114,8 @@ export default function StocktakingItemsTable(
     const systemQty = getSystemQuantity(itemId);
 
     const newItem = createInstance();
-    newItem.itemId = storeItem.item.id;
-    newItem.itemName = storeItem.item.name;
+    newItem.itemId = storeItem.id;
+    newItem.itemName = storeItem.name;
     newItem.itemUnitPricingMethodId = unitDetails.id;
     newItem.itemUnitPricingMethodName = unitDetails.itemUnitPricingMethodName;
     newItem.quantityMultiplier = unitDetails.quantityMultiplier;
@@ -126,10 +126,9 @@ export default function StocktakingItemsTable(
     handleChange({ stocktakingItems: [...(formData.stocktakingItems || []), newItem] });
   };
 
-  const handleStoreItemSelect = (storeItem: StoreItem, selectedIupm?: ItemUnitPricingMethod) =>
+  const handleStoreItemSelect = (item: Item, selectedIupm?: ItemUnitPricingMethod) =>
   {
-    const item = storeItem.item;
-    const unit = selectedIupm || storeItem.itemUnitPricingMethods?.[0];
+    const unit = selectedIupm || item.itemUnitPricingMethods?.[0];
 
     const list = [...(formData.stocktakingItems || [])];
     const existingIndex = list.findIndex(
@@ -147,7 +146,7 @@ export default function StocktakingItemsTable(
     else
     {
       // Brand new item — fall back to live store quantity
-      const systemQty = storeItem.storeQuantity || 0;
+      const systemQty = item.storeQuantity || 0;
       const initialActualQty = selectedIupm ? 1 : 0;
 
       const newItem = createInstance();
@@ -257,7 +256,9 @@ export default function StocktakingItemsTable(
                             <div className="mt-1">
                               <SearchableSelect<ItemUnitPricingMethod>
                                 items={ availableUnits }
-                                labelKey="itemUnitPricingMethodName"
+                                renderContent={ (item) => (
+                                  <span className="flex-1 truncate">{ item.itemUnitPricingMethodName }</span>
+                                ) }
                                 onValueChange={ (iupm) => addUnitToItem(itemId, iupm?.id) }
                                 onSearch={ () =>
                                 {} }

@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { ItemUnitPricingMethod, StoreItem } from "../../../core/data/item";
+import type Item from "../../../core/data/item";
+import type { ItemUnitPricingMethod } from "../../../core/data/item";
 import type { ItemTransfersItem } from "../../../core/data/itemTransfer";
 
 export interface TransferRowItem
@@ -43,7 +44,7 @@ export const itemTransferSlice = createSlice({
     },
     addItem: (
       state,
-      action: PayloadAction<{ storeItem: StoreItem; selectedIupm?: ItemUnitPricingMethod; }>
+      action: PayloadAction<{ storeItem: Item; selectedIupm?: ItemUnitPricingMethod; }>
     ) =>
     {
       const { storeItem, selectedIupm } = action.payload;
@@ -51,7 +52,7 @@ export const itemTransferSlice = createSlice({
       const methodId = defaultMethod?.id || 0;
 
       const existingItem = state.items.find(
-        (i) => Number(i.itemId) === Number(storeItem.item.id) && Number(i.selectedPricingMethodId) === Number(methodId)
+        (i) => Number(i.itemId) === Number(storeItem.id) && Number(i.selectedPricingMethodId) === Number(methodId)
       );
 
       if (existingItem)
@@ -62,8 +63,8 @@ export const itemTransferSlice = createSlice({
       {
         state.items.push({
           id: Math.random().toString(36).substring(2, 9),
-          itemId: storeItem.item.id,
-          itemName: storeItem.item.name,
+          itemId: storeItem.id,
+          itemName: storeItem.name,
           itemUnitPricingMethods: storeItem.itemUnitPricingMethods || [],
           selectedPricingMethodId: methodId,
           quantity: 1,

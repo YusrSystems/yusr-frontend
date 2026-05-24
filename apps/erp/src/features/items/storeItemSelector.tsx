@@ -1,8 +1,8 @@
 import { ScanBarcode, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FilterByTypeRequest, FilterCondition, SearchableSelect } from "yusr-ui";
-import { ItemType, ItemUnitPricingMethod, type StoreItem } from "../../core/data/item";
+import { cn, FilterByTypeRequest, FilterCondition, SearchableSelect } from "yusr-ui";
+import Item, { ItemType, ItemUnitPricingMethod } from "../../core/data/item";
 import { clearBarcodeResult, GetItemByBarcode } from "../../core/state/shared/itemBarcodeSlice";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -11,7 +11,7 @@ interface StoreItemSelectorProps
 {
   storeId?: number;
   itemTypes?: ItemType[];
-  onSelect?: (item: StoreItem, selectedIupm?: ItemUnitPricingMethod) => void;
+  onSelect?: (item: Item, selectedIupm?: ItemUnitPricingMethod) => void;
 }
 
 export default function StoreItemSelector({ storeId, itemTypes, onSelect }: StoreItemSelectorProps)
@@ -22,13 +22,11 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
   const storeItemsState = useAppSelector((state) => state.storeItems);
   const itemBarcodeState = useAppSelector((state) => state.itemBarcode);
 
-  const items = () => storeItemsState.storeItems.map((i) => i.item);
-
   useEffect(() =>
   {
     if (itemBarcodeState.barcodeResult)
     {
-      onSelect?.(itemBarcodeState.barcodeResult.storeItem, itemBarcodeState.barcodeResult.selectedIupm);
+      onSelect?.(itemBarcodeState.barcodeResult.item, itemBarcodeState.barcodeResult.selectedIupm);
       dispatch(clearBarcodeResult());
     }
   }, [itemBarcodeState.barcodeResult]);
@@ -63,9 +61,32 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
       </div>
 
       <div className="w-80">
-        <SearchableSelect
-          items={ items() }
-          labelKey="name"
+        <SearchableSelect<Item>
+          items={ storeItemsState.storeItems }
+          renderContent={ (item) => (
+            <div className="flex items-center gap-3 py-0.5 w-full">
+              <div className="flex-1 min-w-0">
+                <span className="text-sm font-medium truncate">{ item.name }</span>
+              </div>
+
+              { item.type === ItemType.Product && (
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <span
+                    className={ cn(
+                      "text-xs font-medium px-1.5 py-0.5 rounded",
+                      item.storeQuantity <= 0
+                        ? "bg-destructive/10 text-destructive"
+                        : item.storeQuantity <= (item.minQuantity ?? 10)
+                        ? "bg-yellow-500/10 text-yellow-600"
+                        : "bg-green-500/10 text-green-600"
+                    ) }
+                  >
+                    { item.storeQuantity } { item.sellUnitName }
+                  </span>
+                </div>
+              ) }
+            </div>
+          ) }
           placeholder={ t("storeItemSelector.selectItem") }
           onSearch={ (searchInput) =>
           {
@@ -88,7 +109,7 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
           disabled={ storeItemsState.isLoading }
           onValueChange={ (val) =>
           {
-            const selected = storeItemsState.storeItems.find((di) => di.item.id === val?.id);
+            const selected = storeItemsState.storeItems.find((di) => di.id === val?.id);
             if (selected)
             {
               onSelect?.(selected);
