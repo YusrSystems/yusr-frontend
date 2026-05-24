@@ -21,7 +21,7 @@
     "placeholder": "اختر...",
     "loading": "جاري التحميل...",
     "noData": "لا توجد بيانات",
-    "allOption": "الكل",
+    "nullOption": "غير محدد",
     "addOption": "إضافة \"{{value}}\""
   },
 

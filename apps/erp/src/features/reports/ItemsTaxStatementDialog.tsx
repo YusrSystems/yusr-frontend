@@ -41,7 +41,7 @@ export default function ItemsTaxStatementDialog()
             />
             <FormField label={ t("reports.item") } required={ true }>
               <ItemsSearchableSelect
-                showAllOption
+                showNullOption
                 selectedId={ item?.id }
                 selectedLabel={ item?.name }
                 onValueChange={ (item) => setItem(item) }

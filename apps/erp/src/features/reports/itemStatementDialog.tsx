@@ -30,7 +30,7 @@ export default function ItemStatementButton({ item }: { item: Item; })
           <div className="flex flex-col gap-4 py-2">
             <FormField label={ t("itemStatement.store") }>
               <StoresSearchableSelect
-                showAllOption
+                showNullOption
                 selectedId={ store?.id }
                 selectedLabel={ store?.name }
                 onValueChange={ (store) => setStore(store) }

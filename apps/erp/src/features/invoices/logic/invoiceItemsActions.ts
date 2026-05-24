@@ -62,6 +62,7 @@ export default class InvoiceItemsActions
 
     state.formData.invoiceItems?.push({
       id: 0,
+      index: (state.formData.invoiceItems?.length ?? -1) + 1,
       invoiceId: 0,
       itemId: storeItem.id!,
       itemName: storeItem.name,

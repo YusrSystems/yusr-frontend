@@ -20,7 +20,8 @@ export default function AccountsSearchableSelect(
     onValueChange,
     allowAdd = true,
     allowUpdate = true,
-    items
+    items,
+    ...props
   }:
     & BasicSearchableSelectParams<Account>
     & {
@@ -79,6 +80,7 @@ export default function AccountsSearchableSelect(
         filterDataOutside: true
       } }
       authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
+      { ...props }
     />
   );
 }

@@ -21,7 +21,7 @@
     "placeholder": "चुनें...",
     "loading": "लोड हो रहा है...",
     "noData": "कोई डेटा नहीं",
-    "allOption": "सभी",
+    "nullOption": "अनिर्दिष्ट",
     "addOption": "\"{{value}}\" जोड़ें"
   },
 

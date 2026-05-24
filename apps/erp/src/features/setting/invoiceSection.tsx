@@ -37,6 +37,7 @@ export default function InvoiceSection()
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium">{ t("settings.defaultTax") }</label>
             <TaxesSearchableSelect
+              showNullOption
               selectedId={ formData.mainTaxId }
               selectedLabel={ formData.mainTax?.name }
               onValueChange={ (tax) =>

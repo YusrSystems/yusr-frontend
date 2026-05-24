@@ -55,7 +55,7 @@ export default function ItemsMovementDialog()
 
             <FormField label={ t("reports.item") }>
               <ItemsSearchableSelect
-                showAllOption
+                showNullOption
                 selectedId={ item?.id }
                 selectedLabel={ item?.name }
                 onValueChange={ (item) => setItem(item) }
@@ -78,7 +78,7 @@ export default function ItemsMovementDialog()
             <div className="grid grid-cols-2 gap-3">
               <FormField label={ t("reports.fromAccount") }>
                 <ClientsAndSuppliersSearchableSelect
-                  showAllOption
+                  showNullOption
                   selectedId={ fromAccount?.id }
                   selectedLabel={ fromAccount?.name }
                   onValueChange={ (account) => setFromAccount(account) }
@@ -87,7 +87,7 @@ export default function ItemsMovementDialog()
 
               <FormField label={ t("reports.toAccount") }>
                 <ClientsAndSuppliersSearchableSelect
-                  showAllOption
+                  showNullOption
                   selectedId={ toAccount?.id }
                   selectedLabel={ toAccount?.name }
                   onValueChange={ (account) => setToAccount(account) }
@@ -98,7 +98,7 @@ export default function ItemsMovementDialog()
             <div className="grid grid-cols-2 gap-3">
               <FormField label={ t("reports.fromStore") }>
                 <StoresSearchableSelect
-                  showAllOption
+                  showNullOption
                   selectedId={ fromStore?.id }
                   selectedLabel={ fromStore?.name }
                   onValueChange={ (store) => setFromStore(store) }
@@ -107,7 +107,7 @@ export default function ItemsMovementDialog()
 
               <FormField label={ t("reports.toStore") }>
                 <StoresSearchableSelect
-                  showAllOption
+                  showNullOption
                   selectedId={ toStore?.id }
                   selectedLabel={ toStore?.name }
                   onValueChange={ (store) => setToStore(store) }

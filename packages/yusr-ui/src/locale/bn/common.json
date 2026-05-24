@@ -21,7 +21,7 @@
     "placeholder": "নির্বাচন করুন...",
     "loading": "লোড হচ্ছে...",
     "noData": "কোন ডেটা নেই",
-    "allOption": "সব",
+    "nullOption": "নির্ধারিত নয়",
     "addOption": "\"{{value}}\" যোগ করুন"
   },
 

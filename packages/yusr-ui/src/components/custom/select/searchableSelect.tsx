@@ -16,7 +16,7 @@ export type BasicSearchableSelectParams<T extends BaseEntity> = {
   isInvalid?: boolean;
   placeholder?: string;
   isLoading?: boolean;
-  showAllOption?: boolean;
+  showNullOption?: boolean;
   buttonClassName?: string;
   onValueChange: (value?: T) => void;
 };
@@ -38,7 +38,7 @@ export function SearchableSelect<T extends BaseEntity>(
     isInvalid,
     placeholder: customPlaceholder,
     isLoading = false,
-    showAllOption = false,
+    showNullOption = false,
     buttonClassName,
     onSearch,
     onValueChange,
@@ -164,7 +164,7 @@ export function SearchableSelect<T extends BaseEntity>(
 
                   { (items.length > 0 || showCreateOption) && (
                     <CommandGroup>
-                      { showAllOption && (
+                      { showNullOption && (
                         <CommandItem
                           value="all-items-option"
                           onSelect={ () =>
@@ -180,7 +180,9 @@ export function SearchableSelect<T extends BaseEntity>(
                               (selectedId === undefined) ? "opacity-100" : "opacity-0"
                             ) }
                           />
-                          { t("searchableSelect.allOption") }
+                          <span className="italic text-red-500">
+                            { t("searchableSelect.nullOption") }
+                          </span>
                         </CommandItem>
                       ) }
 

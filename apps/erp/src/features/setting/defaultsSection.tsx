@@ -19,6 +19,7 @@ export default function DefaultsSection()
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium">{ t("settings.defaultWarehouse") }</label>
             <StoresSearchableSelect
+              showNullOption
               selectedId={ formData.mainStoreId }
               selectedLabel={ formData.mainStoreName }
               onValueChange={ (selected) =>
@@ -31,6 +32,7 @@ export default function DefaultsSection()
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium">{ t("settings.defaultPaymentMethod") }</label>
             <PaymentMethodsSearchableSelect
+              showNullOption
               selectedId={ formData.mainPaymentMethodId }
               selectedLabel={ formData.mainPaymentMethodName }
               onValueChange={ (selected) =>
@@ -46,6 +48,7 @@ export default function DefaultsSection()
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium">{ t("settings.defaultSalesAccount") }</label>
             <ClientsAndSuppliersSearchableSelect
+              showNullOption
               selectedId={ formData.sellAccountId }
               selectedLabel={ formData.sellAccountName }
               onValueChange={ (account) =>
@@ -60,6 +63,7 @@ export default function DefaultsSection()
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium">{ t("settings.defaultPurchaseAccount") }</label>
             <ClientsAndSuppliersSearchableSelect
+              showNullOption
               selectedId={ formData.purchaseAccountId }
               selectedLabel={ formData.purchaseAccountName }
               onValueChange={ (account) =>
