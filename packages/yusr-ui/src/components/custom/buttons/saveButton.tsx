@@ -52,6 +52,11 @@ export function SaveButton<T extends BaseEntity>(
 
   async function Save(ignoreWarnings = false)
   {
+    console.log(
+      "=================================",
+      JSON.stringify(formData, null, 2),
+      "================================="
+    );
     if (!validate())
     {
       return;

@@ -57,7 +57,7 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
           label={ t("items.initialCost") }
           required
           disabled={ mode === "update" }
-          value={ formData.initialCost ?? "0" }
+          value={ formData.initialCost ?? "" }
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ initialCost: val })) }
           isInvalid={ isInvalid("initialCost") }
           error={ getError("initialCost") }
@@ -66,7 +66,7 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
         <NumberField
           label={ t("items.cost") }
           disabled
-          value={ formData.cost || "0" }
+          value={ formData.cost ?? 0 }
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ cost: val })) }
           currency={ <CurrencyIcon /> }
         />

@@ -17,6 +17,16 @@ export function useValidate<T>(
       for (const validator of rule.validators)
       {
         const error = validator(value, data);
+        console.log(
+          "=================================",
+          "Validating field:",
+          rule.field,
+          "with value:",
+          value,
+          "and error:",
+          error,
+          "================================="
+        );
         if (error)
         {
           newErrors[rule.field as string] = error;
