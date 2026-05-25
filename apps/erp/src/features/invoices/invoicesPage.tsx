@@ -3,7 +3,7 @@ import { Copy, FilePlusCorner, FileTextIcon, RotateCw, Undo2 } from "lucide-reac
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { Button, ContextMenuItem, CrudPage, CurrencyIcon, DropdownMenuItem, FilterCondition, type IDialogState, type IEntityState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, Tooltip, TooltipContent, TooltipTrigger } from "yusr-ui";
+import { Button, ContextMenuItem, CrudPage, CurrencyIcon, DropdownMenuItem, FilterCondition, type IDialogState, type IEntityState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, type TableBodyRowInfo, Tooltip, TooltipContent, TooltipTrigger } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type Account from "../../core/data/account";
 import type { AccountSliceType } from "../../core/data/account";
@@ -191,6 +191,174 @@ export default function InvoicesPage({
     setResendingEInvoice(false);
   };
 
+  const getTableHeadRows = () =>
+  {
+    const rows = [{ rowName: "", rowStyles: "text-left w-12.5" }, {
+      rowName: t("invoices.invoiceId"),
+      rowStyles: "w-24"
+    }];
+
+    if (fixedType === InvoiceType.Quotation)
+    {
+      rows.push({ rowName: t("invoices.notes"), rowStyles: "w-32" });
+    }
+    else
+    {
+      rows.push({ rowName: t("invoices.type"), rowStyles: "w-32" });
+    }
+
+    rows.push(
+      { rowName: t("invoices.date"), rowStyles: "w-32" },
+      { rowName: t("invoices.account"), rowStyles: "w-48" },
+      { rowName: t("invoices.store"), rowStyles: "w-32" },
+      { rowName: t("invoices.total"), rowStyles: "w-32" }
+    );
+
+    if (fixedType === InvoiceType.Sell)
+    {
+      rows.push(
+        { rowName: t("invoices.status"), rowStyles: "w-32" },
+        { rowName: "", rowStyles: "w-32" }
+      );
+    }
+
+    if (
+      authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
+      && fixedType === InvoiceType.Sell
+    )
+    {
+      rows.push({ rowName: t("invoices.eInvoiceStatus"), rowStyles: "w-50" });
+    }
+
+    if (
+      SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.ReportInvoice,
+        SystemPermissionsActions.Get
+      )
+    )
+    {
+      rows.push({ rowName: "", rowStyles: "w-32" });
+    }
+
+    return rows;
+  };
+
+  const getTableRowMapper = (invoice: Invoice) =>
+  {
+    const cells: TableBodyRowInfo[] = [{ rowName: `#${invoice.id}`, rowStyles: "" }];
+
+    if (fixedType === InvoiceType.Quotation)
+    {
+      cells.push({ rowName: invoice.notes, rowStyles: "font-semibold" });
+    }
+    else
+    {
+      cells.push({ rowName: getInvoiceTypeName(invoice.type, t), rowStyles: "font-semibold" });
+    }
+
+    cells.push(
+      { rowName: new Date(invoice.date).toLocaleDateString("en-CA"), rowStyles: "" },
+      { rowName: invoice.actionAccountName || "-", rowStyles: "" },
+      { rowName: invoice.storeName || "-", rowStyles: "" },
+      {
+        rowName: (
+          <div className="flex items-center gap-1">
+            { (invoice.fullAmount ?? 0).toLocaleString("en-US") }
+            <CurrencyIcon />
+          </div>
+        ),
+        rowStyles: "font-bold text-blue-600"
+      }
+    );
+
+    if (fixedType === InvoiceType.Sell)
+    {
+      cells.push(
+        {
+          rowName: invoice.statusId === InvoiceStatus.Valid
+            ? t("invoices.valid")
+            : t("invoices.deleted"),
+          rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            invoice.statusId === InvoiceStatus.Valid
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`
+        },
+        {
+          rowName: getPaymentStatus(invoice).message,
+          rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            getPaymentStatus(invoice).styles
+          }`
+        }
+      );
+    }
+
+    if (
+      authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
+      && fixedType === InvoiceType.Sell
+    )
+    {
+      cells.push({
+        rowName: (
+          <div className="flex items-center gap-2">
+            { getEInvoiceStatus(invoice).message && (
+              <span
+                className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  getEInvoiceStatus(invoice).styles
+                }` }
+              >
+                { getEInvoiceStatus(invoice).message }
+              </span>
+            ) }
+            { invoice.eInvoiceStatus === EInvoiceStatus.NotSent
+              && invoice.statusId === InvoiceStatus.Valid
+              && (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.SellReturn) && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-50"
+                    onClick={ () => resendEInvoice(invoice) }
+                    disabled={ resendingEInvoice }
+                  >
+                    <RotateCw className="h-3.5 w-3.5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>{ t("invoices.resendTooltip") }</p>
+                </TooltipContent>
+              </Tooltip>
+            ) }
+          </div>
+        ),
+        rowStyles: ""
+      });
+    }
+
+    if (
+      SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.ReportAccountStatement,
+        SystemPermissionsActions.Get
+      ) && invoice.statusId === InvoiceStatus.Valid
+    )
+    {
+      cells.push({
+        rowName: (
+          <ReportButton
+            reportName={ ReportConstants.Invoice }
+            request={ { invoiceId: invoice.id } }
+          />
+        ),
+        rowStyles: "w-32"
+      });
+    }
+
+    return cells;
+  };
+
   return (
     <CrudPage<Invoice>
       basePath={ basePath }
@@ -269,117 +437,8 @@ export default function InvoicesPage({
         icon: <FileTextIcon className="h-4 w-4 text-muted-foreground" />
       }] }
       columnsToFilter={ InvoiceFilterColumns.columnsNames(t) }
-      tableHeadRows={ [
-        { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: t("invoices.invoiceId"), rowStyles: "w-24" },
-        { rowName: t("invoices.type"), rowStyles: "w-32" },
-        { rowName: t("invoices.date"), rowStyles: "w-32" },
-        { rowName: t("invoices.account"), rowStyles: "w-48" },
-        { rowName: t("invoices.store"), rowStyles: "w-32" },
-        { rowName: t("invoices.total"), rowStyles: "w-32" },
-
-        ...(fixedType === InvoiceType.Sell
-          ? [{ rowName: t("invoices.status"), rowStyles: "w-32" }, { rowName: "", rowStyles: "w-32" }]
-          : []),
-        ...(authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
-            && fixedType === InvoiceType.Sell
-          ? [{ rowName: t("invoices.eInvoiceStatus"), rowStyles: "w-50" }]
-          : []),
-        ...(SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.ReportInvoice,
-            SystemPermissionsActions.Get
-          )
-          ? [{ rowName: "", rowStyles: "w-32" }]
-          : [])
-      ] }
-      tableRowMapper={ (invoice: Invoice) => [
-        { rowName: `#${invoice.id}`, rowStyles: "" },
-        {
-          rowName: getInvoiceTypeName(invoice.type, t),
-          rowStyles: "font-semibold"
-        },
-        {
-          rowName: new Date(invoice.date).toLocaleDateString("en-CA"),
-          rowStyles: ""
-        },
-        { rowName: invoice.actionAccountName || "-", rowStyles: "" },
-        { rowName: invoice.storeName || "-", rowStyles: "" },
-        {
-          rowName: (
-            <div className="flex items-center gap-1">
-              { (invoice.fullAmount ?? 0).toLocaleString("en-US") }
-              <CurrencyIcon />
-            </div>
-          ),
-          rowStyles: "font-bold text-blue-600"
-        },
-        ...(fixedType === InvoiceType.Sell
-          ? [{
-            rowName: invoice.statusId === InvoiceStatus.Valid ? t("invoices.valid") : t("invoices.deleted"),
-            rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              invoice.statusId === InvoiceStatus.Valid
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`
-          }, {
-            rowName: getPaymentStatus(invoice).message,
-            rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              getPaymentStatus(invoice).styles
-            }`
-          }]
-          : []),
-        ...(authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
-            && fixedType === InvoiceType.Sell
-          ? [{
-            rowName: (
-              <div className="flex items-center gap-2">
-                { getEInvoiceStatus(invoice).message && (
-                  <span
-                    className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      getEInvoiceStatus(invoice).styles
-                    }` }
-                  >
-                    { getEInvoiceStatus(invoice).message }
-                  </span>
-                ) }
-
-                { invoice.eInvoiceStatus === EInvoiceStatus.NotSent
-                  && invoice.statusId === InvoiceStatus.Valid
-                  && (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.SellReturn) && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-50"
-                        onClick={ () => resendEInvoice(invoice) }
-                        disabled={ resendingEInvoice }
-                      >
-                        <RotateCw className="h-3.5 w-3.5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top">
-                      <p>{ t("invoices.resendTooltip") }</p>
-                    </TooltipContent>
-                  </Tooltip>
-                ) }
-              </div>
-            ),
-            rowStyles: ``
-          }]
-          : []),
-        ...(SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.ReportAccountStatement,
-            SystemPermissionsActions.Get
-          ) && invoice.statusId === InvoiceStatus.Valid
-          ? [{
-            rowName: <ReportButton reportName={ ReportConstants.Invoice } request={ { invoiceId: invoice.id } } />,
-            rowStyles: "w-32"
-          }]
-          : [])
-      ] }
+      tableHeadRows={ getTableHeadRows() }
+      tableRowMapper={ (invoice: Invoice) => getTableRowMapper(invoice) }
       actions={ {
         filter: slice.entityActions.filter,
         openChangeDialog: (entity) =>

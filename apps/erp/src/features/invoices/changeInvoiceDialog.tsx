@@ -203,6 +203,7 @@ export default function ChangeInvoiceDialog({
             ...(currentMode === "quotationToSales" && {
               type: InvoiceType.Sell,
               id: 0,
+              notes: undefined,
               date: new Date().toLocaleDateString("en-CA")
             })
           }));
