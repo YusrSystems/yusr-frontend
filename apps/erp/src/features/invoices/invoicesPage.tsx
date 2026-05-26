@@ -350,6 +350,7 @@ export default function InvoicesPage({
           <ReportButton
             reportName={ ReportConstants.Invoice }
             request={ { invoiceId: invoice.id } }
+            fileName={ `${invoice.id}-${getInvoiceTypeName(invoice.type, t)}-${invoice.actionAccountName}` }
           />
         ),
         rowStyles: "w-32"

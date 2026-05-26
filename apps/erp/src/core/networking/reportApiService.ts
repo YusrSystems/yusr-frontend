@@ -31,11 +31,32 @@ export default class ReportApiService
     return true;
   }
 
+  async GetBlob(
+    reportName: string,
+    request: BaseReportRequest
+  ): Promise<Blob | undefined>
+  {
+    const url = `${ApiConstants.baseUrl}/Reports/${reportName}`;
+    return await YusrApiHelper.PostBlob(url, request);
+  }
+
   public static displayPdf(blob: Blob)
   {
     const url = window.URL.createObjectURL(blob);
     window.open(url, "_blank");
     setTimeout(() => window.URL.revokeObjectURL(url), 100);
+  }
+
+  public static downloadPdf(blob: Blob, filename: string)
+  {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${filename}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   }
 
   public static async handleShareFile(blob: Blob, filename: string)
