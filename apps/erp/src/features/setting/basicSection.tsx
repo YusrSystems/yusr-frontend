@@ -15,7 +15,8 @@ export default function BasicSection()
   const { fileInputRef, handleFileChange, handleRemoveFile } = useStorageFile(
     (updater) =>
       dispatch(SettingSlice.formActions.updateFormData(updater as (prev: Partial<Setting>) => Partial<Setting>)),
-    "logo"
+    "logo",
+    false
   );
 
   const getDaysLeftText = (daysLeft: number) =>

@@ -20,6 +20,7 @@ export type InvoicePrintSize = typeof InvoicePrintSize[keyof typeof InvoicePrint
 
 export class Setting
 {
+  public registrationKey!: string;
   public email!: string;
   public companyName!: string;
   public companyPhone!: string;

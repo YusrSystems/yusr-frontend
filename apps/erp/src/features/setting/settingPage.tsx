@@ -1,7 +1,7 @@
 import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BranchSlice, Button, Card, CardContent, CardFooter, CurrencySlice, TabButton, useValidate } from "yusr-ui";
+import { BranchSlice, Button, Card, CardContent, CardFooter, CurrencySlice, TabButton, useStorageFile, useValidate } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import { PaymentMethodSlice } from "../../core/data/paymentMethod";
 import { Setting, SettingSlice, SettingValidationRules } from "../../core/data/setting";
@@ -23,6 +23,12 @@ export default function SettingPage()
     formData,
     SettingValidationRules.validationRules(t),
     (errors) => dispatch(SettingSlice.formActions.setErrors(errors))
+  );
+  const { commitFiles } = useStorageFile(
+    (updater) =>
+      dispatch(SettingSlice.formActions.updateFormData(updater as (prev: Partial<Setting>) => Partial<Setting>)),
+    "logo",
+    false
   );
 
   const [loading, setLoading] = useState(false);
@@ -68,7 +74,23 @@ export default function SettingPage()
     }
 
     setLoading(true);
-    const result = await new SettingsApiService().Update(formData as Setting, tCommon);
+
+    const resolvedLogo = await commitFiles(
+      formData.logo,
+      `Logos`
+    );
+    const updatedLogo = resolvedLogo[0];
+
+    dispatch(
+      SettingSlice.formActions.updateFormData({
+        logo: updatedLogo
+      })
+    );
+
+    const result = await new SettingsApiService().Update(
+      { ...formData, logo: updatedLogo } as Setting,
+      tCommon
+    );
     setLoading(false);
 
     if (result.status === 200)

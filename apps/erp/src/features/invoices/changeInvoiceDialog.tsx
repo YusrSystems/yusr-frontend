@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import type { CommonChangeDialogProps, DialogMode, IEntityState } from "yusr-ui";
-import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, useFormErrors, useFormInit, useStorageFile, useValidate } from "yusr-ui";
 import Account, { type AccountSliceType } from "../../core/data/account";
 import type Invoice from "../../core/data/invoice";
 import { InvoiceRelationType, InvoiceSlice, InvoiceStatus, InvoiceType, InvoiceValidationRules } from "../../core/data/invoice";
@@ -54,6 +54,13 @@ export default function ChangeInvoiceDialog({
   const authState = useAppSelector((state) => state.auth);
   const { createInitialPaymentVoucher } = useInvoiceLogic(authState);
   const invoiceTaxInclusivePrice = () => InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(formData?.invoiceItems ?? []);
+  const { commitFiles } = useStorageFile(
+    (updater) =>
+      dispatch(slice.formActions.updateFormData(
+        updater as (prev: Partial<Invoice>) => Partial<Invoice>
+      )),
+    "invoiceFiles"
+  );
 
   const initialValues = useMemo(
     () => ({
@@ -227,7 +234,7 @@ export default function ChangeInvoiceDialog({
     }
   }, [dispatch, entity?.id]);
 
-  const transformDataBeforeSave = (data: Invoice | Partial<Invoice>): Invoice | Partial<Invoice> =>
+  const transformDataBeforeSave = async (data: Invoice | Partial<Invoice>): Promise<Invoice | Partial<Invoice>> =>
   {
     let transformedData = { ...data, fullAmount: invoiceTaxInclusivePrice() };
     // sent items index
@@ -235,6 +242,17 @@ export default function ChangeInvoiceDialog({
       ...item,
       index
     }));
+
+    const resolvedFiles = await commitFiles(
+      formData.invoiceFiles,
+      `Invoices`
+    );
+
+    transformedData = {
+      ...transformedData,
+      invoiceFiles: resolvedFiles
+    };
+
     if (currentMode === "return")
     {
       return {

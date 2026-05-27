@@ -19,7 +19,7 @@ export interface SaveButtonProps<T extends BaseEntity>
   disable?: () => boolean;
   onSuccess?: (newData: T) => void;
   validate?: () => boolean;
-  transformData?: (data: T | Partial<T>) => T | Partial<T>;
+  transformData?: (data: T | Partial<T>) => T | Partial<T> | Promise<T | Partial<T>>;
   onExecute?: (
     formData: T | Partial<T>,
     ignoreWarnings: boolean
@@ -60,7 +60,7 @@ export function SaveButton<T extends BaseEntity>(
     setLoading(true);
 
     let result: RequestResult<T>;
-    const payload = transformData ? transformData(formData) : formData;
+    const payload = transformData ? await transformData(formData) : formData;
 
     if (onExecute)
     {

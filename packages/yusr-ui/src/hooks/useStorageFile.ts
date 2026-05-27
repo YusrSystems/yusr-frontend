@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { StorageFile, StorageFileStatus } from "../entities";
+import { StorageApiService } from "../networking/storageApiService";
 
 export function useStorageFile<T>(
   setFormData: React.Dispatch<React.SetStateAction<T>>,
@@ -11,7 +12,7 @@ export function useStorageFile<T>(
   const { t } = useTranslation("common");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) =>
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) =>
   {
     const files = Array.from(event.target.files || []);
     if (files.length === 0)
@@ -49,47 +50,30 @@ export function useStorageFile<T>(
       return;
     }
 
-    const filePromises = validFiles.map((file) =>
-    {
-      return new Promise<StorageFile>((resolve) =>
-      {
-        const reader = new FileReader();
-        reader.onloadend = () =>
-        {
-          const base64String = reader.result as string;
-          resolve(
-            new StorageFile({
-              url: base64String,
-              base64File: base64String.split(",")[1],
-              extension: `.${file.name.split(".").pop()}`,
-              contentType: file.type,
-              status: StorageFileStatus.New
-            })
-          );
-        };
-        reader.readAsDataURL(file);
-      });
-    });
-
-    const newStorageFiles = await Promise.all(filePromises);
+    const newStorageFiles: StorageFile[] = validFiles.map((file) =>
+      new StorageFile({
+        file: file,
+        url: URL.createObjectURL(file),
+        extension: `.${file.name.split(".").pop()}`,
+        contentType: file.type,
+        status: StorageFileStatus.New
+      })
+    );
 
     setFormData((prev) =>
     {
       const existingData = prev[fieldName];
-
-      let newValue: any;
-
       const existingArray: StorageFile[] = Array.isArray(existingData)
         ? existingData
         : existingData
         ? [existingData as unknown as StorageFile]
         : [];
 
-      newValue = multiple
+      const newValue = multiple
         ? [...existingArray, ...newStorageFiles]
         : newStorageFiles[0];
 
-      return { ...prev, [fieldName]: newValue };
+      return { ...prev, [fieldName]: newValue as any };
     });
 
     if (fileInputRef.current)
@@ -102,34 +86,107 @@ export function useStorageFile<T>(
   {
     setFormData((prev) =>
     {
-      const existingData = prev[fieldName];
+      const value = prev[fieldName];
 
-      if (Array.isArray(existingData))
+      const removeFile = (file: StorageFile) =>
       {
-        const newFiles = [...existingData];
-        const fileToRemove = newFiles[index];
-
-        if (fileToRemove.status === StorageFileStatus.New)
+        if (file.status === StorageFileStatus.New)
         {
-          newFiles.splice(index, 1);
+          URL.revokeObjectURL(file.url ?? "");
+          return undefined;
+        }
+
+        return new StorageFile({
+          ...file,
+          status: StorageFileStatus.Delete
+        });
+      };
+
+      if (Array.isArray(value))
+      {
+        const files = [...value];
+        const updated = removeFile(files[index]);
+
+        if (updated === undefined)
+        {
+          files.splice(index, 1);
         }
         else
         {
-          newFiles[index] = new StorageFile({ ...fileToRemove, status: StorageFileStatus.Delete });
+          files[index] = updated;
         }
-        return { ...prev, [fieldName]: newFiles as any };
-      }
-      else
-      {
-        const currentFile = existingData as unknown as StorageFile;
+
         return {
           ...prev,
-          [fieldName]: currentFile?.status === StorageFileStatus.New
-            ? undefined
-            : new StorageFile({ ...currentFile, status: StorageFileStatus.Delete }) as any
+          [fieldName]: files as any
         };
       }
+      return {
+        ...prev,
+        [fieldName]: removeFile(value as StorageFile) as any
+      };
     });
+  };
+
+  const commitFiles = async (
+    files: StorageFile | StorageFile[] | undefined,
+    pathPrefix: string
+  ): Promise<StorageFile[]> =>
+  {
+    const arr: StorageFile[] = Array.isArray(files) ? files : files ? [files] : [];
+
+    const results = await Promise.all(
+      arr.map(async (f): Promise<StorageFile | null> =>
+      {
+        switch (f.status)
+        {
+          case StorageFileStatus.New:
+          {
+            if (!f.file)
+            {
+              return null;
+            }
+            const { uploadUrl, key } = await StorageApiService.getPresignedUploadUrl(
+              pathPrefix,
+              f.extension ?? ".bin",
+              f.contentType ?? "application/octet-stream"
+            );
+            const uploadRes = await fetch(uploadUrl, {
+              method: "PUT",
+              headers: { "Content-Type": f.contentType ?? "application/octet-stream" },
+              body: f.file
+            });
+            if (!uploadRes.ok)
+            {
+              throw new Error(`Upload failed for ${f.file.name}`);
+            }
+            URL.revokeObjectURL(f.url ?? ""); // clean up blob URL
+            return new StorageFile({
+              url: key, // ← send key to backend
+              extension: f.extension,
+              contentType: f.contentType,
+              status: StorageFileStatus.Unchanged
+            });
+          }
+
+          case StorageFileStatus.Delete:
+          {
+            const { deleteUrl } = await StorageApiService.getPresignedDeleteUrl(f.key);
+            await StorageApiService.delete(deleteUrl);
+
+            return null; // exclude from result
+          }
+
+          case StorageFileStatus.Unchanged:
+            return f;
+
+          default:
+            return f;
+        }
+      })
+    );
+
+    return results.filter((f): f is StorageFile => f !== null);
   };
 
   const getFileSrc = (file: StorageFile | undefined) =>
@@ -169,5 +226,13 @@ export function useStorageFile<T>(
     }
   };
 
-  return { fileInputRef, handleFileChange, handleRemoveFile, handleDownload, showFilePreview, getFileSrc };
+  return {
+    fileInputRef,
+    handleFileChange,
+    handleRemoveFile,
+    commitFiles,
+    handleDownload,
+    showFilePreview,
+    getFileSrc
+  };
 }

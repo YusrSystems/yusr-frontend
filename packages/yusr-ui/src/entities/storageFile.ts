@@ -1,6 +1,8 @@
 export class StorageFile
 {
+  public key!: string;
   public url: string | null = null;
+  public file?: File; 
   public base64File: string | null = null;
   public extension: string | null = null;
   public contentType: string | null = null;
