@@ -34,7 +34,9 @@ export * from "./fields/selectField";
 export * from "./fields/storageFilesField";
 export * from "./fields/textAreaField";
 export * from "./fields/textField";
+
 // Images
+export * from "./images/imagePreview";
 export * from "./images/lightbox";
 export * from "./images/zoomableImage";
 
@@ -82,6 +84,7 @@ export * from "./status/empty";
 export * from "./status/loading";
 
 // Table
+export * from "./table/columnVisibilityToggle";
 export * from "./table/crudEmptyTablePreview";
 export * from "./table/crudTable";
 export * from "./table/crudTableBodyRow";
@@ -90,7 +93,6 @@ export * from "./table/crudTableHeader";
 export * from "./table/crudTableHeaderRows";
 export * from "./table/crudTablePagination";
 export * from "./table/crudTableRowActionsMenu";
-export * from "./table/columnVisibilityToggle";
 
 // Theme
 export * from "./theme/themeProvider";

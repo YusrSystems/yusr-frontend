@@ -1,3 +1,4 @@
+import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { type DialogMode, SelectField, StorageFileField, TextAreaField, TextField, useFormErrors, useStorageFile } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemUnitPricingMethod } from "../../../core/data/item";
@@ -14,6 +15,7 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
     handleRemoveFile,
     handleDownload,
     showFilePreview,
+    handleSetPrimary,
     getFileSrc
   } = useStorageFile((data) => dispatch(ItemSlice.formActions.updateFormData(data as Partial<Item>)), "itemImages");
 
@@ -113,6 +115,12 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
             onDownload={ handleDownload }
             getFileSrc={ getFileSrc }
             showPreview={ showFilePreview }
+            extraActions={ [{
+              icon: <Star className="h-4 w-4" />,
+              label: "Mark as Primary",
+              className: "bg-yellow-500 text-white",
+              onClick: (index) => handleSetPrimary(index)
+            }] }
           />
         </div>
       </div>

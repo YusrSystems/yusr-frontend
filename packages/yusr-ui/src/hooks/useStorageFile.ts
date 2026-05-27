@@ -235,6 +235,24 @@ export function useStorageFile<T>(
     }
   };
 
+  const handleSetPrimary = (index: number) =>
+  {
+    setFormData((prev) =>
+    {
+      const value = prev[fieldName];
+      if (!Array.isArray(value) || index === 0)
+      {
+        return prev;
+      }
+
+      const files = [...value];
+      // Swap with index 0
+      [files[0], files[index]] = [files[index], files[0]];
+
+      return { ...prev, [fieldName]: files as any };
+    });
+  };
+
   return {
     fileInputRef,
     handleFileChange,
@@ -242,6 +260,7 @@ export function useStorageFile<T>(
     commitFiles,
     handleDownload,
     showFilePreview,
+    handleSetPrimary,
     getFileSrc
   };
 }

@@ -9,6 +9,14 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Dialog, DialogContent, DialogTrigger } from "../../pure/dialog";
 import { Input } from "../../pure/input";
 
+interface StorageFileAction
+{
+  icon: React.ReactNode;
+  label: string;
+  className?: string;
+  onClick: (index: number, file: StorageFile) => void;
+}
+
 interface StorageFileFieldProps
 {
   label: string;
@@ -19,6 +27,7 @@ interface StorageFileFieldProps
   getFileSrc: (file: StorageFile | undefined) => string;
   showPreview: (file: StorageFile | undefined) => boolean;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
+  extraActions?: StorageFileAction[];
   error?: string;
   isInvalid?: boolean;
   dir?: "rtl" | "ltr";
@@ -40,6 +49,7 @@ export function StorageFileField(
     getFileSrc,
     showPreview,
     fileInputRef,
+    extraActions,
     error,
     isInvalid,
     dir = "rtl",
@@ -151,7 +161,8 @@ export function StorageFileField(
                             </Dialog>
 
                             { /* Action Buttons */ }
-                            <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity z-30">
+                            <div className="absolute top-2 right-2 flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity z-30">
+                              { /* Delete */ }
                               <Button
                                 type="button"
                                 size="icon"
@@ -165,6 +176,8 @@ export function StorageFileField(
                               >
                                 <X className="h-4 w-4" />
                               </Button>
+
+                              { /* Download */ }
                               <Button
                                 type="button"
                                 size="icon"
@@ -179,6 +192,24 @@ export function StorageFileField(
                               >
                                 <Download className="h-4 w-4" />
                               </Button>
+
+                              { /* Extra actions */ }
+                              { extraActions?.map((action, i) => (
+                                <Button
+                                  key={ i }
+                                  type="button"
+                                  size="icon"
+                                  className={ cn("h-7 w-7 rounded-full shadow-lg", action.className) }
+                                  onClick={ (e) =>
+                                  {
+                                    e.stopPropagation();
+                                    action.onClick(originalIndex, f);
+                                  } }
+                                  aria-label={ action.label }
+                                >
+                                  { action.icon }
+                                </Button>
+                              )) }
                             </div>
                           </CardContent>
                         </Card>

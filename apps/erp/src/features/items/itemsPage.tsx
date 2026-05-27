@@ -1,7 +1,7 @@
 import { Package } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, FilterCondition, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { CrudPage, FilterCondition, ImagePreview, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Item, { ItemFilterColumns, ItemSlice, ItemType } from "../../core/data/item";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -81,6 +81,20 @@ export default function ItemsPage()
       ] }
       tableRowMapper={ (item: Item) => [
         { rowName: `#${item.id}`, rowStyles: "" },
+        {
+          rowName: (
+            <ImagePreview
+              files={ item.itemImages }
+              size={ 40 }
+              fallback={ 
+                <div className="w-10 h-10 rounded bg-muted flex items-center justify-center">
+                  <Package className="w-4 h-4 text-muted-foreground" />
+                </div>
+               }
+            />
+          ),
+          rowStyles: ""
+        },
         {
           rowName: item.type === ItemType.Product ? t("items.product") : t("items.service"),
           rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
