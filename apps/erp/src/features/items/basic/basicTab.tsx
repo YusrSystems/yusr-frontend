@@ -1,6 +1,6 @@
 import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { type DialogMode, SelectField, StorageFileField, TextAreaField, TextField, useFormErrors, useStorageFile } from "yusr-ui";
+import { type DialogMode, SelectField, StorageFileField, StorageType, TextAreaField, TextField, useFormErrors, useStorageFile } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemUnitPricingMethod } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 import TaxesSection from "./taxesSection";
@@ -17,7 +17,11 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
     showFilePreview,
     handleSetPrimary,
     getFileSrc
-  } = useStorageFile((data) => dispatch(ItemSlice.formActions.updateFormData(data as Partial<Item>)), "itemImages");
+  } = useStorageFile(
+    (data) => dispatch(ItemSlice.formActions.updateFormData(data as Partial<Item>)),
+    "itemImages",
+    StorageType.Public
+  );
 
   const { formData, errors } = useAppSelector((state) => state.itemForm);
   const { getError, isInvalid } = useFormErrors(errors);

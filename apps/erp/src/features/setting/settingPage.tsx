@@ -1,7 +1,7 @@
 import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BranchSlice, Button, Card, CardContent, CardFooter, CurrencySlice, TabButton, useStorageFile, useValidate } from "yusr-ui";
+import { BranchSlice, Button, Card, CardContent, CardFooter, CurrencySlice, StorageType, TabButton, useStorageFile, useValidate } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import { PaymentMethodSlice } from "../../core/data/paymentMethod";
 import { Setting, SettingSlice, SettingValidationRules } from "../../core/data/setting";
@@ -28,6 +28,7 @@ export default function SettingPage()
     (updater) =>
       dispatch(SettingSlice.formActions.updateFormData(updater as (prev: Partial<Setting>) => Partial<Setting>)),
     "logo",
+    StorageType.Public,
     false
   );
 

@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import type { CommonChangeDialogProps, DialogMode, IEntityState } from "yusr-ui";
-import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, useFormErrors, useFormInit, useStorageFile, useValidate } from "yusr-ui";
+import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, StorageType, useFormErrors, useFormInit, useStorageFile, useValidate } from "yusr-ui";
 import Account, { type AccountSliceType } from "../../core/data/account";
 import type Invoice from "../../core/data/invoice";
 import { InvoiceRelationType, InvoiceSlice, InvoiceStatus, InvoiceType, InvoiceValidationRules } from "../../core/data/invoice";
@@ -59,7 +59,8 @@ export default function ChangeInvoiceDialog({
       dispatch(slice.formActions.updateFormData(
         updater as (prev: Partial<Invoice>) => Partial<Invoice>
       )),
-    "invoiceFiles"
+    "invoiceFiles",
+    StorageType.Private
   );
 
   const initialValues = useMemo(

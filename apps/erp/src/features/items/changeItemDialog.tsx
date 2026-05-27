@@ -2,7 +2,7 @@ import { Box, Database, DollarSign } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialogTabbed, DialogContent, DialogDescription, DialogHeader, DialogTitle, Loading, useFormErrors, useFormInit, useStorageFile, useValidate } from "yusr-ui";
+import { ChangeDialogTabbed, DialogContent, DialogDescription, DialogHeader, DialogTitle, Loading, StorageType, useFormErrors, useFormInit, useStorageFile, useValidate } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemValidationRules } from "../../core/data/item";
 import { PricingMethodSlice } from "../../core/data/pricingMethod";
 import { StoreSlice } from "../../core/data/store";
@@ -30,7 +30,8 @@ export default function ChangeItemDialog({
   const [initLoading, setInitLoading] = useState(false);
   const { commitFiles } = useStorageFile(
     (data) => dispatch(ItemSlice.formActions.updateFormData(data as Partial<Item>)),
-    "itemImages"
+    "itemImages",
+    StorageType.Public
   );
 
   const initialValues = useMemo(

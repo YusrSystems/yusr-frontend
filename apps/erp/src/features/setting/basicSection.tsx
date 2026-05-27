@@ -2,7 +2,7 @@ import { useAppSelector } from "@/core/state/store";
 import { differenceInDays, format } from "date-fns";
 import { Camera, Trash2, Upload } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelect, Button, FieldGroup, FieldsSection, FormField, Label, StorageFileStatus, TextField, useAppDispatch, useFormErrors, useStorageFile } from "yusr-ui";
+import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelect, Button, FieldGroup, FieldsSection, FormField, Label, StorageFileStatus, StorageType, TextField, useAppDispatch, useFormErrors, useStorageFile } from "yusr-ui";
 import { type Setting, SettingSlice } from "../../core/data/setting";
 
 export default function BasicSection()
@@ -16,6 +16,7 @@ export default function BasicSection()
     (updater) =>
       dispatch(SettingSlice.formActions.updateFormData(updater as (prev: Partial<Setting>) => Partial<Setting>)),
     "logo",
+    StorageType.Public,
     false
   );
 

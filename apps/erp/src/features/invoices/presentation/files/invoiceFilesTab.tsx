@@ -1,5 +1,5 @@
 import type Invoice from "@/core/data/invoice";
-import { StorageFileField, useStorageFile } from "yusr-ui";
+import { StorageFileField, StorageType, useStorageFile } from "yusr-ui";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function InvoiceFilesTab()
@@ -11,7 +11,8 @@ export default function InvoiceFilesTab()
         dispatch(slice.formActions.updateFormData(
           updater as (prev: Partial<Invoice>) => Partial<Invoice>
         )),
-      "invoiceFiles"
+      "invoiceFiles",
+      StorageType.Private
     );
 
   return (

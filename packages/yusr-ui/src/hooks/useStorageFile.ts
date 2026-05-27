@@ -1,11 +1,12 @@
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { StorageFile, StorageFileStatus } from "../entities";
+import { StorageFile, StorageFileStatus, StorageType } from "../entities";
 import { StorageApiService } from "../networking/storageApiService";
 
 export function useStorageFile<T>(
   setFormData: React.Dispatch<React.SetStateAction<T>>,
   fieldName: keyof T,
+  storageType: StorageType,
   multiple: boolean = true
 )
 {
@@ -150,12 +151,19 @@ export function useStorageFile<T>(
             const { uploadUrl, readUrl, key } = await StorageApiService.getPresignedUploadUrl(
               pathPrefix,
               f.extension ?? ".bin",
-              f.contentType ?? "application/octet-stream"
+              f.contentType ?? "application/octet-stream",
+              storageType
             );
+            const cacheHeader = storageType === StorageType.Private
+              ? "private, no-cache, no-store, must-revalidate"
+              : "public, max-age=31536000, immutable";
 
             const uploadRes = await fetch(uploadUrl, {
               method: "PUT",
-              headers: { "Content-Type": f.contentType ?? "application/octet-stream" },
+              headers: {
+                "Content-Type": f.contentType ?? "application/octet-stream",
+                cacheHeader
+              },
               body: f.file
             });
 
@@ -180,7 +188,7 @@ export function useStorageFile<T>(
             const keyToDelete = f.key ?? f.url; // fallback to url if key missing
             if (keyToDelete)
             {
-              const { deleteUrl } = await StorageApiService.getPresignedDeleteUrl(keyToDelete);
+              const { deleteUrl } = await StorageApiService.getPresignedDeleteUrl(keyToDelete, storageType);
               await StorageApiService.delete(deleteUrl);
             }
             return null;

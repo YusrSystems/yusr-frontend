@@ -1,3 +1,4 @@
+import type { StorageType } from "../entities";
 import { YusrApiHelper } from "./yusrApiHelper";
 
 interface PresignUploadResponse
@@ -17,13 +18,15 @@ export class StorageApiService
   static async getPresignedUploadUrl(
     pathPrefix: string,
     extension: string,
-    contentType: string
+    contentType: string,
+    storageType: StorageType
   ): Promise<PresignUploadResponse>
   {
     const result = await YusrApiHelper.Post<PresignUploadResponse>(`/api/Storage/UploadUrl`, {
       pathPrefix,
       extension,
-      contentType
+      contentType,
+      storageType
     });
     if (!result.data)
     {
@@ -32,9 +35,9 @@ export class StorageApiService
     return result.data;
   }
 
-  static async getPresignedDeleteUrl(key: string): Promise<PresignDeleteResponse>
+  static async getPresignedDeleteUrl(key: string, storageType: StorageType): Promise<PresignDeleteResponse>
   {
-    const result = await YusrApiHelper.Post<PresignDeleteResponse>("/api/Storage/DeleteUrl", { key });
+    const result = await YusrApiHelper.Post<PresignDeleteResponse>("/api/Storage/DeleteUrl", { key, storageType });
 
     if (!result.data)
     {
