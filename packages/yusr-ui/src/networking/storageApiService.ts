@@ -3,6 +3,7 @@ import { YusrApiHelper } from "./yusrApiHelper";
 interface PresignUploadResponse
 {
   uploadUrl: string;
+  readUrl: string;
   key: string;
 }
 
@@ -19,12 +20,11 @@ export class StorageApiService
     contentType: string
   ): Promise<PresignUploadResponse>
   {
-    const result = await YusrApiHelper.Post<PresignUploadResponse>("/api/Storage/UploadUrl", {
+    const result = await YusrApiHelper.Post<PresignUploadResponse>(`/api/Storage/UploadUrl`, {
       pathPrefix,
       extension,
       contentType
     });
-
     if (!result.data)
     {
       throw new Error("Failed to get upload URL");

@@ -248,6 +248,8 @@ export default function ChangeInvoiceDialog({
       `Invoices`
     );
 
+    dispatch(slice.formActions.updateFormData({ invoiceFiles: resolvedFiles }));
+
     transformedData = {
       ...transformedData,
       invoiceFiles: resolvedFiles

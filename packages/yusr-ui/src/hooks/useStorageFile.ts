@@ -146,23 +146,29 @@ export function useStorageFile<T>(
             {
               return null;
             }
-            const { uploadUrl, key } = await StorageApiService.getPresignedUploadUrl(
+
+            const { uploadUrl, readUrl, key } = await StorageApiService.getPresignedUploadUrl(
               pathPrefix,
               f.extension ?? ".bin",
               f.contentType ?? "application/octet-stream"
             );
+
             const uploadRes = await fetch(uploadUrl, {
               method: "PUT",
               headers: { "Content-Type": f.contentType ?? "application/octet-stream" },
               body: f.file
             });
+
             if (!uploadRes.ok)
             {
               throw new Error(`Upload failed for ${f.file.name}`);
             }
-            URL.revokeObjectURL(f.url ?? ""); // clean up blob URL
+
+            URL.revokeObjectURL(f.url ?? "");
+
             return new StorageFile({
-              url: key, // ← send key to backend
+              key,
+              url: readUrl,
               extension: f.extension,
               contentType: f.contentType,
               status: StorageFileStatus.Unchanged
@@ -171,10 +177,13 @@ export function useStorageFile<T>(
 
           case StorageFileStatus.Delete:
           {
-            const { deleteUrl } = await StorageApiService.getPresignedDeleteUrl(f.key);
-            await StorageApiService.delete(deleteUrl);
-
-            return null; // exclude from result
+            const keyToDelete = f.key ?? f.url; // fallback to url if key missing
+            if (keyToDelete)
+            {
+              const { deleteUrl } = await StorageApiService.getPresignedDeleteUrl(keyToDelete);
+              await StorageApiService.delete(deleteUrl);
+            }
+            return null;
           }
 
           case StorageFileStatus.Unchanged:

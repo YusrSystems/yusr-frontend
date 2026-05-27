@@ -98,6 +98,8 @@ export default function ChangeItemDialog({
       `Items`
     );
 
+    dispatch(ItemSlice.formActions.updateFormData({ itemImages: resolvedFiles }));
+
     return {
       ...data,
       itemImages: resolvedFiles
