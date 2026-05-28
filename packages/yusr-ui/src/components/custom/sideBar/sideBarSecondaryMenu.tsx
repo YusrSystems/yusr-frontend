@@ -6,7 +6,6 @@ import { cn } from "../../../utils/cn";
 import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "../../pure/sidebar";
 import { LanguageToggle } from "../locale/languageToggle";
 import { ThemeToggle } from "../theme/themeToggle";
-import { ShareMenuItem } from "./shareMenuItem";
 
 export interface SideBarSecondaryMenuProps extends React.ComponentPropsWithoutRef<typeof SidebarGroup>
 {
