@@ -154,7 +154,7 @@ export function useStorageFile<T>(
               f.contentType ?? "application/octet-stream",
               storageType
             );
-            const cacheHeader = storageType === StorageType.Private
+            const cacheControl = storageType === StorageType.Private
               ? "private, no-cache, no-store, must-revalidate"
               : "public, max-age=31536000, immutable";
 
@@ -162,7 +162,7 @@ export function useStorageFile<T>(
               method: "PUT",
               headers: {
                 "Content-Type": f.contentType ?? "application/octet-stream",
-                cacheHeader
+                "Cache-Control": cacheControl
               },
               body: f.file
             });

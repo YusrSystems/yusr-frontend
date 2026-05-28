@@ -65,7 +65,8 @@ export default function ItemsPage()
       columnsToFilter={ ItemFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: t("items.itemId"), rowStyles: "w-12.5" },
+        { rowName: t("items.itemId"), rowStyles: "w-20" },
+        { rowName: t("items.itemId"), rowStyles: "w-20" },
         { rowName: t("items.itemType"), rowStyles: "w-24" },
         { rowName: t("items.itemName"), rowStyles: "w-48" },
         { rowName: t("items.class"), rowStyles: "w-32" },
