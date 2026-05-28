@@ -1,6 +1,6 @@
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import { useTranslation } from "react-i18next";
-import { Checkbox, CurrencyIcon, type DialogMode, FormField, NumberField, useFormErrors } from "yusr-ui";
+import { CheckboxField, CurrencyIcon, type DialogMode, FieldsSection, FormField, NumberField, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemType } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 import PricingMethodsTable from "./pricingMethodsTable";
@@ -14,7 +14,7 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
 
   return (
     <div className="space-y-6 animate-in fade-in">
-      <div className="grid grid-cols-3 gap-6">
+      <FieldsSection columns={ 4 }>
         <FormField
           label={ t("items.baseUnit") }
           required={ formData.type !== ItemType.Service }
@@ -70,19 +70,25 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ cost: val })) }
           currency={ <CurrencyIcon /> }
         />
-      </div>
 
-      <div className="flex items-center gap-2">
-        <Checkbox
+        <NumberField
+          label={ t("items.lastBuyPrice") }
+          disabled
+          value={ formData.lastBuyPrice ?? 0 }
+          currency={ <CurrencyIcon /> }
+        />
+
+        <CheckboxField
+          required
           id="taxIncluded"
-          checked={ formData.taxIncluded }
+          label={ t("items.priceIncludesTax") }
+          error={ getError("taxIncluded") }
+          isInvalid={ isInvalid("taxIncluded") }
+          checked={ formData.taxIncluded ?? false }
           onCheckedChange={ (checked) =>
             dispatch(ItemSlice.formActions.updateFormData({ taxIncluded: checked as boolean })) }
         />
-        <label htmlFor="taxIncluded" className="text-sm font-bold">
-          { t("items.priceIncludesTax") }
-        </label>
-      </div>
+      </FieldsSection>
 
       <PricingMethodsTable />
     </div>

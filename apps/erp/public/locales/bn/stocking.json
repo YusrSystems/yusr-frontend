@@ -131,6 +131,7 @@
     "noPricingMethods": "কোন মূল্য নির্ধারণের পদ্ধতি যোগ করা হয়নি",
     "baseUnit": "মূল ইউনিট",
     "initialCost": "প্রাথমিক খরচ",
+    "lastBuyPrice": "শেষ ক্রয় মূল্য",
     "priceIncludesTax": "বিক্রয় মূল্যে কর অন্তর্ভুক্ত",
     "storage": "সংরক্ষণ",
     "basicInfo": "মৌলিক তথ্য",

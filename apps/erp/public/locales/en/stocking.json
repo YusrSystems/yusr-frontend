@@ -131,6 +131,7 @@
     "noPricingMethods": "No pricing methods added",
     "baseUnit": "Base Unit",
     "initialCost": "Initial Cost",
+    "lastBuyPrice": "Last Purchase Price",
     "priceIncludesTax": "Selling price includes tax",
     "storage": "Storage",
     "basicInfo": "Basic Information",

@@ -131,6 +131,7 @@
     "noPricingMethods": "لا توجد طرق تسعير مضافة",
     "baseUnit": "الوحدة الأساسية للمادة",
     "initialCost": "التكلفة المبدئية",
+    "lastBuyPrice": "اخر سعر شراء",
     "priceIncludesTax": "سعر البيع يشمل الضريبة",
     "storage": "التخزين",
     "basicInfo": "المعلومات الأساسية",

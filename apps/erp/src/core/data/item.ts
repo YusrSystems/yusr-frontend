@@ -70,6 +70,7 @@ export default class Item extends BaseEntity
   public initialQuantity!: number;
   public quantity!: number;
   public storeQuantity!: number;
+  public lastBuyPrice!: number;
   public initialCost!: number;
   public cost!: number;
   public taxIncluded!: boolean;

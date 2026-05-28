@@ -131,6 +131,7 @@
     "noPricingMethods": "کوئی قیمت کا طریقہ شامل نہیں",
     "baseUnit": "بنیادی یونٹ",
     "initialCost": "ابتدائی لاگت",
+    "lastBuyPrice": "آخری خریداری قیمت",
     "priceIncludesTax": "فروخت کی قیمت میں ٹیکس شامل ہے",
     "storage": "ذخیرہ",
     "basicInfo": "بنیادی معلومات",
