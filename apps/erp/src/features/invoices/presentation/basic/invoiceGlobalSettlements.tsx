@@ -1,7 +1,7 @@
 // InvoiceGlobalSettlements.tsx
 
 import { useTranslation } from "react-i18next";
-import { NumberInput } from "yusr-ui";
+import { FieldsSection, NumberField, TextAreaField } from "yusr-ui";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function InvoiceGlobalSettlements()
@@ -24,13 +24,10 @@ export default function InvoiceGlobalSettlements()
         </h3>
       </div>
 
-      <div className="p-4 grid grid-cols-2 gap-3">
-        <div className="space-y-1">
-          <label className="text-sm text-muted-foreground">
-            { t("paymentMethods.fixedAmount") }
-          </label>
-
-          <NumberInput
+      <div className="p-4 flex flex-col gap-3">
+        <FieldsSection columns={ 2 }>
+          <NumberField
+            label={ t("paymentMethods.fixedAmount") }
             className="mt-1"
             value={ formData.settlementAmount ?? 0 }
             onChange={ (newValue) =>
@@ -41,14 +38,8 @@ export default function InvoiceGlobalSettlements()
               ) }
             disabled={ disabled || mode === "return" || formData.invoiceItems?.length === 0 }
           />
-        </div>
-
-        <div className="space-y-1">
-          <label className="text-sm text-muted-foreground">
-            { t("paymentMethods.percentage") }
-          </label>
-
-          <NumberInput
+          <NumberField
+            label={ t("paymentMethods.percentage") }
             min={ -100 }
             max={ 100 }
             className="mt-1"
@@ -61,7 +52,19 @@ export default function InvoiceGlobalSettlements()
               ) }
             disabled={ disabled || mode === "return" || formData.invoiceItems?.length === 0 }
           />
-        </div>
+        </FieldsSection>
+
+        <TextAreaField
+          label={ t("invoices.settlementReason") }
+          value={ formData.settlementReason }
+          onChange={ (e) =>
+            dispatch(
+              slice.formActions.updateFormData({ settlementReason: e.target.value })
+            ) }
+          disabled={ disabled || mode === "return" || formData.invoiceItems?.length === 0
+            || (formData.settlementPercent === 0 && formData.settlementAmount === 0) }
+          collapsible
+        />
       </div>
     </div>
   );

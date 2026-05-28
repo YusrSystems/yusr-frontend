@@ -237,7 +237,8 @@
     "copyInvoice": "Copy Invoice",
     "addNewQuotationTitle": "Create Quotation",
     "totalQuotations": "Total Quotations",
-    "convertToSales": "Convert to Sales Invoice"
+    "convertToSales": "Convert to Sales Invoice",
+    "settlementReason": "Settlement Reason"
   },
   "paymentMethods": {
     "title": "Payment Methods Management",

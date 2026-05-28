@@ -83,6 +83,7 @@ export default function ChangeInvoiceDialog({
         : new Date().toLocaleDateString("en-CA"),
       settlementAmount: entity?.settlementAmount ?? 0,
       settlementPercent: entity?.settlementPercent ?? 0,
+      settlementReason: entity?.settlementReason ?? undefined,
       paidAmount: entity?.paidAmount ?? 0,
       fullAmount: entity?.fullAmount ?? 0,
       invoiceItems: entity?.invoiceItems ?? [],

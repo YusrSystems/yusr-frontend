@@ -109,6 +109,7 @@ export default class Invoice extends BaseEntity
   public eInvoiceStatus!: EInvoiceStatus;
   public fullAmount!: number;
   public paidAmount!: number;
+  public settlementReason?: string;
   public settlementAmount!: number;
   public settlementPercent!: number;
   public returnStatusId!: InvoiceReturnStatus;

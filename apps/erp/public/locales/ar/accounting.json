@@ -238,7 +238,8 @@
     "deleteItem": "حذف المادة",
     "deleteVoucher": "حذف السند",
     "invoiceSummary": "ملخص الفاتورة",
-    "copyInvoice": "نسخ الفاتورة"
+    "copyInvoice": "نسخ الفاتورة",
+    "settlementReason": "سبب التسوية"
   },
   "paymentMethods": {
     "title": "إدارة طرق الدفع",
