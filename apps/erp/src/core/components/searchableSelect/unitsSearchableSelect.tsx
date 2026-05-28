@@ -20,7 +20,6 @@ export default function UnitsSearchableSelect(
       state={ unitState }
       apiService={ new UnitsApiService() }
       systemPermissionsResources={ SystemPermissionsResources.Units }
-      allowAdd={ false }
       allowUpdate={ false }
       entityActions={ {
         filter: UnitSlice.entityActions.filter,

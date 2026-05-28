@@ -1,5 +1,5 @@
 import type { ActionCreatorWithPayload, AsyncThunk } from "@reduxjs/toolkit";
-import { Edit, PlusCircle } from "lucide-react";
+import { Edit } from "lucide-react";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { SystemPermissions, SystemPermissionsActions } from "../../../auth";
@@ -80,7 +80,6 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
   const hasAuth = (action: string) =>
     SystemPermissions.hasAuth(authPermissions ?? [], systemPermissionsResources, action);
 
-  const showAddButton = hasAuth(SystemPermissionsActions.Add) && allowAdd;
   const showUpdateButton = hasAuth(SystemPermissionsActions.Update) && allowUpdate;
 
   const createEntity = (con: FilterCondition<T>): T =>
@@ -97,14 +96,14 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
           selectedId={ selectedId }
           selectedLabel={ selectedLabel }
           items={ allItems }
-          buttonClassName={ showAddButton ? "rounded-e-none" : "" }
+          buttonClassName={ showUpdateButton && selectedEntity ? "rounded-e-none" : "" }
           onSearch={ (searchInput) =>
             dispatch(entityActions.filter(new FilterCondition({ value: searchInput, columnName: labelKey })) as any) }
           isLoading={ state.isLoading }
           disabled={ state.isLoading || disabled }
           isInvalid={ isInvalid }
           onValueChange={ onValueChange }
-          onNotFound={ hasAuth(SystemPermissionsActions.Add)
+          onNotFound={ hasAuth(SystemPermissionsActions.Add) && allowAdd
             ? async (searchInput) =>
             {
               if (mode === "inline")
@@ -144,21 +143,6 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
           { ...props }
         />
       </div>
-
-      { showAddButton && (
-        <Button
-          variant="outline"
-          className={ `flex-1 ${selectedEntity && showUpdateButton ? "rounded-none" : "rounded-s-none"}` }
-          onClick={ () =>
-          {
-            setDialogMode("create");
-            setSearchInput("");
-            setOpenDialog(true);
-          } }
-        >
-          <PlusCircle className="h-4 w-4" />
-        </Button>
-      ) }
 
       { selectedEntity && showUpdateButton && (
         <Button

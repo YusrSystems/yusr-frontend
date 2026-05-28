@@ -20,7 +20,6 @@ export default function PricingMethodsSearchableSelect(
       state={ pricingMethodState }
       apiService={ new PricingMethodsApiService() }
       systemPermissionsResources={ SystemPermissionsResources.PricingMethods }
-      allowAdd={ false }
       allowUpdate={ false }
       entityActions={ {
         filter: PricingMethodSlice.entityActions.filter,
