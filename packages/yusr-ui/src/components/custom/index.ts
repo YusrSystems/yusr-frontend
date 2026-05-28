@@ -22,6 +22,7 @@ export * from "./dialogs/dialogType";
 export * from "./currency/currencyIcon";
 
 // Fields
+export * from "./fields/checkboxField";
 export * from "./fields/dateField";
 export * from "./fields/dateTimeField";
 export * from "./fields/fieldsSection";

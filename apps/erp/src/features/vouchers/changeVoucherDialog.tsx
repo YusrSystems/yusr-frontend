@@ -3,7 +3,7 @@ import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormField, NumberField, NumbertoWordsService, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, CheckboxField, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormField, NumberField, NumbertoWordsService, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import PaymentMethod, { CommissionType, PaymentMethodSlice } from "../../core/data/paymentMethod";
 import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
@@ -23,6 +23,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
     ...entity,
     date: entity?.date ? new Date(entity.date).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
     amount: entity?.amount || 0,
+    isAmountDue: entity?.isAmountDue,
     commissionAmount: entity?.commissionAmount || 0
   }), [entity]);
 
@@ -78,7 +79,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
     const newType = Number(val) as VoucherType;
     dispatch(VoucherSlice.formActions.updateFormData({
       type: newType,
-      amountDue: newType === VoucherType.Payment ? formData.amountDue : undefined,
+      isAmountDue: newType === VoucherType.Payment ? formData.isAmountDue : false,
       commissionAmount: calculateCommission(newType, formData.amount, getPaymentMethod(formData.paymentMethodId))
     }));
   };
@@ -118,7 +119,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
     >
       <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
         <FieldGroup className="gap-10">
-          <FieldsSection title={ t("vouchers.basicInfo") } columns={ 3 }>
+          <FieldsSection title={ t("vouchers.basicInfo") } columns={ 2 }>
             <SelectField
               label={ t("vouchers.voucherType") }
               required
@@ -140,27 +141,9 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
               isInvalid={ isInvalid("date") }
               error={ getError("date") }
             />
-
-            <NumberField
-              label={ t("vouchers.amount") }
-              required
-              value={ formData.amount || 0 }
-              onChange={ handleAmountChange }
-              isInvalid={ isInvalid("amount") }
-              error={ getError("amount") }
-              currency={ <CurrencyIcon /> }
-            />
-
-            <div className="col-span-full">
-              <TextField
-                label={ t("vouchers.amountInWords") }
-                value={ amountToWords }
-                onChange={ () => undefined }
-              />
-            </div>
           </FieldsSection>
 
-          <FieldsSection title={ t("vouchers.accountAndPayment") } columns={ 2 }>
+          <FieldsSection columns={ 2 }>
             <FormField
               label={ t("vouchers.account") }
               required
@@ -195,14 +178,16 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
             </FormField>
           </FieldsSection>
 
-          <FieldsSection title={ t("vouchers.financialDetails") } columns={ 2 }>
-            { isPayment && (
-              <NumberField
-                label={ t("vouchers.amountDue") }
-                value={ formData.amountDue || 0 }
-                onChange={ (val) => dispatch(VoucherSlice.formActions.updateFormData({ amountDue: val })) }
-              />
-            ) }
+          <FieldsSection columns={ 3 }>
+            <NumberField
+              label={ t("vouchers.amount") }
+              required
+              value={ formData.amount || 0 }
+              onChange={ handleAmountChange }
+              isInvalid={ isInvalid("amount") }
+              error={ getError("amount") }
+              currency={ <CurrencyIcon /> }
+            />
 
             { isReceipt && (
               <NumberField
@@ -212,6 +197,25 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
                 className="bg-muted"
               />
             ) }
+
+            { isPayment && (
+              <CheckboxField
+                required
+                id="isAmountDue"
+                label={ t("vouchers.amountDue") }
+                error={ getError("isAmountDue") }
+                isInvalid={ isInvalid("isAmountDue") }
+                checked={ formData.isAmountDue ?? false }
+                onCheckedChange={ (val) => dispatch(VoucherSlice.formActions.updateFormData({ isAmountDue: val })) }
+              />
+            ) }
+
+            <TextField
+              disabled
+              label={ t("vouchers.amountInWords") }
+              value={ amountToWords }
+              onChange={ () => undefined }
+            />
           </FieldsSection>
 
           <FieldsSection title={ t("vouchers.partyInfo") } columns={ 2 }>
@@ -239,14 +243,12 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
           ) }
 
           <FieldsSection columns={ 1 }>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <TextAreaField
-                label={ t("vouchers.description") }
-                value={ formData.description || "" }
-                onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ description: e.target.value })) }
-                rows={ 3 }
-              />
-            </div>
+            <TextAreaField
+              label={ t("vouchers.description") }
+              value={ formData.description || "" }
+              onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ description: e.target.value })) }
+              rows={ 15 }
+            />
           </FieldsSection>
         </FieldGroup>
       </div>

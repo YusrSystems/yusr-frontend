@@ -38,7 +38,7 @@ export function TextAreaInput({
             overflowY: isCollapsed ? "hidden" : "auto",
             paddingBottom: isCollapsed ? "0.5rem" : undefined
           }),
-          resize: "none"
+          resize: collapsible ? "none" : "vertical"
         } }
         onFocus={ (e) =>
         {
@@ -50,7 +50,7 @@ export function TextAreaInput({
           setIsFocused(false);
           onBlur?.(e);
         } }
-        className={ cn(className, "min-h-0", isInvalid && "border-red-600 focus-visible:ring-red-600") }
+        className={ cn(className, collapsible &&"min-h-0", isInvalid && "border-red-600 focus-visible:ring-red-600") }
       />
       { collapsible && isCollapsed && (
         <ChevronDown

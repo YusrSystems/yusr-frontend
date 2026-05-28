@@ -115,7 +115,7 @@
     "relatedInvoice": "رقم الفاتورة المرتبطة",
     "description": "البيان",
     "additionalNotes": "ملاحظات إضافية",
-    "amountDue": "المبلغ المستحق",
+    "amountDue": "المبلغ مستحق",
     "commissionAmount": "مبلغ العمولة (محسوب تلقائياً)",
     "typeRequired": "يرجى اختيار نوع السند",
     "dateRequired": "يرجى اختيار التاريخ",

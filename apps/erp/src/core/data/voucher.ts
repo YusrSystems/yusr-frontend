@@ -15,7 +15,7 @@ export default class Voucher extends BaseEntity
   public type!: VoucherType;
   public date!: string | Date;
   public amount!: number;
-  public amountDue?: number;
+  public isAmountDue!: boolean;
   public commissionAmount!: number;
   public accountId!: number;
   public paymentMethodId!: number;
