@@ -59,7 +59,8 @@ export function SideBarSecondaryMenu({
             <ThemeToggle variant="sidebar" />
           </SidebarMenuItem>
 
-          <ShareMenuItem itemsFontSize={ itemsFontSize } />
+          { /* TODO: add real company info */ }
+          { /* <ShareMenuItem itemsFontSize={ itemsFontSize } /> */ }
 
           <SidebarMenuItem key="logout">
             <SidebarMenuButton asChild onClick={ onLogout } className="w-full justify-between h-12">
