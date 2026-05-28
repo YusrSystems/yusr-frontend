@@ -101,7 +101,7 @@
     "class": "Class",
     "brand": "Brand",
     "quantity": "Quantity",
-    "cost": "Cost",
+    "cost": "Average Cost",
     "product": "Product",
     "service": "Service",
     "itemImages": "Item Images",
