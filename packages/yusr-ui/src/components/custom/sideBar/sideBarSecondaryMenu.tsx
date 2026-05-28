@@ -6,6 +6,7 @@ import { cn } from "../../../utils/cn";
 import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "../../pure/sidebar";
 import { LanguageToggle } from "../locale/languageToggle";
 import { ThemeToggle } from "../theme/themeToggle";
+import { ShareMenuItem } from "./shareMenuItem";
 
 export interface SideBarSecondaryMenuProps extends React.ComponentPropsWithoutRef<typeof SidebarGroup>
 {
@@ -57,6 +58,8 @@ export function SideBarSecondaryMenu({
             <LanguageToggle variant="sidebar" />
             <ThemeToggle variant="sidebar" />
           </SidebarMenuItem>
+
+          <ShareMenuItem itemsFontSize={ itemsFontSize } />
 
           <SidebarMenuItem key="logout">
             <SidebarMenuButton asChild onClick={ onLogout } className="w-full justify-between h-12">

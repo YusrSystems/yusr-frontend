@@ -14,7 +14,10 @@
       "default": "./src/styles/style.css"
     }
   },
-  "files": ["dist", "src/styles/style.css"],
+  "files": [
+    "dist",
+    "src/styles/style.css"
+  ],
   "scripts": {
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit"
@@ -41,6 +44,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@reduxjs/toolkit": "^2.11.2",
     "@types/node": "^24.12.0",
+    "@types/qrcode.react": "^3.0.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.0",
@@ -68,5 +72,8 @@
     "vite": "^8.0.0",
     "vite-plugin-dts": "^4.0.0",
     "yusr-ui": "workspace:*"
+  },
+  "dependencies": {
+    "qrcode.react": "^4.2.0"
   }
 }

@@ -16,7 +16,8 @@
   "searchNullOption": "اختر العمود",
   "yes": "نعم",
   "no": "لا",
-
+  "share": "مشاركة",
+  "share_company_info": "مشاركة معلومات الشركة",
   "searchableSelect": {
     "placeholder": "اختر...",
     "loading": "جاري التحميل...",
@@ -24,23 +25,19 @@
     "nullOption": "غير محدد",
     "addOption": "إضافة \"{{value}}\""
   },
-
   "pagination": {
     "previous": "السابق",
     "next": "التالي",
     "results": "نتائج {{start}} - {{end}} من {{total}}"
   },
-
   "crudRow": {
     "actions": "الإجراءات",
     "edit": "تعديل",
     "delete": "حذف"
   },
-
   "table": {
     "columns": "الأعمدة"
   },
-
   "crudEmptyTable": {
     "loadingTitle": "فضلا انتظر",
     "loadingDescription": "يتم تحميل البيانات المطلوبة",
@@ -49,13 +46,11 @@
     "errorTitle": "حدث خطأ ما",
     "errorDescription": "حدث خطأ اثناء جلب البيانات الرجاء التحقق من اتصالك الانترنت او اتصل بخدمة العملاء لدينا في حال تكراره"
   },
-
   "changeDialog": {
     "unauthorized": "غير مصرح",
     "close": "إغلاق",
     "cancel": "إلغاء"
   },
-
   "deleteDialog": {
     "title": "حذف {{entityName}}",
     "confirmMessage": "هل أنت متأكد من حذف {{entityName}} رقم {{id}}؟",
@@ -63,7 +58,6 @@
     "cancel": "إلغاء",
     "confirm": "تأكيد الحذف"
   },
-
   "saveButton": {
     "save": "حفظ",
     "saveChanges": "حفظ التغييرات",
@@ -72,11 +66,9 @@
     "cancel": "إلغاء",
     "ignoreWarnings": "تجاهل التحذيرات"
   },
-
   "dateInput": {
     "placeholder": "اختر تاريخا"
   },
-
   "numberToWords": {
     "and": "و",
     "zero": "صفر",
@@ -158,7 +150,6 @@
       "9": "تسعمائة"
     }
   },
-
   "storageFileField": {
     "pdfDocument": "PDF Document",
     "filePreview": "File preview",
@@ -170,42 +161,35 @@
     "uploadFiles": "ارفع الملفات",
     "uploadHint": "يمكنك اختيار ملفات (صور ، PDF)"
   },
-
   "errorFallback": {
     "title": "حدث خطأ غير متوقع",
     "description": "نعتذر عن ذلك، واجه النظام مشكلة تقنية أثناء تحميل هذه الصفحة. يرجى محاولة تحديث الصفحة أو العودة للصفحة الرئيسية.",
     "retry": "إعادة المحاولة",
     "goHome": "العودة للرئيسية"
   },
-
   "notFound": {
     "title": "عذراً، هذه الصفحة مفقودة!",
     "description": "يبدو أنك سلكت مساراً غير موجود، أو أن الصفحة قد تم نقلها إلى عنوان آخر. لا تقلق، يمكنك العودة دائماً إلى المسار الصحيح.",
     "goHome": "العودة للرئيسية",
     "goBack": "العودة للخلف"
   },
-
   "loading": {
     "message": "جاري تحميل بيانات {{entityName}}..."
   },
-
   "unauthorized": {
     "title": "غير مصرح بالدخول",
     "description": "عذراً، ليس لديك الصلاحيات الكافية للوصول إلى هذه الصفحة. تواصل مع مدير النظام إذا كنت تعتقد أن هذا خطأ.",
     "goHome": "العودة للرئيسية",
     "goBack": "العودة للخلف"
   },
-
   "storageFile": {
     "fileTooLarge": "الملف \"{{name}}\" كبير جداً.",
     "fileTypeNotSupported": "نوع الملف \"{{name}}\" غير مدعوم."
   },
-
   "zoomableImage": {
     "title": "انقر للتكبير",
     "zoom": "تكبير"
   },
-
   "api": {
     "sessionExpired": "انتهت صلاحية الدخول",
     "loginAgain": "سجل الدخول مجددًا.",
@@ -218,7 +202,6 @@
     "updateSuccess": "تم تحديث المعلومات بنجاح",
     "deleteSuccess": "تمت إزالة السجل بنجاح"
   },
-
   "validators": {
     "required": "هذا الحقل مطلوب",
     "min": "القيمة يجب أن تكون أكبر من {{min}}",

@@ -16,7 +16,8 @@
   "searchNullOption": "Choose a column",
   "yes": "Yes",
   "no": "No",
-
+  "share": "Share",
+  "share_company_info": "Share Company Information",
   "searchableSelect": {
     "placeholder": "Select...",
     "loading": "Loading...",
@@ -24,23 +25,19 @@
     "nullOption": "Not specified",
     "addOption": "Add \"{{value}}\""
   },
-
   "pagination": {
     "previous": "Previous",
     "next": "Next",
     "results": "Results {{start}} - {{end}} of {{total}}"
   },
-
   "table": {
     "columns": "Columns"
   },
-
   "crudRow": {
     "actions": "Actions",
     "edit": "Edit",
     "delete": "Delete"
   },
-
   "crudEmptyTable": {
     "loadingTitle": "Please wait",
     "loadingDescription": "Loading requested data",
@@ -49,13 +46,11 @@
     "errorTitle": "Something went wrong",
     "errorDescription": "An error occurred while fetching data. Please check your internet connection or contact our customer support if this persists"
   },
-
   "changeDialog": {
     "unauthorized": "Unauthorized",
     "close": "Close",
     "cancel": "Cancel"
   },
-
   "deleteDialog": {
     "title": "Delete {{entityName}}",
     "confirmMessage": "Are you sure you want to delete {{entityName}} #{{id}}?",
@@ -63,7 +58,6 @@
     "cancel": "Cancel",
     "confirm": "Confirm Delete"
   },
-
   "saveButton": {
     "save": "Save",
     "saveChanges": "Save Changes",
@@ -72,11 +66,9 @@
     "cancel": "Cancel",
     "ignoreWarnings": "Ignore Warnings"
   },
-
   "dateInput": {
     "placeholder": "Select a date"
   },
-
   "numberToWords": {
     "and": "and",
     "zero": "zero",
@@ -158,7 +150,6 @@
       "9": "nine hundred"
     }
   },
-
   "storageFileField": {
     "pdfDocument": "PDF Document",
     "filePreview": "File preview",
@@ -170,42 +161,35 @@
     "uploadFiles": "Upload files",
     "uploadHint": "You can select files (images, PDF)"
   },
-
   "errorFallback": {
     "title": "An unexpected error occurred",
     "description": "We apologize, the system encountered a technical issue while loading this page. Please try refreshing the page or return to the homepage.",
     "retry": "Retry",
     "goHome": "Go to Homepage"
   },
-
   "notFound": {
     "title": "Oops, this page is missing!",
     "description": "It seems you've taken a path that doesn't exist, or the page has been moved to another address. Don't worry, you can always return to the right path.",
     "goHome": "Go to Homepage",
     "goBack": "Go Back"
   },
-
   "loading": {
     "message": "Loading {{entityName}} data..."
   },
-
   "unauthorized": {
     "title": "Unauthorized Access",
     "description": "Sorry, you don't have sufficient permissions to access this page. Contact your system administrator if you believe this is an error.",
     "goHome": "Go to Dashboard",
     "goBack": "Go Back"
   },
-
   "storageFile": {
     "fileTooLarge": "File \"{{name}}\" is too large.",
     "fileTypeNotSupported": "File type \"{{name}}\" is not supported."
   },
-
   "zoomableImage": {
     "title": "Click to zoom",
     "zoom": "Zoom"
   },
-
   "api": {
     "sessionExpired": "Session expired",
     "loginAgain": "Please log in again.",
@@ -218,7 +202,6 @@
     "updateSuccess": "Information updated successfully",
     "deleteSuccess": "Record removed successfully"
   },
-
   "validators": {
     "required": "This field is required",
     "min": "Value must be greater than {{min}}",

@@ -11,7 +11,8 @@
   "systemTheme": "System",
   "searchPlaceholder": "Search...",
   "searchNullOption": "Choose a column",
-
+  "share": "Share",
+  "share_company_info": "Share Company Info",
   "searchableSelect": {
     "placeholder": "Select...",
     "loading": "Loading...",
