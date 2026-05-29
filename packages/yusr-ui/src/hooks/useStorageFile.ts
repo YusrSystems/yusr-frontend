@@ -154,15 +154,11 @@ export function useStorageFile<T>(
               f.contentType ?? "application/octet-stream",
               storageType
             );
-            const cacheControl = storageType === StorageType.Private
-              ? "private, no-cache, no-store, must-revalidate"
-              : "public, max-age=31536000, immutable";
 
             const uploadRes = await fetch(uploadUrl, {
               method: "PUT",
               headers: {
-                "Content-Type": f.contentType ?? "application/octet-stream",
-                "Cache-Control": cacheControl
+                "Content-Type": f.contentType ?? "application/octet-stream"
               },
               body: f.file
             });
