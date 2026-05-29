@@ -4,11 +4,11 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import type { ResourcePermissions } from "../../../auth";
-import type { BaseEntity, FilterCondition } from "../../../entities";
+import type { BaseEntity } from "../../../entities";
 import type { BaseApiService } from "../../../networking";
 import type { IDialogState } from "../../../state/interfaces/iDialogState";
 import type { IEntityState } from "../../../state/interfaces/iEntityState";
-import type { ColumnName, FilterResult } from "../../../types";
+import type { FilterResult } from "../../../types";
 import { Dialog, DialogContent } from "../../pure/dialog";
 import { TableBody } from "../../pure/table";
 import { DeleteDialog } from "../dialogs/deleteDialog";
@@ -25,7 +25,7 @@ import useCrudPageRoute from "./useCrudPageRoute";
 
 export interface CrudActions<T extends BaseEntity>
 {
-  filter: AsyncThunk<FilterResult<T> | undefined, FilterCondition<T> | undefined, object>;
+  filter: AsyncThunk<FilterResult<T> | undefined, string | undefined, object>;
   openChangeDialog: (entity: T) => UnknownAction;
   openDeleteDialog: (entity: T) => UnknownAction;
   setIsChangeDialogOpen: (open: boolean) => UnknownAction;
@@ -44,10 +44,9 @@ export type CrudPageProps<T extends BaseEntity> = PropsWithChildren & {
   entityName: string;
   title: string;
   addNewItemTitle: string;
-  onConditionChange?: (condition: FilterCondition<T> | undefined) => void;
+  onSearchTextChange?: (searchText?: string) => void;
   actionButtons?: React.ReactNode[];
   cards: CardProps[];
-  columnsToFilter: ColumnName<T>[];
   service: BaseApiService<T>;
   tableHeadRows: CrudTableHeadRow[];
   tableRowMapper: (entity: T) => TableBodyRowInfo[];
@@ -68,10 +67,9 @@ export function CrudPage<T extends BaseEntity>(
     entityName,
     title,
     addNewItemTitle,
-    onConditionChange,
+    onSearchTextChange,
     actionButtons = [],
     cards,
-    columnsToFilter,
     actions,
     service,
     entityState,
@@ -122,13 +120,12 @@ export function CrudPage<T extends BaseEntity>(
 
       <CrudTableCard cards={ cards } />
 
-      <SearchInput<T>
-        columnsNames={ columnsToFilter }
-        onSearch={ (condition) =>
+      <SearchInput
+        onSearch={ (searchText) =>
         {
           dispatch(actions.setCurrentPage(1));
-          onConditionChange?.(condition);
-          dispatch(actions.filter(condition) as any);
+          onSearchTextChange?.(searchText);
+          dispatch(actions.filter(searchText) as any);
         } }
       />
 

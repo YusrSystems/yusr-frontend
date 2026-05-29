@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import PricingMethodsApiService from "../networking/PricingMethodsApiService";
 
 export default class PricingMethod extends BaseEntity
@@ -11,14 +11,6 @@ export default class PricingMethod extends BaseEntity
     super();
     Object.assign(this, init);
   }
-}
-
-export class PricingMethodFilterColumns
-{
-  public static columnsNames = (t: TFunction<"stocking">): ColumnName<PricingMethod>[] => [{
-    label: t("pricingMethods.methodName"),
-    value: "name"
-  }];
 }
 
 export class PricingMethodValidationRules

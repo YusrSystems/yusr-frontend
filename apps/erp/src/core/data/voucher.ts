@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import VouchersApiService from "../networking/voucherApiService";
 import type PaymentMethod from "./paymentMethod";
 
@@ -32,16 +32,6 @@ export default class Voucher extends BaseEntity
     super();
     Object.assign(this, init);
   }
-}
-
-export class VoucherFilterColumns
-{
-  public static columnsNames = (
-    t: TFunction<"accounting">
-  ): ColumnName<Voucher>[] => [{ label: t("vouchers.voucherId"), value: "id" }, {
-    label: t("vouchers.account"),
-    value: "accountName"
-  }, { label: t("vouchers.description"), value: "description" }];
 }
 
 export class VoucherValidationRules

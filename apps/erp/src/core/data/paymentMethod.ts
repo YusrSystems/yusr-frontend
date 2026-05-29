@@ -1,6 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import PaymentMethodsApiService from "../networking/paymentMethodApiService";
 
 export const CommissionType = {
@@ -22,14 +21,6 @@ export default class PaymentMethod extends BaseEntity
     super();
     Object.assign(this, init);
   }
-}
-
-export class PaymentMethodFilterColumns
-{
-  public static columnsNames = (t: TFunction<"accounting">): ColumnName<PaymentMethod>[] => [{
-    label: t("paymentMethods.name"),
-    value: "name"
-  }];
 }
 
 export class PaymentMethodValidationRules

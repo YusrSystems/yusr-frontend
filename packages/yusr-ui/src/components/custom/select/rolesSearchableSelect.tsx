@@ -16,6 +16,7 @@ export function RolesSearchableSelect(
   return (
     <ChangableSearchableSelect<Role>
       labelKey="name"
+      createKey="name"
       mode="inline"
       state={ roleState }
       apiService={ new RolesApiService() }

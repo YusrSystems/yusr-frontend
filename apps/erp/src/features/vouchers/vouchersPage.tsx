@@ -1,10 +1,11 @@
+import type { VouchersListReportRequest } from "@/core/data/report/vouchersListReportRequest";
 import { FileText } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, CurrencyIcon, FilterCondition, NumbertoWordsService, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { CrudPage, CurrencyIcon, NumbertoWordsService, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import ReportConstants from "../../core/data/report/reportConstants";
-import Voucher, { VoucherFilterColumns, VoucherSlice, VoucherType } from "../../core/data/voucher";
+import Voucher, { VoucherSlice, VoucherType } from "../../core/data/voucher";
 import VouchersApiService from "../../core/networking/voucherApiService";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "../reports/reportButton";
@@ -23,24 +24,24 @@ export default function VouchersPage()
   );
 
   const service = useMemo(() => new VouchersApiService(), []);
-  const [condition, setCondition] = useState<FilterCondition<Voucher> | undefined>(undefined);
+  const [searchText, setSearchText] = useState<string | undefined>(undefined);
 
   return (
     <CrudPage<Voucher>
       title={ t("vouchers.title") }
       entityName={ t("vouchers.entityName") }
       addNewItemTitle={ t("vouchers.addNewTitle") }
-      onConditionChange={ setCondition }
+      onSearchTextChange={ setSearchText }
       actionButtons={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],
           SystemPermissionsResources.ReportVoucherList,
           SystemPermissionsActions.Get
         )
         ? [
-          <ReportButton
+          <ReportButton<VouchersListReportRequest>
             reportName={ ReportConstants.VouchersList }
             request={ {
-              condition: condition
+              searchText: searchText
             } }
           />
         ]
@@ -59,7 +60,6 @@ export default function VouchersPage()
         data: (voucherState.entities?.count ?? 0).toString(),
         icon: <FileText className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ VoucherFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: t("vouchers.voucherId"), rowStyles: "w-24" },

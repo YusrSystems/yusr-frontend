@@ -1,5 +1,4 @@
-import type { FilterCondition } from "yusr-ui";
-import type Invoice from "../invoice";
+import type { InvoiceType } from "../invoice";
 import type { BaseReportRequest } from "./baseReportRequest";
 
 export const InvoicesListReportType = {
@@ -11,7 +10,8 @@ export type InvoicesListReportType = typeof InvoicesListReportType[keyof typeof 
 
 export class InvoicesListReportRequest implements BaseReportRequest
 {
-  condition?: FilterCondition<Invoice>;
+  types: InvoiceType[] = [];
+  searchText?: string;
   fromDate?: string | null;
   toDate?: string | null;
   reportType: InvoicesListReportType;

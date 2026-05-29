@@ -3,12 +3,12 @@ import { Copy, FilePlusCorner, FileTextIcon, RotateCw, Undo2 } from "lucide-reac
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { Button, ContextMenuItem, CrudPage, CurrencyIcon, DropdownMenuItem, FilterCondition, type IDialogState, type IEntityState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, type TableBodyRowInfo, Tooltip, TooltipContent, TooltipTrigger } from "yusr-ui";
+import { Button, ContextMenuItem, CrudPage, CurrencyIcon, DropdownMenuItem, type IDialogState, type IEntityState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, type TableBodyRowInfo, Tooltip, TooltipContent, TooltipTrigger } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type Account from "../../core/data/account";
 import type { AccountSliceType } from "../../core/data/account";
-import Invoice, { EInvoiceStatus, InvoiceFilterColumns, InvoiceSlice, InvoiceStatus, InvoiceType } from "../../core/data/invoice";
-import { InvoicesListReportType } from "../../core/data/report/invoicesListReportType";
+import Invoice, { EInvoiceStatus, InvoiceSlice, InvoiceStatus, InvoiceType } from "../../core/data/invoice";
+import { InvoicesListReportRequest, InvoicesListReportType } from "../../core/data/report/invoicesListReportType";
 import ReportConstants from "../../core/data/report/reportConstants";
 import { EInvoicingEnvironmentType } from "../../core/data/setting";
 import InvoicesApiService from "../../core/networking/invoiceApiService";
@@ -48,7 +48,7 @@ export default function InvoicesPage({
 {
   const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
-  const [condition, setCondition] = useState<FilterCondition<Invoice> | undefined>(undefined);
+  const [searchText, setSearchText] = useState<string | undefined>(undefined);
   const [customMode, setCustomMode] = useState<InvoiceDialogMode | undefined>(undefined);
   const invoiceState = useAppSelector((state) => state[stateKey] as IEntityState<Invoice>);
   const authState = useAppSelector((state) => state.auth);
@@ -394,20 +394,20 @@ export default function InvoicesPage({
       title={ title }
       entityName={ entityName ?? t("invoices.entityName") }
       addNewItemTitle={ addNewItemTitle ?? t("invoices.addNewTitle") }
-      onConditionChange={ setCondition }
+      onSearchTextChange={ setSearchText }
       actionButtons={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],
           SystemPermissionsResources.ReportInvoiceList,
           SystemPermissionsActions.Get
         )
         ? [
-          <ReportButton
+          <ReportButton<InvoicesListReportRequest>
             reportName={ ReportConstants.InvoicesList }
             request={ {
               types: fixedType === InvoiceType.Sell
                 ? [InvoiceType.Sell, InvoiceType.SellReturn, InvoiceType.Quotation]
                 : [InvoiceType.Purchase, InvoiceType.PurchaseReturn],
-              condition: condition,
+              searchText: searchText,
               reportType: InvoicesListReportType.InvoicesList
             } }
           />
@@ -437,7 +437,6 @@ export default function InvoicesPage({
         data: (invoiceState.entities?.count ?? 0).toString(),
         icon: <FileTextIcon className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ InvoiceFilterColumns.columnsNames(t) }
       tableHeadRows={ getTableHeadRows() }
       tableRowMapper={ (invoice: Invoice) => getTableRowMapper(invoice) }
       actions={ {

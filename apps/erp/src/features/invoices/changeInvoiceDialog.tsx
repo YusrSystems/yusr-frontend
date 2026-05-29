@@ -126,7 +126,7 @@ export default function ChangeInvoiceDialog({
         pageNumber: 1,
         rowsPerPage: 100,
         storeId: formData.type === InvoiceType.Purchase ? undefined : formData.storeId ?? 0,
-        request: new FilterByTypeRequest({ condition: undefined, types: [ItemType.Product, ItemType.Service] })
+        request: new FilterByTypeRequest({ types: [ItemType.Product, ItemType.Service] })
       }));
     }
   }, [dispatch, formData.storeId]);

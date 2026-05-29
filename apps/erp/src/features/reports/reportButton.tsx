@@ -4,13 +4,13 @@ import { Button } from "yusr-ui";
 import type { BaseReportRequest } from "../../core/data/report/baseReportRequest";
 import ReportApiService from "../../core/networking/reportApiService";
 
-export type ReportButtonProps = {
+export type ReportButtonProps<T extends BaseReportRequest> = {
   reportName: string;
-  request: BaseReportRequest;
+  request: T;
   fileName?: string;
 };
 
-export default function ReportButton({ reportName, request, fileName = "report" }: ReportButtonProps)
+export default function ReportButton<T extends BaseReportRequest>({ reportName, request, fileName = "report" }: ReportButtonProps<T>)
 {
   const service = new ReportApiService();
 

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type ItemTransfer from "../../core/data/itemTransfer";
-import { ItemTransferFilterColumns, ItemTransferSlice } from "../../core/data/itemTransfer";
+import { ItemTransferSlice } from "../../core/data/itemTransfer";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ItemTransferApiService from "../../core/networking/itemTransferApiService";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -44,7 +44,6 @@ export default function ItemTransfersPage()
         data: (itemTransferState.entities?.count ?? 0).toString(),
         icon: <ArrowLeftRightIcon className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ ItemTransferFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "w-12" },
         { rowName: t("itemTransfers.transferId"), rowStyles: "w-24" },

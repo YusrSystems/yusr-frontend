@@ -2,25 +2,19 @@ import { Search } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDebouncedCallback } from "use-debounce";
-import type { FilterCondition } from "../../../entities";
-import type { ColumnName } from "../../../types";
 import { Input } from "../../pure/input";
 
-type SearchInputParams<T> = {
-  columnsNames: ColumnName<T>[];
-  onSearch: (condition: FilterCondition<T> | undefined) => void;
+type SearchInputParams = {
+  onSearch: (searchText?: string) => void;
   onType?: (value: string) => void;
 };
 
-export function SearchInput<T>({ columnsNames, onSearch, onType }: SearchInputParams<T>)
+export function SearchInput({ onSearch, onType }: SearchInputParams)
 {
   const { t } = useTranslation("common");
-  const [filterCondition, setFilterCondition] = useState<FilterCondition<T>>({
-    value: "",
-    columnName: columnsNames[0]?.value
-  });
+  const [searchText, setSearchText] = useState<string>("");
 
-  const debouncedAction = useDebouncedCallback((value: string, column: keyof T) =>
+  const debouncedAction = useDebouncedCallback((value: string) =>
   {
     if (!value.trim())
     {
@@ -28,14 +22,14 @@ export function SearchInput<T>({ columnsNames, onSearch, onType }: SearchInputPa
     }
     else
     {
-      onSearch({ value: value, columnName: column });
+      onSearch(value);
     }
   }, 500);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
   {
     const val = e.target.value;
-    setFilterCondition((prev) => ({ ...prev, value: val }));
+    setSearchText(val);
     onType?.(val);
 
     if (!val)
@@ -45,7 +39,7 @@ export function SearchInput<T>({ columnsNames, onSearch, onType }: SearchInputPa
     }
     else
     {
-      debouncedAction(val, filterCondition.columnName);
+      debouncedAction(val);
     }
   };
 
@@ -56,7 +50,7 @@ export function SearchInput<T>({ columnsNames, onSearch, onType }: SearchInputPa
         <div className="relative flex-1 z-10">
           <Search className="absolute left-3 rtl:right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            value={ filterCondition.value }
+            value={ searchText }
             onChange={ handleInputChange }
             placeholder={ t("searchPlaceholder") }
             className="ps-10 bg-background border focus-visible:ring-1"

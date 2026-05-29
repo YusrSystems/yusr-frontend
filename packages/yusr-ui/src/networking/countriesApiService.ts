@@ -1,4 +1,4 @@
-import type { Country, FilterCondition } from "../entities";
+import type { Country } from "../entities";
 import type { FilterResult, RequestResult } from "../types";
 import { ApiConstants } from "./apiConstants";
 import { BaseFilterableApiService } from "./baseFilterableApiService";
@@ -11,12 +11,12 @@ export class CountriesApiService extends BaseFilterableApiService<Country>
   async Filter(
     pageNumber: number,
     rowsPerPage: number,
-    condition?: FilterCondition<Country>
+    searchText?: string
   ): Promise<RequestResult<FilterResult<Country>>>
   {
     return await YusrApiHelper.Post(
       `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
-      condition
+      searchText
     );
   }
 }

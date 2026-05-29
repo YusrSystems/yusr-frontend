@@ -1,7 +1,6 @@
 import { type TFunction } from "i18next";
 import { RolesApiService } from "../networking";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
-import type { ColumnName } from "../types";
 import { type ValidationRule, Validators } from "../validation";
 import { BaseEntity } from "./baseEntity";
 
@@ -16,11 +15,6 @@ export class Role extends BaseEntity
     super();
     Object.assign(this, init);
   }
-}
-
-export class RoleFilterColumns
-{
-  public static columnsNames: ColumnName<Role>[] = [{ label: "", value: "name" }];
 }
 
 export class RoleValidationRules

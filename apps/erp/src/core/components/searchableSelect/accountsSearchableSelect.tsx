@@ -55,6 +55,7 @@ export default function AccountsSearchableSelect(
       filterDataOutside?: boolean;
     }>
       labelKey="name"
+      createKey="name"
       selectedId={ selectedId }
       selectedLabel={ selectedLabel }
       items={ items }

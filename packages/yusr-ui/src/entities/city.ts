@@ -1,6 +1,5 @@
 import { CitiesApiService } from "../networking";
 import { createGenericEntitySlice } from "../state";
-import type { ColumnName } from "../types";
 import { BaseEntity } from "./baseEntity";
 import type { Country } from "./country";
 
@@ -15,11 +14,6 @@ export class City extends BaseEntity
     super();
     Object.assign(this, init);
   }
-}
-
-export class CityFilterColumns
-{
-  public static columnsNames: ColumnName<City>[] = [{ label: "", value: "name" }];
 }
 
 export class CitySlice

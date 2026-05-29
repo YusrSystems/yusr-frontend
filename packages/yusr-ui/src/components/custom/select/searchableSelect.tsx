@@ -23,7 +23,7 @@ export type BasicSearchableSelectParams<T extends BaseEntity> = {
 
 type SearchableSelectParams<T extends BaseEntity> = BasicSearchableSelectParams<T> & {
   renderContent: (item: T) => React.ReactNode;
-  onSearch: (searchInput: string) => void;
+  onSearch: (searchInput?: string) => void;
   onNotFound?: (searchInput: string) => void;
   onDelete?: (entity: T) => Promise<boolean>;
 };
@@ -120,18 +120,17 @@ export function SearchableSelect<T extends BaseEntity>(
       }
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start" dir={ i18n.dir() }>
         { /* Search Input Header */ }
-        <SearchInput<T>
-          columnsNames={ [] }
-          onSearch={ (con) =>
+        <SearchInput
+          onSearch={ (searchInput) =>
           {
-            onSearch(con?.value ?? "");
+            onSearch(searchInput);
             if (onNotFound)
             {
               // Only update typedValue when there's an actual value
               // Don't reset it when con is undefined (that just means "fetch all")
-              if (con?.value !== undefined)
+              if (searchInput !== undefined)
               {
-                setSearchInput(con.value);
+                setSearchInput(searchInput);
               }
             }
           } }

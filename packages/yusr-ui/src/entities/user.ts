@@ -1,7 +1,6 @@
 import { type TFunction } from "i18next";
 import { UsersApiService } from "../networking";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
-import type { ColumnName } from "../types";
 import { type ValidationRule, Validators } from "../validation";
 import { BaseEntity } from "./baseEntity";
 import type { Branch } from "./branch";
@@ -22,14 +21,6 @@ export class User extends BaseEntity
     super();
     Object.assign(this, init);
   }
-}
-
-export class UserFilterColumns
-{
-  public static columnsNames: ColumnName<User>[] = [{
-    label: "",
-    value: "username"
-  }];
 }
 
 export class UserValidationRules

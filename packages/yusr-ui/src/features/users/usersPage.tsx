@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPage } from "../../components/custom";
-import { User, UserFilterColumns, UserSlice } from "../../entities";
+import { User, UserSlice } from "../../entities";
 import { UsersApiService } from "../../networking";
 import type { YusrRootState } from "../../state";
 import { ChangeUserDialog } from "./changeUserDialog";
@@ -40,7 +40,6 @@ export function UsersPage()
         data: (userState.entities?.count ?? 0).toString(),
         icon: <User2Icon className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ UserFilterColumns.columnsNames }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: t("users.userId"), rowStyles: "w-30" },

@@ -4,7 +4,6 @@ export * from "./city";
 export * from "./country";
 export * from "./currency";
 export * from "./filterByTypeRequest";
-export * from "./filterCondition";
 export * from "./loginRequest";
 export * from "./role";
 export * from "./storageFile";

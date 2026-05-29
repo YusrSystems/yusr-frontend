@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type StorageFile, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type StorageFile, type ValidationRule, Validators } from "yusr-ui";
 import ItemsApiService from "../networking/itemApiService";
 
 export const ItemType = {
@@ -119,16 +119,6 @@ export class BarcodeResult
   {
     Object.assign(this, init);
   }
-}
-
-export class ItemFilterColumns
-{
-  public static columnsNames = (
-    t: TFunction<"stocking">
-  ): ColumnName<Item>[] => [{ label: t("items.itemId"), value: "id" }, { label: t("items.itemName"), value: "name" }, {
-    label: t("items.class"),
-    value: "class"
-  }];
 }
 
 export class ItemValidationRules

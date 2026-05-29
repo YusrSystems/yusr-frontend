@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import BalanceTransfersApiService from "../networking/balanceTransferApiService";
 
 export default class BalanceTransfer extends BaseEntity
@@ -17,16 +17,6 @@ export default class BalanceTransfer extends BaseEntity
     super();
     Object.assign(this, init);
   }
-}
-
-export class BalanceTransferFilterColumns
-{
-  public static columnsNames = (
-    t: TFunction<"accounting">
-  ): ColumnName<BalanceTransfer>[] => [{ label: t("balanceTransfers.transferId"), value: "id" }, {
-    label: t("balanceTransfers.description"),
-    value: "description"
-  }];
 }
 
 export class BalanceTransferValidationRules

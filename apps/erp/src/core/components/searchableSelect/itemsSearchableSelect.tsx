@@ -16,6 +16,7 @@ export default function ItemsSearchableSelect(
   return (
     <ChangableSearchableSelect<Item>
       labelKey="name"
+      createKey="name"
       mode="dialog"
       state={ itemState }
       apiService={ new ItemsApiService() }

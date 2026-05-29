@@ -15,6 +15,7 @@ export default function TaxesSearchableSelect(
   return (
     <ChangableSearchableSelect<Tax>
       labelKey="name"
+      createKey="name"
       state={ taxState }
       apiService={ new TaxesApiService() }
       systemPermissionsResources={ SystemPermissionsResources.Taxes }

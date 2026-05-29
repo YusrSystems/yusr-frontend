@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPage } from "../../components/custom";
-import { type Role, RoleFilterColumns, RoleSlice, User } from "../../entities";
+import { type Role, RoleSlice, User } from "../../entities";
 import { RolesApiService } from "../../networking";
 import { useAppDispatch, type YusrRootState } from "../../state";
 import { ChangeRoleDialog, type ChangeRoleDialogAdditionalProps } from "./changeRoleDialog";
@@ -45,7 +45,6 @@ export function RolesPage({ onUpdateLoggedInUser, ChangeRoleDialogAdditionalProp
         data: (roleState.entities?.count ?? 0).toString(),
         icon: <Settings2 className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ RoleFilterColumns.columnsNames }
       tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
         rowName: t("roles.roleId"),
         rowStyles: "w-30"

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPage } from "../../components/custom";
-import { Branch, BranchFilterColumns, BranchSlice } from "../../entities";
+import { Branch, BranchSlice } from "../../entities";
 import { BranchesApiService } from "../../networking";
 import type { YusrRootState } from "../../state";
 import { ChangeBranchDialog } from "./changeBranchDialog";
@@ -40,7 +40,6 @@ export function BranchesPage()
         data: (branchState.entities?.count ?? 0).toString(),
         icon: <Building className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ BranchFilterColumns.columnsNames }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: t("branches.branchId"), rowStyles: "w-30" },

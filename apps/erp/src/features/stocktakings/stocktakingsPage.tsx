@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import ReportConstants from "../../core/data/report/reportConstants";
-import Stocktaking, { StocktakingFilterColumns, StocktakingSlice } from "../../core/data/stocktaking";
+import Stocktaking, { StocktakingSlice } from "../../core/data/stocktaking";
 import StocktakingsApiService from "../../core/networking/stocktakingApiService";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "../reports/reportButton";
@@ -43,7 +43,6 @@ export default function StocktakingsPage()
         data: (stocktakingState.entities?.count ?? 0).toString(),
         icon: <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ StocktakingFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: t("stocktakings.stocktakingId"), rowStyles: "w-32" },

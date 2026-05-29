@@ -17,6 +17,7 @@ export function BranchesSearchableSelect(
   return (
     <ChangableSearchableSelect<Branch>
       labelKey="name"
+      createKey="name"
       state={ branchState }
       apiService={ new BranchesApiService() }
       systemPermissionsResources={ YusrSystemPermissionsResources.Branches }

@@ -1,6 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import TaxesApiService from "../networking/taxesApiService";
 
 export class Tax extends BaseEntity
@@ -14,13 +13,6 @@ export class Tax extends BaseEntity
     super();
     Object.assign(this, init);
   }
-}
-
-export class TaxFilterColumns
-{
-  public static columnsNames = (t: TFunction<"accounting">): ColumnName<Tax>[] => [
-    { label: t("taxes.taxName"), value: "name" }
-  ];
 }
 
 export class TaxValidationRules

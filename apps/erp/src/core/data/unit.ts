@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import UnitsApiService from "../networking/unitApiService";
 
 export default class Unit extends BaseEntity
@@ -11,14 +11,6 @@ export default class Unit extends BaseEntity
     super();
     Object.assign(this, init);
   }
-}
-
-export class UnitFilterColumns
-{
-  public static columnsNames = (t: TFunction<"stocking">): ColumnName<Unit>[] => [{
-    label: t("units.unitName"),
-    value: "name"
-  }];
 }
 
 export class UnitValidationRules

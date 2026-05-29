@@ -16,6 +16,7 @@ export default function StoresSearchableSelect(
   return (
     <ChangableSearchableSelect<Store>
       labelKey="name"
+      createKey="name"
       mode="inline"
       state={ storeState }
       apiService={ new StoresApiService() }

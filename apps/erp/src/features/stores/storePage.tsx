@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type Store from "../../core/data/store";
-import { StoreFilterColumns, StoreSlice } from "../../core/data/store";
+import { StoreSlice } from "../../core/data/store";
 import StoresApiService from "../../core/networking/storeApiService";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ChangeStoreDialog from "./changeStoreDialog";
@@ -38,7 +38,6 @@ export default function StoresPage()
         data: (storeState.entities?.count ?? 0).toString(),
         icon: <Warehouse className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ StoreFilterColumns.columnsNames(t) }
       tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
         rowName: t("stores.storeId"),
         rowStyles: "w-30"

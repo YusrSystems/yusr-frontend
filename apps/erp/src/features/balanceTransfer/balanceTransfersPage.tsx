@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CrudPage, CurrencyIcon, NumbertoWordsService, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import BalanceTransfer, { BalanceTransferFilterColumns, BalanceTransferSlice } from "../../core/data/balanceTransfer";
+import BalanceTransfer, { BalanceTransferSlice } from "../../core/data/balanceTransfer";
 import ReportConstants from "../../core/data/report/reportConstants";
 import BalanceTransfersApiService from "../../core/networking/balanceTransferApiService";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -43,7 +43,6 @@ export default function BalanceTransfersPage()
         data: (transferState.entities?.count ?? 0).toString(),
         icon: <ArrowRightLeft className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ BalanceTransferFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: t("balanceTransfers.transferId"), rowStyles: "w-24" },

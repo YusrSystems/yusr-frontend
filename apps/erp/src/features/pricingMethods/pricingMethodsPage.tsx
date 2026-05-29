@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type PricingMethod from "../../core/data/pricingMethod";
-import { PricingMethodFilterColumns, PricingMethodSlice } from "../../core/data/pricingMethod";
+import { PricingMethodSlice } from "../../core/data/pricingMethod";
 import PricingMethodsApiService from "../../core/networking/PricingMethodsApiService";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ChangePricingMethodDialog from "./changePricingMethodDialog";
@@ -47,7 +47,6 @@ export default function PricingMethodsPage()
         data: (pricingMethodState.entities?.count ?? 0).toString(),
         icon: <TagIcon className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ PricingMethodFilterColumns.columnsNames(t) }
       tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
         rowName: t("pricingMethods.methodId"),
         rowStyles: "w-30"

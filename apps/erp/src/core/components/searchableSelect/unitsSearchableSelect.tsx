@@ -16,6 +16,7 @@ export default function UnitsSearchableSelect(
   return (
     <ChangableSearchableSelect<Unit>
       labelKey="name"
+      createKey="name"
       mode="inline"
       state={ unitState }
       apiService={ new UnitsApiService() }

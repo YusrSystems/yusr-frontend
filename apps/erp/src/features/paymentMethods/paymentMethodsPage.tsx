@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type PaymentMethod from "../../core/data/paymentMethod";
-import { CommissionType, PaymentMethodFilterColumns, PaymentMethodSlice } from "../../core/data/paymentMethod";
+import { CommissionType, PaymentMethodSlice } from "../../core/data/paymentMethod";
 import PaymentMethodsApiService from "../../core/networking/paymentMethodApiService";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ChangePaymentMethodDialog from "./changePaymentMethodDialog";
@@ -30,9 +30,9 @@ export default function PaymentMethodsPage()
 
   return (
     <CrudPage<PaymentMethod>
-      title={t("paymentMethods.title")}
-      entityName={t("paymentMethods.entityName")}
-      addNewItemTitle={t("paymentMethods.addNewTitle")}
+      title={ t("paymentMethods.title") }
+      entityName={ t("paymentMethods.entityName") }
+      addNewItemTitle={ t("paymentMethods.addNewTitle") }
       permissions={ permissions }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
@@ -47,7 +47,6 @@ export default function PaymentMethodsPage()
         data: (paymentMethodState.entities?.count ?? 0).toString(),
         icon: <CreditCardIcon className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ PaymentMethodFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: t("paymentMethods.methodId"), rowStyles: "w-20" },

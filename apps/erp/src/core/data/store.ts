@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterCondition, type IEntityState, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type IEntityState, type ValidationRule, Validators } from "yusr-ui";
 import StoresApiService from "../networking/storeApiService";
 
 export default class Store extends BaseEntity
@@ -16,14 +16,6 @@ export default class Store extends BaseEntity
   }
 }
 
-export class StoreFilterColumns
-{
-  public static columnsNames = (t: TFunction<"stocking">): ColumnName<Store>[] => [{
-    label: t("stores.storeName"),
-    value: "name"
-  }];
-}
-
 export class StoreValidationRules
 {
   public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<Store>>[] => [{
@@ -37,10 +29,10 @@ const storeService = new StoresApiService();
 
 const filterAll = createAsyncThunk(
   "store/filterAll",
-  async (condition: FilterCondition<Store> | undefined, { getState }) =>
+  async (searchText: string | undefined, { getState }) =>
   {
     const state = (getState() as never)["store"] as IEntityState<Store>;
-    const result = await storeService.FilterAll(state.currentPage, state.rowsPerPage, condition);
+    const result = await storeService.FilterAll(state.currentPage, state.rowsPerPage, searchText);
     return result?.data;
   }
 );

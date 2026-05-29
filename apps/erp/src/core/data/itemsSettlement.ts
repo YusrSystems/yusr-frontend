@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import ItemsSettlementsApiService from "../networking/itemsSettlementsApiService";
 import type { IStocktaking, IStocktakingItem } from "./stocktaking";
 
@@ -41,16 +41,6 @@ export default class ItemsSettlement extends BaseEntity implements IStocktaking
       this.stocktakingItems = this.itemsSettlementItems;
     }
   }
-}
-
-export class ItemsSettlementFilterColumns
-{
-  public static columnsNames = (
-    t: TFunction<"stocking">
-  ): ColumnName<ItemsSettlement>[] => [{ label: t("itemsSettlements.settlementId"), value: "id" }, {
-    label: t("itemsSettlements.store"),
-    value: "storeName"
-  }, { label: t("itemsSettlements.description"), value: "description" }];
 }
 
 export class ItemsSettlementValidationRules

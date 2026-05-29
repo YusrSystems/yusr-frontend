@@ -18,6 +18,7 @@ export default function PaymentMethodsSearchableSelect(
       filterDataOutside?: boolean;
     }>
       labelKey="name"
+      createKey="name"
       state={ PaymentMethodState }
       apiService={ new PaymentMethodsApiService() }
       systemPermissionsResources={ SystemPermissionsResources.PaymentMethods }

@@ -1,9 +1,10 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import type { AccountsListReportRequest } from "@/core/data/report/accountsListReportRequest";
 import { WalletIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, CurrencyIcon, FilterCondition, type IDialogState, type IEntityState, type IFormState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
-import Account, { AccountFilterColumns, AccountSlice, AccountType } from "../../core/data/account";
+import { CrudPage, CurrencyIcon, type IDialogState, type IEntityState, type IFormState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import Account, { AccountSlice, AccountType } from "../../core/data/account";
 import ReportConstants from "../../core/data/report/reportConstants";
 import AccountsApiService from "../../core/networking/accountApiService";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -22,7 +23,7 @@ export default function AccountsPage({
 }: {
   title: string;
   slice: ReturnType<typeof AccountSlice.create>;
-  fixedType?: AccountType;
+  fixedType: AccountType;
   selectEntityState: (state: RootState) => IEntityState<Account>;
   selectDialogState: (state: RootState) => IDialogState<Account>;
   selectFormState: (state: RootState) => IFormState<Account>;
@@ -30,7 +31,7 @@ export default function AccountsPage({
 })
 {
   const { t } = useTranslation("accounting");
-  const [condition, setCondition] = useState<FilterCondition<Account> | undefined>(undefined);
+  const [searchText, setSearchText] = useState<string | undefined>(undefined);
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const accountState = useAppSelector(selectEntityState);
@@ -53,16 +54,16 @@ export default function AccountsPage({
       title={ title }
       entityName={ t("accounts.entityName") }
       addNewItemTitle={ t("accounts.addNewTitle") }
-      onConditionChange={ setCondition }
+      onSearchTextChange={ setSearchText }
       actionButtons={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],
           SystemPermissionsResources.ReportAccountList,
           SystemPermissionsActions.Get
         )
         ? [
-          <ReportButton
+          <ReportButton<AccountsListReportRequest>
             reportName={ ReportConstants.AccountsList }
-            request={ { type: fixedType, condition: condition } }
+            request={ { type: fixedType, searchText: searchText } }
           />
         ]
         : [] }
@@ -76,7 +77,6 @@ export default function AccountsPage({
         data: (accountState.entities?.count ?? 0).toString(),
         icon: <WalletIcon className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ AccountFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: t("accounts.accountId"), rowStyles: "w-24" },

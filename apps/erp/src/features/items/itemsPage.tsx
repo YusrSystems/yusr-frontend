@@ -1,9 +1,10 @@
+import type { ItemsListReportRequest } from "@/core/data/report/itemsListReportRequest";
 import { Package } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, FilterCondition, ImagePreview, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { CrudPage, ImagePreview, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import Item, { ItemFilterColumns, ItemSlice, ItemType } from "../../core/data/item";
+import Item, { ItemSlice, ItemType } from "../../core/data/item";
 import ReportConstants from "../../core/data/report/reportConstants";
 import { StoreSlice } from "../../core/data/store";
 import ItemsApiService from "../../core/networking/itemApiService";
@@ -23,7 +24,7 @@ export default function ItemsPage()
   const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Items));
 
   const service = useMemo(() => new ItemsApiService(), []);
-  const [condition, setCondition] = useState<FilterCondition<Item> | undefined>(undefined);
+  const [searchText, setSearchText] = useState<string | undefined>(undefined);
 
   useEffect(() =>
   {
@@ -35,16 +36,16 @@ export default function ItemsPage()
       title={ t("items.title") }
       entityName={ t("items.entityName") }
       addNewItemTitle={ t("items.addNewTitle") }
-      onConditionChange={ setCondition }
+      onSearchTextChange={ setSearchText }
       actionButtons={ SystemPermissions.hasAuth(
           authState.loggedInUser?.role?.permissions ?? [],
           SystemPermissionsResources.ReportItemList,
           SystemPermissionsActions.Get
         )
         ? [
-          <ReportButton
+          <ReportButton<ItemsListReportRequest>
             reportName={ ReportConstants.ItemsList }
-            request={ { condition: condition } }
+            request={ { searchText: searchText } }
           />
         ]
         : [] }
@@ -62,7 +63,6 @@ export default function ItemsPage()
         data: (itemState.entities?.count ?? 0).toString(),
         icon: <Package className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ ItemFilterColumns.columnsNames(t) }
       tableHeadRows={ [
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: t("items.itemId"), rowStyles: "w-20" },

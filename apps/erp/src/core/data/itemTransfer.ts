@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import ItemTransferApiService from "../networking/itemTransferApiService";
 import type { ItemUnitPricingMethod } from "./item";
 
@@ -43,18 +43,6 @@ export default class ItemTransfer extends BaseEntity
       this.itemTransfersItems = init.itemTransfersItems.map((i) => new ItemTransfersItem(i));
     }
   }
-}
-
-export class ItemTransferFilterColumns
-{
-  public static columnsNames = (
-    t: TFunction<"stocking">
-  ): ColumnName<ItemTransfer>[] => [
-    { label: t("itemTransfers.transferId"), value: "id" },
-    { label: t("itemTransfers.fromStore"), value: "fromStoreName" },
-    { label: t("itemTransfers.toStore"), value: "toStoreName" },
-    { label: t("itemTransfers.description"), value: "description" }
-  ];
 }
 
 export class ItemTransferValidationRules

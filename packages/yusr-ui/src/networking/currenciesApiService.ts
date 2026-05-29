@@ -1,4 +1,4 @@
-import type { Currency, FilterCondition } from "../entities";
+import type { Currency } from "../entities";
 import type { FilterResult, RequestResult } from "../types";
 import { ApiConstants } from "./apiConstants";
 import { BaseFilterableApiService } from "./baseFilterableApiService";
@@ -11,12 +11,12 @@ export class CurrenciesApiService extends BaseFilterableApiService<Currency>
   async Filter(
     pageNumber: number,
     rowsPerPage: number,
-    condition?: FilterCondition<Currency>
+    searchText?: string
   ): Promise<RequestResult<FilterResult<Currency>>>
   {
     return await YusrApiHelper.Post(
       `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
-      condition
+      searchText
     );
   }
 }

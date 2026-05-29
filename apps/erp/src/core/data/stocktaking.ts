@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
 import StocktakingsApiService from "../networking/stocktakingApiService";
 
 export interface IStocktakingItem extends BaseEntity
@@ -59,16 +59,6 @@ export default class Stocktaking extends BaseEntity implements IStocktaking
       this.stocktakingItems = init.stocktakingItems.map((x) => new StocktakingItem(x));
     }
   }
-}
-
-export class StocktakingFilterColumns
-{
-  public static columnsNames = (
-    t: TFunction<"stocking">
-  ): ColumnName<Stocktaking>[] => [{ label: t("stocktakings.stocktakingId"), value: "id" }, {
-    label: t("stocktakings.store"),
-    value: "storeName"
-  }, { label: t("stocktakings.description"), value: "description" }];
 }
 
 export class StocktakingValidationRules

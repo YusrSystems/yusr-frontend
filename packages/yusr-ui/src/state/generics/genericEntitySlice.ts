@@ -1,6 +1,6 @@
 import { type ActionReducerMapBuilder, type CaseReducerActions, createAsyncThunk, createSlice, type PayloadAction, type SliceCaseReducers } from "@reduxjs/toolkit";
 import { castDraft } from "immer";
-import type { BaseEntity, FilterCondition } from "../../entities";
+import type { BaseEntity } from "../../entities";
 import type { BaseFilterableApiService } from "../../networking";
 import type { FilterResult, RequestResult } from "../../types";
 import type { IEntityState } from "../interfaces/iEntityState";
@@ -8,7 +8,7 @@ import type { IEntityState } from "../interfaces/iEntityState";
 type FilterMethodType<T> = (
   pageNumber: number,
   rowsPerPage: number,
-  condition?: FilterCondition<T> | undefined,
+  searchText?: string,
   filterTypes?: number[]
 ) => Promise<RequestResult<FilterResult<T>>> | undefined;
 
@@ -33,18 +33,18 @@ export function createGenericEntitySlice<
 
   const filter = createAsyncThunk(
     `${sliceName}/filter`,
-    async (condition: FilterCondition<T> | undefined, { getState }) =>
+    async (searchText: string | undefined, { getState }) =>
     {
       const state = (getState() as never)[sliceName] as IEntityState<T>;
 
       let result;
       if (filterMethod)
       {
-        result = await filterMethod(state.currentPage, state.rowsPerPage, condition, state.filterTypes);
+        result = await filterMethod(state.currentPage, state.rowsPerPage, searchText, state.filterTypes);
       }
       else
       {
-        result = await service.Filter(state.currentPage, state.rowsPerPage, condition);
+        result = await service.Filter(state.currentPage, state.rowsPerPage, searchText);
       }
 
       return result?.data;

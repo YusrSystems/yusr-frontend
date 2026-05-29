@@ -47,7 +47,7 @@ export default function ChangeStocktakingDialog(
         pageNumber: 1,
         rowsPerPage: 100,
         storeId: formData.storeId,
-        request: new FilterByTypeRequest({ condition: undefined, types: [ItemType.Product] })
+        request: new FilterByTypeRequest({ types: [ItemType.Product] })
       }));
     }
   }, [dispatch, formData.storeId]);

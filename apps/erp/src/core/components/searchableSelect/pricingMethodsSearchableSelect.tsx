@@ -16,6 +16,7 @@ export default function PricingMethodsSearchableSelect(
   return (
     <ChangableSearchableSelect<PricingMethod>
       labelKey="name"
+      createKey="name"
       mode="inline"
       state={ pricingMethodState }
       apiService={ new PricingMethodsApiService() }

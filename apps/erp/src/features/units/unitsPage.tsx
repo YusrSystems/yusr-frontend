@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type Unit from "../../core/data/unit";
-import { UnitFilterColumns, UnitSlice } from "../../core/data/unit";
+import { UnitSlice } from "../../core/data/unit";
 import UnitsApiService from "../../core/networking/unitApiService";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ChangeUnitDialog from "./changeUnitDialog";
@@ -38,7 +38,6 @@ export default function UnitsPage()
         data: (unitState.entities?.count ?? 0).toString(),
         icon: <BoxIcon className="h-4 w-4 text-muted-foreground" />
       }] }
-      columnsToFilter={ UnitFilterColumns.columnsNames(t) }
       tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
         rowName: t("units.unitId"),
         rowStyles: "w-30"

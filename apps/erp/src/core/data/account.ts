@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, City, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, City, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, type ValidationRule, Validators } from "yusr-ui";
 import { SystemPermissionsResources } from "../auth/systemPermissionsResources";
 import AccountsApiService from "../networking/accountApiService";
 
@@ -66,16 +66,6 @@ export default class Account extends BaseEntity
   }
 }
 
-export class AccountFilterColumns
-{
-  public static columnsNames = (
-    t: TFunction<"accounting">
-  ): ColumnName<Account>[] => [{ label: t("accounts.accountName"), value: "name" }, {
-    label: t("accounts.bankAccountNumber"),
-    value: "bankAccountNumber"
-  }, { label: t("accounts.vatNumber"), value: "vatNumber" }];
-}
-
 export class AccountValidationRules
 {
   public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Account>>[] => [{
@@ -112,11 +102,11 @@ export class AccountSlice
     const entitySliceInstance = createGenericEntitySlice(
       sliceName,
       new AccountsApiService(),
-      (pageNumber, rowsPerPage, condition) =>
+      (pageNumber, rowsPerPage, searchText) =>
         new AccountsApiService().FilterByTypes(
           pageNumber,
           rowsPerPage,
-          new FilterByTypeRequest({ types, condition })
+          new FilterByTypeRequest({ types, searchText })
         )
     );
 

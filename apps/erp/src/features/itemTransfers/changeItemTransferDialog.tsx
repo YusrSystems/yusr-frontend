@@ -107,7 +107,7 @@ export default function ChangeItemTransferDialog({
         pageNumber: 1,
         rowsPerPage: 100,
         storeId: formData.fromStoreId,
-        request: new FilterByTypeRequest({ condition: undefined, types: [ItemType.Product] })
+        request: new FilterByTypeRequest({ types: [ItemType.Product] })
       }));
     }
   }, [dispatch, formData.fromStoreId]);
