@@ -91,6 +91,22 @@ export default class InvoiceItemsActions
       // Misc
       notes: storeItem.description
     });
+
+    if (state.formData.settlementPercent != undefined && state.formData.settlementPercent !== 0)
+    {
+      InvoiceItemsActions.onInvoiceSettlementPercentChange(state, {
+        payload: state.formData.settlementPercent,
+        type: "onInvoiceSettlementPercentChange"
+      });
+    }
+
+    if (state.formData.settlementAmount != undefined && state.formData.settlementAmount !== 0)
+    {
+      InvoiceItemsActions.onInvoiceSettlementAmountChange(state, {
+        payload: state.formData.settlementAmount,
+        type: "onInvoiceSettlementAmountChange"
+      });
+    }
   }
 
   public static onInvoiceItemIupmChange(
@@ -128,6 +144,14 @@ export default class InvoiceItemsActions
       row.quantity
     );
 
+    if (state.formData.settlementPercent != undefined && state.formData.settlementPercent !== 0)
+    {
+      InvoiceItemsActions.onInvoiceSettlementPercentChange(state, {
+        payload: state.formData.settlementPercent,
+        type: "onInvoiceSettlementPercentChange"
+      });
+    }
+
     InvoiceItemsActions.updateItem(state, { payload: { index, item: row }, type: "updateItem" });
   }
 
@@ -160,7 +184,7 @@ export default class InvoiceItemsActions
 
   public static onInvoiceItemSettlementChange(
     state: IFormState<Invoice>,
-    action: PayloadAction<{ index: number; newSettlement: number | undefined; }>
+    action: PayloadAction<{ index: number; newSettlement: number | undefined; resetInvoiceSettlements: boolean; }>
   )
   {
     if (action.payload.newSettlement == undefined || state.formData.invoiceItems == undefined)
@@ -181,6 +205,11 @@ export default class InvoiceItemsActions
       row.settlement,
       row.quantity
     );
+    if (action.payload.resetInvoiceSettlements)
+    {
+      state.formData.settlementAmount = 0;
+      state.formData.settlementPercent = 0;
+    }
     InvoiceItemsActions.updateItem(state, { payload: { index, item: row }, type: "updateItem" });
   }
 
@@ -208,6 +237,15 @@ export default class InvoiceItemsActions
       row.settlement,
       row.quantity
     );
+
+    if (state.formData.settlementPercent != undefined && state.formData.settlementPercent !== 0)
+    {
+      InvoiceItemsActions.onInvoiceSettlementPercentChange(state, {
+        payload: state.formData.settlementPercent,
+        type: "onInvoiceSettlementPercentChange"
+      });
+    }
+
     InvoiceItemsActions.updateItem(state, { payload: { index, item: row }, type: "updateItem" });
   }
 
@@ -217,7 +255,7 @@ export default class InvoiceItemsActions
     state.formData.settlementPercent = 0;
     state.formData.invoiceItems?.forEach((_, i) =>
       InvoiceItemsActions.onInvoiceItemSettlementChange(state, {
-        payload: { index: i, newSettlement: state.formData.settlementAmount },
+        payload: { index: i, newSettlement: state.formData.settlementAmount, resetInvoiceSettlements: false },
         type: "onInvoiceItemSettlementChange"
       })
     );
@@ -234,7 +272,7 @@ export default class InvoiceItemsActions
       );
 
       InvoiceItemsActions.onInvoiceItemSettlementChange(state, {
-        payload: { index: i, newSettlement: newSettlement },
+        payload: { index: i, newSettlement: newSettlement, resetInvoiceSettlements: false },
         type: "onInvoiceItemSettlementChange"
       });
     });

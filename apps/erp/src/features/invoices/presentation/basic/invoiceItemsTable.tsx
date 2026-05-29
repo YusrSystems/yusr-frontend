@@ -122,7 +122,7 @@ export default function InvoiceItemsTable()
     return <EmptyTable />;
   }
 
-  const fixedColCount = 6; // number + item + pricingMethod + quantity + price + totalPrice
+  const fixedColCount = 7; // drag handler + number + item + pricingMethod + quantity + price + totalPrice
   const actionColCount = (showProfit ? 1 : 0) + 1; // profit + delete
   const visibleCount = COLUMNS.filter((c) => isVisible(c.key)).length;
   const totalColSpan = fixedColCount + visibleCount + actionColCount;
@@ -153,8 +153,8 @@ export default function InvoiceItemsTable()
         <table className="relative w-full text-sm text-right">
           <thead className="sticky top-0 bg-muted z-50 border-b border-border">
             <tr>
-              <th className="p-3 w-10" /> { /* drag handle spacer */ }
-              <th className="p-3 font-semibold w-16 text-center text-muted-foreground">{ t("invoices.number") }</th>
+              <th className="p-3 w-5" /> { /* drag handle spacer */ }
+              <th className="p-3 font-semibold w-16 text-muted-foreground">{ t("invoices.number") }</th>
               <th className="p-3 font-semibold text-start w-40">{ t("invoices.item") }</th>
               <th className="p-3 font-semibold text-start w-20 min-w-20">{ t("invoices.pricingMethod") }</th>
               { isVisible("cost") && (
@@ -209,7 +209,7 @@ export default function InvoiceItemsTable()
                     </td>
 
                     { /* Index */ }
-                    <td className="px-2 pt-2 text-center font-bold text-muted-foreground">
+                    <td className="px-2 pt-2 font-bold text-muted-foreground">
                       { index + 1 }
                     </td>
 
@@ -303,7 +303,8 @@ export default function InvoiceItemsTable()
                             dispatch(
                               slice.formActions.onInvoiceItemSettlementChange({
                                 index,
-                                newSettlement: Number(newValue)
+                                newSettlement: Number(newValue),
+                                resetInvoiceSettlements: true
                               })
                             ) }
                         />
@@ -332,12 +333,12 @@ export default function InvoiceItemsTable()
                     </td>
 
                     { showProfit && (
-                      <td className="px-2 pt-2">
+                      <td className="px-2 pt-2 text-center">
                         <ItemProfitDialog item={ row } />
                       </td>
                     ) }
 
-                    <td className="px-2 pt-2">
+                    <td className="px-2 pt-2 text-center">
                       { !disabled && (
                         <button
                           type="button"
