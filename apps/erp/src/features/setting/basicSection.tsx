@@ -44,7 +44,6 @@ export default function BasicSection()
     const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
     const downloadLink = document.createElement("a");
     downloadLink.href = pngUrl;
-    // تسمية الملف باسم المؤسسة إن وجد
     downloadLink.download = `QR-${formData.companyName || "Company"}.png`;
     document.body.appendChild(downloadLink);
     downloadLink.click();
@@ -181,6 +180,14 @@ export default function BasicSection()
                 </Button>
               </div>
             </div>
+            <a
+              href={ shareUrl }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-blue-600 hover:text-primary text-center"
+            >
+              { shareUrl }
+            </a>
           </div>
         ) }
       </div>
