@@ -29,6 +29,7 @@ import SettingPage from "./features/setting/settingPage";
 import StocktakingsPage from "./features/stocktakings/stocktakingsPage";
 import StoresPage from "./features/stores/storePage";
 import TaxesPage from "./features/taxes/taxesPage";
+import TenantInfoSharingPage from "./features/tenantInfoSharing/tenantInfoSharingPage";
 import UnitsPage from "./features/units/unitsPage";
 import VouchersPage from "./features/vouchers/vouchersPage";
 
@@ -69,6 +70,7 @@ function AppRoutes()
         <Route path="/" element={ <LandingPage /> } />
         <Route path="/login" element={ <LoginPage /> } />
         <Route path="/register" element={ <RegisterPage /> } />
+        <Route path="/sharing/:registrationKey" element={ <TenantInfoSharingPage /> } />
 
         <Route element={ <ProtectedRoute isAuthenticated={ isAuthenticated } /> }>
           <Route element={ <AppLayout /> }>

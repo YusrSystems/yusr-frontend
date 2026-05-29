@@ -1,6 +1,8 @@
 import { useAppSelector } from "@/core/state/store";
 import { differenceInDays, format } from "date-fns";
-import { Camera, Trash2, Upload } from "lucide-react";
+import { Camera, Check, Copy, Download, Share2, Trash2, Upload } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelect, Button, FieldGroup, FieldsSection, FormField, Label, StorageFileStatus, StorageType, TextField, useAppDispatch, useFormErrors, useStorageFile } from "yusr-ui";
 import { type Setting, SettingSlice } from "../../core/data/setting";
@@ -10,6 +12,8 @@ export default function BasicSection()
   const { t } = useTranslation("erpCommon");
   const { formData, errors } = useAppSelector((state) => state.settingForm);
   const { getError, isInvalid } = useFormErrors(errors);
+  const [isCopied, setIsCopied] = useState(false);
+  const qrRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
 
   const { fileInputRef, handleFileChange, handleRemoveFile } = useStorageFile(
@@ -19,6 +23,33 @@ export default function BasicSection()
     StorageType.Public,
     false
   );
+
+  const shareUrl = `${window.location.origin}/sharing/${formData.registrationKey}`;
+
+  const handleCopyLink = async () =>
+  {
+    await navigator.clipboard.writeText(shareUrl);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const handleDownloadQR = () =>
+  {
+    const canvas = qrRef.current?.querySelector("canvas");
+    if (!canvas)
+    {
+      return;
+    }
+
+    const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+    const downloadLink = document.createElement("a");
+    downloadLink.href = pngUrl;
+    // تسمية الملف باسم المؤسسة إن وجد
+    downloadLink.download = `QR-${formData.companyName || "Company"}.png`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
 
   const getDaysLeftText = (daysLeft: number) =>
   {
@@ -58,54 +89,100 @@ export default function BasicSection()
   return (
     <div className="space-y-5 animate-in fade-in">
       { /* LOGO SECTION */ }
-      <div className="flex flex-col md:flex-row items-center gap-6 p-3 rounded-xl border bg-muted/10">
-        <Avatar className="h-32 w-32 border-4 border-background shadow-md">
-          <AvatarImage
-            src={ formData.logo?.status !== StorageFileStatus.Delete ? formData.logo?.url || "" : "" }
-            className="object-cover bg-white"
-          />
-          <AvatarFallback className="bg-secondary">
-            <Camera className="h-10 w-10 text-muted-foreground" />
-          </AvatarFallback>
-        </Avatar>
+      <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-6 p-4 rounded-xl border bg-muted/10 shadow-sm">
+        { /* Logo Part */ }
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          <Avatar className="h-32 w-32 border-4 border-background shadow-md">
+            <AvatarImage
+              src={ formData.logo?.status !== StorageFileStatus.Delete ? formData.logo?.url || "" : "" }
+              className="object-cover bg-white"
+            />
+            <AvatarFallback className="bg-secondary">
+              <Camera className="h-10 w-10 text-muted-foreground" />
+            </AvatarFallback>
+          </Avatar>
 
-        <div className="flex flex-col gap-3 text-center md:text-right">
-          <h3 className="text-lg font-bold text-start">{ t("settings.companyLogo") }</h3>
-          <p className="text-sm text-muted-foreground">{ t("settings.companyLogoDescription") }</p>
+          <div className="flex flex-col gap-3 text-center md:text-start">
+            <h3 className="text-lg font-bold">{ t("settings.companyLogo") }</h3>
+            <p className="text-sm text-muted-foreground">{ t("settings.companyLogoDescription") }</p>
 
-          <div className="flex flex-wrap gap-2 justify-center md:justify-start mt-2">
-            { (formData.logo?.url == undefined || formData.logo.status === StorageFileStatus.Delete) && (
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={ () => fileInputRef.current?.click() }
-              >
-                <Upload className="h-4 w-4 ml-2" /> { t("settings.uploadImage") }
-              </Button>
-            ) }
+            <div className="flex flex-wrap gap-2 justify-center md:justify-start mt-2">
+              { (formData.logo?.url == undefined || formData.logo.status === StorageFileStatus.Delete) && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={ () => fileInputRef.current?.click() }
+                >
+                  <Upload className="h-4 w-4 ms-2" /> { t("settings.uploadImage") }
+                </Button>
+              ) }
 
-            { formData.logo?.url && formData.logo.status !== StorageFileStatus.Delete && (
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                onClick={ () => handleRemoveFile(0) }
-              >
-                <Trash2 className="h-4 w-4 ml-2" /> { t("settings.delete") }
-              </Button>
-            ) }
+              { formData.logo?.url && formData.logo.status !== StorageFileStatus.Delete && (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  onClick={ () => handleRemoveFile(0) }
+                >
+                  <Trash2 className="h-4 w-4 ms-2" /> { t("settings.delete") }
+                </Button>
+              ) }
+            </div>
+            <p className="text-xs text-muted-foreground">{ t("settings.logoHint") }</p>
+            <input
+              type="file"
+              ref={ fileInputRef }
+              className="hidden"
+              aria-label={ t("settings.uploadCompanyLogo") }
+              accept="image/*"
+              onChange={ handleFileChange }
+            />
           </div>
-          <p className="text-xs text-muted-foreground">{ t("settings.logoHint") }</p>
-          <input
-            type="file"
-            ref={ fileInputRef }
-            className="hidden"
-            aria-label={ t("settings.uploadCompanyLogo") }
-            accept="image/*"
-            onChange={ handleFileChange }
-          />
         </div>
+
+        { /* Sharing Part (Beside Logo) */ }
+        { shareUrl && (
+          <div className="flex flex-col items-center gap-3 w-full md:w-auto bg-muted/20 p-3 rounded-lg border">
+            <div className="flex items-center gap-2 text-primary font-semibold">
+              <Share2 className="h-4 w-4" />
+              <span className="text-sm">{ t("settings.shareInfoCard") }</span>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full md:w-auto">
+              <div ref={ qrRef } className="bg-white p-2 rounded border shadow-sm shrink-0">
+                <QRCodeCanvas
+                  value={ shareUrl }
+                  size={ 100 }
+                  level="H"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2 w-full sm:w-auto min-w-35">
+                <Button
+                  type="button"
+                  variant={ isCopied ? "default" : "default" }
+                  size="sm"
+                  className={ `${isCopied ? "bg-green-600 hover:bg-green-700" : ""}` }
+                  onClick={ handleCopyLink }
+                >
+                  { isCopied ? <Check className="h-4 w-4 me-2" /> : <Copy className="h-4 w-4 me-2" /> }
+                  { isCopied ? t("settings.copied") : t("settings.copyLink") }
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={ handleDownloadQR }
+                >
+                  <Download className="h-4 w-4 me-2" />
+                  { t("settings.download", "تحميل الرمز") }
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) }
       </div>
 
       { /* BASIC INFO */ }

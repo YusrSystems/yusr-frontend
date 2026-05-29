@@ -47,5 +47,22 @@
     "buildingNumberNumeric": "Building number must be numeric only",
     "postalCodeLength": "Postal code must consist of 5 digits",
     "postalCodeNumeric": "Postal code must be numeric only"
+  },
+
+  "sharing": {
+    "companyName": "Name",
+    "companyPhone": "Phone Number",
+    "crn": "Commercial Registration No.",
+    "vatNumber": "Tax Number",
+    "country": "Country",
+    "city": "City",
+    "district": "District",
+    "street": "Street",
+    "postalCode": "Postal Code",
+    "buildingNumber": "Building Number",
+    "companyInfo": "Company Information",
+    "addressInfo": "Address Information",
+    "card": "Information Sharing Card",
+    "tenantNotFound": "Company not found"
   }
 }

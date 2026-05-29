@@ -5,6 +5,7 @@ export * from "./auth/protectedRoute";
 export * from "./background/yusrBackground";
 
 // Buttons
+export * from "./buttons/copyButton";
 export * from "./buttons/saveButton";
 export * from "./buttons/tabButton";
 

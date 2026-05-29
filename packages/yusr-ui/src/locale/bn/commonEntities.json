@@ -47,5 +47,22 @@
     "buildingNumberNumeric": "বিল্ডিং নম্বরটি শুধুমাত্র সংখ্যাসূচক হতে হবে",
     "postalCodeLength": "পোস্টাল কোডটি 5টি সংখ্যা নিয়ে গঠিত হতে হবে",
     "postalCodeNumeric": "পোস্টাল কোডটি শুধুমাত্র সংখ্যাসূচক হতে হবে"
+  },
+
+  "sharing": {
+    "companyName": "নাম",
+    "companyPhone": "ফোন নম্বর",
+    "crn": "বাণিজ্যিক নিবন্ধন নম্বর",
+    "vatNumber": "ট্যাক্স নম্বর",
+    "country": "দেশ",
+    "city": "শহর",
+    "district": "এলাকা",
+    "street": "রাস্তা",
+    "postalCode": "পোস্টাল কোড",
+    "buildingNumber": "বিল্ডিং নম্বর",
+    "companyInfo": "কোম্পানির তথ্য",
+    "addressInfo": "ঠিকানার তথ্য",
+    "card": "তথ্য শেয়ারিং কার্ড",
+    "tenantNotFound": "কোম্পানি পাওয়া যায়নি"
   }
 }

@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { type Branch, createGenericFormSlice, type Currency, type StorageFile, type ValidationRule, Validators } from "yusr-ui";
+import { type Branch, City, createGenericFormSlice, type Currency, type StorageFile, type ValidationRule, Validators } from "yusr-ui";
 import type { Tax } from "./tax";
 
 export const EInvoicingEnvironmentType = {
@@ -70,6 +70,26 @@ export class Setting
     {
       this.endDate = new Date(this.endDate);
     }
+  }
+}
+
+export class SharingSetting
+{
+  public registrationKey!: string;
+  public companyName!: string;
+  public companyPhone!: string;
+  public crn?: string;
+  public vatNumber?: string;
+  public street!: string;
+  public district!: string;
+  public buildingNumber!: string;
+  public postalCode!: string;
+  public city!: City;
+  public logo?: StorageFile;
+
+  constructor(init?: Partial<SharingSetting>)
+  {
+    Object.assign(this, init);
   }
 }
 

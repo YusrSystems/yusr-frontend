@@ -47,5 +47,22 @@
     "buildingNumberNumeric": "عمارت نمبر صرف عددی ہونا چاہیے",
     "postalCodeLength": "پوسٹل کوڈ پانچ ہندسوں پر مشتمل ہونا چاہیے",
     "postalCodeNumeric": "پوسٹل کوڈ صرف عددی ہونا چاہیے"
+  },
+
+  "sharing": {
+    "companyName": "نام",
+    "companyPhone": "فون نمبر",
+    "crn": "تجارتی رجسٹریشن نمبر",
+    "vatNumber": "ٹیکس نمبر",
+    "country": "ملک",
+    "city": "شہر",
+    "district": "علاقہ",
+    "street": "گلی",
+    "postalCode": "پوسٹل کوڈ",
+    "buildingNumber": "عمارت نمبر",
+    "companyInfo": "کمپنی کی معلومات",
+    "addressInfo": "پتے کی معلومات",
+    "card": "معلومات شیئرنگ کارڈ",
+    "tenantNotFound": "کمپنی نہیں ملی"
   }
 }

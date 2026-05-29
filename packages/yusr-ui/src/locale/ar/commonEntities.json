@@ -47,5 +47,23 @@
     "buildingNumberNumeric": "رقم المبنى يجب أن يكون أرقاماً فقط",
     "postalCodeLength": "الرمز البريدي يجب أن يتكون من خمس أرقام",
     "postalCodeNumeric": "الرمز البريدي يجب أن يكون أرقاماً فقط"
+  },
+
+  "sharing": {
+    "companyName": "الاسم",
+    "companyPhone": "رقم الهاتف",
+    "crn": "رقم السجل التجاري",
+    "vatNumber": " الرقم الضريبي",
+    "country": "الدولة",
+    "city": "المدينة",
+    "district": "الحي",
+    "street": "الشارع",
+    "postalCode": "الرمز البريدي",
+    "buildingNumber": "رقم المبنى",
+    "companyInfo": "معلومات الشركة",
+    "addressInfo": "معلومات العنوان",
+    "card": "بطاقة مشاركة المعلومات",
+    "tenantNotFound": "لم يتم العثور على الشركة",
+    "promotionText": "هل تبحث عن برنامج محاسبي سهل وذكي، ومتوافق مع هيئة الزكاة والضريبة؟ جرب يُسْر"
   }
 }

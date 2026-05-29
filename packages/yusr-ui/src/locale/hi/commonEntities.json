@@ -47,5 +47,22 @@
     "buildingNumberNumeric": "भवन संख्या केवल संख्यात्मक होनी चाहिए",
     "postalCodeLength": "पोस्टल कोड 5 अंकों का होना चाहिए",
     "postalCodeNumeric": "पोस्टल कोड केवल संख्यात्मक होना चाहिए"
+  },
+
+  "sharing": {
+    "companyName": "नाम",
+    "companyPhone": "फोन नंबर",
+    "crn": "वाणिज्यिक पंजीकरण संख्या",
+    "vatNumber": "कर संख्या",
+    "country": "देश",
+    "city": "शहर",
+    "district": "क्षेत्र",
+    "street": "गली",
+    "postalCode": "पोस्टल कोड",
+    "buildingNumber": "भवन संख्या",
+    "companyInfo": "कंपनी की जानकारी",
+    "addressInfo": "पता जानकारी",
+    "card": "सूचना साझाकरण कार्ड",
+    "tenantNotFound": "कंपनी नहीं मिली"
   }
 }
