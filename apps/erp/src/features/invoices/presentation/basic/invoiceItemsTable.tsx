@@ -363,7 +363,7 @@ export default function InvoiceItemsTable()
                         collapsedHeight={ 36 }
                         expandedHeight={ 150 }
                         label=""
-                        placeholder={ t("invoices.addNotes") }
+                        placeholder={ t("invoices.addDiscription") }
                         value={ row.notes || "" }
                         disabled={ disabled || mode === "return" }
                         onChange={ (val) =>
