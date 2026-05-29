@@ -1,6 +1,7 @@
 import placeholderImg from "@/assets/placeholder.svg";
-import { Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { Button, Card, CardContent, cn, Field, FieldDescription, FieldGroup } from "yusr-ui";
 import { useAppSelector } from "../../../core/state/store";
 import AccountInfo from "./feildsInfo/accountInfo";
@@ -37,6 +38,16 @@ export function RegisterForm({
           <form className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
+                <div className="w-full flex justify-start mb-5">
+                  <Link
+                    to="/"
+                    className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <ArrowRight className="h-4 w-4 ltr:rotate-180 rtl:rotate-0" />
+                    { t("login.backToHome") }
+                  </Link>
+                </div>
+
                 <h1 className="text-2xl font-bold">{ t("register.title") }</h1>
                 <p className="text-muted-foreground text-balance">{ t("register.subtitle") }</p>
               </div>

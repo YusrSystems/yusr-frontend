@@ -20,7 +20,8 @@
     "rememberMe": "আমাকে মনে রাখুন",
     "button": "লগইন করুন",
     "noAccount": "এখনও কি অ্যাকাউন্ট নেই?",
-    "registerLink": "নিবন্ধন করুন"
+    "registerLink": "নিবন্ধন করুন",
+    "backToHome": "হোমপেজে ফিরে যান"
   },
 
   "register": {

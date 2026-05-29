@@ -20,7 +20,8 @@
     "rememberMe": "تذكرني",
     "button": "تسجيل الدخول",
     "noAccount": "لا تملك حسابًا بعد؟",
-    "registerLink": "سجل معنا"
+    "registerLink": "سجل معنا",
+    "backToHome": "الرجوع للصفحة الرئيسية"
   },
 
   "register": {

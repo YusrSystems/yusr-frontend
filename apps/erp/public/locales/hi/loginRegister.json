@@ -20,7 +20,8 @@
     "rememberMe": "मुझे याद रखें",
     "button": "लॉगिन करें",
     "noAccount": "अभी तक कोई खाता नहीं है?",
-    "registerLink": "पंजीकरण करें"
+    "registerLink": "पंजीकरण करें",
+    "backToHome": "होमपेज पर वापस जाएं"
   },
 
   "register": {

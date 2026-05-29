@@ -20,7 +20,8 @@
     "rememberMe": "Remember me",
     "button": "Log in",
     "noAccount": "Don't have an account?",
-    "registerLink": "Sign up"
+    "registerLink": "Sign up",
+    "backToHome": "Back to Homepage"
   },
 
   "register": {
