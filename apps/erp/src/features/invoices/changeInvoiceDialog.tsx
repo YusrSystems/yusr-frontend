@@ -401,7 +401,7 @@ export default function ChangeInvoiceDialog({
             label: t("invoices.invoicePolicy"),
             icon: Siren,
             active: false,
-            content: <InvoicePolicyTab />
+            content: <InvoicePolicyTab mode={ mode } />
           },
           {
             label: t("invoices.invoiceAttachments"),
