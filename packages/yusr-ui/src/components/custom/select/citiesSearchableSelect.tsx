@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { YusrSystemPermissionsResources } from "../../../auth";
 import { City, CitySlice } from "../../../entities";
-import { BaseApiService, CitiesApiService } from "../../../networking";
+import { BaseApiServiceOld, CitiesApiService } from "../../../networking";
 import type { YusrRootState } from "../../../state";
 import { ChangableSearchableSelect } from "./changableSearchableSelect";
 import type { BasicSearchableSelectParams } from "./searchableSelect";
@@ -17,7 +17,7 @@ export function CitiesSearchableSelect(
     <ChangableSearchableSelect<City>
       labelKey="name"
       state={ cityState }
-      apiService={ new CitiesApiService() as unknown as BaseApiService<City> }
+      apiService={ new CitiesApiService() as unknown as BaseApiServiceOld<City> }
       systemPermissionsResources={ YusrSystemPermissionsResources.Branches }
       entityActions={ {
         filter: CitySlice.entityActions.filter,

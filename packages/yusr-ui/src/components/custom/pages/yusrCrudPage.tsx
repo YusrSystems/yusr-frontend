@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import type { ResourcePermissions } from "../../../auth";
 import type { BaseEntity, FilterCondition } from "../../../entities";
-import type { BaseApiService } from "../../../networking";
+import type { BaseApiServiceOld } from "../../../networking";
 import type { IDialogState } from "../../../state/interfaces/iDialogState";
 import type { IEntityState } from "../../../state/interfaces/iEntityState";
-import type { ColumnName, FilterResult } from "../../../types";
+import type { ApiFilterResult, ColumnName } from "../../../types";
 import { Dialog, DialogContent } from "../../pure/dialog";
 import { TableBody } from "../../pure/table";
 import { DeleteDialog } from "../dialogs/deleteDialog";
@@ -25,7 +25,7 @@ import useCrudPageRoute from "./useCrudPageRoute";
 
 export interface YusrCrudActions<T extends BaseEntity>
 {
-  filter: AsyncThunk<FilterResult<T> | undefined, FilterCondition<T> | undefined, object>;
+  filter: AsyncThunk<ApiFilterResult<T> | undefined, FilterCondition<T> | undefined, object>;
   openChangeDialog: (entity: T) => UnknownAction;
   openDeleteDialog: (entity: T) => UnknownAction;
   setIsChangeDialogOpen: (open: boolean) => UnknownAction;
@@ -204,7 +204,7 @@ YusrCrudPage.Dialogs = function<T extends BaseEntity>(
   { ChangeDialog, useSlice, service, entityName }: {
     ChangeDialog: React.ReactNode;
     useSlice: () => IDialogState<T>;
-    service: BaseApiService<T>;
+    service: BaseApiServiceOld<T>;
     entityName: string;
   }
 )

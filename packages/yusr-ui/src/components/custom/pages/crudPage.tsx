@@ -5,10 +5,10 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import type { ResourcePermissions } from "../../../auth";
 import type { BaseEntity } from "../../../entities";
-import type { BaseApiService } from "../../../networking";
+import type { BaseApiServiceOld } from "../../../networking";
 import type { IDialogState } from "../../../state/interfaces/iDialogState";
 import type { IEntityState } from "../../../state/interfaces/iEntityState";
-import type { FilterResult } from "../../../types";
+import type { ApiFilterResult } from "../../../types";
 import { Dialog, DialogContent } from "../../pure/dialog";
 import { TableBody } from "../../pure/table";
 import { DeleteDialog } from "../dialogs/deleteDialog";
@@ -25,7 +25,7 @@ import useCrudPageRoute from "./useCrudPageRoute";
 
 export interface CrudActions<T extends BaseEntity>
 {
-  filter: AsyncThunk<FilterResult<T> | undefined, string | undefined, object>;
+  filter: AsyncThunk<ApiFilterResult<T> | undefined, string | undefined, object>;
   openChangeDialog: (entity: T) => UnknownAction;
   openDeleteDialog: (entity: T) => UnknownAction;
   setIsChangeDialogOpen: (open: boolean) => UnknownAction;
@@ -47,7 +47,7 @@ export type CrudPageProps<T extends BaseEntity> = PropsWithChildren & {
   onSearchTextChange?: (searchText?: string) => void;
   actionButtons?: React.ReactNode[];
   cards: CardProps[];
-  service: BaseApiService<T>;
+  service: BaseApiServiceOld<T>;
   tableHeadRows: CrudTableHeadRow[];
   tableRowMapper: (entity: T) => TableBodyRowInfo[];
   ChangeDialog: React.ReactNode;

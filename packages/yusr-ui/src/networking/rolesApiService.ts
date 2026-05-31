@@ -1,7 +1,7 @@
 import type { Role } from "../entities";
-import { BaseApiService } from "./baseApiService";
+import { BaseApiServiceOld } from "./baseApiServiceOld";
 
-export class RolesApiService extends BaseApiService<Role>
+export class RolesApiService extends BaseApiServiceOld<Role>
 {
   routeName: string = "Roles";
 }

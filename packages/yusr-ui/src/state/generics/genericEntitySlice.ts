@@ -1,8 +1,8 @@
 import { type ActionReducerMapBuilder, type CaseReducerActions, createAsyncThunk, createSlice, type PayloadAction, type SliceCaseReducers } from "@reduxjs/toolkit";
 import { castDraft } from "immer";
 import type { BaseEntity } from "../../entities";
-import type { BaseFilterableApiService } from "../../networking";
-import type { FilterResult, RequestResult } from "../../types";
+import type { BaseFilterableApiServiceOld } from "../../networking";
+import type { ApiFilterResult, RequestResult } from "../../types";
 import type { IEntityState } from "../interfaces/iEntityState";
 
 type FilterMethodType<T> = (
@@ -10,14 +10,14 @@ type FilterMethodType<T> = (
   rowsPerPage: number,
   searchText?: string,
   filterTypes?: number[]
-) => Promise<RequestResult<FilterResult<T>>> | undefined;
+) => Promise<RequestResult<ApiFilterResult<T>>> | undefined;
 
 export function createGenericEntitySlice<
   T extends BaseEntity,
   CR extends SliceCaseReducers<IEntityState<T>> = {}
 >(
   sliceName: string,
-  service: BaseFilterableApiService<T>,
+  service: BaseFilterableApiServiceOld<T>,
   filterMethod?: FilterMethodType<T>,
   customReducers?: CR,
   extraActions?: ((builder: ActionReducerMapBuilder<IEntityState<T>>) => void) | undefined

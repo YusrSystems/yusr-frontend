@@ -1,8 +1,8 @@
-import { ApiConstants, BaseApiService, FilterByTypeRequest, type FilterResult, type RequestResult, YusrApiHelper } from "yusr-ui";
+import { ApiConstants, type ApiFilterResult, BaseApiServiceOld, FilterByTypeRequest, type RequestResult, YusrApiHelper } from "yusr-ui";
 import type Invoice from "../data/invoice";
 import type { EInvoiceStatus } from "../data/invoice";
 
-export default class InvoicesApiService extends BaseApiService<Invoice>
+export default class InvoicesApiService extends BaseApiServiceOld<Invoice>
 {
   routeName: string = "Invoices";
 
@@ -10,7 +10,7 @@ export default class InvoicesApiService extends BaseApiService<Invoice>
     pageNumber: number,
     rowsPerPage: number,
     request: FilterByTypeRequest<Invoice>
-  ): Promise<RequestResult<FilterResult<Invoice>>>
+  ): Promise<RequestResult<ApiFilterResult<Invoice>>>
   {
     return await YusrApiHelper.Post(
       `${ApiConstants.baseUrl}/${this.routeName}/FilterByTypes?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,

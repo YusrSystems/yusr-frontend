@@ -2,7 +2,7 @@ import { Loader2, OctagonAlert } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { BaseEntity } from "../../../entities";
-import type { BaseApiService } from "../../../networking";
+import type { BaseApiServiceOld } from "../../../networking";
 import { Button } from "../../pure/button";
 import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure/dialog";
 import { Separator } from "../../pure/separator";
@@ -11,7 +11,7 @@ interface Props<T extends BaseEntity>
 {
   entityName: string;
   id: number;
-  service: BaseApiService<T>;
+  service: BaseApiServiceOld<T>;
   onSuccess?: () => void;
 }
 

@@ -1,18 +1,18 @@
-import type { Currency } from "../entities";
-import type { ApiFilterResult, RequestResult } from "../types";
+import type { BaseEntity } from "../entities";
+import type { ApiFilterResult } from "../types/apiFilterResult";
+import type { RequestResult } from "../types/requestResult";
 import { ApiConstants } from "./apiConstants";
-import { BaseFilterableApiServiceOld } from "./baseFilterableApiServiceOld";
 import { YusrApiHelper } from "./yusrApiHelper";
 
-export class CurrenciesApiService extends BaseFilterableApiServiceOld<Currency>
+export abstract class BaseFilterableApiServiceOld<T extends BaseEntity>
 {
-  routeName: string = "Currencies";
+  abstract routeName: string;
 
   async Filter(
     pageNumber: number,
     rowsPerPage: number,
     searchText?: string
-  ): Promise<RequestResult<ApiFilterResult<Currency>>>
+  ): Promise<RequestResult<ApiFilterResult<T>>>
   {
     return await YusrApiHelper.Post(
       `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,

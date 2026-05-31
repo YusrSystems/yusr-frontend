@@ -2,7 +2,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { BaseEntity } from "../../../entities";
-import type { BaseApiService } from "../../../networking";
+import type { BaseApiServiceOld } from "../../../networking";
 import { type RequestResult, ResultStatus } from "../../../types";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure";
 import { Button } from "../../pure/button";
@@ -12,7 +12,7 @@ export interface SaveButtonProps<T extends BaseEntity>
 {
   formData: T | Partial<T>;
   dialogMode?: DialogMode;
-  service?: BaseApiService<T>;
+  service?: BaseApiServiceOld<T>;
   label?: string;
   variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
   className?: string;

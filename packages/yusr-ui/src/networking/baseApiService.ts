@@ -1,11 +1,12 @@
+import type { Dto, Entity } from "../stateManager";
 import { type TFunction } from "i18next";
-import type { BaseEntity } from "../entities/baseEntity";
 import type { RequestResult } from "../types/requestResult";
 import { ApiConstants } from "./apiConstants";
 import { BaseFilterableApiService } from "./baseFilterableApiService";
 import { YusrApiHelper } from "./yusrApiHelper";
 
-export abstract class BaseApiService<T extends BaseEntity> extends BaseFilterableApiService<T>
+export abstract class BaseApiService<TEntity extends Entity<TDto>, TDto extends Dto>
+  extends BaseFilterableApiService<TEntity, TDto>
 {
   private static t: TFunction<"common"> | null = null;
 
@@ -23,31 +24,45 @@ export abstract class BaseApiService<T extends BaseEntity> extends BaseFilterabl
     return this.t;
   }
 
-  async Get(id: number): Promise<RequestResult<T>>
+  async Get(id: number): Promise<RequestResult<TEntity>>
   {
-    return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/${id}`);
+    const rawResult = await YusrApiHelper.Get<TDto>(`${ApiConstants.baseUrl}/${this.routeName}/${id}`);
+    return {
+      ...rawResult,
+      data: rawResult.data ? this.createEntity(rawResult.data) : undefined
+    };
   }
 
-  async Add(entity: T): Promise<RequestResult<T>>
+  async Add(entity: TEntity): Promise<RequestResult<TEntity>>
   {
     const t = BaseApiService.getT();
-    return await YusrApiHelper.Post(
+    const rawResult = await YusrApiHelper.Post<TDto>(
       `${ApiConstants.baseUrl}/${this.routeName}/Add`,
-      entity,
+      entity.toJson(),
       undefined,
       t("api.saveSuccess")
     );
+
+    return {
+      ...rawResult,
+      data: rawResult.data ? this.createEntity(rawResult.data) : undefined
+    };
   }
 
-  async Update(entity: T): Promise<RequestResult<T>>
+  async Update(entity: TEntity): Promise<RequestResult<TEntity>>
   {
     const t = BaseApiService.getT();
-    return await YusrApiHelper.Put(
+    const rawResult = await YusrApiHelper.Put<TDto>(
       `${ApiConstants.baseUrl}/${this.routeName}/Update`,
-      entity,
+      entity.toJson(),
       undefined,
       t("api.updateSuccess")
     );
+
+    return {
+      ...rawResult,
+      data: rawResult.data ? this.createEntity(rawResult.data) : undefined
+    };
   }
 
   async Delete(id: number)

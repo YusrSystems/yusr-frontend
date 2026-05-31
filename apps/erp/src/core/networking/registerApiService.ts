@@ -1,7 +1,7 @@
-import { ApiConstants, BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
+import { ApiConstants, BaseApiServiceOld, type RequestResult, YusrApiHelper } from "yusr-ui";
 import type Registration from "../data/registration";
 
-export default class RegisterApiService extends BaseApiService<Registration>
+export default class RegisterApiService extends BaseApiServiceOld<Registration>
 {
   routeName: string = "Register";
 

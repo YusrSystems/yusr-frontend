@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { YusrSystemPermissionsResources } from "../../../auth";
 import { Currency, CurrencySlice } from "../../../entities";
-import { BaseApiService, CurrenciesApiService } from "../../../networking";
+import { BaseApiServiceOld, CurrenciesApiService } from "../../../networking";
 import type { YusrRootState } from "../../../state";
 import { ChangableSearchableSelect } from "./changableSearchableSelect";
 import type { BasicSearchableSelectParams } from "./searchableSelect";
@@ -17,7 +17,7 @@ export function CurrenciesSearchableSelect(
     <ChangableSearchableSelect<Currency>
       labelKey="name"
       state={ currencyState }
-      apiService={ new CurrenciesApiService() as unknown as BaseApiService<Currency> }
+      apiService={ new CurrenciesApiService() as unknown as BaseApiServiceOld<Currency> }
       systemPermissionsResources={ YusrSystemPermissionsResources.Branches }
       entityActions={ {
         filter: CurrencySlice.entityActions.filter,

@@ -4,9 +4,9 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { SystemPermissions, SystemPermissionsActions } from "../../../auth";
 import { BaseEntity } from "../../../entities";
-import type { BaseApiService } from "../../../networking";
+import type { BaseApiServiceOld } from "../../../networking";
 import type { IEntityState } from "../../../state";
-import { type FilterResult, ResultStatus } from "../../../types";
+import { type ApiFilterResult, ResultStatus } from "../../../types";
 import { Button, Dialog } from "../../pure";
 import type { DialogMode } from "../dialogs/dialogType";
 import { type BasicSearchableSelectParams, SearchableSelect } from "./searchableSelect";
@@ -14,7 +14,7 @@ import { type BasicSearchableSelectParams, SearchableSelect } from "./searchable
 type BaseDialogProps<T extends BaseEntity> = {
   entity?: T;
   mode: DialogMode;
-  service: BaseApiService<T>;
+  service: BaseApiServiceOld<T>;
   onSuccess: (data: T) => void;
 };
 
@@ -26,12 +26,12 @@ export type ChangableSearchableSelectParams<T extends BaseEntity, TDialogProps e
     createKey?: keyof T;
     renderContent?: (item: T) => React.ReactNode;
     state: IEntityState<T>;
-    apiService: BaseApiService<T>;
+    apiService: BaseApiServiceOld<T>;
     systemPermissionsResources: string;
     allowAdd?: boolean;
     allowUpdate?: boolean;
     entityActions: {
-      filter: AsyncThunk<FilterResult<T> | undefined, string | undefined, object>;
+      filter: AsyncThunk<ApiFilterResult<T> | undefined, string | undefined, object>;
       refresh: ActionCreatorWithPayload<{ data?: T; deletedId?: number; }>;
     };
     changeDialog?: React.ComponentType<BaseDialogProps<T> & TDialogProps>;

@@ -1,8 +1,8 @@
-import type { FilterResult } from "../../types";
+import type { ApiFilterResult } from "../../types";
 
 export interface IEntityState<T>
 {
-  entities: FilterResult<T>;
+  entities: ApiFilterResult<T>;
   isLoaded: boolean;
   isLoading: boolean;
   currentPage: number;

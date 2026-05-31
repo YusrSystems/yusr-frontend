@@ -1,7 +1,7 @@
 import type { User } from "../entities";
-import { BaseApiService } from "./baseApiService";
+import { BaseApiServiceOld } from "./baseApiServiceOld";
 
-export class UsersApiService extends BaseApiService<User>
+export class UsersApiService extends BaseApiServiceOld<User>
 {
   routeName: string = "Users";
 }

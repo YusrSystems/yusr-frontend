@@ -2,7 +2,7 @@ import type { i18n } from "i18next";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { BaseApiService, BranchesPage, NotFoundPage, NumbertoWordsService, ProtectedRoute, ThemeProvider, Toaster, TooltipProvider, UsersPage, Validators, YusrApiHelper } from "yusr-ui";
+import { BaseApiServiceOld, BranchesPage, NotFoundPage, NumbertoWordsService, ProtectedRoute, ThemeProvider, Toaster, TooltipProvider, UsersPage, Validators, YusrApiHelper } from "yusr-ui";
 import AppLayout from "./appLayout";
 import { useAppSelector } from "./core/state/store";
 import BanksAccountsPage from "./features/accounts/banksAccountsPage";
@@ -41,7 +41,7 @@ function App()
   {
     NumbertoWordsService.init(t, i18n.language);
     YusrApiHelper.init(t, i18n.language);
-    BaseApiService.init(t);
+    BaseApiServiceOld.init(t);
     Validators.init(t);
   }, [t, i18n.language]);
 

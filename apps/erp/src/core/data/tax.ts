@@ -1,7 +1,7 @@
 import type { Signal } from "@preact/signals";
 import { type TFunction } from "i18next";
 import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, Entity, type ValidationRule, Validators } from "yusr-ui";
-import TaxesApiService from "../networking/taxesApiService";
+import TaxesApiServiceOld from "../networking/taxesApiServiceold";
 
 export class TaxOld extends BaseEntity
 {
@@ -35,7 +35,7 @@ export class TaxValidationRules
 
 export class TaxSlice
 {
-  private static entitySliceInstance = createGenericEntitySlice("tax", new TaxesApiService());
+  private static entitySliceInstance = createGenericEntitySlice("tax", new TaxesApiServiceOld());
   public static entityActions = TaxSlice.entitySliceInstance.actions;
   public static entityReducer = TaxSlice.entitySliceInstance.reducer;
 

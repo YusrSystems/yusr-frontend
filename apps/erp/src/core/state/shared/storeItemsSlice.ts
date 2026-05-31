@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { FilterByTypeRequest, FilterResult } from "yusr-ui";
+import type { ApiFilterResult, FilterByTypeRequest } from "yusr-ui";
 import type Item from "../../data/item";
 import ItemsApiService from "../../networking/itemApiService";
 
@@ -10,7 +10,7 @@ export interface FetchStoreItemsProps
   storeId: number | undefined;
   request: FilterByTypeRequest<Item>;
 }
-export const fetchStoreItems = createAsyncThunk<FilterResult<Item>, FetchStoreItemsProps>(
+export const fetchStoreItems = createAsyncThunk<ApiFilterResult<Item>, FetchStoreItemsProps>(
   "storeItems/fetch",
   async (
     storeItemsProps: FetchStoreItemsProps

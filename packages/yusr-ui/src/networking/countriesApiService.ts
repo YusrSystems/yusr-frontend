@@ -1,10 +1,10 @@
 import type { Country } from "../entities";
-import type { FilterResult, RequestResult } from "../types";
+import type { ApiFilterResult, RequestResult } from "../types";
 import { ApiConstants } from "./apiConstants";
-import { BaseFilterableApiService } from "./baseFilterableApiService";
+import { BaseFilterableApiServiceOld } from "./baseFilterableApiServiceOld";
 import { YusrApiHelper } from "./yusrApiHelper";
 
-export class CountriesApiService extends BaseFilterableApiService<Country>
+export class CountriesApiService extends BaseFilterableApiServiceOld<Country>
 {
   routeName: string = "Countries";
 
@@ -12,7 +12,7 @@ export class CountriesApiService extends BaseFilterableApiService<Country>
     pageNumber: number,
     rowsPerPage: number,
     searchText?: string
-  ): Promise<RequestResult<FilterResult<Country>>>
+  ): Promise<RequestResult<ApiFilterResult<Country>>>
   {
     return await YusrApiHelper.Post(
       `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
