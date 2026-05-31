@@ -10,16 +10,19 @@ export type InvoicesListReportType = typeof InvoicesListReportType[keyof typeof 
 
 export class InvoicesListReportRequest implements BaseReportRequest
 {
+  reportType: InvoicesListReportType;
   types: InvoiceType[] = [];
   searchText?: string;
-  fromDate?: string | null;
-  toDate?: string | null;
-  reportType: InvoicesListReportType;
+  fromDate?: string;
+  toDate?: string;
+  actionAccountId?: number;
+  storeId?: number;
+  itemIds: number[] = [];
 
   constructor(init?: Partial<InvoicesListReportRequest>)
   {
-    this.fromDate = null;
-    this.toDate = null;
+    this.fromDate = undefined;
+    this.toDate = undefined;
     this.reportType = InvoicesListReportType.InvoicesList;
     Object.assign(this, init);
   }

@@ -256,7 +256,9 @@
     "purchasesTaxReport": "खरीद कर रिपोर्ट",
     "itemBarcode": "वस्तु बारकोड",
     "barcodeCount": "बारकोड की संख्या",
-    "pagesCount": "पृष्ठों की संख्या"
+    "pagesCount": "पृष्ठों की संख्या",
+    "InvoicesList": "चालान सूची",
+    "InvoicesListDescription": "व्यापक फ़िल्टरिंग विकल्पों के साथ चालान देखें"
   },
 
   "accountStatement": {

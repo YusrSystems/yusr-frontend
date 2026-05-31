@@ -251,7 +251,9 @@
     "purchasesTaxReport": "تقرير ضرائب المشتريات",
     "itemBarcode": "باركود المادة",
     "barcodeCount": "عدد الباركودات",
-    "pagesCount": "عدد الصفحات"
+    "pagesCount": "عدد الصفحات",
+    "InvoicesList": "قائمة الفواتير",
+    "InvoicesListDescription": "استعراض الفواتير مع إمكانية التصفية والفلترة الشاملة"
   },
   "accountStatement": {
     "button": "كشف حساب",

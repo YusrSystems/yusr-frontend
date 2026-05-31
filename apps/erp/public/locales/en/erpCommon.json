@@ -256,7 +256,9 @@
     "purchasesTaxReport": "Purchases Tax Report",
     "itemBarcode": "Item Barcode",
     "barcodeCount": "Barcode Count",
-    "pagesCount": "Pages Count"
+    "pagesCount": "Pages Count",
+    "InvoicesList": "Invoices List",
+    "InvoicesListDescription": "View invoices with comprehensive filtering options"
   },
 
   "accountStatement": {

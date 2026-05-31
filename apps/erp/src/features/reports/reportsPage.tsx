@@ -1,4 +1,4 @@
-import { ArrowRightLeft, BarChart2, FileText, type LucideIcon, Percent, TrendingUp } from "lucide-react";
+import { ArrowRightLeft, BarChart2, FileText, type LucideIcon, Percent, ReceiptText, TrendingUp } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
@@ -12,6 +12,7 @@ import ItemsMovementDialog from "./ItemsMovementDialog";
 import ItemsTaxStatementDialog from "./ItemsTaxStatementDialog";
 import ProfitAndLossDialog from "./ProfitAndLossDialog";
 import TaxReturnDialog from "./taxReturnDialog";
+import InvoicesListDialog from "./invoicesListDialog";
 
 interface Report
 {
@@ -127,6 +128,16 @@ export default function ReportsPage()
       hasAuth: SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.ReportProfitAndLoss,
+        SystemPermissionsActions.Get
+      )
+    }, {
+      comp: <InvoicesListDialog />,
+      name: t("reports.InvoicesList"),
+      description: t("reports.InvoicesListDescription"),
+      icon: ReceiptText,
+      hasAuth: SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.ReportInvoiceList,
         SystemPermissionsActions.Get
       )
     }]

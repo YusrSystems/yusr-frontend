@@ -256,7 +256,9 @@
     "purchasesTaxReport": "ক্রয় ট্যাক্স রিপোর্ট",
     "itemBarcode": "আইটেম বারকোড",
     "barcodeCount": "বারকোডের সংখ্যা",
-    "pagesCount": "পৃষ্ঠার সংখ্যা"
+    "pagesCount": "পৃষ্ঠার সংখ্যা",
+    "InvoicesList": "চালানের তালিকা",
+    "InvoicesListDescription": "বিস্তৃত ফিল্টারিং অপশন সহ চালান দেখুন"
   },
 
   "accountStatement": {

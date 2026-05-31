@@ -256,7 +256,9 @@
     "purchasesTaxReport": "پرچیز ٹیکس رپورٹ",
     "itemBarcode": "آئٹم بارکوڈ",
     "barcodeCount": "بارکوڈ کی تعداد",
-    "pagesCount": "صفحات کی تعداد"
+    "pagesCount": "صفحات کی تعداد",
+    "InvoicesList": "انوائسز کی فہرست",
+    "InvoicesListDescription": "جامع فلٹرنگ اختیارات کے ساتھ انوائسز دیکھیں"
   },
 
   "accountStatement": {
