@@ -91,7 +91,7 @@ export default class InvoiceItemsMath
   {
     const taxInclusivePrice = (invoiceItem.taxInclusivePrice ?? 0) + (invoiceItem.settlement ?? 0);
     const totalTaxesAmount = Number(
-      ((invoiceItem.taxInclusivePrice ?? 0) - (invoiceItem.taxExclusivePrice ?? 0)).toFixed(2)
+      ((invoiceItem.taxInclusiveTotalPrice ?? 0) - (invoiceItem.taxExclusiveTotalPrice ?? 0)).toFixed(2)
     );
     const profit = Number((taxInclusivePrice - totalTaxesAmount - (invoiceItem.cost ?? 0)).toFixed(2));
     const qtn = invoiceItem.quantity ?? 0;
