@@ -1,7 +1,7 @@
 import { ArrowRightLeft } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, CurrencyIcon, NumbertoWordsService, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { CrudPageOld, CurrencyIcon, NumbertoWordsService, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import BalanceTransfer, { BalanceTransferSlice } from "../../core/data/balanceTransfer";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -10,8 +10,7 @@ import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "../reports/reportButton";
 import ChangeBalanceTransferDialog from "./changeBalanceTransferDialog";
 
-export default function BalanceTransfersPage()
-{
+export default function BalanceTransfersPage() {
   const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
@@ -25,25 +24,25 @@ export default function BalanceTransfersPage()
   const service = useMemo(() => new BalanceTransfersApiService(), []);
 
   return (
-    <CrudPage<BalanceTransfer>
-      title={ t("balanceTransfers.title") }
-      entityName={ t("balanceTransfers.entityName") }
-      addNewItemTitle={ t("balanceTransfers.addNewTitle") }
-      permissions={ permissions }
-      hasPagePermission={ SystemPermissions.hasAuth(
+    <CrudPageOld<BalanceTransfer>
+      title={t("balanceTransfers.title")}
+      entityName={t("balanceTransfers.entityName")}
+      addNewItemTitle={t("balanceTransfers.addNewTitle")}
+      permissions={permissions}
+      hasPagePermission={SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.BalanceTransfers,
         SystemPermissionsActions.Get
-      ) }
-      entityState={ transferState }
-      useSlice={ () => transferDialogState }
-      service={ service }
-      cards={ [{
+      )}
+      entityState={transferState}
+      useSlice={() => transferDialogState}
+      service={service}
+      cards={[{
         title: t("balanceTransfers.totalTransfers"),
         data: (transferState.entities?.count ?? 0).toString(),
         icon: <ArrowRightLeft className="h-4 w-4 text-muted-foreground" />
-      }] }
-      tableHeadRows={ [
+      }]}
+      tableHeadRows={[
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: t("balanceTransfers.transferId"), rowStyles: "w-24" },
         { rowName: t("balanceTransfers.date"), rowStyles: "w-24" },
@@ -52,52 +51,52 @@ export default function BalanceTransfersPage()
         { rowName: t("balanceTransfers.amount"), rowStyles: "w-32" },
         { rowName: t("balanceTransfers.description"), rowStyles: "w-48" },
         ...(SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.ReportBalanceTransfer,
-            SystemPermissionsActions.Get
-          )
+          authState.loggedInUser?.role?.permissions ?? [],
+          SystemPermissionsResources.ReportBalanceTransfer,
+          SystemPermissionsActions.Get
+        )
           ? [{ rowName: "", rowStyles: "w-32" }]
           : [])
-      ] }
-      tableRowMapper={ (
+      ]}
+      tableRowMapper={(
         transfer: BalanceTransfer
       ) => [
-        { rowName: `#${transfer.id}`, rowStyles: "" },
-        { rowName: new Date(transfer.date).toLocaleDateString("en-CA"), rowStyles: "" },
-        { rowName: transfer.fromAccountName ?? "-", rowStyles: "font-semibold text-red-600" },
-        { rowName: transfer.toAccountName ?? "-", rowStyles: "font-semibold text-green-600" },
-        {
-          rowName: (
-            <div className="flex items-center gap-1">
-              { (transfer.amount ?? 0).toLocaleString("en-US") }
-              <CurrencyIcon />
-            </div>
-          ),
-          rowStyles: "font-mono font-bold"
-        },
-        { rowName: transfer.description ?? "-", rowStyles: "text-sm text-gray-500 truncate max-w-[200px]" },
-        ...(SystemPermissions.hasAuth(
+          { rowName: `#${transfer.id}`, rowStyles: "" },
+          { rowName: new Date(transfer.date).toLocaleDateString("en-CA"), rowStyles: "" },
+          { rowName: transfer.fromAccountName ?? "-", rowStyles: "font-semibold text-red-600" },
+          { rowName: transfer.toAccountName ?? "-", rowStyles: "font-semibold text-green-600" },
+          {
+            rowName: (
+              <div className="flex items-center gap-1">
+                {(transfer.amount ?? 0).toLocaleString("en-US")}
+                <CurrencyIcon />
+              </div>
+            ),
+            rowStyles: "font-mono font-bold"
+          },
+          { rowName: transfer.description ?? "-", rowStyles: "text-sm text-gray-500 truncate max-w-[200px]" },
+          ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
             SystemPermissionsResources.ReportBalanceTransfer,
             SystemPermissionsActions.Get
           )
-          ? [{
-            rowName: (
-              <ReportButton
-                reportName={ ReportConstants.BalanceTransfer }
-                request={ {
-                  balanceTransferId: transfer.id,
-                  tafqit: authState.setting?.currency
-                    ? NumbertoWordsService.ConvertAmount(transfer.amount, authState.setting.currency)
-                    : NumbertoWordsService.Convert(transfer.amount)
-                } }
-              />
-            ),
-            rowStyles: "w-32"
-          }]
-          : [])
-      ] }
-      actions={ {
+            ? [{
+              rowName: (
+                <ReportButton
+                  reportName={ReportConstants.BalanceTransfer}
+                  request={{
+                    balanceTransferId: transfer.id,
+                    tafqit: authState.setting?.currency
+                      ? NumbertoWordsService.ConvertAmount(transfer.amount, authState.setting.currency)
+                      : NumbertoWordsService.Convert(transfer.amount)
+                  }}
+                />
+              ),
+              rowStyles: "w-32"
+            }]
+            : [])
+        ]}
+      actions={{
         filter: BalanceTransferSlice.entityActions.filter,
         openChangeDialog: (entity) => BalanceTransferSlice.dialogActions.openChangeDialog(entity),
         openDeleteDialog: (entity) => BalanceTransferSlice.dialogActions.openDeleteDialog(entity),
@@ -105,22 +104,20 @@ export default function BalanceTransfersPage()
         setIsDeleteDialogOpen: (open) => BalanceTransferSlice.dialogActions.setIsDeleteDialogOpen(open),
         refresh: BalanceTransferSlice.entityActions.refresh,
         setCurrentPage: (page) => BalanceTransferSlice.entityActions.setCurrentPage(page)
-      } }
-      ChangeDialog={ 
+      }}
+      ChangeDialog={
         <ChangeBalanceTransferDialog
-          entity={ transferDialogState.selectedRow || undefined }
-          mode={ transferDialogState.selectedRow ? "update" : "create" }
-          service={ service }
-          onSuccess={ (data, mode) =>
-          {
+          entity={transferDialogState.selectedRow || undefined}
+          mode={transferDialogState.selectedRow ? "update" : "create"}
+          service={service}
+          onSuccess={(data, mode) => {
             dispatch(BalanceTransferSlice.entityActions.refresh({ data: data }));
-            if (mode === "create")
-            {
+            if (mode === "create") {
               dispatch(BalanceTransferSlice.dialogActions.setIsChangeDialogOpen(false));
             }
-          } }
+          }}
         />
-       }
+      }
     />
   );
 }

@@ -1,7 +1,7 @@
 import { BoxIcon } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { CrudPageOld, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type Unit from "../../core/data/unit";
 import { UnitSlice } from "../../core/data/unit";
@@ -9,8 +9,7 @@ import UnitsApiService from "../../core/networking/unitApiService";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ChangeUnitDialog from "./changeUnitDialog";
 
-export default function UnitsPage()
-{
+export default function UnitsPage() {
   const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
@@ -20,32 +19,32 @@ export default function UnitsPage()
   const service = useMemo(() => new UnitsApiService(), []);
 
   return (
-    <CrudPage<Unit>
-      title={ t("units.title") }
-      entityName={ t("units.entityName") }
-      addNewItemTitle={ t("units.addNewTitle") }
-      permissions={ permissions }
-      hasPagePermission={ SystemPermissions.hasAuth(
+    <CrudPageOld<Unit>
+      title={t("units.title")}
+      entityName={t("units.entityName")}
+      addNewItemTitle={t("units.addNewTitle")}
+      permissions={permissions}
+      hasPagePermission={SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.Units,
         SystemPermissionsActions.Get
-      ) }
-      entityState={ unitState }
-      useSlice={ () => unitDialogState }
-      service={ service }
-      cards={ [{
+      )}
+      entityState={unitState}
+      useSlice={() => unitDialogState}
+      service={service}
+      cards={[{
         title: t("units.totalUnits"),
         data: (unitState.entities?.count ?? 0).toString(),
         icon: <BoxIcon className="h-4 w-4 text-muted-foreground" />
-      }] }
-      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
+      }]}
+      tableHeadRows={[{ rowName: "", rowStyles: "text-left w-12.5" }, {
         rowName: t("units.unitId"),
         rowStyles: "w-30"
-      }, { rowName: t("units.unitName"), rowStyles: "w-70" }] }
-      tableRowMapper={ (
+      }, { rowName: t("units.unitName"), rowStyles: "w-70" }]}
+      tableRowMapper={(
         unit: Unit
-      ) => [{ rowName: `#${unit.id}`, rowStyles: "" }, { rowName: unit.name, rowStyles: "font-semibold" }] }
-      actions={ {
+      ) => [{ rowName: `#${unit.id}`, rowStyles: "" }, { rowName: unit.name, rowStyles: "font-semibold" }]}
+      actions={{
         filter: UnitSlice.entityActions.filter,
         openChangeDialog: (entity) => UnitSlice.dialogActions.openChangeDialog(entity),
         openDeleteDialog: (entity) => UnitSlice.dialogActions.openDeleteDialog(entity),
@@ -53,22 +52,20 @@ export default function UnitsPage()
         setIsDeleteDialogOpen: (open) => UnitSlice.dialogActions.setIsDeleteDialogOpen(open),
         refresh: UnitSlice.entityActions.refresh,
         setCurrentPage: (page) => UnitSlice.entityActions.setCurrentPage(page)
-      } }
-      ChangeDialog={ 
+      }}
+      ChangeDialog={
         <ChangeUnitDialog
-          entity={ unitDialogState.selectedRow || undefined }
-          mode={ unitDialogState.selectedRow ? "update" : "create" }
-          service={ service }
-          onSuccess={ (data, mode) =>
-          {
+          entity={unitDialogState.selectedRow || undefined}
+          mode={unitDialogState.selectedRow ? "update" : "create"}
+          service={service}
+          onSuccess={(data, mode) => {
             dispatch(UnitSlice.entityActions.refresh({ data: data }));
-            if (mode === "create")
-            {
+            if (mode === "create") {
               dispatch(UnitSlice.dialogActions.setIsChangeDialogOpen(false));
             }
-          } }
+          }}
         />
-       }
+      }
     />
   );
 }

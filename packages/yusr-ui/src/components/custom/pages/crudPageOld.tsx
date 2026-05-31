@@ -57,7 +57,7 @@ export type CrudPageProps<T extends BaseEntity> = PropsWithChildren & {
   onRouteOpen?: (id: number) => void;
 };
 
-export function CrudPage<T extends BaseEntity>(
+export function CrudPageOld<T extends BaseEntity>(
   {
     permissions,
     perRowPermissions,

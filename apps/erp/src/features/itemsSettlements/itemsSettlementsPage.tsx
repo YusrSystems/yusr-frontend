@@ -1,7 +1,7 @@
 import { Scale } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { CrudPageOld, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import ItemsSettlement, { ItemsSettlementSlice } from "../../core/data/itemsSettlement";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -10,8 +10,7 @@ import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "../reports/reportButton";
 import ChangeItemsSettlementDialog from "./changeItemsSettlementDialog";
 
-export default function ItemsSettlementsPage()
-{
+export default function ItemsSettlementsPage() {
   const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
@@ -25,62 +24,62 @@ export default function ItemsSettlementsPage()
   const service = useMemo(() => new ItemsSettlementsApiService(), []);
 
   return (
-    <CrudPage<ItemsSettlement>
-      title={ t("itemsSettlements.title") }
-      entityName={ t("itemsSettlements.entityName") }
-      addNewItemTitle={ t("itemsSettlements.addNewTitle") }
-      permissions={ permissions }
-      hasPagePermission={ SystemPermissions.hasAuth(
+    <CrudPageOld<ItemsSettlement>
+      title={t("itemsSettlements.title")}
+      entityName={t("itemsSettlements.entityName")}
+      addNewItemTitle={t("itemsSettlements.addNewTitle")}
+      permissions={permissions}
+      hasPagePermission={SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.ItemsSettlements,
         SystemPermissionsActions.Get
-      ) }
-      entityState={ itemsSettlementState }
-      useSlice={ () => itemsSettlementDialogState }
-      service={ service }
-      cards={ [{
+      )}
+      entityState={itemsSettlementState}
+      useSlice={() => itemsSettlementDialogState}
+      service={service}
+      cards={[{
         title: t("itemsSettlements.totalSettlements"),
         data: (itemsSettlementState.entities?.count ?? 0).toString(),
         icon: <Scale className="h-4 w-4 text-muted-foreground" />
-      }] }
-      tableHeadRows={ [
+      }]}
+      tableHeadRows={[
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: t("itemsSettlements.settlementId"), rowStyles: "w-32" },
         { rowName: t("itemsSettlements.date"), rowStyles: "w-32" },
         { rowName: t("itemsSettlements.store"), rowStyles: "w-48" },
         { rowName: t("itemsSettlements.description"), rowStyles: "" },
         ...(SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.ReportItemSettlement,
-            SystemPermissionsActions.Get
-          )
+          authState.loggedInUser?.role?.permissions ?? [],
+          SystemPermissionsResources.ReportItemSettlement,
+          SystemPermissionsActions.Get
+        )
           ? [{ rowName: "", rowStyles: "w-32" }]
           : [])
-      ] }
-      tableRowMapper={ (
+      ]}
+      tableRowMapper={(
         settlement: ItemsSettlement
       ) => [
-        { rowName: `#${settlement.id}`, rowStyles: "" },
-        { rowName: new Date(settlement.date).toLocaleDateString("en-CA"), rowStyles: "font-mono" },
-        { rowName: settlement.storeName, rowStyles: "font-semibold" },
-        { rowName: settlement.description ?? "-", rowStyles: "text-sm text-gray-500" },
-        ...(SystemPermissions.hasAuth(
+          { rowName: `#${settlement.id}`, rowStyles: "" },
+          { rowName: new Date(settlement.date).toLocaleDateString("en-CA"), rowStyles: "font-mono" },
+          { rowName: settlement.storeName, rowStyles: "font-semibold" },
+          { rowName: settlement.description ?? "-", rowStyles: "text-sm text-gray-500" },
+          ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
             SystemPermissionsResources.ReportItemSettlement,
             SystemPermissionsActions.Get
           )
-          ? [{
-            rowName: (
-              <ReportButton
-                reportName={ ReportConstants.ItemSettlement }
-                request={ { itemSettlementId: settlement.id } }
-              />
-            ),
-            rowStyles: "w-32"
-          }]
-          : [])
-      ] }
-      actions={ {
+            ? [{
+              rowName: (
+                <ReportButton
+                  reportName={ReportConstants.ItemSettlement}
+                  request={{ itemSettlementId: settlement.id }}
+                />
+              ),
+              rowStyles: "w-32"
+            }]
+            : [])
+        ]}
+      actions={{
         filter: ItemsSettlementSlice.entityActions.filter,
         openChangeDialog: (entity) => ItemsSettlementSlice.dialogActions.openChangeDialog(entity),
         openDeleteDialog: (entity) => ItemsSettlementSlice.dialogActions.openDeleteDialog(entity),
@@ -88,22 +87,20 @@ export default function ItemsSettlementsPage()
         setIsDeleteDialogOpen: (open) => ItemsSettlementSlice.dialogActions.setIsDeleteDialogOpen(open),
         refresh: ItemsSettlementSlice.entityActions.refresh,
         setCurrentPage: (page) => ItemsSettlementSlice.entityActions.setCurrentPage(page)
-      } }
-      ChangeDialog={ 
+      }}
+      ChangeDialog={
         <ChangeItemsSettlementDialog
-          entity={ itemsSettlementDialogState.selectedRow || undefined }
-          mode={ itemsSettlementDialogState.selectedRow ? "update" : "create" }
-          service={ service }
-          onSuccess={ (data, mode) =>
-          {
+          entity={itemsSettlementDialogState.selectedRow || undefined}
+          mode={itemsSettlementDialogState.selectedRow ? "update" : "create"}
+          service={service}
+          onSuccess={(data, mode) => {
             dispatch(ItemsSettlementSlice.entityActions.refresh({ data: data }));
-            if (mode === "create")
-            {
+            if (mode === "create") {
               dispatch(ItemsSettlementSlice.dialogActions.setIsChangeDialogOpen(false));
             }
-          } }
+          }}
         />
-       }
+      }
     />
   );
 }

@@ -1,7 +1,7 @@
 import type { ResourcePermissions } from "@/auth";
 import { createContext, useContext } from "react";
 import type { BaseEntity } from "../../../entities";
-import type { CrudActions } from "./crudPage";
+import type { CrudActions } from "./crudPageOld";
 
 interface crudPageContextProps<T extends BaseEntity>
 {

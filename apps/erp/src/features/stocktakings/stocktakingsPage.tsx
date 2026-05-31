@@ -1,7 +1,7 @@
 import { ClipboardCheck } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { CrudPageOld, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import ReportConstants from "../../core/data/report/reportConstants";
 import Stocktaking, { StocktakingSlice } from "../../core/data/stocktaking";
@@ -10,8 +10,7 @@ import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "../reports/reportButton";
 import ChangeStocktakingDialog from "./changeStocktakingDialog";
 
-export default function StocktakingsPage()
-{
+export default function StocktakingsPage() {
   const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
@@ -25,62 +24,62 @@ export default function StocktakingsPage()
   const service = useMemo(() => new StocktakingsApiService(), []);
 
   return (
-    <CrudPage<Stocktaking>
-      title={ t("stocktakings.title") }
-      entityName={ t("stocktakings.entityName") }
-      addNewItemTitle={ t("stocktakings.addNewTitle") }
-      permissions={ permissions }
-      hasPagePermission={ SystemPermissions.hasAuth(
+    <CrudPageOld<Stocktaking>
+      title={t("stocktakings.title")}
+      entityName={t("stocktakings.entityName")}
+      addNewItemTitle={t("stocktakings.addNewTitle")}
+      permissions={permissions}
+      hasPagePermission={SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.Stocktakings,
         SystemPermissionsActions.Get
-      ) }
-      entityState={ stocktakingState }
-      useSlice={ () => stocktakingDialogState }
-      service={ service }
-      cards={ [{
+      )}
+      entityState={stocktakingState}
+      useSlice={() => stocktakingDialogState}
+      service={service}
+      cards={[{
         title: t("stocktakings.totalStocktakings"),
         data: (stocktakingState.entities?.count ?? 0).toString(),
         icon: <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
-      }] }
-      tableHeadRows={ [
+      }]}
+      tableHeadRows={[
         { rowName: "", rowStyles: "text-left w-12.5" },
         { rowName: t("stocktakings.stocktakingId"), rowStyles: "w-32" },
         { rowName: t("stocktakings.date"), rowStyles: "w-32" },
         { rowName: t("stocktakings.store"), rowStyles: "w-48" },
         { rowName: t("stocktakings.description"), rowStyles: "" },
         ...(SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.ReportStocktaking,
-            SystemPermissionsActions.Get
-          )
+          authState.loggedInUser?.role?.permissions ?? [],
+          SystemPermissionsResources.ReportStocktaking,
+          SystemPermissionsActions.Get
+        )
           ? [{ rowName: "", rowStyles: "w-32" }]
           : [])
-      ] }
-      tableRowMapper={ (
+      ]}
+      tableRowMapper={(
         stocktaking: Stocktaking
       ) => [
-        { rowName: `#${stocktaking.id}`, rowStyles: "" },
-        { rowName: new Date(stocktaking.date).toLocaleDateString("en-CA"), rowStyles: "font-mono" },
-        { rowName: stocktaking.storeName, rowStyles: "font-semibold" },
-        { rowName: stocktaking.description ?? "-", rowStyles: "text-sm text-gray-500" },
-        ...(SystemPermissions.hasAuth(
+          { rowName: `#${stocktaking.id}`, rowStyles: "" },
+          { rowName: new Date(stocktaking.date).toLocaleDateString("en-CA"), rowStyles: "font-mono" },
+          { rowName: stocktaking.storeName, rowStyles: "font-semibold" },
+          { rowName: stocktaking.description ?? "-", rowStyles: "text-sm text-gray-500" },
+          ...(SystemPermissions.hasAuth(
             authState.loggedInUser?.role?.permissions ?? [],
             SystemPermissionsResources.ReportStocktaking,
             SystemPermissionsActions.Get
           )
-          ? [{
-            rowName: (
-              <ReportButton
-                reportName={ ReportConstants.StockTaking }
-                request={ { stocktakingId: stocktaking.id } }
-              />
-            ),
-            rowStyles: "w-32"
-          }]
-          : [])
-      ] }
-      actions={ {
+            ? [{
+              rowName: (
+                <ReportButton
+                  reportName={ReportConstants.StockTaking}
+                  request={{ stocktakingId: stocktaking.id }}
+                />
+              ),
+              rowStyles: "w-32"
+            }]
+            : [])
+        ]}
+      actions={{
         filter: StocktakingSlice.entityActions.filter,
         openChangeDialog: (entity) => StocktakingSlice.dialogActions.openChangeDialog(entity),
         openDeleteDialog: (entity) => StocktakingSlice.dialogActions.openDeleteDialog(entity),
@@ -88,22 +87,20 @@ export default function StocktakingsPage()
         setIsDeleteDialogOpen: (open) => StocktakingSlice.dialogActions.setIsDeleteDialogOpen(open),
         refresh: StocktakingSlice.entityActions.refresh,
         setCurrentPage: (page) => StocktakingSlice.entityActions.setCurrentPage(page)
-      } }
-      ChangeDialog={ 
+      }}
+      ChangeDialog={
         <ChangeStocktakingDialog
-          entity={ stocktakingDialogState.selectedRow || undefined }
-          mode={ stocktakingDialogState.selectedRow ? "update" : "create" }
-          service={ service }
-          onSuccess={ (data, mode) =>
-          {
+          entity={stocktakingDialogState.selectedRow || undefined}
+          mode={stocktakingDialogState.selectedRow ? "update" : "create"}
+          service={service}
+          onSuccess={(data, mode) => {
             dispatch(StocktakingSlice.entityActions.refresh({ data: data }));
-            if (mode === "create")
-            {
+            if (mode === "create") {
               dispatch(StocktakingSlice.dialogActions.setIsChangeDialogOpen(false));
             }
-          } }
+          }}
         />
-       }
+      }
     />
   );
 }

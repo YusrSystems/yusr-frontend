@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import type { BaseEntity } from "../../../entities";
-import type { CrudActions } from "./crudPage";
+import type { CrudActions } from "./crudPageOld";
 
 export default function useCrudPageRoute<T extends BaseEntity>(
   { actions, routeIdParam, basePath, onRouteOpen }: {
