@@ -204,6 +204,11 @@ export function CrudPage2<T extends BaseEntity>(
 }
 
 
+// TODO: make crud page only takes the entity 
+// only entity, the permissions must be taken from global state or local storage 
+// and the actions must be optional, the user can subscribe to the actions throw the CrudePage itself not it's components
+// the components must take the *minimum* required props only
+// by: Ahmed Bakri, 01:07 AM (01/06/2026)  
 export function CrudPage({ children }: PropsWithChildren) {
   return <div className="px-5 py-3 h-[calc(100vh-50px)] flex flex-col">
     {children}
@@ -223,6 +228,9 @@ CrudPage.Cards = function ({ ...props }: { cards: CardProps[] }) {
 
 
 // TODO : it could be more separated ( Comound Component )
+/* note: we could take permissions from global stored user state instead */
+
+
 export type CrudPageTableProps<TEntity extends Entity<TDto>, TDto extends Dto> = {
   tableHeadRows: CrudTableHeadRow[];
   entities: TEntity[];
