@@ -1,7 +1,8 @@
+import i18n from "@/config/i18n";
 import { GripVertical, Trash2 } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { type ColumnDef, ColumnVisibilityToggle, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, useColumnVisibility } from "yusr-ui";
+import { cn, type ColumnDef, ColumnVisibilityToggle, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, Tooltip, TooltipContent, TooltipTrigger, useColumnVisibility } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
 import { InvoiceType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
@@ -22,6 +23,7 @@ export default function InvoiceItemsTable()
     dispatch,
     disabled
   } = useInvoiceContext();
+  const [focusedQuantityIndex, setFocusedQuantityIndex] = useState<number | undefined>(undefined);
 
   const hasSettlementPerm = SystemPermissions.hasAuth(
     authState.loggedInUser?.role?.permissions ?? [],
@@ -187,6 +189,8 @@ export default function InvoiceItemsTable()
             {
               const isDragging = dragState.draggedIndex === index;
               const isDraggingOver = dragState.dragOverIndex === index;
+              const remaining = row.originalQuantity - row.quantity;
+              const isLowStock = remaining < 0;
 
               return (
                 <React.Fragment key={ `${row.id}-${index}` }>
@@ -249,16 +253,30 @@ export default function InvoiceItemsTable()
 
                     { /* Quantity */ }
                     <td className="px-2 pt-2">
-                      <NumberField
-                        label=""
-                        min={ 0 }
-                        step={ 0.1 }
-                        max={ getMaxAllowedQuantity(row.originalQuantity) }
-                        value={ row.quantity ?? 1 }
-                        onChange={ (newValue) =>
-                          dispatch(slice.formActions.onInvoiceItemQuantityChange({ index, newQtn: newValue })) }
-                        disabled={ mode === "return" ? false : disabled }
-                      />
+                      <Tooltip open={ focusedQuantityIndex === index }>
+                        <TooltipTrigger asChild>
+                          <NumberField
+                            label=""
+                            min={ 0 }
+                            step={ 0.1 }
+                            max={ getMaxAllowedQuantity(row.originalQuantity) }
+                            value={ row.quantity ?? 1 }
+                            onChange={ (newValue) =>
+                              dispatch(slice.formActions.onInvoiceItemQuantityChange({ index, newQtn: newValue })) }
+                            disabled={ mode === "return" ? false : disabled }
+                            onFocus={ () => setFocusedQuantityIndex(index) }
+                            onBlur={ () => setFocusedQuantityIndex(undefined) }
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent className="flex flex-col gap-1 min-w-40" dir={ i18n.dir() }>
+                          <span className="text-xs">
+                            الكمية المتبقية في المستودع
+                          </span>
+                          <span className={ cn("text-lg font-medium", isLowStock && "text-red-600 dark:text-red-400") }>
+                            { remaining }
+                          </span>
+                        </TooltipContent>
+                      </Tooltip>
                     </td>
 
                     { isVisible("priceWithoutTax") && (
