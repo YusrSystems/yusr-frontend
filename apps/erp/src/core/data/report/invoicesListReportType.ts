@@ -17,7 +17,7 @@ export class InvoicesListReportRequest implements BaseReportRequest
   toDate?: string;
   actionAccountId?: number;
   storeId?: number;
-  itemIds: number[] = [];
+  itemIds?: number[];
 
   constructor(init?: Partial<InvoicesListReportRequest>)
   {
