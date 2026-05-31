@@ -189,7 +189,9 @@ export default function InvoiceItemsTable()
             {
               const isDragging = dragState.draggedIndex === index;
               const isDraggingOver = dragState.dragOverIndex === index;
-              const remaining = row.originalQuantity - row.quantity;
+              const showToolTip = (formData.type === InvoiceType.Purchase || formData.type === InvoiceType.Sell) && mode != "return";
+              const multiplier = formData.type === InvoiceType.Sell ? -1 : 1;
+              const remaining = row.originalQuantity + row.quantity * multiplier;
               const isLowStock = remaining < 0;
 
               return (
@@ -247,7 +249,7 @@ export default function InvoiceItemsTable()
                     ) }
 
                     <td className="px-2 pt-2">
-                      <Tooltip open={ focusedQuantityIndex === index }>
+                      <Tooltip open={ focusedQuantityIndex === index && showToolTip }>
                         <TooltipTrigger asChild>
                           <NumberField
                             label=""
