@@ -1,11 +1,11 @@
 import type { ResourcePermissions } from "@/auth";
 import { createContext, useContext } from "react";
 import type { BaseEntity } from "../../../entities";
-import type { CrudActions } from "./crudPageOld";
+import type { CrudActionsOld } from "./crudPageOld";
 
 interface crudPageContextProps<T extends BaseEntity>
 {
-  actions: CrudActions<T>;
+  actions: CrudActionsOld<T>;
   permissions: ResourcePermissions;
   dispatch: any;
   handleOpenChangeDialog: (entity: T) => void;

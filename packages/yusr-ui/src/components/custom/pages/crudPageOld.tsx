@@ -13,7 +13,7 @@ import { Dialog, DialogContent } from "../../pure/dialog";
 import { TableBody } from "../../pure/table";
 import { DeleteDialog } from "../dialogs/deleteDialog";
 import { SearchInput } from "../inputs/searchInput";
-import { CrudTable } from "../table/crudTable";
+import { CrudTableOld } from "../table/crudTable";
 import { CrudTableBodyRow, type TableBodyRowInfo } from "../table/crudTableBodyRow";
 import { type CardProps, CrudTableCard } from "../table/crudTableCard";
 import { CrudTableHeader } from "../table/crudTableHeader";
@@ -23,7 +23,7 @@ import { CrudTableRowActionsMenu } from "../table/crudTableRowActionsMenu";
 import { UnauthorizedPage } from "../unauthorized/unauthorizedPage";
 import useCrudPageRoute from "./useCrudPageRoute";
 
-export interface CrudActions<T extends BaseEntity> {
+export interface CrudActionsOld<T extends BaseEntity> {
   filter: AsyncThunk<ApiFilterResult<T> | undefined, string | undefined, object>;
   openChangeDialog: (entity: T) => UnknownAction;
   openDeleteDialog: (entity: T) => UnknownAction;
@@ -33,10 +33,10 @@ export interface CrudActions<T extends BaseEntity> {
   setCurrentPage: (page: number) => UnknownAction;
 }
 
-export type CrudPageProps<T extends BaseEntity> = PropsWithChildren & {
+export type CrudPagePropsOld<T extends BaseEntity> = PropsWithChildren & {
   entityState: IEntityState<T>;
   useSlice: () => IDialogState<T>;
-  actions: CrudActions<T>;
+  actions: CrudActionsOld<T>;
   permissions: ResourcePermissions;
   perRowPermissions?: (entity: T) => ResourcePermissions;
   hasPagePermission?: boolean;
@@ -81,7 +81,7 @@ export function CrudPageOld<T extends BaseEntity>(
     routeIdParam,
     onRouteOpen,
     children
-  }: CrudPageProps<T>
+  }: CrudPagePropsOld<T>
 ) {
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
@@ -107,10 +107,10 @@ export function CrudPageOld<T extends BaseEntity>(
     <div className="px-5 py-3 h-[calc(100vh-50px)] flex flex-col">
       <CrudTableHeader
         title={title}
-        buttonTitle={addNewItemTitle}
-        isButtonVisible={permissions.addPermission}
+        addButtonTitle={addNewItemTitle}
+        isAddButtonVisible={permissions.addPermission}
         actionButtons={actionButtons}
-        createComp={ChangeDialog}
+        changeDialog={ChangeDialog}
       />
 
       <CrudTableCard cards={cards} />
@@ -124,7 +124,7 @@ export function CrudPageOld<T extends BaseEntity>(
       />
 
       <div className="rounded-b-xl border shadow-sm overflow-auto flex-1">
-        <CrudTable state={entityState}>
+        <CrudTableOld state={entityState}>
           <CrudTableHeaderRows tableHeadRows={tableHeadRows} />
 
           <TableBody>
@@ -156,7 +156,7 @@ export function CrudPageOld<T extends BaseEntity>(
               />
             ))}
           </TableBody>
-        </CrudTable>
+        </CrudTableOld>
 
         <CrudTablePagination
           pageSize={entityState.rowsPerPage}

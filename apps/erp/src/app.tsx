@@ -32,80 +32,78 @@ import TaxesPage from "./features/taxes/taxesPage";
 import TenantInfoSharingPage from "./features/tenantInfoSharing/tenantInfoSharingPage";
 import UnitsPage from "./features/units/unitsPage";
 import VouchersPage from "./features/vouchers/vouchersPage";
+import TestPage from "./features/test/testPage";
 
-function App()
-{
+function App() {
   const { t, i18n } = useTranslation("common");
 
-  useEffect(() =>
-  {
+  useEffect(() => {
     NumbertoWordsService.init(t, i18n.language);
     YusrApiHelper.init(t, i18n.language);
     BaseApiServiceOld.init(t);
     Validators.init(t);
   }, [t, i18n.language]);
 
-  return <AppBody i18n={ i18n } />;
+  return <AppBody i18n={i18n} />;
 }
 
-function AppBody({ i18n }: { i18n: i18n; })
-{
+function AppBody({ i18n }: { i18n: i18n; }) {
   return (
     <TooltipProvider>
       <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
         <AppRoutes />
-        <Toaster richColors closeButton position="top-center" dir={ i18n.dir() } />
+        <Toaster richColors closeButton position="top-center" dir={i18n.dir()} />
       </ThemeProvider>
     </TooltipProvider>
   );
 }
 
-function AppRoutes()
-{
+function AppRoutes() {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={ <LandingPage /> } />
-        <Route path="/login" element={ <LoginPage /> } />
-        <Route path="/register" element={ <RegisterPage /> } />
-        <Route path="/sharing/:registrationKey" element={ <TenantInfoSharingPage /> } />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/sharing/:registrationKey" element={<TenantInfoSharingPage />} />
 
-        <Route element={ <ProtectedRoute isAuthenticated={ isAuthenticated } /> }>
-          <Route element={ <AppLayout /> }>
-            <Route path="/dashboard" element={ <DashboardPage /> } />
-            <Route path="/users" element={ <UsersPage /> } />
-            <Route path="/settings" element={ <SettingPage /> } />
-            <Route path="/taxes" element={ <TaxesPage /> } />
-            <Route path="/branches" element={ <BranchesPage /> } />
-            <Route path="/roles" element={ <ErpRolesPage /> } />
-            <Route path="/stores" element={ <StoresPage /> } />
-            <Route path="/units" element={ <UnitsPage /> } />
-            <Route path="/clients" element={ <ClientsAccountsPage /> } />
-            <Route path="/suppliers" element={ <SuppliersAccountsPage /> } />
-            <Route path="/employees" element={ <EmployeesAccountsPage /> } />
-            <Route path="/banks" element={ <BanksAccountsPage /> } />
-            <Route path="/boxes" element={ <BoxesAccountsPage /> } />
-            <Route path="/paymentMethods" element={ <PaymentMethodsPage /> } />
-            <Route path="/balanceTransfer" element={ <BalanceTransfersPage /> } />
-            <Route path="/sales" element={ <SellInvoicesPage /> } />
-            <Route path="/sales/:id" element={ <SellInvoicesPage /> } />
-            <Route path="/purchases" element={ <PurchaseInvoicesPage /> } />
-            <Route path="/purchases/:id" element={ <PurchaseInvoicesPage /> } />
-            <Route path="/quotations" element={ <QuotationInvoicesPage /> } />
-            <Route path="/quotations/:id" element={ <QuotationInvoicesPage /> } />
-            <Route path="/vouchers" element={ <VouchersPage /> } />
-            <Route path="/items" element={ <ItemsPage /> } />
-            <Route path="/pricingMethods" element={ <PricingMethodsPage /> } />
-            <Route path="/itemTransfers" element={ <ItemTransfersPage /> } />
-            <Route path="/stocktakings" element={ <StocktakingsPage /> } />
-            <Route path="/itemsSettlements" element={ <ItemsSettlementsPage /> } />
-            <Route path="/reports" element={ <ReportsPage /> } />
+        <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
+          <Route element={<AppLayout />}>
+            <Route path="/test" element={<TestPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/settings" element={<SettingPage />} />
+            <Route path="/taxes" element={<TaxesPage />} />
+            <Route path="/branches" element={<BranchesPage />} />
+            <Route path="/roles" element={<ErpRolesPage />} />
+            <Route path="/stores" element={<StoresPage />} />
+            <Route path="/units" element={<UnitsPage />} />
+            <Route path="/clients" element={<ClientsAccountsPage />} />
+            <Route path="/suppliers" element={<SuppliersAccountsPage />} />
+            <Route path="/employees" element={<EmployeesAccountsPage />} />
+            <Route path="/banks" element={<BanksAccountsPage />} />
+            <Route path="/boxes" element={<BoxesAccountsPage />} />
+            <Route path="/paymentMethods" element={<PaymentMethodsPage />} />
+            <Route path="/balanceTransfer" element={<BalanceTransfersPage />} />
+            <Route path="/sales" element={<SellInvoicesPage />} />
+            <Route path="/sales/:id" element={<SellInvoicesPage />} />
+            <Route path="/purchases" element={<PurchaseInvoicesPage />} />
+            <Route path="/purchases/:id" element={<PurchaseInvoicesPage />} />
+            <Route path="/quotations" element={<QuotationInvoicesPage />} />
+            <Route path="/quotations/:id" element={<QuotationInvoicesPage />} />
+            <Route path="/vouchers" element={<VouchersPage />} />
+            <Route path="/items" element={<ItemsPage />} />
+            <Route path="/pricingMethods" element={<PricingMethodsPage />} />
+            <Route path="/itemTransfers" element={<ItemTransfersPage />} />
+            <Route path="/stocktakings" element={<StocktakingsPage />} />
+            <Route path="/itemsSettlements" element={<ItemsSettlementsPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
           </Route>
         </Route>
 
-        <Route path="*" element={ <NotFoundPage /> } />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );

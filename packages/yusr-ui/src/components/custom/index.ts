@@ -56,6 +56,7 @@ export * from "./inputs/textAreaInput";
 export * from "./locale/languageToggle";
 
 // Pages
+export * from "./pages/crudPage";
 export * from "./pages/crudPageOld";
 
 // permissions

@@ -1,5 +1,5 @@
 import type { ActionCreatorWithPayload, AsyncThunk, UnknownAction } from "@reduxjs/toolkit";
-import type { PropsWithChildren } from "react";
+import type { JSX, PropsWithChildren } from "react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -13,15 +13,16 @@ import { Dialog, DialogContent } from "../../pure/dialog";
 import { TableBody } from "../../pure/table";
 import { DeleteDialog } from "../dialogs/deleteDialog";
 import { SearchInput } from "../inputs/searchInput";
-import { CrudTable } from "../table/crudTable";
+import { CrudTable, CrudTableOld, type CrudTableProps } from "../table/crudTable";
 import { CrudTableBodyRow, type TableBodyRowInfo } from "../table/crudTableBodyRow";
 import { type CardProps, CrudTableCard } from "../table/crudTableCard";
-import { CrudTableHeader } from "../table/crudTableHeader";
+import { CrudTableHeader, type CrudTableHeaderProps } from "../table/crudTableHeader";
 import { CrudTableHeaderRows, type CrudTableHeadRow } from "../table/crudTableHeaderRows";
 import { CrudTablePagination } from "../table/crudTablePagination";
 import { CrudTableRowActionsMenu } from "../table/crudTableRowActionsMenu";
 import { UnauthorizedPage } from "../unauthorized/unauthorizedPage";
 import useCrudPageRoute from "./useCrudPageRoute";
+import type { Dto, Entity } from "../../..//stateManager";
 
 export interface CrudActions<T extends BaseEntity> {
   filter: AsyncThunk<ApiFilterResult<T> | undefined, string | undefined, object>;
@@ -57,7 +58,7 @@ export type CrudPageProps<T extends BaseEntity> = PropsWithChildren & {
   onRouteOpen?: (id: number) => void;
 };
 
-export function CrudPage<T extends BaseEntity>(
+export function CrudPage2<T extends BaseEntity>(
   {
     permissions,
     perRowPermissions,
@@ -107,10 +108,10 @@ export function CrudPage<T extends BaseEntity>(
     <div className="px-5 py-3 h-[calc(100vh-50px)] flex flex-col">
       <CrudTableHeader
         title={title}
-        buttonTitle={addNewItemTitle}
-        isButtonVisible={permissions.addPermission}
+        addButtonTitle={addNewItemTitle}
+        isAddButtonVisible={permissions.addPermission}
         actionButtons={actionButtons}
-        createComp={ChangeDialog}
+        changeDialog={ChangeDialog}
       />
 
       <CrudTableCard cards={cards} />
@@ -124,7 +125,7 @@ export function CrudPage<T extends BaseEntity>(
       />
 
       <div className="rounded-b-xl border shadow-sm overflow-auto flex-1">
-        <CrudTable state={entityState}>
+        <CrudTableOld state={entityState}>
           <CrudTableHeaderRows tableHeadRows={tableHeadRows} />
 
           <TableBody>
@@ -156,7 +157,7 @@ export function CrudPage<T extends BaseEntity>(
               />
             ))}
           </TableBody>
-        </CrudTable>
+        </CrudTableOld>
 
         <CrudTablePagination
           pageSize={entityState.rowsPerPage}
@@ -200,4 +201,92 @@ export function CrudPage<T extends BaseEntity>(
       </div>
     </div>
   );
+}
+
+
+export function CrudPage({ children }: PropsWithChildren) {
+  return <div className="px-5 py-3 h-[calc(100vh-50px)] flex flex-col">
+    {children}
+  </div>
+}
+
+
+CrudPage.Header = function ({ ...props }: CrudTableHeaderProps) {
+  return <CrudTableHeader {...props} />
+}
+
+CrudPage.Cards = function ({ ...props }: { cards: CardProps[] }) {
+  return <CrudTableCard {...props} />
+}
+
+
+
+
+// TODO : it could be more separated ( Comound Component )
+export type CrudPageTableProps<TEntity extends Entity<TDto>, TDto extends Dto> = {
+  tableHeadRows: CrudTableHeadRow[];
+  entities: TEntity[];
+  tableRowMapper: (entity: TEntity) => TableBodyRowInfo[];
+  permissions: ResourcePermissions;
+  perRowPermissions?: (entity: TEntity) => ResourcePermissions;
+  dorpdownItems?: (entity: TEntity) => JSX.Element[];
+  contextMenuItems?: (entity: TEntity) => JSX.Element[];
+  onDoubleClick?: (entity: TEntity) => void
+  onEditClicked?: (entity: TEntity) => void
+  onDeleteClicked?: (entity: TEntity) => void
+}
+CrudPage.Table = function <TEntity extends Entity<TDto>, TDto extends Dto>({
+  loadingState,
+  tableHeadRows,
+  entities,
+  tableRowMapper,
+  permissions,
+  perRowPermissions,
+  dorpdownItems,
+  contextMenuItems,
+  onDeleteClicked,
+  onEditClicked,
+  onDoubleClick,
+  ...props }:
+  CrudTableProps & CrudPageTableProps<TEntity, TDto>) {
+
+
+  return <div className="rounded-b-xl border shadow-sm overflow-auto flex-1">
+    <CrudTable loadingState={loadingState} {...props} >
+
+      <CrudTableHeaderRows tableHeadRows={tableHeadRows} />
+
+      <TableBody>
+        {entities?.map((entity: TEntity, i: number) => (
+          <CrudTableBodyRow
+            key={i}
+            tableRows={tableRowMapper(entity)}
+            onDoubleClick={onDoubleClick ? () => onDoubleClick(entity) : undefined}
+
+            dropdownMenu={
+              <CrudTableRowActionsMenu
+                permissions={perRowPermissions ? perRowPermissions(entity) : permissions}
+                type="dropdown"
+                // if not edit clicked then onEditClicked will be undefined
+                onEditClicked={onEditClicked ? () => onEditClicked(entity) : () => { }}
+                onDeleteClicked={onDeleteClicked ? () => onDeleteClicked(entity) : () => { }}
+                dorpdownItems={dorpdownItems?.(entity)}
+                contextMenuItems={contextMenuItems?.(entity)}
+              />
+            }
+            contextMenuContent={
+              <CrudTableRowActionsMenu
+                permissions={perRowPermissions ? perRowPermissions(entity) : permissions}
+                type="context"
+                onEditClicked={onEditClicked ? () => onEditClicked(entity) : () => { }}
+                onDeleteClicked={onDeleteClicked ? () => onDeleteClicked(entity) : () => { }}
+                dorpdownItems={dorpdownItems?.(entity)}
+                contextMenuItems={contextMenuItems?.(entity)}
+              />
+            }
+          />
+        ))}
+      </TableBody>
+    </CrudTable>
+  </div >
 }
