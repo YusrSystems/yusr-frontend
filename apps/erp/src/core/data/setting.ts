@@ -1,6 +1,6 @@
 import type { TFunction } from "i18next";
 import { type Branch, City, createGenericFormSlice, type Currency, type StorageFile, type ValidationRule, Validators } from "yusr-ui";
-import type { Tax } from "./tax";
+import type { TaxOld } from "./tax";
 
 export const EInvoicingEnvironmentType = {
   Production: 0,
@@ -40,7 +40,7 @@ export class Setting
   public branch?: Branch;
 
   public mainTaxId!: number;
-  public mainTax?: Tax;
+  public mainTax?: TaxOld;
 
   public sellAccountId?: number;
   public sellAccountName?: string;

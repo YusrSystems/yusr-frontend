@@ -4,32 +4,27 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Checkbox, type DialogMode, NumberField, TextField } from "yusr-ui";
 import { ItemSlice, ItemTax } from "../../../core/data/item";
-import { type Tax } from "../../../core/data/tax";
+import { type TaxOld } from "../../../core/data/tax";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 
-export default function TaxesSection({ mode }: { mode: DialogMode; })
-{
+export default function TaxesSection({ mode }: { mode: DialogMode; }) {
   const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const taxState = useAppSelector((state) => state.tax);
   const { formData, isDirty } = useAppSelector((state) => state.itemForm);
 
-  useEffect(() =>
-  {
-    if (mode === "create" && !isDirty && taxState.entities?.data?.length)
-    {
+  useEffect(() => {
+    if (mode === "create" && !isDirty && taxState.entities?.data?.length) {
       handleTaxableChange(true);
     }
   }, [taxState.entities?.data]);
 
-  const handleTaxableChange = (isTaxable: boolean) =>
-  {
-    if (isTaxable)
-    {
+  const handleTaxableChange = (isTaxable: boolean) => {
+    if (isTaxable) {
       const primaryTaxes = (taxState.entities?.data || [])
-        .filter((t: Tax) => t.isPrimary)
+        .filter((t: TaxOld) => t.isPrimary)
         .map(
-          (t: Tax) =>
+          (t: TaxOld) =>
             ({
               taxId: t.id,
               taxName: t.name,
@@ -45,8 +40,7 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
         exemptionReasonCode: ""
       })));
     }
-    else
-    {
+    else {
       dispatch(ItemSlice.formActions.updateFormData((prev) => ({
         ...prev,
         taxable: false,
@@ -57,14 +51,12 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
 
   const addTax = () =>
     dispatch(ItemSlice.formActions.updateFormData({ itemTaxes: [...(formData.itemTaxes || []), new ItemTax()] }));
-  const updateTax = (index: number, updates: Partial<ItemTax>) =>
-  {
+  const updateTax = (index: number, updates: Partial<ItemTax>) => {
     const list = [...(formData.itemTaxes || [])];
     list[index] = { ...list[index], ...updates };
     dispatch(ItemSlice.formActions.updateFormData({ itemTaxes: list }));
   };
-  const removeTax = (index: number) =>
-  {
+  const removeTax = (index: number) => {
     const list = [...(formData.itemTaxes || [])];
     list.splice(index, 1);
     dispatch(ItemSlice.formActions.updateFormData({ itemTaxes: list }));
@@ -76,43 +68,43 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
         <div className="flex items-center gap-2">
           <Checkbox
             id="taxable"
-            checked={ formData.taxable || false }
-            onCheckedChange={ (checked) => handleTaxableChange(checked as boolean) }
+            checked={formData.taxable || false}
+            onCheckedChange={(checked) => handleTaxableChange(checked as boolean)}
           />
           <label htmlFor="taxable" className="text-sm font-bold">
-            { t("items.taxable") }
+            {t("items.taxable")}
           </label>
         </div>
 
-        { formData.taxable && (
-          <Button type="button" size="sm" onClick={ addTax } className="flex items-center justify-center">
-            <Plus className="w-4 h-4 me-2" /> { t("items.addTax") }
+        {formData.taxable && (
+          <Button type="button" size="sm" onClick={addTax} className="flex items-center justify-center">
+            <Plus className="w-4 h-4 me-2" /> {t("items.addTax")}
           </Button>
-        ) }
+        )}
       </div>
 
-      { !formData.taxable
+      {!formData.taxable
         ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 bg-muted/10 p-4 rounded-lg border">
             <TextField
-              label={ t("items.exemptionReasonCode") }
-              placeholder={ t("items.exemptionReasonCodePlaceholder") }
-              value={ formData.exemptionReasonCode || "" }
-              onChange={ (e) =>
+              label={t("items.exemptionReasonCode")}
+              placeholder={t("items.exemptionReasonCodePlaceholder")}
+              value={formData.exemptionReasonCode || ""}
+              onChange={(e) =>
                 dispatch(ItemSlice.formActions.updateFormData((prev) => ({
                   ...prev,
                   exemptionReasonCode: e.target.value
-                }))) }
+                })))}
             />
             <TextField
-              label={ t("items.exemptionReason") }
-              placeholder={ t("items.exemptionReasonPlaceholder") }
-              value={ formData.exemptionReason || "" }
-              onChange={ (e) =>
+              label={t("items.exemptionReason")}
+              placeholder={t("items.exemptionReasonPlaceholder")}
+              value={formData.exemptionReason || ""}
+              onChange={(e) =>
                 dispatch(ItemSlice.formActions.updateFormData((prev) => ({
                   ...prev,
                   exemptionReason: e.target.value
-                }))) }
+                })))}
             />
           </div>
         )
@@ -122,38 +114,36 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
               <table className="w-full text-sm text-right">
                 <thead className="bg-muted/50 text-muted-foreground">
                   <tr>
-                    <th className="p-3 w-16">{ t("items.number") }</th>
-                    <th className="p-3 text-start">{ t("items.tax") }</th>
-                    <th className="p-3 w-50 text-start">{ t("items.taxPercentage") }</th>
+                    <th className="p-3 w-16">{t("items.number")}</th>
+                    <th className="p-3 text-start">{t("items.tax")}</th>
+                    <th className="p-3 w-50 text-start">{t("items.taxPercentage")}</th>
                     <th className="p-3 w-16 text-center"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  { formData.itemTaxes?.map((tax, index) =>
-                  {
+                  {formData.itemTaxes?.map((tax, index) => {
                     return (
-                      <tr key={ index } className="border-t border-muted">
-                        <td className="p-3 font-bold">{ index + 1 }</td>
+                      <tr key={index} className="border-t border-muted">
+                        <td className="p-3 font-bold">{index + 1}</td>
                         <td className="p-3">
                           <TaxesSearchableSelect
-                            selectedId={ formData.itemTaxes?.[index].taxId }
-                            selectedLabel={ formData.itemTaxes?.[index].taxName }
-                            onValueChange={ (tax) =>
-                            {
+                            selectedId={formData.itemTaxes?.[index].taxId}
+                            selectedLabel={formData.itemTaxes?.[index].taxName}
+                            onValueChange={(tax) => {
                               updateTax(index, {
                                 taxId: tax?.id,
                                 taxName: tax?.name,
                                 taxPercentage: tax?.percentage
                               });
-                            } }
+                            }}
                           />
                         </td>
                         <td className="p-3">
                           <NumberField
                             label=""
-                            value={ tax.taxPercentage || 0 }
+                            value={tax.taxPercentage || 0}
                             disabled
-                            onChange={ (val) => updateTax(index, { taxPercentage: val }) }
+                            onChange={(val) => updateTax(index, { taxPercentage: val })}
                           />
                         </td>
                         <td className="p-3 text-center">
@@ -161,25 +151,25 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className={ `text-red-500 hover:text-red-700 hover:bg-red-100` }
-                            onClick={ () => removeTax(index) }
+                            className={`text-red-500 hover:text-red-700 hover:bg-red-100`}
+                            onClick={() => removeTax(index)}
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </td>
                       </tr>
                     );
-                  }) }
+                  })}
                 </tbody>
               </table>
-              { (!formData.itemTaxes || formData.itemTaxes.length === 0) && (
+              {(!formData.itemTaxes || formData.itemTaxes.length === 0) && (
                 <div className="p-4 text-center text-muted-foreground">
-                  { t("items.noTaxes") }
+                  {t("items.noTaxes")}
                 </div>
-              ) }
+              )}
             </div>
           </div>
-        ) }
+        )}
     </div>
   );
 }
