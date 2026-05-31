@@ -1,3 +1,4 @@
+import { InvoiceType } from "@/core/data/invoice";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "yusr-ui";
@@ -48,7 +49,8 @@ export default function ProfitAndLossDialog()
               request={ new InvoicesListReportRequest({
                 fromDate: fromDate?.toLocaleDateString("en-CA") ?? null,
                 toDate: toDate?.toLocaleDateString("en-CA") ?? null,
-                reportType: InvoicesListReportType.ProfitAndLoss
+                reportType: InvoicesListReportType.ProfitAndLoss,
+                types: [InvoiceType.Sell, InvoiceType.SellReturn, InvoiceType.Purchase, InvoiceType.PurchaseReturn]
               }) }
             />
           </DialogFooter>
