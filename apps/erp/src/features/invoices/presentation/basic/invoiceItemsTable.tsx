@@ -155,7 +155,7 @@ export default function InvoiceItemsTable()
         <table className="relative w-full text-sm text-right">
           <thead className="sticky top-0 bg-muted z-50 border-b border-border">
             <tr>
-              <th className="p-3 w-5" /> { /* drag handle spacer */ }
+              <th className="p-3 w-5" />
               <th className="p-3 font-semibold w-16 text-muted-foreground">{ t("invoices.number") }</th>
               <th className="p-3 font-semibold text-start w-40">{ t("invoices.item") }</th>
               <th className="p-3 font-semibold text-start w-20 min-w-20">{ t("invoices.pricingMethod") }</th>
@@ -194,7 +194,6 @@ export default function InvoiceItemsTable()
 
               return (
                 <React.Fragment key={ `${row.id}-${index}` }>
-                  { /* ── Data Row ── */ }
                   <tr
                     draggable={ !disabled }
                     onDragStart={ () => handleDragStart(index) }
@@ -207,22 +206,18 @@ export default function InvoiceItemsTable()
                       isDraggingOver ? "border-t-2 border-t-primary" : ""
                     ].join(" ") }
                   >
-                    { /* Drag Handle */ }
                     <td className={ `px-2 pt-2 ${disabled ? "invisible" : "cursor-grab active:cursor-grabbing"}` }>
                       <GripVertical className="h-4 w-4 text-muted-foreground" />
                     </td>
 
-                    { /* Index */ }
                     <td className="px-2 pt-2 font-bold text-muted-foreground">
                       { index + 1 }
                     </td>
 
-                    { /* Item Name */ }
                     <td className="px-2 pt-2">
                       <div className="font-semibold text-start text-foreground">{ row.itemName }</div>
                     </td>
 
-                    { /* Pricing Method */ }
                     <td className="px-2 pt-2">
                       { (disabled || mode === "return")
                         ? <div className="font-semibold text-foreground">{ row.itemUnitPricingMethodName }</div>
@@ -251,7 +246,6 @@ export default function InvoiceItemsTable()
                       </td>
                     ) }
 
-                    { /* Quantity */ }
                     <td className="px-2 pt-2">
                       <Tooltip open={ focusedQuantityIndex === index }>
                         <TooltipTrigger asChild>
@@ -297,7 +291,6 @@ export default function InvoiceItemsTable()
                       </td>
                     ) }
 
-                    { /* Price After Tax */ }
                     <td className="px-2 pt-2">
                       <NumberField
                         label=""
@@ -345,7 +338,6 @@ export default function InvoiceItemsTable()
                       </td>
                     ) }
 
-                    { /* Final Price with Tax */ }
                     <td className="px-2 pt-2">
                       <NumberField label="" value={ row.taxInclusiveTotalPrice || "0" } disabled />
                     </td>
@@ -370,7 +362,6 @@ export default function InvoiceItemsTable()
                     </td>
                   </tr>
 
-                  { /* ── Notes Row ── */ }
                   <tr
                     className="bg-muted/10 border-b"
                     onDragOver={ (e) => handleDragOver(e, index) }

@@ -90,15 +90,14 @@ export default class InvoiceItemsMath
   public static CalcInvoiceItemProfit(invoiceItem: InvoiceItem): InvoiceItemProfitResult
   {
     const taxInclusivePrice = (invoiceItem.taxInclusivePrice ?? 0) + (invoiceItem.settlement ?? 0);
-    const totalTaxesAmount = Number(
-      ((invoiceItem.taxInclusiveTotalPrice ?? 0) - (invoiceItem.taxExclusiveTotalPrice ?? 0)).toFixed(2)
-    );
-    const profit = Number((taxInclusivePrice - totalTaxesAmount - (invoiceItem.cost ?? 0)).toFixed(2));
+    const taxFactor = (100 + invoiceItem.totalTaxesPerc) / 100;
+    const itemTaxesAmount = Number((taxInclusivePrice - (taxInclusivePrice / taxFactor)).toFixed(2));
+    const profit = Number((taxInclusivePrice - itemTaxesAmount - (invoiceItem.cost ?? 0)).toFixed(2));
     const qtn = invoiceItem.quantity ?? 0;
     return {
       taxInclusivePrice: taxInclusivePrice,
       cost: invoiceItem.cost ?? 0,
-      totalTaxesAmount: totalTaxesAmount,
+      totalTaxesAmount: itemTaxesAmount,
       quantity: qtn,
       profit: profit,
       totalProfit: Number((profit * qtn).toFixed(2))
@@ -117,7 +116,6 @@ export default class InvoiceItemsMath
     invoiceItems.forEach((i) =>
     {
       const itemProfit = InvoiceItemsMath.CalcInvoiceItemProfit(i);
-      console.log("Item profit: ", itemProfit);
       taxInclusiveTotalPrice += itemProfit.taxInclusivePrice * (itemProfit.quantity ?? 0);
       totalCost += itemProfit.cost * (itemProfit.quantity ?? 0);
       totalTaxesAmount += itemProfit.totalTaxesAmount * (itemProfit.quantity ?? 0);
