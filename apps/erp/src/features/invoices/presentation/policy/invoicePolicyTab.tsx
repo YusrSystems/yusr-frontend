@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { TextAreaField } from "yusr-ui";
+import type { InvoiceDialogMode } from "../../changeInvoiceDialog";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
-export default function InvoicePolicyTab()
+export default function InvoicePolicyTab({ mode }: { mode: InvoiceDialogMode; })
 {
   const { t } = useTranslation("accounting");
   const {
@@ -16,7 +17,7 @@ export default function InvoicePolicyTab()
 
   useEffect(() =>
   {
-    if (authState.setting?.invoicePolicy && !formData.policy)
+    if (authState.setting?.invoicePolicy && !formData.policy && mode !== "update")
     {
       dispatch(slice.formActions.updateFormData({ policy: authState.setting.invoicePolicy }));
     }
