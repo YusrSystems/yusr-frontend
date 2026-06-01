@@ -1,24 +1,25 @@
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import type { ResourcePermissions } from "../../../auth";
 import { Button } from "../../pure/button";
 import { ContextMenuContent, ContextMenuGroup, ContextMenuItem } from "../../pure/context-menu";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../pure/dropdown-menu";
 
 type ListType = "dropdown" | "context";
 
-export type CrudTableRowActionsMenuProps = {
-  type?: ListType;
+export interface CrudTableRowActionsMenuPropsOld
+{
+  type: ListType;
   onEditClicked: () => void;
   onDeleteClicked: () => void;
-  hasUpdatePermission: boolean;
-  hasDeletePermission: boolean;
+  permissions: ResourcePermissions;
   dorpdownItems?: React.ReactNode[];
   contextMenuItems?: React.ReactNode[];
-};
+}
 
-export function CrudTableRowActionsMenu(
-  { onEditClicked, onDeleteClicked, type, hasUpdatePermission, hasDeletePermission, dorpdownItems, contextMenuItems }:
-    CrudTableRowActionsMenuProps
+export function CrudTableRowActionsMenuOld(
+  { onEditClicked, onDeleteClicked, type, permissions, dorpdownItems, contextMenuItems }:
+    CrudTableRowActionsMenuPropsOld
 )
 {
   const { t, i18n } = useTranslation("common");
@@ -33,14 +34,14 @@ export function CrudTableRowActionsMenu(
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
-            { hasUpdatePermission && (
+            { permissions.updatePermission && (
               <DropdownMenuItem className="text-amber-500 font-semibold" onSelect={ onEditClicked }>
                 <Edit className="me-2 h-4 w-4" />
                 { t("crudRow.edit") }
               </DropdownMenuItem>
             ) }
             { dorpdownItems }
-            { hasDeletePermission && (
+            { permissions.deletePermission && (
               <DropdownMenuItem className="text-destructive font-semibold" onSelect={ onDeleteClicked }>
                 <Trash className="me-2 h-4 w-4" />
                 { t("crudRow.delete") }
@@ -53,14 +54,14 @@ export function CrudTableRowActionsMenu(
       { type === "context" && (
         <ContextMenuContent>
           <ContextMenuGroup dir={ i18n.dir() }>
-            { hasUpdatePermission && (
+            { permissions.updatePermission && (
               <ContextMenuItem className="text-amber-500 font-semibold" onSelect={ onEditClicked }>
                 <Edit className="me-2 h-4 w-4" />
                 { t("crudRow.edit") }
               </ContextMenuItem>
             ) }
             { contextMenuItems }
-            { hasDeletePermission && (
+            { permissions.deletePermission && (
               <ContextMenuItem className="text-destructive font-semibold" onSelect={ onDeleteClicked }>
                 <Trash className="me-2 h-4 w-4" />
                 { t("crudRow.delete") }

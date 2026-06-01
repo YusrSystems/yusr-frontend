@@ -1,15 +1,9 @@
 import type { ReactNode } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../../pure/card";
 
-export type CrudTableCardProps = {
-  cards: {
-    title: string;
-    data: string;
-    icon: ReactNode;
-  }[];
-};
+export type CardProps = { title: string; data: string; icon: ReactNode; };
 
-export function CrudTableCard({ cards }: CrudTableCardProps)
+export function CrudTableCardOld({ cards }: { cards: CardProps[]; })
 {
   return (
     <div className="mb-5 grid grid-cols-1 sm:grid-cols-2 gap-5">

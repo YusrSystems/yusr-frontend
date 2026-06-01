@@ -4,14 +4,14 @@ import { useTranslation } from "react-i18next";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../pure/dropdown-menu";
 import { SidebarMenuButton } from "../../pure/sidebar";
 
-type PaginationFooterProps = {
+export type CrudTablePaginationProps = {
   pageSize: number;
   totalNumber: number;
   currentPage: number;
   onPageChanged?: (newPage: number) => void;
 };
 
-export function CrudTablePagination({ pageSize, totalNumber, currentPage, onPageChanged }: PaginationFooterProps)
+export function CrudTablePagination({ pageSize, totalNumber, currentPage, onPageChanged }: CrudTablePaginationProps)
 {
   const { t, i18n } = useTranslation("common");
   const totalPages = Math.ceil(totalNumber / pageSize);

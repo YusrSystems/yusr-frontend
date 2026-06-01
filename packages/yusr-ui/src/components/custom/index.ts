@@ -16,7 +16,7 @@ export * from "./containers/yusrApp";
 export * from "./dialogs/changeDialog";
 export * from "./dialogs/changeDialogTabbed";
 export * from "./dialogs/commonChangeDialogProps";
-export * from "./dialogs/deleteDialog";
+export * from "./dialogs/deleteDialogOld";
 export * from "./dialogs/dialogType";
 
 // Currency
@@ -91,11 +91,11 @@ export * from "./table/columnVisibilityToggle";
 export * from "./table/crudEmptyTablePreview";
 export * from "./table/crudTable";
 export * from "./table/crudTableBodyRow";
-export * from "./table/crudTableCard";
-export * from "./table/crudTableHeader";
+export * from "./table/crudTableCardOld";
+export * from "./table/crudTableHeaderOld";
 export * from "./table/crudTableHeaderRows";
 export * from "./table/crudTablePagination";
-export * from "./table/crudTableRowActionsMenu";
+export * from "./table/crudTableRowActionsMenuOld";
 
 // Theme
 export * from "./theme/themeProvider";

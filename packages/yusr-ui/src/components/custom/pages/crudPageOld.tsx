@@ -11,19 +11,20 @@ import type { IEntityState } from "../../../state/interfaces/iEntityState";
 import type { ApiFilterResult } from "../../../types";
 import { Dialog, DialogContent } from "../../pure/dialog";
 import { TableBody } from "../../pure/table";
-import { DeleteDialog } from "../dialogs/deleteDialog";
+import { DeleteDialogOld } from "../dialogs/deleteDialogOld";
 import { SearchInput } from "../inputs/searchInput";
 import { CrudTableOld } from "../table/crudTable";
 import { CrudTableBodyRow, type TableBodyRowInfo } from "../table/crudTableBodyRow";
-import { type CardProps, CrudTableCard } from "../table/crudTableCard";
-import { CrudTableHeader } from "../table/crudTableHeader";
+import { type CardProps, CrudTableCardOld } from "../table/crudTableCardOld";
+import { CrudTableHeaderOld } from "../table/crudTableHeaderOld";
 import { CrudTableHeaderRows, type CrudTableHeadRow } from "../table/crudTableHeaderRows";
 import { CrudTablePagination } from "../table/crudTablePagination";
-import { CrudTableRowActionsMenu } from "../table/crudTableRowActionsMenu";
+import { CrudTableRowActionsMenuOld } from "../table/crudTableRowActionsMenuOld";
 import { UnauthorizedPage } from "../unauthorized/unauthorizedPage";
 import useCrudPageRoute from "./useCrudPageRoute";
 
-export interface CrudActionsOld<T extends BaseEntity> {
+export interface CrudActionsOld<T extends BaseEntity>
+{
   filter: AsyncThunk<ApiFilterResult<T> | undefined, string | undefined, object>;
   openChangeDialog: (entity: T) => UnknownAction;
   openDeleteDialog: (entity: T) => UnknownAction;
@@ -82,7 +83,8 @@ export function CrudPageOld<T extends BaseEntity>(
     onRouteOpen,
     children
   }: CrudPagePropsOld<T>
-) {
+)
+{
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
   const { selectedRow, isChangeDialogOpen, isDeleteDialogOpen } = useSlice();
@@ -93,110 +95,116 @@ export function CrudPageOld<T extends BaseEntity>(
     onRouteOpen
   });
 
-  useEffect(() => {
-    if (hasPagePermission) {
+  useEffect(() =>
+  {
+    if (hasPagePermission)
+    {
       dispatch(actions.filter(undefined) as any);
     }
   }, [dispatch, actions.filter]);
 
-  if (!hasPagePermission) {
+  if (!hasPagePermission)
+  {
     return <UnauthorizedPage />;
   }
 
   return (
     <div className="px-5 py-3 h-[calc(100vh-50px)] flex flex-col">
-      <CrudTableHeader
-        title={title}
-        addButtonTitle={addNewItemTitle}
-        isAddButtonVisible={permissions.addPermission}
-        actionButtons={actionButtons}
-        changeDialog={ChangeDialog}
+      <CrudTableHeaderOld
+        title={ title }
+        addButtonTitle={ addNewItemTitle }
+        isAddButtonVisible={ permissions.addPermission }
+        actionButtons={ actionButtons }
+        changeDialog={ ChangeDialog }
       />
 
-      <CrudTableCard cards={cards} />
+      <CrudTableCardOld cards={ cards } />
 
       <SearchInput
-        onSearch={(searchText) => {
+        onSearch={ (searchText) =>
+        {
           dispatch(actions.setCurrentPage(1));
           onSearchTextChange?.(searchText);
           dispatch(actions.filter(searchText) as any);
-        }}
+        } }
       />
 
       <div className="rounded-b-xl border shadow-sm overflow-auto flex-1">
-        <CrudTableOld state={entityState}>
-          <CrudTableHeaderRows tableHeadRows={tableHeadRows} />
+        <CrudTableOld state={ entityState }>
+          <CrudTableHeaderRows tableHeadRows={ tableHeadRows } />
 
           <TableBody>
-            {entityState.entities?.data?.map((entity: T, i: number) => (
+            { entityState.entities?.data?.map((entity: T, i: number) => (
               <CrudTableBodyRow
-                key={i}
-                tableRows={tableRowMapper(entity)}
-                onDoubleClick={permissions.updatePermission ? () => handleOpenChangeDialog(entity) : undefined}
-                dropdownMenu={
-                  <CrudTableRowActionsMenu
-                    permissions={perRowPermissions ? perRowPermissions(entity) : permissions}
+                key={ i }
+                tableRows={ tableRowMapper(entity) }
+                onDoubleClick={ permissions.updatePermission ? () => handleOpenChangeDialog(entity) : undefined }
+                dropdownMenu={ 
+                  <CrudTableRowActionsMenuOld
+                    permissions={ perRowPermissions ? perRowPermissions(entity) : permissions }
                     type="dropdown"
-                    onEditClicked={() => handleOpenChangeDialog(entity)}
-                    onDeleteClicked={() => dispatch(actions.openDeleteDialog(entity))}
-                    dorpdownItems={dorpdownItems?.(entity)}
-                    contextMenuItems={contextMenuItems?.(entity)}
+                    onEditClicked={ () => handleOpenChangeDialog(entity) }
+                    onDeleteClicked={ () => dispatch(actions.openDeleteDialog(entity)) }
+                    dorpdownItems={ dorpdownItems?.(entity) }
+                    contextMenuItems={ contextMenuItems?.(entity) }
                   />
-                }
-                contextMenuContent={
-                  <CrudTableRowActionsMenu
-                    permissions={perRowPermissions ? perRowPermissions(entity) : permissions}
+                 }
+                contextMenuContent={ 
+                  <CrudTableRowActionsMenuOld
+                    permissions={ perRowPermissions ? perRowPermissions(entity) : permissions }
                     type="context"
-                    onEditClicked={() => handleOpenChangeDialog(entity)}
-                    onDeleteClicked={() => dispatch(actions.openDeleteDialog(entity))}
-                    dorpdownItems={dorpdownItems?.(entity)}
-                    contextMenuItems={contextMenuItems?.(entity)}
+                    onEditClicked={ () => handleOpenChangeDialog(entity) }
+                    onDeleteClicked={ () => dispatch(actions.openDeleteDialog(entity)) }
+                    dorpdownItems={ dorpdownItems?.(entity) }
+                    contextMenuItems={ contextMenuItems?.(entity) }
                   />
-                }
+                 }
               />
-            ))}
+            )) }
           </TableBody>
         </CrudTableOld>
 
         <CrudTablePagination
-          pageSize={entityState.rowsPerPage}
-          totalNumber={entityState.entities?.count ?? 0}
-          currentPage={entityState.currentPage || 1}
-          onPageChanged={(newPage) => {
+          pageSize={ entityState.rowsPerPage }
+          totalNumber={ entityState.entities?.count ?? 0 }
+          currentPage={ entityState.currentPage || 1 }
+          onPageChanged={ (newPage) =>
+          {
             dispatch(actions.setCurrentPage(newPage));
             dispatch(actions.filter() as any);
-          }}
+          } }
         />
 
-        {isChangeDialogOpen && permissions.updatePermission && (
+        { isChangeDialogOpen && permissions.updatePermission && (
           <Dialog
-            open={isChangeDialogOpen}
-            onOpenChange={handleSetIsChangeDialogOpen}
+            open={ isChangeDialogOpen }
+            onOpenChange={ handleSetIsChangeDialogOpen }
           >
-            {ChangeDialog}
+            { ChangeDialog }
           </Dialog>
-        )}
+        ) }
 
-        {isDeleteDialogOpen && (
+        { isDeleteDialogOpen && (
           <Dialog
-            open={isDeleteDialogOpen}
-            onOpenChange={(open) => dispatch(actions.setIsDeleteDialogOpen(open))}
+            open={ isDeleteDialogOpen }
+            onOpenChange={ (open) => dispatch(actions.setIsDeleteDialogOpen(open)) }
           >
-            <DialogContent dir={i18n.dir()} className="sm:max-w-sm">
-              <DeleteDialog
-                entityName={entityName}
-                id={selectedRow?.id ?? 0}
-                service={service}
-                onSuccess={() => {
+            <DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
+              <DeleteDialogOld
+                entityName={ entityName }
+                id={ selectedRow?.id ?? 0 }
+                service={ service }
+                onSuccess={ () =>
+                {
                   dispatch(actions.refresh({ deletedId: selectedRow?.id }));
                   dispatch(actions.setIsDeleteDialogOpen(false));
-                }}
+                } }
               />
             </DialogContent>
           </Dialog>
-        )}
+        ) }
 
-        {children}
+        { children }
       </div>
     </div>
   );

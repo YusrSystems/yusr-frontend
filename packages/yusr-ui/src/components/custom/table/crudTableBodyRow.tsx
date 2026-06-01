@@ -5,15 +5,14 @@ import { TableCell, TableRow } from "../../pure/table";
 
 export type TableBodyRowInfo = { rowName: ReactNode; rowStyles?: string; };
 
-interface GenericRowProps
-{
+type CrudTableBodyRowProps = {
   tableRows: TableBodyRowInfo[];
   dropdownMenu: ReactNode;
   contextMenuContent: ReactNode;
   onDoubleClick?: () => void;
-}
+};
 
-export function CrudTableBodyRow({ tableRows, dropdownMenu, contextMenuContent, onDoubleClick }: GenericRowProps)
+export function CrudTableBodyRow({ tableRows, dropdownMenu, contextMenuContent, onDoubleClick }: CrudTableBodyRowProps)
 {
   const { i18n } = useTranslation();
   return (

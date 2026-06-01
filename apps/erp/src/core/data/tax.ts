@@ -58,6 +58,6 @@ export class TaxDto extends Dto
 export class Tax extends Entity<TaxDto>
 {
   declare name: Signal<string>;
-  declare percentage: Signal<string>;
+  declare percentage: Signal<number>;
   declare isPrimary: Signal<boolean>;
 }

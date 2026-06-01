@@ -1,22 +1,21 @@
 import { Loader2, OctagonAlert } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { BaseApiService } from "../../../networking";
-import type { Dto, Entity } from "../../../stateManager";
+import type { BaseEntity } from "../../../entities";
+import type { BaseApiServiceOld } from "../../../networking";
 import { Button } from "../../pure/button";
 import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure/dialog";
 import { Separator } from "../../pure/separator";
 
-export type DeleteDialogProps<TEntity extends Entity<TDto>, TDto extends Dto> = {
+interface Props<T extends BaseEntity>
+{
   entityName: string;
   id: number;
-  service: BaseApiService<TEntity, TDto>;
+  service: BaseApiServiceOld<T>;
   onSuccess?: () => void;
-};
+}
 
-export function DeleteDialog<TEntity extends Entity<TDto>, TDto extends Dto>(
-  { entityName, id, service, onSuccess }: DeleteDialogProps<TEntity, TDto>
-)
+export function DeleteDialogOld<T extends BaseEntity>({ entityName, id, service, onSuccess }: Props<T>)
 {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);

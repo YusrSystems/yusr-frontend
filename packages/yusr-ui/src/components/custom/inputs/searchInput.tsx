@@ -9,29 +9,36 @@ export type SearchInputParams = {
   onType?: (value: string) => void;
 };
 
-export function SearchInput({ onSearch, onType }: SearchInputParams) {
+export function SearchInput({ onSearch, onType }: SearchInputParams)
+{
   const { t } = useTranslation("common");
   const [searchText, setSearchText] = useState<string>("");
 
-  const debouncedAction = useDebouncedCallback((value: string) => {
-    if (!value.trim()) {
+  const debouncedAction = useDebouncedCallback((value: string) =>
+  {
+    if (!value.trim())
+    {
       onSearch(undefined);
     }
-    else {
+    else
+    {
       onSearch(value);
     }
   }, 500);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+  {
     const val = e.target.value;
     setSearchText(val);
     onType?.(val);
 
-    if (!val) {
+    if (!val)
+    {
       debouncedAction.cancel();
       onSearch(undefined);
     }
-    else {
+    else
+    {
       debouncedAction(val);
     }
   };
@@ -39,13 +46,13 @@ export function SearchInput({ onSearch, onType }: SearchInputParams) {
   return (
     <div className="p-3 rounded-t-xl border-x border-t flex flex-col sm:flex-row gap-4 bg-muted z-0">
       <div className="relative w-full flex gap-2">
-        { /* Search Icon & Input */}
+        { /* Search Icon & Input */ }
         <div className="relative flex-1 z-10">
           <Search className="absolute left-3 rtl:right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            value={searchText}
-            onChange={handleInputChange}
-            placeholder={t("searchPlaceholder")}
+            value={ searchText }
+            onChange={ handleInputChange }
+            placeholder={ t("searchPlaceholder") }
             className="ps-10 bg-background border focus-visible:ring-1"
           />
         </div>
