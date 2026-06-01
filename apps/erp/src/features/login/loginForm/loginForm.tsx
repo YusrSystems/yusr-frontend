@@ -1,5 +1,4 @@
 import placeholderImg from "@/assets/placeholder.svg";
-import { signal } from "@preact/signals-react";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -35,7 +34,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
     INITIAL_STATE,
     validationRules
   );
-  const formData = signal<LoginRequest>();
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const location = useLocation();
