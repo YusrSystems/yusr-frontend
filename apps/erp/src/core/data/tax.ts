@@ -1,6 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, Entity, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, Entity, type ValidationRuleOld, Validators } from "yusr-ui";
 import TaxesApiServiceOld from "../networking/taxesApiServiceold";
 
 export class TaxOld extends BaseEntity
@@ -18,7 +18,7 @@ export class TaxOld extends BaseEntity
 
 export class TaxValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<TaxOld>>[] => [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<TaxOld>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("taxes.nameRequired"))]

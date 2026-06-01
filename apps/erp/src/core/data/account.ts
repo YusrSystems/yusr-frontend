@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, City, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, City, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, type ValidationRuleOld, Validators } from "yusr-ui";
 import { SystemPermissionsResources } from "../auth/systemPermissionsResources";
 import AccountsApiService from "../networking/accountApiService";
 
@@ -68,7 +68,7 @@ export default class Account extends BaseEntity
 
 export class AccountValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Account>>[] => [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<Account>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("accounts.nameRequired"))]

@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
 import BalanceTransfersApiService from "../networking/balanceTransferApiService";
 
 export default class BalanceTransfer extends BaseEntity
@@ -21,7 +21,7 @@ export default class BalanceTransfer extends BaseEntity
 
 export class BalanceTransferValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<BalanceTransfer>>[] => [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<BalanceTransfer>>[] => [{
     field: "amount",
     selector: (d) => d.amount,
     validators: [Validators.required(t("balanceTransfers.amountRequired"))]

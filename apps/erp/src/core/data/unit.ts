@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
 import UnitsApiService from "../networking/unitApiService";
 
 export default class Unit extends BaseEntity
@@ -15,7 +15,7 @@ export default class Unit extends BaseEntity
 
 export class UnitValidationRules
 {
-  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<Unit>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRuleOld<Partial<Unit>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("units.nameRequired"))]

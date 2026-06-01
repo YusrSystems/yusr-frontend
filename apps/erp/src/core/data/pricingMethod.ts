@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
 import PricingMethodsApiService from "../networking/PricingMethodsApiService";
 
 export default class PricingMethod extends BaseEntity
@@ -15,7 +15,7 @@ export default class PricingMethod extends BaseEntity
 
 export class PricingMethodValidationRules
 {
-  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<PricingMethod>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRuleOld<Partial<PricingMethod>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("pricingMethods.nameRequired"))]

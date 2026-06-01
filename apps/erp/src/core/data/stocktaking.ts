@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
 import StocktakingsApiService from "../networking/stocktakingApiService";
 
 export interface IStocktakingItem extends BaseEntity
@@ -63,7 +63,7 @@ export default class Stocktaking extends BaseEntity implements IStocktaking
 
 export class StocktakingValidationRules
 {
-  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<Stocktaking>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRuleOld<Partial<Stocktaking>>[] => [{
     field: "storeId",
     selector: (d) => d.storeId,
     validators: [Validators.required(t("stocktakings.storeRequired"))]

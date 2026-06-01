@@ -1,7 +1,7 @@
 import { type TFunction } from "i18next";
 import { UsersApiService } from "../networking";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
-import { type ValidationRule, Validators } from "../validation";
+import { type ValidationRuleOld, Validators } from "../validation";
 import { BaseEntity } from "./baseEntity";
 import type { Branch } from "./branch";
 import type { Role } from "./role";
@@ -25,7 +25,7 @@ export class User extends BaseEntity
 
 export class UserValidationRules
 {
-  public static validationRules = (t: TFunction<"commonEntities", undefined>): ValidationRule<Partial<User>>[] => [{
+  public static validationRules = (t: TFunction<"commonEntities", undefined>): ValidationRuleOld<Partial<User>>[] => [{
     field: "username",
     selector: (d) => d.username,
     validators: [Validators.required(t("users.usernameRequired"))]

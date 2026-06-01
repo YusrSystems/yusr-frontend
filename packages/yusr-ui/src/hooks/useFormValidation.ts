@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
-import type { ValidationRule } from "../validation";
+import type { ValidationRuleOld } from "../validation";
 
-export function useFormValidation<T>(data: T, rules: ValidationRule<T>[])
+export function useFormValidation<T>(data: T, rules: ValidationRuleOld<T>[])
 {
   const [errors, setErrors] = useState<Record<string, string>>({});
 

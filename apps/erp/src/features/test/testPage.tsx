@@ -1,6 +1,5 @@
 import { Tax, type TaxDto } from "@/core/data/tax";
 import TaxesApiService from "@/core/networking/taxesApiService";
-import { effect } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Percent } from "lucide-react";
 import { CrudPage, DialogContent, DialogTitle, TablePreview, UnauthorizedPage } from "yusr-ui";
@@ -9,14 +8,8 @@ import { TaxesError, TaxesLoaded, TaxesLoading } from "./state/taxesState";
 
 const cubit = new TaxesCubit();
 
-effect(() =>
-{
-  console.log("cubit state: ", cubit.state.value);
-});
 export default function TestPage()
 {
-  // get user permissions from global state or local storage
-  // if else if
   useSignals();
   console.log("page rendered");
 
@@ -114,6 +107,7 @@ function TestPageTable()
 
 export function TestDialog()
 {
+  useSignals();
   return (
     <DialogContent aria-describedby={ undefined }>
       <DialogTitle>Test Dialog</DialogTitle>

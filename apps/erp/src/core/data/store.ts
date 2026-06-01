@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type IEntityState, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type IEntityState, type ValidationRuleOld, Validators } from "yusr-ui";
 import StoresApiService from "../networking/storeApiService";
 
 export default class Store extends BaseEntity
@@ -18,7 +18,7 @@ export default class Store extends BaseEntity
 
 export class StoreValidationRules
 {
-  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<Store>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRuleOld<Partial<Store>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("stores.nameRequired"))]

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { type TFunction } from "i18next";
-import { type ValidationRule, Validators } from "yusr-ui";
+import { type ValidationRuleOld, Validators } from "yusr-ui";
 import type Registration from "../../../core/data/registration";
 import RegisterApiService from "../../../core/networking/registerApiService";
 
@@ -14,7 +14,7 @@ export interface RegisterState
   acceptPolicies?: boolean;
 }
 
-export const getValidationRules = (t: TFunction<"loginRegister">): ValidationRule<Partial<Registration>>[] => [{
+export const getValidationRules = (t: TFunction<"loginRegister">): ValidationRuleOld<Partial<Registration>>[] => [{
   field: "username",
   selector: (d) => d.username,
   validators: [Validators.required(t("register.accountInfo.username.required"))]

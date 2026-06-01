@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { type Branch, City, createGenericFormSlice, type Currency, type StorageFile, type ValidationRule, Validators } from "yusr-ui";
+import { type Branch, City, createGenericFormSlice, type Currency, type StorageFile, type ValidationRuleOld, Validators } from "yusr-ui";
 import type { TaxOld } from "./tax";
 
 export const EInvoicingEnvironmentType = {
@@ -95,7 +95,7 @@ export class SharingSetting
 
 export class SettingValidationRules
 {
-  public static validationRules = (t: TFunction<"erpCommon">): ValidationRule<Partial<Setting>>[] => [{
+  public static validationRules = (t: TFunction<"erpCommon">): ValidationRuleOld<Partial<Setting>>[] => [{
     field: "companyName",
     selector: (d) => d.companyName,
     validators: [Validators.required(t("settings.companyNameRequired"))]

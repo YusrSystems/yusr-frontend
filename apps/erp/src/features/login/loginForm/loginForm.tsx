@@ -1,18 +1,19 @@
 import placeholderImg from "@/assets/placeholder.svg";
+import { signal } from "@preact/signals-react";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequest, PasswordField, TextField, useEntityForm, User, type ValidationRule, Validators, YusrApiHelper } from "yusr-ui";
-import type { Setting } from "../../core/data/setting";
-import { login, updateLoggedInUser, useAppDispatch } from "../../core/state/store";
+import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequest, PasswordField, TextField, useEntityForm, User, type ValidationRuleOld, Validators, YusrApiHelper } from "yusr-ui";
+import type { Setting } from "../../../core/data/setting";
+import { login, updateLoggedInUser, useAppDispatch } from "../../../core/state/store";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 {
   const { t } = useTranslation("loginRegister");
   const navigate = useNavigate();
 
-  const validationRules: ValidationRule<Partial<LoginRequest>>[] = useMemo(
+  const validationRules: ValidationRuleOld<Partial<LoginRequest>>[] = useMemo(
     () => [{
       field: "email",
       selector: (d) => d.companyEmail,
@@ -34,6 +35,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
     INITIAL_STATE,
     validationRules
   );
+  const formData = signal<LoginRequest>();
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const location = useLocation();

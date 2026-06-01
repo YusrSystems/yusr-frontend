@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
 import VouchersApiService from "../networking/voucherApiService";
 import type PaymentMethod from "./paymentMethod";
 
@@ -36,7 +36,7 @@ export default class Voucher extends BaseEntity
 
 export class VoucherValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Voucher>>[] => [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<Voucher>>[] => [{
     field: "type",
     selector: (d) => d.type,
     validators: [Validators.required(t("vouchers.typeRequired"))]

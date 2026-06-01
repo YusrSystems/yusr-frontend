@@ -1,9 +1,9 @@
 import { useCallback } from "react";
-import type { ValidationRule } from "../validation";
+import type { ValidationRuleOld } from "../validation";
 
 export function useValidate<T>(
   data: Partial<T>,
-  validationRules: ValidationRule<Partial<T>>[],
+  validationRules: ValidationRuleOld<Partial<T>>[],
   onSetErrors: (errors: Record<string, string>) => void
 )
 {

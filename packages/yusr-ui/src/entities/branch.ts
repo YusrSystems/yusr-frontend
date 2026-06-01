@@ -1,7 +1,7 @@
 import { type TFunction } from "i18next";
 import { BranchesApiService } from "../networking";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
-import { type ValidationRule, Validators } from "../validation";
+import { type ValidationRuleOld, Validators } from "../validation";
 import { BaseEntity } from "./baseEntity";
 import type { City } from "./city";
 
@@ -24,7 +24,9 @@ export class Branch extends BaseEntity
 
 export class BranchValidationRules
 {
-  public static validationRules = (t: TFunction<"commonEntities", undefined>): ValidationRule<Partial<Branch>>[] => [{
+  public static validationRules = (
+    t: TFunction<"commonEntities", undefined>
+  ): ValidationRuleOld<Partial<Branch>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("branches.nameRequired"))]

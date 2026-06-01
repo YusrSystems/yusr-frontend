@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
 import PaymentMethodsApiService from "../networking/paymentMethodApiService";
 
 export const CommissionType = {
@@ -25,7 +25,7 @@ export default class PaymentMethod extends BaseEntity
 
 export class PaymentMethodValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<PaymentMethod>>[] => [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<PaymentMethod>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("paymentMethods.nameRequired"))]

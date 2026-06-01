@@ -1,6 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit/react";
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, StorageFile, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, StorageFile, type ValidationRuleOld, Validators } from "yusr-ui";
 import InvoiceItemsActions from "../../features/invoices/logic/invoiceItemsActions";
 import InvoiceVouchersActions from "../../features/invoices/logic/invoiceVouchersActions";
 import InvoicesApiService from "../networking/invoiceApiService";
@@ -142,7 +142,7 @@ export default class Invoice extends BaseEntity
 
 export class InvoiceValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Invoice>>[] => [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<Invoice>>[] => [{
     field: "type",
     selector: (d) => d.type,
     validators: [Validators.required(t("invoices.typeRequired"))]

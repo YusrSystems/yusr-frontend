@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
 import ItemTransferApiService from "../networking/itemTransferApiService";
 import type { ItemUnitPricingMethod } from "./item";
 
@@ -47,7 +47,7 @@ export default class ItemTransfer extends BaseEntity
 
 export class ItemTransferValidationRules
 {
-  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<ItemTransfer>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRuleOld<Partial<ItemTransfer>>[] => [{
     field: "transferDate",
     selector: (d) => d.transferDate,
     validators: [Validators.required(t("itemTransfers.transferDateRequired"))]

@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type StorageFile, type ValidationRule, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type StorageFile, type ValidationRuleOld, Validators } from "yusr-ui";
 import ItemsApiService from "../networking/itemApiService";
 
 export const ItemType = {
@@ -123,7 +123,7 @@ export class BarcodeResult
 
 export class ItemValidationRules
 {
-  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<Item>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRuleOld<Partial<Item>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("items.nameRequired"))]
