@@ -23,3 +23,6 @@ export class TaxesError extends TaxesInitialState
     this.message = message;
   }
 }
+
+export class TaxesEmpty extends TaxesInitialState
+{}

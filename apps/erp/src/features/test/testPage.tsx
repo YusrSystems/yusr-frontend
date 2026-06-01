@@ -1,10 +1,10 @@
 import { Tax, type TaxDto } from "@/core/data/tax";
 import TaxesApiService from "@/core/networking/taxesApiService";
 // import { useAppSelector } from "@/core/state/store";
-import { signal } from "@preact/signals-react";
+import { effect, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Percent } from "lucide-react";
-import { CrudPage, DialogContent, DialogTitle } from "yusr-ui";
+import { CrudPage, DialogContent, DialogTitle, TablePreview } from "yusr-ui";
 import { TaxesCubit } from "./state/taxesCubit";
 import { TaxesError, TaxesLoaded, TaxesLoading } from "./state/taxesState";
 
@@ -12,11 +12,17 @@ const isChangeDialogOpen = signal<boolean>(false);
 const isDeleteDialogOpen = signal<boolean>(false);
 const cubit = new TaxesCubit();
 
-export default async function TestPage()
+effect(() =>
 {
+  console.log("cubit state: ", cubit.state.value);
+});
+export default function TestPage()
+{
+  // get user permissions from global state or local storage
+  // if else if
   useSignals();
   console.log("page rendered");
-  await cubit.getUserData();
+  cubit.getUserData();
 
   return (
     <CrudPage>
@@ -44,8 +50,16 @@ export default async function TestPage()
       />
 
       <CrudPage.SearchInput onSearch={ (searchText) => console.log(searchText) } />
-
-      <TestPageTable />
+      <CrudPage.Table>
+        <TestPageTable />
+        <CrudPage.TablePagination
+          pageSize={ 10 }
+          totalNumber={ 100 }
+          currentPage={ 1 }
+          onPageChanged={ () =>
+          {} }
+        />
+      </CrudPage.Table>
 
       <CrudPage.ChangeDialog
         changeDialog={ <TestDialog /> }
@@ -72,15 +86,16 @@ export default async function TestPage()
 
 function TestPageTable()
 {
+  useSignals();
   if (cubit.state.value instanceof TaxesLoading)
   {
-    return <h2>Loading...</h2>;
+    return <TablePreview.Loading />;
   }
 
   if (cubit.state.value instanceof TaxesLoaded)
   {
     return (
-      <CrudPage.Table<Tax, TaxDto>
+      <CrudPage.TableBody<Tax, TaxDto>
         data={ cubit.state.value.taxes }
         headerRows={ [
           { rowBody: "Actions", rowStyles: "" },
@@ -111,10 +126,10 @@ function TestPageTable()
 
   if (cubit.state.value instanceof TaxesError)
   {
-    return <h2>Error loading user: { cubit.state.value.message }</h2>;
+    return <TablePreview.Error />;
   }
 
-  return <h2>No taxes yet</h2>;
+  return <TablePreview.Empty />;
 }
 
 export function TestDialog()

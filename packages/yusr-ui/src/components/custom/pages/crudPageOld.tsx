@@ -109,7 +109,7 @@ export function CrudPageOld<T extends BaseEntity>(
   }
 
   return (
-    <div className="px-5 py-3 h-[calc(100vh-50px)] flex flex-col">
+    <div className="px-5 py-3 h-[calc(100vh-70px)] flex flex-col">
       <CrudTableHeaderOld
         title={ title }
         addButtonTitle={ addNewItemTitle }
@@ -129,7 +129,7 @@ export function CrudPageOld<T extends BaseEntity>(
         } }
       />
 
-      <div className="rounded-b-xl border shadow-sm overflow-auto flex-1">
+      <div className="rounded-b-xl border shadow-sm overflow-auto">
         <CrudTableOld state={ entityState }>
           <CrudTableHeaderRows tableHeadRows={ tableHeadRows } />
 

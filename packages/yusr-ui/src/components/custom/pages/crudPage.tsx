@@ -1,4 +1,5 @@
 import type { Signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
 import type { PropsWithChildren, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import type { Dto, Entity } from "../../..//stateManager";
@@ -36,8 +37,9 @@ export type CrudPageChangeDialogProps = CrudDialogState & {
 
 export function CrudPage({ children }: PropsWithChildren)
 {
+  useSignals();
   return (
-    <div className="px-5 py-3 h-[calc(100vh-50px)] flex flex-col">
+    <div className="px-5 py-3 h-[calc(100vh-70px)] flex flex-col">
       { children }
     </div>
   );
@@ -45,12 +47,13 @@ export function CrudPage({ children }: PropsWithChildren)
 
 CrudPage.Header = function({ ...props }: CrudTableHeaderProps)
 {
-  console.log("header rendered");
+  useSignals();
   return <CrudTableHeader { ...props } />;
 };
 
 CrudPage.Cards = function({ ...props }: CrudTableCardProps)
 {
+  useSignals();
   return <CrudTableCard { ...props } />;
 };
 
@@ -59,63 +62,79 @@ CrudPage.SearchInput = function({ ...props }: SearchInputParams)
   return <SearchInput { ...props } />;
 };
 
-CrudPage.Table = function<TEntity extends Entity<TDto>, TDto extends Dto>(
+CrudPage.Table = function({ children }: PropsWithChildren)
+{
+  useSignals();
+  return (
+    <>
+      <div className="rounded-b-xl border shadow-sm overflow-auto ">
+        { children }
+      </div>
+    </>
+  );
+};
+
+CrudPage.TableBody = function<TEntity extends Entity<TDto>, TDto extends Dto>(
   { data, headerRows, tableRowMapper, onDoubleClick, ...props }:
     & CrudPageTableRow<TEntity, TDto>
     & CrudTableRowActionsMenuProps
     & CrudTablePaginationProps
 )
 {
+  useSignals();
   const { i18n } = useTranslation();
   console.log("table rendered");
   return (
-    <div className="rounded-b-xl border shadow-sm overflow-auto flex-1">
-      <Table>
-        <TableHeader className="bg-muted">
-          <TableRow>
-            { headerRows.map((row, i) => <TableHead key={ i } className={ row.rowStyles }>{ row.rowBody }</TableHead>) }
-          </TableRow>
-        </TableHeader>
+    <Table>
+      <TableHeader className="bg-muted">
+        <TableRow>
+          { headerRows.map((row, i) => <TableHead key={ i } className={ row.rowStyles }>{ row.rowBody }</TableHead>) }
+        </TableRow>
+      </TableHeader>
 
-        <TableBody>
-          { data.map((entity, i: number) => (
-            <ContextMenu dir={ i18n.dir() } key={ i }>
-              <ContextMenuTrigger asChild>
-                <TableRow
-                  onDoubleClick={ () => onDoubleClick?.(entity) }
-                  className="hover:bg-secondary/50 transition-colors cursor-pointer"
-                >
-                  <TableCell>
-                    <CrudTableRowActionsMenu
-                      { ...props }
-                      type="dropdown"
-                    />
+      <TableBody>
+        { data.map((entity, i: number) => (
+          <ContextMenu dir={ i18n.dir() } key={ i }>
+            <ContextMenuTrigger asChild>
+              <TableRow
+                onDoubleClick={ () => onDoubleClick?.(entity) }
+                className="hover:bg-secondary/50 transition-colors cursor-pointer"
+              >
+                <TableCell>
+                  <CrudTableRowActionsMenu
+                    { ...props }
+                    type="dropdown"
+                  />
+                </TableCell>
+
+                { tableRowMapper(entity).map((row, i) => (
+                  <TableCell key={ i }>
+                    <div className={ row.rowStyles }>{ row.rowBody }</div>
                   </TableCell>
+                )) }
+              </TableRow>
+            </ContextMenuTrigger>
 
-                  { tableRowMapper(entity).map((row, i) => (
-                    <TableCell key={ i }>
-                      <div className={ row.rowStyles }>{ row.rowBody }</div>
-                    </TableCell>
-                  )) }
-                </TableRow>
-              </ContextMenuTrigger>
-
-              <CrudTableRowActionsMenu
-                { ...props }
-                type="context"
-              />
-            </ContextMenu>
-          )) }
-        </TableBody>
-      </Table>
-
-      <CrudTablePagination { ...props } />
-    </div>
+            <CrudTableRowActionsMenu
+              { ...props }
+              type="context"
+            />
+          </ContextMenu>
+        )) }
+      </TableBody>
+    </Table>
   );
+};
+
+CrudPage.TablePagination = function(props: CrudTablePaginationProps)
+{
+  useSignals();
+  return <CrudTablePagination { ...props } />;
 };
 
 CrudPage.ChangeDialog = function({ changeDialog, open, onOpenChange }: CrudPageChangeDialogProps)
 {
+  useSignals();
   return (
     <>
       { open.value && ( // ✅ Signal read inside JSX — reactive
@@ -131,6 +150,7 @@ CrudPage.DeleteDialog = function<TEntity extends Entity<TDto>, TDto extends Dto>
   { open, onOpenChange, ...props }: CrudDialogState & DeleteDialogProps<TEntity, TDto>
 )
 {
+  useSignals();
   const { i18n } = useTranslation();
 
   return (

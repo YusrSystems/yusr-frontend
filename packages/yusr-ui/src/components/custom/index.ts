@@ -96,6 +96,7 @@ export * from "./table/crudTableHeaderOld";
 export * from "./table/crudTableHeaderRows";
 export * from "./table/crudTablePagination";
 export * from "./table/crudTableRowActionsMenuOld";
+export * from "./table/tablePreview";
 
 // Theme
 export * from "./theme/themeProvider";
