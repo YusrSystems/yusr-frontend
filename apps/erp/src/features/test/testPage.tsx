@@ -1,31 +1,32 @@
-import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import { Tax, type TaxDto } from "@/core/data/tax";
 import TaxesApiService from "@/core/networking/taxesApiService";
-import { useAppSelector } from "@/core/state/store";
-import { signal } from "@preact/signals";
+// import { useAppSelector } from "@/core/state/store";
+import { signal } from "@preact/signals-react";
 import { Percent } from "lucide-react";
-import { CrudPage, DialogContent, DialogTitle, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { CrudPage, DialogContent, DialogTitle } from "yusr-ui";
 
 const isChangeDialogOpen = signal<boolean>(false);
 const isDeleteDialogOpen = signal<boolean>(false);
 
 export default function TestPage()
 {
-  const authState = useAppSelector((state) => state.auth);
+  // const authState = useAppSelector((state) => state.auth);
+
+  console.log("page rendered");
 
   return (
     <CrudPage>
-      { isChangeDialogOpen.value }
-
       <CrudPage.Header
         title="Test Page"
         addButtonTitle="Create Test"
-        isAddButtonVisible={ SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
-          SystemPermissionsResources.Taxes,
-          SystemPermissionsActions.Get
-        ) }
-        onAddButtonClicked={ () => isChangeDialogOpen.value = true }
+        isAddButtonVisible={ true }
+        onAddButtonClicked={ () =>
+        {
+          console.log("add button clicked");
+          console.log("isChangeDialogOpen: ", isChangeDialogOpen);
+          isChangeDialogOpen.value = true;
+          console.log("isChangeDialogOpen: ", isChangeDialogOpen);
+        } }
         changeDialog={ <></> }
         actionButtons={ [] }
       />
@@ -69,12 +70,17 @@ export default function TestPage()
 
       <CrudPage.ChangeDialog
         changeDialog={ <TestDialog /> }
-        open={ isChangeDialogOpen.value }
-        onOpenChange={ (open) => isChangeDialogOpen.value = open }
+        open={ isChangeDialogOpen }
+        onOpenChange={ (open) =>
+        {
+          console.log("open change edit dialog");
+
+          isChangeDialogOpen.value = open;
+        } }
       />
 
       <CrudPage.DeleteDialog
-        open={ isDeleteDialogOpen.value }
+        open={ isDeleteDialogOpen }
         onOpenChange={ (open) => isDeleteDialogOpen.value = open }
         entityName="test"
         id={ 1 }
@@ -88,7 +94,7 @@ export default function TestPage()
 export function TestDialog()
 {
   return (
-    <DialogContent>
+    <DialogContent aria-describedby={ undefined }>
       <DialogTitle>Test Dialog</DialogTitle>
     </DialogContent>
   );

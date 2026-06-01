@@ -1,4 +1,3 @@
-import { useSignals } from "@preact/signals-react/runtime";
 import type { i18n } from "i18next";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -46,8 +45,6 @@ function App()
     BaseApiServiceOld.init(t);
     Validators.init(t);
   }, [t, i18n.language]);
-
-  useSignals();
 
   return <AppBody i18n={ i18n } />;
 }

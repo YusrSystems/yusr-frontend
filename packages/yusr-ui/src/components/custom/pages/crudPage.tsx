@@ -1,3 +1,4 @@
+import type { Signal } from "@preact/signals-react";
 import type { PropsWithChildren, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import type { Dto, Entity } from "../../..//stateManager";
@@ -25,7 +26,7 @@ export type CrudPageTableRow<TEntity extends Entity<TDto>, TDto extends Dto> = {
 };
 
 export type CrudDialogState = {
-  open: boolean;
+  open: Signal<boolean>;
   onOpenChange: (open: boolean) => void;
 };
 
@@ -44,6 +45,7 @@ export function CrudPage({ children }: PropsWithChildren)
 
 CrudPage.Header = function({ ...props }: CrudTableHeaderProps)
 {
+  console.log("header rendered");
   return <CrudTableHeader { ...props } />;
 };
 
@@ -65,7 +67,7 @@ CrudPage.Table = function<TEntity extends Entity<TDto>, TDto extends Dto>(
 )
 {
   const { i18n } = useTranslation();
-
+  console.log("table rendered");
   return (
     <div className="rounded-b-xl border shadow-sm overflow-auto flex-1">
       <Table>
@@ -116,11 +118,8 @@ CrudPage.ChangeDialog = function({ changeDialog, open, onOpenChange }: CrudPageC
 {
   return (
     <>
-      { open && (
-        <Dialog
-          open={ open }
-          onOpenChange={ onOpenChange }
-        >
+      { open.value && ( // ✅ Signal read inside JSX — reactive
+        <Dialog open={ open.value } onOpenChange={ onOpenChange }>
           { changeDialog }
         </Dialog>
       ) }
@@ -136,7 +135,7 @@ CrudPage.DeleteDialog = function<TEntity extends Entity<TDto>, TDto extends Dto>
 
   return (
     <Dialog
-      open={ open }
+      open={ open.value }
       onOpenChange={ onOpenChange }
     >
       <DialogContent dir={ i18n.dir() } className="sm:max-w-sm">

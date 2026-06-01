@@ -1,4 +1,4 @@
-import type { Signal } from "@preact/signals";
+import type { Signal } from "@preact/signals-react";
 import { type TFunction } from "i18next";
 import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, Entity, type ValidationRule, Validators } from "yusr-ui";
 import TaxesApiServiceOld from "../networking/taxesApiServiceold";

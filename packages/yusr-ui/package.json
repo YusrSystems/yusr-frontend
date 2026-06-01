@@ -74,7 +74,9 @@
     "yusr-ui": "workspace:*"
   },
   "dependencies": {
-    "@preact/signals-react": "^3.10.1",
     "qrcode.react": "^4.2.0"
+  },
+  "peerDependencies": {
+    "@preact/signals-react": "^3.10.1"
   }
 }
