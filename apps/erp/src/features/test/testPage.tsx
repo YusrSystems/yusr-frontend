@@ -2,17 +2,21 @@ import { Tax, type TaxDto } from "@/core/data/tax";
 import TaxesApiService from "@/core/networking/taxesApiService";
 // import { useAppSelector } from "@/core/state/store";
 import { signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Percent } from "lucide-react";
 import { CrudPage, DialogContent, DialogTitle } from "yusr-ui";
+import { TaxesCubit } from "./state/taxesCubit";
+import { TaxesError, TaxesLoaded, TaxesLoading } from "./state/taxesState";
 
 const isChangeDialogOpen = signal<boolean>(false);
 const isDeleteDialogOpen = signal<boolean>(false);
+const cubit = new TaxesCubit();
 
-export default function TestPage()
+export default async function TestPage()
 {
-  // const authState = useAppSelector((state) => state.auth);
-
+  useSignals();
   console.log("page rendered");
+  await cubit.getUserData();
 
   return (
     <CrudPage>
@@ -41,8 +45,43 @@ export default function TestPage()
 
       <CrudPage.SearchInput onSearch={ (searchText) => console.log(searchText) } />
 
+      <TestPageTable />
+
+      <CrudPage.ChangeDialog
+        changeDialog={ <TestDialog /> }
+        open={ isChangeDialogOpen }
+        onOpenChange={ (open) =>
+        {
+          console.log("open change edit dialog");
+
+          isChangeDialogOpen.value = open;
+        } }
+      />
+
+      <CrudPage.DeleteDialog
+        open={ isDeleteDialogOpen }
+        onOpenChange={ (open) => isDeleteDialogOpen.value = open }
+        entityName="test"
+        id={ 1 }
+        service={ new TaxesApiService() }
+        onSuccess={ () => console.log("deleted") }
+      />
+    </CrudPage>
+  );
+}
+
+function TestPageTable()
+{
+  if (cubit.state.value instanceof TaxesLoading)
+  {
+    return <h2>Loading...</h2>;
+  }
+
+  if (cubit.state.value instanceof TaxesLoaded)
+  {
+    return (
       <CrudPage.Table<Tax, TaxDto>
-        data={ [new Tax({ id: 1, name: "test", percentage: 10, isPrimary: true })] }
+        data={ cubit.state.value.taxes }
         headerRows={ [
           { rowBody: "Actions", rowStyles: "" },
           { rowBody: "id", rowStyles: "" },
@@ -67,28 +106,15 @@ export default function TestPage()
         onPageChanged={ () =>
         {} }
       />
+    );
+  }
 
-      <CrudPage.ChangeDialog
-        changeDialog={ <TestDialog /> }
-        open={ isChangeDialogOpen }
-        onOpenChange={ (open) =>
-        {
-          console.log("open change edit dialog");
+  if (cubit.state.value instanceof TaxesError)
+  {
+    return <h2>Error loading user: { cubit.state.value.message }</h2>;
+  }
 
-          isChangeDialogOpen.value = open;
-        } }
-      />
-
-      <CrudPage.DeleteDialog
-        open={ isDeleteDialogOpen }
-        onOpenChange={ (open) => isDeleteDialogOpen.value = open }
-        entityName="test"
-        id={ 1 }
-        service={ new TaxesApiService() }
-        onSuccess={ () => console.log("deleted") }
-      />
-    </CrudPage>
-  );
+  return <h2>No taxes yet</h2>;
 }
 
 export function TestDialog()
