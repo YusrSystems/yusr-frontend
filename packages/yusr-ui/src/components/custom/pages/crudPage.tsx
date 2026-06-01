@@ -1,4 +1,4 @@
-import type { Signal } from "@preact/signals-react";
+import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import type { PropsWithChildren, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,11 +13,8 @@ import { CrudTableHeader, type CrudTableHeaderProps } from "../table/crudTableHe
 import { CrudTablePagination, type CrudTablePaginationProps } from "../table/crudTablePagination";
 import { CrudTableRowActionsMenu, type CrudTableRowActionsMenuProps } from "../table/crudTableRowActionsMenu";
 
-// TODO: make crud page only takes the entity
-// only entity, the permissions must be taken from global state or local storage
-// and the actions must be optional, the user can subscribe to the actions throw the CrudePage itself not it's components
-// the components must take the *minimum* required props only
-// by: Ahmed Bakri, 01:07 AM (01/06/2026)
+const isChangeDialogOpen = signal<boolean>(false);
+const isDeleteDialogOpen = signal<boolean>(false);
 
 export type CrudPageTableRow<TEntity extends Entity<TDto>, TDto extends Dto> = {
   data: TEntity[];
@@ -26,12 +23,7 @@ export type CrudPageTableRow<TEntity extends Entity<TDto>, TDto extends Dto> = {
   onDoubleClick?: (entity: TEntity) => void;
 };
 
-export type CrudDialogState = {
-  open: Signal<boolean>;
-  onOpenChange: (open: boolean) => void;
-};
-
-export type CrudPageChangeDialogProps = CrudDialogState & {
+export type CrudPageChangeDialogProps = {
   changeDialog: React.ReactNode;
 };
 
@@ -45,10 +37,10 @@ export function CrudPage({ children }: PropsWithChildren)
   );
 }
 
-CrudPage.Header = function({ ...props }: CrudTableHeaderProps)
+CrudPage.Header = function({ ...props }: Omit<CrudTableHeaderProps, "onAddButtonClicked">)
 {
   useSignals();
-  return <CrudTableHeader { ...props } />;
+  return <CrudTableHeader onAddButtonClicked={ () => isChangeDialogOpen.value = true } { ...props } />;
 };
 
 CrudPage.Cards = function({ ...props }: CrudTableCardProps)
@@ -75,10 +67,9 @@ CrudPage.Table = function({ children }: PropsWithChildren)
 };
 
 CrudPage.TableBody = function<TEntity extends Entity<TDto>, TDto extends Dto>(
-  { data, headerRows, tableRowMapper, onDoubleClick, ...props }:
-    & CrudPageTableRow<TEntity, TDto>
-    & CrudTableRowActionsMenuProps
-    & CrudTablePaginationProps
+  { data, headerRows, tableRowMapper, ...props }:
+    & Omit<CrudPageTableRow<TEntity, TDto>, "onDoubleClick">
+    & Omit<CrudTableRowActionsMenuProps, "onEditClicked" | "onDeleteClicked">
 )
 {
   useSignals();
@@ -97,13 +88,15 @@ CrudPage.TableBody = function<TEntity extends Entity<TDto>, TDto extends Dto>(
           <ContextMenu dir={ i18n.dir() } key={ i }>
             <ContextMenuTrigger asChild>
               <TableRow
-                onDoubleClick={ () => onDoubleClick?.(entity) }
+                onDoubleClick={ () => isChangeDialogOpen.value = true }
                 className="hover:bg-secondary/50 transition-colors cursor-pointer"
               >
                 <TableCell>
                   <CrudTableRowActionsMenu
                     { ...props }
                     type="dropdown"
+                    onEditClicked={ () => isChangeDialogOpen.value = true }
+                    onDeleteClicked={ () => isDeleteDialogOpen.value = true }
                   />
                 </TableCell>
 
@@ -118,6 +111,8 @@ CrudPage.TableBody = function<TEntity extends Entity<TDto>, TDto extends Dto>(
             <CrudTableRowActionsMenu
               { ...props }
               type="context"
+              onEditClicked={ () => isChangeDialogOpen.value = true }
+              onDeleteClicked={ () => isDeleteDialogOpen.value = true }
             />
           </ContextMenu>
         )) }
@@ -132,13 +127,13 @@ CrudPage.TablePagination = function(props: CrudTablePaginationProps)
   return <CrudTablePagination { ...props } />;
 };
 
-CrudPage.ChangeDialog = function({ changeDialog, open, onOpenChange }: CrudPageChangeDialogProps)
+CrudPage.ChangeDialog = function({ changeDialog }: CrudPageChangeDialogProps)
 {
   useSignals();
   return (
     <>
-      { open.value && ( // ✅ Signal read inside JSX — reactive
-        <Dialog open={ open.value } onOpenChange={ onOpenChange }>
+      { isChangeDialogOpen.value && ( // ✅ Signal read inside JSX — reactive
+        <Dialog open={ isChangeDialogOpen.value } onOpenChange={ (open) => isChangeDialogOpen.value = open }>
           { changeDialog }
         </Dialog>
       ) }
@@ -147,7 +142,7 @@ CrudPage.ChangeDialog = function({ changeDialog, open, onOpenChange }: CrudPageC
 };
 
 CrudPage.DeleteDialog = function<TEntity extends Entity<TDto>, TDto extends Dto>(
-  { open, onOpenChange, ...props }: CrudDialogState & DeleteDialogProps<TEntity, TDto>
+  { ...props }: DeleteDialogProps<TEntity, TDto>
 )
 {
   useSignals();
@@ -155,8 +150,8 @@ CrudPage.DeleteDialog = function<TEntity extends Entity<TDto>, TDto extends Dto>
 
   return (
     <Dialog
-      open={ open.value }
-      onOpenChange={ onOpenChange }
+      open={ isDeleteDialogOpen.value }
+      onOpenChange={ (open) => isDeleteDialogOpen.value = open }
     >
       <DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
         <DeleteDialog { ...props } />

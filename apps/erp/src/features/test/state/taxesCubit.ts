@@ -9,11 +9,11 @@ export class TaxesCubit extends Cubit<TaxesInitialState>
     super(new TaxesInitialState());
   }
 
-  async getUserData()
+  async Filter(searchText?: string)
   {
     this.emit(new TaxesLoading());
     const taxesApiService = new TaxesApiService();
-    await taxesApiService.Filter(1, 100);
+    await taxesApiService.Filter(1, 100, searchText);
 
     if (taxesApiService.Data.value.length === 0)
     {

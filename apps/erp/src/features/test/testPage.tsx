@@ -1,15 +1,12 @@
 import { Tax, type TaxDto } from "@/core/data/tax";
 import TaxesApiService from "@/core/networking/taxesApiService";
-// import { useAppSelector } from "@/core/state/store";
-import { effect, signal } from "@preact/signals-react";
+import { effect } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Percent } from "lucide-react";
-import { CrudPage, DialogContent, DialogTitle, TablePreview } from "yusr-ui";
+import { CrudPage, DialogContent, DialogTitle, TablePreview, UnauthorizedPage } from "yusr-ui";
 import { TaxesCubit } from "./state/taxesCubit";
 import { TaxesError, TaxesLoaded, TaxesLoading } from "./state/taxesState";
 
-const isChangeDialogOpen = signal<boolean>(false);
-const isDeleteDialogOpen = signal<boolean>(false);
 const cubit = new TaxesCubit();
 
 effect(() =>
@@ -22,7 +19,14 @@ export default function TestPage()
   // if else if
   useSignals();
   console.log("page rendered");
-  cubit.getUserData();
+
+  // if(CurrentUserService.CurrentUser.role.permissions )
+  if (false)
+  {
+    return <UnauthorizedPage />;
+  }
+
+  cubit.Filter();
 
   return (
     <CrudPage>
@@ -30,14 +34,6 @@ export default function TestPage()
         title="Test Page"
         addButtonTitle="Create Test"
         isAddButtonVisible={ true }
-        onAddButtonClicked={ () =>
-        {
-          console.log("add button clicked");
-          console.log("isChangeDialogOpen: ", isChangeDialogOpen);
-          isChangeDialogOpen.value = true;
-          console.log("isChangeDialogOpen: ", isChangeDialogOpen);
-        } }
-        changeDialog={ <></> }
         actionButtons={ [] }
       />
 
@@ -49,7 +45,8 @@ export default function TestPage()
         }] }
       />
 
-      <CrudPage.SearchInput onSearch={ (searchText) => console.log(searchText) } />
+      <CrudPage.SearchInput onSearch={ (searchText) => cubit.Filter(searchText) } />
+
       <CrudPage.Table>
         <TestPageTable />
         <CrudPage.TablePagination
@@ -63,18 +60,9 @@ export default function TestPage()
 
       <CrudPage.ChangeDialog
         changeDialog={ <TestDialog /> }
-        open={ isChangeDialogOpen }
-        onOpenChange={ (open) =>
-        {
-          console.log("open change edit dialog");
-
-          isChangeDialogOpen.value = open;
-        } }
       />
 
       <CrudPage.DeleteDialog
-        open={ isDeleteDialogOpen }
-        onOpenChange={ (open) => isDeleteDialogOpen.value = open }
         entityName="test"
         id={ 1 }
         service={ new TaxesApiService() }
@@ -110,16 +98,8 @@ function TestPageTable()
           rowBody: entity.percentage.value.toString(),
           rowStyles: ""
         }, { rowBody: entity.isPrimary.value.toString(), rowStyles: "" }] }
-        onEditClicked={ () => isChangeDialogOpen.value = true }
-        onDeleteClicked={ () => isDeleteDialogOpen.value = true }
-        onDoubleClick={ () => isChangeDialogOpen.value = true }
         hasUpdatePermission={ true }
         hasDeletePermission={ true }
-        pageSize={ 10 }
-        totalNumber={ 100 }
-        currentPage={ 1 }
-        onPageChanged={ () =>
-        {} }
       />
     );
   }
