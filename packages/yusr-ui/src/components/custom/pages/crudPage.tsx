@@ -74,7 +74,6 @@ CrudPage.TableBody = function<TEntity extends Entity<TDto>, TDto extends Dto>(
 {
   useSignals();
   const { i18n } = useTranslation();
-  console.log("table rendered");
   return (
     <Table>
       <TableHeader className="bg-muted">

@@ -1,79 +1,37 @@
 import placeholderImg from "@/assets/placeholder.svg";
-import { Setting } from "@/core/data/setting";
-import type { SettingOld } from "@/core/data/settingOld";
-import { Services } from "@/services";
-import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useMemo } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, i18n, LoginRequest, PasswordField, TextField, User, UserOld, YusrApiHelper } from "yusr-ui";
-
-const emailStorageItemName = "remembered_email";
-const usernameStorageItemName = "remembered_username";
-const rememberMe = signal(
-  !!(localStorage.getItem(emailStorageItemName) || localStorage.getItem(usernameStorageItemName))
-);
-const isLoading = signal(false);
+import { Link, useLocation } from "react-router-dom";
+import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, i18n, PasswordField, TextField } from "yusr-ui";
+import LoginCubit from "./logic/loginCubit";
+import { LoginErrorState, LoginLoadingState } from "./logic/loginState";
+import LoginFormSkeleton from "./loginFormSkeleton";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 {
   useSignals();
-
-  const formData = useMemo(() =>
-    new LoginRequest({
-      companyEmail: localStorage.getItem(emailStorageItemName) ?? "",
-      username: localStorage.getItem(usernameStorageItemName) ?? "",
-      password: ""
-    }), []);
-
-  const navigate = useNavigate();
   const location = useLocation();
-
-  const Login = async () =>
+  const cubit = useMemo(() =>
   {
-    if (!formData.validate())
+    let origin = location.state?.from?.pathname || "/dashboard";
+    if (!origin.startsWith("/") || origin.startsWith("//"))
     {
-      console.log(formData.errors);
-      return;
+      origin = "/dashboard";
     }
 
-    if (rememberMe)
-    {
-      localStorage.setItem(emailStorageItemName, formData.companyEmail.value || "");
-      localStorage.setItem(usernameStorageItemName, formData.username.value || "");
-    }
-    else
-    {
-      localStorage.removeItem(emailStorageItemName);
-      localStorage.removeItem(usernameStorageItemName);
-    }
+    return new LoginCubit(origin);
+  }, []);
 
-    isLoading.value = true;
-
-    const result = await YusrApiHelper.Post<{ user: UserOld; setting: SettingOld; }>(
-      `${ApiConstants.baseUrl}/Login`,
-      formData.toJson()
-    );
-
-    if (result.status === 200 && result.data)
-    {
-      Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
-
-      const origin = location.state?.from?.pathname || "/dashboard";
-
-      isLoading.value = false;
-
-      setTimeout(() =>
-      {
-        navigate(origin, { replace: true });
-      }, 10);
-    }
-    else
-    {
-      isLoading.value = false;
-    }
-  };
+  if (cubit.state.value instanceof LoginLoadingState)
+  {
+    return <LoginFormSkeleton />;
+  }
+  else if (cubit.state.value instanceof LoginErrorState)
+  {
+    // show error message
+  }
+  const formData = cubit.formData;
 
   return (
     <div className={ cn("flex flex-col gap-6", className) } { ...props }>
@@ -127,8 +85,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
               <div className="flex items-center gap-3">
                 <Checkbox
                   id="rememberMe"
-                  checked={ rememberMe.value }
-                  onCheckedChange={ (checked) => rememberMe.value = checked as boolean }
+                  checked={ cubit.rememberMe.value }
+                  onCheckedChange={ (checked) => cubit.rememberMe.value = checked as boolean }
                 />
                 <label
                   htmlFor="rememberMe"
@@ -139,8 +97,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
               </div>
 
               <Field>
-                <Button type="button" disabled={ isLoading.value } onClick={ Login }>
-                  { isLoading.value && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
+                <Button type="button" onClick={ async () => await cubit.login() }>
                   { i18n.t("login:button") }
                 </Button>
               </Field>

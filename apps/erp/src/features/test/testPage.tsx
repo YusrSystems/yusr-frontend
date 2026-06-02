@@ -11,7 +11,6 @@ const cubit = new TaxesCubit();
 export default function TestPage()
 {
   useSignals();
-  console.log("page rendered");
 
   // if(CurrentUserService.CurrentUser.role.permissions )
   if (false)
