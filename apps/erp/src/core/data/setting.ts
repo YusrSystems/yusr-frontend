@@ -1,5 +1,5 @@
-import type { TFunction } from "i18next";
-import { type Branch, City, createGenericFormSlice, type Currency, type StorageFile, type ValidationRuleOld, Validators } from "yusr-ui";
+import type { Signal } from "@preact/signals-react";
+import { type Branch, City, type Currency, Dto, i18n, type StorageFile, ValidatableEntity, Validators } from "yusr-ui";
 import type { TaxOld } from "./tax";
 
 export const EInvoicingEnvironmentType = {
@@ -18,7 +18,7 @@ export const InvoicePrintSize = {
 
 export type InvoicePrintSize = typeof InvoicePrintSize[keyof typeof InvoicePrintSize];
 
-export class Setting
+export class SettingDto extends Dto
 {
   public registrationKey!: string;
   public email!: string;
@@ -57,19 +57,61 @@ export class Setting
   public invoicePolicy?: string;
   public invoicePrintSize!: InvoicePrintSize;
   public eInvoicingEnvironmentType!: EInvoicingEnvironmentType;
+}
 
-  constructor(init?: Partial<Setting>)
+export class Setting extends ValidatableEntity<SettingDto>
+{
+  declare registrationKey: Signal<string>;
+  declare email: Signal<string>;
+  declare companyName: Signal<string>;
+  declare companyPhone: Signal<string>;
+  declare companyBusinessCategory?: Signal<string>;
+  declare crn?: Signal<string>;
+  declare vatNumber?: Signal<string>;
+  declare currencyId: Signal<number>;
+  declare currency?: Signal<Currency>;
+  declare logo?: Signal<StorageFile>;
+  declare startDate: Signal<Date>;
+  declare endDate: Signal<Date>;
+  declare branchId: Signal<number>;
+  declare branch?: Signal<Branch>;
+  declare mainTaxId: Signal<number>;
+  declare mainTax?: Signal<TaxOld>;
+  declare sellAccountId?: Signal<number>;
+  declare sellAccountName?: Signal<string>;
+  declare purchaseAccountId?: Signal<number>;
+  declare purchaseAccountName?: Signal<string>;
+  declare mainPaymentMethodId?: Signal<number>;
+  declare mainPaymentMethodName?: Signal<string>;
+  declare mainStoreId?: Signal<number>;
+  declare mainStoreName?: Signal<string>;
+  declare invoicePolicy?: Signal<string>;
+  declare invoicePrintSize: Signal<InvoicePrintSize>;
+  declare eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType>;
+
+  constructor(dto: Partial<SettingDto>)
   {
-    Object.assign(this, init);
-
-    if (this.startDate)
-    {
-      this.startDate = new Date(this.startDate);
-    }
-    if (this.endDate)
-    {
-      this.endDate = new Date(this.endDate);
-    }
+    super(dto, [{
+      field: "companyName",
+      selector: (d) => d.companyName,
+      validators: [Validators.required(i18n.t("erpCommon:settings.companyNameRequired"))]
+    }, {
+      field: "companyPhone",
+      selector: (d) => d.companyPhone,
+      validators: [Validators.required(i18n.t("erpCommon:settings.companyPhoneRequired"))]
+    }, {
+      field: "branchId",
+      selector: (d) => d.branchId,
+      validators: [Validators.required(i18n.t("erpCommon:settings.branchRequired"))]
+    }, {
+      field: "email",
+      selector: (d) => d.email,
+      validators: [Validators.required(i18n.t("erpCommon:settings.emailRequired"))]
+    }, {
+      field: "currencyId",
+      selector: (d) => d.currencyId,
+      validators: [Validators.required(i18n.t("erpCommon:settings.currencyRequired"))]
+    }]);
   }
 }
 
@@ -91,36 +133,4 @@ export class SharingSetting
   {
     Object.assign(this, init);
   }
-}
-
-export class SettingValidationRules
-{
-  public static validationRules = (t: TFunction<"erpCommon">): ValidationRuleOld<Partial<Setting>>[] => [{
-    field: "companyName",
-    selector: (d) => d.companyName,
-    validators: [Validators.required(t("settings.companyNameRequired"))]
-  }, {
-    field: "companyPhone",
-    selector: (d) => d.companyPhone,
-    validators: [Validators.required(t("settings.companyPhoneRequired"))]
-  }, {
-    field: "branchId",
-    selector: (d) => d.branchId,
-    validators: [Validators.required(t("settings.branchRequired"))]
-  }, {
-    field: "email",
-    selector: (d) => d.email,
-    validators: [Validators.required(t("settings.emailRequired"))]
-  }, {
-    field: "currencyId",
-    selector: (d) => d.currencyId,
-    validators: [Validators.required(t("settings.currencyRequired"))]
-  }];
-}
-
-export class SettingSlice
-{
-  private static formSliceInstance = createGenericFormSlice<Setting>("settingForm");
-  public static formActions = SettingSlice.formSliceInstance.actions;
-  public static formReducer = SettingSlice.formSliceInstance.reducer;
 }

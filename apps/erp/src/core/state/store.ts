@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { BranchSlice, CitySlice, CountrySlice, createAuthSlice, CurrencySlice, RoleSlice, setupAuthListeners, systemReducer, User, UserSlice, type YusrAppDispatch, type YusrRootState } from "yusr-ui";
+import { BranchSlice, CitySlice, CountrySlice, createAuthSlice, CurrencySlice, RoleSlice, setupAuthListeners, systemReducer, UserOld, UserSlice, type YusrAppDispatch, type YusrRootState } from "yusr-ui";
 import dashboardReducer from "../../features/dashboard/logic/dashboardSlice";
 import { itemTransferReducer } from "../../features/itemTransfers/logic/itemTransferSlice";
 import registerReducer from "../../features/register/logic/registerSlice";
@@ -12,7 +12,7 @@ import { ItemsSettlementSlice } from "../data/itemsSettlement";
 import { ItemTransferSlice } from "../data/itemTransfer";
 import { PaymentMethodSlice } from "../data/paymentMethod";
 import { PricingMethodSlice } from "../data/pricingMethod";
-import { type Setting, SettingSlice } from "../data/setting";
+import { type SettingOld, SettingSlice } from "../data/settingOld";
 import { StocktakingSlice } from "../data/stocktaking";
 import { StoreSlice } from "../data/store";
 import { TaxSlice } from "../data/tax";
@@ -22,7 +22,7 @@ import itemBarcodeReducer from "./shared/itemBarcodeSlice";
 import serviceIdsReducer from "./shared/serviceIdsSlice";
 import storeItemsReducer from "./shared/storeItemsSlice";
 
-const authSlice = createAuthSlice<User, Setting>();
+const authSlice = createAuthSlice<UserOld, SettingOld>();
 export const {
   login,
   logout,

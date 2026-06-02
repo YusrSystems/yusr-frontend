@@ -1,11 +1,10 @@
 import { createContext, useContext } from "react";
 import type { ThunkDispatch } from "redux-thunk";
-import type { AuthState, User } from "yusr-ui";
-import type { IEntityState } from "yusr-ui";
+import type { AuthState, IEntityState, UserOld } from "yusr-ui";
 import type Account from "../../../core/data/account";
 import type { AccountSliceType } from "../../../core/data/account";
 import type Invoice from "../../../core/data/invoice";
-import type { Setting } from "../../../core/data/setting";
+import type { SettingOld } from "../../../core/data/settingOld";
 import type { InvoiceDialogMode, InvoiceSliceType } from "../changeInvoiceDialog";
 
 export type InvoiceContextType = {
@@ -15,7 +14,7 @@ export type InvoiceContextType = {
   isInvalid: (field: string) => boolean;
   slice: InvoiceSliceType;
   mode: InvoiceDialogMode;
-  authState: AuthState<User, Setting>;
+  authState: AuthState<UserOld, SettingOld>;
   dispatch: ThunkDispatch<any, any, any>;
   disabled: boolean;
   accountState: IEntityState<Account>;

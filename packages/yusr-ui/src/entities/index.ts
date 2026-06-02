@@ -8,3 +8,4 @@ export * from "./loginRequest";
 export * from "./role";
 export * from "./storageFile";
 export * from "./user";
+export * from "./userOld";

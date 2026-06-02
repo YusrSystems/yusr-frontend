@@ -1,8 +1,8 @@
 import Invoice, { InvoiceRelationType, InvoiceVoucher } from "@/core/data/invoice";
-import type { Setting } from "@/core/data/setting";
-import type { AuthState, User } from "yusr-ui";
+import type { SettingOld } from "@/core/data/settingOld";
+import type { AuthState, UserOld } from "yusr-ui";
 
-export function useInvoiceLogic(authState: AuthState<User, Setting>)
+export function useInvoiceLogic(authState: AuthState<UserOld, SettingOld>)
 {
   const createInitialPaymentVoucher = (invoice: Invoice, invoiceTaxInclusivePrice?: number): InvoiceVoucher =>
   {

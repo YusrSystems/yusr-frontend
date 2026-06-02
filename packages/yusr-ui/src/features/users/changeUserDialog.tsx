@@ -3,11 +3,11 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BranchesSearchableSelect, ChangeDialog, type CommonChangeDialogProps, FormField, PasswordField, RolesSearchableSelect, SelectField, TextField } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
-import { BranchSlice, RoleSlice, User, UserSlice, UserValidationRules } from "../../entities";
+import { BranchSlice, RoleSlice, UserOld, UserSlice, UserValidationRules } from "../../entities";
 import { useFormErrors, useFormInit, useValidate } from "../../hooks";
 import { useAppDispatch } from "../../state";
 
-export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<User>)
+export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<UserOld>)
 {
   const { t } = useTranslation(["commonEntities", "common"]);
   const roleState = useSelector((state: any) => state.role);
@@ -34,7 +34,7 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
   const title = mode === "create" ? t("users.addNewTitle") : `${t("common:crudRow.edit")} ${t("users.entityName")}`;
 
   return (
-    <ChangeDialog<User>
+    <ChangeDialog<UserOld>
       title={ title }
       className="sm:max-w-xl"
       formData={ formData }

@@ -1,12 +1,11 @@
-import { type TFunction } from "i18next";
-import { UsersApiService } from "../networking";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
-import { type ValidationRuleOld, Validators } from "../validation";
-import { BaseEntity } from "./baseEntity";
+import type { Signal } from "@preact/signals-react";
+import { i18n } from "../locales";
+import { Dto, ValidatableEntity } from "../stateManager";
+import { Validators } from "../validation";
 import type { Branch } from "./branch";
 import type { Role } from "./role";
 
-export class User extends BaseEntity
+export class UserDto extends Dto
 {
   public username!: string;
   public password!: string;
@@ -15,46 +14,36 @@ export class User extends BaseEntity
   public roleId!: number;
   public branch!: Branch;
   public role!: Role;
+}
 
-  constructor(init?: Partial<User>)
+export class User extends ValidatableEntity<UserDto>
+{
+  declare username: Signal<string>;
+  declare password: Signal<string>;
+  declare isActive: Signal<boolean>;
+  declare branchId: Signal<number>;
+  declare roleId: Signal<number>;
+  declare branch: Signal<Branch>;
+  declare role: Signal<Role>;
+
+  constructor(dto: Partial<UserDto>)
   {
-    super();
-    Object.assign(this, init);
+    super(dto, [{
+      field: "username",
+      selector: (d) => d.username,
+      validators: [Validators.required(i18n.t("commonEntities:users.usernameRequired"))]
+    }, {
+      field: "password",
+      selector: (d) => d.password,
+      validators: [Validators.required(i18n.t("commonEntities:users.passwordRequired"))]
+    }, {
+      field: "roleId",
+      selector: (d) => d.roleId,
+      validators: [Validators.required(i18n.t("commonEntities:users.roleRequired"))]
+    }, {
+      field: "branchId",
+      selector: (d) => d.branchId,
+      validators: [Validators.required(i18n.t("commonEntities:users.branchRequired"))]
+    }]);
   }
-}
-
-export class UserValidationRules
-{
-  public static validationRules = (t: TFunction<"commonEntities", undefined>): ValidationRuleOld<Partial<User>>[] => [{
-    field: "username",
-    selector: (d) => d.username,
-    validators: [Validators.required(t("users.usernameRequired"))]
-  }, {
-    field: "password",
-    selector: (d) => d.password,
-    validators: [Validators.required(t("users.passwordRequired"))]
-  }, {
-    field: "roleId",
-    selector: (d) => d.roleId,
-    validators: [Validators.required(t("users.roleRequired"))]
-  }, {
-    field: "branchId",
-    selector: (d) => d.branchId,
-    validators: [Validators.required(t("users.branchRequired"))]
-  }];
-}
-
-export class UserSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("user", new UsersApiService());
-  public static entityActions = UserSlice.entitySliceInstance.actions;
-  public static entityReducer = UserSlice.entitySliceInstance.reducer;
-
-  private static dialogSliceInstance = createGenericDialogSlice<User>("userDialog");
-  public static dialogActions = UserSlice.dialogSliceInstance.actions;
-  public static dialogReducer = UserSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<User>("userForm");
-  public static formActions = UserSlice.formSliceInstance.actions;
-  public static formReducer = UserSlice.formSliceInstance.reducer;
 }

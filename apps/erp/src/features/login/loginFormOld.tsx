@@ -3,8 +3,8 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequestOld, PasswordField, TextField, useEntityForm, User, type ValidationRuleOld, Validators, YusrApiHelper } from "yusr-ui";
-import type { Setting } from "../../core/data/setting";
+import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequestOld, PasswordField, TextField, useEntityForm, UserOld, type ValidationRuleOld, Validators, YusrApiHelper } from "yusr-ui";
+import type { SettingOld } from "../../core/data/settingOld";
 import { login, updateLoggedInUser, useAppDispatch } from "../../core/state/store";
 
 export function LoginFormOld({ className, ...props }: React.ComponentProps<"div">)
@@ -78,7 +78,7 @@ export function LoginFormOld({ className, ...props }: React.ComponentProps<"div"
 
     setLoading(true);
 
-    const result = await YusrApiHelper.Post<{ user: User; setting: Setting; }>(
+    const result = await YusrApiHelper.Post<{ user: UserOld; setting: SettingOld; }>(
       `${ApiConstants.baseUrl}/Login`,
       request
     );

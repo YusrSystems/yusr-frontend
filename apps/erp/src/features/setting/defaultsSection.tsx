@@ -1,7 +1,7 @@
 import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
-import { SettingSlice } from "@/core/data/setting";
+import { SettingSlice } from "@/core/data/settingOld";
 import { useAppSelector } from "@/core/state/store";
 import { useTranslation } from "react-i18next";
 import { FieldGroup, FieldsSection, useAppDispatch } from "yusr-ui";

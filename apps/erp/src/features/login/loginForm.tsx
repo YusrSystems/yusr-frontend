@@ -1,68 +1,44 @@
 import placeholderImg from "@/assets/placeholder.svg";
-import type { Setting } from "@/core/data/setting";
-import { login, updateLoggedInUser } from "@/core/state/store";
+import { Setting } from "@/core/data/setting";
+import type { SettingOld } from "@/core/data/settingOld";
+import { Services } from "@/services";
+import { signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequestOld, PasswordField, TextField, useAppDispatch, useEntityForm, User, type ValidationRuleOld, Validators, YusrApiHelper } from "yusr-ui";
+import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequest, PasswordField, TextField, User, UserOld, YusrApiHelper } from "yusr-ui";
+
+const emailStorageItemName = "remembered_email";
+const usernameStorageItemName = "remembered_username";
+const formData = new LoginRequest({
+  companyEmail: localStorage.getItem(emailStorageItemName) ?? "",
+  username: localStorage.getItem(usernameStorageItemName) ?? "",
+  password: ""
+});
+const rememberMe = signal(
+  !!(localStorage.getItem(emailStorageItemName) || localStorage.getItem(usernameStorageItemName))
+);
+const isLoading = signal(false);
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 {
+  useSignals();
   const { t } = useTranslation("loginRegister");
   const navigate = useNavigate();
-
-  const validationRules: ValidationRuleOld<Partial<LoginRequestOld>>[] = useMemo(
-    () => [{
-      field: "email",
-      selector: (d) => d.companyEmail,
-      validators: [Validators.required(t("login.email.required"))]
-    }, {
-      field: "username",
-      selector: (d) => d.username,
-      validators: [Validators.required(t("login.username.required"))]
-    }, {
-      field: "password",
-      selector: (d) => d.password,
-      validators: [Validators.required(t("login.password.required"))]
-    }],
-    [t]
-  );
-
-  const INITIAL_STATE = useMemo(() => ({}), []);
-  const { formData, handleChange, getError, isInvalid, validate, clearError } = useEntityForm<LoginRequestOld>(
-    INITIAL_STATE,
-    validationRules
-  );
-  const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const location = useLocation();
-  const dispatch = useAppDispatch();
-
-  const emailStorageItemName = "remembered_email";
-  const usernameStorageItemName = "remembered_username";
-  useEffect(() =>
-  {
-    const savedEmail = localStorage.getItem(emailStorageItemName);
-    const savedUsername = localStorage.getItem(usernameStorageItemName);
-    if (savedEmail || savedUsername)
-    {
-      handleChange((prev) => ({ ...prev, companyEmail: savedEmail || "", username: savedUsername || "" }));
-      setRememberMe(true);
-    }
-  }, []);
 
   const Login = async () =>
   {
-    if (!validate())
+    if (!formData.validate())
     {
       return;
     }
 
     if (rememberMe)
     {
-      localStorage.setItem(emailStorageItemName, formData.companyEmail || "");
-      localStorage.setItem(usernameStorageItemName, formData.username || "");
+      localStorage.setItem(emailStorageItemName, formData.companyEmail.value || "");
+      localStorage.setItem(usernameStorageItemName, formData.username.value || "");
     }
     else
     {
@@ -70,27 +46,20 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
       localStorage.removeItem(usernameStorageItemName);
     }
 
-    const request = new LoginRequestOld({
-      companyEmail: formData.companyEmail,
-      username: formData.username,
-      password: formData.password
-    });
+    isLoading.value = true;
 
-    setLoading(true);
-
-    const result = await YusrApiHelper.Post<{ user: User; setting: Setting; }>(
+    const result = await YusrApiHelper.Post<{ user: UserOld; setting: SettingOld; }>(
       `${ApiConstants.baseUrl}/Login`,
-      request
+      formData.toJson()
     );
 
     if (result.status === 200 && result.data)
     {
-      dispatch(login(result.data));
-      dispatch(updateLoggedInUser(result.data.user));
+      Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
 
       const origin = location.state?.from?.pathname || "/dashboard";
 
-      setLoading(false);
+      isLoading.value = false;
 
       setTimeout(() =>
       {
@@ -99,7 +68,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
     }
     else
     {
-      setLoading(false);
+      isLoading.value = false;
     }
   };
 
@@ -125,16 +94,16 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 
               <TextField
                 label={ t("login.email.label") }
-                id="email"
-                type="email"
+                id="companyEmail"
+                type="companyEmail"
                 placeholder={ t("login.email.placeholder") }
-                value={ formData.companyEmail || "" }
-                isInvalid={ isInvalid("email") }
-                error={ getError("email") }
+                value={ formData.companyEmail.value || "" }
+                isInvalid={ formData.isInvalid("companyEmail") }
+                error={ formData.getError("companyEmail").value }
                 onChange={ (e) =>
                 {
-                  handleChange({ companyEmail: e.target.value });
-                  clearError("email");
+                  formData.companyEmail.value = e.target.value;
+                  formData.clearError("companyEmail");
                 } }
                 required
               />
@@ -144,13 +113,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 id="username"
                 type="text"
                 placeholder={ t("login.username.placeholder") }
-                value={ formData.username || "" }
-                isInvalid={ isInvalid("username") }
-                error={ getError("username") }
+                value={ formData.username.value || "" }
+                isInvalid={ formData.isInvalid("username") }
+                error={ formData.getError("username").value }
                 onChange={ (e) =>
                 {
-                  handleChange({ username: e.target.value });
-                  clearError("username");
+                  formData.username.value = e.target.value;
+                  formData.clearError("username");
                 } }
                 required
               />
@@ -159,13 +128,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 label={ t("login.password.label") }
                 id="password"
                 placeholder={ t("login.password.placeholder") }
-                value={ formData.password || "" }
-                isInvalid={ isInvalid("password") }
-                error={ getError("password") }
+                value={ formData.password.value || "" }
+                isInvalid={ formData.isInvalid("password") }
+                error={ formData.getError("password").value }
                 onChange={ (e) =>
                 {
-                  handleChange({ password: e.target.value });
-                  clearError("password");
+                  formData.password.value = e.target.value;
+                  formData.clearError("password");
                 } }
                 required
               />
@@ -173,8 +142,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
               <div className="flex items-center gap-3">
                 <Checkbox
                   id="rememberMe"
-                  checked={ rememberMe }
-                  onCheckedChange={ (checked) => setRememberMe(checked as boolean) }
+                  checked={ rememberMe.value }
+                  onCheckedChange={ (checked) => rememberMe.value = checked as boolean }
                 />
                 <label
                   htmlFor="rememberMe"
@@ -185,8 +154,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
               </div>
 
               <Field>
-                <Button type="button" disabled={ loading } onClick={ Login }>
-                  { loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
+                <Button type="button" disabled={ isLoading.value } onClick={ Login }>
+                  { isLoading.value && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
                   { t("login.button") }
                 </Button>
               </Field>

@@ -1,12 +1,12 @@
 import type { TFunction } from "i18next";
 import { ApiConstants, type RequestResult, YusrApiHelper } from "yusr-ui";
-import type { Setting, SharingSetting } from "../data/setting";
+import type { SettingOld, SharingSetting } from "../data/settingOld";
 
 export default class SettingsApiService
 {
   routeName: string = "Settings";
 
-  async Get(): Promise<RequestResult<Setting>>
+  async Get(): Promise<RequestResult<SettingOld>>
   {
     return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/Get`);
   }
@@ -16,7 +16,7 @@ export default class SettingsApiService
     return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/Get/${registrationKey}`);
   }
 
-  async Update(entity: Setting, t: TFunction<"common">)
+  async Update(entity: SettingOld, t: TFunction<"common">)
   {
     return await YusrApiHelper.Put(
       `${ApiConstants.baseUrl}/${this.routeName}/Update`,

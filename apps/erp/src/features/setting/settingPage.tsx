@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { BranchSlice, Button, Card, CardContent, CardFooter, CurrencySlice, StorageType, TabButton, useStorageFile, useValidate } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import { PaymentMethodSlice } from "../../core/data/paymentMethod";
-import { Setting, SettingSlice, SettingValidationRules } from "../../core/data/setting";
+import { SettingOld, SettingSlice, SettingValidationRules } from "../../core/data/settingOld";
 import { StoreSlice } from "../../core/data/store";
 import { TaxSlice } from "../../core/data/tax";
 import SettingsApiService from "../../core/networking/settingsApiService";
@@ -26,7 +26,7 @@ export default function SettingPage()
   );
   const { commitFiles } = useStorageFile(
     (updater) =>
-      dispatch(SettingSlice.formActions.updateFormData(updater as (prev: Partial<Setting>) => Partial<Setting>)),
+      dispatch(SettingSlice.formActions.updateFormData(updater as (prev: Partial<SettingOld>) => Partial<SettingOld>)),
     "logo",
     StorageType.Public,
     false
@@ -89,15 +89,15 @@ export default function SettingPage()
     );
 
     const result = await new SettingsApiService().Update(
-      { ...formData, logo: updatedLogo } as Setting,
+      { ...formData, logo: updatedLogo } as SettingOld,
       tCommon
     );
     setLoading(false);
 
     if (result.status === 200)
     {
-      dispatch(SettingSlice.formActions.updateFormData(result.data as Setting));
-      dispatch(updateSetting(result.data as Setting));
+      dispatch(SettingSlice.formActions.updateFormData(result.data as SettingOld));
+      dispatch(updateSetting(result.data as SettingOld));
     }
   }
 

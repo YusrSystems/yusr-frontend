@@ -1,6 +1,6 @@
 import logoDark from "@/assets/yusrLogoOnly_Dark.png";
 import logoLight from "@/assets/yusrLogoOnly_Light.png";
-import type { SharingSetting } from "@/core/data/setting";
+import type { SharingSetting } from "@/core/data/settingOld";
 import SettingsApiService from "@/core/networking/settingsApiService";
 import { Building2, FileText, Globe, Hash, Home, MailOpen, MapPin, Navigation, Phone, Receipt } from "lucide-react";
 import { useEffect, useState } from "react";

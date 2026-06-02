@@ -1,6 +1,5 @@
 import { AlertTriangle, Home, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "../components/pure";
 
 interface ErrorFallbackProps
@@ -34,10 +33,10 @@ export function ErrorFallback({ reset }: ErrorFallbackProps)
             { t("errorFallback.retry") }
           </Button>
           <Button variant="outline" asChild className="gap-2 border-destructive/20 hover:bg-destructive/10">
-            <Link to="/">
+            <a href="/">
               <Home className="ml-2 h-4 w-4" />
               { t("errorFallback.goHome") }
-            </Link>
+            </a>
           </Button>
         </CardFooter>
       </Card>

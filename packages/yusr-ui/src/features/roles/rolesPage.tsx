@@ -4,17 +4,18 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPageOld } from "../../components/custom";
-import { type Role, RoleSlice, User } from "../../entities";
+import { type Role, RoleSlice, UserOld } from "../../entities";
 import { RolesApiService } from "../../networking";
 import { useAppDispatch, type YusrRootState } from "../../state";
 import { ChangeRoleDialog, type ChangeRoleDialogAdditionalProps } from "./changeRoleDialog";
 
 type RolesPageProps = {
-  onUpdateLoggedInUser?: (user: Partial<User>) => void;
+  onUpdateLoggedInUser?: (user: Partial<UserOld>) => void;
   ChangeRoleDialogAdditionalProps: ChangeRoleDialogAdditionalProps;
 };
 
-export function RolesPage({ onUpdateLoggedInUser, ChangeRoleDialogAdditionalProps }: RolesPageProps) {
+export function RolesPage({ onUpdateLoggedInUser, ChangeRoleDialogAdditionalProps }: RolesPageProps)
+{
   const { t } = useTranslation("commonEntities");
   const dispatch = useAppDispatch();
   const authState = useSelector((state: YusrRootState) => state.auth);
@@ -27,31 +28,31 @@ export function RolesPage({ onUpdateLoggedInUser, ChangeRoleDialogAdditionalProp
 
   return (
     <CrudPageOld<Role>
-      title={t("roles.title")}
-      entityName={t("roles.entityName")}
-      addNewItemTitle={t("roles.addNewTitle")}
-      permissions={permissions}
-      hasPagePermission={SystemPermissions.hasAuth(
+      title={ t("roles.title") }
+      entityName={ t("roles.entityName") }
+      addNewItemTitle={ t("roles.addNewTitle") }
+      permissions={ permissions }
+      hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
         YusrSystemPermissionsResources.Roles,
         SystemPermissionsActions.Get
-      )}
-      entityState={roleState}
-      useSlice={() => roleDialogState}
-      service={service}
-      cards={[{
+      ) }
+      entityState={ roleState }
+      useSlice={ () => roleDialogState }
+      service={ service }
+      cards={ [{
         title: t("roles.totalRoles"),
         data: (roleState.entities?.count ?? 0).toString(),
         icon: <Settings2 className="h-4 w-4 text-muted-foreground" />
-      }]}
-      tableHeadRows={[{ rowName: "", rowStyles: "text-left w-12.5" }, {
+      }] }
+      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
         rowName: t("roles.roleId"),
         rowStyles: "w-30"
-      }, { rowName: t("roles.roleName"), rowStyles: "" }]}
-      tableRowMapper={(
+      }, { rowName: t("roles.roleName"), rowStyles: "" }] }
+      tableRowMapper={ (
         role: Role
-      ) => [{ rowName: `#${role.id}`, rowStyles: "" }, { rowName: role.name, rowStyles: "font-semibold" }]}
-      actions={{
+      ) => [{ rowName: `#${role.id}`, rowStyles: "" }, { rowName: role.name, rowStyles: "font-semibold" }] }
+      actions={ {
         filter: RoleSlice.entityActions.filter,
         openChangeDialog: (entity) => RoleSlice.dialogActions.openChangeDialog(entity),
         openDeleteDialog: (entity) => RoleSlice.dialogActions.openDeleteDialog(entity),
@@ -59,26 +60,30 @@ export function RolesPage({ onUpdateLoggedInUser, ChangeRoleDialogAdditionalProp
         setIsDeleteDialogOpen: (open) => RoleSlice.dialogActions.setIsDeleteDialogOpen(open),
         refresh: RoleSlice.entityActions.refresh,
         setCurrentPage: (page) => RoleSlice.entityActions.setCurrentPage(page)
-      }}
-      ChangeDialog={
+      } }
+      ChangeDialog={ 
         <ChangeRoleDialog
-          {...ChangeRoleDialogAdditionalProps}
-          entity={roleDialogState.selectedRow || undefined}
-          mode={roleDialogState.selectedRow ? "update" : "create"}
-          service={service}
-          onSuccess={(data, mode) => {
+          { ...ChangeRoleDialogAdditionalProps }
+          entity={ roleDialogState.selectedRow || undefined }
+          mode={ roleDialogState.selectedRow ? "update" : "create" }
+          service={ service }
+          onSuccess={ (data, mode) =>
+          {
             dispatch(RoleSlice.entityActions.refresh({ data: data }));
-            if (mode === "create") {
+            if (mode === "create")
+            {
               dispatch(RoleSlice.dialogActions.setIsChangeDialogOpen(false));
             }
-            if (mode === "update") {
-              if (authState.loggedInUser?.roleId === data.id) {
+            if (mode === "update")
+            {
+              if (authState.loggedInUser?.roleId === data.id)
+              {
                 onUpdateLoggedInUser?.({ ...authState.loggedInUser, role: data });
               }
             }
-          }}
+          } }
         />
-      }
+       }
     />
   );
 }

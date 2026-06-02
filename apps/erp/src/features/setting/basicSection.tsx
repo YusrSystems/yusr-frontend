@@ -5,7 +5,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelect, Button, FieldGroup, FieldsSection, FormField, Label, StorageFileStatus, StorageType, TextField, useAppDispatch, useFormErrors, useStorageFile } from "yusr-ui";
-import { type Setting, SettingSlice } from "../../core/data/setting";
+import { type SettingOld, SettingSlice } from "../../core/data/settingOld";
 
 export default function BasicSection()
 {
@@ -18,7 +18,7 @@ export default function BasicSection()
 
   const { fileInputRef, handleFileChange, handleRemoveFile } = useStorageFile(
     (updater) =>
-      dispatch(SettingSlice.formActions.updateFormData(updater as (prev: Partial<Setting>) => Partial<Setting>)),
+      dispatch(SettingSlice.formActions.updateFormData(updater as (prev: Partial<SettingOld>) => Partial<SettingOld>)),
     "logo",
     StorageType.Public,
     false

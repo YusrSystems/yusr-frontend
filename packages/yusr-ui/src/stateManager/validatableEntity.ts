@@ -22,14 +22,15 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
     });
   }
 
-  validate(dto: Partial<TDto>): boolean
+  validate(dto?: Partial<TDto>): boolean
   {
+    const target = dto ?? this.toJson();
     this._validationRules.forEach((rule) =>
     {
-      const value = rule.selector(dto);
+      const value = rule.selector(target);
       for (const validator of rule.validators)
       {
-        const error = validator(value, dto);
+        const error = validator(value, target);
         if (error)
         {
           this.errors[rule.field].value = error;
@@ -38,6 +39,17 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
       }
     });
 
-    return Object.keys(this.errors).length === 0;
+    return Object.values(this.errors).every(
+      (s) => (s as Signal<string | undefined>).value === undefined
+    );
+  }
+
+  getError = (field: keyof TDto) => this.errors[field];
+
+  isInvalid = (field: keyof TDto) => !!this.errors[field].value;
+
+  clearError(field: keyof TDto)
+  {
+    this.errors[field].value = undefined;
   }
 }

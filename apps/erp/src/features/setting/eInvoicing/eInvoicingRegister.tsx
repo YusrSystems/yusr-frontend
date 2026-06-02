@@ -1,4 +1,4 @@
-import type { EInvoicingEnvironmentType } from "@/core/data/setting";
+import type { EInvoicingEnvironmentType } from "@/core/data/settingOld";
 import EInvoicingApiService from "@/core/networking/eInvoicingApiService";
 import { updateSetting, useAppDispatch } from "@/core/state/store";
 import { Loader2, ShieldCheck } from "lucide-react";
@@ -46,8 +46,8 @@ export function EInvoicingRegister({ linkType, onFinish }: EInvoicingRegisterPro
           <ShieldCheck className="w-7 h-7 text-green-600 dark:text-green-400" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-foreground">{t("settings.linkZatca")}</h2>
-          <p className="text-sm text-muted-foreground mt-1">{t("settings.enterVerificationCode")}</p>
+          <h2 className="text-xl font-semibold text-foreground">{ t("settings.linkZatca") }</h2>
+          <p className="text-sm text-muted-foreground mt-1">{ t("settings.enterVerificationCode") }</p>
         </div>
       </div>
 
@@ -64,7 +64,7 @@ export function EInvoicingRegister({ linkType, onFinish }: EInvoicingRegisterPro
             { loading
               ? (
                 <>
-                  <Loader2 className="ml-2 h-4 w-4 animate-spin" /> {t("settings.linking")}
+                  <Loader2 className="ml-2 h-4 w-4 animate-spin" /> { t("settings.linking") }
                 </>
               )
               : t("settings.startLinking") }
@@ -73,8 +73,8 @@ export function EInvoicingRegister({ linkType, onFinish }: EInvoicingRegisterPro
       </Card>
 
       <div className="flex flex-col items-center gap-1 text-center text-sm text-muted-foreground">
-        <p>{t("settings.noCode")}</p>
-        <p>{t("settings.visitZatca")}</p>
+        <p>{ t("settings.noCode") }</p>
+        <p>{ t("settings.visitZatca") }</p>
         <a
           href="https://login.zatca.gov.sa"
           target="_blank"

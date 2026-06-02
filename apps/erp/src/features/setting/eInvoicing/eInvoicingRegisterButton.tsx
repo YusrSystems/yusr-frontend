@@ -1,5 +1,5 @@
 import ZatcaLogo from "@/assets/Zatca_logo.png";
-import type { EInvoicingEnvironmentType } from "@/core/data/setting";
+import type { EInvoicingEnvironmentType } from "@/core/data/settingOld";
 import { CircleCheck } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -47,7 +47,7 @@ export function EInvoicingRegisterButton({
         <div className="ms-auto">
           { linked
             ? <CircleCheck className="text-green-600 dark:text-green-400" />
-            : <Button onClick={ () => setOpen(true) }>{t("settings.startLinking")}</Button> }
+            : <Button onClick={ () => setOpen(true) }>{ t("settings.startLinking") }</Button> }
         </div>
       </div>
 
