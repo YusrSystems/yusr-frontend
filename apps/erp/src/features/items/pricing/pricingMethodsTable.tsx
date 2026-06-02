@@ -2,7 +2,7 @@ import PricingMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, CurrencyIcon, FormField, NumberField, SystemPermissions, SystemPermissionsActions, TextField } from "yusr-ui";
+import { Button, CurrencyIcon, FormField, NumberField, SystemPermissions, SystemPermissionsActions, TextFieldOld } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../core/auth/systemPermissionsResources";
 import Item, { ItemType } from "../../../core/data/item";
 import { useAppSelector } from "../../../core/state/store";
@@ -133,14 +133,14 @@ export default function PricingMethodsTable()
                     />
                   </td>
                   <td className="p-3">
-                    <TextField
+                    <TextFieldOld
                       label=""
                       value={ method.barcode || "" }
                       onChange={ (e) => updatePricingMethod(index, { barcode: e.target.value }) }
                     />
                   </td>
                   <td className="p-3">
-                    <TextField
+                    <TextFieldOld
                       label=""
                       value={ method.itemUnitPricingMethodName || "" }
                       onChange={ (e) => updatePricingMethod(index, { itemUnitPricingMethodName: e.target.value }) }

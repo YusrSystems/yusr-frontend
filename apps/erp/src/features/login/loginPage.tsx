@@ -1,10 +1,8 @@
-import { useSignals } from "@preact/signals-react/runtime";
 import { YusrBackground } from "yusr-ui";
 import { LoginForm } from "./loginForm";
 
 export default function LoginPage()
 {
-  useSignals();
   return (
     <div className="flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
       <YusrBackground />

@@ -1,7 +1,7 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, type DialogMode, FormField, NumberField, TextField, useFormErrors } from "yusr-ui";
+import { Button, type DialogMode, FormField, NumberField, TextFieldOld, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemStore, ItemType } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 
@@ -63,7 +63,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
           value={ formData.maxQuantity || "" }
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ maxQuantity: val })) }
         />
-        <TextField
+        <TextFieldOld
           label={ t("items.locationInStore") }
           value={ formData.location || "" }
           onChange={ (e) => dispatch(ItemSlice.formActions.updateFormData({ location: e.target.value })) }

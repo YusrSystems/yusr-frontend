@@ -3,7 +3,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequestOld, PasswordField, TextField, useEntityForm, UserOld, type ValidationRuleOld, Validators, YusrApiHelper } from "yusr-ui";
+import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequestOld, PasswordField, TextFieldOld, useEntityForm, UserOld, type ValidationRuleOld, Validators, YusrApiHelper } from "yusr-ui";
 import type { SettingOld } from "../../core/data/settingOld";
 import { login, updateLoggedInUser, useAppDispatch } from "../../core/state/store";
 
@@ -123,7 +123,7 @@ export function LoginFormOld({ className, ...props }: React.ComponentProps<"div"
                 <p className="text-muted-foreground text-balance">{ t("login.subtitle") }</p>
               </div>
 
-              <TextField
+              <TextFieldOld
                 label={ t("login.email.label") }
                 id="email"
                 type="email"
@@ -139,7 +139,7 @@ export function LoginFormOld({ className, ...props }: React.ComponentProps<"div"
                 required
               />
 
-              <TextField
+              <TextFieldOld
                 label={ t("login.username.label") }
                 id="username"
                 type="text"

@@ -7,7 +7,7 @@ import { Button } from "../../pure/button";
 import { Card, CardContent } from "../../pure/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../../pure/carousel";
 import { Dialog, DialogContent, DialogTrigger } from "../../pure/dialog";
-import { Input } from "../../pure/input";
+import { InputOld } from "../../pure/input";
 
 interface StorageFileAction
 {
@@ -257,7 +257,7 @@ export function StorageFileField(
       { isInvalid && error && <p className="text-[10px] text-red-500 font-medium mr-1">{ error }</p> }
 
       { mode === "edit" && (
-        <Input
+        <InputOld
           type="file"
           ref={ fileInputRef }
           className="hidden"

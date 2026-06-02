@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, FieldGroup, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import type Unit from "../../core/data/unit";
 import { UnitSlice, UnitValidationRules } from "../../core/data/unit";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -40,7 +40,7 @@ export default function ChangeUnitDialog({
       validate={ validate }
     >
       <FieldGroup>
-        <TextField
+        <TextFieldOld
           label={ t("units.unitName") }
           required
           value={ formData.name || "" }

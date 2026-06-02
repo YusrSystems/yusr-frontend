@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { CitiesSearchableSelect, TextField } from "yusr-ui";
+import { CitiesSearchableSelect, TextFieldOld } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import { updateField } from "../../logic/registerSlice";
@@ -35,7 +35,7 @@ export default function AddressInfo()
         ) }
       </div>
 
-      <TextField
+      <TextFieldOld
         label={ t("register.addressInfo.street.label") }
         type="text"
         placeholder={ t("register.addressInfo.street.placeholder") }
@@ -45,7 +45,7 @@ export default function AddressInfo()
         onChange={ (e) => onFieldChange({ street: e.target.value }) }
       />
 
-      <TextField
+      <TextFieldOld
         label={ t("register.addressInfo.district.label") }
         type="text"
         placeholder={ t("register.addressInfo.district.placeholder") }
@@ -55,7 +55,7 @@ export default function AddressInfo()
         onChange={ (e) => onFieldChange({ district: e.target.value }) }
       />
 
-      <TextField
+      <TextFieldOld
         label={ t("register.addressInfo.buildingNumber.label") }
         type="text"
         placeholder={ t("register.addressInfo.buildingNumber.placeholder") }
@@ -65,7 +65,7 @@ export default function AddressInfo()
         onChange={ (e) => onFieldChange({ buildingNumber: e.target.value }) }
       />
 
-      <TextField
+      <TextFieldOld
         label={ t("register.addressInfo.postalCode.label") }
         type="text"
         placeholder={ t("register.addressInfo.postalCode.placeholder") }

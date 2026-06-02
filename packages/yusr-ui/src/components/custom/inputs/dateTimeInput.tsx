@@ -1,6 +1,6 @@
 import { format, isSameDay } from "date-fns";
 import { arSA } from "date-fns/locale";
-import { BaseInput } from "./baseInput";
+import { BaseInputOld } from "./baseInput";
 import { DateInput } from "./dateInput";
 
 export interface DateTimeInputProps
@@ -84,7 +84,7 @@ export function DateTimeInput({
 
       { /* Time Part */ }
       <div className="w-24">
-        <BaseInput
+        <BaseInputOld
           type="time"
           className="bg-background appearance-none"
           value={ dateValue ? format(dateValue, "HH:mm") : "" }

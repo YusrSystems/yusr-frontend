@@ -1,6 +1,6 @@
-import { InputField, type InputFieldProps } from "./inputField";
+import { InputFieldOld, type InputFieldPropsOld } from "./inputField";
 
-export function PhoneField(props: InputFieldProps)
+export function PhoneField(props: InputFieldPropsOld)
 {
-  return <InputField { ...props } type="tel" dir="ltr" placeholder="05xxxxxxxx" className="text-right font-mono" />;
+  return <InputFieldOld { ...props } type="tel" dir="ltr" placeholder="05xxxxxxxx" className="text-right font-mono" />;
 }

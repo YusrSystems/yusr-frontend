@@ -5,9 +5,8 @@ import { Services } from "@/services";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequest, PasswordField, TextField, User, UserOld, YusrApiHelper } from "yusr-ui";
+import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, i18n, LoginRequest, PasswordField, TextField, User, UserOld, YusrApiHelper } from "yusr-ui";
 
 const emailStorageItemName = "remembered_email";
 const usernameStorageItemName = "remembered_username";
@@ -24,7 +23,6 @@ const isLoading = signal(false);
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 {
   useSignals();
-  const { t } = useTranslation("loginRegister");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -78,56 +76,44 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
         <CardContent className="grid p-0 md:grid-cols-2">
           <form className="p-6 md:p-8">
             <FieldGroup>
-              <div className="flex flex-col items-center gap-2 text-center">
-                <div className="w-full flex justify-start mb-5">
-                  <Link
-                    to="/"
-                    className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <ArrowRight className="h-4 w-4 ltr:rotate-180 rtl:rotate-0" />
-                    { t("login.backToHome") }
-                  </Link>
-                </div>
-                <h1 className="text-2xl font-bold">{ t("login.title") }</h1>
-                <p className="text-muted-foreground text-balance">{ t("login.subtitle") }</p>
-              </div>
+              <BackToHomeLink />
 
               <TextField
-                label={ t("login.email.label") }
+                label={ i18n.t("login:email.label") }
                 id="companyEmail"
                 type="companyEmail"
-                placeholder={ t("login.email.placeholder") }
-                value={ formData.companyEmail.value || "" }
+                placeholder={ i18n.t("login:email.placeholder") }
+                value={ formData.companyEmail || "" }
                 isInvalid={ formData.isInvalid("companyEmail") }
                 error={ formData.getError("companyEmail").value }
-                onChange={ (e) =>
+                onChange={ () =>
                 {
-                  formData.companyEmail.value = e.target.value;
+                  // formData.companyEmail.value = e.target.value;
                   formData.clearError("companyEmail");
                 } }
                 required
               />
 
               <TextField
-                label={ t("login.username.label") }
+                label={ i18n.t("login:username.label") }
                 id="username"
                 type="text"
-                placeholder={ t("login.username.placeholder") }
-                value={ formData.username.value || "" }
-                isInvalid={ formData.isInvalid("username") }
-                error={ formData.getError("username").value }
-                onChange={ (e) =>
+                placeholder={ i18n.t("login:username.placeholder") }
+                value={ formData.username || "" }
+                // isInvalid={ formData.isInvalid("username") }
+                // error={ formData.getError("username").value }
+                onChange={ () =>
                 {
-                  formData.username.value = e.target.value;
+                  // formData.username.value = e.target.value;
                   formData.clearError("username");
                 } }
                 required
               />
 
               <PasswordField
-                label={ t("login.password.label") }
+                label={ i18n.t("login:password.label") }
                 id="password"
-                placeholder={ t("login.password.placeholder") }
+                placeholder={ i18n.t("login:password.placeholder") }
                 value={ formData.password.value || "" }
                 isInvalid={ formData.isInvalid("password") }
                 error={ formData.getError("password").value }
@@ -149,18 +135,18 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                   htmlFor="rememberMe"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
                 >
-                  { t("login.rememberMe") }
+                  { i18n.t("login:rememberMe") }
                 </label>
               </div>
 
               <Field>
                 <Button type="button" disabled={ isLoading.value } onClick={ Login }>
                   { isLoading.value && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
-                  { t("login.button") }
+                  { i18n.t("login:button") }
                 </Button>
               </Field>
               <FieldDescription className="text-center">
-                { t("login.noAccount") } <Link to="/register">{ t("login.registerLink") }</Link>
+                { i18n.t("login:noAccount") } <Link to="/register">{ i18n.t("login:registerLink") }</Link>
               </FieldDescription>
             </FieldGroup>
           </form>
@@ -173,6 +159,24 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+function BackToHomeLink()
+{
+  return (
+    <div className="flex flex-col items-center gap-2 text-center">
+      <div className="w-full flex justify-start mb-5">
+        <Link
+          to="/"
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowRight className="h-4 w-4 ltr:rotate-180 rtl:rotate-0" />
+          { i18n.t("login:backToHome") }
+        </Link>
+      </div>
+      <h1 className="text-2xl font-bold">{ i18n.t("login:title") }</h1>
+      <p className="text-muted-foreground text-balance">{ i18n.t("login:subtitle") }</p>
     </div>
   );
 }

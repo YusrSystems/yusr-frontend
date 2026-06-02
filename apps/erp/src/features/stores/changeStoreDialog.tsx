@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, FieldGroup, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import type Store from "../../core/data/store";
 import { StoreSlice, StoreValidationRules } from "../../core/data/store";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -46,7 +46,7 @@ export default function ChangeStoreDialog({
       validate={ validate }
     >
       <FieldGroup>
-        <TextField
+        <TextFieldOld
           label={ t("stores.storeName") }
           required
           value={ formData.name || "" }

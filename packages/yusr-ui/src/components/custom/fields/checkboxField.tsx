@@ -1,8 +1,8 @@
 import { Checkbox } from "../../../components/pure";
 import { FormField } from "./formField";
-import { type InputFieldProps } from "./inputField";
+import { type InputFieldPropsOld } from "./inputField";
 
-interface CheckboxFieldProps extends Omit<InputFieldProps, "value">
+interface CheckboxFieldProps extends Omit<InputFieldPropsOld, "value">
 {
   id: string;
   checked: boolean;

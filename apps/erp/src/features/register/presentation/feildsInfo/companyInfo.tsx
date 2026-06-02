@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { CurrenciesSearchableSelect, TextField } from "yusr-ui";
+import { CurrenciesSearchableSelect, TextFieldOld } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import { updateField } from "../../logic/registerSlice";
@@ -17,7 +17,7 @@ export default function CompanyInfo()
 
   return (
     <>
-      <TextField
+      <TextFieldOld
         label={ t("register.companyInfo.companyName.label") }
         id="companyName"
         type="text"
@@ -29,7 +29,7 @@ export default function CompanyInfo()
         required
       />
 
-      <TextField
+      <TextFieldOld
         label={ t("register.companyInfo.email.label") }
         id="email"
         type="email"
@@ -41,7 +41,7 @@ export default function CompanyInfo()
         required
       />
 
-      <TextField
+      <TextFieldOld
         label={ t("register.companyInfo.branchName.label") }
         id="branchName"
         type="text"
@@ -53,7 +53,7 @@ export default function CompanyInfo()
         required
       />
 
-      <TextField
+      <TextFieldOld
         label={ t("register.companyInfo.companyBusinessCategory.label") }
         id="companyBusinessCategory"
         type="text"
@@ -65,7 +65,7 @@ export default function CompanyInfo()
         required
       />
 
-      <TextField
+      <TextFieldOld
         label={ t("register.companyInfo.companyPhone.label") }
         id="companyPhone"
         type="tel"
@@ -77,7 +77,7 @@ export default function CompanyInfo()
         required
       />
 
-      <TextField
+      <TextFieldOld
         label={ t("register.companyInfo.crn.label") }
         id="crn"
         type="text"
@@ -89,7 +89,7 @@ export default function CompanyInfo()
         required
       />
 
-      <TextField
+      <TextFieldOld
         label={ t("register.companyInfo.vatNumber.label") }
         id="vatNumber"
         type="text"

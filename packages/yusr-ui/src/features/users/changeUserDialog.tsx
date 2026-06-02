@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { BranchesSearchableSelect, ChangeDialog, type CommonChangeDialogProps, FormField, PasswordField, RolesSearchableSelect, SelectField, TextField } from "../../components/custom";
+import { BranchesSearchableSelect, ChangeDialog, type CommonChangeDialogProps, FormField, PasswordField, RolesSearchableSelect, SelectField, TextFieldOld } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
 import { BranchSlice, RoleSlice, UserOld, UserSlice, UserValidationRules } from "../../entities";
 import { useFormErrors, useFormInit, useValidate } from "../../hooks";
@@ -46,7 +46,7 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
     >
       <FieldGroup>
         <div className="grid grid-cols-2 gap-4">
-          <TextField
+          <TextFieldOld
             label={ t("users.username") }
             required
             value={ formData.username || "" }

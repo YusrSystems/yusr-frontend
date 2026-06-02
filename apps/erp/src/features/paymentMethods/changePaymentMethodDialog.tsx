@@ -2,7 +2,7 @@ import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/ba
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, FormField, NumberField, SelectField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, FieldGroup, FormField, NumberField, SelectField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BanksAndBoxesSlice } from "../../core/data/account";
 import type PaymentMethod from "../../core/data/paymentMethod";
 import { CommissionType, PaymentMethodSlice, PaymentMethodValidationRules } from "../../core/data/paymentMethod";
@@ -69,7 +69,7 @@ export default function ChangePaymentMethodDialog({
     >
       <FieldGroup>
         <div className="grid grid-cols-2 gap-4">
-          <TextField
+          <TextFieldOld
             label={ t("paymentMethods.methodName") }
             required
             value={ formData.name || "" }

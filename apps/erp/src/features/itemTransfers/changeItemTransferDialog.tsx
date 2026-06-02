@@ -1,7 +1,7 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChangeDialog, type CommonChangeDialogProps, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormField, Loading, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, type CommonChangeDialogProps, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormField, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ItemType } from "../../core/data/item";
 import ItemTransfer, { ItemTransfersItem, ItemTransferSlice, ItemTransferValidationRules } from "../../core/data/itemTransfer";
 import { StoreSlice } from "../../core/data/store";
@@ -167,7 +167,7 @@ export default function ChangeItemTransferDialog({
     >
       <FieldGroup>
         <FieldsSection columns={ 3 }>
-          <TextField
+          <TextFieldOld
             label={ t("itemTransfers.stocktakingDate") }
             required
             value={ formData.transferDate ? new Date(formData.transferDate).toLocaleDateString("en-CA") : "" }
@@ -223,7 +223,7 @@ export default function ChangeItemTransferDialog({
         </FieldsSection>
 
         <FieldsSection columns={ 1 }>
-          <TextField
+          <TextFieldOld
             label={ t("itemTransfers.description") }
             value={ formData.description || "" }
             onChange={ (e) => dispatch(ItemTransferSlice.formActions.updateFormData({ description: e.target.value })) }

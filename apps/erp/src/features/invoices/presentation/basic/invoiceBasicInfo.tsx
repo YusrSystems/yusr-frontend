@@ -3,7 +3,7 @@ import StoresSearchableSelect from "@/core/components/searchableSelect/storesSea
 import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Checkbox, DateField, FieldsSection, FormField, SelectField, TextField } from "yusr-ui";
+import { Checkbox, DateField, FieldsSection, FormField, SelectField, TextFieldOld } from "yusr-ui";
 import Account from "../../../../core/data/account";
 import { ImportExportType, InvoiceType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
@@ -80,7 +80,7 @@ export default function InvoiceBasicInfo()
   return (
     <FieldsSection columns={ { base: 1, md: 2, lg: 4 } }>
       { (mode === "update" || mode === "return") && (
-        <TextField
+        <TextFieldOld
           label={ t("invoices.invoiceDate") }
           required
           value={ formData.date ? new Date(formData.date).toISOString().split("T")[0] : "" }
@@ -160,7 +160,7 @@ export default function InvoiceBasicInfo()
         ) }
       </FormField>
 
-      <TextField
+      <TextFieldOld
         label={ t("invoices.relatedInvoiceNumber") }
         disabled
         value={ formData.originalInvoiceId || "" }
@@ -203,7 +203,7 @@ export default function InvoiceBasicInfo()
       ) }
 
       <div className="col-span-1 md:col-span-2 lg:col-span-4">
-        <TextField
+        <TextFieldOld
           label={ t("invoices.notes") }
           value={ formData.notes || "" }
           onChange={ (e) => dispatch(slice.formActions.updateFormData({ notes: e.target.value })) }

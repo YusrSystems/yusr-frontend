@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "../../../utils/cn";
-import { Input } from "../../pure/input";
+import { InputOld } from "../../pure/input";
 
 export interface NumberInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value">
 {
@@ -27,7 +27,7 @@ export function NumberInput({ value, onChange, min, max, isInvalid, className, c
   }, [value]);
 
   const input = (
-    <Input
+    <InputOld
       { ...props }
       type="text"
       inputMode="decimal"

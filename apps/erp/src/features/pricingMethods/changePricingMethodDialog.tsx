@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, FieldGroup, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import type PricingMethod from "../../core/data/pricingMethod";
 import { PricingMethodSlice, PricingMethodValidationRules } from "../../core/data/pricingMethod";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -48,7 +48,7 @@ export default function ChangePricingMethodDialog({
       validate={ validate }
     >
       <FieldGroup>
-        <TextField
+        <TextFieldOld
           label={ t("pricingMethods.methodName") }
           required
           value={ formData.name || "" }

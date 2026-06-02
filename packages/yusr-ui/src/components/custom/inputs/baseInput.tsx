@@ -1,9 +1,28 @@
+import type { Signal } from "@preact/signals-react";
+import type React from "react";
 import { cn } from "../../../utils/cn";
-import { Input } from "../../pure/input";
+import { Input, InputOld } from "../../pure/input";
 
-export interface BaseInputProps extends React.InputHTMLAttributes<HTMLInputElement>
+export interface BaseInputPropsOld extends React.InputHTMLAttributes<HTMLInputElement>
 {
   isInvalid?: boolean;
+}
+
+export interface BaseInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">
+{
+  isInvalid?: boolean;
+  value?: Signal<string>;
+  onChange?: (value: string) => void;
+}
+
+export function BaseInputOld({ isInvalid, className, ...props }: BaseInputPropsOld)
+{
+  return (
+    <InputOld
+      { ...props }
+      className={ cn(className, isInvalid && "border-red-500 ring-red-500 text-red-900 focus-visible:ring-red-500") }
+    />
+  );
 }
 
 export function BaseInput({ isInvalid, className, ...props }: BaseInputProps)

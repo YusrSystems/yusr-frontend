@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, NumberField, SelectField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, FieldGroup, NumberField, SelectField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { type TaxOld, TaxSlice, TaxValidationRules } from "../../core/data/tax";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
-export default function ChangeTaxDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<TaxOld>) {
+export default function ChangeTaxDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<TaxOld>)
+{
   const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
   const initialValues = useMemo(() => ({ isPrimary: false, ...entity }), [entity]);
@@ -23,43 +24,43 @@ export default function ChangeTaxDialog({ entity, mode, service, onSuccess }: Co
 
   return (
     <ChangeDialog<TaxOld>
-      title={title}
+      title={ title }
       className="sm:max-w-lg"
-      formData={formData}
-      dialogMode={mode}
-      service={service}
-      onSuccess={(data) => onSuccess?.(data, mode)}
-      validate={validate}
+      formData={ formData }
+      dialogMode={ mode }
+      service={ service }
+      onSuccess={ (data) => onSuccess?.(data, mode) }
+      validate={ validate }
     >
       <FieldGroup>
         <div className="grid grid-cols-2 gap-4">
-          <TextField
-            label={t("taxes.taxName")}
+          <TextFieldOld
+            label={ t("taxes.taxName") }
             required
-            value={formData.name || ""}
-            onChange={(e) => dispatch(TaxSlice.formActions.updateFormData({ name: e.target.value }))}
-            isInvalid={isInvalid("name")}
-            error={getError("name")}
+            value={ formData.name || "" }
+            onChange={ (e) => dispatch(TaxSlice.formActions.updateFormData({ name: e.target.value })) }
+            isInvalid={ isInvalid("name") }
+            error={ getError("name") }
           />
 
           <NumberField
-            label={t("taxes.percentage")}
+            label={ t("taxes.percentage") }
             required
-            min={0}
-            max={100}
-            value={formData.percentage ?? 0}
-            onChange={(value) => dispatch(TaxSlice.formActions.updateFormData({ percentage: Number(value) }))}
-            isInvalid={isInvalid("percentage")}
-            error={getError("percentage")}
+            min={ 0 }
+            max={ 100 }
+            value={ formData.percentage ?? 0 }
+            onChange={ (value) => dispatch(TaxSlice.formActions.updateFormData({ percentage: Number(value) })) }
+            isInvalid={ isInvalid("percentage") }
+            error={ getError("percentage") }
           />
         </div>
 
         <SelectField
-          label={t("taxes.isPrimary")}
-          value={formData.isPrimary ? "yes" : "no"}
-          onValueChange={(val) => dispatch(TaxSlice.formActions.updateFormData({ isPrimary: val === "yes" }))}
-          required={true}
-          options={[{ label: t("common:yes"), value: "yes" }, { label: t("common:no"), value: "no" }]}
+          label={ t("taxes.isPrimary") }
+          value={ formData.isPrimary ? "yes" : "no" }
+          onValueChange={ (val) => dispatch(TaxSlice.formActions.updateFormData({ isPrimary: val === "yes" })) }
+          required={ true }
+          options={ [{ label: t("common:yes"), value: "yes" }, { label: t("common:no"), value: "no" }] }
         />
       </FieldGroup>
     </ChangeDialog>

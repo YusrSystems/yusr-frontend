@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { ChangeDialog, CitiesSearchableSelect, type CommonChangeDialogProps, FieldsSection, FormField, TextField } from "../../components/custom";
+import { ChangeDialog, CitiesSearchableSelect, type CommonChangeDialogProps, FieldsSection, FormField, TextFieldOld } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
 import { Branch, BranchSlice, BranchValidationRules, CitySlice } from "../../entities";
 import { useFormErrors, useFormInit, useValidate } from "../../hooks";
@@ -42,7 +42,7 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
       validate={ validate }
     >
       <FieldGroup className="py-2">
-        <TextField
+        <TextFieldOld
           label={ t("branches.branchName") }
           value={ formData.name || "" }
           onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ name: e.target.value })) }
@@ -60,30 +60,31 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
           <CitiesSearchableSelect
             selectedId={ formData.cityId }
             selectedLabel={ formData.city?.name }
-            onValueChange={ (city) => dispatch(BranchSlice.formActions.updateFormData({ cityId: city?.id, city: city })) }
+            onValueChange={ (city) =>
+              dispatch(BranchSlice.formActions.updateFormData({ cityId: city?.id, city: city })) }
             isInvalid={ isInvalid("cityId") }
           />
         </FormField>
 
         <FieldsSection title="" columns={ 2 }>
-          <TextField
+          <TextFieldOld
             label={ t("branches.street") }
             value={ formData.street || "" }
             onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ street: e.target.value })) }
           />
-          <TextField
+          <TextFieldOld
             label={ t("branches.district") }
             value={ formData.district || "" }
             onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ district: e.target.value })) }
           />
-          <TextField
+          <TextFieldOld
             label={ t("branches.buildingNumber") }
             value={ formData.buildingNumber || "" }
             onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ buildingNumber: e.target.value })) }
             isInvalid={ isInvalid("buildingNumber") }
             error={ getError("buildingNumber") }
           />
-          <TextField
+          <TextFieldOld
             label={ t("branches.postalCode") }
             value={ formData.postalCode || "" }
             onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ postalCode: e.target.value })) }

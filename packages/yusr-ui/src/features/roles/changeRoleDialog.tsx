@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
-import { categorizePermissions, ChangeDialogTabbed, type CommonChangeDialogProps, PermissionCard, PermissionSkeleton, type TabProps, TextField } from "../../components/custom";
+import { categorizePermissions, ChangeDialogTabbed, type CommonChangeDialogProps, PermissionCard, PermissionSkeleton, type TabProps, TextFieldOld } from "../../components/custom";
 import { Skeleton } from "../../components/pure";
 import { type Role, RoleSlice, RoleValidationRules } from "../../entities";
 import { useFormErrors, useValidate } from "../../hooks";
@@ -130,7 +130,7 @@ export function ChangeRoleDialog(
     content: (
       <div className="space-y-4">
         { index === 0 && (
-          <TextField
+          <TextFieldOld
             label={ t("roles.roleName") }
             required
             value={ formData.name || "" }

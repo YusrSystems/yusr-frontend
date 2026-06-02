@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { PasswordField, TextField } from "yusr-ui";
+import { PasswordField, TextFieldOld } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import { acceptPoliciesToggle, updateField } from "../../logic/registerSlice";
@@ -17,7 +17,7 @@ export default function AccountInfo()
 
   return (
     <>
-      <TextField
+      <TextFieldOld
         label={ t("register.accountInfo.username.label") }
         id="username"
         type="text"

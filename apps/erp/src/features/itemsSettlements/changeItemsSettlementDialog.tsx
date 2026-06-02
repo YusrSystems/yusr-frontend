@@ -2,7 +2,7 @@ import StoresSearchableSelect from "@/core/components/searchableSelect/storesSea
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormField, Loading, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormField, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ItemType } from "../../core/data/item";
 import ItemsSettlement, { ItemsSettlementItem, ItemsSettlementSlice, ItemsSettlementValidationRules } from "../../core/data/itemsSettlement";
 import type { IStocktaking } from "../../core/data/stocktaking";
@@ -148,7 +148,7 @@ export default function ChangeItemsSettlementDialog(
       <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
         <FieldGroup>
           <FieldsSection columns={ 2 }>
-            <TextField
+            <TextFieldOld
               label={ t("itemsSettlements.settlementDate") }
               required
               value={ formData.date
@@ -175,7 +175,7 @@ export default function ChangeItemsSettlementDialog(
             </FormField>
           </FieldsSection>
 
-          <TextField
+          <TextFieldOld
             label={ t("itemsSettlements.description") }
             value={ formData.description || "" }
             onChange={ (e) =>

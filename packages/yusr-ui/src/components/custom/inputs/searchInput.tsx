@@ -2,7 +2,7 @@ import { Search } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDebouncedCallback } from "use-debounce";
-import { Input } from "../../pure/input";
+import { InputOld } from "../../pure/input";
 
 export type SearchInputParams = {
   onSearch: (searchText?: string) => void;
@@ -49,7 +49,7 @@ export function SearchInput({ onSearch, onType }: SearchInputParams)
         { /* Search Icon & Input */ }
         <div className="relative flex-1 z-10">
           <Search className="absolute left-3 rtl:right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
+          <InputOld
             value={ searchText }
             onChange={ handleInputChange }
             placeholder={ t("searchPlaceholder") }

@@ -3,7 +3,7 @@ import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, CheckboxField, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormField, NumberField, NumbertoWordsService, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, CheckboxField, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormField, NumberField, NumbertoWordsService, SelectField, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import PaymentMethod, { CommissionType, PaymentMethodSlice } from "../../core/data/paymentMethod";
 import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
@@ -210,7 +210,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
               />
             ) }
 
-            <TextField
+            <TextFieldOld
               disabled
               label={ t("vouchers.amountInWords") }
               value={ amountToWords }
@@ -219,12 +219,12 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
           </FieldsSection>
 
           <FieldsSection title={ t("vouchers.partyInfo") } columns={ 2 }>
-            <TextField
+            <TextFieldOld
               label={ t("vouchers.giver") }
               value={ formData.giver || "" }
               onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ giver: e.target.value })) }
             />
-            <TextField
+            <TextFieldOld
               label={ t("vouchers.recipient") }
               value={ formData.recipient || "" }
               onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ recipient: e.target.value })) }
@@ -233,7 +233,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
 
           { formData.invoiceId && (
             <FieldsSection title={ t("vouchers.systemLinks") } columns={ 1 }>
-              <TextField
+              <TextFieldOld
                 label={ t("vouchers.relatedInvoice") }
                 value={ `#${formData.invoiceId}` }
                 disabled={ true }

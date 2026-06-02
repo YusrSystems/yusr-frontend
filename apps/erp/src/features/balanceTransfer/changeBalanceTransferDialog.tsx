@@ -2,7 +2,7 @@ import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/ba
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormField, NumberField, NumbertoWordsService, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormField, NumberField, NumbertoWordsService, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BanksAndBoxesSlice } from "../../core/data/account";
 import type BalanceTransfer from "../../core/data/balanceTransfer";
 import { BalanceTransferSlice, BalanceTransferValidationRules } from "../../core/data/balanceTransfer";
@@ -91,7 +91,7 @@ export default function ChangeBalanceTransferDialog(
               currency={ <CurrencyIcon /> }
             />
             <div className="col-span-full">
-              <TextField
+              <TextFieldOld
                 label={ t("balanceTransfers.amountInWords") }
                 value={ amountToWords }
                 onChange={ () => undefined }

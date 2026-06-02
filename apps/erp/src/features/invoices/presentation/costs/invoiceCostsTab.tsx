@@ -2,7 +2,7 @@ import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSel
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, CurrencyIcon, FormField, NumberField, TextField } from "yusr-ui";
+import { Button, CurrencyIcon, FormField, NumberField, TextFieldOld } from "yusr-ui";
 import { InvoiceRelationType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
@@ -114,7 +114,7 @@ export default function InvoiceCostsTab()
                 </td>
 
                 <td className="p-2">
-                  <TextField
+                  <TextFieldOld
                     label=""
                     value={ row.description || "" }
                     onChange={ (e) =>

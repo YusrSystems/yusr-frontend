@@ -4,7 +4,7 @@ import { Camera, Check, Copy, Download, Share2, Trash2, Upload } from "lucide-re
 import { QRCodeCanvas } from "qrcode.react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelect, Button, FieldGroup, FieldsSection, FormField, Label, StorageFileStatus, StorageType, TextField, useAppDispatch, useFormErrors, useStorageFile } from "yusr-ui";
+import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelect, Button, FieldGroup, FieldsSection, FormField, Label, StorageFileStatus, StorageType, TextFieldOld, useAppDispatch, useFormErrors, useStorageFile } from "yusr-ui";
 import { type SettingOld, SettingSlice } from "../../core/data/settingOld";
 
 export default function BasicSection()
@@ -195,7 +195,7 @@ export default function BasicSection()
       { /* BASIC INFO */ }
       <FieldGroup>
         <FieldsSection title={ t("settings.basicData") } columns={ 2 }>
-          <TextField
+          <TextFieldOld
             label={ t("settings.companyName") }
             required
             value={ formData.companyName || "" }
@@ -203,13 +203,13 @@ export default function BasicSection()
             error={ getError("companyName") }
             onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ companyName: e.target.value })) }
           />
-          <TextField
+          <TextFieldOld
             label={ t("settings.businessActivity") }
             value={ formData.companyBusinessCategory || "" }
             onChange={ (e) =>
               dispatch(SettingSlice.formActions.updateFormData({ companyBusinessCategory: e.target.value })) }
           />
-          <TextField
+          <TextFieldOld
             label={ t("settings.companyPhone") }
             required
             value={ formData.companyPhone || "" }
@@ -217,7 +217,7 @@ export default function BasicSection()
             error={ getError("companyPhone") }
             onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ companyPhone: e.target.value })) }
           />
-          <TextField
+          <TextFieldOld
             label={ t("settings.email") }
             required
             type="email"
@@ -238,12 +238,12 @@ export default function BasicSection()
             />
           </FormField>
 
-          <TextField
+          <TextFieldOld
             label={ t("settings.commercialRegistration") }
             value={ formData.crn || "" }
             onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ crn: e.target.value })) }
           />
-          <TextField
+          <TextFieldOld
             label={ t("settings.taxNumber") }
             value={ formData.vatNumber || "" }
             onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ vatNumber: e.target.value })) }

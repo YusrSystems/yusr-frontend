@@ -1,6 +1,6 @@
 import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { type DialogMode, SelectField, StorageFileField, StorageType, TextAreaField, TextField, useFormErrors, useStorageFile } from "yusr-ui";
+import { type DialogMode, SelectField, StorageFileField, StorageType, TextAreaField, TextFieldOld, useFormErrors, useStorageFile } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemUnitPricingMethod } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 import TaxesSection from "./taxesSection";
@@ -33,7 +33,7 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="flex-1 space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <TextField
+            <TextFieldOld
               label={ t("items.itemName") }
               required
               value={ formData.name || "" }
@@ -80,7 +80,7 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <TextField
+            <TextFieldOld
               label={ t("items.class") }
               value={ formData.class || "" }
               onChange={ (e) => dispatch(ItemSlice.formActions.updateFormData({ class: e.target.value })) }

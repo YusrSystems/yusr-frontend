@@ -1,6 +1,6 @@
 import { AlertCircle, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { cn, type DialogMode, InputField, SelectField } from "yusr-ui";
+import { cn, type DialogMode, InputFieldOld, SelectField } from "yusr-ui";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import { ItemTransferActions } from "./logic/itemTransferActions";
 import type { TransferRowItem } from "./logic/itemTransferSlice";
@@ -90,7 +90,7 @@ export default function SelectedItemsTable({ mode }: { mode: DialogMode; })
 
               <td className="p-4 text-center align-top">
                 <div className="flex flex-col items-center justify-center gap-1">
-                  <InputField
+                  <InputFieldOld
                     label=""
                     min={ 1 }
                     value={ row.quantity || "" }

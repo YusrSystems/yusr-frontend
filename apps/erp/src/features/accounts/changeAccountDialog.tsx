@@ -4,7 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps, IEntityState, IFormState } from "yusr-ui";
-import { Button, ChangeDialog, CitiesSearchableSelect, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormField, Input, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { Button, ChangeDialog, CitiesSearchableSelect, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormField, InputOld, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Account, { AccountContact, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/account";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -192,7 +192,7 @@ export default function ChangeAccountDialog({
               />
             ) }
 
-            <TextField
+            <TextFieldOld
               label={ t("accounts.accountName") }
               required
               value={ formData.name || "" }
@@ -258,13 +258,13 @@ export default function ChangeAccountDialog({
             >
               { requiresTaxInfo && (
                 <>
-                  <TextField
+                  <TextFieldOld
                     label={ t("accounts.vatNumber") }
                     value={ formData.vatNumber || "" }
                     onChange={ (e) => dispatch(slice.formActions.updateFormData({ vatNumber: e.target.value })) }
                     dir="ltr"
                   />
-                  <TextField
+                  <TextFieldOld
                     label={ t("accounts.crn") }
                     value={ formData.crn || "" }
                     onChange={ (e) => dispatch(slice.formActions.updateFormData({ crn: e.target.value })) }
@@ -274,7 +274,7 @@ export default function ChangeAccountDialog({
               ) }
 
               { isBank && (
-                <TextField
+                <TextFieldOld
                   label={ t("accounts.bankAccountNumber") }
                   value={ formData.bankAccountNumber || "" }
                   onChange={ (e) => dispatch(slice.formActions.updateFormData({ bankAccountNumber: e.target.value })) }
@@ -305,26 +305,26 @@ export default function ChangeAccountDialog({
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <TextField
+                    <TextFieldOld
                       label={ t("accounts.district") }
                       value={ formData.district || "" }
                       onChange={ (e) => dispatch(slice.formActions.updateFormData({ district: e.target.value })) }
                     />
-                    <TextField
+                    <TextFieldOld
                       label={ t("accounts.street") }
                       value={ formData.street || "" }
                       onChange={ (e) => dispatch(slice.formActions.updateFormData({ street: e.target.value })) }
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <TextField
+                    <TextFieldOld
                       label={ t("accounts.buildingNumber") }
                       value={ formData.buildingNumber || "" }
                       onChange={ (e) => dispatch(slice.formActions.updateFormData({ buildingNumber: e.target.value })) }
                       isInvalid={ isInvalid("buildingNumber") }
                       error={ getError("buildingNumber") }
                     />
-                    <TextField
+                    <TextFieldOld
                       label={ t("accounts.postalCode") }
                       value={ formData.postalCode || "" }
                       onChange={ (e) => dispatch(slice.formActions.updateFormData({ postalCode: e.target.value })) }
@@ -342,7 +342,7 @@ export default function ChangeAccountDialog({
                       { formData.accountContacts?.map((contact, index) => (
                         <div key={ index } className="flex items-center gap-3">
                           <div className="flex-1">
-                            <Input
+                            <InputOld
                               value={ contact.number || "" }
                               onChange={ (e) =>
                                 updateContact(index, "number", e.target.value) }
