@@ -1,8 +1,8 @@
+import i18n from "@/config/i18n";
 import type { Signal } from "@preact/signals-react";
 import { type TFunction } from "i18next";
 import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, ValidatableEntity, type ValidationRuleOld, Validators } from "yusr-ui";
 import TaxesApiServiceOld from "../networking/taxesApiServiceold";
-import enTranslations from '../../../public/locales/ar/accounting.json';
 
 export class TaxOld extends BaseEntity
 {
@@ -22,7 +22,7 @@ export class TaxValidationRules
   public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<TaxOld>>[] => [{
     field: "name",
     selector: (d) => d.name,
-    validators: [Validators.required("taxes.nameRequired" as keyof typeof enTranslations)]
+    validators: [Validators.required(t("taxes.nameRequired"))]
   }, {
     field: "percentage",
     selector: (d) => d.percentage,
@@ -67,14 +67,14 @@ export class Tax extends ValidatableEntity<TaxDto>
     super(dto, [{
       field: "name",
       selector: (d) => d.name,
-      validators: [Validators.required("taxes.nameRequired")]
+      validators: [Validators.required(i18n.t("accounting:taxes.nameRequired"))]
     }, {
       field: "percentage",
       selector: (d) => d.percentage,
       validators: [
-        Validators.required("taxes.percentageRequired"),
-        Validators.min(0, "taxes.percentageMin"),
-        Validators.max(100, "taxes.percentageMax")
+        Validators.required(i18n.t("accounting:taxes.percentageRequired")),
+        Validators.min(0, i18n.t("accounting:taxes.percentageMin")),
+        Validators.max(100, i18n.t("accounting:taxes.percentageMax"))
       ]
     }]);
   }
