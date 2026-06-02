@@ -2,7 +2,7 @@ import PricingMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, CurrencyIcon, FormField, NumberField, SystemPermissions, SystemPermissionsActions, TextFieldOld } from "yusr-ui";
+import { Button, CurrencyIcon, FormFieldOld, NumberField, SystemPermissions, SystemPermissionsActions, TextFieldOld } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../core/auth/systemPermissionsResources";
 import Item, { ItemType } from "../../../core/data/item";
 import { useAppSelector } from "../../../core/state/store";
@@ -71,7 +71,7 @@ export default function PricingMethodsTable()
                 <tr key={ index } className="border-t border-muted">
                   <td className="p-3 font-bold">{ index + 1 }</td>
                   <td className="p-3">
-                    <FormField
+                    <FormFieldOld
                       label=""
                       isInvalid={ hasError && !isService && !method.unitId }
                     >
@@ -88,10 +88,10 @@ export default function PricingMethodsTable()
                           });
                         } }
                       />
-                    </FormField>
+                    </FormFieldOld>
                   </td>
                   <td className="p-3">
-                    <FormField
+                    <FormFieldOld
                       label=""
                       isInvalid={ hasError && !isService && !method.pricingMethodId }
                     >
@@ -108,7 +108,7 @@ export default function PricingMethodsTable()
                           });
                         } }
                       />
-                    </FormField>
+                    </FormFieldOld>
                   </td>
                   <td className="p-3">
                     <NumberField

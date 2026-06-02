@@ -10,7 +10,6 @@ export interface BaseInputPropsOld extends React.InputHTMLAttributes<HTMLInputEl
 
 export interface BaseInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">
 {
-  isInvalid?: boolean;
   value?: Signal<string>;
   onChange?: (value: string) => void;
 }
@@ -25,12 +24,12 @@ export function BaseInputOld({ isInvalid, className, ...props }: BaseInputPropsO
   );
 }
 
-export function BaseInput({ isInvalid, className, ...props }: BaseInputProps)
+export function BaseInput({ className, ...props }: BaseInputProps)
 {
   return (
     <Input
       { ...props }
-      className={ cn(className, isInvalid && "border-red-500 ring-red-500 text-red-900 focus-visible:ring-red-500") }
+      className={ className }
     />
   );
 }

@@ -1,7 +1,7 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, type DialogMode, FormField, NumberField, TextFieldOld, useFormErrors } from "yusr-ui";
+import { Button, type DialogMode, FormFieldOld, NumberField, TextFieldOld, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemStore, ItemType } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 
@@ -106,7 +106,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                 <tr key={ index } className="border-t border-muted">
                   <td className="p-3 font-bold text-start">{ index + 1 }</td>
                   <td className="p-3">
-                    <FormField
+                    <FormFieldOld
                       label=""
                       isInvalid={ hasError && !isService && !store.storeId }
                     >
@@ -122,7 +122,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                           });
                         } }
                       />
-                    </FormField>
+                    </FormFieldOld>
                   </td>
                   <td className="p-3">
                     <NumberField

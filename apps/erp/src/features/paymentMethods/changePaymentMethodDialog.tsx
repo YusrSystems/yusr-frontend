@@ -2,7 +2,7 @@ import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/ba
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, FormField, NumberField, SelectField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, FieldGroup, FormFieldOld, NumberField, SelectField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BanksAndBoxesSlice } from "../../core/data/account";
 import type PaymentMethod from "../../core/data/paymentMethod";
 import { CommissionType, PaymentMethodSlice, PaymentMethodValidationRules } from "../../core/data/paymentMethod";
@@ -78,7 +78,7 @@ export default function ChangePaymentMethodDialog({
             error={ getError("name") }
           />
 
-          <FormField
+          <FormFieldOld
             label={ t("paymentMethods.responsibleAccount") }
             required
             isInvalid={ isInvalid("accountId") }
@@ -97,7 +97,7 @@ export default function ChangePaymentMethodDialog({
                 }));
               } }
             />
-          </FormField>
+          </FormFieldOld>
         </div>
 
         <div className="grid grid-cols-2 gap-4">

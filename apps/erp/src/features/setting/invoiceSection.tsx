@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { FieldGroup, FieldsSection, FormField, SelectField, SelectInput, TextAreaField, useAppDispatch, useFormErrors } from "yusr-ui";
+import { FieldGroup, FieldsSection, FormFieldOld, SelectField, SelectInput, TextAreaField, useAppDispatch, useFormErrors } from "yusr-ui";
 import TaxesSearchableSelect from "../../core/components/searchableSelect/taxesSearchableSelect";
 import { EInvoicingEnvironmentType, InvoicePrintSize, SettingSlice } from "../../core/data/settingOld";
 import { useAppSelector } from "../../core/state/store";
@@ -18,7 +18,7 @@ export default function InvoiceSection()
     <div className="space-y-10 animate-in fade-in">
       <FieldGroup>
         <FieldsSection title={ t("settings.invoiceAndTaxSettings") } columns={ 2 }>
-          <FormField
+          <FormFieldOld
             label={ t("settings.defaultCurrency") }
             required
             isInvalid={ isInvalid("currencyId") }
@@ -32,7 +32,7 @@ export default function InvoiceSection()
                 || [] }
               onValueChange={ (val) => dispatch(SettingSlice.formActions.updateFormData({ currencyId: Number(val) })) }
             />
-          </FormField>
+          </FormFieldOld>
 
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium">{ t("settings.defaultTax") }</label>

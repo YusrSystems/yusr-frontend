@@ -7,7 +7,7 @@ import type Item from "@/core/data/item";
 import type Store from "@/core/data/store";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField } from "yusr-ui";
+import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld } from "yusr-ui";
 import { InvoicesListReportRequest, InvoicesListReportType } from "../../core/data/report/invoicesListReportType";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
@@ -53,25 +53,25 @@ export default function InvoicesListDialog()
               />
             </div>
 
-            <FormField label={ t("accounting:invoices.store") }>
+            <FormFieldOld label={ t("accounting:invoices.store") }>
               <StoresSearchableSelect
                 showNullOption
                 selectedId={ store?.id }
                 selectedLabel={ store?.name }
                 onValueChange={ (store) => setStore(store) }
               />
-            </FormField>
+            </FormFieldOld>
 
-            <FormField label={ t("accounting:invoices.account") }>
+            <FormFieldOld label={ t("accounting:invoices.account") }>
               <ClientsAndSuppliersSearchableSelect
                 showNullOption
                 selectedId={ account?.id }
                 selectedLabel={ account?.name }
                 onValueChange={ (account) => setAccount(account) }
               />
-            </FormField>
+            </FormFieldOld>
 
-            <FormField label={ t("sidebar.items") }>
+            <FormFieldOld label={ t("sidebar.items") }>
               <ItemsSearchableSelect
                 showNullOption
                 selectedId={ undefined }
@@ -103,7 +103,7 @@ export default function InvoicesListDialog()
                   )) }
                 </div>
               ) }
-            </FormField>
+            </FormFieldOld>
           </div>
 
           <DialogFooter>

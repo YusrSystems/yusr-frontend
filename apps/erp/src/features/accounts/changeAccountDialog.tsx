@@ -4,7 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps, IEntityState, IFormState } from "yusr-ui";
-import { Button, ChangeDialog, CitiesSearchableSelect, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormField, InputOld, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { Button, ChangeDialog, CitiesSearchableSelect, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormFieldOld, InputOld, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Account, { AccountContact, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/account";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -202,7 +202,7 @@ export default function ChangeAccountDialog({
             />
 
             { (formData.type === AccountType.Client || formData.type === AccountType.Supplier) && (
-              <FormField label={ t("accounts.parentAccount") }>
+              <FormFieldOld label={ t("accounts.parentAccount") }>
                 { formData.type === AccountType.Supplier && (
                   <SuppliersSearchableSelect
                     isInvalid={ isInvalid("parentId") }
@@ -232,7 +232,7 @@ export default function ChangeAccountDialog({
                     } }
                   />
                 ) }
-              </FormField>
+              </FormFieldOld>
             ) }
 
             <NumberField

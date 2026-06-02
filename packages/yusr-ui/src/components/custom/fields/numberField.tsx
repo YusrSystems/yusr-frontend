@@ -1,5 +1,5 @@
 import { NumberInput, type NumberInputProps } from "../inputs/numberInput";
-import { FormField } from "./formField";
+import { FormFieldOld } from "./formField";
 
 interface NumberFieldProps extends NumberInputProps
 {
@@ -12,8 +12,8 @@ interface NumberFieldProps extends NumberInputProps
 export function NumberField({ label, error, isInvalid, required, ...props }: NumberFieldProps)
 {
   return (
-    <FormField label={ label } error={ error } isInvalid={ isInvalid } required={ required }>
+    <FormFieldOld label={ label } error={ error } isInvalid={ isInvalid } required={ required }>
       <NumberInput { ...props } isInvalid={ isInvalid } />
-    </FormField>
+    </FormFieldOld>
   );
 }

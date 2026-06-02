@@ -46,8 +46,6 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
 
   getError = (field: keyof TDto) => this.errors[field];
 
-  isInvalid = (field: keyof TDto) => !!this.errors[field].value;
-
   clearError(field: keyof TDto)
   {
     this.errors[field].value = undefined;

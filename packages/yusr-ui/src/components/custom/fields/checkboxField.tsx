@@ -1,5 +1,5 @@
 import { Checkbox } from "../../../components/pure";
-import { FormField } from "./formField";
+import { FormFieldOld } from "./formField";
 import { type InputFieldPropsOld } from "./inputField";
 
 interface CheckboxFieldProps extends Omit<InputFieldPropsOld, "value">
@@ -12,7 +12,7 @@ interface CheckboxFieldProps extends Omit<InputFieldPropsOld, "value">
 export function CheckboxField({ id, checked, onCheckedChange, ...formFieldProps }: CheckboxFieldProps)
 {
   return (
-    <FormField { ...formFieldProps }>
+    <FormFieldOld { ...formFieldProps }>
       <div
         className="flex items-center gap-3 rounded-lg border p-1.75 cursor-pointer border-border"
         onClick={ () => onCheckedChange(!checked) }
@@ -22,6 +22,6 @@ export function CheckboxField({ id, checked, onCheckedChange, ...formFieldProps 
           checked={ checked }
         />
       </div>
-    </FormField>
+    </FormFieldOld>
   );
 }

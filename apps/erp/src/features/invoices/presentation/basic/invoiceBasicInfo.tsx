@@ -3,7 +3,7 @@ import StoresSearchableSelect from "@/core/components/searchableSelect/storesSea
 import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Checkbox, DateField, FieldsSection, FormField, SelectField, TextFieldOld } from "yusr-ui";
+import { Checkbox, DateField, FieldsSection, FormFieldOld, SelectField, TextFieldOld } from "yusr-ui";
 import Account from "../../../../core/data/account";
 import { ImportExportType, InvoiceType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
@@ -101,7 +101,7 @@ export default function InvoiceBasicInfo()
         />
       ) }
 
-      <FormField
+      <FormFieldOld
         label={ t("invoices.store") }
         required
         isInvalid={ isInvalid("storeId") }
@@ -119,9 +119,9 @@ export default function InvoiceBasicInfo()
             );
           } }
         />
-      </FormField>
+      </FormFieldOld>
 
-      <FormField
+      <FormFieldOld
         label={ t("invoices.account") }
         required
         isInvalid={ isInvalid("actionAccountId") }
@@ -158,7 +158,7 @@ export default function InvoiceBasicInfo()
             } }
           />
         ) }
-      </FormField>
+      </FormFieldOld>
 
       <TextFieldOld
         label={ t("invoices.relatedInvoiceNumber") }

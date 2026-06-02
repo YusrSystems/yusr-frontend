@@ -3,7 +3,7 @@ import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, CheckboxField, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormField, NumberField, NumbertoWordsService, SelectField, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, CheckboxField, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberField, NumbertoWordsService, SelectField, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import PaymentMethod, { CommissionType, PaymentMethodSlice } from "../../core/data/paymentMethod";
 import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
@@ -144,7 +144,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
           </FieldsSection>
 
           <FieldsSection columns={ 2 }>
-            <FormField
+            <FormFieldOld
               label={ t("vouchers.account") }
               required
               isInvalid={ isInvalid("accountId") }
@@ -161,9 +161,9 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
                   );
                 } }
               />
-            </FormField>
+            </FormFieldOld>
 
-            <FormField
+            <FormFieldOld
               label={ t("vouchers.paymentMethod") }
               required
               isInvalid={ isInvalid("paymentMethodId") }
@@ -175,7 +175,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
                 isInvalid={ isInvalid("paymentMethodId") }
                 onValueChange={ handlePaymentMethodChange }
               />
-            </FormField>
+            </FormFieldOld>
           </FieldsSection>
 
           <FieldsSection columns={ 3 }>

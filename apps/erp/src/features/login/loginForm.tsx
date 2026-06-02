@@ -5,16 +5,12 @@ import { Services } from "@/services";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRight, Loader2 } from "lucide-react";
+import { useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, i18n, LoginRequest, PasswordField, TextField, User, UserOld, YusrApiHelper } from "yusr-ui";
 
 const emailStorageItemName = "remembered_email";
 const usernameStorageItemName = "remembered_username";
-const formData = new LoginRequest({
-  companyEmail: localStorage.getItem(emailStorageItemName) ?? "",
-  username: localStorage.getItem(usernameStorageItemName) ?? "",
-  password: ""
-});
 const rememberMe = signal(
   !!(localStorage.getItem(emailStorageItemName) || localStorage.getItem(usernameStorageItemName))
 );
@@ -23,6 +19,14 @@ const isLoading = signal(false);
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 {
   useSignals();
+
+  const formData = useMemo(() =>
+    new LoginRequest({
+      companyEmail: localStorage.getItem(emailStorageItemName) ?? "",
+      username: localStorage.getItem(usernameStorageItemName) ?? "",
+      password: ""
+    }), []);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,6 +34,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
   {
     if (!formData.validate())
     {
+      console.log(formData.errors);
       return;
     }
 
@@ -84,11 +89,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 type="companyEmail"
                 placeholder={ i18n.t("login:email.placeholder") }
                 value={ formData.companyEmail || "" }
-                isInvalid={ formData.isInvalid("companyEmail") }
-                error={ formData.getError("companyEmail").value }
+                error={ formData.getError("companyEmail") }
                 onChange={ () =>
                 {
-                  // formData.companyEmail.value = e.target.value;
                   formData.clearError("companyEmail");
                 } }
                 required
@@ -100,11 +103,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 type="text"
                 placeholder={ i18n.t("login:username.placeholder") }
                 value={ formData.username || "" }
-                // isInvalid={ formData.isInvalid("username") }
-                // error={ formData.getError("username").value }
+                error={ formData.getError("username") }
                 onChange={ () =>
                 {
-                  // formData.username.value = e.target.value;
                   formData.clearError("username");
                 } }
                 required
@@ -114,12 +115,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 label={ i18n.t("login:password.label") }
                 id="password"
                 placeholder={ i18n.t("login:password.placeholder") }
-                value={ formData.password.value || "" }
-                isInvalid={ formData.isInvalid("password") }
-                error={ formData.getError("password").value }
-                onChange={ (e) =>
+                value={ formData.password }
+                error={ formData.getError("password") }
+                onChange={ () =>
                 {
-                  formData.password.value = e.target.value;
                   formData.clearError("password");
                 } }
                 required

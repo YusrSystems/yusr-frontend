@@ -1,5 +1,5 @@
 import { SelectInput, type SelectInputProps } from "../inputs/selectInput";
-import { FormField } from "./formField";
+import { FormFieldOld } from "./formField";
 
 export function SelectField(
   { label, error, required, isInvalid, ...props }: SelectInputProps & {
@@ -10,8 +10,8 @@ export function SelectField(
 )
 {
   return (
-    <FormField label={ label } error={ error } isInvalid={ isInvalid } required={ required }>
+    <FormFieldOld label={ label } error={ error } isInvalid={ isInvalid } required={ required }>
       <SelectInput { ...props } isInvalid={ isInvalid } />
-    </FormField>
+    </FormFieldOld>
   );
 }

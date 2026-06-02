@@ -1,5 +1,5 @@
 import { DateInput, type DateInputProps } from "../inputs/dateInput";
-import { FormField } from "./formField";
+import { FormFieldOld } from "./formField";
 
 interface DateFieldProps extends DateInputProps
 {
@@ -17,13 +17,13 @@ export function DateField({
 }: DateFieldProps)
 {
   return (
-    <FormField
+    <FormFieldOld
       label={ label }
       error={ error }
       isInvalid={ isInvalid }
       required={ required }
     >
       <DateInput { ...props } isInvalid={ isInvalid } />
-    </FormField>
+    </FormFieldOld>
   );
 }

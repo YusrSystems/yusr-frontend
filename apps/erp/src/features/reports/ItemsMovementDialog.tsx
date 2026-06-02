@@ -6,7 +6,7 @@ import type Item from "@/core/data/item";
 import type Store from "@/core/data/store";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField, SelectField } from "yusr-ui";
+import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld, SelectField } from "yusr-ui";
 import { ItemsMovementReportGroupOption, ItemsMovementReportRequest, ItemsMovementReportTransType } from "../../core/data/report/itemsMovementReportRequest";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
@@ -53,14 +53,14 @@ export default function ItemsMovementDialog()
               ] }
             />
 
-            <FormField label={ t("reports.item") }>
+            <FormFieldOld label={ t("reports.item") }>
               <ItemsSearchableSelect
                 showNullOption
                 selectedId={ item?.id }
                 selectedLabel={ item?.name }
                 onValueChange={ (item) => setItem(item) }
               />
-            </FormField>
+            </FormFieldOld>
 
             <div className="grid grid-cols-2 gap-3">
               <DateField
@@ -76,43 +76,43 @@ export default function ItemsMovementDialog()
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <FormField label={ t("reports.fromAccount") }>
+              <FormFieldOld label={ t("reports.fromAccount") }>
                 <ClientsAndSuppliersSearchableSelect
                   showNullOption
                   selectedId={ fromAccount?.id }
                   selectedLabel={ fromAccount?.name }
                   onValueChange={ (account) => setFromAccount(account) }
                 />
-              </FormField>
+              </FormFieldOld>
 
-              <FormField label={ t("reports.toAccount") }>
+              <FormFieldOld label={ t("reports.toAccount") }>
                 <ClientsAndSuppliersSearchableSelect
                   showNullOption
                   selectedId={ toAccount?.id }
                   selectedLabel={ toAccount?.name }
                   onValueChange={ (account) => setToAccount(account) }
                 />
-              </FormField>
+              </FormFieldOld>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <FormField label={ t("reports.fromStore") }>
+              <FormFieldOld label={ t("reports.fromStore") }>
                 <StoresSearchableSelect
                   showNullOption
                   selectedId={ fromStore?.id }
                   selectedLabel={ fromStore?.name }
                   onValueChange={ (store) => setFromStore(store) }
                 />
-              </FormField>
+              </FormFieldOld>
 
-              <FormField label={ t("reports.toStore") }>
+              <FormFieldOld label={ t("reports.toStore") }>
                 <StoresSearchableSelect
                   showNullOption
                   selectedId={ toStore?.id }
                   selectedLabel={ toStore?.name }
                   onValueChange={ (store) => setToStore(store) }
                 />
-              </FormField>
+              </FormFieldOld>
             </div>
 
             <SelectField

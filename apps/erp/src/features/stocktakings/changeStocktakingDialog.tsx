@@ -2,7 +2,7 @@ import StoresSearchableSelect from "@/core/components/searchableSelect/storesSea
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormField, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormFieldOld, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ItemType } from "../../core/data/item";
 import Stocktaking, { StocktakingItem, StocktakingSlice, StocktakingValidationRules } from "../../core/data/stocktaking";
 import Store, { StoreSlice } from "../../core/data/store";
@@ -124,7 +124,7 @@ export default function ChangeStocktakingDialog(
               disabled
             />
 
-            <FormField
+            <FormFieldOld
               label={ t("stocktakings.store") }
               required
               isInvalid={ isInvalid("storeId") }
@@ -137,7 +137,7 @@ export default function ChangeStocktakingDialog(
                 isInvalid={ isInvalid("storeId") }
                 onValueChange={ handleStoreChange }
               />
-            </FormField>
+            </FormFieldOld>
           </FieldsSection>
 
           <TextFieldOld

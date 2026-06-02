@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { ChangeDialog, CitiesSearchableSelect, type CommonChangeDialogProps, FieldsSection, FormField, TextFieldOld } from "../../components/custom";
+import { ChangeDialog, CitiesSearchableSelect, type CommonChangeDialogProps, FieldsSection, FormFieldOld, TextFieldOld } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
 import { Branch, BranchSlice, BranchValidationRules, CitySlice } from "../../entities";
 import { useFormErrors, useFormInit, useValidate } from "../../hooks";
@@ -51,7 +51,7 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
           required={ true }
         />
 
-        <FormField
+        <FormFieldOld
           label={ t("branches.city") }
           required={ true }
           isInvalid={ isInvalid("cityId") }
@@ -64,7 +64,7 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
               dispatch(BranchSlice.formActions.updateFormData({ cityId: city?.id, city: city })) }
             isInvalid={ isInvalid("cityId") }
           />
-        </FormField>
+        </FormFieldOld>
 
         <FieldsSection title="" columns={ 2 }>
           <TextFieldOld

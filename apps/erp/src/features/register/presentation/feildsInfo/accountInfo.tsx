@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { PasswordField, TextFieldOld } from "yusr-ui";
+import { PasswordFieldOld, TextFieldOld } from "yusr-ui";
 import type Registration from "../../../../core/data/registration";
 import { useAppDispatch, useAppSelector } from "../../../../core/state/store";
 import { acceptPoliciesToggle, updateField } from "../../logic/registerSlice";
@@ -29,7 +29,7 @@ export default function AccountInfo()
         required
       />
 
-      <PasswordField
+      <PasswordFieldOld
         label={ t("register.accountInfo.password.label") }
         id="userPassword"
         placeholder={ t("register.accountInfo.password.placeholder") }

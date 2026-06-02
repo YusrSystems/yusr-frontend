@@ -2,7 +2,7 @@ import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/ba
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormField, NumberField, NumbertoWordsService, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialog, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberField, NumbertoWordsService, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BanksAndBoxesSlice } from "../../core/data/account";
 import type BalanceTransfer from "../../core/data/balanceTransfer";
 import { BalanceTransferSlice, BalanceTransferValidationRules } from "../../core/data/balanceTransfer";
@@ -101,7 +101,7 @@ export default function ChangeBalanceTransferDialog(
           </FieldsSection>
 
           <FieldsSection title={ t("balanceTransfers.transferParties") } columns={ 2 }>
-            <FormField
+            <FormFieldOld
               label={ t("balanceTransfers.fromAccount") }
               required
               isInvalid={ isInvalid("fromAccountId") }
@@ -122,9 +122,9 @@ export default function ChangeBalanceTransferDialog(
                   );
                 } }
               />
-            </FormField>
+            </FormFieldOld>
 
-            <FormField
+            <FormFieldOld
               label={ t("balanceTransfers.toAccount") }
               required
               isInvalid={ isInvalid("toAccountId") }
@@ -145,7 +145,7 @@ export default function ChangeBalanceTransferDialog(
                   );
                 } }
               />
-            </FormField>
+            </FormFieldOld>
           </FieldsSection>
 
           <FieldsSection title={ t("balanceTransfers.additionalInfo") } columns={ 1 }>

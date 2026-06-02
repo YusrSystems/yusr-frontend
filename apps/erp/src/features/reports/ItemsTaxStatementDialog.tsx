@@ -1,7 +1,7 @@
 import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormField, SelectField } from "yusr-ui";
+import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld, SelectField } from "yusr-ui";
 import Item from "../../core/data/item";
 import { ItemsTaxStatementReportRequest, ItemsTaxStatementReportType } from "../../core/data/report/itemsTaxStatementReportRequest";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -39,14 +39,14 @@ export default function ItemsTaxStatementDialog()
                 value: ItemsTaxStatementReportType.Purchases.toString()
               }] }
             />
-            <FormField label={ t("reports.item") } required={ true }>
+            <FormFieldOld label={ t("reports.item") } required={ true }>
               <ItemsSearchableSelect
                 showNullOption
                 selectedId={ item?.id }
                 selectedLabel={ item?.name }
                 onValueChange={ (item) => setItem(item) }
               />
-            </FormField>
+            </FormFieldOld>
             <DateField
               label={ t("reports.fromDate") }
               value={ fromDate ?? undefined }

@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { BranchesSearchableSelect, ChangeDialog, type CommonChangeDialogProps, FormField, PasswordField, RolesSearchableSelect, SelectField, TextFieldOld } from "../../components/custom";
+import { BranchesSearchableSelect, ChangeDialog, type CommonChangeDialogProps, FormFieldOld, PasswordFieldOld, RolesSearchableSelect, SelectField, TextFieldOld } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
 import { BranchSlice, RoleSlice, UserOld, UserSlice, UserValidationRules } from "../../entities";
 import { useFormErrors, useFormInit, useValidate } from "../../hooks";
@@ -55,7 +55,7 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
             error={ getError("username") }
           />
 
-          <PasswordField
+          <PasswordFieldOld
             label={ t("users.password") }
             required
             value={ formData.password || "" }
@@ -65,7 +65,7 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
           />
         </div>
 
-        <FormField label={ t("users.role") } required isInvalid={ isInvalid("roleId") } error={ getError("roleId") }>
+        <FormFieldOld label={ t("users.role") } required isInvalid={ isInvalid("roleId") } error={ getError("roleId") }>
           <RolesSearchableSelect
             selectedId={ formData.roleId }
             selectedLabel={ "must be set" }
@@ -76,9 +76,9 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
               dispatch(UserSlice.formActions.updateFormData({ role: role }));
             } }
           />
-        </FormField>
+        </FormFieldOld>
 
-        <FormField
+        <FormFieldOld
           label={ t("users.branch") }
           required
           isInvalid={ isInvalid("branchId") }
@@ -94,7 +94,7 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
               dispatch(UserSlice.formActions.updateFormData({ branch: branch }));
             } }
           />
-        </FormField>
+        </FormFieldOld>
 
         <SelectField
           label={ t("users.userStatus") }

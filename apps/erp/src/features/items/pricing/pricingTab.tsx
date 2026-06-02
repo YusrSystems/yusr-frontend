@@ -1,6 +1,6 @@
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import { useTranslation } from "react-i18next";
-import { CheckboxField, CurrencyIcon, type DialogMode, FieldsSection, FormField, NumberField, useFormErrors } from "yusr-ui";
+import { CheckboxField, CurrencyIcon, type DialogMode, FieldsSection, FormFieldOld, NumberField, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemType } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 import PricingMethodsTable from "./pricingMethodsTable";
@@ -15,7 +15,7 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
   return (
     <div className="space-y-6 animate-in fade-in">
       <FieldsSection columns={ 4 }>
-        <FormField
+        <FormFieldOld
           label={ t("items.baseUnit") }
           required={ formData.type !== ItemType.Service }
           isInvalid={ isInvalid("sellUnitId") }
@@ -51,7 +51,7 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
               }));
             } }
           />
-        </FormField>
+        </FormFieldOld>
 
         <NumberField
           label={ t("items.initialCost") }
