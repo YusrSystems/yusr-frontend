@@ -13,6 +13,8 @@ export * from "./services";
 export * from "./types";
 export * from "./validation";
 
-export * from "./locale";
+export * from "./locales";
 
 export * from "./stateManager";
+
+export * from "./locales/i18n";

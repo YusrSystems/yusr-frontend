@@ -1,7 +1,6 @@
-import i18n from "@/config/i18n";
 import type { Signal } from "@preact/signals-react";
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, ValidatableEntity, type ValidationRuleOld, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, i18n, ValidatableEntity, type ValidationRuleOld, Validators } from "yusr-ui";
 import TaxesApiServiceOld from "../networking/taxesApiServiceold";
 
 export class TaxOld extends BaseEntity

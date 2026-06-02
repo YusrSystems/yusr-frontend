@@ -2,7 +2,7 @@ import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import Backend from "i18next-http-backend";
 import { initReactI18next } from "react-i18next";
-import { yusrNamespaces, yusrResources } from "yusr-ui";
+import { yusrNamespaces, yusrResources } from "./i18nResources";
 
 i18n
   .use(Backend)
@@ -37,4 +37,4 @@ i18n.on("languageChanged", (lng) =>
   document.documentElement.setAttribute("dir", i18n.dir(lng));
 });
 
-export default i18n;
+export { i18n };

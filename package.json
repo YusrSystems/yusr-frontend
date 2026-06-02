@@ -9,7 +9,6 @@
     "build": "pnpm build:core && pnpm build:ui"
   },
   "dependencies": {
-    "@preact/signals": "^2.9.1",
     "@preact/signals-react": "^3.10.1",
     "@vitejs/plugin-react": "^6.0.2",
     "i18next": "^26.0.8",

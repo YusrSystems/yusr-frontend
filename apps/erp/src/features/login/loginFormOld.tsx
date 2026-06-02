@@ -3,7 +3,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequest, PasswordField, TextField, useEntityForm, User, type ValidationRuleOld, Validators, YusrApiHelper } from "yusr-ui";
+import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequestOld, PasswordField, TextField, useEntityForm, User, type ValidationRuleOld, Validators, YusrApiHelper } from "yusr-ui";
 import type { Setting } from "../../core/data/setting";
 import { login, updateLoggedInUser, useAppDispatch } from "../../core/state/store";
 
@@ -12,7 +12,7 @@ export function LoginFormOld({ className, ...props }: React.ComponentProps<"div"
   const { t } = useTranslation("loginRegister");
   const navigate = useNavigate();
 
-  const validationRules: ValidationRuleOld<Partial<LoginRequest>>[] = useMemo(
+  const validationRules: ValidationRuleOld<Partial<LoginRequestOld>>[] = useMemo(
     () => [{
       field: "email",
       selector: (d) => d.companyEmail,
@@ -30,7 +30,7 @@ export function LoginFormOld({ className, ...props }: React.ComponentProps<"div"
   );
 
   const INITIAL_STATE = useMemo(() => ({}), []);
-  const { formData, handleChange, getError, isInvalid, validate, clearError } = useEntityForm<LoginRequest>(
+  const { formData, handleChange, getError, isInvalid, validate, clearError } = useEntityForm<LoginRequestOld>(
     INITIAL_STATE,
     validationRules
   );
@@ -70,7 +70,7 @@ export function LoginFormOld({ className, ...props }: React.ComponentProps<"div"
       localStorage.removeItem(usernameStorageItemName);
     }
 
-    const request = new LoginRequest({
+    const request = new LoginRequestOld({
       companyEmail: formData.companyEmail,
       username: formData.username,
       password: formData.password

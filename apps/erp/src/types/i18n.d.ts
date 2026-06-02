@@ -1,5 +1,5 @@
 import "i18next";
-import { arCommon, arCommonEntities } from "yusr-ui";
+import { arCommon, arCommonEntities, arLogin } from "yusr-ui";
 import accounting from "../../public/locales/ar/accounting.json";
 import erpCommon from "../../public/locales/ar/erpCommon.json";
 import landing from "../../public/locales/ar/landing.json";
@@ -19,6 +19,7 @@ declare module "i18next"
       accounting: typeof accounting;
       stocking: typeof stocking;
       commonEntities: typeof arCommonEntities;
+      login: typeof arLogin;
     };
   }
 }

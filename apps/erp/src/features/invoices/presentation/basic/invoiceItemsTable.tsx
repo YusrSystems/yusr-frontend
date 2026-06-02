@@ -1,8 +1,7 @@
-import i18n from "@/config/i18n";
 import { GripVertical, Trash2 } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { cn, type ColumnDef, ColumnVisibilityToggle, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, Tooltip, TooltipContent, TooltipTrigger, useColumnVisibility } from "yusr-ui";
+import { cn, type ColumnDef, ColumnVisibilityToggle, i18n, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, Tooltip, TooltipContent, TooltipTrigger, useColumnVisibility } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
 import { InvoiceType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
@@ -189,7 +188,8 @@ export default function InvoiceItemsTable()
             {
               const isDragging = dragState.draggedIndex === index;
               const isDraggingOver = dragState.dragOverIndex === index;
-              const showToolTip = (formData.type === InvoiceType.Purchase || formData.type === InvoiceType.Sell) && mode != "return";
+              const showToolTip = (formData.type === InvoiceType.Purchase || formData.type === InvoiceType.Sell)
+                && mode != "return";
               const multiplier = formData.type === InvoiceType.Sell ? -1 : 1;
               const remaining = row.originalQuantity + row.quantity * multiplier;
               const isLowStock = remaining < 0;

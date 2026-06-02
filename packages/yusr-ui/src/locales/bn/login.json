@@ -1,0 +1,24 @@
+{
+    "title": "আবারও স্বাগতম",
+    "subtitle": "আপনার অ্যাকাউন্টে লগইন করুন",
+    "email": {
+        "label": "ইমেল",
+        "placeholder": "m@example.com",
+        "required": "ইমেল প্রয়োজন"
+    },
+    "username": {
+        "label": "ব্যবহারকারীর নাম",
+        "placeholder": "ব্যবহারকারীর নাম লিখুন",
+        "required": "ব্যবহারকারীর নাম প্রয়োজন"
+    },
+    "password": {
+        "label": "পাসওয়ার্ড",
+        "placeholder": "••••••••",
+        "required": "পাসওয়ার্ড প্রয়োজন"
+    },
+    "rememberMe": "আমাকে মনে রাখুন",
+    "button": "লগইন করুন",
+    "noAccount": "এখনও কি অ্যাকাউন্ট নেই?",
+    "registerLink": "নিবন্ধন করুন",
+    "backToHome": "হোমপেজে ফিরে যান"
+}

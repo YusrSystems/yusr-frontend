@@ -1,0 +1,24 @@
+{
+    "title": "خوش آمدید",
+    "subtitle": "اپنے اکاؤنٹ میں لاگ ان کریں",
+    "email": {
+        "label": "ای میل",
+        "placeholder": "m@example.com",
+        "required": "ای میل درکار ہے"
+    },
+    "username": {
+        "label": "صارف کا نام",
+        "placeholder": "صارف کا نام درج کریں",
+        "required": "صارف کا نام درکار ہے"
+    },
+    "password": {
+        "label": "پاس ورڈ",
+        "placeholder": "••••••••",
+        "required": "پاس ورڈ درکار ہے"
+    },
+    "rememberMe": "مجھے یاد رکھیں",
+    "button": "لاگ ان کریں",
+    "noAccount": "کیا آپ کے پاس اکاؤنٹ نہیں ہے؟",
+    "registerLink": "رجسٹر کریں",
+    "backToHome": "ہوم پیج پر واپس جائیں"
+}

@@ -1,12 +1,12 @@
 import { createRoot } from "react-dom/client";
-import { YusrApp } from "yusr-ui";
+import { i18n, YusrApp } from "yusr-ui";
 import App from "./app.tsx";
-import "./config/i18n.ts";
 import { store } from "./core/state/store.ts";
 import "./index.css";
 
 function revealApp()
 {
+  i18n.init();
   const loader = document.getElementById("initial-loader");
 
   if (!loader)
