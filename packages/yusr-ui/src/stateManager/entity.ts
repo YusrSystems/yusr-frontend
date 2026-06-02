@@ -5,13 +5,13 @@ export abstract class Entity<TDto extends Dto>
 {
   id: Signal<number>;
 
-  constructor(data: Partial<TDto> = {})
+  constructor(dto: Partial<TDto>)
   {
-    this.id = signal((data as Dto).id ?? 0);
+    this.id = signal((dto as Dto).id ?? 0);
 
-    (Object.keys(data) as (keyof TDto)[]).forEach((key) =>
+    (Object.keys(dto) as (keyof TDto)[]).forEach((key) =>
     {
-      (this as any)[key] = signal(data[key]);
+      (this as any)[key] = signal(dto[key]);
     });
   }
 

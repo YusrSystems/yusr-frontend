@@ -1,7 +1,8 @@
 import type { Signal } from "@preact/signals-react";
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, Entity, type ValidationRuleOld, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, ValidatableEntity, type ValidationRuleOld, Validators } from "yusr-ui";
 import TaxesApiServiceOld from "../networking/taxesApiServiceold";
+import enTranslations from '../../../public/locales/ar/accounting.json';
 
 export class TaxOld extends BaseEntity
 {
@@ -21,7 +22,7 @@ export class TaxValidationRules
   public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<TaxOld>>[] => [{
     field: "name",
     selector: (d) => d.name,
-    validators: [Validators.required(t("taxes.nameRequired"))]
+    validators: [Validators.required("taxes.nameRequired" as keyof typeof enTranslations)]
   }, {
     field: "percentage",
     selector: (d) => d.percentage,
@@ -55,9 +56,26 @@ export class TaxDto extends Dto
   public isPrimary!: boolean;
 }
 
-export class Tax extends Entity<TaxDto>
+export class Tax extends ValidatableEntity<TaxDto>
 {
   declare name: Signal<string>;
   declare percentage: Signal<number>;
   declare isPrimary: Signal<boolean>;
+
+  constructor(dto: Partial<TaxDto>)
+  {
+    super(dto, [{
+      field: "name",
+      selector: (d) => d.name,
+      validators: [Validators.required("taxes.nameRequired")]
+    }, {
+      field: "percentage",
+      selector: (d) => d.percentage,
+      validators: [
+        Validators.required("taxes.percentageRequired"),
+        Validators.min(0, "taxes.percentageMin"),
+        Validators.max(100, "taxes.percentageMax")
+      ]
+    }]);
+  }
 }

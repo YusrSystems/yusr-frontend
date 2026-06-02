@@ -1,11 +1,11 @@
 import placeholderImg from "@/assets/placeholder.svg";
+import type { Setting } from "@/core/data/setting";
+import { login, updateLoggedInUser } from "@/core/state/store";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequest, PasswordField, TextField, useEntityForm, User, type ValidationRuleOld, Validators, YusrApiHelper } from "yusr-ui";
-import type { Setting } from "../../../core/data/setting";
-import { login, updateLoggedInUser, useAppDispatch } from "../../../core/state/store";
+import { ApiConstants, Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, LoginRequest, PasswordField, TextField, useAppDispatch, useEntityForm, User, type ValidationRuleOld, Validators, YusrApiHelper } from "yusr-ui";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 {
