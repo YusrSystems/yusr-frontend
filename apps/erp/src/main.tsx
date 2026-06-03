@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import { i18n, YusrApp } from "yusr-ui";
-import App from "./app.tsx";
+import App from "./app/app.tsx";
 import { store } from "./core/state/store.ts";
 import "./index.css";
 

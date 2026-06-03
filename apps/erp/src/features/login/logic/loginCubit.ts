@@ -1,10 +1,10 @@
-import { AppNavigator } from "@/appNavigator";
+import { AppNavigator } from "@/app/appNavigator";
 import { Setting } from "@/core/data/setting";
 import type { SettingOld } from "@/core/data/settingOld";
-import { Services } from "@/services";
 import { signal } from "@preact/signals-react";
 import { ApiConstants, Cubit, LoginRequest, User, UserOld, YusrApiHelper } from "yusr-ui";
 import { LoginInitialState, LoginLoadingState } from "./loginState";
+import { Services } from "@/core/services/services";
 
 const emailStorageItemName = "loginEmail";
 const usernameStorageItemName = "loginUsername";

@@ -1,13 +1,13 @@
-import { AppNavigator } from "@/appNavigator";
+import { AppNavigator } from "@/app/appNavigator";
 import logoOnlyDark from "@/assets/yusrLogoOnly_Dark.png";
 import logoOnlyLight from "@/assets/yusrLogoOnly_Light.png";
-import { Services } from "@/services";
 import { Building2, FileChartColumnIncreasing, LayoutDashboardIcon, Package, ReceiptText, ScrollText, SettingsIcon, UsersIcon, WalletCards } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { ApiConstants, Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SideBarUserData, SystemPermissionsActions, useSidebar, YusrApiHelper } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { logout, useAppDispatch, useAppSelector } from "../../core/state/store";
+import { Services } from "@/core/services/services";
 
 export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
 {

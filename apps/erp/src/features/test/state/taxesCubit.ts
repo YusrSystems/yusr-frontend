@@ -1,7 +1,7 @@
-import { Services } from "@/services";
-import { PAGE_SIZE } from "@/systemConstants";
+import { PAGE_SIZE } from "@/core/constants/systemConstants";
 import { Cubit } from "yusr-ui";
 import { TaxesEmpty, TaxesInitialState, TaxesLoaded, TaxesLoading } from "./taxesState";
+import { Services } from "@/core/services/services";
 
 export class TaxesCubit extends Cubit<TaxesInitialState>
 {

@@ -1,4 +1,4 @@
-import { router } from "@/router";
+import { router } from "@/app/router";
 
 export class AppNavigator
 {

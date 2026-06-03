@@ -1,14 +1,14 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import { PAGE_SIZE } from "@/core/constants/systemConstants";
 import { Tax, type TaxDto } from "@/core/data/tax";
 import TaxesApiService from "@/core/networking/taxesApiService";
-import { Services } from "@/services";
-import { PAGE_SIZE } from "@/systemConstants";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Percent } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { CrudPage, DialogContent, DialogTitle, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
 import { TaxesCubit } from "./state/taxesCubit";
 import { TaxesError, TaxesLoaded, TaxesLoading } from "./state/taxesState";
+import { Services } from "@/core/services/services";
 
 const cubit = new TaxesCubit();
 

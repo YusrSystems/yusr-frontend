@@ -1,6 +1,6 @@
 import { AuthService } from "yusr-ui";
-import { Setting, type SettingDto } from "./core/data/setting";
-import TaxesApiService from "./core/networking/taxesApiService";
+import TaxesApiService from "../networking/taxesApiService";
+import { Setting, type SettingDto } from "../data/setting";
 
 export class Services
 {
