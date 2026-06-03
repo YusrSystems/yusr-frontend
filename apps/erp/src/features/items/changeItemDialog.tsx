@@ -1,7 +1,7 @@
 import { Box, Database, DollarSign } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
+import type { CommonChangeDialogPropsOld } from "yusr-ui";
 import { ChangeDialogTabbed, DialogContent, DialogDescription, DialogHeader, DialogTitle, Loading, StorageType, useFormErrors, useFormInit, useStorageFile, useValidate } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemValidationRules } from "../../core/data/item";
 import { PricingMethodSlice } from "../../core/data/pricingMethod";
@@ -23,7 +23,7 @@ export default function ChangeItemDialog({
   mode,
   service,
   onSuccess
-}: CommonChangeDialogProps<Item>)
+}: CommonChangeDialogPropsOld<Item>)
 {
   const { t } = useTranslation(["stocking", "common"]);
   const dispatch = useAppDispatch();

@@ -1,19 +1,20 @@
 import { type Signal, signal } from "@preact/signals-react";
 import type { ValidationRule } from "../validation";
 import type { Dto } from "./dto";
-import { Entity } from "./entity";
+import { Entity, type EntityMode } from "./entity";
 
 export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
 {
+  ignoreWarnings: Signal<boolean> = signal(false);
   readonly errors: Record<keyof TDto, Signal<string | undefined>> = {} as Record<
     keyof TDto,
     Signal<string | undefined>
   >;
   private _validationRules: ValidationRule<Partial<TDto>>[] = [];
 
-  constructor(dto: Partial<TDto>, validationRules: ValidationRule<Partial<TDto>>[])
+  constructor(dto: Partial<TDto>, mode: EntityMode, validationRules: ValidationRule<Partial<TDto>>[])
   {
-    super(dto);
+    super(dto, mode);
     this._validationRules = validationRules;
     this._validationRules.forEach((rule) =>
     {

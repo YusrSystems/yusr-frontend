@@ -1,13 +1,13 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { BranchesSearchableSelect, ChangeDialog, type CommonChangeDialogProps, FormFieldOld, PasswordFieldOld, RolesSearchableSelect, SelectField, TextFieldOld } from "../../components/custom";
+import { BranchesSearchableSelect, ChangeDialogOld, type CommonChangeDialogPropsOld, FormFieldOld, PasswordFieldOld, RolesSearchableSelect, SelectFieldOld, TextFieldOld } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
 import { BranchSlice, RoleSlice, UserOld, UserSlice, UserValidationRules } from "../../entities";
 import { useFormErrors, useFormInit, useValidate } from "../../hooks";
 import { useAppDispatch } from "../../state";
 
-export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<UserOld>)
+export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<UserOld>)
 {
   const { t } = useTranslation(["commonEntities", "common"]);
   const roleState = useSelector((state: any) => state.role);
@@ -34,7 +34,7 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
   const title = mode === "create" ? t("users.addNewTitle") : `${t("common:crudRow.edit")} ${t("users.entityName")}`;
 
   return (
-    <ChangeDialog<UserOld>
+    <ChangeDialogOld<UserOld>
       title={ title }
       className="sm:max-w-xl"
       formData={ formData }
@@ -96,7 +96,7 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
           />
         </FormFieldOld>
 
-        <SelectField
+        <SelectFieldOld
           label={ t("users.userStatus") }
           value={ formData.isActive ? "active" : "inactive" }
           onValueChange={ (val) => dispatch(UserSlice.formActions.updateFormData({ isActive: val === "active" })) }
@@ -104,6 +104,6 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
           options={ [{ label: t("users.active"), value: "active" }, { label: t("users.inactive"), value: "inactive" }] }
         />
       </FieldGroup>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

@@ -1,13 +1,17 @@
 import { Signal, signal } from "@preact/signals-react";
 import type { Dto } from "./dto";
 
+export type EntityMode = "create" | "update";
+
 export abstract class Entity<TDto extends Dto>
 {
   id: Signal<number>;
+  mode: Signal<EntityMode>;
 
-  constructor(dto: Partial<TDto>)
+  protected constructor(dto: Partial<TDto>, mode: EntityMode = "create")
   {
     this.id = signal((dto as Dto).id ?? 0);
+    this.mode = signal(mode);
 
     (Object.keys(dto) as (keyof TDto)[]).forEach((key) =>
     {

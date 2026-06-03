@@ -1,11 +1,11 @@
-import { BaseApiService } from "yusr-ui";
+import { BaseApiService, type EntityMode } from "yusr-ui";
 import { Tax, TaxDto } from "../data/tax";
 
 export default class TaxesApiService extends BaseApiService<Tax, TaxDto>
 {
   routeName: string = "Taxes";
-  createEntity(dto: TaxDto): Tax
+  override createEntity(dto: TaxDto, mode: EntityMode): Tax
   {
-    return new Tax(dto);
+    return new Tax(dto, mode);
   }
 }

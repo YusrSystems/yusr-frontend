@@ -1,7 +1,7 @@
 import { GripVertical, Trash2 } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { cn, type ColumnDef, ColumnVisibilityToggle, i18n, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, Tooltip, TooltipContent, TooltipTrigger, useColumnVisibility } from "yusr-ui";
+import { cn, type ColumnDef, ColumnVisibilityToggle, i18n, NumberFieldOld, SelectFieldOld, SystemPermissions, SystemPermissionsActions, TextAreaField, Tooltip, TooltipContent, TooltipTrigger, useColumnVisibility } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
 import { InvoiceType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
@@ -224,7 +224,7 @@ export default function InvoiceItemsTable()
                       { (disabled || mode === "return")
                         ? <div className="font-semibold text-foreground">{ row.itemUnitPricingMethodName }</div>
                         : (
-                          <SelectField
+                          <SelectFieldOld
                             label=""
                             value={ row.itemUnitPricingMethodId?.toString() || "" }
                             onValueChange={ (val: string) =>
@@ -244,14 +244,14 @@ export default function InvoiceItemsTable()
 
                     { isVisible("cost") && (
                       <td className="px-2 pt-2">
-                        <NumberField disabled label="" value={ row.cost || "0" } />
+                        <NumberFieldOld disabled label="" value={ row.cost || "0" } />
                       </td>
                     ) }
 
                     <td className="px-2 pt-2">
                       <Tooltip open={ focusedQuantityIndex === index && showToolTip }>
                         <TooltipTrigger asChild>
-                          <NumberField
+                          <NumberFieldOld
                             label=""
                             min={ 0 }
                             step={ 0.1 }
@@ -277,7 +277,7 @@ export default function InvoiceItemsTable()
 
                     { isVisible("priceWithoutTax") && (
                       <td className="px-2 pt-2">
-                        <NumberField
+                        <NumberFieldOld
                           label=""
                           disabled
                           value={ row.taxExclusivePrice || "0" }
@@ -289,12 +289,12 @@ export default function InvoiceItemsTable()
 
                     { isVisible("taxPercentage") && (
                       <td className="px-2 pt-2">
-                        <NumberField label="" value={ row.totalTaxesPerc || "0" } disabled />
+                        <NumberFieldOld label="" value={ row.totalTaxesPerc || "0" } disabled />
                       </td>
                     ) }
 
                     <td className="px-2 pt-2">
-                      <NumberField
+                      <NumberFieldOld
                         label=""
                         min={ getMinAllowedTaxInclusivePrice(row.originaltaxInclusivePrice) }
                         value={ row.taxInclusivePrice || "0" }
@@ -308,7 +308,7 @@ export default function InvoiceItemsTable()
 
                     { hasSettlementPerm && isVisible("settlement") && (
                       <td className="px-2 pt-2">
-                        <NumberField
+                        <NumberFieldOld
                           label=""
                           value={ row.settlement || "0" }
                           disabled={ disabled || mode === "return" }
@@ -326,7 +326,7 @@ export default function InvoiceItemsTable()
 
                     { isVisible("finalCost") && (
                       <td className="px-2 pt-2">
-                        <NumberField
+                        <NumberFieldOld
                           label=""
                           value={ InvoiceItemsMath.CalcTotalCost(row.cost, row.quantity) || "0" }
                           disabled
@@ -336,12 +336,12 @@ export default function InvoiceItemsTable()
 
                     { isVisible("finalPriceWithoutTax") && (
                       <td className="px-2 pt-2">
-                        <NumberField label="" value={ row.taxExclusiveTotalPrice || "0" } disabled />
+                        <NumberFieldOld label="" value={ row.taxExclusiveTotalPrice || "0" } disabled />
                       </td>
                     ) }
 
                     <td className="px-2 pt-2">
-                      <NumberField label="" value={ row.taxInclusiveTotalPrice || "0" } disabled />
+                      <NumberFieldOld label="" value={ row.taxInclusiveTotalPrice || "0" } disabled />
                     </td>
 
                     { showProfit && (

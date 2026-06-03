@@ -3,7 +3,7 @@ import StoresSearchableSelect from "@/core/components/searchableSelect/storesSea
 import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Checkbox, DateField, FieldsSection, FormFieldOld, SelectField, TextFieldOld } from "yusr-ui";
+import { Checkbox, DateField, FieldsSection, FormFieldOld, SelectFieldOld, TextFieldOld } from "yusr-ui";
 import Account from "../../../../core/data/account";
 import { ImportExportType, InvoiceType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
@@ -177,7 +177,7 @@ export default function InvoiceBasicInfo()
       }
 
       { canBeExportInvoice() && (
-        <SelectField
+        <SelectFieldOld
           label={ t("invoices.importInvoice") }
           required
           disabled={ mode === "return" }

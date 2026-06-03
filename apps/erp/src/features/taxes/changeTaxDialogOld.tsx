@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, NumberField, SelectField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import type { CommonChangeDialogPropsOld } from "yusr-ui";
+import { ChangeDialogOld, FieldGroup, NumberFieldOld, SelectFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { type TaxOld, TaxSlice, TaxValidationRules } from "../../core/data/tax";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
-export default function ChangeTaxDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<TaxOld>)
+export default function ChangeTaxDialogOld({ entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<TaxOld>)
 {
   const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
@@ -23,7 +23,7 @@ export default function ChangeTaxDialog({ entity, mode, service, onSuccess }: Co
   const title = mode === "create" ? t("taxes.addNewTitle") : `${t("common:crudRow.edit")} ${t("taxes.entityName")}`;
 
   return (
-    <ChangeDialog<TaxOld>
+    <ChangeDialogOld<TaxOld>
       title={ title }
       className="sm:max-w-lg"
       formData={ formData }
@@ -43,7 +43,7 @@ export default function ChangeTaxDialog({ entity, mode, service, onSuccess }: Co
             error={ getError("name") }
           />
 
-          <NumberField
+          <NumberFieldOld
             label={ t("taxes.percentage") }
             required
             min={ 0 }
@@ -55,7 +55,7 @@ export default function ChangeTaxDialog({ entity, mode, service, onSuccess }: Co
           />
         </div>
 
-        <SelectField
+        <SelectFieldOld
           label={ t("taxes.isPrimary") }
           value={ formData.isPrimary ? "yes" : "no" }
           onValueChange={ (val) => dispatch(TaxSlice.formActions.updateFormData({ isPrimary: val === "yes" })) }
@@ -63,6 +63,6 @@ export default function ChangeTaxDialog({ entity, mode, service, onSuccess }: Co
           options={ [{ label: t("common:yes"), value: "yes" }, { label: t("common:no"), value: "no" }] }
         />
       </FieldGroup>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

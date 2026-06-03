@@ -1,15 +1,15 @@
 import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/banksAndBoxesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberField, NumbertoWordsService, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import type { CommonChangeDialogPropsOld } from "yusr-ui";
+import { ChangeDialogOld, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberFieldOld, NumbertoWordsService, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BanksAndBoxesSlice } from "../../core/data/account";
 import type BalanceTransfer from "../../core/data/balanceTransfer";
 import { BalanceTransferSlice, BalanceTransferValidationRules } from "../../core/data/balanceTransfer";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
 export default function ChangeBalanceTransferDialog(
-  { entity, mode, service, onSuccess }: CommonChangeDialogProps<BalanceTransfer>
+  { entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<BalanceTransfer>
 )
 {
   const { t } = useTranslation(["accounting", "common"]);
@@ -57,7 +57,7 @@ export default function ChangeBalanceTransferDialog(
   }, [accountState.entities.data, formData.fromAccountId]);
 
   return (
-    <ChangeDialog<BalanceTransfer>
+    <ChangeDialogOld<BalanceTransfer>
       title={ mode === "create"
         ? t("balanceTransfers.addNewTitle")
         : `${t("common:crudRow.edit")} ${t("balanceTransfers.entityName")}` }
@@ -81,7 +81,7 @@ export default function ChangeBalanceTransferDialog(
               error={ getError("date") }
             />
 
-            <NumberField
+            <NumberFieldOld
               label={ t("balanceTransfers.amount") }
               required
               value={ formData.amount || 0 }
@@ -160,6 +160,6 @@ export default function ChangeBalanceTransferDialog(
           </FieldsSection>
         </FieldGroup>
       </div>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

@@ -1,6 +1,6 @@
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import { useTranslation } from "react-i18next";
-import { CheckboxField, CurrencyIcon, type DialogMode, FieldsSection, FormFieldOld, NumberField, useFormErrors } from "yusr-ui";
+import { CheckboxField, CurrencyIcon, type DialogMode, FieldsSection, FormFieldOld, NumberFieldOld, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemType } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 import PricingMethodsTable from "./pricingMethodsTable";
@@ -53,7 +53,7 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
           />
         </FormFieldOld>
 
-        <NumberField
+        <NumberFieldOld
           label={ t("items.initialCost") }
           required
           disabled={ mode === "update" }
@@ -63,7 +63,7 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
           error={ getError("initialCost") }
           currency={ <CurrencyIcon /> }
         />
-        <NumberField
+        <NumberFieldOld
           label={ t("items.cost") }
           disabled
           value={ formData.cost ?? 0 }
@@ -71,7 +71,7 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
           currency={ <CurrencyIcon /> }
         />
 
-        <NumberField
+        <NumberFieldOld
           label={ t("items.lastBuyPrice") }
           disabled
           value={ formData.lastBuyPrice ?? 0 }

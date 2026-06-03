@@ -1,7 +1,8 @@
 import { NumberInput, type NumberInputProps } from "../inputs/numberInput";
-import { FormFieldOld } from "./formField";
+import { NumberInputOld, type NumberInputPropsOld } from "../inputs/numberInputOld";
+import { FormField, FormFieldOld, type FormFieldProps } from "./formField";
 
-interface NumberFieldProps extends NumberInputProps
+interface NumberFieldPropsOld extends NumberInputPropsOld
 {
   label?: string;
   error?: string;
@@ -9,11 +10,24 @@ interface NumberFieldProps extends NumberInputProps
   currency?: React.ReactNode;
 }
 
-export function NumberField({ label, error, isInvalid, required, ...props }: NumberFieldProps)
+type NumberFieldProps = NumberInputProps & FormFieldProps & {
+  currency?: React.ReactNode;
+};
+
+export function NumberFieldOld({ label, error, isInvalid, required, ...props }: NumberFieldPropsOld)
 {
   return (
     <FormFieldOld label={ label } error={ error } isInvalid={ isInvalid } required={ required }>
-      <NumberInput { ...props } isInvalid={ isInvalid } />
+      <NumberInputOld { ...props } isInvalid={ isInvalid } />
     </FormFieldOld>
+  );
+}
+
+export function NumberField({ label, error, required, ...props }: NumberFieldProps)
+{
+  return (
+    <FormField label={ label } error={ error } required={ required }>
+      <NumberInput { ...props } />
+    </FormField>
   );
 }

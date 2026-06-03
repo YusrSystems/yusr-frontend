@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { BaseEntity } from "../../../entities";
 import { FieldGroup } from "../../pure/field";
 import { TabButton } from "../buttons/tabButton";
-import { ChangeDialog, type ChangeDialogProps } from "./changeDialog";
+import { ChangeDialogOld, type ChangeDialogPropsOld } from "./changeDialogOld";
 
 export type TabProps = {
   active: boolean;
@@ -12,7 +12,7 @@ export type TabProps = {
   content: React.ReactElement;
 };
 export type ChangeDialogTabbedProps<T extends BaseEntity> = {
-  changeDialogProps: ChangeDialogProps<T>;
+  changeDialogProps: ChangeDialogPropsOld<T>;
   tabs: TabProps[];
 };
 export function ChangeDialogTabbed<T extends BaseEntity>({
@@ -23,7 +23,7 @@ export function ChangeDialogTabbed<T extends BaseEntity>({
   const [currentTab, setCurrentTab] = useState(0);
 
   return (
-    <ChangeDialog<T> { ...changeDialogProps }>
+    <ChangeDialogOld<T> { ...changeDialogProps }>
       <div className="flex flex-col h-[80vh]">
         <div className="flex justify-start border-b mb-4 shrink-0 bg-muted/20 rounded-t-lg">
           { tabs.map((tab, i) => (
@@ -43,6 +43,6 @@ export function ChangeDialogTabbed<T extends BaseEntity>({
           <FieldGroup>{ tabs[currentTab].content }</FieldGroup>
         </div>
       </div>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

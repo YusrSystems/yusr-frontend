@@ -1,5 +1,6 @@
 import { type Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
+import type { PropsWithChildren } from "react";
 import { Label } from "../../pure/label";
 
 interface FormFieldPropsOld
@@ -31,15 +32,13 @@ export function FormFieldOld({ label, error, isInvalid, children, required }: Fo
   );
 }
 
-interface FormFieldProps
-{
+export type FormFieldProps = {
   label?: string;
   error?: Signal<string | undefined>;
-  children: React.ReactNode;
   required?: boolean;
-}
+};
 
-export function FormField({ label, error, children, required }: FormFieldProps)
+export function FormField({ label, error, children, required }: FormFieldProps & PropsWithChildren)
 {
   return (
     <div className="flex flex-col gap-1.5 w-full">

@@ -67,6 +67,11 @@ export abstract class PageCubit<TState, TEntity extends Entity<TDto>, TDto exten
     this._filter();
   }
 
+  add(entity: TEntity)
+  {
+    this.entities.value = [entity, ...this.entities.value];
+  }
+
   update(entity: TEntity)
   {
     this.entities.value = this.entities.value.map((e) => e.id.value === entity.id.value ? entity : e);

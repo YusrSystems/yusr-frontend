@@ -2,14 +2,14 @@ import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSel
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, CheckboxField, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberField, NumbertoWordsService, SelectField, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import type { CommonChangeDialogPropsOld } from "yusr-ui";
+import { ChangeDialogOld, CheckboxField, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberFieldOld, NumbertoWordsService, SelectFieldOld, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import PaymentMethod, { CommissionType, PaymentMethodSlice } from "../../core/data/paymentMethod";
 import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
-export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Voucher>)
+export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<Voucher>)
 {
   const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
@@ -105,7 +105,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
   const isReceipt = formData.type === VoucherType.Receipt;
 
   return (
-    <ChangeDialog<Voucher>
+    <ChangeDialogOld<Voucher>
       title={ mode === "create"
         ? t("vouchers.addNewTitle")
         : `${t("common:crudRow.edit")} ${t("vouchers.entityName")}` }
@@ -120,7 +120,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
       <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
         <FieldGroup className="gap-10">
           <FieldsSection title={ t("vouchers.basicInfo") } columns={ 2 }>
-            <SelectField
+            <SelectFieldOld
               label={ t("vouchers.voucherType") }
               required
               value={ formData.type?.toString() || "" }
@@ -179,7 +179,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
           </FieldsSection>
 
           <FieldsSection columns={ 3 }>
-            <NumberField
+            <NumberFieldOld
               label={ t("vouchers.amount") }
               required
               value={ formData.amount || 0 }
@@ -190,7 +190,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
             />
 
             { isReceipt && (
-              <NumberField
+              <NumberFieldOld
                 label={ t("vouchers.commissionAmount") }
                 value={ formData.commissionAmount || 0 }
                 disabled={ true }
@@ -252,6 +252,6 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
           </FieldsSection>
         </FieldGroup>
       </div>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

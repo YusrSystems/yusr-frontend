@@ -1,7 +1,7 @@
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
 import { Plus, Trash2, Wallet } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, CrudEmptyTablePreview, CurrencyIcon, NumberField } from "yusr-ui";
+import { Button, CrudEmptyTablePreview, CurrencyIcon, NumberFieldOld } from "yusr-ui";
 import { InvoiceRelationType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
@@ -104,7 +104,7 @@ export default function invoicePayments()
 
                 { /* Amount — label-free */ }
                 <div className="w-36 shrink-0">
-                  <NumberField
+                  <NumberFieldOld
                     min={ 0 }
                     max={ unpaidPrice + (row.amount ?? 0) }
                     value={ row.amount || "0" }

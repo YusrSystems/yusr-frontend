@@ -1,15 +1,14 @@
 import type { PropsWithChildren, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import type { Dto, ValidatableEntity } from "../../../stateManager";
+import type { BaseEntity } from "../../../entities";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
 import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure/dialog";
 import { Separator } from "../../pure/separator";
-import { SaveButton, type SaveButtonProps } from "../buttons/saveButton";
+import { SaveButtonOld, type SaveButtonPropsOld } from "../buttons/saveButtonOld";
 import { UnauthorizedPage } from "../unauthorized/unauthorizedPage";
 
-export interface ChangeDialogProps<TEntity extends ValidatableEntity<TDto>, TDto extends Dto>
-  extends SaveButtonProps<TEntity, TDto>, PropsWithChildren
+export interface ChangeDialogPropsOld<T extends BaseEntity> extends SaveButtonPropsOld<T>, PropsWithChildren
 {
   title: string;
   description?: string;
@@ -18,16 +17,22 @@ export interface ChangeDialogProps<TEntity extends ValidatableEntity<TDto>, TDto
   authorized?: boolean;
 }
 
-export function ChangeDialog<TEntity extends ValidatableEntity<TDto>, TDto extends Dto>(
+export function ChangeDialogOld<T extends BaseEntity>(
   {
     title,
     description = "",
     className = "sm:max-w-sm",
     actionButtons,
     authorized = true,
-    children,
-    ...props
-  }: ChangeDialogProps<TEntity, TDto>
+    formData,
+    dialogMode,
+    service,
+    disable,
+    onSuccess,
+    validate = () => true,
+    transformData,
+    children
+  }: ChangeDialogPropsOld<T>
 )
 {
   const { t, i18n } = useTranslation("common");
@@ -66,7 +71,15 @@ export function ChangeDialog<TEntity extends ValidatableEntity<TDto>, TDto exten
         <DialogClose asChild>
           <Button variant="outline">{ t("changeDialog.cancel") }</Button>
         </DialogClose>
-        <SaveButton { ...props } />
+        <SaveButtonOld
+          formData={ formData as T }
+          dialogMode={ dialogMode }
+          service={ service }
+          disable={ disable }
+          onSuccess={ onSuccess }
+          validate={ validate }
+          transformData={ transformData }
+        />
       </DialogFooter>
     </DialogContent>
   );

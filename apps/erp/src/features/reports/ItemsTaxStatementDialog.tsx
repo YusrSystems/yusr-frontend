@@ -1,7 +1,7 @@
 import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld, SelectField } from "yusr-ui";
+import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld, SelectFieldOld } from "yusr-ui";
 import Item from "../../core/data/item";
 import { ItemsTaxStatementReportRequest, ItemsTaxStatementReportType } from "../../core/data/report/itemsTaxStatementReportRequest";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -29,7 +29,7 @@ export default function ItemsTaxStatementDialog()
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-2">
-            <SelectField
+            <SelectFieldOld
               label={ t("reports.invoiceType") }
               required
               value={ type.toString() || "" }

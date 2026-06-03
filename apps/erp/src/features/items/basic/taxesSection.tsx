@@ -2,7 +2,7 @@ import TaxesSearchableSelect from "@/core/components/searchableSelect/taxesSearc
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Checkbox, type DialogMode, NumberField, TextFieldOld } from "yusr-ui";
+import { Button, Checkbox, type DialogMode, NumberFieldOld, TextFieldOld } from "yusr-ui";
 import { ItemSlice, ItemTax } from "../../../core/data/item";
 import { type TaxOld } from "../../../core/data/tax";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
@@ -149,7 +149,7 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
                           />
                         </td>
                         <td className="p-3">
-                          <NumberField
+                          <NumberFieldOld
                             label=""
                             value={ tax.taxPercentage || 0 }
                             disabled

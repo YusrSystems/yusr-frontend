@@ -1,8 +1,8 @@
 import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/banksAndBoxesSearchableSelect";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, FormFieldOld, NumberField, SelectField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import type { CommonChangeDialogPropsOld } from "yusr-ui";
+import { ChangeDialogOld, FieldGroup, FormFieldOld, NumberFieldOld, SelectFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BanksAndBoxesSlice } from "../../core/data/account";
 import type PaymentMethod from "../../core/data/paymentMethod";
 import { CommissionType, PaymentMethodSlice, PaymentMethodValidationRules } from "../../core/data/paymentMethod";
@@ -14,7 +14,7 @@ export default function ChangePaymentMethodDialog({
   service,
   filterDataOutside,
   onSuccess
-}: CommonChangeDialogProps<PaymentMethod> & {
+}: CommonChangeDialogPropsOld<PaymentMethod> & {
   filterDataOutside?: boolean;
 })
 {
@@ -57,7 +57,7 @@ export default function ChangePaymentMethodDialog({
     : `${t("common:crudRow.edit")} ${t("paymentMethods.entityName")}`;
 
   return (
-    <ChangeDialog<PaymentMethod>
+    <ChangeDialogOld<PaymentMethod>
       title={ title }
       className="sm:max-w-xl"
       formData={ formData }
@@ -101,7 +101,7 @@ export default function ChangePaymentMethodDialog({
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <SelectField
+          <SelectFieldOld
             label={ t("paymentMethods.commissionType") }
             required
             disabled={ mode === "update" }
@@ -118,7 +118,7 @@ export default function ChangePaymentMethodDialog({
             }] }
           />
 
-          <NumberField
+          <NumberFieldOld
             label={ t("paymentMethods.commissionValue") }
             required
             disabled={ mode === "update" }
@@ -129,6 +129,6 @@ export default function ChangePaymentMethodDialog({
           />
         </div>
       </FieldGroup>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

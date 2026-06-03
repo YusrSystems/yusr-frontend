@@ -1,6 +1,6 @@
 import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { type DialogMode, SelectField, StorageFileField, StorageType, TextAreaField, TextFieldOld, useFormErrors, useStorageFile } from "yusr-ui";
+import { type DialogMode, SelectFieldOld, StorageFileField, StorageType, TextAreaField, TextFieldOld, useFormErrors, useStorageFile } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemUnitPricingMethod } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 import TaxesSection from "./taxesSection";
@@ -45,7 +45,7 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
                 dispatch(ItemSlice.formActions.clearError("name"));
               } }
             />
-            <SelectField
+            <SelectFieldOld
               label={ t("items.itemType") }
               required
               disabled={ mode === "update" }
@@ -85,7 +85,7 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
               value={ formData.class || "" }
               onChange={ (e) => dispatch(ItemSlice.formActions.updateFormData({ class: e.target.value })) }
             />
-            <SelectField
+            <SelectFieldOld
               label={ t("items.status") }
               required
               value={ formData.statusId?.toString() || "1" }

@@ -1,4 +1,4 @@
-import ChangeTaxDialog from "@/features/taxes/changeTaxDialog";
+import ChangeTaxDialogOld from "@/features/taxes/changeTaxDialogOld";
 import { type BasicSearchableSelectParams, ChangableSearchableSelect } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import { TaxOld, TaxSlice } from "../../data/tax";
@@ -23,7 +23,7 @@ export default function TaxesSearchableSelect(
         filter: TaxSlice.entityActions.filter,
         refresh: TaxSlice.entityActions.refresh
       } }
-      changeDialog={ ChangeTaxDialog }
+      changeDialog={ ChangeTaxDialogOld }
       authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
       { ...props }
     />

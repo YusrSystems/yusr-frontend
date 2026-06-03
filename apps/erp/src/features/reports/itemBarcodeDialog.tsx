@@ -1,7 +1,7 @@
 import { ScanBarcode } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, NumberField } from "yusr-ui";
+import { Button, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, NumberFieldOld } from "yusr-ui";
 import type Item from "../../core/data/item";
 import type { ItemUnitPricingMethod } from "../../core/data/item";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -62,7 +62,7 @@ export default function ItemBarcodeButton({ item, iupm }: { item: Item; iupm: It
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-2">
-            <NumberField
+            <NumberFieldOld
               label={ t("reports.barcodeCount") }
               min={ 1 }
               step={ 1 }
@@ -70,7 +70,7 @@ export default function ItemBarcodeButton({ item, iupm }: { item: Item; iupm: It
               onChange={ (num) => num && setBarcodesQtn(num) }
             />
 
-            <NumberField
+            <NumberFieldOld
               label={ t("reports.pagesCount") }
               value={ pages }
               onChange={ (num) =>

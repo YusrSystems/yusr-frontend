@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import type { CommonChangeDialogPropsOld } from "yusr-ui";
+import { ChangeDialogOld, FieldGroup, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import type Store from "../../core/data/store";
 import { StoreSlice, StoreValidationRules } from "../../core/data/store";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -11,7 +11,7 @@ export default function ChangeStoreDialog({
   mode,
   service,
   onSuccess
-}: CommonChangeDialogProps<Store>)
+}: CommonChangeDialogPropsOld<Store>)
 {
   const { t } = useTranslation(["stocking", "common"]);
   const dispatch = useAppDispatch();
@@ -35,7 +35,7 @@ export default function ChangeStoreDialog({
   const title = mode === "create" ? t("stores.addNewTitle") : `${t("common:crudRow.edit")} ${t("stores.entityName")}`;
 
   return (
-    <ChangeDialog<Store>
+    <ChangeDialogOld<Store>
       title={ title }
       className="sm:max-w-md"
       formData={ formData }
@@ -55,6 +55,6 @@ export default function ChangeStoreDialog({
           error={ getError("name") }
         />
       </FieldGroup>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

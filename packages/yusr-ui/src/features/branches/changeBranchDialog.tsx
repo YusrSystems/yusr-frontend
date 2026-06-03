@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { ChangeDialog, CitiesSearchableSelect, type CommonChangeDialogProps, FieldsSection, FormFieldOld, TextFieldOld } from "../../components/custom";
+import { ChangeDialogOld, CitiesSearchableSelect, type CommonChangeDialogPropsOld, FieldsSection, FormFieldOld, TextFieldOld } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
 import { Branch, BranchSlice, BranchValidationRules, CitySlice } from "../../entities";
 import { useFormErrors, useFormInit, useValidate } from "../../hooks";
 import { useAppDispatch, type YusrRootState } from "../../state";
 
-export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Branch>)
+export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<Branch>)
 {
   const { t } = useTranslation(["commonEntities", "common"]);
   const cityState = useSelector((state: YusrRootState) => state.city);
@@ -32,7 +32,7 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
     : `${t("common:crudRow.edit")} ${t("branches.entityName")}`;
 
   return (
-    <ChangeDialog<Branch>
+    <ChangeDialogOld<Branch>
       title={ title }
       formData={ formData }
       dialogMode={ mode }
@@ -93,6 +93,6 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
           />
         </FieldsSection>
       </FieldGroup>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

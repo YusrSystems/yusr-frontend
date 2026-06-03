@@ -1,8 +1,8 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormFieldOld, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import type { CommonChangeDialogPropsOld } from "yusr-ui";
+import { ChangeDialogOld, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormFieldOld, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ItemType } from "../../core/data/item";
 import ItemsSettlement, { ItemsSettlementItem, ItemsSettlementSlice, ItemsSettlementValidationRules } from "../../core/data/itemsSettlement";
 import type { IStocktaking } from "../../core/data/stocktaking";
@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import StocktakingItemsTable from "../stocktakings/stocktakingItemsTable";
 
 export default function ChangeItemsSettlementDialog(
-  { entity, mode, service, onSuccess }: CommonChangeDialogProps<ItemsSettlement>
+  { entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<ItemsSettlement>
 )
 {
   const { t } = useTranslation(["stocking", "common"]);
@@ -133,7 +133,7 @@ export default function ChangeItemsSettlementDialog(
   }
 
   return (
-    <ChangeDialog<ItemsSettlement>
+    <ChangeDialogOld<ItemsSettlement>
       title={ mode === "create"
         ? t("itemsSettlements.addNewTitle")
         : `${t("common:crudRow.edit")} ${t("itemsSettlements.entityName")}` }
@@ -193,6 +193,6 @@ export default function ChangeItemsSettlementDialog(
           ) }
         </FieldGroup>
       </div>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

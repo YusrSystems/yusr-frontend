@@ -2,7 +2,7 @@ import PricingMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, CurrencyIcon, FormFieldOld, NumberField, SystemPermissions, SystemPermissionsActions, TextFieldOld } from "yusr-ui";
+import { Button, CurrencyIcon, FormFieldOld, NumberFieldOld, SystemPermissions, SystemPermissionsActions, TextFieldOld } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../core/auth/systemPermissionsResources";
 import Item, { ItemType } from "../../../core/data/item";
 import { useAppSelector } from "../../../core/state/store";
@@ -111,7 +111,7 @@ export default function PricingMethodsTable()
                     </FormFieldOld>
                   </td>
                   <td className="p-3">
-                    <NumberField
+                    <NumberFieldOld
                       label=""
                       min={ 1 }
                       disabled={ method.unitId === formData.sellUnitId }
@@ -122,7 +122,7 @@ export default function PricingMethodsTable()
                     />
                   </td>
                   <td className="p-3">
-                    <NumberField
+                    <NumberFieldOld
                       label=""
                       min={ 0 }
                       value={ parseFloat((method.price / multiplier).toFixed(2)) ?? 0 }

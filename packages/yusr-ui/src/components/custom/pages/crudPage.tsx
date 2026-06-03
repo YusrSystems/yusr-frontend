@@ -15,7 +15,7 @@ import { CrudTableRowActionsMenu, type CrudTableRowActionsMenuProps } from "../t
 
 const isChangeDialogOpen = signal<boolean>(false);
 const isDeleteDialogOpen = signal<boolean>(false);
-const selectedEntity = signal<any | undefined>(undefined);
+const selectedEntity = signal<Entity<Dto> | undefined>(undefined);
 
 export type CrudPageTableRow<TEntity extends Entity<TDto>, TDto extends Dto> = {
   data: TEntity[];
@@ -24,8 +24,8 @@ export type CrudPageTableRow<TEntity extends Entity<TDto>, TDto extends Dto> = {
   onDoubleClick?: (entity: TEntity) => void;
 };
 
-export type CrudPageChangeDialogProps = {
-  changeDialog: React.ReactNode;
+export type CrudPageChangeDialogProps<TDto extends Dto> = {
+  changeDialog: (dto: TDto | undefined) => React.ReactNode;
 };
 
 export function CrudPage({ children }: PropsWithChildren)
@@ -41,7 +41,16 @@ export function CrudPage({ children }: PropsWithChildren)
 CrudPage.Header = function({ ...props }: Omit<CrudTableHeaderProps, "onAddButtonClicked">)
 {
   useSignals();
-  return <CrudTableHeader onAddButtonClicked={ () => isChangeDialogOpen.value = true } { ...props } />;
+  return (
+    <CrudTableHeader
+      onAddButtonClicked={ () =>
+      {
+        selectedEntity.value = undefined;
+        isChangeDialogOpen.value = true;
+      } }
+      { ...props }
+    />
+  );
 };
 
 CrudPage.Cards = function({ ...props }: CrudTableCardProps)
@@ -91,6 +100,7 @@ CrudPage.TableBody = function<TEntity extends Entity<TDto>, TDto extends Dto>(
                 onDoubleClick={ () =>
                 {
                   selectedEntity.value = entity;
+                  selectedEntity.value.mode.value = "update";
                   isChangeDialogOpen.value = true;
                 } }
                 className="hover:bg-secondary/50 transition-colors cursor-pointer"
@@ -102,6 +112,7 @@ CrudPage.TableBody = function<TEntity extends Entity<TDto>, TDto extends Dto>(
                     onEditClicked={ () =>
                     {
                       selectedEntity.value = entity;
+                      selectedEntity.value.mode.value = "update";
                       isChangeDialogOpen.value = true;
                     } }
                     onDeleteClicked={ () =>
@@ -126,6 +137,7 @@ CrudPage.TableBody = function<TEntity extends Entity<TDto>, TDto extends Dto>(
               onEditClicked={ () =>
               {
                 selectedEntity.value = entity;
+                selectedEntity.value.mode.value = "update";
                 isChangeDialogOpen.value = true;
               } }
               onDeleteClicked={ () =>
@@ -147,7 +159,9 @@ CrudPage.TablePagination = function(props: CrudTablePaginationProps)
   return <CrudTablePagination { ...props } />;
 };
 
-CrudPage.ChangeDialog = function({ changeDialog }: CrudPageChangeDialogProps)
+CrudPage.ChangeDialog = function<TDto extends Dto>(
+  { changeDialog }: CrudPageChangeDialogProps<TDto>
+)
 {
   useSignals();
   return (
@@ -157,7 +171,7 @@ CrudPage.ChangeDialog = function({ changeDialog }: CrudPageChangeDialogProps)
           open={ isChangeDialogOpen.value }
           onOpenChange={ (open) => isChangeDialogOpen.value = open }
         >
-          { changeDialog }
+          { changeDialog(selectedEntity.value?.toJson() as TDto) }
         </Dialog>
       ) }
     </>

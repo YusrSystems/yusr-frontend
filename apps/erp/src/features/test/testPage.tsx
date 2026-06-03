@@ -6,6 +6,7 @@ import { Percent } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { CrudPage, DialogContent, DialogTitle, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
+import ChangeTaxDialog from "./changeTaxDialog";
 import { TaxesCubit } from "./state/taxesCubit";
 import { TaxesError, TaxesLoaded, TaxesLoading } from "./state/taxesState";
 
@@ -40,7 +41,28 @@ export default function TestPage()
       <TestPageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ <TestDialog /> }
+        changeDialog={ (dto) =>
+        {
+          console.log(dto);
+          return (
+            <ChangeTaxDialog
+              entity={ dto ? new Tax(dto, "update") : new Tax(dto ?? { id: 0, name: "", percentage: 0 }, "create") }
+              service={ Services.taxesApi }
+              onSuccess={ (data) =>
+              {
+                console.log(data);
+                if (data.mode.value === "create")
+                {
+                  cubit.add(data);
+                }
+                else if (data.mode.value === "update")
+                {
+                  cubit.update(data);
+                }
+              } }
+            />
+          );
+        } }
       />
 
       <CrudPage.DeleteDialog
@@ -92,13 +114,13 @@ function TestPageTable()
           ] }
           tableRowMapper={ (
             tax
-          ) => [{ rowBody: `#${tax.id}`, rowStyles: "" }, { rowBody: tax.name, rowStyles: "font-semibold" }, {
-            rowBody: `%${tax.percentage}`,
+          ) => [{ rowBody: `#${tax.id.value}`, rowStyles: "" }, { rowBody: tax.name.value, rowStyles: "font-semibold" }, {
+            rowBody: `%${tax.percentage.value}`,
             rowStyles: ""
           }, {
-            rowBody: tax.isPrimary ? t("common:yes") : t("common:no"),
+            rowBody: tax.isPrimary.value ? t("common:yes") : t("common:no"),
             rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              tax.isPrimary ? "bg-blue-300" : "bg-gray-200"
+              tax.isPrimary.value ? "bg-blue-300" : "bg-gray-200"
             } text-slate-800`
           }] }
           hasUpdatePermission={ Services.auth.hasAuth(

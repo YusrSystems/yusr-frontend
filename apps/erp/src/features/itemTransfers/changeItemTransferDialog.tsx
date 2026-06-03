@@ -1,7 +1,7 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChangeDialog, type CommonChangeDialogProps, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormFieldOld, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialogOld, type CommonChangeDialogPropsOld, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormFieldOld, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ItemType } from "../../core/data/item";
 import ItemTransfer, { ItemTransfersItem, ItemTransferSlice, ItemTransferValidationRules } from "../../core/data/itemTransfer";
 import { StoreSlice } from "../../core/data/store";
@@ -17,7 +17,7 @@ export default function ChangeItemTransferDialog({
   mode,
   service,
   onSuccess
-}: CommonChangeDialogProps<ItemTransfer>)
+}: CommonChangeDialogPropsOld<ItemTransfer>)
 {
   const { t } = useTranslation(["stocking", "common"]);
   const dispatch = useAppDispatch();
@@ -153,7 +153,7 @@ export default function ChangeItemTransferDialog({
   }
 
   return (
-    <ChangeDialog<ItemTransfer>
+    <ChangeDialogOld<ItemTransfer>
       title={ mode === "create"
         ? t("itemTransfers.addNewTitle")
         : `${t("common:crudRow.edit")} ${t("itemTransfers.entityName")}` }
@@ -249,6 +249,6 @@ export default function ChangeItemTransferDialog({
           ) }
         </FieldsSection>
       </FieldGroup>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

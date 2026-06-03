@@ -1,8 +1,10 @@
+import type { Signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
 import { cn } from "../../../utils/cn";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../pure/select";
 
-export interface SelectInputProps
+export interface SelectInputPropsOld
 {
   value: string;
   onValueChange: (value: string) => void;
@@ -12,7 +14,7 @@ export interface SelectInputProps
   disabled?: boolean;
 }
 
-export function SelectInput({ value, onValueChange, options, placeholder, isInvalid, disabled }: SelectInputProps)
+export function SelectInputOld({ value, onValueChange, options, placeholder, isInvalid, disabled }: SelectInputPropsOld)
 {
   const { i18n } = useTranslation();
   return (
@@ -22,6 +24,48 @@ export function SelectInput({ value, onValueChange, options, placeholder, isInva
       </SelectTrigger>
       <SelectContent>
         { options.map((opt) => <SelectItem key={ opt.value } value={ opt.value }>{ opt.label }</SelectItem>) }
+      </SelectContent>
+    </Select>
+  );
+}
+
+export interface SelectInputProps<T>
+{
+  value: Signal<T>;
+  onValueChange?: (value: T) => void;
+  options: { label: string; value: T; }[];
+  placeholder?: string;
+  disabled?: boolean;
+}
+
+export function SelectInput<T extends string | number | boolean>(
+  { value, onValueChange, options, placeholder, disabled }: SelectInputProps<T>
+)
+{
+  useSignals();
+  const { i18n } = useTranslation();
+  return (
+    <Select
+      value={ String(value.value) }
+      onValueChange={ (val) =>
+      {
+        const match = options.find((o) => String(o.value) === val);
+        if (match)
+        {
+          value.value = match.value;
+        }
+        onValueChange?.(val as T);
+      } }
+      dir={ i18n.dir() }
+      disabled={ disabled }
+    >
+      <SelectTrigger className="w-full">
+        <SelectValue placeholder={ placeholder } />
+      </SelectTrigger>
+      <SelectContent>
+        { options.map((opt) => (
+          <SelectItem key={ String(opt.value) } value={ String(opt.value) }>{ opt.label }</SelectItem>
+        )) }
       </SelectContent>
     </Select>
   );

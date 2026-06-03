@@ -1,7 +1,7 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, type DialogMode, FormFieldOld, NumberField, TextFieldOld, useFormErrors } from "yusr-ui";
+import { Button, type DialogMode, FormFieldOld, NumberFieldOld, TextFieldOld, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemStore, ItemType } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 
@@ -53,12 +53,12 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
   return (
     <div className="space-y-6 animate-in fade-in">
       <div className="grid grid-cols-3 gap-6">
-        <NumberField
+        <NumberFieldOld
           label={ t("items.minQuantity") }
           value={ formData.minQuantity || "" }
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ minQuantity: val })) }
         />
-        <NumberField
+        <NumberFieldOld
           label={ t("items.maxQuantity") }
           value={ formData.maxQuantity || "" }
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ maxQuantity: val })) }
@@ -68,13 +68,13 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
           value={ formData.location || "" }
           onChange={ (e) => dispatch(ItemSlice.formActions.updateFormData({ location: e.target.value })) }
         />
-        <NumberField
+        <NumberFieldOld
           label={ t("items.totalInitialQuantity") }
           value={ formData.initialQuantity || "0" }
           disabled={ true }
           className="bg-muted font-bold"
         />
-        <NumberField
+        <NumberFieldOld
           label={ t("items.totalCurrentQuantity") }
           value={ formData.quantity || "0" }
           disabled={ true }
@@ -125,7 +125,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                     </FormFieldOld>
                   </td>
                   <td className="p-3">
-                    <NumberField
+                    <NumberFieldOld
                       label=""
                       value={ store.initialQuantity || 0 }
                       disabled={ mode === "update" }
@@ -137,7 +137,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                     />
                   </td>
                   <td className="p-3">
-                    <NumberField
+                    <NumberFieldOld
                       label=""
                       value={ store.quantity || "0" }
                       disabled

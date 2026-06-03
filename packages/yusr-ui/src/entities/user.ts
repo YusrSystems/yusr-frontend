@@ -1,6 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import { i18n } from "../locales";
-import { Dto, ValidatableEntity } from "../stateManager";
+import { Dto, type EntityMode, ValidatableEntity } from "../stateManager";
 import { Validators } from "../validation";
 import type { Branch } from "./branch";
 import type { Role } from "./role";
@@ -26,9 +26,9 @@ export class User extends ValidatableEntity<UserDto>
   declare branch: Signal<Branch>;
   declare role: Signal<Role>;
 
-  constructor(dto: Partial<UserDto>)
+  constructor(dto: Partial<UserDto>, mode: EntityMode)
   {
-    super(dto, [{
+    super(dto, mode, [{
       field: "username",
       selector: (d) => d.username,
       validators: [Validators.required(i18n.t("commonEntities:users.usernameRequired"))]

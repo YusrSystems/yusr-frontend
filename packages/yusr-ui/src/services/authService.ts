@@ -29,7 +29,7 @@ export class AuthService<
       {
         return undefined;
       }
-      this._loggedInUser = new User(storedItem);
+      this._loggedInUser = new User(storedItem, "update");
       return this._loggedInUser;
     }
     return this._loggedInUser;

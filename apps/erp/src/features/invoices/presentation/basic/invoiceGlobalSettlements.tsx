@@ -1,7 +1,7 @@
 // InvoiceGlobalSettlements.tsx
 
 import { useTranslation } from "react-i18next";
-import { FieldsSection, NumberField, TextAreaField } from "yusr-ui";
+import { FieldsSection, NumberFieldOld, TextAreaField } from "yusr-ui";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function InvoiceGlobalSettlements()
@@ -26,7 +26,7 @@ export default function InvoiceGlobalSettlements()
 
       <div className="p-4 flex flex-col gap-3">
         <FieldsSection columns={ 2 }>
-          <NumberField
+          <NumberFieldOld
             label={ t("paymentMethods.fixedAmount") }
             className="mt-1"
             value={ formData.settlementAmount ?? 0 }
@@ -38,7 +38,7 @@ export default function InvoiceGlobalSettlements()
               ) }
             disabled={ disabled || mode === "return" || formData.invoiceItems?.length === 0 }
           />
-          <NumberField
+          <NumberFieldOld
             label={ t("paymentMethods.percentage") }
             min={ -100 }
             max={ 100 }

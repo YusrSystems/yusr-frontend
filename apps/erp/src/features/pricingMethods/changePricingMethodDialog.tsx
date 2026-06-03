@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import type { CommonChangeDialogPropsOld } from "yusr-ui";
+import { ChangeDialogOld, FieldGroup, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import type PricingMethod from "../../core/data/pricingMethod";
 import { PricingMethodSlice, PricingMethodValidationRules } from "../../core/data/pricingMethod";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -11,7 +11,7 @@ export default function ChangePricingMethodDialog({
   mode,
   service,
   onSuccess
-}: CommonChangeDialogProps<PricingMethod>)
+}: CommonChangeDialogPropsOld<PricingMethod>)
 {
   const { t } = useTranslation(["stocking", "common"]);
   const initialValues = useMemo(
@@ -37,7 +37,7 @@ export default function ChangePricingMethodDialog({
     : `${t("common:crudRow.edit")} ${t("pricingMethods.entityName")}`;
 
   return (
-    <ChangeDialog<PricingMethod>
+    <ChangeDialogOld<PricingMethod>
       title={ title }
       className="sm:max-w-md"
       formData={ formData }
@@ -57,6 +57,6 @@ export default function ChangePricingMethodDialog({
           error={ getError("name") }
         />
       </FieldGroup>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

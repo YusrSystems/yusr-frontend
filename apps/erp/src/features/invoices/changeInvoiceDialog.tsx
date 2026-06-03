@@ -2,7 +2,7 @@ import { BanknoteArrowUp, Box, CheckCircle2, FolderKanban, Siren } from "lucide-
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import type { CommonChangeDialogProps, DialogMode, IEntityState } from "yusr-ui";
+import type { CommonChangeDialogPropsOld, DialogMode, IEntityState } from "yusr-ui";
 import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, StorageType, useFormErrors, useFormInit, useStorageFile, useValidate } from "yusr-ui";
 import Account, { type AccountSliceType } from "../../core/data/account";
 import type Invoice from "../../core/data/invoice";
@@ -34,7 +34,7 @@ export default function ChangeInvoiceDialog({
   selectFormState,
   accountSlice,
   accountState
-}: Omit<CommonChangeDialogProps<Invoice>, "mode" | "onSuccess"> & {
+}: Omit<CommonChangeDialogPropsOld<Invoice>, "mode" | "onSuccess"> & {
   mode: InvoiceDialogMode;
   onSuccess?: (data: Invoice, mode: InvoiceDialogMode) => void;
   slice: InvoiceSliceType;

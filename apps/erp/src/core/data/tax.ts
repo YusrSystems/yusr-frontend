@@ -1,6 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, i18n, ValidatableEntity, type ValidationRuleOld, Validators } from "yusr-ui";
+import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, type EntityMode, i18n, ValidatableEntity, type ValidationRuleOld, Validators } from "yusr-ui";
 import TaxesApiServiceOld from "../networking/taxesApiServiceold";
 
 export class TaxOld extends BaseEntity
@@ -61,9 +61,9 @@ export class Tax extends ValidatableEntity<TaxDto>
   declare percentage: Signal<number>;
   declare isPrimary: Signal<boolean>;
 
-  constructor(dto: Partial<TaxDto>)
+  constructor(dto: Partial<TaxDto>, mode: EntityMode)
   {
-    super(dto, [{
+    super(dto, mode, [{
       field: "name",
       selector: (d) => d.name,
       validators: [Validators.required(i18n.t("accounting:taxes.nameRequired"))]

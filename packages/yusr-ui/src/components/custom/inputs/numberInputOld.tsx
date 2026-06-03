@@ -1,37 +1,35 @@
-import { type Signal, signal } from "@preact/signals-react";
-import { useSignals } from "@preact/signals-react/runtime";
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "../../../utils/cn";
-import { Input } from "../../pure/input";
+import { InputOld } from "../../pure/input";
 
-export interface NumberInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value">
+export interface NumberInputPropsOld extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value">
 {
-  value: Signal<number | undefined> | Signal<number>;
-  onChange?: (value: number | undefined) => void;
+  isInvalid?: boolean;
+  value?: string | number;
+  onChange?: (val: number | undefined) => void;
   currency?: React.ReactNode;
 }
 
-export function NumberInput(
-  { value, onChange, min, max, className, currency, ...props }: NumberInputProps
+export function NumberInputOld(
+  { value, onChange, min, max, isInvalid, className, currency, ...props }: NumberInputPropsOld
 )
 {
-  useSignals();
-  const localValue: Signal<string> = useMemo(() => signal(value.value ? value.value.toString() : ""), [value]);
+  const [localValue, setLocalValue] = useState<string | number>(value ?? "");
 
   useEffect(() =>
   {
-    if (typeof value.value === "number" && isNaN(value.value))
+    if (typeof value === "number" && isNaN(value))
     {
-      localValue.value = "";
+      setLocalValue("");
     }
     else
     {
-      localValue.value = value.value ? value.value.toString() : "";
+      setLocalValue(value ?? "");
     }
   }, [value]);
 
   const input = (
-    <Input
+    <InputOld
       { ...props }
       type="text"
       inputMode="decimal"
@@ -40,38 +38,41 @@ export function NumberInput(
       value={ localValue }
       className={ cn(
         className,
-        currency && "pe-8"
+        currency && "pe-8",
+        isInvalid && "border-red-600 ring-red-600 text-red-900"
       ) }
-      onChange={ (value) =>
+      onChange={ (e) =>
       {
+        let rawValue = e.target.value;
+
         // 1. (Optional but recommended) Convert Arabic/Persian numbers to English numbers automatically
-        value = value
+        rawValue = rawValue
           .replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d).toString())
           .replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d).toString());
 
         // 2. Prevent letters and invalid characters from being typed
         // This regex only allows: optional minus sign, numbers, and an optional single decimal point
-        if (!/^-?\d*\.?\d*$/.test(value))
+        if (!/^-?\d*\.?\d*$/.test(rawValue))
         {
           return; // Stop here! Do NOT update localValue.
         }
 
         // 3. Now it is safe to update the UI
-        localValue.value = value;
+        setLocalValue(rawValue);
 
-        if (value === "")
+        if (rawValue === "")
         {
           onChange?.(undefined);
           return;
         }
 
         // Allow intermediate typing states: "-" or "-0" or "3."
-        if (value === "-" || value === "-0" || value.endsWith("."))
+        if (rawValue === "-" || rawValue === "-0" || rawValue.endsWith("."))
         {
           return; // Wait for more input, don't call parent onChange yet
         }
 
-        let val = Number(value);
+        let val = Number(rawValue);
 
         if (isNaN(val))
         {
@@ -81,12 +82,12 @@ export function NumberInput(
         if (min !== undefined && val < Number(min))
         {
           val = Number(min);
-          localValue.value = String(val);
+          setLocalValue(val);
         }
         if (max !== undefined && val > Number(max))
         {
           val = Number(max);
-          localValue.value = String(val);
+          setLocalValue(val);
         }
 
         onChange?.(val);
@@ -94,15 +95,15 @@ export function NumberInput(
       onBlur={ (e) =>
       {
         // Clean up invalid trailing characters if the user clicks away
-        if (localValue.value === "-" || localValue.value === "-0")
+        if (localValue === "-" || localValue === "-0")
         {
-          localValue.value = "";
+          setLocalValue("");
           onChange?.(undefined);
         }
-        else if (typeof localValue.value === "string" && localValue.value.endsWith("."))
+        else if (typeof localValue === "string" && localValue.endsWith("."))
         {
           const cleanVal = Number(localValue);
-          localValue.value = String(isNaN(cleanVal) ? "" : cleanVal.toString());
+          setLocalValue(isNaN(cleanVal) ? "" : cleanVal);
         }
 
         // Trigger any parent onBlur if passed

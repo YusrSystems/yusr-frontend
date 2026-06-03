@@ -1,6 +1,6 @@
 import { AlertCircle, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { cn, type DialogMode, InputFieldOld, SelectField } from "yusr-ui";
+import { cn, type DialogMode, InputFieldOld, SelectFieldOld } from "yusr-ui";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import { ItemTransferActions } from "./logic/itemTransferActions";
 import type { TransferRowItem } from "./logic/itemTransferSlice";
@@ -67,7 +67,7 @@ export default function SelectedItemsTable({ mode }: { mode: DialogMode; })
               </td>
 
               <td className="p-4 text-center align-top">
-                <SelectField
+                <SelectFieldOld
                   label=""
                   value={ row.selectedPricingMethodId?.toString() || "" }
                   onValueChange={ (val) => ItemTransferActions.updatePricingMethod(dispatch, row.id, Number(val)) }

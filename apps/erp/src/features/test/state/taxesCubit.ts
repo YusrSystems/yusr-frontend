@@ -7,7 +7,7 @@ export class TaxesCubit extends PageCubit<TaxesInitialState, Tax, TaxDto>
 {
   constructor()
   {
-    super(new TaxesInitialState(), Services.taxesApi, 1);
+    super(new TaxesInitialState(), Services.taxesApi);
   }
 
   protected loadingState()

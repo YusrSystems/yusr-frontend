@@ -3,8 +3,8 @@ import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppli
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps, IEntityState, IFormState } from "yusr-ui";
-import { Button, ChangeDialog, CitiesSearchableSelect, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormFieldOld, InputOld, NumberField, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import type { CommonChangeDialogPropsOld, IEntityState, IFormState } from "yusr-ui";
+import { Button, ChangeDialogOld, CitiesSearchableSelect, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormFieldOld, InputOld, NumberFieldOld, SelectFieldOld, SystemPermissions, SystemPermissionsActions, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Account, { AccountContact, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/account";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -20,7 +20,7 @@ export default function ChangeAccountDialog({
   filterDataOutside = false,
   selectEntityState,
   selectFormState
-}: CommonChangeDialogProps<Account> & {
+}: CommonChangeDialogPropsOld<Account> & {
   slice: AccountSliceType;
   fixedType?: AccountType;
   selectTypes?: {
@@ -158,7 +158,7 @@ export default function ChangeAccountDialog({
   };
 
   return (
-    <ChangeDialog<Account>
+    <ChangeDialogOld<Account>
       title={ `${
         mode === "create" ? t("accounts.addNewTitle") : `${t("common:crudRow.edit")} ${t("accounts.entityName")}`
       } ${getTypeName()}` }
@@ -179,7 +179,7 @@ export default function ChangeAccountDialog({
         <FieldGroup className="gap-10">
           <FieldsSection title={ t("accounts.basicInfo") } columns={ 2 }>
             { selectTypes.length > 0 && (
-              <SelectField
+              <SelectFieldOld
                 label={ t("accounts.accountType") }
                 required
                 disabled={ mode === "update" }
@@ -235,14 +235,14 @@ export default function ChangeAccountDialog({
               </FormFieldOld>
             ) }
 
-            <NumberField
+            <NumberFieldOld
               label={ t("accounts.openingBalance") }
               value={ canShowBalance ? (formData.initialBalance || "") : "" }
               onChange={ (val) => dispatch(slice.formActions.updateFormData({ initialBalance: val })) }
               currency={ <CurrencyIcon /> }
             />
 
-            <NumberField
+            <NumberFieldOld
               label={ t("accounts.balance") }
               disabled
               value={ canShowBalance ? (formData.balance || "") : "" }
@@ -391,6 +391,6 @@ export default function ChangeAccountDialog({
           </FieldsSection>
         </FieldGroup>
       </div>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

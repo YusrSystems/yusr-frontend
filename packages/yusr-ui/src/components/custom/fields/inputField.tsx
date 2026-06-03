@@ -1,6 +1,5 @@
-import type { Signal } from "@preact/signals-react";
 import { BaseInput, BaseInputOld, type BaseInputProps, type BaseInputPropsOld } from "../inputs/baseInput";
-import { FormField, FormFieldOld } from "./formField";
+import { FormField, FormFieldOld, type FormFieldProps } from "./formField";
 
 export interface InputFieldPropsOld extends BaseInputPropsOld
 {
@@ -9,12 +8,7 @@ export interface InputFieldPropsOld extends BaseInputPropsOld
   required?: boolean;
 }
 
-export interface InputFieldProps extends BaseInputProps
-{
-  label: string;
-  error?: Signal<string | undefined>;
-  required?: boolean;
-}
+export type InputFieldProps = BaseInputProps & FormFieldProps;
 
 export function InputFieldOld({ label, error, isInvalid, required, ...props }: InputFieldPropsOld)
 {

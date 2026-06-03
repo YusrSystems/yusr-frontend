@@ -6,7 +6,7 @@ import type Item from "@/core/data/item";
 import type Store from "@/core/data/store";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld, SelectField } from "yusr-ui";
+import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld, SelectFieldOld } from "yusr-ui";
 import { ItemsMovementReportGroupOption, ItemsMovementReportRequest, ItemsMovementReportTransType } from "../../core/data/report/itemsMovementReportRequest";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
@@ -39,7 +39,7 @@ export default function ItemsMovementDialog()
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-2">
-            <SelectField
+            <SelectFieldOld
               label={ t("reports.movementType") }
               value={ transTypeId?.toString() ?? "" }
               onValueChange={ (val) => setTransTypeId(val ? Number(val) as ItemsMovementReportTransType : undefined) }
@@ -115,7 +115,7 @@ export default function ItemsMovementDialog()
               </FormFieldOld>
             </div>
 
-            <SelectField
+            <SelectFieldOld
               label={ t("reports.groupBy") }
               value={ groupOption?.toString() ?? "" }
               onValueChange={ (val) => setGroupOption(val ? Number(val) as ItemsMovementReportGroupOption : undefined) }

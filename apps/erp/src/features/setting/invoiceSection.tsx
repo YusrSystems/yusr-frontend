@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { FieldGroup, FieldsSection, FormFieldOld, SelectField, SelectInput, TextAreaField, useAppDispatch, useFormErrors } from "yusr-ui";
+import { FieldGroup, FieldsSection, FormFieldOld, SelectFieldOld, SelectInputOld, TextAreaField, useAppDispatch, useFormErrors } from "yusr-ui";
 import TaxesSearchableSelect from "../../core/components/searchableSelect/taxesSearchableSelect";
 import { EInvoicingEnvironmentType, InvoicePrintSize, SettingSlice } from "../../core/data/settingOld";
 import { useAppSelector } from "../../core/state/store";
@@ -24,7 +24,7 @@ export default function InvoiceSection()
             isInvalid={ isInvalid("currencyId") }
             error={ getError("currencyId") }
           >
-            <SelectInput
+            <SelectInputOld
               value={ formData.currencyId?.toString() || "" }
               disabled={ currencyState.isLoading }
               isInvalid={ isInvalid("currencyId") }
@@ -45,7 +45,7 @@ export default function InvoiceSection()
             />
           </div>
 
-          <SelectField
+          <SelectFieldOld
             label={ t("settings.invoicePrintSize") }
             value={ formData.invoicePrintSize?.toString() || InvoicePrintSize.A4.toString() }
             onValueChange={ (val) =>

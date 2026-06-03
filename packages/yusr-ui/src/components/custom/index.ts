@@ -6,7 +6,7 @@ export * from "./background/yusrBackground";
 
 // Buttons
 export * from "./buttons/copyButton";
-export * from "./buttons/saveButton";
+export * from "./buttons/saveButtonOld";
 export * from "./buttons/tabButton";
 
 // Containers
@@ -14,6 +14,7 @@ export * from "./containers/dynamicListContainer";
 export * from "./containers/yusrApp";
 // Dialogs
 export * from "./dialogs/changeDialog";
+export * from "./dialogs/changeDialogOld";
 export * from "./dialogs/changeDialogTabbed";
 export * from "./dialogs/commonChangeDialogProps";
 export * from "./dialogs/deleteDialogOld";
@@ -46,7 +47,7 @@ export * from "./images/zoomableImage";
 export * from "./inputs/baseInput";
 export * from "./inputs/dateInput";
 export * from "./inputs/dateTimeInput";
-export * from "./inputs/numberInput";
+export * from "./inputs/numberInputOld";
 export * from "./inputs/otpInput";
 export * from "./inputs/searchInput";
 export * from "./inputs/selectInput";

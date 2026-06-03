@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import type { CommonChangeDialogPropsOld } from "yusr-ui";
+import { ChangeDialogOld, FieldGroup, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import type Unit from "../../core/data/unit";
 import { UnitSlice, UnitValidationRules } from "../../core/data/unit";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -11,7 +11,7 @@ export default function ChangeUnitDialog({
   mode,
   service,
   onSuccess
-}: CommonChangeDialogProps<Unit>)
+}: CommonChangeDialogPropsOld<Unit>)
 {
   const { t } = useTranslation(["stocking", "common"]);
   const dispatch = useAppDispatch();
@@ -29,7 +29,7 @@ export default function ChangeUnitDialog({
   const title = mode === "create" ? t("units.addNewTitle") : `${t("common:crudRow.edit")} ${t("units.entityName")}`;
 
   return (
-    <ChangeDialog<Unit>
+    <ChangeDialogOld<Unit>
       title={ title }
       className="sm:max-w-md"
       formData={ formData }
@@ -49,6 +49,6 @@ export default function ChangeUnitDialog({
           error={ getError("name") }
         />
       </FieldGroup>
-    </ChangeDialog>
+    </ChangeDialogOld>
   );
 }

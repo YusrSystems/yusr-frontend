@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
-import { categorizePermissions, ChangeDialogTabbed, type CommonChangeDialogProps, PermissionCard, PermissionSkeleton, type TabProps, TextFieldOld } from "../../components/custom";
+import { categorizePermissions, ChangeDialogTabbed, type CommonChangeDialogPropsOld, PermissionCard, PermissionSkeleton, type TabProps, TextFieldOld } from "../../components/custom";
 import { Skeleton } from "../../components/pure";
 import { type Role, RoleSlice, RoleValidationRules } from "../../entities";
 import { useFormErrors, useValidate } from "../../hooks";
@@ -31,7 +31,7 @@ export type ChangeRoleDialogAdditionalProps = {
 
 export function ChangeRoleDialog(
   { entity, mode, service, onSuccess, additionalTabs, initRequests, permissionSecions, labels }:
-    & CommonChangeDialogProps<Role>
+    & CommonChangeDialogPropsOld<Role>
     & ChangeRoleDialogAdditionalProps
 )
 {
