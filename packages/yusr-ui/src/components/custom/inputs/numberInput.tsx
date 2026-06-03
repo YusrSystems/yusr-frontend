@@ -16,7 +16,21 @@ export function NumberInput(
 )
 {
   useSignals();
-  const localValue: Signal<string> = useMemo(() => signal(value.value ? value.value.toString() : ""), [value]);
+  const handleChange = (val: number | undefined) =>
+  {
+    if (val === undefined)
+    {
+      (value as Signal<number>).value = 0;
+      return;
+    }
+    (value as Signal<number | undefined>).value = val;
+    onChange?.(val);
+  };
+
+  const localValue: Signal<string> = useMemo(
+    () => signal(value.value != null ? value.value.toString() : ""),
+    [value]
+  );
 
   useEffect(() =>
   {
@@ -26,9 +40,9 @@ export function NumberInput(
     }
     else
     {
-      localValue.value = value.value ? value.value.toString() : "";
+      localValue.value = value.value != null ? value.value.toString() : "";
     }
-  }, [value]);
+  }, [value.value]);
 
   const input = (
     <Input
@@ -44,31 +58,30 @@ export function NumberInput(
       ) }
       onChange={ (value) =>
       {
-        // 1. (Optional but recommended) Convert Arabic/Persian numbers to English numbers automatically
         value = value
           .replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d).toString())
           .replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d).toString());
 
-        // 2. Prevent letters and invalid characters from being typed
-        // This regex only allows: optional minus sign, numbers, and an optional single decimal point
         if (!/^-?\d*\.?\d*$/.test(value))
         {
-          return; // Stop here! Do NOT update localValue.
+          localValue.value = localValue.value.slice(0, -1);
+          return;
         }
 
-        // 3. Now it is safe to update the UI
+        console.log(value);
+
         localValue.value = value;
 
         if (value === "")
         {
-          onChange?.(undefined);
+          localValue.value = "0";
+          handleChange(undefined);
           return;
         }
 
-        // Allow intermediate typing states: "-" or "-0" or "3."
         if (value === "-" || value === "-0" || value.endsWith("."))
         {
-          return; // Wait for more input, don't call parent onChange yet
+          return; // Wait for more input before notifying the parent.
         }
 
         let val = Number(value);
@@ -89,23 +102,21 @@ export function NumberInput(
           localValue.value = String(val);
         }
 
-        onChange?.(val);
+        handleChange(val);
       } }
       onBlur={ (e) =>
       {
-        // Clean up invalid trailing characters if the user clicks away
         if (localValue.value === "-" || localValue.value === "-0")
         {
           localValue.value = "";
           onChange?.(undefined);
         }
-        else if (typeof localValue.value === "string" && localValue.value.endsWith("."))
+        else if (localValue.value.endsWith("."))
         {
-          const cleanVal = Number(localValue);
-          localValue.value = String(isNaN(cleanVal) ? "" : cleanVal.toString());
+          const cleanVal = Number(localValue.value);
+          localValue.value = isNaN(cleanVal) ? "" : cleanVal.toString();
         }
 
-        // Trigger any parent onBlur if passed
         props.onBlur?.(e);
       } }
     />
