@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { BranchesPage, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
 import AppLayout from "./appLayout";
-import { useAppSelector } from "./core/state/store";
 import BanksAccountsPage from "./features/accounts/banksAccountsPage";
 import BoxesAccountsPage from "./features/accounts/boxesAccountsPage";
 import ClientsAccountsPage from "./features/accounts/clientsAccountsPage";
@@ -30,12 +29,11 @@ import TenantInfoSharingPage from "./features/tenantInfoSharing/tenantInfoSharin
 import TestPage from "./features/test/testPage";
 import UnitsPage from "./features/units/unitsPage";
 import VouchersPage from "./features/vouchers/vouchersPage";
+import { Services } from "./services";
 
 function ProtectedRouteWrapper()
 {
-  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
-
-  return <ProtectedRoute isAuthenticated={ isAuthenticated } />;
+  return <ProtectedRoute isAuthenticated={ Services.auth.isAuthenticated } />;
 }
 
 export const router = createBrowserRouter([

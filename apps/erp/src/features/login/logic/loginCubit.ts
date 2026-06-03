@@ -4,17 +4,14 @@ import type { SettingOld } from "@/core/data/settingOld";
 import { Services } from "@/services";
 import { signal } from "@preact/signals-react";
 import { ApiConstants, Cubit, LoginRequest, User, UserOld, YusrApiHelper } from "yusr-ui";
-import { LoginInitState, LoginLoadingState, type LoginState } from "./loginState";
+import { LoginInitialState, LoginLoadingState } from "./loginState";
+
 const emailStorageItemName = "loginEmail";
 const usernameStorageItemName = "loginUsername";
-export default class LoginCubit extends Cubit<LoginState>
+
+export default class LoginCubit extends Cubit<LoginInitialState>
 {
   private _origin: string;
-  constructor(origin: string)
-  {
-    super(new LoginInitState());
-    this._origin = origin;
-  }
   public formData = new LoginRequest({
     companyEmail: localStorage.getItem(emailStorageItemName) ?? "",
     username: localStorage.getItem(usernameStorageItemName) ?? "",
@@ -23,6 +20,12 @@ export default class LoginCubit extends Cubit<LoginState>
   public rememberMe = signal(
     !!(localStorage.getItem(emailStorageItemName) || localStorage.getItem(usernameStorageItemName))
   );
+
+  constructor(origin: string)
+  {
+    super(new LoginInitialState());
+    this._origin = origin;
+  }
 
   public async login()
   {
@@ -47,7 +50,7 @@ export default class LoginCubit extends Cubit<LoginState>
     }
     else
     {
-      this.emit(new LoginInitState());
+      this.emit(new LoginInitialState());
     }
   }
 

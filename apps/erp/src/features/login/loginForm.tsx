@@ -1,12 +1,11 @@
 import placeholderImg from "@/assets/placeholder.svg";
 import { useSignals } from "@preact/signals-react/runtime";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, i18n, PasswordField, TextField } from "yusr-ui";
 import LoginCubit from "./logic/loginCubit";
-import { LoginErrorState, LoginLoadingState } from "./logic/loginState";
-import LoginFormSkeleton from "./loginFormSkeleton";
+import { LoginLoadingState } from "./logic/loginState";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 {
@@ -23,14 +22,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
     return new LoginCubit(origin);
   }, []);
 
-  if (cubit.state.value instanceof LoginLoadingState)
-  {
-    return <LoginFormSkeleton />;
-  }
-  else if (cubit.state.value instanceof LoginErrorState)
-  {
-    // show error message
-  }
+  const isLoading = cubit.state.value instanceof LoginLoadingState;
   const formData = cubit.formData;
 
   return (
@@ -52,6 +44,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 {
                   formData.clearError("companyEmail");
                 } }
+                disabled={ isLoading }
                 required
               />
 
@@ -66,6 +59,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 {
                   formData.clearError("username");
                 } }
+                disabled={ isLoading }
                 required
               />
 
@@ -79,6 +73,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 {
                   formData.clearError("password");
                 } }
+                disabled={ isLoading }
                 required
               />
 
@@ -87,6 +82,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                   id="rememberMe"
                   checked={ cubit.rememberMe.value }
                   onCheckedChange={ (checked) => cubit.rememberMe.value = checked as boolean }
+                  disabled={ isLoading }
                 />
                 <label
                   htmlFor="rememberMe"
@@ -97,8 +93,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
               </div>
 
               <Field>
-                <Button type="button" onClick={ async () => await cubit.login() }>
-                  { i18n.t("login:button") }
+                <Button type="button" onClick={ async () => await cubit.login() } disabled={ isLoading }>
+                  { isLoading
+                    ? <Loader2 className="h-4 w-4 animate-spin" />
+                    : i18n.t("login:button") }
                 </Button>
               </Field>
               <FieldDescription className="text-center">

@@ -1,9 +1,11 @@
+import { AppNavigator } from "@/appNavigator";
 import logoOnlyDark from "@/assets/yusrLogoOnly_Dark.png";
 import logoOnlyLight from "@/assets/yusrLogoOnly_Light.png";
+import { Services } from "@/services";
 import { Building2, FileChartColumnIncreasing, LayoutDashboardIcon, Package, ReceiptText, ScrollText, SettingsIcon, UsersIcon, WalletCards } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { ApiConstants, Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SideBarUserData, SystemPermissions, SystemPermissionsActions, useSidebar, YusrApiHelper } from "yusr-ui";
+import { ApiConstants, Sidebar, SideBarCompanyData, SidebarContent, SidebarFooter, SidebarHeader, SidebarLogo, SideBarMainMenu, SidebarMenu, SidebarMenuItem, SideBarSecondaryMenu, SideBarUserData, SystemPermissionsActions, useSidebar, YusrApiHelper } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { logout, useAppDispatch, useAppSelector } from "../../core/state/store";
 
@@ -11,7 +13,6 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
 {
   const { t } = useTranslation("erpCommon");
   const authState = useAppSelector((state) => state.auth);
-  const permissions: string[] = authState.loggedInUser?.role?.permissions || [];
 
   const dispatch = useAppDispatch();
 
@@ -30,48 +31,40 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
       title: t("sidebar.invoices"),
       url: "/invoices",
       icon: <ReceiptText />,
-      hasAuth: SystemPermissions.hasAuth(
-        permissions,
+      hasAuth: Services.auth.hasAuth(
         SystemPermissionsResources.InvoiceSell,
         SystemPermissionsActions.Get
-      ) || SystemPermissions.hasAuth(
-        permissions,
+      ) || Services.auth.hasAuth(
         SystemPermissionsResources.InvoicePurchase,
         SystemPermissionsActions.Get
       ),
       subItems: [{
         title: t("sidebar.sellInvoices"),
         url: "/sales",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.InvoiceSell,
           SystemPermissionsActions.Get
-        ) && SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
+        ) && Services.auth.hasAuth(
           SystemPermissionsResources.Invoices,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.purchaseInvoices"),
         url: "/purchases",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.InvoicePurchase,
           SystemPermissionsActions.Get
-        ) && SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
+        ) && Services.auth.hasAuth(
           SystemPermissionsResources.Invoices,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.quotationInvoices"),
         url: "/quotations",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.InvoiceSell,
           SystemPermissionsActions.Get
-        ) && SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
+        ) && Services.auth.hasAuth(
           SystemPermissionsResources.Invoices,
           SystemPermissionsActions.Get
         )
@@ -80,8 +73,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
       title: t("sidebar.vouchers"),
       url: "/vouchers",
       icon: <ScrollText />,
-      hasAuth: SystemPermissions.hasAuth(
-        permissions,
+      hasAuth: Services.auth.hasAuth(
         SystemPermissionsResources.Vouchers,
         SystemPermissionsActions.Get
       )
@@ -93,76 +85,64 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
       subItems: [{
         title: t("sidebar.clients"),
         url: "/clients",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.AccountClient,
           SystemPermissionsActions.Get
-        ) && SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
+        ) && Services.auth.hasAuth(
           SystemPermissionsResources.Accounts,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.suppliers"),
         url: "/suppliers",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.AccountSupplier,
           SystemPermissionsActions.Get
-        ) && SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
+        ) && Services.auth.hasAuth(
           SystemPermissionsResources.Accounts,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.employees"),
         url: "/employees",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.AccountEmployee,
           SystemPermissionsActions.Get
-        ) && SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
+        ) && Services.auth.hasAuth(
           SystemPermissionsResources.Accounts,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.banks"),
         url: "/banks",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.AccountBank,
           SystemPermissionsActions.Get
-        ) && SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
+        ) && Services.auth.hasAuth(
           SystemPermissionsResources.Accounts,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.boxes"),
         url: "/boxes",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.AccountBox,
           SystemPermissionsActions.Get
-        ) && SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
+        ) && Services.auth.hasAuth(
           SystemPermissionsResources.Accounts,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.paymentMethods"),
         url: "/paymentMethods",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.PaymentMethods,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.balanceTransfer"),
         url: "/balanceTransfer",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.BalanceTransfers,
           SystemPermissionsActions.Get
         )
@@ -175,64 +155,56 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
       subItems: [{
         title: t("sidebar.items"),
         url: "/items",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.Items,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.itemTransfers"),
         url: "/itemTransfers",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.ItemTransfers,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.stocktakings"),
         url: "/stocktakings",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.Stocktakings,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.itemsSettlements"),
         url: "/itemsSettlements",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.ItemsSettlements,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.pricingMethods"),
         url: "/pricingMethods",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.PricingMethods,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.units"),
         url: "/units",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.Units,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.stores"),
         url: "/stores",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.Stores,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.taxes"),
         url: "/taxes",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.Taxes,
           SystemPermissionsActions.Get
         )
@@ -241,8 +213,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
       title: t("sidebar.branches"),
       url: "/branches",
       icon: <Building2 />,
-      hasAuth: SystemPermissions.hasAuth(
-        permissions,
+      hasAuth: Services.auth.hasAuth(
         SystemPermissionsResources.Branches,
         SystemPermissionsActions.Get
       )
@@ -254,16 +225,14 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
       subItems: [{
         title: t("sidebar.roles"),
         url: "/roles",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.Roles,
           SystemPermissionsActions.Get
         )
       }, {
         title: t("sidebar.users"),
         url: "/users",
-        hasAuth: SystemPermissions.hasAuth(
-          permissions,
+        hasAuth: Services.auth.hasAuth(
           SystemPermissionsResources.Users,
           SystemPermissionsActions.Get
         )
@@ -272,8 +241,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
       title: t("sidebar.reports"),
       url: "/reports",
       icon: <FileChartColumnIncreasing />,
-      hasAuth: SystemPermissions.hasAuth(
-        permissions,
+      hasAuth: Services.auth.hasAuth(
         SystemPermissionsResources.Stores,
         SystemPermissionsActions.Get
       )
@@ -296,6 +264,8 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>)
 
     if (result.status === 200 || result.status === 204)
     {
+      AppNavigator.navigate("/login", true);
+      Services.auth.logout();
       dispatch(logout());
     }
   };
