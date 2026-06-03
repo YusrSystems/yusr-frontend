@@ -1,0 +1,83 @@
+import { type Signal, signal } from "@preact/signals-react";
+import type { BaseFilterableApiService } from "../networking";
+import { Cubit } from "./cubit";
+import type { Dto } from "./dto";
+import type { Entity } from "./entity";
+
+export abstract class PageCubit<TState, TEntity extends Entity<TDto>, TDto extends Dto> extends Cubit<TState>
+{
+  private _service: BaseFilterableApiService<TEntity, TDto>;
+  public pageSize: Signal<number>;
+  public currentPage: Signal<number>;
+  public searchText: Signal<string | undefined>;
+  entities: Signal<TEntity[]>;
+  count: Signal<number>;
+
+  constructor(initialState: TState, service: BaseFilterableApiService<TEntity, TDto>, pageSize: number = 100)
+  {
+    super(initialState);
+    this._service = service;
+    this.pageSize = signal(pageSize);
+    this.currentPage = signal(1);
+    this.searchText = signal(undefined);
+    this.entities = signal<TEntity[]>([]);
+    this.count = signal(0);
+  }
+
+  protected abstract loadingState(): TState;
+  protected abstract loadedState(): TState;
+  protected abstract emptyState(): TState;
+
+  private async _filter()
+  {
+    this.emit(this.loadingState());
+
+    const result = await this._service.Filter(this.currentPage.value, this.pageSize.value, this.searchText.value);
+
+    if (!result.data?.length)
+    {
+      this.entities.value = [];
+      this.count.value = 0;
+      this.emit(this.emptyState());
+      return;
+    }
+
+    this.entities.value = result.data;
+    this.count.value = result.count ?? 0;
+    this.emit(this.loadedState());
+  }
+
+  init()
+  {
+    this.searchText.value = undefined;
+    this.currentPage.value = 1;
+    this._filter();
+  }
+
+  changePage(pageNumber: number)
+  {
+    this.currentPage.value = pageNumber;
+    this._filter();
+  }
+
+  search(searchText: string | undefined)
+  {
+    this.searchText.value = searchText;
+    this.currentPage.value = 1;
+    this._filter();
+  }
+
+  update(entity: TEntity)
+  {
+    this.entities.value = this.entities.value.map((e) => e.id.value === entity.id.value ? entity : e);
+  }
+
+  delete(entity: TEntity)
+  {
+    this.entities.value = this.entities.value.filter((e) => e.id.value !== entity.id.value);
+    if (this.entities.value.length === 0)
+    {
+      this._filter();
+    }
+  }
+}

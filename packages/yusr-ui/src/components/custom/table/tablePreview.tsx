@@ -10,18 +10,20 @@ export type TablePreviewProps = PropsWithChildren & {
 export function TablePreview({ title, description, children }: TablePreviewProps)
 {
   return (
-    <Empty>
-      <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <Table />
-        </EmptyMedia>
-        <EmptyTitle>{ title }</EmptyTitle>
-        <EmptyDescription>{ description }</EmptyDescription>
-      </EmptyHeader>
-      <EmptyContent>
-        { children }
-      </EmptyContent>
-    </Empty>
+    <div className="rounded-b-xl border shadow-sm overflow-auto ">
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Table />
+          </EmptyMedia>
+          <EmptyTitle>{ title }</EmptyTitle>
+          <EmptyDescription>{ description }</EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          { children }
+        </EmptyContent>
+      </Empty>
+    </div>
   );
 }
 

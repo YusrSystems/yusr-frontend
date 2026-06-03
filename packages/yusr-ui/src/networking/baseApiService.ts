@@ -43,15 +43,9 @@ export abstract class BaseApiService<TEntity extends Entity<TDto>, TDto extends 
       t("api.saveSuccess")
     );
 
-    const addedEntity = rawResult.data ? this.createEntity(rawResult.data) : undefined;
-    if (addedEntity != undefined)
-    {
-      this.Data.value = [addedEntity, ...this.Data.value];
-    }
-
     return {
       ...rawResult,
-      data: addedEntity
+      data: rawResult.data ? this.createEntity(rawResult.data) : undefined
     };
   }
 
@@ -65,15 +59,9 @@ export abstract class BaseApiService<TEntity extends Entity<TDto>, TDto extends 
       t("api.updateSuccess")
     );
 
-    const updatedEntity = rawResult.data ? this.createEntity(rawResult.data) : undefined;
-    if (updatedEntity != undefined)
-    {
-      this.Data.value = this.Data.value.map((x) => x.id === updatedEntity.id ? updatedEntity : x);
-    }
-
     return {
       ...rawResult,
-      data: updatedEntity
+      data: rawResult.data ? this.createEntity(rawResult.data) : undefined
     };
   }
 
@@ -85,11 +73,6 @@ export abstract class BaseApiService<TEntity extends Entity<TDto>, TDto extends 
       undefined,
       t("api.deleteSuccess")
     );
-
-    if (result.data != undefined)
-    {
-      this.Data.value = this.Data.value.filter((x) => x.id.value !== id);
-    }
 
     return result;
   }

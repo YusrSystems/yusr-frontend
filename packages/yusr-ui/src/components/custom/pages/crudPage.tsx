@@ -1,4 +1,4 @@
-import { signal } from "@preact/signals-react";
+import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import type { PropsWithChildren, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,7 @@ import { CrudTableRowActionsMenu, type CrudTableRowActionsMenuProps } from "../t
 
 const isChangeDialogOpen = signal<boolean>(false);
 const isDeleteDialogOpen = signal<boolean>(false);
+const selectedEntity = signal<any | undefined>(undefined);
 
 export type CrudPageTableRow<TEntity extends Entity<TDto>, TDto extends Dto> = {
   data: TEntity[];
@@ -87,15 +88,27 @@ CrudPage.TableBody = function<TEntity extends Entity<TDto>, TDto extends Dto>(
           <ContextMenu dir={ i18n.dir() } key={ i }>
             <ContextMenuTrigger asChild>
               <TableRow
-                onDoubleClick={ () => isChangeDialogOpen.value = true }
+                onDoubleClick={ () =>
+                {
+                  selectedEntity.value = entity;
+                  isChangeDialogOpen.value = true;
+                } }
                 className="hover:bg-secondary/50 transition-colors cursor-pointer"
               >
                 <TableCell>
                   <CrudTableRowActionsMenu
                     { ...props }
                     type="dropdown"
-                    onEditClicked={ () => isChangeDialogOpen.value = true }
-                    onDeleteClicked={ () => isDeleteDialogOpen.value = true }
+                    onEditClicked={ () =>
+                    {
+                      selectedEntity.value = entity;
+                      isChangeDialogOpen.value = true;
+                    } }
+                    onDeleteClicked={ () =>
+                    {
+                      selectedEntity.value = entity;
+                      isDeleteDialogOpen.value = true;
+                    } }
                   />
                 </TableCell>
 
@@ -110,8 +123,16 @@ CrudPage.TableBody = function<TEntity extends Entity<TDto>, TDto extends Dto>(
             <CrudTableRowActionsMenu
               { ...props }
               type="context"
-              onEditClicked={ () => isChangeDialogOpen.value = true }
-              onDeleteClicked={ () => isDeleteDialogOpen.value = true }
+              onEditClicked={ () =>
+              {
+                selectedEntity.value = entity;
+                isChangeDialogOpen.value = true;
+              } }
+              onDeleteClicked={ () =>
+              {
+                selectedEntity.value = entity;
+                isDeleteDialogOpen.value = true;
+              } }
             />
           </ContextMenu>
         )) }
@@ -131,8 +152,11 @@ CrudPage.ChangeDialog = function({ changeDialog }: CrudPageChangeDialogProps)
   useSignals();
   return (
     <>
-      { isChangeDialogOpen.value && ( // ✅ Signal read inside JSX — reactive
-        <Dialog open={ isChangeDialogOpen.value } onOpenChange={ (open) => isChangeDialogOpen.value = open }>
+      { isChangeDialogOpen.value && (
+        <Dialog
+          open={ isChangeDialogOpen.value }
+          onOpenChange={ (open) => isChangeDialogOpen.value = open }
+        >
           { changeDialog }
         </Dialog>
       ) }
@@ -141,11 +165,22 @@ CrudPage.ChangeDialog = function({ changeDialog }: CrudPageChangeDialogProps)
 };
 
 CrudPage.DeleteDialog = function<TEntity extends Entity<TDto>, TDto extends Dto>(
-  { ...props }: DeleteDialogProps<TEntity, TDto>
+  { entityNameSelector, onSuccess, ...props }:
+    & Omit<DeleteDialogProps<TEntity, TDto>, "id" | "entityName" | "onSuccess">
+    & {
+      entityNameSelector: (entity: TEntity) => Signal<string>;
+      onSuccess?: (entity: TEntity) => void;
+    }
 )
 {
   useSignals();
   const { i18n } = useTranslation();
+
+  const entity: TEntity | undefined = selectedEntity.value as TEntity;
+  if (entity?.id === undefined)
+  {
+    return undefined;
+  }
 
   return (
     <Dialog
@@ -153,7 +188,16 @@ CrudPage.DeleteDialog = function<TEntity extends Entity<TDto>, TDto extends Dto>
       onOpenChange={ (open) => isDeleteDialogOpen.value = open }
     >
       <DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
-        <DeleteDialog { ...props } />
+        <DeleteDialog
+          { ...props }
+          id={ entity.id.value }
+          entityName={ entityNameSelector(entity).value }
+          onSuccess={ () =>
+          {
+            onSuccess?.(entity);
+            isDeleteDialogOpen.value = false;
+          } }
+        />
       </DialogContent>
     </Dialog>
   );

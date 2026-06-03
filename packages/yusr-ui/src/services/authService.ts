@@ -53,6 +53,7 @@ export class AuthService<
 
   get isAuthenticated(): boolean
   {
+    this._isAuthenticated = localStorage.getItem(AuthConstants.AuthCheckStorageItemName) === "true";
     return this._isAuthenticated;
   }
 

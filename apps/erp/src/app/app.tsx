@@ -2,7 +2,7 @@ import type { i18n } from "i18next";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { RouterProvider } from "react-router-dom";
-import { BaseApiServiceOld, NumbertoWordsService, ThemeProvider, Toaster, TooltipProvider, Validators, YusrApiHelper } from "yusr-ui";
+import { BaseApiService, BaseApiServiceOld, NumbertoWordsService, ThemeProvider, Toaster, TooltipProvider, Validators, YusrApiHelper } from "yusr-ui";
 import { router } from "./router";
 
 function App()
@@ -14,6 +14,7 @@ function App()
     NumbertoWordsService.init(t, i18n.language);
     YusrApiHelper.init(t, i18n.language);
     BaseApiServiceOld.init(t);
+    BaseApiService.init(t);
     Validators.init(t);
   }, [t, i18n.language]);
 

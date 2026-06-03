@@ -1,26 +1,25 @@
-import { PAGE_SIZE } from "@/core/constants/systemConstants";
-import { Cubit } from "yusr-ui";
-import { TaxesEmpty, TaxesInitialState, TaxesLoaded, TaxesLoading } from "./taxesState";
+import type { Tax, TaxDto } from "@/core/data/tax";
 import { Services } from "@/core/services/services";
+import { PageCubit } from "yusr-ui";
+import { TaxesEmpty, TaxesInitialState, TaxesLoaded, TaxesLoading } from "./taxesState";
 
-export class TaxesCubit extends Cubit<TaxesInitialState>
+export class TaxesCubit extends PageCubit<TaxesInitialState, Tax, TaxDto>
 {
   constructor()
   {
-    super(new TaxesInitialState());
+    super(new TaxesInitialState(), Services.taxesApi, 1);
   }
 
-  async Filter(pageNumber?: number, searchText?: string)
+  protected loadingState()
   {
-    this.emit(new TaxesLoading());
-    const taxesApiService = Services.taxesApi;
-    await taxesApiService.Filter(pageNumber ?? 1, PAGE_SIZE, searchText);
-
-    if (taxesApiService.Data.value.length === 0)
-    {
-      this.emit(new TaxesEmpty());
-      return;
-    }
-    this.emit(new TaxesLoaded(taxesApiService.Data.value, taxesApiService.Count.value));
+    return new TaxesLoading();
+  }
+  protected loadedState()
+  {
+    return new TaxesLoaded();
+  }
+  protected emptyState()
+  {
+    return new TaxesEmpty();
   }
 }
