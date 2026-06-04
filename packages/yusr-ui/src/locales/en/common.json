@@ -211,5 +211,12 @@
     "exactLength": "Text length must be exactly {{length}} characters",
     "numeric": "Field must contain only numbers",
     "arrayMinLength": "Please select at least one item"
+  },
+  "maintenance": {
+    "title": "System Under Maintenance",
+    "description": "We're currently performing maintenance and will be back soon.",
+    "retry": "Try Again",
+    "goHome": "Go Home",
+    "eta": "Estimated completion in ~{{minutes}} min"
   }
 }

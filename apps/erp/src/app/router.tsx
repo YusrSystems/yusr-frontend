@@ -1,6 +1,6 @@
 import { Services } from "@/core/services/services";
 import { createBrowserRouter } from "react-router-dom";
-import { BranchesPage, ErrorFallback, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
+import { BranchesPage, ErrorFallback, MaintenanceFallback, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
 import BanksAccountsPage from "../features/accounts/banksAccountsPage";
 import BoxesAccountsPage from "../features/accounts/boxesAccountsPage";
 import ClientsAccountsPage from "../features/accounts/clientsAccountsPage";
@@ -18,7 +18,7 @@ import LandingPage from "../features/landing/landingPage";
 import LoginPage from "../features/login/loginPage";
 import PaymentMethodsPage from "../features/paymentMethods/paymentMethodsPage";
 import PricingMethodsPage from "../features/pricingMethods/pricingMethodsPage";
-import RegisterPage from "../features/register/presentation/registerPage";
+// import RegisterPage from "../features/register/presentation/registerPage";
 import ReportsPage from "../features/reports/reportsPage";
 import ErpRolesPage from "../features/roles/rolesPage";
 import SettingPage from "../features/setting/settingPage";
@@ -31,24 +31,22 @@ import UnitsPage from "../features/units/unitsPage";
 import VouchersPage from "../features/vouchers/vouchersPage";
 import AppLayout from "./appLayout";
 
-function ProtectedRouteWrapper()
-{
-  return <ProtectedRoute isAuthenticated={ Services.auth.isAuthenticated } />;
+function ProtectedRouteWrapper() {
+  return <ProtectedRoute isAuthenticated={Services.auth.isAuthenticated} />;
 }
-const refreshPage = () =>
-{
+const refreshPage = () => {
   window.location.reload();
 };
 export const router = createBrowserRouter([{
   errorElement: (
     <ErrorFallback
-      reset={ refreshPage }
+      reset={refreshPage}
     />
   ),
   children: [
     { path: "/", element: <LandingPage /> },
     { path: "/login", element: <LoginPage /> },
-    { path: "/register", element: <RegisterPage /> },
+    { path: "/register", element: <MaintenanceFallback /> },
     { path: "/sharing/:registrationKey", element: <TenantInfoSharingPage /> },
     {
       element: <ProtectedRouteWrapper />,

@@ -1,20 +1,20 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { type TFunction } from "i18next";
 import { type ValidationRuleOld, Validators } from "yusr-ui";
-import type Registration from "../../../core/data/registration";
-import RegisterApiService from "../../../core/networking/registerApiService";
+import type RegistrationOld from "../../../core/data/registration";
+import RegisterApiServiceOld from "../../../core/networking/registerApiService";
 
 export interface RegisterState
 {
-  formData: Partial<Registration>;
+  formData: Partial<RegistrationOld>;
   currentStep: number;
   loading: boolean;
   successed: boolean;
-  errors: Partial<Record<keyof Registration, string>>;
+  errors: Partial<Record<keyof RegistrationOld, string>>;
   acceptPolicies?: boolean;
 }
 
-export const getValidationRules = (t: TFunction<"loginRegister">): ValidationRuleOld<Partial<Registration>>[] => [{
+export const getValidationRules = (t: TFunction<"loginRegister">): ValidationRuleOld<Partial<RegistrationOld>>[] => [{
   field: "username",
   selector: (d) => d.username,
   validators: [Validators.required(t("register.accountInfo.username.required"))]
@@ -88,12 +88,12 @@ export const registerSlice = createSlice({
       state.errors = {};
       state.acceptPolicies = false;
     },
-    updateField(state, action: PayloadAction<Partial<Registration>>)
+    updateField(state, action: PayloadAction<Partial<RegistrationOld>>)
     {
       state.formData = { ...state.formData, ...action.payload };
       Object.keys(action.payload).forEach((key) =>
       {
-        const fieldKey = key as keyof Registration;
+        const fieldKey = key as keyof RegistrationOld;
         if (state.errors[fieldKey])
         {
           delete state.errors[fieldKey];
@@ -110,7 +110,7 @@ export const registerSlice = createSlice({
     },
     setErrors(
       state,
-      action: PayloadAction<Partial<Record<keyof Registration, string>>>
+      action: PayloadAction<Partial<Record<keyof RegistrationOld, string>>>
     )
     {
       state.errors = action.payload;
@@ -152,9 +152,9 @@ export const registerSlice = createSlice({
 
 export const registerAsync = createAsyncThunk(
   "register/register",
-  async (data: Registration, { rejectWithValue }) =>
+  async (data: RegistrationOld, { rejectWithValue }) =>
   {
-    const res = await new RegisterApiService().register(data);
+    const res = await new RegisterApiServiceOld().register(data);
     if (res.status !== 200)
     {
       return rejectWithValue(res.status);
