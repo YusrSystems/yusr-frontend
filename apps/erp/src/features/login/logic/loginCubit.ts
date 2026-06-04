@@ -3,7 +3,7 @@ import { Setting } from "@/core/data/setting";
 import type { SettingOld } from "@/core/data/settingOld";
 import { Services } from "@/core/services/services";
 import { signal } from "@preact/signals-react";
-import { ApiConstants, Cubit, LoginRequest, User, UserOld, YusrApiHelper } from "yusr-ui";
+import { ApiConstants, Cubit, LoginRequest, type RequestResult, User, UserOld, YusrApiHelper } from "yusr-ui";
 import { LoginInitialState, LoginLoadingState } from "./loginState";
 
 const emailStorageItemName = "loginEmail";
@@ -27,7 +27,14 @@ export default class LoginCubit extends Cubit<LoginInitialState>
     this._origin = origin;
   }
 
-  public async login()
+  public async login(
+    additionalFunc?: (
+      result: RequestResult<{
+        user: UserOld;
+        setting: SettingOld;
+      }>
+    ) => void
+  )
   {
     if (!this.formData.validate())
     {
@@ -45,6 +52,7 @@ export default class LoginCubit extends Cubit<LoginInitialState>
     if (result.status === 200 && result.data)
     {
       Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
+      additionalFunc?.(result);
       AppNavigator.navigate(this._origin, true);
       return;
     }

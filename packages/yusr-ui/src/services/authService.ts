@@ -68,7 +68,7 @@ export class AuthService<
     localStorage.setItem(AuthConstants.SettingStorageItemName, JSON.stringify(setting.toJson()));
   }
 
-  logout()
+  logout = () =>
   {
     this._isAuthenticated = false;
     this._loggedInUser = undefined;
@@ -77,7 +77,7 @@ export class AuthService<
     localStorage.removeItem(AuthConstants.AuthCheckStorageItemName);
     localStorage.removeItem(AuthConstants.LoggedInUserStorageItemName);
     localStorage.removeItem(AuthConstants.SettingStorageItemName);
-  }
+  };
 
   FormatFunc = (resource: string, action: string) =>
   {
@@ -93,4 +93,11 @@ export class AuthService<
     }
     return this.loggedInUser?.role.value.permissions.includes(formattedPermissions);
   }
+
+  syncFromStorage = () =>
+  {
+    this._isAuthenticated = this.isAuthenticated;
+    this._loggedInUser = this.loggedInUser;
+    this._setting = this.setting;
+  };
 }

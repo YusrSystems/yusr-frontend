@@ -7,7 +7,7 @@ interface AuthActions
   syncFromStorage: () => any;
 }
 
-export const setupAuthListeners = (dispatch: Dispatch<UnknownAction>, actions: AuthActions) =>
+export const setupAuthListenersForRedux = (dispatch: Dispatch<UnknownAction>, actions: AuthActions) =>
 {
   window.addEventListener("storage", (e) =>
   {
@@ -20,5 +20,18 @@ export const setupAuthListeners = (dispatch: Dispatch<UnknownAction>, actions: A
   window.addEventListener(AuthConstants.UnauthorizedEventName, () =>
   {
     dispatch(actions.logout());
+  });
+};
+
+export const setupAuthListeners = (actions: AuthActions) =>
+{
+  window.addEventListener(AuthConstants.AuthCheckStorageItemName, () =>
+  {
+    actions.syncFromStorage();
+  });
+
+  window.addEventListener(AuthConstants.UnauthorizedEventName, () =>
+  {
+    actions.logout();
   });
 };

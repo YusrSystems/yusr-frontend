@@ -1,9 +1,10 @@
 import placeholderImg from "@/assets/placeholder.svg";
+import { login, updateLoggedInUser } from "@/core/state/store";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, i18n, PasswordField, TextField } from "yusr-ui";
+import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, i18n, PasswordField, TextField, useAppDispatch } from "yusr-ui";
 import LoginCubit from "./logic/loginCubit";
 import { LoginLoadingState } from "./logic/loginState";
 
@@ -11,6 +12,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 {
   useSignals();
   const location = useLocation();
+  const dispatch = useAppDispatch();
   const cubit = useMemo(() =>
   {
     let origin = location.state?.from?.pathname || "/dashboard";
@@ -93,7 +95,16 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
               </div>
 
               <Field>
-                <Button type="button" onClick={ async () => await cubit.login() } disabled={ isLoading }>
+                <Button
+                  type="button"
+                  onClick={ async () =>
+                    await cubit.login((result) =>
+                    {
+                      dispatch(login(result.data));
+                      dispatch(updateLoggedInUser(result.data?.user ?? {}));
+                    }) }
+                  disabled={ isLoading }
+                >
                   { isLoading
                     ? <Loader2 className="h-4 w-4 animate-spin" />
                     : i18n.t("login:button") }
