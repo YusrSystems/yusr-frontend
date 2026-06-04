@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { type Branch, City, type Currency, Dto, type EntityMode, i18n, type StorageFile, ValidatableEntity, Validators } from "yusr-ui";
+import { type Branch, City, type Currency, Dto, i18n, type StorageFile, ValidatableEntity, Validators } from "yusr-ui";
 import type { TaxOld } from "./tax";
 
 export const EInvoicingEnvironmentType = {
@@ -89,9 +89,9 @@ export class Setting extends ValidatableEntity<SettingDto>
   declare invoicePrintSize: Signal<InvoicePrintSize>;
   declare eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType>;
 
-  constructor(dto: Partial<SettingDto>, mode: EntityMode)
+  constructor(dto: Partial<SettingDto>)
   {
-    super(dto, mode, [{
+    super(dto, [{
       field: "companyName",
       selector: (d) => d.companyName,
       validators: [Validators.required(i18n.t("erpCommon:settings.companyNameRequired"))]

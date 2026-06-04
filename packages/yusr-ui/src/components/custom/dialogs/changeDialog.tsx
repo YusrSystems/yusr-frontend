@@ -1,6 +1,6 @@
 import type { PropsWithChildren, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import type { Dto, ValidatableEntity } from "../../../stateManager";
+import type { ChangeableEntity, Dto } from "../../../stateManager";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
 import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure/dialog";
@@ -8,7 +8,7 @@ import { Separator } from "../../pure/separator";
 import { SaveButton, type SaveButtonProps } from "../buttons/saveButton";
 import { UnauthorizedPage } from "../unauthorized/unauthorizedPage";
 
-export interface ChangeDialogProps<TEntity extends ValidatableEntity<TDto>, TDto extends Dto>
+export interface ChangeDialogProps<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>
   extends SaveButtonProps<TEntity, TDto>, PropsWithChildren
 {
   title: string;
@@ -18,7 +18,7 @@ export interface ChangeDialogProps<TEntity extends ValidatableEntity<TDto>, TDto
   authorized?: boolean;
 }
 
-export function ChangeDialog<TEntity extends ValidatableEntity<TDto>, TDto extends Dto>(
+export function ChangeDialog<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
   {
     title,
     description = "",

@@ -2,7 +2,7 @@ import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import type { PropsWithChildren, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import type { Dto, Entity } from "../../..//stateManager";
+import type { ChangeableEntity, Dto } from "../../..//stateManager";
 import { ContextMenu, ContextMenuTrigger } from "../../../components/pure";
 import { Dialog, DialogContent } from "../../pure/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../pure/table";
@@ -15,9 +15,9 @@ import { CrudTableRowActionsMenu, type CrudTableRowActionsMenuProps } from "../t
 
 const isChangeDialogOpen = signal<boolean>(false);
 const isDeleteDialogOpen = signal<boolean>(false);
-const selectedEntity = signal<Entity<Dto> | undefined>(undefined);
+const selectedEntity = signal<ChangeableEntity<any> | undefined>(undefined);
 
-export type CrudPageTableRow<TEntity extends Entity<TDto>, TDto extends Dto> = {
+export type CrudPageTableRow<TEntity extends ChangeableEntity<TDto>, TDto extends Dto> = {
   data: TEntity[];
   headerRows: { rowBody: ReactNode; rowStyles: string; }[];
   tableRowMapper: (entity: TEntity) => { rowBody: ReactNode; rowStyles?: string; }[];
@@ -76,7 +76,7 @@ CrudPage.Table = function({ children }: PropsWithChildren)
   );
 };
 
-CrudPage.TableBody = function<TEntity extends Entity<TDto>, TDto extends Dto>(
+CrudPage.TableBody = function<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
   { data, headerRows, tableRowMapper, ...props }:
     & Omit<CrudPageTableRow<TEntity, TDto>, "onDoubleClick">
     & Omit<CrudTableRowActionsMenuProps, "onEditClicked" | "onDeleteClicked">
@@ -178,7 +178,7 @@ CrudPage.ChangeDialog = function<TDto extends Dto>(
   );
 };
 
-CrudPage.DeleteDialog = function<TEntity extends Entity<TDto>, TDto extends Dto>(
+CrudPage.DeleteDialog = function<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
   { entityNameSelector, onSuccess, ...props }:
     & Omit<DeleteDialogProps<TEntity, TDto>, "id" | "entityName" | "onSuccess">
     & {

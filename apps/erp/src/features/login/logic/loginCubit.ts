@@ -16,7 +16,7 @@ export default class LoginCubit extends Cubit<LoginInitialState>
     companyEmail: localStorage.getItem(emailStorageItemName) ?? "",
     username: localStorage.getItem(usernameStorageItemName) ?? "",
     password: ""
-  }, "create");
+  });
   public rememberMe = signal(
     !!(localStorage.getItem(emailStorageItemName) || localStorage.getItem(usernameStorageItemName))
   );
@@ -44,7 +44,7 @@ export default class LoginCubit extends Cubit<LoginInitialState>
 
     if (result.status === 200 && result.data)
     {
-      Services.auth.login(new User(result.data.user, "update"), new Setting(result.data.setting, "update"));
+      Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
       AppNavigator.navigate(this._origin, true);
       return;
     }

@@ -1,6 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import { i18n } from "../locales/i18n";
-import { Dto, type EntityMode, ValidatableEntity } from "../stateManager";
+import { Dto, ValidatableEntity } from "../stateManager";
 import { Validators } from "../validation";
 export class LoginRequestOld
 {
@@ -27,9 +27,9 @@ export class LoginRequest extends ValidatableEntity<LoginRequestDto>
   declare username: Signal<string>;
   declare password: Signal<string>;
 
-  constructor(dto: Partial<LoginRequestDto>, mode: EntityMode)
+  constructor(dto: Partial<LoginRequestDto>)
   {
-    super(dto, mode, [{
+    super(dto, [{
       field: "companyEmail",
       selector: (d) => d.companyEmail,
       validators: [Validators.required(i18n.t("login:email.required"))]

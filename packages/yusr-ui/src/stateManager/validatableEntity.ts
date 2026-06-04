@@ -1,7 +1,7 @@
 import { type Signal, signal } from "@preact/signals-react";
 import type { ValidationRule } from "../validation";
 import type { Dto } from "./dto";
-import { Entity, type EntityMode } from "./entity";
+import { Entity } from "./entity";
 
 export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
 {
@@ -12,9 +12,9 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
   >;
   private _validationRules: ValidationRule<Partial<TDto>>[] = [];
 
-  constructor(dto: Partial<TDto>, mode: EntityMode, validationRules: ValidationRule<Partial<TDto>>[])
+  constructor(dto: Partial<TDto>, validationRules: ValidationRule<Partial<TDto>>[])
   {
-    super(dto, mode);
+    super(dto);
     this._validationRules = validationRules;
     this._validationRules.forEach((rule) =>
     {

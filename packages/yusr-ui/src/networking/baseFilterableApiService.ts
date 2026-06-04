@@ -1,4 +1,4 @@
-import { Dto, Entity, type EntityMode } from "../stateManager";
+import { Dto, Entity } from "../stateManager";
 import type { ApiFilterResult } from "../types";
 import type { FilterResult } from "../types/filterResult";
 import { ApiConstants } from "./apiConstants";
@@ -7,7 +7,7 @@ import { YusrApiHelper } from "./yusrApiHelper";
 export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDto extends Dto>
 {
   abstract routeName: string;
-  abstract createEntity(dto: TDto, mode: EntityMode): TEntity;
+  abstract createEntity(dto: TDto): TEntity;
 
   async Filter(
     pageNumber: number,
@@ -21,7 +21,7 @@ export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDt
     );
 
     return {
-      data: rawResult?.data?.data?.map((dto: TDto) => this.createEntity(dto, "update")) ?? [],
+      data: rawResult?.data?.data?.map((dto: TDto) => this.createEntity(dto)) ?? [],
       count: rawResult?.data?.count ?? 0
     };
   }

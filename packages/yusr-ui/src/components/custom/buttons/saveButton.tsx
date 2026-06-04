@@ -4,12 +4,12 @@ import { Loader2 } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { BaseApiService } from "../../../networking";
-import type { Dto, ValidatableEntity } from "../../../stateManager";
+import type { ChangeableEntity, Dto } from "../../../stateManager";
 import { type RequestResult, ResultStatus } from "../../../types";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure";
 import { Button } from "../../pure/button";
 
-export interface SaveButtonProps<TEntity extends ValidatableEntity<TDto>, TDto extends Dto>
+export interface SaveButtonProps<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>
 {
   entity: TEntity;
   service: BaseApiService<TEntity, TDto>;
@@ -21,7 +21,7 @@ export interface SaveButtonProps<TEntity extends ValidatableEntity<TDto>, TDto e
   transformData?: (data: TEntity) => TEntity | Promise<TEntity>;
 }
 
-export function SaveButton<TEntity extends ValidatableEntity<TDto>, TDto extends Dto>(
+export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
   {
     entity,
     service,
@@ -58,6 +58,11 @@ export function SaveButton<TEntity extends ValidatableEntity<TDto>, TDto extends
     result = payload.mode.value === "create"
       ? await service.Add(payload)
       : await service.Update(payload);
+
+    if (result?.data)
+    {
+      result.data.mode.value = payload.mode.value;
+    }
 
     loading.value = false;
 

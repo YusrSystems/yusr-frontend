@@ -46,7 +46,9 @@ export default function TestPage()
           console.log(dto);
           return (
             <ChangeTaxDialog
-              entity={ dto ? new Tax(dto, "update") : new Tax(dto ?? { id: 0, name: "", percentage: 0 }, "create") }
+              entity={ dto
+                ? new Tax(dto, "update")
+                : new Tax({ id: 0, name: "", percentage: 0, isPrimary: false }, "create") }
               service={ Services.taxesApi }
               onSuccess={ (data) =>
               {
@@ -114,15 +116,20 @@ function TestPageTable()
           ] }
           tableRowMapper={ (
             tax
-          ) => [{ rowBody: `#${tax.id.value}`, rowStyles: "" }, { rowBody: tax.name.value, rowStyles: "font-semibold" }, {
-            rowBody: `%${tax.percentage.value}`,
-            rowStyles: ""
-          }, {
-            rowBody: tax.isPrimary.value ? t("common:yes") : t("common:no"),
-            rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              tax.isPrimary.value ? "bg-blue-300" : "bg-gray-200"
-            } text-slate-800`
-          }] }
+          ) => [
+            { rowBody: `#${tax.id.value}`, rowStyles: "" },
+            { rowBody: tax.name.value, rowStyles: "font-semibold" },
+            {
+              rowBody: `%${tax.percentage.value}`,
+              rowStyles: ""
+            },
+            {
+              rowBody: tax.isPrimary.value ? t("common:yes") : t("common:no"),
+              rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                tax.isPrimary.value ? "bg-blue-300" : "bg-gray-200"
+              } text-slate-800`
+            }
+          ] }
           hasUpdatePermission={ Services.auth.hasAuth(
             SystemPermissionsResources.Taxes,
             SystemPermissionsActions.Update

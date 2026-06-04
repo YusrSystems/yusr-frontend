@@ -1,6 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, type EntityMode, i18n, ValidatableEntity, type ValidationRuleOld, Validators } from "yusr-ui";
+import { BaseEntity, ChangeableEntity, type ChangeableEntityMode, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, Dto, i18n, type ValidationRule, type ValidationRuleOld, Validators } from "yusr-ui";
 import TaxesApiServiceOld from "../networking/taxesApiServiceold";
 
 export class TaxOld extends BaseEntity
@@ -55,15 +55,15 @@ export class TaxDto extends Dto
   public isPrimary!: boolean;
 }
 
-export class Tax extends ValidatableEntity<TaxDto>
+export class Tax extends ChangeableEntity<TaxDto>
 {
   declare name: Signal<string>;
   declare percentage: Signal<number>;
   declare isPrimary: Signal<boolean>;
 
-  constructor(dto: Partial<TaxDto>, mode: EntityMode)
+  constructor(dto: Partial<TaxDto>, mode: ChangeableEntityMode = "create")
   {
-    super(dto, mode, [{
+    const rules: ValidationRule<Partial<TaxDto>>[] = [{
       field: "name",
       selector: (d) => d.name,
       validators: [Validators.required(i18n.t("accounting:taxes.nameRequired"))]
@@ -75,6 +75,8 @@ export class Tax extends ValidatableEntity<TaxDto>
         Validators.min(0, i18n.t("accounting:taxes.percentageMin")),
         Validators.max(100, i18n.t("accounting:taxes.percentageMax"))
       ]
-    }]);
+    }];
+
+    super(dto, rules, mode);
   }
 }

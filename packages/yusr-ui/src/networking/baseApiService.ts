@@ -29,7 +29,7 @@ export abstract class BaseApiService<TEntity extends Entity<TDto>, TDto extends 
     const rawResult = await YusrApiHelper.Get<TDto>(`${ApiConstants.baseUrl}/${this.routeName}/${id}`);
     return {
       ...rawResult,
-      data: rawResult.data ? this.createEntity(rawResult.data, "update") : undefined
+      data: rawResult.data ? this.createEntity(rawResult.data) : undefined
     };
   }
 
@@ -45,7 +45,7 @@ export abstract class BaseApiService<TEntity extends Entity<TDto>, TDto extends 
 
     return {
       ...rawResult,
-      data: rawResult.data ? this.createEntity(rawResult.data, "create") : undefined
+      data: rawResult.data ? this.createEntity(rawResult.data) : undefined
     };
   }
 
@@ -61,7 +61,7 @@ export abstract class BaseApiService<TEntity extends Entity<TDto>, TDto extends 
 
     return {
       ...rawResult,
-      data: rawResult.data ? this.createEntity(rawResult.data, "update") : undefined
+      data: rawResult.data ? this.createEntity(rawResult.data) : undefined
     };
   }
 

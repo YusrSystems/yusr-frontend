@@ -3,3 +3,4 @@ export * from "./pageCubit";
 export * from "./dto";
 export * from "./entity";
 export * from "./validatableEntity";
+export * from "./changableEntity";
