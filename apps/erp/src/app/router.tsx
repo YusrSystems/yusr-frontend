@@ -1,6 +1,6 @@
 import { Services } from "@/core/services/services";
 import { createBrowserRouter } from "react-router-dom";
-import { BranchesPage, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
+import { BranchesPage, ErrorFallback, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
 import BanksAccountsPage from "../features/accounts/banksAccountsPage";
 import BoxesAccountsPage from "../features/accounts/boxesAccountsPage";
 import ClientsAccountsPage from "../features/accounts/clientsAccountsPage";
@@ -35,48 +35,58 @@ function ProtectedRouteWrapper()
 {
   return <ProtectedRoute isAuthenticated={ Services.auth.isAuthenticated } />;
 }
-
-export const router = createBrowserRouter([
-  { path: "/", element: <LandingPage /> },
-  { path: "/login", element: <LoginPage /> },
-  { path: "/register", element: <RegisterPage /> },
-  { path: "/sharing/:registrationKey", element: <TenantInfoSharingPage /> },
-  {
-    element: <ProtectedRouteWrapper />,
-    children: [{
-      element: <AppLayout />,
-      children: [
-        { path: "/test", element: <TestPage /> },
-        { path: "/dashboard", element: <DashboardPage /> },
-        { path: "/users", element: <UsersPage /> },
-        { path: "/settings", element: <SettingPage /> },
-        { path: "/taxes", element: <TaxesPage /> },
-        { path: "/branches", element: <BranchesPage /> },
-        { path: "/roles", element: <ErpRolesPage /> },
-        { path: "/stores", element: <StoresPage /> },
-        { path: "/units", element: <UnitsPage /> },
-        { path: "/clients", element: <ClientsAccountsPage /> },
-        { path: "/suppliers", element: <SuppliersAccountsPage /> },
-        { path: "/employees", element: <EmployeesAccountsPage /> },
-        { path: "/banks", element: <BanksAccountsPage /> },
-        { path: "/boxes", element: <BoxesAccountsPage /> },
-        { path: "/paymentMethods", element: <PaymentMethodsPage /> },
-        { path: "/balanceTransfer", element: <BalanceTransfersPage /> },
-        { path: "/sales", element: <SellInvoicesPage /> },
-        { path: "/sales/:id", element: <SellInvoicesPage /> },
-        { path: "/purchases", element: <PurchaseInvoicesPage /> },
-        { path: "/purchases/:id", element: <PurchaseInvoicesPage /> },
-        { path: "/quotations", element: <QuotationInvoicesPage /> },
-        { path: "/quotations/:id", element: <QuotationInvoicesPage /> },
-        { path: "/vouchers", element: <VouchersPage /> },
-        { path: "/items", element: <ItemsPage /> },
-        { path: "/pricingMethods", element: <PricingMethodsPage /> },
-        { path: "/itemTransfers", element: <ItemTransfersPage /> },
-        { path: "/stocktakings", element: <StocktakingsPage /> },
-        { path: "/itemsSettlements", element: <ItemsSettlementsPage /> },
-        { path: "/reports", element: <ReportsPage /> }
-      ]
-    }]
-  },
-  { path: "*", element: <NotFoundPage /> }
-]);
+const refreshPage = () =>
+{
+  window.location.reload();
+};
+export const router = createBrowserRouter([{
+  errorElement: (
+    <ErrorFallback
+      reset={ refreshPage }
+    />
+  ),
+  children: [
+    { path: "/", element: <LandingPage /> },
+    { path: "/login", element: <LoginPage /> },
+    { path: "/register", element: <RegisterPage /> },
+    { path: "/sharing/:registrationKey", element: <TenantInfoSharingPage /> },
+    {
+      element: <ProtectedRouteWrapper />,
+      children: [{
+        element: <AppLayout />,
+        children: [
+          { path: "/test", element: <TestPage /> },
+          { path: "/dashboard", element: <DashboardPage /> },
+          { path: "/users", element: <UsersPage /> },
+          { path: "/settings", element: <SettingPage /> },
+          { path: "/taxes", element: <TaxesPage /> },
+          { path: "/branches", element: <BranchesPage /> },
+          { path: "/roles", element: <ErpRolesPage /> },
+          { path: "/stores", element: <StoresPage /> },
+          { path: "/units", element: <UnitsPage /> },
+          { path: "/clients", element: <ClientsAccountsPage /> },
+          { path: "/suppliers", element: <SuppliersAccountsPage /> },
+          { path: "/employees", element: <EmployeesAccountsPage /> },
+          { path: "/banks", element: <BanksAccountsPage /> },
+          { path: "/boxes", element: <BoxesAccountsPage /> },
+          { path: "/paymentMethods", element: <PaymentMethodsPage /> },
+          { path: "/balanceTransfer", element: <BalanceTransfersPage /> },
+          { path: "/sales", element: <SellInvoicesPage /> },
+          { path: "/sales/:id", element: <SellInvoicesPage /> },
+          { path: "/purchases", element: <PurchaseInvoicesPage /> },
+          { path: "/purchases/:id", element: <PurchaseInvoicesPage /> },
+          { path: "/quotations", element: <QuotationInvoicesPage /> },
+          { path: "/quotations/:id", element: <QuotationInvoicesPage /> },
+          { path: "/vouchers", element: <VouchersPage /> },
+          { path: "/items", element: <ItemsPage /> },
+          { path: "/pricingMethods", element: <PricingMethodsPage /> },
+          { path: "/itemTransfers", element: <ItemTransfersPage /> },
+          { path: "/stocktakings", element: <StocktakingsPage /> },
+          { path: "/itemsSettlements", element: <ItemsSettlementsPage /> },
+          { path: "/reports", element: <ReportsPage /> }
+        ]
+      }]
+    },
+    { path: "*", element: <NotFoundPage /> }
+  ]
+}]);
