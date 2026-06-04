@@ -1,6 +1,6 @@
 import { BaseEntity } from "yusr-ui";
 
-export default class Registration extends BaseEntity
+export default class RegistrationOld extends BaseEntity
 {
   public email!: string;
   public password!: string;
@@ -20,7 +20,7 @@ export default class Registration extends BaseEntity
   public buildingNumber?: string;
   public postalCode?: string;
 
-  constructor(init?: Partial<Registration>)
+  constructor(init?: Partial<RegistrationOld>)
   {
     super();
     Object.assign(this, init);

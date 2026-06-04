@@ -32,8 +32,10 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
       for (const validator of rule.validators)
       {
         const error = validator(value, target);
+
         if (error)
         {
+          console.log(error);
           this.errors[rule.field].value = error;
           break;
         }

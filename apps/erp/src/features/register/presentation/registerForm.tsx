@@ -1,15 +1,15 @@
 import placeholderImg from "@/assets/placeholder.svg";
+import { signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRight, Loader2 } from "lucide-react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Button, Card, CardContent, cn, Field, FieldDescription, FieldGroup } from "yusr-ui";
-import { useAppSelector } from "../../../core/state/store";
-import AccountInfo from "./feildsInfo/accountInfo";
-import AddressInfo from "./feildsInfo/addressInfo";
-import CompanyInfo from "./feildsInfo/companyInfo";
+import { Button, Card, CardContent, cn, Field, FieldDescription, FieldGroup, i18n, PasswordField, TextField } from "yusr-ui";
+import { RegistrationCubit } from "../logic/registrationCubit";
+import { RegistrationStateLoading } from "../logic/registrationState";
 
-export interface RegisterFormProps
-{
+export interface RegisterFormProps {
   className?: string;
   onNextStep: () => void;
   onPrevStep: () => void;
@@ -24,15 +24,16 @@ export function RegisterForm({
   onSubmit,
   onLoginClick,
   ...props
-}: RegisterFormProps)
-{
+}: RegisterFormProps) {
+  useSignals();
   const { t } = useTranslation("loginRegister");
-  const { loading, currentStep, acceptPolicies } = useAppSelector((state) => state.register);
-  const steps = t("register.steps", { returnObjects: true }) as string[];
-  const isLastStep = currentStep === steps.length - 1;
 
+
+  const cubit = useMemo(() => new RegistrationCubit(), []);
+
+  const isLoading = cubit.state instanceof RegistrationStateLoading;
   return (
-    <div className={ cn("flex flex-col gap-6", className) } { ...props }>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form className="p-6 md:p-8">
@@ -44,87 +45,160 @@ export function RegisterForm({
                     className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <ArrowRight className="h-4 w-4 ltr:rotate-180 rtl:rotate-0" />
-                    { t("login.backToHome") }
+                    {t("login.backToHome")}
                   </Link>
                 </div>
 
-                <h1 className="text-2xl font-bold">{ t("register.title") }</h1>
-                <p className="text-muted-foreground text-balance">{ t("register.subtitle") }</p>
+                <h1 className="text-2xl font-bold">{t("register.title")}</h1>
+                <p className="text-muted-foreground text-balance">{t("register.subtitle")}</p>
               </div>
 
-              <div className="flex items-center justify-between gap-2">
-                { steps.map((step, index) => (
-                  <div key={ index } className="flex flex-1 flex-col items-center gap-1">
-                    <div
-                      className={ cn(
-                        "flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-medium transition-colors",
-                        index < currentStep && "border-primary bg-primary text-primary-foreground",
-                        index === currentStep && "border-primary text-primary",
-                        index > currentStep && "border-muted-foreground/30 text-muted-foreground/30"
-                      ) }
-                    >
-                      { index + 1 }
-                    </div>
-                    <span
-                      className={ cn(
-                        "hidden text-xs md:block",
-                        index === currentStep ? "text-foreground font-medium" : "text-muted-foreground"
-                      ) }
-                    >
-                      { step }
-                    </span>
-                  </div>
-                )) }
-              </div>
 
-              { currentStep === 0 && <CompanyInfo /> }
-              { currentStep === 1 && <AddressInfo /> }
-              { currentStep === 2 && <AccountInfo /> }
+              <RegisterInfo cubit={cubit} />
+              <AcceptTerms />
+              <SubmitButton isLoading={isLoading} onSubmit={async () => await cubit.register()} />
 
-              <div className={ cn("flex gap-2", currentStep > 0 ? "justify-between" : "justify-end") }>
-                { currentStep > 0 && (
-                  <Field className="flex-1">
-                    <Button type="button" variant="outline" onClick={ onPrevStep } disabled={ loading }>
-                      { t("register.buttons.previous") }
-                    </Button>
-                  </Field>
-                ) }
-                <Field className="flex-1">
-                  <Button
-                    type="button"
-                    disabled={ loading || (isLastStep && !acceptPolicies) }
-                    onClick={ isLastStep ? onSubmit : onNextStep }
-                  >
-                    { loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
-                    { isLastStep ? t("register.buttons.create") : t("register.buttons.next") }
-                  </Button>
-                </Field>
-              </div>
 
               <FieldDescription className="text-center">
-                { t("register.alreadyHaveAccount") }{" "}
+                {t("register.alreadyHaveAccount")}{" "}
                 <a
                   href="#"
-                  onClick={ (e) =>
-                  {
+                  onClick={(e) => {
                     e.preventDefault();
                     onLoginClick();
-                  } }
+                  }}
                 >
-                  { t("register.buttons.login") }
+                  {t("register.buttons.login")}
                 </a>
               </FieldDescription>
             </FieldGroup>
           </form>
           <div className="bg-muted relative hidden md:block">
             <img
-              src={ placeholderImg }
+              src={placeholderImg}
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+
+
+
+function RegisterInfo({ cubit }: { cubit: RegistrationCubit }) {
+  useSignals();
+  return <>
+
+
+    <TextField
+      label={i18n.t("loginRegister:register.companyInfo.companyName.label")}
+      type="text"
+      placeholder={i18n.t("loginRegister:register.companyInfo.companyName.placeholder")}
+      value={cubit.formData.companyName}
+      error={cubit.formData.getError("companyName")}
+      onChange={() => {
+        cubit.formData.clearError("companyName");
+      }}
+      required
+    />
+
+    <TextField
+      label={i18n.t("loginRegister:register.companyInfo.email.label")}
+      type="text"
+      placeholder={i18n.t("loginRegister:register.companyInfo.email.placeholder")}
+      value={cubit.formData.email}
+      error={cubit.formData.getError("email")}
+      onChange={() => {
+        cubit.formData.clearError("email");
+      }}
+      required
+    />
+    <TextField
+      label={i18n.t("loginRegister:register.companyInfo.branchName.label")}
+      type="text"
+      placeholder={i18n.t("loginRegister:register.companyInfo.branchName.placeholder")}
+      value={cubit.formData.branchName}
+      error={cubit.formData.getError("branchName")}
+      onChange={() => {
+        cubit.formData.clearError("branchName");
+      }}
+      required
+    />
+
+    <TextField
+      label={i18n.t("loginRegister:register.accountInfo.username.label")}
+      type="text"
+      placeholder={i18n.t("loginRegister:register.accountInfo.username.placeholder")}
+      value={cubit.formData.username}
+      error={cubit.formData.getError("username")}
+      onChange={() => {
+        cubit.formData.clearError("username");
+      }}
+      required
+    />
+
+    <PasswordField
+      label={i18n.t("login:password.label")}
+      id="password"
+      placeholder={i18n.t("login:password.placeholder")}
+      value={cubit.formData.userPassword}
+      error={cubit.formData.getError("userPassword")}
+      onChange={() => {
+        cubit.formData.clearError("userPassword");
+      }}
+      // disabled={ isLoading }
+      required
+    />
+
+
+
+  </>
+}
+
+function AcceptTerms() {
+  useSignals();
+  const acceptPolicies = useMemo(() => signal(false), []);
+  return <div className="flex items-start space-x-2 rtl:space-x-reverse">
+    <input
+      type="checkbox"
+      id="acceptPolicies"
+      checked={acceptPolicies.value}
+      onChange={() => acceptPolicies.value = !acceptPolicies.value}
+      className="mt-1 me-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+    />
+    <label htmlFor="acceptPolicies" className="text-sm text-muted-foreground">
+      {i18n.t("loginRegister:register.accountInfo.acceptPolicies")}{" "}
+      <a
+        rel="noopener noreferrer"
+        href="https://github.com/YusrSystems/Legal-Documents"
+        target="_blank"
+        className="text-primary hover:underline"
+      >
+        {i18n.t("loginRegister:register.accountInfo.termsAndPrivacy")}
+      </a>
+    </label>
+  </div>
+}
+
+function SubmitButton({ isLoading, onSubmit }: { isLoading: boolean, onSubmit: () => Promise<void> }) {
+  useSignals();
+
+  return (
+    <div className={"flex gap-2 justify-between"}>
+      <Field className="flex-1">
+        <Button
+          type="button"
+          disabled={isLoading}
+          onClick={onSubmit}
+        >
+          {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+          {i18n.t("loginRegister:register.buttons.create")}
+        </Button>
+      </Field>
     </div>
   );
 }
