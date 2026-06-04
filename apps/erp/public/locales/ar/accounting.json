@@ -10,7 +10,7 @@
     "isPrimary": "ضريبة أساسية",
     "nameRequired": "يرجى إدخال اسم الضريبة",
     "percentageRequired": "يرجى إدخال نسبة الضريبة",
-    "percentageMin": "الحد الادنى هو 0%",
+    "percentageMin": "الحد الادنى هو 1%",
     "percentageMax": "الحد الاقصى هو 100%"
   },
   "accounts": {

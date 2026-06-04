@@ -10,7 +10,7 @@
     "isPrimary": "प्राथमिक कर",
     "nameRequired": "कृपया कर का नाम दर्ज करें",
     "percentageRequired": "कृपया कर का प्रतिशत दर्ज करें",
-    "percentageMin": "न्यूनतम मान 0% है",
+    "percentageMin": "न्यूनतम मान 1% है",
     "percentageMax": "अधिकतम मान 100% है"
   },
   "accounts": {

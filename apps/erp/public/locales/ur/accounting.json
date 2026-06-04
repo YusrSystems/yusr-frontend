@@ -10,7 +10,7 @@
     "isPrimary": "بنیادی ٹیکس",
     "nameRequired": "براہ کرم ٹیکس کا نام درج کریں",
     "percentageRequired": "براہ کرم ٹیکس کا فیصد درج کریں",
-    "percentageMin": "کم از کم قیمت 0% ہے",
+    "percentageMin": "کم از کم قیمت 1% ہے",
     "percentageMax": "زیادہ سے زیادہ قیمت 100% ہے"
   },
   "accounts": {

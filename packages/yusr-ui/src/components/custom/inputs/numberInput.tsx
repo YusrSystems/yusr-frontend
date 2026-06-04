@@ -68,8 +68,6 @@ export function NumberInput(
           return;
         }
 
-        console.log(value);
-
         localValue.value = value;
 
         if (value === "")

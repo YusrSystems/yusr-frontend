@@ -43,16 +43,14 @@ export default function TestPage()
       <CrudPage.ChangeDialog
         changeDialog={ (dto) =>
         {
-          console.log(dto);
           return (
             <ChangeTaxDialog
               entity={ dto
                 ? new Tax(dto, "update")
-                : new Tax({ id: 0, name: "", percentage: 0, isPrimary: false }, "create") }
+                : new Tax({ id: 0, name: "", percentage: 1, isPrimary: false }, "create") }
               service={ Services.taxesApi }
               onSuccess={ (data) =>
               {
-                console.log(data);
                 if (data.mode.value === "create")
                 {
                   cubit.add(data);

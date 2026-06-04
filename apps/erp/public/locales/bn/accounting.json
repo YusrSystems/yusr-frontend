@@ -10,7 +10,7 @@
     "isPrimary": "প্রাথমিক ট্যাক্স",
     "nameRequired": "অনুগ্রহ করে ট্যাক্সের নাম লিখুন",
     "percentageRequired": "অনুগ্রহ করে ট্যাক্সের শতাংশ লিখুন",
-    "percentageMin": "সর্বনিম্ন মান 0%",
+    "percentageMin": "সর্বনিম্ন মান 1%",
     "percentageMax": "সর্বোচ্চ মান 100%"
   },
   "accounts": {

@@ -72,7 +72,7 @@ export class Tax extends ChangeableEntity<TaxDto>
       selector: (d) => d.percentage,
       validators: [
         Validators.required(i18n.t("accounting:taxes.percentageRequired")),
-        Validators.min(0, i18n.t("accounting:taxes.percentageMin")),
+        Validators.min(1, i18n.t("accounting:taxes.percentageMin")),
         Validators.max(100, i18n.t("accounting:taxes.percentageMax"))
       ]
     }];

@@ -1,4 +1,4 @@
-import type { PropsWithChildren, ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 import type { ChangeableEntity, Dto } from "../../../stateManager";
 import { cn } from "../../../utils/cn";
@@ -8,66 +8,82 @@ import { Separator } from "../../pure/separator";
 import { SaveButton, type SaveButtonProps } from "../buttons/saveButton";
 import { UnauthorizedPage } from "../unauthorized/unauthorizedPage";
 
-export interface ChangeDialogProps<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>
-  extends SaveButtonProps<TEntity, TDto>, PropsWithChildren
-{
-  title: string;
-  description?: string;
-  className?: string;
-  actionButtons?: ReactNode;
-  authorized?: boolean;
-}
+export type ChangeDialogProps =
+  & PropsWithChildren
+  & {
+    className?: string;
+  };
 
-export function ChangeDialog<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
-  {
-    title,
-    description = "",
-    className = "sm:max-w-sm",
-    actionButtons,
-    authorized = true,
-    children,
-    ...props
-  }: ChangeDialogProps<TEntity, TDto>
-)
-{
-  const { t, i18n } = useTranslation("common");
+export type ChangeDialogHeaderProps = PropsWithChildren & { title: string; description?: string; };
 
-  if (!authorized)
-  {
-    return (
-      <DialogContent className="sm:max-w-xl" dir={ i18n.dir() }>
-        <DialogHeader>
-          <DialogTitle>{ t("changeDialog.unauthorized") }</DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
-        <UnauthorizedPage showButtons={ false } />
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">{ t("changeDialog.close") }</Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    );
-  }
+export function ChangeDialog({ className = "sm:max-w-sm", children }: ChangeDialogProps)
+{
+  const { i18n } = useTranslation("common");
 
   return (
     <DialogContent dir={ i18n.dir() } className={ cn(className, "scroll-auto") }>
-      <DialogHeader>
-        <DialogTitle>{ title }</DialogTitle>
-        <DialogDescription>{ description }</DialogDescription>
-      </DialogHeader>
-
-      <Separator />
-
       { children }
-
-      <DialogFooter>
-        { actionButtons }
-        <DialogClose asChild>
-          <Button variant="outline">{ t("changeDialog.cancel") }</Button>
-        </DialogClose>
-        <SaveButton { ...props } />
-      </DialogFooter>
     </DialogContent>
   );
 }
+
+ChangeDialog.Unauthorized = function()
+{
+  const { t, i18n } = useTranslation("common");
+
+  return (
+    <DialogContent className="sm:max-w-xl" dir={ i18n.dir() }>
+      <DialogHeader>
+        <DialogTitle>{ t("changeDialog.unauthorized") }</DialogTitle>
+        <DialogDescription></DialogDescription>
+      </DialogHeader>
+      <UnauthorizedPage showButtons={ false } />
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="outline">{ t("changeDialog.close") }</Button>
+        </DialogClose>
+      </DialogFooter>
+    </DialogContent>
+  );
+};
+
+ChangeDialog.Header = function({ title, description, children }: ChangeDialogHeaderProps)
+{
+  return (
+    <>
+      <DialogHeader>
+        <DialogTitle>{ title }</DialogTitle>
+        <DialogDescription>{ description }</DialogDescription>
+        { children }
+      </DialogHeader>
+
+      <Separator />
+    </>
+  );
+};
+
+ChangeDialog.Footer = function({ children }: PropsWithChildren)
+{
+  return (
+    <DialogFooter>
+      { children }
+    </DialogFooter>
+  );
+};
+
+ChangeDialog.Close = function()
+{
+  const { t } = useTranslation("common");
+  return (
+    <DialogClose asChild>
+      <Button variant="outline">{ t("changeDialog.cancel") }</Button>
+    </DialogClose>
+  );
+};
+
+ChangeDialog.SaveButton = function<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
+  { ...props }: SaveButtonProps<TEntity, TDto>
+)
+{
+  return <SaveButton { ...props } />;
+};
