@@ -1,13 +1,13 @@
 import { type Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { cn } from "../../../utils/cn";
 import { BaseInput } from "./baseInput";
 
 export interface NumberInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value">
 {
   error?: Signal<string | undefined>;
-  value: Signal<number | undefined> | Signal<number>;
+  value: Signal<number | undefined>;
   onChange?: (value: number | undefined) => void;
   currency?: React.ReactNode;
 }
@@ -17,33 +17,11 @@ export function NumberInput(
 )
 {
   useSignals();
-  const handleChange = (val: number | undefined) =>
-  {
-    if (val === undefined)
-    {
-      (value as Signal<number>).value = 0;
-      return;
-    }
-    (value as Signal<number | undefined>).value = val;
-    onChange?.(val);
-  };
 
   const localValue: Signal<string> = useMemo(
-    () => signal(value.value != null ? value.value.toString() : ""),
+    () => signal(value.value != undefined ? value.value.toString() : ""),
     [value]
   );
-
-  useEffect(() =>
-  {
-    if (typeof value.value === "number" && isNaN(value.value))
-    {
-      localValue.value = "";
-    }
-    else
-    {
-      localValue.value = value.value != null ? value.value.toString() : "";
-    }
-  }, [value.value]);
 
   const input = (
     <BaseInput
@@ -57,66 +35,66 @@ export function NumberInput(
         className,
         currency && "pe-8"
       ) }
-      onChange={ (value) =>
+      onChange={ (inputValue) =>
       {
-        value = value
+        // 1. Normalize Arabic/Persian digits
+        inputValue = inputValue
           .replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d).toString())
           .replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d).toString());
 
-        if (!/^-?\d*\.?\d*$/.test(value))
+        // 2. Block invalid characters
+        if (!/^-?\d*\.?\d*$/.test(inputValue))
         {
           localValue.value = localValue.value.slice(0, -1);
           return;
         }
 
-        localValue.value = value;
-
-        if (value === "")
+        // 3. Mid-typing states — not a number yet, just update display
+        const isMidTyping = !inputValue || inputValue === "-" || inputValue === "." || inputValue === "-.";
+        if (isMidTyping)
         {
-          localValue.value = "0";
-          handleChange(undefined);
+          localValue.value = inputValue;
+          value.value = undefined;
+          onChange?.(undefined);
           return;
         }
 
-        if (value === "-" || value === "-0" || value.endsWith("."))
+        // 4. Block leading zeros ("0013" → reject, but "0", "0.5" are fine)
+        if (/^-?0\d/.test(inputValue))
         {
-          return; // Wait for more input before notifying the parent.
+          localValue.value = localValue.value.slice(0, -1);
+          return;
         }
 
-        let val = Number(value);
+        // 5. Normalize dot-leading input (".5" → "0.5")
+        if (inputValue.startsWith(".") || inputValue.startsWith("-."))
+        {
+          const sign = inputValue.startsWith("-") ? "-" : "";
+          inputValue = sign + "0." + inputValue.slice(sign ? 2 : 1);
+        }
 
+        // 6. Normal number — parse, clamp, commit
+        let val = Number(inputValue);
         if (isNaN(val))
         {
+          localValue.value = "";
+          value.value = undefined;
+          onChange?.(undefined);
           return;
         }
 
-        if (min !== undefined && val < Number(min))
+        if (min !== undefined)
         {
-          val = Number(min);
-          localValue.value = String(val);
+          val = Math.max(val, Number(min));
         }
-        if (max !== undefined && val > Number(max))
+        if (max !== undefined)
         {
-          val = Number(max);
-          localValue.value = String(val);
+          val = Math.min(val, Number(max));
         }
 
-        handleChange(val);
-      } }
-      onBlur={ (e) =>
-      {
-        if (localValue.value === "-" || localValue.value === "-0")
-        {
-          localValue.value = "";
-          onChange?.(undefined);
-        }
-        else if (localValue.value.endsWith("."))
-        {
-          const cleanVal = Number(localValue.value);
-          localValue.value = isNaN(cleanVal) ? "" : cleanVal.toString();
-        }
-
-        props.onBlur?.(e);
+        localValue.value = String(val);
+        value.value = val;
+        onChange?.(val);
       } }
     />
   );

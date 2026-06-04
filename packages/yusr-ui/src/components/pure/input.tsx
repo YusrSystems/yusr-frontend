@@ -21,7 +21,7 @@ function InputOld({ className, type, ...props }: React.ComponentProps<"input">)
 
 function Input(
   { className, type, value, onChange, ...props }: Omit<React.ComponentProps<"input">, "value" | "onChange"> & {
-    value?: Signal<string>;
+    value?: Signal<string | number | undefined>;
     onChange?: (value: string) => void;
   }
 )
@@ -42,7 +42,7 @@ function Input(
         {
           value.value = event.target.value;
         }
-        onChange && onChange(event.target.value);
+        onChange?.(event.target.value);
       } }
       { ...props }
     />

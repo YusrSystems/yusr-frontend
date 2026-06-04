@@ -12,7 +12,7 @@ export interface BaseInputPropsOld extends React.InputHTMLAttributes<HTMLInputEl
 export interface BaseInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">
 {
   error?: Signal<string | undefined>;
-  value?: Signal<string>;
+  value?: Signal<string | number | undefined>;
   onChange?: (value: string) => void;
 }
 
