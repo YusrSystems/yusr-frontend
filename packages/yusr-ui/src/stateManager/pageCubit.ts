@@ -3,8 +3,9 @@ import type { BaseFilterableApiService } from "../networking";
 import { Cubit } from "./cubit";
 import type { Dto } from "./dto";
 import type { Entity } from "./entity";
+import { PageEmpty, PageInitial, PageLoaded, PageLoading, type PageState } from "./pageStates";
 
-export abstract class PageCubit<TState, TEntity extends Entity<TDto>, TDto extends Dto> extends Cubit<TState>
+export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends Cubit<PageState>
 {
   private _service: BaseFilterableApiService<TEntity, TDto>;
   public pageSize: Signal<number>;
@@ -13,9 +14,9 @@ export abstract class PageCubit<TState, TEntity extends Entity<TDto>, TDto exten
   entities: Signal<TEntity[]>;
   count: Signal<number>;
 
-  constructor(initialState: TState, service: BaseFilterableApiService<TEntity, TDto>, pageSize: number = 100)
+  constructor(service: BaseFilterableApiService<TEntity, TDto>, pageSize: number = 100)
   {
-    super(initialState);
+    super(new PageInitial());
     this._service = service;
     this.pageSize = signal(pageSize);
     this.currentPage = signal(1);
@@ -24,13 +25,9 @@ export abstract class PageCubit<TState, TEntity extends Entity<TDto>, TDto exten
     this.count = signal(0);
   }
 
-  protected abstract loadingState(): TState;
-  protected abstract loadedState(): TState;
-  protected abstract emptyState(): TState;
-
   private async _filter()
   {
-    this.emit(this.loadingState());
+    this.emit(new PageLoading());
 
     const result = await this._service.Filter(this.currentPage.value, this.pageSize.value, this.searchText.value);
 
@@ -38,13 +35,13 @@ export abstract class PageCubit<TState, TEntity extends Entity<TDto>, TDto exten
     {
       this.entities.value = [];
       this.count.value = 0;
-      this.emit(this.emptyState());
+      this.emit(new PageEmpty());
       return;
     }
 
     this.entities.value = result.data;
     this.count.value = result.count ?? 0;
-    this.emit(this.loadedState());
+    this.emit(new PageLoaded());
   }
 
   init()

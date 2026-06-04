@@ -23,7 +23,10 @@ export function InputField({ label, error, required, ...props }: InputFieldProps
 {
   return (
     <FormField label={ label } error={ error } required={ required }>
-      <BaseInput { ...props } />
+      <BaseInput
+        error={ error }
+        { ...props }
+      />
     </FormField>
   );
 }

@@ -1,85 +1,157 @@
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import { Tax, type TaxDto } from "@/core/data/tax";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Percent } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPageOld, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { TaxOld, TaxSlice } from "../../core/data/tax";
-import TaxesApiServiceOld from "../../core/networking/taxesApiServiceold";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
-import ChangeTaxDialogOld from "./changeTaxDialogOld";
+import { CrudPage, PageCubit, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
+import ChangeTaxDialog from "./changeTaxDialog";
+
+const cubit = new PageCubit<Tax, TaxDto>(Services.taxesApi);
 
 export default function TaxesPage()
 {
   const { t } = useTranslation("accounting");
-  const { t: tCommon } = useTranslation("common");
-  const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const taxState = useAppSelector((state) => state.tax);
-  const taxDialogState = useAppSelector((state) => state.taxDialog);
-  const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Taxes));
-  const service = useMemo(() => new TaxesApiServiceOld(), []);
+
+  if (!Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Get))
+  {
+    return <UnauthorizedPage />;
+  }
+
+  useEffect(() =>
+  {
+    cubit.init();
+  }, []);
 
   return (
-    <CrudPageOld<TaxOld>
-      title={ t("taxes.title") }
-      entityName={ t("taxes.entityName") }
-      addNewItemTitle={ t("taxes.addNewTitle") }
-      permissions={ permissions }
-      hasPagePermission={ SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.Taxes,
-        SystemPermissionsActions.Get
-      ) }
-      entityState={ taxState }
-      useSlice={ () => taxDialogState }
-      service={ service }
+    <CrudPage>
+      <CrudPage.Header
+        title={ t("taxes.title") }
+        addButtonTitle={ t("taxes.addNewTitle") }
+        isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Add) }
+      />
+
+      <TaxesCards />
+
+      <CrudPage.SearchInput onSearch={ (searchText) => cubit.search(searchText) } />
+
+      <TestPageTable />
+
+      <CrudPage.ChangeDialog
+        changeDialog={ (dto) =>
+        {
+          return (
+            <ChangeTaxDialog
+              entity={ dto
+                ? new Tax(dto, "update")
+                : new Tax({ id: 0, name: "", percentage: 1, isPrimary: false }, "create") }
+              service={ Services.taxesApi }
+              onSuccess={ (data) =>
+              {
+                if (data.mode.value === "create")
+                {
+                  cubit.add(data);
+                }
+                else if (data.mode.value === "update")
+                {
+                  cubit.update(data);
+                }
+              } }
+            />
+          );
+        } }
+      />
+
+      <CrudPage.DeleteDialog
+        entityNameSelector={ (tax) => tax.name }
+        service={ Services.taxesApi }
+        onSuccess={ (entity) => cubit.delete(entity) }
+      />
+    </CrudPage>
+  );
+}
+
+function TaxesCards()
+{
+  useSignals();
+  const { t } = useTranslation("accounting");
+  return (
+    <CrudPage.Cards
       cards={ [{
         title: t("taxes.totalTaxes"),
-        data: (taxState.entities?.count ?? 0).toString(),
+        data: cubit.count.value.toString(),
         icon: <Percent className="h-4 w-4 text-muted-foreground" />
       }] }
-      tableHeadRows={ [
-        { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: t("taxes.taxNumber"), rowStyles: "w-30" },
-        { rowName: t("taxes.taxName"), rowStyles: "w-50" },
-        { rowName: t("taxes.percentage"), rowStyles: "w-30" },
-        { rowName: t("taxes.isPrimary"), rowStyles: "" }
-      ] }
-      tableRowMapper={ (
-        tax: TaxOld
-      ) => [{ rowName: `#${tax.id}`, rowStyles: "" }, { rowName: tax.name, rowStyles: "font-semibold" }, {
-        rowName: `%${tax.percentage}`,
-        rowStyles: ""
-      }, {
-        rowName: tax.isPrimary ? tCommon("yes") : tCommon("no"),
-        rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          tax.isPrimary ? "bg-blue-300" : "bg-gray-200"
-        } text-slate-800`
-      }] }
-      actions={ {
-        filter: TaxSlice.entityActions.filter,
-        openChangeDialog: (entity) => TaxSlice.dialogActions.openChangeDialog(entity),
-        openDeleteDialog: (entity) => TaxSlice.dialogActions.openDeleteDialog(entity),
-        setIsChangeDialogOpen: (open) => TaxSlice.dialogActions.setIsChangeDialogOpen(open),
-        setIsDeleteDialogOpen: (open) => TaxSlice.dialogActions.setIsDeleteDialogOpen(open),
-        refresh: TaxSlice.entityActions.refresh,
-        setCurrentPage: (page) => TaxSlice.entityActions.setCurrentPage(page)
-      } }
-      ChangeDialog={ 
-        <ChangeTaxDialogOld
-          entity={ taxDialogState.selectedRow || undefined }
-          mode={ taxDialogState.selectedRow ? "update" : "create" }
-          service={ service }
-          onSuccess={ (data, mode) =>
-          {
-            dispatch(TaxSlice.entityActions.refresh({ data: data }));
-            if (mode === "create")
-            {
-              dispatch(TaxSlice.dialogActions.setIsChangeDialogOpen(false));
-            }
-          } }
-        />
-       }
     />
   );
+}
+
+function TestPageTable()
+{
+  useSignals();
+  const { t } = useTranslation(["accounting", "common"]);
+
+  if (cubit.state.value instanceof PageLoading)
+  {
+    return <TablePreview.Loading />;
+  }
+
+  if (cubit.state.value instanceof PageLoaded)
+  {
+    return (
+      <CrudPage.Table>
+        <CrudPage.TableBody<Tax, TaxDto>
+          data={ cubit.entities.value }
+          headerRows={ [
+            { rowBody: "", rowStyles: "text-left w-12.5" },
+            { rowBody: t("taxes.taxNumber"), rowStyles: "w-30" },
+            { rowBody: t("taxes.taxName"), rowStyles: "w-50" },
+            { rowBody: t("taxes.percentage"), rowStyles: "w-30" },
+            { rowBody: t("taxes.isPrimary"), rowStyles: "" }
+          ] }
+          tableRowMapper={ (
+            tax
+          ) => [
+            { rowBody: `#${tax.id.value}`, rowStyles: "" },
+            { rowBody: tax.name.value, rowStyles: "font-semibold" },
+            {
+              rowBody: `%${tax.percentage.value}`,
+              rowStyles: ""
+            },
+            {
+              rowBody: tax.isPrimary.value ? t("common:yes") : t("common:no"),
+              rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                tax.isPrimary.value ? "bg-blue-300" : "bg-gray-200"
+              } text-slate-800`
+            }
+          ] }
+          hasUpdatePermission={ Services.auth.hasAuth(
+            SystemPermissionsResources.Taxes,
+            SystemPermissionsActions.Update
+          ) }
+          hasDeletePermission={ Services.auth.hasAuth(
+            SystemPermissionsResources.Taxes,
+            SystemPermissionsActions.Delete
+          ) }
+        />
+        <CrudPage.TablePagination
+          pageSize={ cubit.pageSize.value }
+          totalNumber={ cubit.count.value }
+          currentPage={ cubit.currentPage.value }
+          onPageChanged={ (newPage) =>
+          {
+            cubit.changePage(newPage);
+          } }
+        />
+      </CrudPage.Table>
+    );
+  }
+
+  if (cubit.state.value instanceof PageError)
+  {
+    return <TablePreview.Error />;
+  }
+
+  return <TablePreview.Empty />;
 }

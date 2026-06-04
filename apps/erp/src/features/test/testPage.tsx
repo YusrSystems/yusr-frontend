@@ -5,12 +5,10 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { Percent } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, DialogContent, DialogTitle, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
+import { CrudPage, DialogContent, DialogTitle, PageCubit, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
 import ChangeTaxDialog from "./changeTaxDialog";
-import { TaxesCubit } from "./state/taxesCubit";
-import { TaxesError, TaxesLoaded, TaxesLoading } from "./state/taxesState";
 
-const cubit = new TaxesCubit();
+const cubit = new PageCubit<Tax, TaxDto>(Services.taxesApi);
 
 export default function TestPage()
 {
@@ -94,12 +92,12 @@ function TestPageTable()
   useSignals();
   const { t } = useTranslation(["accounting", "common"]);
 
-  if (cubit.state.value instanceof TaxesLoading)
+  if (cubit.state.value instanceof PageLoading)
   {
     return <TablePreview.Loading />;
   }
 
-  if (cubit.state.value instanceof TaxesLoaded)
+  if (cubit.state.value instanceof PageLoaded)
   {
     return (
       <CrudPage.Table>
@@ -150,7 +148,7 @@ function TestPageTable()
     );
   }
 
-  if (cubit.state.value instanceof TaxesError)
+  if (cubit.state.value instanceof PageError)
   {
     return <TablePreview.Error />;
   }

@@ -2,10 +2,11 @@ import { type Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useEffect, useMemo } from "react";
 import { cn } from "../../../utils/cn";
-import { Input } from "../../pure/input";
+import { BaseInput } from "./baseInput";
 
 export interface NumberInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value">
 {
+  error?: Signal<string | undefined>;
   value: Signal<number | undefined> | Signal<number>;
   onChange?: (value: number | undefined) => void;
   currency?: React.ReactNode;
@@ -45,7 +46,7 @@ export function NumberInput(
   }, [value.value]);
 
   const input = (
-    <Input
+    <BaseInput
       { ...props }
       type="text"
       inputMode="decimal"

@@ -27,7 +27,7 @@ export function NumberField({ label, error, required, ...props }: NumberFieldPro
 {
   return (
     <FormField label={ label } error={ error } required={ required }>
-      <NumberInput { ...props } />
+      <NumberInput error={ error } { ...props } />
     </FormField>
   );
 }
