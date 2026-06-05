@@ -35,7 +35,6 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
 
         if (error)
         {
-          console.log(error);
           this.errors[rule.field].value = error;
           break;
         }

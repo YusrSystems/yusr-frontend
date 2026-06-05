@@ -1,13 +1,13 @@
 import UnitsApiService from "@/core/networking/unitApiService";
 import ChangeUnitDialog from "@/features/units/changeUnitDialog";
-import { type BasicSearchableSelectParams, ChangableSearchableSelect } from "yusr-ui";
+import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type Unit from "../../data/unit";
 import { UnitSlice } from "../../data/unit";
 import { useAppSelector } from "../../state/store";
 
 export default function UnitsSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<Unit>
+  { ...props }: BasicSearchableSelectParamsOld<Unit>
 )
 {
   const unitState = useAppSelector((state) => state.unit);

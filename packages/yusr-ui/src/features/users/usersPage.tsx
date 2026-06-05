@@ -4,10 +4,11 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPageOld } from "../../components/custom";
-import { UserOld, UserSlice } from "../../entities";
+import { UserOld } from "../../entities";
 import { UsersApiService } from "../../networking";
 import type { YusrRootState } from "../../state";
 import { ChangeUserDialog } from "./changeUserDialog";
+import { UserSlice } from "../../entities/userSlice";
 
 export function UsersPage()
 {

@@ -1,27 +1,28 @@
 import { useSelector } from "react-redux";
 import { YusrSystemPermissionsResources } from "../../../auth";
-import { Currency, CurrencySlice } from "../../../entities";
-import { BaseApiServiceOld, CurrenciesApiService } from "../../../networking";
+import { CityOld } from "../../../entities";
+import { BaseApiServiceOld, CitiesApiServiceOld } from "../../../networking";
 import type { YusrRootState } from "../../../state";
 import { ChangableSearchableSelect } from "./changableSearchableSelect";
 import type { BasicSearchableSelectParamsOld } from "./searchableSelectOld";
+import { CitySlice } from "../../../entities/citySlice";
 
-export function CurrenciesSearchableSelect(
-  { ...props }: BasicSearchableSelectParamsOld<Currency>
+export function CitiesSearchableSelectOld(
+  { ...props }: BasicSearchableSelectParamsOld<CityOld>
 )
 {
-  const currencyState = useSelector((state: YusrRootState) => state.currency);
+  const cityState = useSelector((state: YusrRootState) => state.city);
   const authState = useSelector((state: YusrRootState) => state.auth);
 
   return (
-    <ChangableSearchableSelect<Currency>
+    <ChangableSearchableSelect<CityOld>
       labelKey="name"
-      state={ currencyState }
-      apiService={ new CurrenciesApiService() as unknown as BaseApiServiceOld<Currency> }
+      state={ cityState }
+      apiService={ new CitiesApiServiceOld() as unknown as BaseApiServiceOld<CityOld> }
       systemPermissionsResources={ YusrSystemPermissionsResources.Branches }
       entityActions={ {
-        filter: CurrencySlice.entityActions.filter,
-        refresh: CurrencySlice.entityActions.refresh
+        filter: CitySlice.entityActions.filter,
+        refresh: CitySlice.entityActions.refresh
       } }
       authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
       allowAdd={ false }

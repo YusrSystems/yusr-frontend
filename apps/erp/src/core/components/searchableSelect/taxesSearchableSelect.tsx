@@ -1,12 +1,12 @@
 import ChangeTaxDialogOld from "@/features/taxes/changeTaxDialogOld";
-import { type BasicSearchableSelectParams, ChangableSearchableSelect } from "yusr-ui";
+import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import { TaxOld, TaxSlice } from "../../data/tax";
 import TaxesApiServiceOld from "../../networking/taxesApiServiceold";
 import { useAppSelector } from "../../state/store";
 
 export default function TaxesSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<TaxOld>
+  { ...props }: BasicSearchableSelectParamsOld<TaxOld>
 )
 {
   const taxState = useAppSelector((state) => state.tax);

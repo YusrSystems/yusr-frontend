@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BranchesSearchableSelect, ChangeDialogOld, type CommonChangeDialogPropsOld, FormFieldOld, PasswordFieldOld, RolesSearchableSelect, SelectFieldOld, TextFieldOld } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
-import { BranchSlice, RoleSlice, UserOld, UserSlice, UserValidationRules } from "../../entities";
+import { BranchSlice, RoleSlice, UserOld, UserValidationRules } from "../../entities";
+import { UserSlice } from "../../entities/userSlice";
 import { useFormErrors, useFormInit, useValidate } from "../../hooks";
 import { useAppDispatch } from "../../state";
 

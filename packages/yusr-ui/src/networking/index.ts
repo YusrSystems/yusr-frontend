@@ -5,6 +5,7 @@ export * from "./baseFilterableApiService";
 export * from "./baseFilterableApiServiceOld";
 export * from "./branchesApiService";
 export * from "./citiesApiService";
+export * from "./citiesApiServiceOld";
 export * from "./countriesApiService";
 export * from "./currenciesApiService";
 export * from "./rolesApiService";

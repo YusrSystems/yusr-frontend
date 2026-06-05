@@ -1,9 +1,9 @@
 import Account, { AccountType, SuppliersSlice } from "@/core/data/account";
-import type { BasicSearchableSelectParams } from "yusr-ui";
+import type { BasicSearchableSelectParamsOld } from "yusr-ui";
 import AccountsSearchableSelect from "./accountsSearchableSelect";
 
 export default function SuppliersSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<Account>
+  { ...props }: BasicSearchableSelectParamsOld<Account>
 )
 {
   return (

@@ -1,15 +1,13 @@
 import { type TFunction } from "i18next";
-import { BranchesApiService } from "../networking";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
 import { type ValidationRuleOld, Validators } from "../validation";
 import { BaseEntity } from "./baseEntity";
-import type { City } from "./city";
+import type { CityOld } from "./city";
 
 export class Branch extends BaseEntity
 {
   public name!: string;
   public cityId!: number;
-  public city!: City;
+  public city!: CityOld;
   public street!: string;
   public district!: string;
   public buildingNumber!: string;
@@ -49,19 +47,4 @@ export class BranchValidationRules
       Validators.numeric(t("branches.postalCodeNumeric"))
     )]
   }];
-}
-
-export class BranchSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("branch", new BranchesApiService());
-  public static entityActions = BranchSlice.entitySliceInstance.actions;
-  public static entityReducer = BranchSlice.entitySliceInstance.reducer;
-
-  private static dialogSliceInstance = createGenericDialogSlice<Branch>("branchDialog");
-  public static dialogActions = BranchSlice.dialogSliceInstance.actions;
-  public static dialogReducer = BranchSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<Branch>("branchForm");
-  public static formActions = BranchSlice.formSliceInstance.actions;
-  public static formReducer = BranchSlice.formSliceInstance.reducer;
 }

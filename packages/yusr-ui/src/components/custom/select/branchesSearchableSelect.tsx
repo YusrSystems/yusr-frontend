@@ -5,10 +5,10 @@ import { ChangeBranchDialog } from "../../../features/branches/changeBranchDialo
 import { BranchesApiService } from "../../../networking";
 import type { YusrRootState } from "../../../state";
 import { ChangableSearchableSelect } from "./changableSearchableSelect";
-import type { BasicSearchableSelectParams } from "./searchableSelect";
+import type { BasicSearchableSelectParamsOld } from "./searchableSelectOld";
 
 export function BranchesSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<Branch>
+  { ...props }: BasicSearchableSelectParamsOld<Branch>
 )
 {
   const branchState = useSelector((state: YusrRootState) => state.branch);

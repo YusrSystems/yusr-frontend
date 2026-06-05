@@ -2,11 +2,11 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import Account, { AccountType, BanksAndBoxesSlice } from "@/core/data/account";
 import { useAppSelector } from "@/core/state/store";
 import { useTranslation } from "react-i18next";
-import { type BasicSearchableSelectParams, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { type BasicSearchableSelectParamsOld, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import AccountsSearchableSelect from "./accountsSearchableSelect";
 
 export default function BanksAndBoxesSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<Account> & { items?: Account[]; }
+  { ...props }: BasicSearchableSelectParamsOld<Account> & { items?: Account[]; }
 )
 {
   const { t } = useTranslation("accounting");

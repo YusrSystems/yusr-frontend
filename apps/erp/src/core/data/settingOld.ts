@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { type Branch, City, createGenericFormSlice, type Currency, type StorageFile, type ValidationRuleOld, Validators } from "yusr-ui";
+import { type Branch, CityOld, createGenericFormSlice, type Currency, type StorageFile, type ValidationRuleOld, Validators } from "yusr-ui";
 import type { TaxOld } from "./tax";
 
 export const EInvoicingEnvironmentType = {
@@ -84,7 +84,7 @@ export class SharingSetting
   public district!: string;
   public buildingNumber!: string;
   public postalCode!: string;
-  public city!: City;
+  public city!: CityOld;
   public logo?: StorageFile;
 
   constructor(init?: Partial<SharingSetting>)

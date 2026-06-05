@@ -2,12 +2,12 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import Account, { AccountType, ClientsAndSuppliersSlice } from "@/core/data/account";
 import { useAppSelector } from "@/core/state/store";
 import { useTranslation } from "react-i18next";
-import type { BasicSearchableSelectParams } from "yusr-ui";
+import type { BasicSearchableSelectParamsOld } from "yusr-ui";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import AccountsSearchableSelect from "./accountsSearchableSelect";
 
 export default function ClientsAndSuppliersSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<Account>
+  { ...props }: BasicSearchableSelectParamsOld<Account>
 )
 {
   const { t } = useTranslation("accounting");

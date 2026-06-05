@@ -5,7 +5,7 @@ export abstract class Entity<TDto extends Dto>
 {
   id: Signal<number>;
 
-  protected constructor(dto: Partial<TDto>)
+  constructor(dto: Partial<TDto>)
   {
     this.id = signal((dto as Dto).id ?? 0);
 

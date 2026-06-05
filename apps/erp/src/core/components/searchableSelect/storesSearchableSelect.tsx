@@ -1,13 +1,13 @@
 import StoresApiService from "@/core/networking/storeApiService";
 import ChangeStoreDialog from "@/features/stores/changeStoreDialog";
-import { type BasicSearchableSelectParams, ChangableSearchableSelect } from "yusr-ui";
+import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type Store from "../../data/store";
 import { StoreSlice } from "../../data/store";
 import { useAppSelector } from "../../state/store";
 
 export default function StoresSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<Store> & { items?: Store[]; }
+  { ...props }: BasicSearchableSelectParamsOld<Store> & { items?: Store[]; }
 )
 {
   const storeState = useAppSelector((state) => state.store);

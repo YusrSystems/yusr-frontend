@@ -1,7 +1,7 @@
 import AccountsApiService from "@/core/networking/accountApiService";
 import { type RootState, useAppSelector } from "@/core/state/store";
 import ChangeAccountDialog from "@/features/accounts/changeAccountDialog";
-import { type BasicSearchableSelectParams, ChangableSearchableSelect, type IEntityState, type IFormState } from "yusr-ui";
+import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect, type IEntityState, type IFormState } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type Account from "../../data/account";
 import { type AccountSliceType, AccountType } from "../../data/account";
@@ -23,7 +23,7 @@ export default function AccountsSearchableSelect(
     items,
     ...props
   }:
-    & BasicSearchableSelectParams<Account>
+    & BasicSearchableSelectParamsOld<Account>
     & {
       slice: AccountSliceType;
       selectEntityState: (state: RootState) => IEntityState<Account>;

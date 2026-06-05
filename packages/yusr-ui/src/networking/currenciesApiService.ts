@@ -1,4 +1,4 @@
-import type { Currency } from "../entities";
+import type { Currency } from "../entities/currency";
 import type { ApiFilterResult, RequestResult } from "../types";
 import { ApiConstants } from "./apiConstants";
 import { BaseFilterableApiServiceOld } from "./baseFilterableApiServiceOld";

@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { ChangeDialogOld, CitiesSearchableSelect, type CommonChangeDialogPropsOld, FieldsSection, FormFieldOld, TextFieldOld } from "../../components/custom";
+import { ChangeDialogOld, CitiesSearchableSelectOld, type CommonChangeDialogPropsOld, FieldsSection, FormFieldOld, TextFieldOld } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
-import { Branch, BranchSlice, BranchValidationRules, CitySlice } from "../../entities";
+import { Branch, BranchSlice, BranchValidationRules } from "../../entities";
 import { useFormErrors, useFormInit, useValidate } from "../../hooks";
 import { useAppDispatch, type YusrRootState } from "../../state";
+import { CitySlice } from "../../entities/citySlice";
 
 export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<Branch>)
 {
@@ -57,7 +58,7 @@ export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonC
           isInvalid={ isInvalid("cityId") }
           error={ getError("cityId") }
         >
-          <CitiesSearchableSelect
+          <CitiesSearchableSelectOld
             selectedId={ formData.cityId }
             selectedLabel={ formData.city?.name }
             onValueChange={ (city) =>

@@ -1,6 +1,4 @@
 import { type TFunction } from "i18next";
-import { UsersApiService } from "../networking";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
 import { type ValidationRuleOld, Validators } from "../validation";
 import { BaseEntity } from "./baseEntity";
 import type { Branch } from "./branch";
@@ -44,19 +42,4 @@ export class UserValidationRules
     selector: (d) => d.branchId,
     validators: [Validators.required(t("users.branchRequired"))]
   }];
-}
-
-export class UserSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("user", new UsersApiService());
-  public static entityActions = UserSlice.entitySliceInstance.actions;
-  public static entityReducer = UserSlice.entitySliceInstance.reducer;
-
-  private static dialogSliceInstance = createGenericDialogSlice<UserOld>("userDialog");
-  public static dialogActions = UserSlice.dialogSliceInstance.actions;
-  public static dialogReducer = UserSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<UserOld>("userForm");
-  public static formActions = UserSlice.formSliceInstance.actions;
-  public static formReducer = UserSlice.formSliceInstance.reducer;
 }

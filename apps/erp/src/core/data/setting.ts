@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { type Branch, City, type Currency, Dto, i18n, type StorageFile, ValidatableEntity, Validators } from "yusr-ui";
+import { type Branch, CityOld, type Currency, Dto, i18n, type StorageFile, ValidatableEntity, Validators } from "yusr-ui";
 import type { TaxOld } from "./tax";
 
 export const EInvoicingEnvironmentType = {
@@ -126,7 +126,7 @@ export class SharingSetting
   public district!: string;
   public buildingNumber!: string;
   public postalCode!: string;
-  public city!: City;
+  public city!: CityOld;
   public logo?: StorageFile;
 
   constructor(init?: Partial<SharingSetting>)

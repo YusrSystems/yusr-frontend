@@ -9,7 +9,7 @@ import type { IEntityState } from "../../../state";
 import { type ApiFilterResult, ResultStatus } from "../../../types";
 import { Button, Dialog } from "../../pure";
 import type { DialogMode } from "../dialogs/dialogType";
-import { type BasicSearchableSelectParams, SearchableSelect } from "./searchableSelect";
+import { type BasicSearchableSelectParamsOld, SearchableSelectOld } from "./searchableSelectOld";
 
 type BaseDialogProps<T extends BaseEntity> = {
   entity?: T;
@@ -19,7 +19,7 @@ type BaseDialogProps<T extends BaseEntity> = {
 };
 
 export type ChangableSearchableSelectParams<T extends BaseEntity, TDialogProps extends object = {}> =
-  & BasicSearchableSelectParams<T>
+  & BasicSearchableSelectParamsOld<T>
   & {
     mode?: "dialog" | "inline";
     labelKey: keyof T;
@@ -97,7 +97,7 @@ export function ChangableSearchableSelect<T extends BaseEntity, TDialogProps ext
   return (
     <div className="flex w-full">
       <div className="flex-9">
-        <SearchableSelect
+        <SearchableSelectOld
           renderContent={ renderContent
             ?? ((item) => <span className="flex-1 truncate">{ String(item[labelKey]) }</span>) }
           selectedId={ selectedId }

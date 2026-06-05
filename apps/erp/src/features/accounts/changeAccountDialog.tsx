@@ -4,7 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld, IEntityState, IFormState } from "yusr-ui";
-import { Button, ChangeDialogOld, CitiesSearchableSelect, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormFieldOld, InputOld, NumberFieldOld, SelectFieldOld, SystemPermissions, SystemPermissionsActions, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { Button, ChangeDialogOld, CitiesSearchableSelectOld, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormFieldOld, InputOld, NumberFieldOld, SelectFieldOld, SystemPermissions, SystemPermissionsActions, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Account, { AccountContact, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/account";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -296,7 +296,7 @@ export default function ChangeAccountDialog({
                 <FieldsSection title={ t("accounts.addressInfo") } columns={ 1 }>
                   <div className="flex flex-col gap-1.5 w-full">
                     <label className="text-sm font-medium">{ t("accounts.city") }</label>
-                    <CitiesSearchableSelect
+                    <CitiesSearchableSelectOld
                       selectedId={ formData.cityId }
                       selectedLabel={ formData.city?.name }
                       isInvalid={ !!errors.cityId }

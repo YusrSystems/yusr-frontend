@@ -68,9 +68,10 @@ export * from "./permissions/permissionSkeleton";
 export * from "./select/branchesSearchableSelect";
 export * from "./select/changableSearchableSelect";
 export * from "./select/citiesSearchableSelect";
+export * from "./select/citiesSearchableSelectOld";
 export * from "./select/currenciesSearchableSelect";
 export * from "./select/rolesSearchableSelect";
-export * from "./select/searchableSelect";
+export * from "./select/searchableSelectOld";
 
 // Separators
 export * from "./separators/titleSeparator";

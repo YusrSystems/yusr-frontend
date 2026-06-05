@@ -2,12 +2,12 @@ import type Item from "@/core/data/item";
 import { ItemSlice } from "@/core/data/item";
 import ItemsApiService from "@/core/networking/itemApiService";
 import ChangeItemDialog from "@/features/items/changeItemDialog";
-import { type BasicSearchableSelectParams, ChangableSearchableSelect } from "yusr-ui";
+import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import { useAppSelector } from "../../state/store";
 
 export default function ItemsSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<Item> & { items?: Item[]; }
+  { ...props }: BasicSearchableSelectParamsOld<Item> & { items?: Item[]; }
 )
 {
   const itemState = useAppSelector((state) => state.item);

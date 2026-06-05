@@ -2,12 +2,12 @@ import type PaymentMethod from "@/core/data/paymentMethod";
 import { PaymentMethodSlice } from "@/core/data/paymentMethod";
 import PaymentMethodsApiService from "@/core/networking/paymentMethodApiService";
 import ChangePaymentMethodDialog from "@/features/paymentMethods/changePaymentMethodDialog";
-import { type BasicSearchableSelectParams, ChangableSearchableSelect } from "yusr-ui";
+import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import { useAppSelector } from "../../state/store";
 
 export default function PaymentMethodsSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<PaymentMethod>
+  { ...props }: BasicSearchableSelectParamsOld<PaymentMethod>
 )
 {
   const PaymentMethodState = useAppSelector((state) => state.paymentMethod);

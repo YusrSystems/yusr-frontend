@@ -1,7 +1,7 @@
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { createAuthSlice } from "../auth";
-import type { Branch, City, Currency, Role, UserOld } from "../entities";
+import type { Branch, CityOld, Currency, Role, UserOld } from "../entities";
 import type { SystemPermissionsState } from "../types";
 import type { IDialogState } from "./interfaces/iDialogState";
 import type { IEntityState } from "./interfaces/iEntityState";
@@ -20,7 +20,7 @@ export type YusrRootState = {
   user: IEntityState<UserOld>;
   userForm: IFormState<UserOld>;
   userDialog: IDialogState<UserOld>;
-  city: IEntityState<City>;
+  city: IEntityState<CityOld>;
   currency: IEntityState<Currency>;
   system: SystemPermissionsState;
 };

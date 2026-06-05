@@ -1,13 +1,13 @@
 import PricingMethodsApiService from "@/core/networking/PricingMethodsApiService";
 import ChangePricingMethodDialog from "@/features/pricingMethods/changePricingMethodDialog";
-import { type BasicSearchableSelectParams, ChangableSearchableSelect } from "yusr-ui";
+import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type PricingMethod from "../../data/pricingMethod";
 import { PricingMethodSlice } from "../../data/pricingMethod";
 import { useAppSelector } from "../../state/store";
 
 export default function PricingMethodsSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<PricingMethod>
+  { ...props }: BasicSearchableSelectParamsOld<PricingMethod>
 )
 {
   const pricingMethodState = useAppSelector((state) => state.pricingMethod);

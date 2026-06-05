@@ -1,24 +1,31 @@
-import { CitiesApiService } from "../networking";
-import { createGenericEntitySlice } from "../state";
+import type { Signal } from "@preact/signals-react";
+import { Dto, Entity } from "../stateManager";
 import { BaseEntity } from "./baseEntity";
 import type { Country } from "./country";
 
-export class City extends BaseEntity
+export class CityOld extends BaseEntity
 {
   public name!: string;
   public countryId!: number;
   public country!: Country;
 
-  constructor(init?: Partial<City>)
+  constructor(init?: Partial<CityOld>)
   {
     super();
     Object.assign(this, init);
   }
 }
 
-export class CitySlice
+export class CityDto extends Dto
 {
-  private static entitySliceInstance = createGenericEntitySlice<City>("city", new CitiesApiService());
-  public static entityActions = CitySlice.entitySliceInstance.actions;
-  public static entityReducer = CitySlice.entitySliceInstance.reducer;
+  public name!: string;
+  public countryId!: number;
+  public country!: Country;
+}
+
+export class City extends Entity<CityDto>
+{
+  declare name: Signal<string>;
+  declare countryId: Signal<number>;
+  declare country: Signal<Country>;
 }

@@ -1,22 +1,11 @@
-import type { City } from "../entities";
-import type { ApiFilterResult, RequestResult } from "../types";
-import { ApiConstants } from "./apiConstants";
-import { BaseFilterableApiServiceOld } from "./baseFilterableApiServiceOld";
-import { YusrApiHelper } from "./yusrApiHelper";
+import { City, type CityDto } from "../entities";
+import { BaseFilterableApiService } from "./baseFilterableApiService";
 
-export class CitiesApiService extends BaseFilterableApiServiceOld<City>
+export class CitiesApiService extends BaseFilterableApiService<City, CityDto>
 {
   routeName: string = "Cities";
-
-  async Filter(
-    pageNumber: number,
-    rowsPerPage: number,
-    searchText?: string
-  ): Promise<RequestResult<ApiFilterResult<City>>>
+  createEntity(dto: CityDto): City
   {
-    return await YusrApiHelper.Post(
-      `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
-      searchText
-    );
+    return new City(dto);
   }
 }

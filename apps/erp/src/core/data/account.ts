@@ -1,5 +1,5 @@
 import { type TFunction } from "i18next";
-import { BaseEntity, City, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, type ValidationRuleOld, Validators } from "yusr-ui";
+import { BaseEntity, CityOld, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, type ValidationRuleOld, Validators } from "yusr-ui";
 import { SystemPermissionsResources } from "../auth/systemPermissionsResources";
 import AccountsApiService from "../networking/accountApiService";
 
@@ -45,7 +45,7 @@ export default class Account extends BaseEntity
   public parentName?: string;
   public bankAccountNumber?: string;
   public cityId?: number;
-  public city?: City;
+  public city?: CityOld;
   public street?: string;
   public district?: string;
   public buildingNumber?: string;

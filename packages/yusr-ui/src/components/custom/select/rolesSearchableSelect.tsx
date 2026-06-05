@@ -4,10 +4,10 @@ import { Role, RoleSlice } from "../../../entities";
 import { RolesApiService } from "../../../networking";
 import { type YusrRootState } from "../../../state";
 import { ChangableSearchableSelect } from "./changableSearchableSelect";
-import { type BasicSearchableSelectParams } from "./searchableSelect";
+import { type BasicSearchableSelectParamsOld } from "./searchableSelectOld";
 
 export function RolesSearchableSelect(
-  { ...props }: BasicSearchableSelectParams<Role>
+  { ...props }: BasicSearchableSelectParamsOld<Role>
 )
 {
   const roleState = useSelector((state: YusrRootState) => state.role);
