@@ -8,6 +8,7 @@ export * from "./citiesApiService";
 export * from "./citiesApiServiceOld";
 export * from "./countriesApiService";
 export * from "./currenciesApiService";
+export * from "./currenciesApiServiceOld";
 export * from "./rolesApiService";
 export * from "./systemApiService";
 export * from "./usersApiService";

@@ -22,7 +22,7 @@ const getInitialState = <TUser extends object, TSetting extends object>(): AuthS
 };
 
 export type AuthReducers<TUser extends object, TSetting extends object> = {
-  login: (state: any, action: PayloadAction<{ user: TUser; setting: TSetting; } | undefined>) => void;
+  login: (state: any, action: PayloadAction<{ user: TUser | any; setting: TSetting | any; } | undefined>) => void;
   logout: (state: any) => void;
   updateLoggedInUser: (state: any, action: PayloadAction<Partial<TUser>>) => void;
   updateSetting: (state: any, action: PayloadAction<Partial<TSetting>>) => void;

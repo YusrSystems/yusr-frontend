@@ -1,9 +1,8 @@
 import { AppNavigator } from "@/app/appNavigator";
-import { Setting } from "@/core/data/setting";
-import type { SettingOld } from "@/core/data/settingOld";
+import { Setting, SettingDto } from "@/core/data/setting";
 import { Services } from "@/core/services/services";
 import { signal } from "@preact/signals-react";
-import { ApiConstants, Cubit, LoginRequest, type RequestResult, User, UserOld, YusrApiHelper } from "yusr-ui";
+import { ApiConstants, Cubit, LoginRequest, type RequestResult, User, UserDto, YusrApiHelper } from "yusr-ui";
 import { LoginInitialState, LoginLoadingState } from "./loginState";
 
 const emailStorageItemName = "loginEmail";
@@ -30,8 +29,8 @@ export default class LoginCubit extends Cubit<LoginInitialState>
   public async login(
     additionalFunc?: (
       result: RequestResult<{
-        user: UserOld;
-        setting: SettingOld;
+        user: UserDto;
+        setting: SettingDto;
       }>
     ) => void
   )
@@ -44,7 +43,7 @@ export default class LoginCubit extends Cubit<LoginInitialState>
     this.performRememberMe();
     this.emit(new LoginLoadingState());
 
-    const result = await YusrApiHelper.Post<{ user: UserOld; setting: SettingOld; }>(
+    const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
       `${ApiConstants.baseUrl}/Login`,
       this.formData.toJson()
     );

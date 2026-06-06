@@ -1,99 +1,84 @@
-import { useEffect } from "react";
+import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import { ChangeDialogOld, CitiesSearchableSelectOld, type CommonChangeDialogPropsOld, FieldsSection, FormFieldOld, TextFieldOld } from "../../components/custom";
+import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
+import { ChangeDialog, CitiesSearchableSelect, type CommonChangeDialogProps, FieldsSection, FormField, TextField } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
-import { Branch, BranchSlice, BranchValidationRules } from "../../entities";
-import { useFormErrors, useFormInit, useValidate } from "../../hooks";
-import { useAppDispatch, type YusrRootState } from "../../state";
-import { CitySlice } from "../../entities/citySlice";
+import { Branch, BranchDto } from "../../entities";
+import { BaseServices } from "../../services";
 
-export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<Branch>)
+export function ChangeBranchDialog({ entity, service, onSuccess }: CommonChangeDialogProps<Branch, BranchDto>)
 {
-  const { t } = useTranslation(["commonEntities", "common"]);
-  const cityState = useSelector((state: YusrRootState) => state.city);
-  const dispatch = useAppDispatch();
+  useSignals();
 
-  useEffect(() =>
+  if (
+    (entity.mode.value === "create"
+      && !BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Branches, SystemPermissionsActions.Add))
+    || (entity.mode.value === "update"
+      && !BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Branches, SystemPermissionsActions.Update))
+  )
   {
-    dispatch(CitySlice.entityActions.filter());
-  }, [dispatch]);
+    return <ChangeDialog.Unauthorized />;
+  }
 
-  const { formData, errors } = useSelector((state: YusrRootState) => state.branchForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    BranchValidationRules.validationRules(t),
-    (errors) => dispatch(BranchSlice.formActions.setErrors(errors))
-  );
-  useFormInit(BranchSlice.formActions.setInitialData, entity ?? {});
-
-  const title = mode === "create"
+  const { t } = useTranslation(["commonEntities", "common"]);
+  const title = entity.mode.value === "create"
     ? t("branches.addNewTitle")
     : `${t("common:crudRow.edit")} ${t("branches.entityName")}`;
 
   return (
-    <ChangeDialogOld<Branch>
-      title={ title }
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => cityState.isLoading }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-    >
+    <ChangeDialog>
+      <ChangeDialog.Header title={ title } />
+
       <FieldGroup className="py-2">
-        <TextFieldOld
+        <TextField
           label={ t("branches.branchName") }
-          value={ formData.name || "" }
-          onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ name: e.target.value })) }
-          isInvalid={ isInvalid("name") }
-          error={ getError("name") }
-          required={ true }
+          required
+          value={ entity.name }
+          error={ entity.getError("name") }
         />
 
-        <FormFieldOld
+        <FormField
           label={ t("branches.city") }
-          required={ true }
-          isInvalid={ isInvalid("cityId") }
-          error={ getError("cityId") }
+          required
+          error={ entity.getError("cityId") }
         >
-          <CitiesSearchableSelectOld
-            selectedId={ formData.cityId }
-            selectedLabel={ formData.city?.name }
-            onValueChange={ (city) =>
-              dispatch(BranchSlice.formActions.updateFormData({ cityId: city?.id, city: city })) }
-            isInvalid={ isInvalid("cityId") }
+          <CitiesSearchableSelect
+            id={ entity.cityId }
+            label={ entity.cityName }
           />
-        </FormFieldOld>
+        </FormField>
 
         <FieldsSection title="" columns={ 2 }>
-          <TextFieldOld
+          <TextField
             label={ t("branches.street") }
-            value={ formData.street || "" }
-            onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ street: e.target.value })) }
+            value={ entity.street }
           />
-          <TextFieldOld
+          <TextField
             label={ t("branches.district") }
-            value={ formData.district || "" }
-            onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ district: e.target.value })) }
+            value={ entity.district }
           />
-          <TextFieldOld
+          <TextField
             label={ t("branches.buildingNumber") }
-            value={ formData.buildingNumber || "" }
-            onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ buildingNumber: e.target.value })) }
-            isInvalid={ isInvalid("buildingNumber") }
-            error={ getError("buildingNumber") }
+            value={ entity.buildingNumber }
+            error={ entity.getError("buildingNumber") }
           />
-          <TextFieldOld
+          <TextField
             label={ t("branches.postalCode") }
-            value={ formData.postalCode || "" }
-            onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ postalCode: e.target.value })) }
-            isInvalid={ isInvalid("postalCode") }
-            error={ getError("postalCode") }
+            value={ entity.postalCode }
+            error={ entity.getError("postalCode") }
           />
         </FieldsSection>
       </FieldGroup>
-    </ChangeDialogOld>
+
+      <ChangeDialog.Footer>
+        <ChangeDialog.Close />
+
+        <ChangeDialog.SaveButton<Branch, BranchDto>
+          entity={ entity }
+          service={ service }
+          onSuccess={ (data) => onSuccess?.(data) }
+        />
+      </ChangeDialog.Footer>
+    </ChangeDialog>
   );
 }

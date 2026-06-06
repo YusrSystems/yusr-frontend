@@ -20,6 +20,18 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
     {
       const field = rule.field;
       this.errors[field] = signal(undefined);
+
+      const original = (this as any)[field] as Signal<unknown>;
+      (this as any)[field] = new Proxy(original, {
+        set: (target, prop, value) =>
+        {
+          if (prop === "value")
+          {
+            this.errors[field].value = undefined;
+          }
+          return Reflect.set(target, prop, value);
+        }
+      });
     });
   }
 

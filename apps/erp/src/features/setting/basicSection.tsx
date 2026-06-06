@@ -4,7 +4,7 @@ import { Camera, Check, Copy, Download, Share2, Trash2, Upload } from "lucide-re
 import { QRCodeCanvas } from "qrcode.react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelect, Button, FieldGroup, FieldsSection, FormFieldOld, Label, StorageFileStatus, StorageType, TextFieldOld, useAppDispatch, useFormErrors, useStorageFile } from "yusr-ui";
+import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelectOld, Button, FieldGroup, FieldsSection, FormFieldOld, Label, StorageFileStatus, StorageType, TextFieldOld, useAppDispatch, useFormErrors, useStorageFile } from "yusr-ui";
 import { type SettingOld, SettingSlice } from "../../core/data/settingOld";
 
 export default function BasicSection()
@@ -227,7 +227,7 @@ export default function BasicSection()
             onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ email: e.target.value })) }
           />
           <FormFieldOld label={ t("settings.mainBranch") } required>
-            <BranchesSearchableSelect
+            <BranchesSearchableSelectOld
               selectedId={ formData.branchId }
               selectedLabel={ formData.branch?.name }
               onValueChange={ (selected) =>

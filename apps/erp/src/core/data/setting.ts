@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { type Branch, CityOld, type Currency, Dto, i18n, type StorageFile, ValidatableEntity, Validators } from "yusr-ui";
+import { type BranchOld, CityOld, type Currency, Dto, i18n, type StorageFile, ValidatableEntity, Validators } from "yusr-ui";
 import type { TaxOld } from "./tax";
 
 export const EInvoicingEnvironmentType = {
@@ -37,7 +37,7 @@ export class SettingDto extends Dto
   public endDate!: Date;
 
   public branchId!: number;
-  public branch?: Branch;
+  public branch?: BranchOld;
 
   public mainTaxId!: number;
   public mainTax?: TaxOld;
@@ -74,7 +74,7 @@ export class Setting extends ValidatableEntity<SettingDto>
   declare startDate: Signal<Date>;
   declare endDate: Signal<Date>;
   declare branchId: Signal<number>;
-  declare branch?: Signal<Branch>;
+  declare branch?: Signal<BranchOld>;
   declare mainTaxId: Signal<number>;
   declare mainTax?: Signal<TaxOld>;
   declare sellAccountId?: Signal<number>;

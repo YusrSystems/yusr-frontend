@@ -1,33 +1,56 @@
-import { useSelector } from "react-redux";
-import { YusrSystemPermissionsResources } from "../../../auth";
-import { Branch, BranchSlice } from "../../../entities";
-import { ChangeBranchDialog } from "../../../features/branches/changeBranchDialog";
-import { BranchesApiService } from "../../../networking";
-import type { YusrRootState } from "../../../state";
-import { ChangableSearchableSelect } from "./changableSearchableSelect";
-import type { BasicSearchableSelectParamsOld } from "./searchableSelectOld";
+import { useSignals } from "@preact/signals-react/runtime";
+import React, { useEffect, useMemo } from "react";
+import { Branch, BranchDto } from "../../../entities";
+import { BaseServices } from "../../../services/baseServices";
+import { PageCubit, PageLoaded, PageLoading } from "../../../stateManager";
+import { SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "./searchableSelect";
 
-export function BranchesSearchableSelect(
-  { ...props }: BasicSearchableSelectParamsOld<Branch>
-)
+export function BranchesSearchableSelect({ ...props }: SearchableSelectProps)
 {
-  const branchState = useSelector((state: YusrRootState) => state.branch);
-  const authState = useSelector((state: YusrRootState) => state.auth);
+  useSignals();
+  const cubit = useMemo(() => new PageCubit<Branch, BranchDto>(BaseServices.branchesApi), []);
+  useEffect(() => cubit.init(), []);
 
   return (
-    <ChangableSearchableSelect<Branch>
-      labelKey="name"
-      createKey="name"
-      state={ branchState }
-      apiService={ new BranchesApiService() }
-      systemPermissionsResources={ YusrSystemPermissionsResources.Branches }
-      entityActions={ {
-        filter: BranchSlice.entityActions.filter,
-        refresh: BranchSlice.entityActions.refresh
-      } }
-      changeDialog={ ChangeBranchDialog }
-      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
-      { ...props }
-    />
+    <SearchableSelect>
+      <SearchableSelect.Trigger label={ props.label.value } />
+      <SearchableSelect.Content>
+        <SearchableSelect.SearchInput onSearch={ (searchInput) => cubit.search(searchInput) } />
+        <SearchableSelect.Command>
+          <SearchableSelect.NullOption { ...props } />
+          <CommandItems />
+        </SearchableSelect.Command>
+      </SearchableSelect.Content>
+    </SearchableSelect>
   );
+
+  function CommandItems()
+  {
+    if (cubit.state.value instanceof PageLoading)
+    {
+      return <SearchableSelect.Loading />;
+    }
+
+    if (cubit.state.value instanceof PageLoaded && cubit.entities.value.length > 0)
+    {
+      return cubit.entities.value.map((entity) => <Option key={ entity.id.value } item={ entity } { ...props } />);
+    }
+
+    return <SearchableSelect.Empty />;
+  }
 }
+
+const Option = React.memo(
+  function Option({ ...props }: Omit<SearchableSelectOptionProps<Branch, BranchDto>, "labelSelector">)
+  {
+    useSignals();
+    return (
+      <SearchableSelect.Option
+        labelSelector="name"
+        { ...props }
+      >
+        <SearchableSelect.OptionBody label={ props.item.name.value } />
+      </SearchableSelect.Option>
+    );
+  }
+);

@@ -13,13 +13,18 @@ import { Popover, PopoverContent, PopoverTrigger } from "../../pure/popover";
 import { SearchInput, type SearchInputParams } from "../inputs/searchInput";
 import useSearchableSelectContext, { SearchableSelectContext } from "./useSearchableSelectContext";
 
-export type SearchableSelectOptionProps<TEntity extends Entity<TDto>, TDto extends Dto> = PropsWithChildren & {
+export type SearchableSelectOptionProps<TEntity extends Entity<TDto>, TDto extends Dto> = {
   id: Signal<number | undefined>;
-  label: Signal<string | undefined>;
+  label?: Signal<string | undefined>;
   labelSelector: keyof TEntity;
   item: TEntity;
-  onSelect?: () => void;
+  onSelect?: (item?: TEntity) => void;
 };
+
+export type SearchableSelectProps<TEntity extends Entity<TDto>, TDto extends Dto> = Omit<
+  SearchableSelectOptionProps<TEntity, TDto>,
+  "labelSelector" | "item"
+>;
 
 export function SearchableSelect<T extends BaseEntity>({ children }: PropsWithChildren)
 {
@@ -121,7 +126,7 @@ SearchableSelect.OptionBody = function({ label }: { label: string; })
 };
 
 SearchableSelect.Option = function<TEntity extends Entity<TDto>, TDto extends Dto>(
-  { id, label, labelSelector, item, onSelect, children }: SearchableSelectOptionProps<TEntity, TDto>
+  { id, label, labelSelector, item, onSelect, children }: SearchableSelectOptionProps<TEntity, TDto> & PropsWithChildren
 )
 {
   useSignals();
@@ -132,8 +137,11 @@ SearchableSelect.Option = function<TEntity extends Entity<TDto>, TDto extends Dt
       onSelect={ () =>
       {
         id.value = item.id.value;
-        label.value = (item[labelSelector] as Signal).value;
-        onSelect?.();
+        if (label != undefined)
+        {
+          label.value = (item[labelSelector] as Signal).value;
+        }
+        onSelect?.(item);
         data.isOpen.value = false;
       } }
       className="cursor-pointer group"
@@ -161,7 +169,10 @@ SearchableSelect.NullOption = function(
       onSelect={ () =>
       {
         id.value = undefined;
-        label.value = undefined;
+        if (label != undefined)
+        {
+          label.value = undefined;
+        }
         onSelect?.();
         data.isOpen.value = false;
       } }

@@ -2,8 +2,8 @@ import type { Signal } from "@preact/signals-react";
 import { i18n } from "../locales";
 import { Dto, ValidatableEntity } from "../stateManager";
 import { Validators } from "../validation";
-import type { Branch } from "./branch";
-import type { Role } from "./role";
+import type { BranchOld } from "./branch";
+import type { RoleOld } from "./role";
 
 export class UserDto extends Dto
 {
@@ -12,8 +12,8 @@ export class UserDto extends Dto
   public isActive!: boolean;
   public branchId!: number;
   public roleId!: number;
-  public branch!: Branch;
-  public role!: Role;
+  public branch!: BranchOld;
+  public role!: RoleOld;
 }
 
 export class User extends ValidatableEntity<UserDto>
@@ -23,8 +23,8 @@ export class User extends ValidatableEntity<UserDto>
   declare isActive: Signal<boolean>;
   declare branchId: Signal<number>;
   declare roleId: Signal<number>;
-  declare branch: Signal<Branch>;
-  declare role: Signal<Role>;
+  declare branch: Signal<BranchOld>;
+  declare role: Signal<RoleOld>;
 
   constructor(dto: Partial<UserDto>)
   {

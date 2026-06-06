@@ -35,7 +35,6 @@ export default function ChangeTaxDialog({ entity, service, onSuccess }: CommonCh
           required
           value={ entity.name }
           error={ entity.getError("name") }
-          onChange={ () => entity.clearError("name") }
         />
         <FieldsSection columns={ 2 }>
           <NumberField
@@ -45,7 +44,6 @@ export default function ChangeTaxDialog({ entity, service, onSuccess }: CommonCh
             max={ 100 }
             value={ entity.percentage }
             error={ entity.getError("percentage") }
-            onChange={ () => entity.clearError("percentage") }
           />
           <SelectField
             label={ t("taxes.isPrimary") }

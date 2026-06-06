@@ -1,8 +1,8 @@
 import { type TFunction } from "i18next";
 import { type ValidationRuleOld, Validators } from "../validation";
 import { BaseEntity } from "./baseEntity";
-import type { Branch } from "./branch";
-import type { Role } from "./role";
+import type { BranchOld } from "./branch";
+import type { RoleOld } from "./role";
 
 export class UserOld extends BaseEntity
 {
@@ -11,8 +11,8 @@ export class UserOld extends BaseEntity
   public isActive!: boolean;
   public branchId!: number;
   public roleId!: number;
-  public branch!: Branch;
-  public role!: Role;
+  public branch!: BranchOld;
+  public role!: RoleOld;
 
   constructor(init?: Partial<UserOld>)
   {

@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { type Branch, CityOld, createGenericFormSlice, type Currency, type StorageFile, type ValidationRuleOld, Validators } from "yusr-ui";
+import { type BranchOld, CityOld, createGenericFormSlice, CurrencyOld, type StorageFile, type ValidationRuleOld, Validators } from "yusr-ui";
 import type { TaxOld } from "./tax";
 
 export const EInvoicingEnvironmentType = {
@@ -29,7 +29,7 @@ export class SettingOld
   public vatNumber?: string;
 
   public currencyId!: number;
-  public currency?: Currency;
+  public currency?: CurrencyOld;
 
   public logo?: StorageFile;
 
@@ -37,7 +37,7 @@ export class SettingOld
   public endDate!: Date;
 
   public branchId!: number;
-  public branch?: Branch;
+  public branch?: BranchOld;
 
   public mainTaxId!: number;
   public mainTax?: TaxOld;

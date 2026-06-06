@@ -1,22 +1,12 @@
-import type { Currency } from "../entities/currency";
-import type { ApiFilterResult, RequestResult } from "../types";
-import { ApiConstants } from "./apiConstants";
-import { BaseFilterableApiServiceOld } from "./baseFilterableApiServiceOld";
-import { YusrApiHelper } from "./yusrApiHelper";
+import { Currency, type CurrencyDto } from "../entities/currency";
+import { BaseFilterableApiService } from "./baseFilterableApiService";
 
-export class CurrenciesApiService extends BaseFilterableApiServiceOld<Currency>
+export class CurrenciesApiService extends BaseFilterableApiService<Currency, CurrencyDto>
 {
   routeName: string = "Currencies";
 
-  async Filter(
-    pageNumber: number,
-    rowsPerPage: number,
-    searchText?: string
-  ): Promise<RequestResult<ApiFilterResult<Currency>>>
+  createEntity(dto: CurrencyDto): Currency
   {
-    return await YusrApiHelper.Post(
-      `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
-      searchText
-    );
+    return new Currency(dto);
   }
 }

@@ -1,18 +1,18 @@
-import { RolesApiService } from "../networking/rolesApiService";
+import { RolesApiServiceOld } from "../networking/rolesApiService";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
-import type { Role } from "./role";
+import type { RoleOld } from "./role";
 
 export class RoleSlice
 {
-  private static entitySliceInstance = createGenericEntitySlice("role", new RolesApiService());
+  private static entitySliceInstance = createGenericEntitySlice("role", new RolesApiServiceOld());
   public static entityActions = RoleSlice.entitySliceInstance.actions;
   public static entityReducer = RoleSlice.entitySliceInstance.reducer;
 
-  private static dialogSliceInstance = createGenericDialogSlice<Role>("roleDialog");
+  private static dialogSliceInstance = createGenericDialogSlice<RoleOld>("roleDialog");
   public static dialogActions = RoleSlice.dialogSliceInstance.actions;
   public static dialogReducer = RoleSlice.dialogSliceInstance.reducer;
 
-  private static formSliceInstance = createGenericFormSlice<Role>("roleForm");
+  private static formSliceInstance = createGenericFormSlice<RoleOld>("roleForm");
   public static formActions = RoleSlice.formSliceInstance.actions;
   public static formReducer = RoleSlice.formSliceInstance.reducer;
 }

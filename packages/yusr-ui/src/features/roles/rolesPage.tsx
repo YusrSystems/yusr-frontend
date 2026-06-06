@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPageOld } from "../../components/custom";
-import { type Role, RoleSlice, UserOld } from "../../entities";
-import { RolesApiService } from "../../networking";
+import { type RoleOld, RoleSlice, UserOld } from "../../entities";
+import { RolesApiServiceOld } from "../../networking";
 import { useAppDispatch, type YusrRootState } from "../../state";
 import { ChangeRoleDialog, type ChangeRoleDialogAdditionalProps } from "./changeRoleDialog";
 
@@ -24,10 +24,10 @@ export function RolesPage({ onUpdateLoggedInUser, ChangeRoleDialogAdditionalProp
   const permissions = useSelector((state: YusrRootState) =>
     selectPermissionsByResource(state, YusrSystemPermissionsResources.Roles)
   );
-  const service = useMemo(() => new RolesApiService(), []);
+  const service = useMemo(() => new RolesApiServiceOld(), []);
 
   return (
-    <CrudPageOld<Role>
+    <CrudPageOld<RoleOld>
       title={ t("roles.title") }
       entityName={ t("roles.entityName") }
       addNewItemTitle={ t("roles.addNewTitle") }
@@ -50,7 +50,7 @@ export function RolesPage({ onUpdateLoggedInUser, ChangeRoleDialogAdditionalProp
         rowStyles: "w-30"
       }, { rowName: t("roles.roleName"), rowStyles: "" }] }
       tableRowMapper={ (
-        role: Role
+        role: RoleOld
       ) => [{ rowName: `#${role.id}`, rowStyles: "" }, { rowName: role.name, rowStyles: "font-semibold" }] }
       actions={ {
         filter: RoleSlice.entityActions.filter,

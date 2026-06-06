@@ -1,32 +1,56 @@
-import { useSelector } from "react-redux";
-import { YusrSystemPermissionsResources } from "../../../auth";
-import { Currency, CurrencySlice } from "../../../entities";
-import { BaseApiServiceOld, CurrenciesApiService } from "../../../networking";
-import type { YusrRootState } from "../../../state";
-import { ChangableSearchableSelect } from "./changableSearchableSelect";
-import type { BasicSearchableSelectParamsOld } from "./searchableSelectOld";
+import { useSignals } from "@preact/signals-react/runtime";
+import React, { useEffect, useMemo } from "react";
+import { Currency, CurrencyDto, CurrencyOld } from "../../../entities";
+import { BaseServices } from "../../../services/baseServices";
+import { PageCubit, PageLoaded, PageLoading } from "../../../stateManager";
+import { SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "./searchableSelect";
 
-export function CurrenciesSearchableSelect(
-  { ...props }: BasicSearchableSelectParamsOld<Currency>
-)
+export function CurrenciesSearchableSelect({ ...props }: SearchableSelectProps<Currency, CurrencyDto>)
 {
-  const currencyState = useSelector((state: YusrRootState) => state.currency);
-  const authState = useSelector((state: YusrRootState) => state.auth);
+  useSignals();
+  const cubit = useMemo(() => new PageCubit<Currency, CurrencyOld>(BaseServices.currenciesApi), []);
+  useEffect(() => cubit.init(), []);
 
   return (
-    <ChangableSearchableSelect<Currency>
-      labelKey="name"
-      state={ currencyState }
-      apiService={ new CurrenciesApiService() as unknown as BaseApiServiceOld<Currency> }
-      systemPermissionsResources={ YusrSystemPermissionsResources.Branches }
-      entityActions={ {
-        filter: CurrencySlice.entityActions.filter,
-        refresh: CurrencySlice.entityActions.refresh
-      } }
-      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
-      allowAdd={ false }
-      allowUpdate={ false }
-      { ...props }
-    />
+    <SearchableSelect>
+      <SearchableSelect.Trigger label={ props.label?.value } />
+      <SearchableSelect.Content>
+        <SearchableSelect.SearchInput onSearch={ (searchInput) => cubit.search(searchInput) } />
+        <SearchableSelect.Command>
+          <SearchableSelect.NullOption { ...props } />
+          <CommandItems />
+        </SearchableSelect.Command>
+      </SearchableSelect.Content>
+    </SearchableSelect>
   );
+
+  function CommandItems()
+  {
+    if (cubit.state.value instanceof PageLoading)
+    {
+      return <SearchableSelect.Loading />;
+    }
+
+    if (cubit.state.value instanceof PageLoaded && cubit.entities.value.length > 0)
+    {
+      return cubit.entities.value.map((entity) => <Option key={ entity.id.value } item={ entity } { ...props } />);
+    }
+
+    return <SearchableSelect.Empty />;
+  }
 }
+
+const Option = React.memo(
+  function Option({ ...props }: Omit<SearchableSelectOptionProps<Currency, CurrencyOld>, "labelSelector">)
+  {
+    useSignals();
+    return (
+      <SearchableSelect.Option
+        labelSelector="name"
+        { ...props }
+      >
+        <SearchableSelect.OptionBody label={ props.item.name.value } />
+      </SearchableSelect.Option>
+    );
+  }
+);
