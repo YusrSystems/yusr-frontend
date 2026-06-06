@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Button } from "yusr-ui";
 import privacyAr from "./privacy-policy-ar.md?raw";
 import privacyEn from "./privacy-policy-en.md?raw";
 import refundAr from "./refund-policy-ar.md?raw";
@@ -19,13 +18,13 @@ const files = {
 };
 
 const css = `
-  .legal-body h1 { font-size: 1.8rem; font-weight: 700; margin: 0 0 1rem; color: hsl(var(--foreground)); }
-  .legal-body h2 { font-size: 1.3rem; font-weight: 600; margin: 2rem 0 0.5rem; padding-bottom: 4px; border-bottom: 1px solid hsl(var(--border)); color: hsl(var(--foreground)); }
-  .legal-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.4rem; color: hsl(var(--foreground)); }
-  .legal-body p  { margin: 0.6rem 0; color: hsl(var(--muted-foreground)); }
+  .legal-body h1 { font-size: 1.6rem; font-weight: 700; margin: 0 0 1rem; color: hsl(var(--foreground)); }
+  .legal-body h2 { font-size: 1.2rem; font-weight: 600; margin: 2rem 0 0.5rem; padding-bottom: 6px; border-bottom: 1px solid hsl(var(--border)); color: hsl(var(--foreground)); }
+  .legal-body h3 { font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.4rem; color: hsl(var(--foreground)); }
+  .legal-body p  { margin: 0.6rem 0; line-height: 1.8; color: hsl(var(--muted-foreground)); }
   .legal-body ul { padding-left: 1.4rem; margin: 0.5rem 0; }
   .legal-body ol { padding-left: 1.4rem; margin: 0.5rem 0; }
-  .legal-body li { margin: 0.3rem 0; color: hsl(var(--muted-foreground)); }
+  .legal-body li { margin: 0.4rem 0; line-height: 1.8; color: hsl(var(--muted-foreground)); }
   .legal-body strong { font-weight: 600; color: hsl(var(--foreground)); }
   .legal-body em { font-style: italic; }
   .legal-body code { background: hsl(var(--muted)); color: hsl(var(--foreground)); padding: 1px 5px; font-size: 0.9em; border-radius: 3px; }
@@ -103,65 +102,62 @@ export default function LegalDocViewer()
   }
 
   return (
-    <div style={ { maxWidth: 720, margin: "0 auto", padding: "2rem 1rem", fontFamily: "Georgia, serif" } }>
+    <div className="min-h-screen bg-background text-foreground">
       <style>{ css }</style>
 
-      { /* Language switcher */ }
-      <div style={ { display: "flex", gap: 8, marginBottom: 16 } }>
-        { (["ar", "en"] as Lang[]).map((l) => (
-          <Button
-            key={ l }
-            onClick={ () => switchLang(l) }
-            style={ {
-              padding: "4px 16px",
-              border: "1px solid hsl(var(--border))",
-              background: lang === l ? "hsl(var(--foreground))" : "hsl(var(--background))",
-              color: lang === l ? "hsl(var(--background))" : "hsl(var(--muted-foreground))",
-              cursor: "pointer",
-              fontSize: 18,
-              borderRadius: 4
-            } }
+      { /* Sticky header */ }
+      <div className="sticky top-0 z-10 bg-background border-b border-border">
+        <div className="max-w-2xl mx-auto px-6">
+          { /* Language switcher */ }
+          <div className="flex items-center gap-1 pt-4 pb-2">
+            { (["ar", "en"] as Lang[]).map((l) => (
+              <button
+                key={ l }
+                onClick={ () => switchLang(l) }
+                className={ `px-4 py-1 rounded-full text-sm font-medium transition-colors ${
+                  lang === l
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                }` }
+              >
+                { l === "ar" ? "العربية" : "English" }
+              </button>
+            )) }
+          </div>
+
+          { /* Doc tabs */ }
+          <div
+            className={ `flex items-center gap-1 pb-3 overflow-x-auto scrollbar-hide ` }
           >
-            { l === "ar" ? "العربية" : "English" }
-          </Button>
-        )) }
+            { docs.map((f, i) => (
+              <button
+                key={ i }
+                onClick={ () => setActive(i) }
+                className={ `whitespace-nowrap px-4 py-1.5 text-sm transition-colors rounded-md ${
+                  i === active
+                    ? "text-foreground font-medium bg-muted"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                }` }
+              >
+                { f.name }
+              </button>
+            )) }
+          </div>
+        </div>
       </div>
 
-      { /* Divider */ }
-      <hr style={ { borderColor: "hsl(var(--border))", marginBottom: 16 } } />
+      { /* Content */ }
+      <div className="max-w-2xl mx-auto px-6 py-10">
+        <div
+          className="legal-body"
+          dir={ rtl ? "rtl" : "ltr" }
+          dangerouslySetInnerHTML={ { __html: parseMarkdown(doc.content) } }
+        />
 
-      { /* Document tabs */ }
-      <div style={ { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 32, direction: rtl ? "rtl" : "ltr" } }>
-        { docs.map((f, i) => (
-          <Button
-            key={ i }
-            onClick={ () => setActive(i) }
-            style={ {
-              padding: "4px 14px",
-              border: "1px solid hsl(var(--border))",
-              background: i === active ? "hsl(var(--foreground))" : "hsl(var(--background))",
-              color: i === active ? "hsl(var(--background))" : "hsl(var(--muted-foreground))",
-              cursor: "pointer",
-              fontSize: 13,
-              borderRadius: 4
-            } }
-          >
-            { f.name }
-          </Button>
-        )) }
+        <div className="mt-16 pt-6 border-t border-border text-center text-xs text-muted-foreground">
+          Yusr Systems · yusrsystems@gmail.com
+        </div>
       </div>
-
-      { /* Document body */ }
-      <div
-        className="legal-body"
-        dir={ rtl ? "rtl" : "ltr" }
-        dangerouslySetInnerHTML={ { __html: parseMarkdown(doc.content) } }
-      />
-
-      <hr style={ { marginTop: 48, borderColor: "hsl(var(--border))" } } />
-      <p style={ { textAlign: "center", fontSize: 12, color: "hsl(var(--muted-foreground))", marginTop: 12 } }>
-        Yusr Systems · yusrsystems@gmail.com
-      </p>
     </div>
   );
 }
