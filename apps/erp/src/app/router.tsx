@@ -19,6 +19,7 @@ import LoginPage from "../features/login/loginPage";
 import PaymentMethodsPage from "../features/paymentMethods/paymentMethodsPage";
 import PricingMethodsPage from "../features/pricingMethods/pricingMethodsPage";
 // import RegisterPage from "../features/register/presentation/registerPage";
+import LegalDocViewer from "@/features/legal/legaldocviewer";
 import ReportsPage from "../features/reports/reportsPage";
 import ErpRolesPage from "../features/roles/rolesPage";
 import SettingPage from "../features/setting/settingPage";
@@ -31,22 +32,26 @@ import UnitsPage from "../features/units/unitsPage";
 import VouchersPage from "../features/vouchers/vouchersPage";
 import AppLayout from "./appLayout";
 
-function ProtectedRouteWrapper() {
-  return <ProtectedRoute isAuthenticated={Services.auth.isAuthenticated} />;
+function ProtectedRouteWrapper()
+{
+  return <ProtectedRoute isAuthenticated={ Services.auth.isAuthenticated } />;
 }
-const refreshPage = () => {
+const refreshPage = () =>
+{
   window.location.reload();
 };
 export const router = createBrowserRouter([{
   errorElement: (
     <ErrorFallback
-      reset={refreshPage}
+      reset={ refreshPage }
     />
   ),
   children: [
     { path: "/", element: <LandingPage /> },
     { path: "/login", element: <LoginPage /> },
     { path: "/register", element: <MaintenanceFallback /> },
+    { path: "/legal", element: <LegalDocViewer /> },
+    // { path: "/register", element: <RegisterPage /> },
     { path: "/sharing/:registrationKey", element: <TenantInfoSharingPage /> },
     {
       element: <ProtectedRouteWrapper />,
