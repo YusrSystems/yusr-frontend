@@ -7,12 +7,12 @@ import tosAr from "./terms-of-service-ar.md?raw";
 import tosEn from "./terms-of-service-en.md?raw";
 
 const files = [
-  { name: "Privacy Policy (AR)", content: privacyAr },
-  { name: "Privacy Policy (EN)", content: privacyEn },
-  { name: "Refund Policy (AR)", content: refundAr },
-  { name: "Refund Policy (EN)", content: refundEn },
-  { name: "Terms of Service (AR)", content: tosAr },
-  { name: "Terms of Service (EN)", content: tosEn }
+  { name: "سياسة الخصوصية", content: privacyAr },
+  { name: "Privacy Policy", content: privacyEn },
+  { name: "سياسة الاسترداد", content: refundAr },
+  { name: "Refund Policy", content: refundEn },
+  { name: "شروط الخدمة", content: tosAr },
+  { name: "Terms of Service", content: tosEn }
 ];
 
 const css = `
