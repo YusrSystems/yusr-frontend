@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "yusr-ui";
 import privacyAr from "./privacy-policy-ar.md?raw";
 import privacyEn from "./privacy-policy-en.md?raw";
 import refundAr from "./refund-policy-ar.md?raw";
@@ -6,14 +7,16 @@ import refundEn from "./refund-policy-en.md?raw";
 import tosAr from "./terms-of-service-ar.md?raw";
 import tosEn from "./terms-of-service-en.md?raw";
 
-const files = [
-  { name: "سياسة الخصوصية", content: privacyAr },
-  { name: "Privacy Policy", content: privacyEn },
-  { name: "سياسة الاسترداد", content: refundAr },
-  { name: "Refund Policy", content: refundEn },
-  { name: "شروط الخدمة", content: tosAr },
-  { name: "Terms of Service", content: tosEn }
-];
+const files = {
+  ar: [{ name: "سياسة الخصوصية", content: privacyAr }, { name: "سياسة الاسترداد", content: refundAr }, {
+    name: "شروط الخدمة",
+    content: tosAr
+  }],
+  en: [{ name: "Privacy Policy", content: privacyEn }, { name: "Refund Policy", content: refundEn }, {
+    name: "Terms of Service",
+    content: tosEn
+  }]
+};
 
 const css = `
   .legal-body h1 { font-size: 1.8rem; font-weight: 700; margin: 0 0 1rem; color: hsl(var(--foreground)); }
@@ -82,34 +85,55 @@ function parseMarkdown(md: string)
     .join("\n");
 }
 
-function isRTL(text: string)
-{
-  return (text.match(/[\u0600-\u06ff]/g) || []).length
-    > (text.match(/[a-zA-Z]/g) || []).length;
-}
+type Lang = "ar" | "en";
 
 export default function LegalDocViewer()
 {
+  const [lang, setLang] = useState<Lang>("ar");
   const [active, setActive] = useState(0);
-  const doc = files[active];
-  const rtl = isRTL(doc.content);
+
+  const docs = files[lang];
+  const doc = docs[active];
+  const rtl = lang === "ar";
+
+  function switchLang(l: Lang)
+  {
+    setLang(l);
+    setActive(0);
+  }
 
   return (
-    <div
-      style={ {
-        maxWidth: 720,
-        margin: "0 auto",
-        padding: "2rem 1rem",
-        fontFamily: "Georgia, serif",
-        color: "hsl(var(--foreground))"
-      } }
-    >
+    <div style={ { maxWidth: 720, margin: "0 auto", padding: "2rem 1rem", fontFamily: "Georgia, serif" } }>
       <style>{ css }</style>
 
-      { /* Tabs */ }
-      <div style={ { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 32 } }>
-        { files.map((f, i) => (
-          <button
+      { /* Language switcher */ }
+      <div style={ { display: "flex", gap: 8, marginBottom: 16 } }>
+        { (["ar", "en"] as Lang[]).map((l) => (
+          <Button
+            key={ l }
+            onClick={ () => switchLang(l) }
+            style={ {
+              padding: "4px 16px",
+              border: "1px solid hsl(var(--border))",
+              background: lang === l ? "hsl(var(--foreground))" : "hsl(var(--background))",
+              color: lang === l ? "hsl(var(--background))" : "hsl(var(--muted-foreground))",
+              cursor: "pointer",
+              fontSize: 18,
+              borderRadius: 4
+            } }
+          >
+            { l === "ar" ? "العربية" : "English" }
+          </Button>
+        )) }
+      </div>
+
+      { /* Divider */ }
+      <hr style={ { borderColor: "hsl(var(--border))", marginBottom: 16 } } />
+
+      { /* Document tabs */ }
+      <div style={ { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 32, direction: rtl ? "rtl" : "ltr" } }>
+        { docs.map((f, i) => (
+          <Button
             key={ i }
             onClick={ () => setActive(i) }
             style={ {
@@ -123,11 +147,11 @@ export default function LegalDocViewer()
             } }
           >
             { f.name }
-          </button>
+          </Button>
         )) }
       </div>
 
-      { /* Document */ }
+      { /* Document body */ }
       <div
         className="legal-body"
         dir={ rtl ? "rtl" : "ltr" }
