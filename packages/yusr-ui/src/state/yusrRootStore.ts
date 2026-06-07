@@ -1,7 +1,7 @@
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { createAuthSlice } from "../auth";
-import type { Branch, CityOld, Currency, Role, UserOld } from "../entities";
+import type { BranchOld, CityOld, CurrencyOld, RoleOld, UserOld } from "../entities";
 import type { SystemPermissionsState } from "../types";
 import type { IDialogState } from "./interfaces/iDialogState";
 import type { IEntityState } from "./interfaces/iEntityState";
@@ -11,17 +11,17 @@ type AuthSlice = ReturnType<typeof createAuthSlice<UserOld, object>>;
 
 export type YusrRootState = {
   auth: ReturnType<AuthSlice["reducer"]>;
-  branch: IEntityState<Branch>;
-  branchForm: IFormState<Branch>;
-  branchDialog: IDialogState<Branch>;
-  role: IEntityState<Role>;
-  roleForm: IFormState<Role>;
-  roleDialog: IDialogState<Role>;
+  branch: IEntityState<BranchOld>;
+  branchForm: IFormState<BranchOld>;
+  branchDialog: IDialogState<BranchOld>;
+  role: IEntityState<RoleOld>;
+  roleForm: IFormState<RoleOld>;
+  roleDialog: IDialogState<RoleOld>;
   user: IEntityState<UserOld>;
   userForm: IFormState<UserOld>;
   userDialog: IDialogState<UserOld>;
   city: IEntityState<CityOld>;
-  currency: IEntityState<Currency>;
+  currency: IEntityState<CurrencyOld>;
   system: SystemPermissionsState;
 };
 

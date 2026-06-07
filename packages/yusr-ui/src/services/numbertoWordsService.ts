@@ -1,6 +1,6 @@
 import { type TFunction } from "i18next";
 import * as numberToWords from "number-to-words";
-import type { Currency } from "../entities";
+import type { CurrencyOld } from "../entities";
 
 export class NumbertoWordsService
 {
@@ -113,7 +113,7 @@ export class NumbertoWordsService
     return this.t;
   }
 
-  static ConvertAmount(amount: number, currency: Currency): string
+  static ConvertAmount(amount: number, currency: CurrencyOld): string
   {
     const integerPart = Math.floor(amount);
     const fractionPart = Math.round((amount - integerPart) * 100);
@@ -310,7 +310,7 @@ export class NumbertoWordsService
     return result || restWords;
   }
 
-  private static getCurrencyWord(value: number, currency: Currency, sub: boolean): string
+  private static getCurrencyWord(value: number, currency: CurrencyOld, sub: boolean): string
   {
     if (value === 0)
     {

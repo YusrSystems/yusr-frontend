@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { BranchesSearchableSelect, ChangeDialogOld, type CommonChangeDialogPropsOld, FormFieldOld, PasswordFieldOld, RolesSearchableSelect, SelectFieldOld, TextFieldOld } from "../../components/custom";
+import { BranchesSearchableSelectOld, ChangeDialogOld, type CommonChangeDialogPropsOld, FormFieldOld, PasswordFieldOld, RolesSearchableSelectOld, SelectFieldOld, TextFieldOld } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
 import { BranchSlice, RoleSlice, UserOld, UserValidationRules } from "../../entities";
 import { UserSlice } from "../../entities/userSlice";
@@ -67,7 +67,7 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
         </div>
 
         <FormFieldOld label={ t("users.role") } required isInvalid={ isInvalid("roleId") } error={ getError("roleId") }>
-          <RolesSearchableSelect
+          <RolesSearchableSelectOld
             selectedId={ formData.roleId }
             selectedLabel={ "must be set" }
             isInvalid={ isInvalid("roleId") }
@@ -85,7 +85,7 @@ export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonCha
           isInvalid={ isInvalid("branchId") }
           error={ getError("branchId") }
         >
-          <BranchesSearchableSelect
+          <BranchesSearchableSelectOld
             selectedId={ formData.branchId }
             selectedLabel={ formData.branch?.name }
             isInvalid={ isInvalid("branchId") }

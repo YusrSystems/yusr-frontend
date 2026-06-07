@@ -1,10 +1,10 @@
+import { CurrenciesApiServiceOld } from "../networking/currenciesApiServiceOld";
 import { createGenericEntitySlice } from "../state";
-import { CurrenciesApiService } from "../networking/currenciesApiService";
-import type { Currency } from "./currency";
+import type { CurrencyOld } from "./currency";
 
 export class CurrencySlice
 {
-  private static entitySliceInstance = createGenericEntitySlice<Currency>("currency", new CurrenciesApiService());
+  private static entitySliceInstance = createGenericEntitySlice<CurrencyOld>("currency", new CurrenciesApiServiceOld());
   public static entityActions = CurrencySlice.entitySliceInstance.actions;
   public static entityReducer = CurrencySlice.entitySliceInstance.reducer;
 }

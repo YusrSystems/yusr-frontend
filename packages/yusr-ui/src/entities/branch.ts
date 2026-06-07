@@ -1,9 +1,12 @@
+import type { Signal } from "@preact/signals-react";
 import { type TFunction } from "i18next";
-import { type ValidationRuleOld, Validators } from "../validation";
+import { i18n } from "../locales";
+import { ChangeableEntity, type ChangeableEntityMode, Dto } from "../stateManager";
+import { type ValidationRule, type ValidationRuleOld, Validators } from "../validation";
 import { BaseEntity } from "./baseEntity";
 import type { CityOld } from "./city";
 
-export class Branch extends BaseEntity
+export class BranchOld extends BaseEntity
 {
   public name!: string;
   public cityId!: number;
@@ -13,7 +16,7 @@ export class Branch extends BaseEntity
   public buildingNumber!: string;
   public postalCode!: string;
 
-  constructor(init?: Partial<Branch>)
+  constructor(init?: Partial<BranchOld>)
   {
     super();
     Object.assign(this, init);
@@ -24,7 +27,7 @@ export class BranchValidationRules
 {
   public static validationRules = (
     t: TFunction<"commonEntities", undefined>
-  ): ValidationRuleOld<Partial<Branch>>[] => [{
+  ): ValidationRuleOld<Partial<BranchOld>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("branches.nameRequired"))]
@@ -47,4 +50,55 @@ export class BranchValidationRules
       Validators.numeric(t("branches.postalCodeNumeric"))
     )]
   }];
+}
+
+export class BranchDto extends Dto
+{
+  public name!: string;
+  public cityId!: number;
+  public cityName!: number;
+  public street?: string;
+  public district?: string;
+  public buildingNumber?: string;
+  public postalCode?: string;
+}
+
+export class Branch extends ChangeableEntity<BranchDto>
+{
+  declare name: Signal<string>;
+  declare cityId: Signal<number>;
+  declare cityName: Signal<string>;
+  declare street: Signal<string | undefined>;
+  declare district: Signal<string | undefined>;
+  declare buildingNumber: Signal<string | undefined>;
+  declare postalCode: Signal<string | undefined>;
+
+  constructor(dto: Partial<BranchDto>, mode: ChangeableEntityMode = "create")
+  {
+    const rules: ValidationRule<Partial<BranchDto>>[] = [{
+      field: "name",
+      selector: (d) => d.name,
+      validators: [Validators.required(i18n.t("commonEntities:branches.nameRequired"))]
+    }, {
+      field: "cityId",
+      selector: (d) => d.cityId,
+      validators: [Validators.required(i18n.t("commonEntities:branches.cityRequired"))]
+    }, {
+      field: "buildingNumber",
+      selector: (d) => d.buildingNumber,
+      validators: [Validators.optional(
+        Validators.exactLength(4, i18n.t("commonEntities:branches.buildingNumberLength")),
+        Validators.numeric(i18n.t("commonEntities:branches.buildingNumberNumeric"))
+      )]
+    }, {
+      field: "postalCode",
+      selector: (d) => d.postalCode,
+      validators: [Validators.optional(
+        Validators.exactLength(5, i18n.t("commonEntities:branches.postalCodeLength")),
+        Validators.numeric(i18n.t("commonEntities:branches.postalCodeNumeric"))
+      )]
+    }];
+
+    super(dto, rules, mode);
+  }
 }

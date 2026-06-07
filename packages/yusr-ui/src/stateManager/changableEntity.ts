@@ -21,7 +21,7 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
 
   static create<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
     this: new(dto: Partial<TDto>, mode: ChangeableEntityMode) => TEntity,
-    dto: Partial<TDto>
+    dto: Partial<TDto> = {}
   ): TEntity
   {
     return new this(dto, "create");

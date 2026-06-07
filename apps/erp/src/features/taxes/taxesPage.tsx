@@ -32,11 +32,11 @@ export default function TaxesPage()
         isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Add) }
       />
 
-      <TaxesCards />
+      <Cards />
 
       <CrudPage.SearchInput onSearch={ (searchText) => cubit.search(searchText) } />
 
-      <TestPageTable />
+      <PageTable />
 
       <CrudPage.ChangeDialog
         changeDialog={ (dto) =>
@@ -44,8 +44,8 @@ export default function TaxesPage()
           return (
             <ChangeTaxDialog
               entity={ dto
-                ? new Tax(dto, "update")
-                : new Tax({ id: 0, name: "", percentage: 1, isPrimary: false }, "create") }
+                ? Tax.load(dto)
+                : Tax.create({ id: 0, name: "", percentage: 1, isPrimary: false }) }
               service={ Services.taxesApi }
               onSuccess={ (data) =>
               {
@@ -72,7 +72,7 @@ export default function TaxesPage()
   );
 }
 
-function TaxesCards()
+function Cards()
 {
   useSignals();
   const { t } = useTranslation("accounting");
@@ -87,7 +87,7 @@ function TaxesCards()
   );
 }
 
-function TestPageTable()
+function PageTable()
 {
   useSignals();
   const { t } = useTranslation(["accounting", "common"]);

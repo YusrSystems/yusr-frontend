@@ -1,7 +1,18 @@
-import type { Branch } from "../entities/branch";
+import { Branch, type BranchDto, type BranchOld } from "../entities/branch";
+import { BaseApiService } from "./baseApiService";
 import { BaseApiServiceOld } from "./baseApiServiceOld";
 
-export class BranchesApiService extends BaseApiServiceOld<Branch>
+export class BranchesApiServiceOld extends BaseApiServiceOld<BranchOld>
 {
   routeName: string = "Branches";
+}
+
+export class BranchesApiService extends BaseApiService<Branch, BranchDto>
+{
+  routeName: string = "Branches";
+
+  createEntity(dto: BranchDto): Branch
+  {
+    return new Branch(dto);
+  }
 }

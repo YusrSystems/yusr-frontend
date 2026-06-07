@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { categorizePermissions, ChangeDialogTabbed, type CommonChangeDialogPropsOld, PermissionCard, PermissionSkeleton, type TabProps, TextFieldOld } from "../../components/custom";
 import { Skeleton } from "../../components/pure";
-import { type Role, RoleSlice, RoleValidationRules } from "../../entities";
+import { type RoleOld, RoleSlice, RoleValidationRules } from "../../entities";
 import { useFormErrors, useValidate } from "../../hooks";
 import { fetchSystemPermissions, useAppDispatch, type YusrRootState } from "../../state";
 
@@ -23,7 +23,7 @@ export type PermissionSecion = {
 };
 
 export type ChangeRoleDialogAdditionalProps = {
-  additionalTabs?: (role: Partial<Role>) => TabProps[];
+  additionalTabs?: (role: Partial<RoleOld>) => TabProps[];
   initRequests?: () => void;
   permissionSecions: PermissionSecion[];
   labels: Record<string, string>;
@@ -31,7 +31,7 @@ export type ChangeRoleDialogAdditionalProps = {
 
 export function ChangeRoleDialog(
   { entity, mode, service, onSuccess, additionalTabs, initRequests, permissionSecions, labels }:
-    & CommonChangeDialogPropsOld<Role>
+    & CommonChangeDialogPropsOld<RoleOld>
     & ChangeRoleDialogAdditionalProps
 )
 {
@@ -159,7 +159,7 @@ export function ChangeRoleDialog(
   const tabs: TabProps[] = [...permissionTabs, ...(additionalTabs?.(formData) ?? [])];
 
   return (
-    <ChangeDialogTabbed<Role>
+    <ChangeDialogTabbed<RoleOld>
       changeDialogProps={ {
         title: mode === "create" ? t("roles.addNewTitle") : `${t("common:crudRow.edit")} ${t("roles.entityName")}`,
         className: "sm:max-w-6xl",

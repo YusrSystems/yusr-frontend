@@ -1,5 +1,5 @@
 export * from "./branches/branchesPage";
-export * from "./branches/changeBranchDialog";
+export * from "./branches/changeBranchDialogOld";
 export * from "./roles/changeRoleDialog";
 export * from "./roles/rolesPage";
 export * from "./users/changeUserDialog";

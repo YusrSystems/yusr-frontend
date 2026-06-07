@@ -65,12 +65,14 @@ export * from "./permissions/permissionCard";
 export * from "./permissions/permissionSkeleton";
 
 // Select
-export * from "./select/branchesSearchableSelect";
+export * from "./select/branchesSearchableSelectOld";
 export * from "./select/changableSearchableSelect";
 export * from "./select/citiesSearchableSelect";
 export * from "./select/citiesSearchableSelectOld";
 export * from "./select/currenciesSearchableSelect";
+export * from "./select/currenciesSearchableSelectOld";
 export * from "./select/rolesSearchableSelect";
+export * from "./select/rolesSearchableSelectOld";
 export * from "./select/searchableSelectOld";
 
 // Separators
