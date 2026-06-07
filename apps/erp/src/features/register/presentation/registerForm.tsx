@@ -1,4 +1,5 @@
 import placeholderImg from "@/assets/placeholder.svg";
+import { login, updateLoggedInUser } from "@/core/state/store";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRight, Loader2 } from "lucide-react";
@@ -9,6 +10,7 @@ import { Button, Card, CardContent, cn, Field, FieldDescription, FieldGroup, i18
 import { RegistrationCubit } from "../logic/registrationCubit";
 import { RegistrationStateLoading } from "../logic/registrationState";
 
+import { useAppDispatch } from "@/core/state/store";
 import { GoogleLogin } from "@react-oauth/google";
 export interface RegisterFormProps
 {
@@ -212,6 +214,8 @@ function SubmitButton({ isLoading, onSubmit }: { isLoading: boolean; onSubmit: (
 
 function SignInWithGoogle({ cubit }: { cubit: RegistrationCubit; })
 {
+  useSignals();
+  const dispatch = useAppDispatch();
   return (
     <div className="flex flex-col gap-2 items-center ">
       <div className="border-t-2 border-gray-900 border-dashed w-full"></div>
@@ -222,7 +226,11 @@ function SignInWithGoogle({ cubit }: { cubit: RegistrationCubit; })
           {
             return;
           }
-          cubit.externalAuthRegister(response.credential);
+          cubit.externalAuthRegister(response.credential, (result) =>
+          {
+            dispatch(login(result));
+            dispatch(updateLoggedInUser(result.user ?? {}));
+          });
         } }
         onError={ () => console.log("Login Failed") }
       />

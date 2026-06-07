@@ -41,4 +41,9 @@ export class ErpAuthService extends AuthService
     this.baseSyncFromStorage();
     this._setting = this.setting;
   };
+
+  get isVerifiedAccount(): boolean
+  {
+    return !!(this.setting?.companyPhone?.value && this.setting?.crn?.value && this.setting?.vatNumber?.value);
+  }
 }
