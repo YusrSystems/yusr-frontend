@@ -1,23 +1,9 @@
-import { AuthConstants, type Dto, type Entity, User, UserDto } from "../index";
+import { AuthConstants, User, UserDto } from "../index";
 
-export class AuthService<
-  TSetting extends Entity<TSettingDto>,
-  TSettingDto extends Dto
->
+export abstract class AuthService
 {
   private _isAuthenticated = false;
   private _loggedInUser: User | undefined;
-  private _setting: TSetting | undefined;
-  private _createSetting: (dto: TSettingDto) => TSetting;
-
-  constructor(createSetting: (dto: TSettingDto) => TSetting, formatFunc?: (resource: string, action: string) => string)
-  {
-    this._createSetting = createSetting;
-    if (formatFunc)
-    {
-      this.FormatFunc = formatFunc;
-    }
-  }
 
   get loggedInUser(): User | undefined
   {
@@ -35,48 +21,34 @@ export class AuthService<
     return this._loggedInUser;
   }
 
-  get setting(): TSetting | undefined
-  {
-    if (!this._setting)
-    {
-      const storedSettingString = localStorage.getItem(AuthConstants.SettingStorageItemName);
-      const storedSetting: TSettingDto = storedSettingString ? JSON.parse(storedSettingString) : undefined;
-      if (storedSetting == undefined)
-      {
-        return undefined;
-      }
-      this._setting = this._createSetting(storedSetting);
-      return this._setting;
-    }
-    return this._setting;
-  }
-
   get isAuthenticated(): boolean
   {
     this._isAuthenticated = localStorage.getItem(AuthConstants.AuthCheckStorageItemName) === "true";
     return this._isAuthenticated;
   }
 
-  login(user: User, setting: TSetting)
+  protected readonly baseLogin = (user: User) =>
   {
     this._isAuthenticated = true;
     this._loggedInUser = user;
-    this._setting = setting;
 
     localStorage.setItem(AuthConstants.AuthCheckStorageItemName, "true");
     localStorage.setItem(AuthConstants.LoggedInUserStorageItemName, JSON.stringify(user.toJson()));
-    localStorage.setItem(AuthConstants.SettingStorageItemName, JSON.stringify(setting.toJson()));
-  }
+  };
 
-  logout = () =>
+  protected readonly baseLogout = () =>
   {
     this._isAuthenticated = false;
     this._loggedInUser = undefined;
-    this._setting = undefined;
 
     localStorage.removeItem(AuthConstants.AuthCheckStorageItemName);
     localStorage.removeItem(AuthConstants.LoggedInUserStorageItemName);
-    localStorage.removeItem(AuthConstants.SettingStorageItemName);
+  };
+
+  protected readonly baseSyncFromStorage = () =>
+  {
+    this._isAuthenticated = this.isAuthenticated;
+    this._loggedInUser = this.loggedInUser;
   };
 
   FormatFunc = (resource: string, action: string) =>
@@ -84,7 +56,7 @@ export class AuthService<
     return `${resource}.${action}`;
   };
 
-  hasAuth(resource: string, action: string): boolean
+  readonly hasAuth = (resource: string, action: string): boolean =>
   {
     const formattedPermissions = AuthConstants.FormatFunc(resource, action);
     if (this.loggedInUser == undefined)
@@ -92,12 +64,5 @@ export class AuthService<
       return false;
     }
     return this.loggedInUser?.role.value.permissions.includes(formattedPermissions);
-  }
-
-  syncFromStorage = () =>
-  {
-    this._isAuthenticated = this.isAuthenticated;
-    this._loggedInUser = this.loggedInUser;
-    this._setting = this.setting;
   };
 }

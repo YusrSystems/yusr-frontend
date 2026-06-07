@@ -1,14 +1,14 @@
-import { AuthService, BaseServices } from "yusr-ui";
-import { Setting, type SettingDto } from "../data/setting";
+import { BaseServices } from "yusr-ui";
 import TaxesApiService from "../networking/taxesApiService";
+import { ErpAuthService } from "./erpAuthService";
 
 export class Services extends BaseServices
 {
-  public static auth = new AuthService<Setting, SettingDto>((dto) => new Setting(dto));
+  public static override auth: ErpAuthService = new ErpAuthService();
   public static taxesApi = new TaxesApiService();
 
   static
   {
-    BaseServices.init(Services.auth);
+    BaseServices.auth = Services.auth;
   }
 }

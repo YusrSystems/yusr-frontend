@@ -8,10 +8,5 @@ export class BaseServices
   public static readonly rolesApi = new RolesApiService();
   public static readonly branchesApi = new BranchesApiService();
   public static readonly usersApi = new UsersApiService();
-  public static auth: AuthService<any, any>;
-
-  public static init(auth: AuthService<any, any>)
-  {
-    BaseServices.auth = auth;
-  }
+  public static auth: AuthService;
 }
