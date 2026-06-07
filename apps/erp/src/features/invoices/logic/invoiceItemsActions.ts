@@ -75,7 +75,8 @@ export default class InvoiceItemsActions
       // Financials
       quantity: 1,
       originalQuantity: storeItem.storeQuantity || 0,
-      cost: storeItem.cost || 0,
+      originalCost: storeItem.cost || 0,
+      cost: (storeItem.cost || 0) * defaultPricingMethod.quantityMultiplier,
       taxExclusivePrice: taxExclusivePrice,
       taxInclusivePrice: taxInclusivePrice,
       originaltaxInclusivePrice: taxInclusivePrice,
@@ -130,6 +131,7 @@ export default class InvoiceItemsActions
 
     row.itemUnitPricingMethodId = iupmId;
     row.itemUnitPricingMethodName = selectedMethod?.itemUnitPricingMethodName || "";
+    row.cost = (row.originalCost || 0) * (selectedMethod?.quantityMultiplier ?? 0);
     row.taxExclusivePrice = taxExclusivePrice;
     row.taxInclusivePrice = taxInclusivePrice;
     row.taxExclusiveTotalPrice = InvoiceItemsMath.CalcTaxExclusiveTotalPrice(
