@@ -1,9 +1,8 @@
 import { AppNavigator } from "@/app/appNavigator";
-import { Setting } from "@/core/data/setting";
-import type { SettingOld } from "@/core/data/settingOld";
+import { Setting, SettingDto } from "@/core/data/setting";
 import { RegisterApiService } from "@/core/networking/registerApiService";
 import { Services } from "@/core/services/services";
-import { ApiConstants, Cubit, User, UserOld, YusrApiHelper } from "yusr-ui";
+import { ApiConstants, Cubit, User, UserDto, YusrApiHelper } from "yusr-ui";
 import { Registration } from "../data/registration";
 import { type RegistrationState, RegistrationStateError, RegistrationStateInitial } from "./registrationState";
 
@@ -44,7 +43,7 @@ export class RegistrationCubit extends Cubit<RegistrationState>
   {
     console.log(token);
 
-    const result = await YusrApiHelper.Post<{ user: UserOld; setting: SettingOld; }>(
+    const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
       `${ApiConstants.baseUrl}/Login/external-login`,
       {
         provider: "google",
