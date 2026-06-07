@@ -25,7 +25,7 @@ export type CrudPageTableRow<TEntity extends ChangeableEntity<TDto>, TDto extend
 };
 
 export type CrudPageChangeDialogProps<TDto extends Dto> = {
-  changeDialog: (dto: TDto | undefined) => React.ReactNode;
+  changeDialog: (dto: TDto | undefined, closeDialog: () => void) => React.ReactNode;
 };
 
 export function CrudPage({ children }: PropsWithChildren)
@@ -171,7 +171,13 @@ CrudPage.ChangeDialog = function<TDto extends Dto>(
           open={ isChangeDialogOpen.value }
           onOpenChange={ (open) => isChangeDialogOpen.value = open }
         >
-          { changeDialog(selectedEntity.value?.toJson() as TDto) }
+          { changeDialog(
+            selectedEntity.value?.toJson() as TDto,
+            () =>
+            {
+              isChangeDialogOpen.value = false;
+            }
+          ) }
         </Dialog>
       ) }
     </>

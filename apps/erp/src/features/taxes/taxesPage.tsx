@@ -12,12 +12,12 @@ const cubit = new PageCubit<Tax, TaxDto>(Services.taxesApi);
 
 export default function TaxesPage()
 {
-  const { t } = useTranslation("accounting");
-
   if (!Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Get))
   {
     return <UnauthorizedPage />;
   }
+
+  const { t } = useTranslation("accounting");
 
   useEffect(() =>
   {
@@ -39,7 +39,7 @@ export default function TaxesPage()
       <PageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ (dto) =>
+        changeDialog={ (dto, closeDialog) =>
         {
           return (
             <ChangeTaxDialog
@@ -52,6 +52,7 @@ export default function TaxesPage()
                 if (data.mode.value === "create")
                 {
                   cubit.add(data);
+                  closeDialog();
                 }
                 else if (data.mode.value === "update")
                 {

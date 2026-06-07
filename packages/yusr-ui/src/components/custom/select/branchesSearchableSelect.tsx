@@ -5,7 +5,7 @@ import { BaseServices } from "../../../services/baseServices";
 import { PageCubit, PageLoaded, PageLoading } from "../../../stateManager";
 import { SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "./searchableSelect";
 
-export function BranchesSearchableSelect({ ...props }: SearchableSelectProps)
+export function BranchesSearchableSelect({ ...props }: SearchableSelectProps<Branch, BranchDto>)
 {
   useSignals();
   const cubit = useMemo(() => new PageCubit<Branch, BranchDto>(BaseServices.branchesApi), []);
@@ -13,7 +13,7 @@ export function BranchesSearchableSelect({ ...props }: SearchableSelectProps)
 
   return (
     <SearchableSelect>
-      <SearchableSelect.Trigger label={ props.label.value } />
+      <SearchableSelect.Trigger label={ props.label?.value } />
       <SearchableSelect.Content>
         <SearchableSelect.SearchInput onSearch={ (searchInput) => cubit.search(searchInput) } />
         <SearchableSelect.Command>

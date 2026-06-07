@@ -1,9 +1,8 @@
 import type { Signal } from "@preact/signals-react";
 import { i18n } from "../locales";
-import { Dto, ValidatableEntity } from "../stateManager";
-import { Validators } from "../validation";
-import type { BranchOld } from "./branch";
-import type { RoleOld } from "./role";
+import { ChangeableEntity, type ChangeableEntityMode, Dto } from "../stateManager";
+import { type ValidationRule, Validators } from "../validation";
+import type { RoleDto } from "./role";
 
 export class UserDto extends Dto
 {
@@ -11,24 +10,26 @@ export class UserDto extends Dto
   public password!: string;
   public isActive!: boolean;
   public branchId!: number;
+  public branchName!: string;
   public roleId!: number;
-  public branch!: BranchOld;
-  public role!: RoleOld;
+  public roleName!: string;
+  public role!: RoleDto;
 }
 
-export class User extends ValidatableEntity<UserDto>
+export class User extends ChangeableEntity<UserDto>
 {
   declare username: Signal<string>;
   declare password: Signal<string>;
   declare isActive: Signal<boolean>;
   declare branchId: Signal<number>;
+  declare branchName: Signal<string>;
   declare roleId: Signal<number>;
-  declare branch: Signal<BranchOld>;
-  declare role: Signal<RoleOld>;
+  declare roleName: Signal<string>;
+  declare role: Signal<RoleDto>;
 
-  constructor(dto: Partial<UserDto>)
+  constructor(dto: Partial<UserDto>, mode: ChangeableEntityMode = "create")
   {
-    super(dto, [{
+    const rules: ValidationRule<Partial<UserDto>>[] = [{
       field: "username",
       selector: (d) => d.username,
       validators: [Validators.required(i18n.t("commonEntities:users.usernameRequired"))]
@@ -44,6 +45,8 @@ export class User extends ValidatableEntity<UserDto>
       field: "branchId",
       selector: (d) => d.branchId,
       validators: [Validators.required(i18n.t("commonEntities:users.branchRequired"))]
-    }]);
+    }];
+
+    super(dto, rules, mode);
   }
 }

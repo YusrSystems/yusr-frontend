@@ -1,10 +1,10 @@
-import { UsersApiService } from "../networking/usersApiService";
+import { UsersApiServiceOld } from "../networking/usersApiService";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
 import type { UserOld } from "./userOld";
 
 export class UserSlice
 {
-  private static entitySliceInstance = createGenericEntitySlice("user", new UsersApiService());
+  private static entitySliceInstance = createGenericEntitySlice("user", new UsersApiServiceOld());
   public static entityActions = UserSlice.entitySliceInstance.actions;
   public static entityReducer = UserSlice.entitySliceInstance.reducer;
 
