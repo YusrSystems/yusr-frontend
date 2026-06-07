@@ -179,7 +179,7 @@ function AcceptTerms()
         { i18n.t("loginRegister:register.accountInfo.acceptPolicies") }{" "}
         <a
           rel="noopener noreferrer"
-          href="https://github.com/YusrSystems/Legal-Documents"
+          href="https://erp.yusrsys.com/legal"
           target="_blank"
           className="text-primary hover:underline"
         >
@@ -214,7 +214,7 @@ function SignInWithGoogle({ cubit }: { cubit: RegistrationCubit; })
 {
   return (
     <div className="flex flex-col gap-2 items-center ">
-      <div className="border-t-4 border-gray-900 border-dashed w-full"></div>
+      <div className="border-t-2 border-gray-900 border-dashed w-full"></div>
       <GoogleLogin
         onSuccess={ async (response) =>
         {
