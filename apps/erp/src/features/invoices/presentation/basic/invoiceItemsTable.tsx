@@ -191,7 +191,9 @@ export default function InvoiceItemsTable()
               const showToolTip = (formData.type === InvoiceType.Purchase || formData.type === InvoiceType.Sell)
                 && mode != "return";
               const multiplier = formData.type === InvoiceType.Sell ? -1 : 1;
-              const remaining = row.originalQuantity + row.quantity * multiplier;
+              const selectedMethod = row.itemUnitPricingMethods?.find((p) => p.id === row.itemUnitPricingMethodId);
+              const remaining = row.originalQuantity
+                + row.quantity * (selectedMethod?.quantityMultiplier ?? 1) * multiplier;
               const isLowStock = remaining < 0;
 
               return (
@@ -266,7 +268,7 @@ export default function InvoiceItemsTable()
                         </TooltipTrigger>
                         <TooltipContent className="flex flex-col gap-1 min-w-40" dir={ i18n.dir() }>
                           <span className="text-xs">
-                            الكمية المتبقية في المستودع
+                            { t("invoices.quantityInStore") }
                           </span>
                           <span className={ cn("text-lg font-medium", isLowStock && "text-red-600 dark:text-red-400") }>
                             { remaining }

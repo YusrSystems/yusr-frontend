@@ -238,7 +238,8 @@
     "addNewQuotationTitle": "কোটেশন তৈরি করুন",
     "totalQuotations": "মোট কোটেশন",
     "convertToSales": "সেলস ইনভয়েসে রূপান্তর করুন",
-    "settlementReason": "নিষ্পত্তির কারণ"
+    "settlementReason": "নিষ্পত্তির কারণ",
+    "quantityInStore": "গুদামে পরিমাণ"
   },
   "paymentMethods": {
     "title": "পেমেন্ট পদ্ধতি ব্যবস্থাপনা",

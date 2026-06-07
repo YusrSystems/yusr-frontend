@@ -66,7 +66,7 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
         <NumberFieldOld
           label={ t("items.cost") }
           disabled
-          value={ formData.cost ?? 0 }
+          value={ (formData.cost ?? 0).toFixed(2) }
           onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ cost: val })) }
           currency={ <CurrencyIcon /> }
         />

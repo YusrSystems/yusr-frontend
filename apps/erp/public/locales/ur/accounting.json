@@ -238,7 +238,8 @@
     "addNewQuotationTitle": "کوٹیشن بنائیں",
     "totalQuotations": "کل کوٹیشنز",
     "convertToSales": "سیلز انوائس میں تبدیل کریں",
-    "settlementReason": "تصفیہ کی وجہ"
+    "settlementReason": "تصفیہ کی وجہ",
+    "quantityInStore": "گودام میں مقدار"
   },
   "paymentMethods": {
     "title": "ادائیگی کے طریقوں کا نظم",

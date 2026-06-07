@@ -239,7 +239,8 @@
     "deleteVoucher": "حذف السند",
     "invoiceSummary": "ملخص الفاتورة",
     "copyInvoice": "نسخ الفاتورة",
-    "settlementReason": "سبب التسوية"
+    "settlementReason": "سبب التسوية",
+    "quantityInStore": "الكمية في المستودع"
   },
   "paymentMethods": {
     "title": "إدارة طرق الدفع",

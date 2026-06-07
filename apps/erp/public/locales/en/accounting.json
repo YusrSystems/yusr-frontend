@@ -238,7 +238,8 @@
     "addNewQuotationTitle": "Create Quotation",
     "totalQuotations": "Total Quotations",
     "convertToSales": "Convert to Sales Invoice",
-    "settlementReason": "Settlement Reason"
+    "settlementReason": "Settlement Reason",
+    "quantityInStore": "Quantity in Warehouse"
   },
   "paymentMethods": {
     "title": "Payment Methods Management",

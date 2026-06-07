@@ -238,7 +238,8 @@
     "addNewQuotationTitle": "कोटेशन बनाएँ",
     "totalQuotations": "कुल कोटेशन",
     "convertToSales": "सेल्स इनवॉइस में बदलें",
-    "settlementReason": "निपटान का कारण"
+    "settlementReason": "निपटान का कारण",
+    "quantityInStore": "गोदाम में मात्रा"
   },
   "paymentMethods": {
     "title": "भुगतान विधि प्रबंधन",
