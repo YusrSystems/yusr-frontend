@@ -11,7 +11,7 @@ import { ChangeBranchDialog } from "./changeBranchDialog";
 
 const cubit = new PageCubit<Branch, BranchDto>(BaseServices.branchesApi);
 
-export function BranchesPage()
+export function BranchesPage({ onUpdate }: { onUpdate?: (entity: Branch) => void; })
 {
   const { t } = useTranslation("commonEntities");
 
@@ -69,6 +69,7 @@ export function BranchesPage()
                 else if (data.mode.value === "update")
                 {
                   cubit.update(data);
+                  onUpdate?.(data);
                 }
               } }
             />

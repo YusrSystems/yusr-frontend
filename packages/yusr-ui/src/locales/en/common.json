@@ -224,6 +224,9 @@
     "description": "You have to verify your account to use this feature",
     "howToVerify": "How to verify?",
     "instructions": "Press the blue button to complete your account verification process",
-    "completeButton": "Complete your account verification"
+    "completeButton": "Complete your account verification",
+    "enterPhoneToVerify": "To complete verification, please enter the organization's phone number",
+    "addCityToBranch": "Add a city to the main branch, you can also edit the branch name to suit your organization",
+    "addCompanyPhone": "Add the organization's phone number"
   }
 }

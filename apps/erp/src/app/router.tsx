@@ -2,7 +2,7 @@ import { Services } from "@/core/services/services";
 import LegalDocViewer from "@/features/legal/legaldocviewer";
 import { ErpRolesPage } from "@/features/roles/rolesPage";
 import { createBrowserRouter } from "react-router-dom";
-import { BranchesPage, ErrorFallback, MaintenanceFallback, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
+import { BranchesPage, BranchOld, ErrorFallback, MaintenanceFallback, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
 import BanksAccountsPage from "../features/accounts/banksAccountsPage";
 import BoxesAccountsPage from "../features/accounts/boxesAccountsPage";
 import ClientsAccountsPage from "../features/accounts/clientsAccountsPage";
@@ -20,7 +20,7 @@ import LandingPage from "../features/landing/landingPage";
 import LoginPage from "../features/login/loginPage";
 import PaymentMethodsPage from "../features/paymentMethods/paymentMethodsPage";
 import PricingMethodsPage from "../features/pricingMethods/pricingMethodsPage";
-// import RegisterPage from "../features/register/presentation/registerPage";
+import RegisterPage from "../features/register/presentation/registerPage";
 import ReportsPage from "../features/reports/reportsPage";
 import SettingPage from "../features/setting/settingPage";
 import StocktakingsPage from "../features/stocktakings/stocktakingsPage";
@@ -50,7 +50,7 @@ export const router = createBrowserRouter([{
     { path: "/", element: <LandingPage /> },
     { path: "/login", element: <LoginPage /> },
     { path: "/register", element: <MaintenanceFallback /> },
-    // { path: "/register", element: <RegisterPage /> },
+    { path: "/register", element: <RegisterPage /> },
     { path: "/legal", element: <LegalDocViewer /> },
     { path: "/sharing/:registrationKey", element: <TenantInfoSharingPage /> },
     {
@@ -63,7 +63,22 @@ export const router = createBrowserRouter([{
           { path: "/users", element: <UsersPage /> },
           { path: "/settings", element: <SettingPage /> },
           { path: "/taxes", element: <TaxesPage /> },
-          { path: "/branches", element: <BranchesPage /> },
+          {
+            path: "/branches",
+            element: (
+              <BranchesPage
+                onUpdate={ (data) =>
+                {
+                  if (Services.auth.setting?.branch?.value)
+                  {
+                    Services.auth.setting!.branch!.value = new BranchOld({
+                      cityId: data.cityId.value
+                    });
+                  }
+                } }
+              />
+            )
+          },
           { path: "/roles", element: <ErpRolesPage /> },
           { path: "/stores", element: <StoresPage /> },
           { path: "/units", element: <UnitsPage /> },
