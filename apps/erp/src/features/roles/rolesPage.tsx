@@ -32,9 +32,7 @@ export function ErpRolesPage()
       {
         if (result.data != undefined)
         {
-          console.log(result.data.authorizedStores.value);
           entity.authorizedStores.value = result.data?.authorizedStores.value;
-          console.log(entity.authorizedStores.value);
         }
       } }
       extraTabs={ (entity) => [{

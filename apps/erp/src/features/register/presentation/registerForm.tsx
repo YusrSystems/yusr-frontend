@@ -1,5 +1,5 @@
 import placeholderImg from "@/assets/placeholder.svg";
-import { login } from "@/core/state/store";
+import { login, updateLoggedInUser } from "@/core/state/store";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRight, Loader2 } from "lucide-react";
@@ -228,8 +228,17 @@ function SignInWithGoogle({ cubit }: { cubit: RegistrationCubit; })
           }
           cubit.externalAuthRegister(response.credential, (result) =>
           {
+            const user = result.user
+              ? {
+                ...result.user,
+                role: result.user.role
+                  ? { ...result.user.role, authorizedStores: (result.user.role as any).authorizedStores ?? [] }
+                  : undefined
+              }
+              : {};
+
             dispatch(login(result));
-            // dispatch(updateLoggedInUser(result.user ?? {}));
+            dispatch(updateLoggedInUser(user));
           });
         } }
         onError={ () => console.log("Login Failed") }

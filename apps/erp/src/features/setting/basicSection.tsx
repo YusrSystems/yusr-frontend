@@ -1,14 +1,21 @@
+import { Services } from "@/core/services/services";
 import { useAppSelector } from "@/core/state/store";
+import { useSignals } from "@preact/signals-react/runtime";
 import { differenceInDays, format } from "date-fns";
 import { Camera, Check, Copy, Download, Share2, Trash2, Upload } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelectOld, Button, FieldGroup, FieldsSection, FormFieldOld, Label, StorageFileStatus, StorageType, TextFieldOld, useAppDispatch, useFormErrors, useStorageFile } from "yusr-ui";
+import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelectOld, Button, cn, FieldGroup, FieldsSection, FormFieldOld, Label, StorageFileStatus, StorageType, TextFieldOld, useAppDispatch, useFormErrors, useStorageFile } from "yusr-ui";
 import { type SettingOld, SettingSlice } from "../../core/data/settingOld";
 
 export default function BasicSection()
 {
+  useSignals();
+  const companyPhne = Services.auth.setting?.companyPhone?.value;
+  console.log(companyPhne);
+
   const { t } = useTranslation("erpCommon");
   const { formData, errors } = useAppSelector((state) => state.settingForm);
   const { getError, isInvalid } = useFormErrors(errors);
@@ -209,14 +216,25 @@ export default function BasicSection()
             onChange={ (e) =>
               dispatch(SettingSlice.formActions.updateFormData({ companyBusinessCategory: e.target.value })) }
           />
-          <TextFieldOld
-            label={ t("settings.companyPhone") }
-            required
-            value={ formData.companyPhone || "" }
-            isInvalid={ isInvalid("companyPhone") }
-            error={ getError("companyPhone") }
-            onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ companyPhone: e.target.value })) }
-          />
+          <div>
+            { !Boolean(Services.auth.setting?.companyPhone?.value) && (
+              <FieldNoticablePing
+                isError={ isInvalid("companyPhone") }
+                onClick={ () =>
+                {
+                  toast.info("لإكمال التحقق, يرجى ادخال رقم هاتف المؤسسة");
+                } }
+              />
+            ) }
+            <TextFieldOld
+              label={ t("settings.companyPhone") }
+              required
+              value={ formData.companyPhone || "" }
+              isInvalid={ isInvalid("companyPhone") }
+              error={ getError("companyPhone") }
+              onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ companyPhone: e.target.value })) }
+            />
+          </div>
           <TextFieldOld
             label={ t("settings.email") }
             required
@@ -290,5 +308,22 @@ export default function BasicSection()
         </div>
       </div>
     </div>
+  );
+}
+
+function FieldNoticablePing({ isError, onClick }: { onClick?: () => void; isError: boolean; })
+{
+  return (
+    <span
+      onClick={ onClick }
+      className={ cn(
+        "relative cursor-pointer flex size-3 -inset-s-[3%]",
+        isError ? "top-[54%]" : "top-[70%]"
+      ) }
+    >
+      <span className="absolute h-full w-full animate-ping rounded-full bg-sky-400 opacity-75">
+      </span>
+      <span className="relative inline-flex size-3 rounded-full bg-sky-500"></span>
+    </span>
   );
 }
