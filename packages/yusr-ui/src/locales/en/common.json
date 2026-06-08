@@ -218,5 +218,12 @@
     "retry": "Try Again",
     "goHome": "Go Home",
     "eta": "Estimated completion in ~{{minutes}} min"
+  },
+  "accountVerification": {
+    "title": "Account Verification Required",
+    "description": "You have to verify your account to use this feature",
+    "howToVerify": "How to verify?",
+    "instructions": "Press the blue button to complete your account verification process",
+    "completeButton": "Complete your account verification"
   }
 }

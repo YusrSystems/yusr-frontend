@@ -1,3 +1,4 @@
+import VerfiAccountWrapper from "@/core/components/verfiAccountWrapper";
 import type { TFunction } from "i18next";
 import { Copy, FilePlusCorner, FileTextIcon, RotateCw, Undo2 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -361,131 +362,133 @@ export default function InvoicesPage({
   };
 
   return (
-    <CrudPageOld<Invoice>
-      basePath={ basePath }
-      routeIdParam="id"
-      onRouteOpen={ async (id) =>
-      {
-        if (!hasPagePermission)
+    <VerfiAccountWrapper>
+      <CrudPageOld<Invoice>
+        basePath={ basePath }
+        routeIdParam="id"
+        onRouteOpen={ async (id) =>
         {
-          return;
-        }
+          if (!hasPagePermission)
+          {
+            return;
+          }
 
-        const invoice = (await service.Get(id)).data;
-        if (invoice == undefined)
-        {
-          return;
-        }
+          const invoice = (await service.Get(id)).data;
+          if (invoice == undefined)
+          {
+            return;
+          }
 
-        if (
-          (fixedType === InvoiceType.Purchase
-            && (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.SellReturn
-              || invoice.type === InvoiceType.Quotation))
-          || (fixedType === InvoiceType.Sell
-            && (invoice.type === InvoiceType.Purchase || invoice.type === InvoiceType.PurchaseReturn))
-        )
-        {
-          toast.error(t("invoices.invoiceNotFound"));
-          return;
-        }
+          if (
+            (fixedType === InvoiceType.Purchase
+              && (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.SellReturn
+                || invoice.type === InvoiceType.Quotation))
+            || (fixedType === InvoiceType.Sell
+              && (invoice.type === InvoiceType.Purchase || invoice.type === InvoiceType.PurchaseReturn))
+          )
+          {
+            toast.error(t("invoices.invoiceNotFound"));
+            return;
+          }
 
-        dispatch(slice.dialogActions.openChangeDialog(invoice));
-      } }
-      title={ title }
-      entityName={ entityName ?? t("invoices.entityName") }
-      addNewItemTitle={ addNewItemTitle ?? t("invoices.addNewTitle") }
-      onSearchTextChange={ setSearchText }
-      actionButtons={ SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
-          SystemPermissionsResources.ReportInvoiceList,
-          SystemPermissionsActions.Get
-        )
-        ? [
-          <ReportButton<InvoicesListReportRequest>
-            reportName={ ReportConstants.InvoicesList }
-            request={ {
-              types: fixedType === InvoiceType.Sell
-                ? [InvoiceType.Sell, InvoiceType.SellReturn, InvoiceType.Quotation]
-                : [InvoiceType.Purchase, InvoiceType.PurchaseReturn],
-              searchText: searchText,
-              reportType: InvoicesListReportType.InvoicesList
-            } }
-          />
-        ]
-        : [] }
-      permissions={ {
-        getPermission: permissions.getPermission,
-        addPermission: permissions.addPermission,
-        updatePermission: permissions.updatePermission,
-        deletePermission: false
-      } }
-      perRowPermissions={ (entity) =>
-      {
-        return {
+          dispatch(slice.dialogActions.openChangeDialog(invoice));
+        } }
+        title={ title }
+        entityName={ entityName ?? t("invoices.entityName") }
+        addNewItemTitle={ addNewItemTitle ?? t("invoices.addNewTitle") }
+        onSearchTextChange={ setSearchText }
+        actionButtons={ SystemPermissions.hasAuth(
+            authState.loggedInUser?.role?.permissions ?? [],
+            SystemPermissionsResources.ReportInvoiceList,
+            SystemPermissionsActions.Get
+          )
+          ? [
+            <ReportButton<InvoicesListReportRequest>
+              reportName={ ReportConstants.InvoicesList }
+              request={ {
+                types: fixedType === InvoiceType.Sell
+                  ? [InvoiceType.Sell, InvoiceType.SellReturn, InvoiceType.Quotation]
+                  : [InvoiceType.Purchase, InvoiceType.PurchaseReturn],
+                searchText: searchText,
+                reportType: InvoicesListReportType.InvoicesList
+              } }
+            />
+          ]
+          : [] }
+        permissions={ {
           getPermission: permissions.getPermission,
           addPermission: permissions.addPermission,
           updatePermission: permissions.updatePermission,
-          deletePermission: entity.type === InvoiceType.Quotation ? permissions.deletePermission : false
-        };
-      } }
-      hasPagePermission={ hasPagePermission }
-      entityState={ invoiceState }
-      useSlice={ () => invoiceDialogState }
-      service={ service }
-      cards={ [{
-        title: totalInvoicesTitle ?? t("invoices.totalInvoices"),
-        data: (invoiceState.entities?.count ?? 0).toString(),
-        icon: <FileTextIcon className="h-4 w-4 text-muted-foreground" />
-      }] }
-      tableHeadRows={ getTableHeadRows() }
-      tableRowMapper={ (invoice: Invoice) => getTableRowMapper(invoice) }
-      actions={ {
-        filter: slice.entityActions.filter,
-        openChangeDialog: (entity) =>
+          deletePermission: false
+        } }
+        perRowPermissions={ (entity) =>
         {
-          setCustomMode(undefined);
-          return dispatch(slice.dialogActions.openChangeDialog(entity));
-        },
-        openDeleteDialog: (entity) => slice.dialogActions.openDeleteDialog(entity),
-        setIsChangeDialogOpen: (open) =>
-        {
-          if (!open)
+          return {
+            getPermission: permissions.getPermission,
+            addPermission: permissions.addPermission,
+            updatePermission: permissions.updatePermission,
+            deletePermission: entity.type === InvoiceType.Quotation ? permissions.deletePermission : false
+          };
+        } }
+        hasPagePermission={ hasPagePermission }
+        entityState={ invoiceState }
+        useSlice={ () => invoiceDialogState }
+        service={ service }
+        cards={ [{
+          title: totalInvoicesTitle ?? t("invoices.totalInvoices"),
+          data: (invoiceState.entities?.count ?? 0).toString(),
+          icon: <FileTextIcon className="h-4 w-4 text-muted-foreground" />
+        }] }
+        tableHeadRows={ getTableHeadRows() }
+        tableRowMapper={ (invoice: Invoice) => getTableRowMapper(invoice) }
+        actions={ {
+          filter: slice.entityActions.filter,
+          openChangeDialog: (entity) =>
           {
             setCustomMode(undefined);
-          }
-          return slice.dialogActions.setIsChangeDialogOpen(open);
-        },
-        setIsDeleteDialogOpen: (open) => slice.dialogActions.setIsDeleteDialogOpen(open),
-        refresh: slice.entityActions.refresh,
-        setCurrentPage: (page) => slice.entityActions.setCurrentPage(page)
-      } }
-      ChangeDialog={ 
-        <ChangeInvoiceDialog
-          entity={ customMode === "quotationToSales"
-            ? ({ ...invoiceDialogState.selectedRow, type: InvoiceType.Sell } as Invoice)
-            : (invoiceDialogState.selectedRow || undefined) }
-          mode={ customMode ?? (invoiceDialogState.selectedRow ? "update" : "create") }
-          service={ service }
-          slice={ slice }
-          stateKey={ stateKey }
-          selectFormState={ selectFormState }
-          fixedType={ customMode === "quotationToSales" ? InvoiceType.Sell : fixedType }
-          accountSlice={ accountSlice }
-          accountState={ accountState }
-          onSuccess={ (data, mode) =>
+            return dispatch(slice.dialogActions.openChangeDialog(entity));
+          },
+          openDeleteDialog: (entity) => slice.dialogActions.openDeleteDialog(entity),
+          setIsChangeDialogOpen: (open) =>
           {
-            dispatch(slice.entityActions.refresh({ data: data }));
-            if (mode === "create" || mode === "return")
+            if (!open)
             {
               setCustomMode(undefined);
-              dispatch(slice.dialogActions.setIsChangeDialogOpen(false));
             }
-          } }
-        />
-       }
-      dorpdownItems={ (entity) => getActions(entity, DropdownMenuItem) }
-      contextMenuItems={ (entity) => getActions(entity, ContextMenuItem) }
-    />
+            return slice.dialogActions.setIsChangeDialogOpen(open);
+          },
+          setIsDeleteDialogOpen: (open) => slice.dialogActions.setIsDeleteDialogOpen(open),
+          refresh: slice.entityActions.refresh,
+          setCurrentPage: (page) => slice.entityActions.setCurrentPage(page)
+        } }
+        ChangeDialog={ 
+          <ChangeInvoiceDialog
+            entity={ customMode === "quotationToSales"
+              ? ({ ...invoiceDialogState.selectedRow, type: InvoiceType.Sell } as Invoice)
+              : (invoiceDialogState.selectedRow || undefined) }
+            mode={ customMode ?? (invoiceDialogState.selectedRow ? "update" : "create") }
+            service={ service }
+            slice={ slice }
+            stateKey={ stateKey }
+            selectFormState={ selectFormState }
+            fixedType={ customMode === "quotationToSales" ? InvoiceType.Sell : fixedType }
+            accountSlice={ accountSlice }
+            accountState={ accountState }
+            onSuccess={ (data, mode) =>
+            {
+              dispatch(slice.entityActions.refresh({ data: data }));
+              if (mode === "create" || mode === "return")
+              {
+                setCustomMode(undefined);
+                dispatch(slice.dialogActions.setIsChangeDialogOpen(false));
+              }
+            } }
+          />
+         }
+        dorpdownItems={ (entity) => getActions(entity, DropdownMenuItem) }
+        contextMenuItems={ (entity) => getActions(entity, ContextMenuItem) }
+      />
+    </VerfiAccountWrapper>
   );
 }
 

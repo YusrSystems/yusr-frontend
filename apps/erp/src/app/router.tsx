@@ -1,4 +1,5 @@
 import { Services } from "@/core/services/services";
+import LegalDocViewer from "@/features/legal/legaldocviewer";
 import { createBrowserRouter } from "react-router-dom";
 import { BranchesPage, ErrorFallback, MaintenanceFallback, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
 import BanksAccountsPage from "../features/accounts/banksAccountsPage";
@@ -19,7 +20,6 @@ import LoginPage from "../features/login/loginPage";
 import PaymentMethodsPage from "../features/paymentMethods/paymentMethodsPage";
 import PricingMethodsPage from "../features/pricingMethods/pricingMethodsPage";
 // import RegisterPage from "../features/register/presentation/registerPage";
-import LegalDocViewer from "@/features/legal/legaldocviewer";
 import { ErpRolesPage } from "@/features/roles/rolesPage";
 import ReportsPage from "../features/reports/reportsPage";
 import SettingPage from "../features/setting/settingPage";
@@ -50,8 +50,8 @@ export const router = createBrowserRouter([{
     { path: "/", element: <LandingPage /> },
     { path: "/login", element: <LoginPage /> },
     { path: "/register", element: <MaintenanceFallback /> },
-    { path: "/legal", element: <LegalDocViewer /> },
     // { path: "/register", element: <RegisterPage /> },
+    { path: "/legal", element: <LegalDocViewer /> },
     { path: "/sharing/:registrationKey", element: <TenantInfoSharingPage /> },
     {
       element: <ProtectedRouteWrapper />,

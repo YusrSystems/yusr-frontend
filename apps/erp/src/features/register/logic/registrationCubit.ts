@@ -14,6 +14,7 @@ export class RegistrationCubit extends Cubit<RegistrationState>
     userPassword: "",
     currencyId: 1,
     username: "",
+    branchName: "",
     id: 0
   });
 
@@ -24,25 +25,26 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 
   public async register()
   {
-    console.log("=========== start register ===========");
-    console.log("validating . . .");
-
     if (!this.formData.validate())
     {
       return;
     }
-    console.log("=========== validated ===========");
     const service = new RegisterApiService();
 
-    console.log("sending to backend");
     const result = await service.register(this.formData);
     console.log(result);
   }
 
-  public async externalAuthRegister(token: string)
+  public async externalAuthRegister(
+    token: string,
+    additionalFunc?: (
+      result: {
+        user: UserDto;
+        setting: SettingDto;
+      }
+    ) => void
+  )
   {
-    console.log(token);
-
     const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
       `${ApiConstants.baseUrl}/Login/external-login`,
       {
@@ -50,12 +52,12 @@ export class RegistrationCubit extends Cubit<RegistrationState>
         token
       }
     );
-    console.log(result);
 
     if (result.status === 200 && result.data)
     {
       Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
       AppNavigator.navigate("/dashboard", true);
+      additionalFunc?.(result.data);
       return;
     }
     else
