@@ -10,7 +10,7 @@ import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogH
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
 
-export default function ItemsListDialog()
+export default function ItemsListDialog({ store, buttonLabel }: { store?: StoreOld; buttonLabel?: string; })
 {
   useSignals();
   const { t, i18n } = useTranslation(["erpCommon", "stocking", "accounting", "common"]);
@@ -18,12 +18,12 @@ export default function ItemsListDialog()
   const itemType = useMemo(() => signal<ItemType | undefined>(undefined), []);
   const itemClass = useMemo(() => signal<string | undefined>(undefined), []);
   const brand = useMemo(() => signal<string | undefined>(undefined), []);
-  const store = useMemo(() => signal<StoreOld | undefined>(undefined), []);
+  const selectedStore = useMemo(() => signal<StoreOld | undefined>(store), []);
 
   return (
     <>
       <Button variant="outline" size="sm" onClick={ () => isOpen.value = true }>
-        { t("reports.create") }
+        { buttonLabel ?? t("reports.create") }
       </Button>
       <Dialog open={ isOpen.value } onOpenChange={ (open) => isOpen.value = open }>
         <DialogContent dir={ i18n.dir() } className="sm:max-w-lg">
@@ -48,9 +48,9 @@ export default function ItemsListDialog()
             <FormFieldOld label={ t("accounting:invoices.store") }>
               <StoresSearchableSelect
                 showNullOption
-                selectedId={ store.value?.id }
-                selectedLabel={ store.value?.name }
-                onValueChange={ (selected) => store.value = selected }
+                selectedId={ selectedStore.value?.id }
+                selectedLabel={ selectedStore.value?.name }
+                onValueChange={ (selected) => selectedStore.value = selected }
               />
             </FormFieldOld>
 
@@ -71,8 +71,8 @@ export default function ItemsListDialog()
                 itemType: itemType.value,
                 class: itemClass.value,
                 brand: brand.value,
-                storeId: store.value?.id,
-                storeName: store.value?.name
+                storeId: selectedStore.value?.id,
+                storeName: selectedStore.value?.name
               }) }
             />
           </DialogFooter>

@@ -7,11 +7,12 @@ import { CrudPageOld, selectPermissionsByResource, SystemPermissions, SystemPerm
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type StoreOld from "../../core/data/store";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import ItemsListDialog from "../reports/itemsListDialog";
 import ChangeStoreDialog from "./changeStoreDialog";
 
 export default function StoresPage()
 {
-  const { t } = useTranslation("stocking");
+  const { t } = useTranslation(["stocking", "erpCommon"]);
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const storeState = useAppSelector((state) => state.store);
@@ -38,13 +39,37 @@ export default function StoresPage()
         data: (storeState.entities?.count ?? 0).toString(),
         icon: <Warehouse className="h-4 w-4 text-muted-foreground" />
       }] }
-      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
-        rowName: t("stores.storeId"),
-        rowStyles: "w-30"
-      }, { rowName: t("stores.storeName"), rowStyles: "w-70" }] }
+      tableHeadRows={ [
+        { rowName: "", rowStyles: "text-left w-12.5" },
+        {
+          rowName: t("stores.storeId"),
+          rowStyles: "w-30"
+        },
+        { rowName: t("stores.storeName"), rowStyles: "w-70" },
+        ...(SystemPermissions.hasAuth(
+            authState.loggedInUser?.role?.permissions ?? [],
+            SystemPermissionsResources.ReportItemList,
+            SystemPermissionsActions.Get
+          )
+          ? [{ rowName: "", rowStyles: "w-32" }]
+          : [])
+      ] }
       tableRowMapper={ (
         store: StoreOld
-      ) => [{ rowName: `#${store.id}`, rowStyles: "" }, { rowName: store.name, rowStyles: "font-semibold" }] }
+      ) => [
+        { rowName: `#${store.id}`, rowStyles: "" },
+        { rowName: store.name, rowStyles: "font-semibold" },
+        ...(SystemPermissions.hasAuth(
+            authState.loggedInUser?.role?.permissions ?? [],
+            SystemPermissionsResources.ReportItemList,
+            SystemPermissionsActions.Get
+          )
+          ? [{
+            rowName: <ItemsListDialog store={ store } buttonLabel={ t("erpCommon:reports.itemsList") } />,
+            rowStyles: "w-32"
+          }]
+          : [])
+      ] }
       actions={ {
         filter: StoreSlice.entityActions.filter,
         openChangeDialog: (entity) => StoreSlice.dialogActions.openChangeDialog(entity),
