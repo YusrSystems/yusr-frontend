@@ -30,6 +30,7 @@ export function SearchableSelect<T extends BaseEntity>({ children }: PropsWithCh
 {
   useSignals();
   const isOpen = useMemo(() => signal<boolean>(false), []);
+  const searchInput = useMemo(() => signal<string | undefined>(""), []);
   const { t, i18n } = useTranslation("common");
 
   return (
@@ -37,7 +38,8 @@ export function SearchableSelect<T extends BaseEntity>({ children }: PropsWithCh
       value={ {
         isOpen: isOpen,
         i18n: i18n,
-        t: t
+        t: t,
+        searchInput: searchInput
       } }
     >
       <Popover open={ isOpen.value } onOpenChange={ (open) => isOpen.value = open } modal={ true }>
@@ -85,7 +87,17 @@ SearchableSelect.Content = function({ children }: React.PropsWithChildren)
 
 SearchableSelect.SearchInput = function({ ...props }: SearchInputParams)
 {
-  return <SearchInput { ...props } />;
+  const data = useSearchableSelectContext();
+  return (
+    <SearchInput
+      { ...props }
+      onSearch={ (searchText) =>
+      {
+        data.searchInput.value = searchText;
+        props.onSearch?.(searchText);
+      } }
+    />
+  );
 };
 
 SearchableSelect.Command = function({ children }: React.PropsWithChildren)
@@ -204,7 +216,7 @@ SearchableSelect.DeleteOptionButton = function({ onDelete }: { onDelete: () => P
       onPointerUp={ (e) => e.stopPropagation() }
     >
       { isDeleting.value
-        ? <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+        ? <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
         : (
           <Button
             type="button"
@@ -228,19 +240,32 @@ SearchableSelect.DeleteOptionButton = function({ onDelete }: { onDelete: () => P
 };
 
 SearchableSelect.AddOptionButton = function(
-  { searchInput, onCreate }: { searchInput: string; onCreate: () => Promise<void>; }
+  { onCreate }: { onCreate: (searchText?: string) => Promise<void>; }
 )
 {
   useSignals();
+  const isAdding = useMemo(() => signal(false), []);
   const data = useSearchableSelectContext();
+
   return (
     <CommandItem
-      value={ `__create__${searchInput}` }
-      onSelect={ async () => await onCreate() }
+      value={ `__create__${data.searchInput.value}` }
+      onSelect={ async () =>
+      {
+        isAdding.value = true;
+        await onCreate(data.searchInput.value);
+        isAdding.value = false;
+      } }
       className="cursor-pointer text-primary"
     >
-      <span className="ltr:mr-2 rtl:ml-2">+</span>
-      { data.t("searchableSelect.addOption", { value: searchInput.trim() }) }
+      { isAdding.value
+        ? <Loader2 className="h-4 w-4 animate-spin" />
+        : (
+          <>
+            <span className="ltr:mr-2 rtl:ml-2">+</span>
+            { data.t("searchableSelect.addOption", { value: data.searchInput.value?.trim() }) }
+          </>
+        ) }
     </CommandItem>
   );
 };

@@ -26,6 +26,7 @@ export function CitiesSearchableSelect({ ...props }: SearchableSelectProps<City,
 
   function CommandItems()
   {
+    useSignals();
     if (cubit.state.value instanceof PageLoading)
     {
       return <SearchableSelect.Loading />;

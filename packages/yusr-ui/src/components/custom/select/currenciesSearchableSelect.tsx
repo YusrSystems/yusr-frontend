@@ -26,6 +26,7 @@ export function CurrenciesSearchableSelect({ ...props }: SearchableSelectProps<C
 
   function CommandItems()
   {
+    useSignals();
     if (cubit.state.value instanceof PageLoading)
     {
       return <SearchableSelect.Loading />;
