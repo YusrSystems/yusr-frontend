@@ -1,99 +1,165 @@
-import { StoreSlice } from "@/core/data/storeSlice";
-import StoresApiServiceOld from "@/core/networking/storesApiServiceOld";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import { Store, type StoreDto } from "@/core/data/store";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Warehouse } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPageOld, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import type StoreOld from "../../core/data/store";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import { CrudPage, PageCubit, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
 import ItemsListDialog from "../reports/itemsListDialog";
 import ChangeStoreDialog from "./changeStoreDialog";
 
+const cubit = new PageCubit<Store, StoreDto>(Services.storesApi);
+
 export default function StoresPage()
 {
-  const { t } = useTranslation(["stocking", "erpCommon"]);
-  const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const storeState = useAppSelector((state) => state.store);
-  const storeDialogState = useAppSelector((state) => state.storeDialog);
-  const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Stores));
-  const service = useMemo(() => new StoresApiServiceOld(), []);
+  if (!Services.auth.hasAuth(SystemPermissionsResources.Stores, SystemPermissionsActions.Get))
+  {
+    return <UnauthorizedPage />;
+  }
+
+  const { t } = useTranslation("stocking");
+
+  useEffect(() =>
+  {
+    cubit.init();
+  }, []);
 
   return (
-    <CrudPageOld<StoreOld>
-      title={ t("stores.title") }
-      entityName={ t("stores.entityName") }
-      addNewItemTitle={ t("stores.addNewTitle") }
-      permissions={ permissions }
-      hasPagePermission={ SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.Stores,
-        SystemPermissionsActions.Get
-      ) }
-      entityState={ storeState }
-      useSlice={ () => storeDialogState }
-      service={ service }
+    <CrudPage>
+      <CrudPage.Header
+        title={ t("stores.title") }
+        addButtonTitle={ t("stores.addNewTitle") }
+        isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Stores, SystemPermissionsActions.Add) }
+      />
+
+      <Cards />
+
+      <CrudPage.SearchInput onSearch={ (searchText) => cubit.search(searchText) } />
+
+      <PageTable />
+
+      <CrudPage.ChangeDialog
+        changeDialog={ (dto, closeDialog) =>
+        {
+          return (
+            <ChangeStoreDialog
+              entity={ dto
+                ? Store.load(dto)
+                : Store.create({ id: 0, name: "", authorized: true }) }
+              service={ Services.storesApi }
+              onSuccess={ (data) =>
+              {
+                if (data.mode.value === "create")
+                {
+                  cubit.add(data);
+                  closeDialog();
+                }
+                else if (data.mode.value === "update")
+                {
+                  cubit.update(data);
+                }
+              } }
+            />
+          );
+        } }
+      />
+
+      <CrudPage.DeleteDialog
+        entityNameSelector={ (store) => store.name }
+        service={ Services.storesApi }
+        onSuccess={ (entity) => cubit.delete(entity) }
+      />
+    </CrudPage>
+  );
+}
+
+function Cards()
+{
+  useSignals();
+  const { t } = useTranslation("stocking");
+  return (
+    <CrudPage.Cards
       cards={ [{
         title: t("stores.totalStores"),
-        data: (storeState.entities?.count ?? 0).toString(),
+        data: cubit.count.value.toString(),
         icon: <Warehouse className="h-4 w-4 text-muted-foreground" />
       }] }
-      tableHeadRows={ [
-        { rowName: "", rowStyles: "text-left w-12.5" },
-        {
-          rowName: t("stores.storeId"),
-          rowStyles: "w-30"
-        },
-        { rowName: t("stores.storeName"), rowStyles: "w-70" },
-        ...(SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.ReportItemList,
-            SystemPermissionsActions.Get
-          )
-          ? [{ rowName: "", rowStyles: "w-32" }]
-          : [])
-      ] }
-      tableRowMapper={ (
-        store: StoreOld
-      ) => [
-        { rowName: `#${store.id}`, rowStyles: "" },
-        { rowName: store.name, rowStyles: "font-semibold" },
-        ...(SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.ReportItemList,
-            SystemPermissionsActions.Get
-          )
-          ? [{
-            rowName: <ItemsListDialog store={ store } buttonLabel={ t("erpCommon:reports.itemsList") } />,
-            rowStyles: "w-32"
-          }]
-          : [])
-      ] }
-      actions={ {
-        filter: StoreSlice.entityActions.filter,
-        openChangeDialog: (entity) => StoreSlice.dialogActions.openChangeDialog(entity),
-        openDeleteDialog: (entity) => StoreSlice.dialogActions.openDeleteDialog(entity),
-        setIsChangeDialogOpen: (open) => StoreSlice.dialogActions.setIsChangeDialogOpen(open),
-        setIsDeleteDialogOpen: (open) => StoreSlice.dialogActions.setIsDeleteDialogOpen(open),
-        refresh: StoreSlice.entityActions.refresh,
-        setCurrentPage: (page) => StoreSlice.entityActions.setCurrentPage(page)
-      } }
-      ChangeDialog={ 
-        <ChangeStoreDialog
-          entity={ storeDialogState.selectedRow || undefined }
-          mode={ storeDialogState.selectedRow ? "update" : "create" }
-          service={ service }
-          onSuccess={ (data, mode) =>
-          {
-            dispatch(StoreSlice.entityActions.refresh({ data: data }));
-            if (mode === "create")
-            {
-              dispatch(StoreSlice.dialogActions.setIsChangeDialogOpen(false));
-            }
-          } }
-        />
-       }
     />
   );
+}
+
+function PageTable()
+{
+  useSignals();
+  const { t } = useTranslation(["stocking", "common", "erpCommon"]);
+
+  if (cubit.state.value instanceof PageLoading)
+  {
+    return <TablePreview.Loading />;
+  }
+
+  if (cubit.state.value instanceof PageLoaded)
+  {
+    return (
+      <CrudPage.Table>
+        <CrudPage.TableBody<Store, StoreDto>
+          data={ cubit.entities.value }
+          headerRows={ [
+            { rowBody: "", rowStyles: "text-left w-12.5" },
+            {
+              rowBody: t("stores.storeId"),
+              rowStyles: "w-30"
+            },
+            { rowBody: t("stores.storeName"), rowStyles: "w-70" },
+            ...(Services.auth.hasAuth(
+                SystemPermissionsResources.ReportItemList,
+                SystemPermissionsActions.Get
+              )
+              ? [{ rowBody: "", rowStyles: "w-32" }]
+              : [])
+          ] }
+          tableRowMapper={ (
+            store
+          ) => [
+            { rowBody: `#${store.id}`, rowStyles: "" },
+            { rowBody: store.name, rowStyles: "font-semibold" },
+            ...(Services.auth.hasAuth(
+                SystemPermissionsResources.ReportItemList,
+                SystemPermissionsActions.Get
+              )
+              ? [{
+                rowBody: <ItemsListDialog store={ store } buttonLabel={ t("erpCommon:reports.itemsList") } />,
+                rowStyles: "w-32"
+              }]
+              : [])
+          ] }
+          hasUpdatePermission={ Services.auth.hasAuth(
+            SystemPermissionsResources.Taxes,
+            SystemPermissionsActions.Update
+          ) }
+          hasDeletePermission={ Services.auth.hasAuth(
+            SystemPermissionsResources.Taxes,
+            SystemPermissionsActions.Delete
+          ) }
+        />
+        <CrudPage.TablePagination
+          pageSize={ cubit.pageSize.value }
+          totalNumber={ cubit.count.value }
+          currentPage={ cubit.currentPage.value }
+          onPageChanged={ (newPage) =>
+          {
+            cubit.changePage(newPage);
+          } }
+        />
+      </CrudPage.Table>
+    );
+  }
+
+  if (cubit.state.value instanceof PageError)
+  {
+    return <TablePreview.Error />;
+  }
+
+  return <TablePreview.Empty />;
 }

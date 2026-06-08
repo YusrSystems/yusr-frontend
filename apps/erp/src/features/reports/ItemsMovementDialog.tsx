@@ -1,6 +1,6 @@
 import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
 import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
-import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
 import type Account from "@/core/data/account";
 import type Item from "@/core/data/item";
 import type StoreOld from "@/core/data/store";
@@ -97,7 +97,7 @@ export default function ItemsMovementDialog()
 
             <div className="grid grid-cols-2 gap-3">
               <FormFieldOld label={ t("reports.fromStore") }>
-                <StoresSearchableSelect
+                <StoresSearchableSelectOld
                   showNullOption
                   selectedId={ fromStore?.id }
                   selectedLabel={ fromStore?.name }
@@ -106,7 +106,7 @@ export default function ItemsMovementDialog()
               </FormFieldOld>
 
               <FormFieldOld label={ t("reports.toStore") }>
-                <StoresSearchableSelect
+                <StoresSearchableSelectOld
                   showNullOption
                   selectedId={ toStore?.id }
                   selectedLabel={ toStore?.name }

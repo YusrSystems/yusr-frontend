@@ -1,7 +1,7 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { ItemType } from "@/core/data/item";
 import { ItemsListReportRequest } from "@/core/data/report/itemsListReportRequest";
-import type StoreOld from "@/core/data/store";
+import { Store } from "@/core/data/store";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useMemo } from "react";
@@ -10,7 +10,7 @@ import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogH
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
 
-export default function ItemsListDialog({ store, buttonLabel }: { store?: StoreOld; buttonLabel?: string; })
+export default function ItemsListDialog({ store, buttonLabel }: { store?: Store; buttonLabel?: string; })
 {
   useSignals();
   const { t, i18n } = useTranslation(["erpCommon", "stocking", "accounting", "common"]);
@@ -18,7 +18,7 @@ export default function ItemsListDialog({ store, buttonLabel }: { store?: StoreO
   const itemType = useMemo(() => signal<ItemType | undefined>(undefined), []);
   const itemClass = useMemo(() => signal<string | undefined>(undefined), []);
   const brand = useMemo(() => signal<string | undefined>(undefined), []);
-  const selectedStore = useMemo(() => signal<StoreOld | undefined>(store), []);
+  const selectedStore = useMemo(() => signal<Store>(store ?? Store.create({ id: undefined, name: "" })), []);
 
   return (
     <>
@@ -47,10 +47,8 @@ export default function ItemsListDialog({ store, buttonLabel }: { store?: StoreO
 
             <FormFieldOld label={ t("accounting:invoices.store") }>
               <StoresSearchableSelect
-                showNullOption
-                selectedId={ selectedStore.value?.id }
-                selectedLabel={ selectedStore.value?.name }
-                onValueChange={ (selected) => selectedStore.value = selected }
+                id={ selectedStore.value?.id }
+                label={ selectedStore.value?.name }
               />
             </FormFieldOld>
 
@@ -71,8 +69,8 @@ export default function ItemsListDialog({ store, buttonLabel }: { store?: StoreO
                 itemType: itemType.value,
                 class: itemClass.value,
                 brand: brand.value,
-                storeId: selectedStore.value?.id,
-                storeName: selectedStore.value?.name
+                storeId: selectedStore.value?.id.value,
+                storeName: selectedStore.value?.name.value
               }) }
             />
           </DialogFooter>

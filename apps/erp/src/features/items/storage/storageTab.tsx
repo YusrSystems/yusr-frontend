@@ -1,4 +1,4 @@
-import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, type DialogMode, FormFieldOld, NumberFieldOld, TextFieldOld, useFormErrors } from "yusr-ui";
@@ -110,7 +110,7 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
                       label=""
                       isInvalid={ hasError && !isService && !store.storeId }
                     >
-                      <StoresSearchableSelect
+                      <StoresSearchableSelectOld
                         selectedId={ formData.itemStores?.[index]?.storeId }
                         selectedLabel={ formData.itemStores?.[index]?.storeName }
                         isInvalid={ hasError && !isService && !store.storeId }

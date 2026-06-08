@@ -1,35 +1,55 @@
-import { StoreSlice } from "@/core/data/storeSlice";
-import StoresApiServiceOld from "@/core/networking/storesApiServiceOld";
-import ChangeStoreDialog from "@/features/stores/changeStoreDialog";
-import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect } from "yusr-ui";
-import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
-import type StoreOld from "../../data/store";
-import { useAppSelector } from "../../state/store";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
+import React, { useEffect, useMemo } from "react";
+import { PageCubit, PageLoaded, PageLoading, SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "yusr-ui";
+import type { Store, StoreDto } from "../../data/store";
 
-export default function StoresSearchableSelect(
-  { ...props }: BasicSearchableSelectParamsOld<StoreOld> & { items?: StoreOld[]; }
-)
+export default function StoresSearchableSelect({ ...props }: SearchableSelectProps<Store, StoreDto>)
 {
-  const storeState = useAppSelector((state) => state.store);
-  const authState = useAppSelector((state) => state.auth);
+  useSignals();
+  const cubit = useMemo(() => new PageCubit<Store, StoreDto>(Services.storesApi), []);
+  useEffect(() => cubit.init(), []);
 
   return (
-    <ChangableSearchableSelect<StoreOld>
-      labelKey="name"
-      createKey="name"
-      mode="inline"
-      state={ storeState }
-      apiService={ new StoresApiServiceOld() }
-      systemPermissionsResources={ SystemPermissionsResources.Stores }
-      allowAdd={ false }
-      allowUpdate={ false }
-      entityActions={ {
-        filter: StoreSlice.entityActions.filter,
-        refresh: StoreSlice.entityActions.refresh
-      } }
-      changeDialog={ ChangeStoreDialog }
-      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
-      { ...props }
-    />
+    <SearchableSelect>
+      <SearchableSelect.Trigger label={ props.label?.value } />
+      <SearchableSelect.Content>
+        <SearchableSelect.SearchInput onSearch={ (searchInput) => cubit.search(searchInput) } />
+        <SearchableSelect.Command>
+          <SearchableSelect.NullOption { ...props } />
+          <CommandItems />
+        </SearchableSelect.Command>
+      </SearchableSelect.Content>
+    </SearchableSelect>
   );
+
+  function CommandItems()
+  {
+    if (cubit.state.value instanceof PageLoading)
+    {
+      return <SearchableSelect.Loading />;
+    }
+
+    if (cubit.state.value instanceof PageLoaded && cubit.entities.value.length > 0)
+    {
+      return cubit.entities.value.map((entity) => <Option key={ entity.id.value } item={ entity } { ...props } />);
+    }
+
+    return <SearchableSelect.Empty />;
+  }
 }
+
+const Option = React.memo(
+  function Option({ ...props }: Omit<SearchableSelectOptionProps<Store, StoreDto>, "labelSelector">)
+  {
+    useSignals();
+    return (
+      <SearchableSelect.Option
+        labelSelector="name"
+        { ...props }
+      >
+        <SearchableSelect.OptionBody label={ props.item.name.value } />
+      </SearchableSelect.Option>
+    );
+  }
+);

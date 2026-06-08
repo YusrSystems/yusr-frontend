@@ -20,14 +20,12 @@ export default class StoreOld extends BaseEntity
 export class StoreDto extends Dto
 {
   public name!: string;
-  public createdBy!: number;
   public authorized!: boolean;
 }
 
 export class Store extends ChangeableEntity<StoreDto>
 {
   declare name: Signal<string>;
-  declare createdBy: Signal<number>;
   declare authorized: Signal<boolean>;
 
   constructor(dto: Partial<StoreDto>, mode: ChangeableEntityMode = "create")
