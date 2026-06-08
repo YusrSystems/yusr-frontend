@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld } from "yusr-ui";
 import { ChangeDialogTabbed, DialogContent, DialogDescription, DialogHeader, DialogTitle, Loading, StorageType, useFormErrors, useFormInit, useStorageFile, useValidate } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemValidationRules } from "../../core/data/item";
-import { PricingMethodSlice } from "../../core/data/pricingMethod";
+import { PricingMethodSlice } from "../../core/data/pricingMethodOld";
 import { TaxSlice } from "../../core/data/tax";
 import { UnitSlice } from "../../core/data/unitOld";
 import { fetchServiceIds } from "../../core/state/shared/serviceIdsSlice";
