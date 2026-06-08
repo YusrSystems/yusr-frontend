@@ -6,6 +6,7 @@ export type SearchableSelectContextType = {
   isOpen: Signal<boolean>;
   i18n: i18n;
   t: TFunction<"common">;
+  searchInput: Signal<string | undefined>;
 };
 
 export const SearchableSelectContext = createContext<SearchableSelectContextType | undefined>(undefined);

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { FieldGroup, FieldsSection, FormFieldOld, SelectFieldOld, SelectInputOld, TextAreaField, useAppDispatch, useFormErrors } from "yusr-ui";
-import TaxesSearchableSelect from "../../core/components/searchableSelect/taxesSearchableSelect";
+import TaxesSearchableSelectOld from "../../core/components/searchableSelect/taxesSearchableSelectOld";
 import { EInvoicingEnvironmentType, InvoicePrintSize, SettingSlice } from "../../core/data/settingOld";
 import { useAppSelector } from "../../core/state/store";
 import { EInvoicingRegisterButton } from "./eInvoicing/eInvoicingRegisterButton";
@@ -36,7 +36,7 @@ export default function InvoiceSection()
 
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium">{ t("settings.defaultTax") }</label>
-            <TaxesSearchableSelect
+            <TaxesSearchableSelectOld
               showNullOption
               selectedId={ formData.mainTaxId }
               selectedLabel={ formData.mainTax?.name }

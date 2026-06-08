@@ -26,6 +26,7 @@ export function RolesSearchableSelect({ ...props }: SearchableSelectProps<Role<R
 
   function CommandItems()
   {
+    useSignals();
     if (cubit.state.value instanceof PageLoading)
     {
       return <SearchableSelect.Loading />;

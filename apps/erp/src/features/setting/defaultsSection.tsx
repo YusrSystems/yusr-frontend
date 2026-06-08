@@ -1,6 +1,6 @@
 import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
-import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
 import { SettingSlice } from "@/core/data/settingOld";
 import { useAppSelector } from "@/core/state/store";
 import { useTranslation } from "react-i18next";
@@ -18,7 +18,7 @@ export default function DefaultsSection()
         <FieldsSection title={ t("settings.defaultAccountsAndWarehouses") } columns={ 2 }>
           <div className="flex flex-col gap-1.5 w-full">
             <label className="text-sm font-medium">{ t("settings.defaultWarehouse") }</label>
-            <StoresSearchableSelect
+            <StoresSearchableSelectOld
               showNullOption
               selectedId={ formData.mainStoreId }
               selectedLabel={ formData.mainStoreName }

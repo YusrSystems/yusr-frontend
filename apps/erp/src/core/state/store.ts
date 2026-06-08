@@ -11,16 +11,16 @@ import { ItemSlice } from "../data/item";
 import { ItemsSettlementSlice } from "../data/itemsSettlement";
 import { ItemTransferSlice } from "../data/itemTransfer";
 import { PaymentMethodSlice } from "../data/paymentMethod";
-import { PricingMethodSlice } from "../data/pricingMethod";
+import { PricingMethodSlice } from "../data/pricingMethodOld";
 import { type SettingOld, SettingSlice } from "../data/settingOld";
 import { StocktakingSlice } from "../data/stocktaking";
+import { StoreSlice } from "../data/storeSlice";
 import { TaxSlice } from "../data/tax";
-import { UnitSlice } from "../data/unit";
+import { UnitSlice } from "../data/unitOld";
 import { VoucherSlice } from "../data/voucher";
 import itemBarcodeReducer from "./shared/itemBarcodeSlice";
 import serviceIdsReducer from "./shared/serviceIdsSlice";
 import storeItemsReducer from "./shared/storeItemsSlice";
-import { StoreSlice } from "../data/storeSlice";
 
 const authSlice = createAuthSlice<UserOld, SettingOld>();
 export const {

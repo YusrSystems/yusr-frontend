@@ -1,6 +1,6 @@
 import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
 import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
-import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
 import type Account from "@/core/data/account";
 import { InvoiceType } from "@/core/data/invoice";
 import type Item from "@/core/data/item";
@@ -54,7 +54,7 @@ export default function InvoicesListDialog()
             </div>
 
             <FormFieldOld label={ t("accounting:invoices.store") }>
-              <StoresSearchableSelect
+              <StoresSearchableSelectOld
                 showNullOption
                 selectedId={ store?.id }
                 selectedLabel={ store?.name }

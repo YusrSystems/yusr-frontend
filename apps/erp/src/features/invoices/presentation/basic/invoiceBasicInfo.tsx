@@ -1,5 +1,5 @@
 import ClientsSearchableSelect from "@/core/components/searchableSelect/clientsSearchableSelect";
-import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
 import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -107,7 +107,7 @@ export default function InvoiceBasicInfo()
         isInvalid={ isInvalid("storeId") }
         error={ getError("storeId") }
       >
-        <StoresSearchableSelect
+        <StoresSearchableSelectOld
           selectedId={ formData.storeId }
           selectedLabel={ formData.storeName }
           isInvalid={ isInvalid("storeId") }

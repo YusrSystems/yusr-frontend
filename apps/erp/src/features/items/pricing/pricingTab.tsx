@@ -1,4 +1,4 @@
-import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
+import UnitsSearchableSelectOld from "@/core/components/searchableSelect/unitsSearchableSelectOld";
 import { useTranslation } from "react-i18next";
 import { CheckboxField, CurrencyIcon, type DialogMode, FieldsSection, FormFieldOld, NumberFieldOld, useFormErrors } from "yusr-ui";
 import { ItemSlice, ItemType } from "../../../core/data/item";
@@ -21,7 +21,7 @@ export default function PricingTab({ mode }: { mode: DialogMode; })
           isInvalid={ isInvalid("sellUnitId") }
           error={ getError("sellUnitId") }
         >
-          <UnitsSearchableSelect
+          <UnitsSearchableSelectOld
             selectedId={ formData.sellUnitId }
             selectedLabel={ formData.sellUnitName }
             disabled={ formData.type === ItemType.Service || mode === "update" }

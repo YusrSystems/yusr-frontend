@@ -1,4 +1,4 @@
-import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld } from "yusr-ui";
@@ -29,7 +29,7 @@ export default function ItemStatementButton({ item }: { item: Item; })
 
           <div className="flex flex-col gap-4 py-2">
             <FormFieldOld label={ t("itemStatement.store") }>
-              <StoresSearchableSelect
+              <StoresSearchableSelectOld
                 showNullOption
                 selectedId={ store?.id }
                 selectedLabel={ store?.name }

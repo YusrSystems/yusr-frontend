@@ -75,44 +75,6 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
     onMount?.();
   }, [entity?.id.value]);
 
-  const permissionTabs: ChangeDialogTabProps[] = permissionSecions.map((section, index) => ({
-    active: index === 0,
-    icon: section.icon,
-    label: section.title,
-    hasError: index === 0 ? !!entity.getError("name").value : undefined,
-    content: (
-      <div className="space-y-4">
-        { index === 0 && (
-          <TextField
-            label={ t("commonEntities:roles.roleName") }
-            required
-            value={ entity.name }
-            error={ entity.getError("name") }
-          />
-        ) }
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          { categorizePermissions(BaseServices.auth.systemPermissions.value, section.resources, delimiter).map((
-            item
-          ) => (
-            <PermissionCard
-              key={ item.resource }
-              resourceId={ item.resource }
-              label={ labels[item.resource] || item.resource }
-              masterPermission={ item.get }
-              isMasterRequired={ item.resource === YusrSystemPermissionsResources.Settings }
-              selectedPermissions={ entity.permissions }
-              actions={ item.actions.map((perm) => ({
-                id: perm,
-                label: labels[perm.split(delimiter)[1]] || perm.split(delimiter)[1],
-                icon: ActionIcons[perm.split(delimiter)[1]]
-              })) }
-            />
-          )) }
-        </div>
-      </div>
-    )
-  }));
-
   return (
     <ChangeDialog className="sm:max-w-6xl">
       <ChangeDialog.Header
@@ -127,6 +89,44 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
   function DialogBody()
   {
     useSignals();
+
+    const permissionTabs: ChangeDialogTabProps[] = permissionSecions.map((section, index) => ({
+      active: index === 0,
+      icon: section.icon,
+      label: section.title,
+      hasError: index === 0 ? !!entity.getError("name").value : undefined,
+      content: (
+        <div className="space-y-4">
+          { index === 0 && (
+            <TextField
+              label={ t("commonEntities:roles.roleName") }
+              required
+              value={ entity.name }
+              error={ entity.getError("name") }
+            />
+          ) }
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            { categorizePermissions(BaseServices.auth.systemPermissions.value, section.resources, delimiter).map((
+              item
+            ) => (
+              <PermissionCard
+                key={ item.resource }
+                resourceId={ item.resource }
+                label={ labels[item.resource] || item.resource }
+                masterPermission={ item.get }
+                isMasterRequired={ item.resource === YusrSystemPermissionsResources.Settings }
+                selectedPermissions={ entity.permissions }
+                actions={ item.actions.map((perm) => ({
+                  id: perm,
+                  label: labels[perm.split(delimiter)[1]] || perm.split(delimiter)[1],
+                  icon: ActionIcons[perm.split(delimiter)[1]]
+                })) }
+              />
+            )) }
+          </div>
+        </div>
+      )
+    }));
 
     if (isLoading.value)
     {

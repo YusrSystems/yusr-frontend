@@ -26,6 +26,7 @@ export function BranchesSearchableSelect({ ...props }: SearchableSelectProps<Bra
 
   function CommandItems()
   {
+    useSignals();
     if (cubit.state.value instanceof PageLoading)
     {
       return <SearchableSelect.Loading />;

@@ -1,4 +1,5 @@
-import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
+import { StoreSlice } from "@/core/data/storeSlice";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChangeDialogOld, type CommonChangeDialogPropsOld, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormFieldOld, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
@@ -10,7 +11,6 @@ import StoreItemSelector from "../items/storeItemSelector";
 import { ItemTransferActions } from "./logic/itemTransferActions";
 import { initializeItems } from "./logic/itemTransferSlice";
 import SelectedItemsTable from "./selectedItemsTable";
-import { StoreSlice } from "@/core/data/storeSlice";
 
 export default function ChangeItemTransferDialog({
   entity,
@@ -181,7 +181,7 @@ export default function ChangeItemTransferDialog({
             isInvalid={ isInvalid("fromStoreId") }
             error={ getError("fromStoreId") }
           >
-            <StoresSearchableSelect
+            <StoresSearchableSelectOld
               selectedId={ formData.fromStoreId }
               selectedLabel={ formData.fromStoreName }
               items={ availableFromStores }
@@ -206,7 +206,7 @@ export default function ChangeItemTransferDialog({
             isInvalid={ isInvalid("toStoreId") }
             error={ getError("toStoreId") }
           >
-            <StoresSearchableSelect
+            <StoresSearchableSelectOld
               selectedId={ formData.toStoreId }
               selectedLabel={ formData.toStoreName }
               items={ availableToStores }

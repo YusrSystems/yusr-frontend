@@ -73,6 +73,7 @@ export * from "./select/currenciesSearchableSelect";
 export * from "./select/currenciesSearchableSelectOld";
 export * from "./select/rolesSearchableSelect";
 export * from "./select/rolesSearchableSelectOld";
+export * from "./select/searchableSelect";
 export * from "./select/searchableSelectOld";
 
 // Separators

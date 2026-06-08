@@ -1,4 +1,4 @@
-import TaxesSearchableSelect from "@/core/components/searchableSelect/taxesSearchableSelect";
+import TaxesSearchableSelectOld from "@/core/components/searchableSelect/taxesSearchableSelectOld";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -135,7 +135,7 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
                       <tr key={ index } className="border-t border-muted">
                         <td className="p-3 font-bold">{ index + 1 }</td>
                         <td className="p-3">
-                          <TaxesSearchableSelect
+                          <TaxesSearchableSelectOld
                             selectedId={ formData.itemTaxes?.[index].taxId }
                             selectedLabel={ formData.itemTaxes?.[index].taxName }
                             onValueChange={ (tax) =>

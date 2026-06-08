@@ -1,4 +1,6 @@
-import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
+import type StoreOld from "@/core/data/store";
+import { StoreSlice } from "@/core/data/storeSlice";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld } from "yusr-ui";
@@ -9,8 +11,6 @@ import type { IStocktaking } from "../../core/data/stocktaking";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import StocktakingItemsTable from "../stocktakings/stocktakingItemsTable";
-import type StoreOld from "@/core/data/store";
-import { StoreSlice } from "@/core/data/storeSlice";
 
 export default function ChangeItemsSettlementDialog(
   { entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<ItemsSettlement>
@@ -166,7 +166,7 @@ export default function ChangeItemsSettlementDialog(
               isInvalid={ isInvalid("storeId") }
               error={ getError("storeId") }
             >
-              <StoresSearchableSelect
+              <StoresSearchableSelectOld
                 disabled={ mode === "update" }
                 isInvalid={ isInvalid("storeId") }
                 onValueChange={ handleStoreChange }

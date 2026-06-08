@@ -1,5 +1,5 @@
-import PricingMethodsSearchableSelect from "@/core/components/searchableSelect/pricingMethodsSearchableSelect";
-import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
+import PricingMethodsSearchableSelectOld from "@/core/components/searchableSelect/pricingMethodsSearchableSelectOld";
+import UnitsSearchableSelectOld from "@/core/components/searchableSelect/unitsSearchableSelectOld";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, CurrencyIcon, FormFieldOld, NumberFieldOld, SystemPermissions, SystemPermissionsActions, TextFieldOld } from "yusr-ui";
@@ -75,7 +75,7 @@ export default function PricingMethodsTable()
                       label=""
                       isInvalid={ hasError && !isService && !method.unitId }
                     >
-                      <UnitsSearchableSelect
+                      <UnitsSearchableSelectOld
                         selectedId={ formData.itemUnitPricingMethods?.[index].unitId }
                         selectedLabel={ formData.itemUnitPricingMethods?.[index].unitName }
                         disabled={ isService }
@@ -95,7 +95,7 @@ export default function PricingMethodsTable()
                       label=""
                       isInvalid={ hasError && !isService && !method.pricingMethodId }
                     >
-                      <PricingMethodsSearchableSelect
+                      <PricingMethodsSearchableSelectOld
                         selectedId={ formData.itemUnitPricingMethods?.[index].pricingMethodId }
                         selectedLabel={ formData.itemUnitPricingMethods?.[index].pricingMethodName }
                         disabled={ isService }
