@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import ServiceIds from "../../data/serviceIds";
-import UnitsApiService from "../../networking/unitApiService";
+import UnitsApiServiceOld from "../../networking/unitApiServiceOld";
 
 export const fetchServiceIds = createAsyncThunk("serviceIds/fetchServiceIds", async () =>
 {
-  const res = await new UnitsApiService().GetServiceIds();
+  const res = await new UnitsApiServiceOld().GetServiceIds();
   return res.data;
 });
 

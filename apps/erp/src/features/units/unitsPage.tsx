@@ -1,71 +1,140 @@
+import type { UnitDto } from "@/core/data/unit";
+import Unit from "@/core/data/unit";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { BoxIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPageOld, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { CrudPage, PageCubit, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import type Unit from "../../core/data/unit";
-import { UnitSlice } from "../../core/data/unit";
-import UnitsApiService from "../../core/networking/unitApiService";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ChangeUnitDialog from "./changeUnitDialog";
 
-export default function UnitsPage() {
+const cubit = new PageCubit<Unit, UnitDto>(Services.unitsApi);
+
+export default function UnitsPage()
+{
+  if (!Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Get))
+  {
+    return <UnauthorizedPage />;
+  }
+
   const { t } = useTranslation("stocking");
-  const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const unitState = useAppSelector((state) => state.unit);
-  const unitDialogState = useAppSelector((state) => state.unitDialog);
-  const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Units));
-  const service = useMemo(() => new UnitsApiService(), []);
+
+  useEffect(() => cubit.init(), []);
 
   return (
-    <CrudPageOld<Unit>
-      title={t("units.title")}
-      entityName={t("units.entityName")}
-      addNewItemTitle={t("units.addNewTitle")}
-      permissions={permissions}
-      hasPagePermission={SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.Units,
-        SystemPermissionsActions.Get
-      )}
-      entityState={unitState}
-      useSlice={() => unitDialogState}
-      service={service}
-      cards={[{
-        title: t("units.totalUnits"),
-        data: (unitState.entities?.count ?? 0).toString(),
-        icon: <BoxIcon className="h-4 w-4 text-muted-foreground" />
-      }]}
-      tableHeadRows={[{ rowName: "", rowStyles: "text-left w-12.5" }, {
-        rowName: t("units.unitId"),
-        rowStyles: "w-30"
-      }, { rowName: t("units.unitName"), rowStyles: "w-70" }]}
-      tableRowMapper={(
-        unit: Unit
-      ) => [{ rowName: `#${unit.id}`, rowStyles: "" }, { rowName: unit.name, rowStyles: "font-semibold" }]}
-      actions={{
-        filter: UnitSlice.entityActions.filter,
-        openChangeDialog: (entity) => UnitSlice.dialogActions.openChangeDialog(entity),
-        openDeleteDialog: (entity) => UnitSlice.dialogActions.openDeleteDialog(entity),
-        setIsChangeDialogOpen: (open) => UnitSlice.dialogActions.setIsChangeDialogOpen(open),
-        setIsDeleteDialogOpen: (open) => UnitSlice.dialogActions.setIsDeleteDialogOpen(open),
-        refresh: UnitSlice.entityActions.refresh,
-        setCurrentPage: (page) => UnitSlice.entityActions.setCurrentPage(page)
-      }}
-      ChangeDialog={
-        <ChangeUnitDialog
-          entity={unitDialogState.selectedRow || undefined}
-          mode={unitDialogState.selectedRow ? "update" : "create"}
-          service={service}
-          onSuccess={(data, mode) => {
-            dispatch(UnitSlice.entityActions.refresh({ data: data }));
-            if (mode === "create") {
-              dispatch(UnitSlice.dialogActions.setIsChangeDialogOpen(false));
-            }
-          }}
-        />
-      }
-    />
+    <CrudPage>
+      <CrudPage.Header
+        title={ t("units.title") }
+        addButtonTitle={ t("units.addNewTitle") }
+        isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Add) }
+      />
+
+      <Cards />
+
+      <CrudPage.SearchInput onSearch={ (searchText) => cubit.search(searchText) } />
+
+      <PageTable />
+
+      <CrudPage.ChangeDialog
+        changeDialog={ (dto, closeDialog) =>
+        {
+          return (
+            <ChangeUnitDialog
+              entity={ dto
+                ? Unit.load(dto)
+                : Unit.create({ id: 0, name: "" }) }
+              service={ Services.unitsApi }
+              onSuccess={ (data) =>
+              {
+                if (data.mode.value === "create")
+                {
+                  cubit.add(data);
+                  closeDialog();
+                }
+                else if (data.mode.value === "update")
+                {
+                  cubit.update(data);
+                }
+              } }
+            />
+          );
+        } }
+      />
+
+      <CrudPage.DeleteDialog
+        entityNameSelector={ (unit) => unit.name }
+        service={ Services.unitsApi }
+        onSuccess={ (entity) => cubit.delete(entity) }
+      />
+    </CrudPage>
   );
+
+  function Cards()
+  {
+    useSignals();
+    const { t } = useTranslation("stocking");
+    return (
+      <CrudPage.Cards
+        cards={ [{
+          title: t("units.totalUnits"),
+          data: (cubit.count.value ?? 0).toString(),
+          icon: <BoxIcon className="h-4 w-4 text-muted-foreground" />
+        }] }
+      />
+    );
+  }
+}
+
+function PageTable()
+{
+  useSignals();
+  const { t } = useTranslation(["stocking", "common"]);
+
+  if (cubit.state.value instanceof PageLoading)
+  {
+    return <TablePreview.Loading />;
+  }
+
+  if (cubit.state.value instanceof PageLoaded)
+  {
+    return (
+      <CrudPage.Table>
+        <CrudPage.TableBody<Unit, UnitDto>
+          data={ cubit.entities.value }
+          headerRows={ [{ rowBody: "", rowStyles: "text-left w-12.5" }, {
+            rowBody: t("units.unitId"),
+            rowStyles: "w-30"
+          }, { rowBody: t("units.unitName"), rowStyles: "w-70" }] }
+          tableRowMapper={ (
+            unit
+          ) => [{ rowBody: `#${unit.id}`, rowStyles: "" }, { rowBody: unit.name, rowStyles: "font-semibold" }] }
+          hasUpdatePermission={ Services.auth.hasAuth(
+            SystemPermissionsResources.Units,
+            SystemPermissionsActions.Update
+          ) }
+          hasDeletePermission={ Services.auth.hasAuth(
+            SystemPermissionsResources.Units,
+            SystemPermissionsActions.Delete
+          ) }
+        />
+        <CrudPage.TablePagination
+          pageSize={ cubit.pageSize.value }
+          totalNumber={ cubit.count.value }
+          currentPage={ cubit.currentPage.value }
+          onPageChanged={ (newPage) =>
+          {
+            cubit.changePage(newPage);
+          } }
+        />
+      </CrudPage.Table>
+    );
+  }
+
+  if (cubit.state.value instanceof PageError)
+  {
+    return <TablePreview.Error />;
+  }
+
+  return <TablePreview.Empty />;
 }
