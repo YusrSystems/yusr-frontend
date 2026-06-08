@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld } from "yusr-ui";
 import type Item from "../../core/data/item";
 import ReportConstants from "../../core/data/report/reportConstants";
-import Store from "../../core/data/store";
+import StoreOld from "../../core/data/store";
 import ReportButton from "./reportButton";
 
 export default function ItemStatementButton({ item }: { item: Item; })
@@ -12,7 +12,7 @@ export default function ItemStatementButton({ item }: { item: Item; })
   const { t, i18n } = useTranslation("erpCommon");
 
   const [isOpen, setIsOpen] = useState(false);
-  const [store, setStore] = useState<Store | undefined>(undefined);
+  const [store, setStore] = useState<StoreOld | undefined>(undefined);
 
   return (
     <>

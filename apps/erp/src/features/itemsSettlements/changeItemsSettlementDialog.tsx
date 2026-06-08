@@ -6,10 +6,11 @@ import { ChangeDialogOld, DialogContent, DialogDescription, DialogHeader, Dialog
 import { ItemType } from "../../core/data/item";
 import ItemsSettlement, { ItemsSettlementItem, ItemsSettlementSlice, ItemsSettlementValidationRules } from "../../core/data/itemsSettlement";
 import type { IStocktaking } from "../../core/data/stocktaking";
-import Store, { StoreSlice } from "../../core/data/store";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import StocktakingItemsTable from "../stocktakings/stocktakingItemsTable";
+import type StoreOld from "@/core/data/store";
+import { StoreSlice } from "@/core/data/storeSlice";
 
 export default function ChangeItemsSettlementDialog(
   { entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<ItemsSettlement>
@@ -68,7 +69,7 @@ export default function ChangeItemsSettlementDialog(
     }
   }, [entity?.id, mode]);
 
-  const handleStoreChange = (store?: Store) =>
+  const handleStoreChange = (store?: StoreOld) =>
   {
     dispatch(ItemsSettlementSlice.formActions.updateFormData({
       storeId: store?.id,

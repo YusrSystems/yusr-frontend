@@ -14,13 +14,13 @@ import { PaymentMethodSlice } from "../data/paymentMethod";
 import { PricingMethodSlice } from "../data/pricingMethod";
 import { type SettingOld, SettingSlice } from "../data/settingOld";
 import { StocktakingSlice } from "../data/stocktaking";
-import { StoreSlice } from "../data/store";
 import { TaxSlice } from "../data/tax";
 import { UnitSlice } from "../data/unit";
 import { VoucherSlice } from "../data/voucher";
 import itemBarcodeReducer from "./shared/itemBarcodeSlice";
 import serviceIdsReducer from "./shared/serviceIdsSlice";
 import storeItemsReducer from "./shared/storeItemsSlice";
+import { StoreSlice } from "../data/storeSlice";
 
 const authSlice = createAuthSlice<UserOld, SettingOld>();
 export const {

@@ -1,25 +1,25 @@
-import StoresApiService from "@/core/networking/storeApiService";
+import { StoreSlice } from "@/core/data/storeSlice";
+import StoresApiServiceOld from "@/core/networking/storesApiServiceOld";
 import ChangeStoreDialog from "@/features/stores/changeStoreDialog";
 import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
-import type Store from "../../data/store";
-import { StoreSlice } from "../../data/store";
+import type StoreOld from "../../data/store";
 import { useAppSelector } from "../../state/store";
 
 export default function StoresSearchableSelect(
-  { ...props }: BasicSearchableSelectParamsOld<Store> & { items?: Store[]; }
+  { ...props }: BasicSearchableSelectParamsOld<StoreOld> & { items?: StoreOld[]; }
 )
 {
   const storeState = useAppSelector((state) => state.store);
   const authState = useAppSelector((state) => state.auth);
 
   return (
-    <ChangableSearchableSelect<Store>
+    <ChangableSearchableSelect<StoreOld>
       labelKey="name"
       createKey="name"
       mode="inline"
       state={ storeState }
-      apiService={ new StoresApiService() }
+      apiService={ new StoresApiServiceOld() }
       systemPermissionsResources={ SystemPermissionsResources.Stores }
       allowAdd={ false }
       allowUpdate={ false }

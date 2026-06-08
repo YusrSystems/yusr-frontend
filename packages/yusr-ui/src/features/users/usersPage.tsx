@@ -45,21 +45,6 @@ export function UsersPage()
       <CrudPage.ChangeDialog
         changeDialog={ (dto, closeDialog) =>
         {
-          console.log(dto);
-          console.log(
-            dto
-              ? User.load(dto)
-              : User.create({
-                id: 0,
-                username: "",
-                password: "",
-                isActive: true,
-                branchId: undefined,
-                branchName: "",
-                roleId: undefined,
-                roleName: ""
-              })
-          );
           return (
             <ChangeUserDialog
               entity={ dto

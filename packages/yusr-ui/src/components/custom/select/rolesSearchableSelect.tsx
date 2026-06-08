@@ -5,10 +5,10 @@ import { BaseServices } from "../../../services/baseServices";
 import { PageCubit, PageLoaded, PageLoading } from "../../../stateManager";
 import { SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "./searchableSelect";
 
-export function RolesSearchableSelect({ ...props }: SearchableSelectProps<Role, RoleDto>)
+export function RolesSearchableSelect({ ...props }: SearchableSelectProps<Role<RoleDto>, RoleDto>)
 {
   useSignals();
-  const cubit = useMemo(() => new PageCubit<Role, RoleDto>(BaseServices.rolesApi), []);
+  const cubit = useMemo(() => new PageCubit<Role<RoleDto>, RoleDto>(BaseServices.rolesApi), []);
   useEffect(() => cubit.init(), []);
 
   return (
@@ -41,7 +41,7 @@ export function RolesSearchableSelect({ ...props }: SearchableSelectProps<Role, 
 }
 
 const Option = React.memo(
-  function Option({ ...props }: Omit<SearchableSelectOptionProps<Role, RoleDto>, "labelSelector">)
+  function Option({ ...props }: Omit<SearchableSelectOptionProps<Role<RoleDto>, RoleDto>, "labelSelector">)
   {
     useSignals();
     return (

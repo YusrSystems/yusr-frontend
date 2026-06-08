@@ -1,3 +1,5 @@
+import type { Signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
 import { ShieldCheck } from "lucide-react";
 import { Card, CardContent, CardHeader, Checkbox, Label } from "../../pure";
 
@@ -7,8 +9,7 @@ export interface PermissionCardProps
   label: string;
   masterPermission?: string | null;
   actions: { id: string; label: string; icon?: React.ReactNode; }[];
-  selectedPermissions: string[];
-  onToggle: (updated: string[]) => void;
+  selectedPermissions: Signal<string[]>;
   isMasterRequired?: boolean;
 }
 
@@ -47,30 +48,39 @@ export const categorizePermissions = (
 };
 
 export function PermissionCard(
-  { resourceId, label, masterPermission, actions, selectedPermissions, onToggle, isMasterRequired = false }:
-    PermissionCardProps
+  { resourceId, label, masterPermission, actions, selectedPermissions, isMasterRequired = false }: PermissionCardProps
 )
 {
-  const hasMaster = isMasterRequired ? true : masterPermission ? selectedPermissions.includes(masterPermission) : false;
+  useSignals();
+  
+  const hasMaster = isMasterRequired
+    ? true
+    : masterPermission
+    ? selectedPermissions.value.includes(masterPermission)
+    : false;
 
-  const toggleGetPermission = (
-    currentPermissions: string[],
-    resource: string,
-    getPerm: string,
-    delimiter: string = "."
-  ): string[] =>
+  const toggleGetPermission = (resource: string) =>
   {
-    const isActive = currentPermissions.includes(getPerm);
-    return isActive
-      ? currentPermissions.filter((p) => !p.startsWith(`${resource}${delimiter}`))
-      : [...currentPermissions, getPerm];
+    const current = selectedPermissions.value;
+    const isSelected = current.includes(masterPermission!);
+
+    if (isSelected)
+    {
+      selectedPermissions.value = current.filter((p) => !p.startsWith(`${resource}`));
+    }
+    else
+    {
+      const toAdd = [masterPermission!, ...actions.map((a) => a.id)];
+      selectedPermissions.value = [...current, ...toAdd];
+    }
   };
 
-  const toggleActionPermission = (currentPermissions: string[], perm: string): string[] =>
+  const handleToggle = (resourceId: string) =>
   {
-    return currentPermissions.includes(perm)
-      ? currentPermissions.filter((p) => p !== perm)
-      : [...currentPermissions, perm];
+    const current = selectedPermissions.value;
+    selectedPermissions.value = current.includes(resourceId)
+      ? current.filter((id) => id !== resourceId)
+      : [...current, resourceId];
   };
 
   return (
@@ -83,7 +93,7 @@ export function PermissionCard(
         { masterPermission && !isMasterRequired && (
           <Checkbox
             checked={ hasMaster }
-            onCheckedChange={ () => onToggle(toggleGetPermission(selectedPermissions, resourceId, masterPermission)) }
+            onCheckedChange={ () => toggleGetPermission(resourceId) }
           />
         ) }
       </CardHeader>
@@ -101,8 +111,8 @@ export function PermissionCard(
             </div>
             <Checkbox
               disabled={ !hasMaster }
-              checked={ selectedPermissions.includes(action.id) }
-              onCheckedChange={ () => onToggle(toggleActionPermission(selectedPermissions, action.id)) }
+              checked={ selectedPermissions.value.includes(action.id) }
+              onCheckedChange={ () => handleToggle(action.id) }
             />
           </div>
         )) }

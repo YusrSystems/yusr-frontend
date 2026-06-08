@@ -6,12 +6,12 @@ import { CrudPageOld, ImagePreview, selectPermissionsByResource, SystemPermissio
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Item, { ItemSlice, ItemType } from "../../core/data/item";
 import ReportConstants from "../../core/data/report/reportConstants";
-import { StoreSlice } from "../../core/data/store";
 import ItemsApiService from "../../core/networking/itemApiService";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ItemStatementButton from "../reports/itemStatementDialog";
 import ReportButton from "../reports/reportButton";
 import ChangeItemDialog from "./changeItemDialog";
+import { StoreSlice } from "@/core/data/storeSlice";
 
 export default function ItemsPage() {
   const { t } = useTranslation("stocking");

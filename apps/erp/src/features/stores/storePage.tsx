@@ -1,50 +1,51 @@
+import { StoreSlice } from "@/core/data/storeSlice";
+import StoresApiServiceOld from "@/core/networking/storesApiServiceOld";
 import { Warehouse } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CrudPageOld, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import type Store from "../../core/data/store";
-import { StoreSlice } from "../../core/data/store";
-import StoresApiService from "../../core/networking/storeApiService";
+import type StoreOld from "../../core/data/store";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ChangeStoreDialog from "./changeStoreDialog";
 
-export default function StoresPage() {
+export default function StoresPage()
+{
   const { t } = useTranslation("stocking");
   const dispatch = useAppDispatch();
   const authState = useAppSelector((state) => state.auth);
   const storeState = useAppSelector((state) => state.store);
   const storeDialogState = useAppSelector((state) => state.storeDialog);
   const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Stores));
-  const service = useMemo(() => new StoresApiService(), []);
+  const service = useMemo(() => new StoresApiServiceOld(), []);
 
   return (
-    <CrudPageOld<Store>
-      title={t("stores.title")}
-      entityName={t("stores.entityName")}
-      addNewItemTitle={t("stores.addNewTitle")}
-      permissions={permissions}
-      hasPagePermission={SystemPermissions.hasAuth(
+    <CrudPageOld<StoreOld>
+      title={ t("stores.title") }
+      entityName={ t("stores.entityName") }
+      addNewItemTitle={ t("stores.addNewTitle") }
+      permissions={ permissions }
+      hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
         SystemPermissionsResources.Stores,
         SystemPermissionsActions.Get
-      )}
-      entityState={storeState}
-      useSlice={() => storeDialogState}
-      service={service}
-      cards={[{
+      ) }
+      entityState={ storeState }
+      useSlice={ () => storeDialogState }
+      service={ service }
+      cards={ [{
         title: t("stores.totalStores"),
         data: (storeState.entities?.count ?? 0).toString(),
         icon: <Warehouse className="h-4 w-4 text-muted-foreground" />
-      }]}
-      tableHeadRows={[{ rowName: "", rowStyles: "text-left w-12.5" }, {
+      }] }
+      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
         rowName: t("stores.storeId"),
         rowStyles: "w-30"
-      }, { rowName: t("stores.storeName"), rowStyles: "w-70" }]}
-      tableRowMapper={(
-        store: Store
-      ) => [{ rowName: `#${store.id}`, rowStyles: "" }, { rowName: store.name, rowStyles: "font-semibold" }]}
-      actions={{
+      }, { rowName: t("stores.storeName"), rowStyles: "w-70" }] }
+      tableRowMapper={ (
+        store: StoreOld
+      ) => [{ rowName: `#${store.id}`, rowStyles: "" }, { rowName: store.name, rowStyles: "font-semibold" }] }
+      actions={ {
         filter: StoreSlice.entityActions.filter,
         openChangeDialog: (entity) => StoreSlice.dialogActions.openChangeDialog(entity),
         openDeleteDialog: (entity) => StoreSlice.dialogActions.openDeleteDialog(entity),
@@ -52,20 +53,22 @@ export default function StoresPage() {
         setIsDeleteDialogOpen: (open) => StoreSlice.dialogActions.setIsDeleteDialogOpen(open),
         refresh: StoreSlice.entityActions.refresh,
         setCurrentPage: (page) => StoreSlice.entityActions.setCurrentPage(page)
-      }}
-      ChangeDialog={
+      } }
+      ChangeDialog={ 
         <ChangeStoreDialog
-          entity={storeDialogState.selectedRow || undefined}
-          mode={storeDialogState.selectedRow ? "update" : "create"}
-          service={service}
-          onSuccess={(data, mode) => {
+          entity={ storeDialogState.selectedRow || undefined }
+          mode={ storeDialogState.selectedRow ? "update" : "create" }
+          service={ service }
+          onSuccess={ (data, mode) =>
+          {
             dispatch(StoreSlice.entityActions.refresh({ data: data }));
-            if (mode === "create") {
+            if (mode === "create")
+            {
               dispatch(StoreSlice.dialogActions.setIsChangeDialogOpen(false));
             }
-          }}
+          } }
         />
-      }
+       }
     />
   );
 }

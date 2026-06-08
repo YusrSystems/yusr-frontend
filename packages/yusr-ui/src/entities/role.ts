@@ -2,7 +2,7 @@ import type { Signal } from "@preact/signals-react";
 import { type TFunction } from "i18next";
 import { i18n } from "../locales";
 import { ChangeableEntity, type ChangeableEntityMode, Dto } from "../stateManager";
-import { type ValidationRule, type ValidationRuleOld, Validators } from "../validation";
+import { type ValidationRuleOld, Validators } from "../validation";
 import { BaseEntity } from "./baseEntity";
 
 export class RoleOld extends BaseEntity
@@ -33,23 +33,22 @@ export class RoleDto extends Dto
 {
   public name!: string;
   public permissions!: string[];
-  public authorizedStores!: number[];
 }
 
-export class Role extends ChangeableEntity<RoleDto>
+export class Role<TRoleDto extends RoleDto> extends ChangeableEntity<TRoleDto>
 {
   declare name: Signal<string>;
   declare permissions: Signal<string[]>;
-  declare authorizedStores: Signal<number[]>;
 
-  constructor(dto: Partial<RoleDto>, mode: ChangeableEntityMode = "create")
+  constructor(
+    dto: Partial<TRoleDto>,
+    mode: ChangeableEntityMode = "create"
+  )
   {
-    const rules: ValidationRule<Partial<RoleDto>>[] = [{
+    super(dto, [{
       field: "name",
       selector: (d) => d.name,
       validators: [Validators.required(i18n.t("commonEntities:roles.nameRequired"))]
-    }];
-
-    super(dto, rules, mode);
+    }], mode);
   }
 }

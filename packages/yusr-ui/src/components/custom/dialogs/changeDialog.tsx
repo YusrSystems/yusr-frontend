@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from "react";
+import { type PropsWithChildren, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { ChangeableEntity, Dto } from "../../../stateManager";
 import { cn } from "../../../utils/cn";
@@ -6,6 +6,7 @@ import { Button } from "../../pure/button";
 import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure/dialog";
 import { Separator } from "../../pure/separator";
 import { SaveButton, type SaveButtonProps } from "../buttons/saveButton";
+import { TabButton } from "../buttons/tabButton";
 import { UnauthorizedPage } from "../unauthorized/unauthorizedPage";
 
 export type ChangeDialogProps =
@@ -15,6 +16,14 @@ export type ChangeDialogProps =
   };
 
 export type ChangeDialogHeaderProps = PropsWithChildren & { title: string; description?: string; };
+
+export type ChangeDialogTabProps = {
+  active: boolean;
+  hasError?: boolean;
+  icon: any;
+  label: string;
+  content: React.ReactElement;
+};
 
 export function ChangeDialog({ className = "sm:max-w-sm", children }: ChangeDialogProps)
 {
@@ -86,4 +95,33 @@ ChangeDialog.SaveButton = function<TEntity extends ChangeableEntity<TDto>, TDto 
 )
 {
   return <SaveButton { ...props } />;
+};
+
+ChangeDialog.Tabbed = function({ tabs, children }: { tabs: ChangeDialogTabProps[]; children?: React.ReactNode; })
+{
+  const [currentTab, setCurrentTab] = useState(0);
+
+  return (
+    <div className="flex flex-col h-[80vh]">
+      <div className="flex justify-start border-b mb-4 shrink-0 bg-muted/20 rounded-t-lg">
+        { tabs.map((tab, i) => (
+          <TabButton
+            key={ i }
+            active={ currentTab === i }
+            hasError={ tab.hasError }
+            icon={ tab.icon }
+            label={ tab.label }
+            onClick={ () => setCurrentTab(i) }
+            content={ tab.content }
+          />
+        )) }
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-2 pb-2">
+        { tabs[currentTab].content }
+      </div>
+
+      { children }
+    </div>
+  );
 };

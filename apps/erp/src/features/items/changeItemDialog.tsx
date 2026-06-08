@@ -5,7 +5,6 @@ import type { CommonChangeDialogPropsOld } from "yusr-ui";
 import { ChangeDialogTabbed, DialogContent, DialogDescription, DialogHeader, DialogTitle, Loading, StorageType, useFormErrors, useFormInit, useStorageFile, useValidate } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemValidationRules } from "../../core/data/item";
 import { PricingMethodSlice } from "../../core/data/pricingMethod";
-import { StoreSlice } from "../../core/data/store";
 import { TaxSlice } from "../../core/data/tax";
 import { UnitSlice } from "../../core/data/unit";
 import { fetchServiceIds } from "../../core/state/shared/serviceIdsSlice";
@@ -13,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import BasicTab from "./basic/basicTab";
 import PricingTab from "./pricing/pricingTab";
 import StorageTab from "./storage/storageTab";
+import { StoreSlice } from "@/core/data/storeSlice";
 
 const BASIC_FIELDS = ["name", "type"] as const;
 const STORAGE_FIELDS = ["itemStores"] as const;

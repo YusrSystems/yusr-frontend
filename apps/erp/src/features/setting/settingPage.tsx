@@ -5,13 +5,13 @@ import { BranchSlice, Button, Card, CardContent, CardFooter, CurrencySlice, Stor
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import { PaymentMethodSlice } from "../../core/data/paymentMethod";
 import { SettingOld, SettingSlice, SettingValidationRules } from "../../core/data/settingOld";
-import { StoreSlice } from "../../core/data/store";
 import { TaxSlice } from "../../core/data/tax";
 import SettingsApiService from "../../core/networking/settingsApiService";
 import { updateSetting, useAppDispatch, useAppSelector } from "../../core/state/store";
 import BasicSection from "./basicSection";
 import DefaultsSection from "./defaultsSection";
 import InvoiceSection from "./invoiceSection";
+import { StoreSlice } from "@/core/data/storeSlice";
 
 export default function SettingPage()
 {

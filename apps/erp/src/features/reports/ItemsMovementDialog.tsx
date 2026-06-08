@@ -3,7 +3,7 @@ import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearc
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import type Account from "@/core/data/account";
 import type Item from "@/core/data/item";
-import type Store from "@/core/data/store";
+import type StoreOld from "@/core/data/store";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld, SelectFieldOld } from "yusr-ui";
@@ -22,8 +22,8 @@ export default function ItemsMovementDialog()
   const [toDate, setToDate] = useState<Date | undefined>(undefined);
   const [fromAccount, setFromAccount] = useState<Account | undefined>(undefined);
   const [toAccount, setToAccount] = useState<Account | undefined>(undefined);
-  const [fromStore, setFromStore] = useState<Store | undefined>(undefined);
-  const [toStore, setToStore] = useState<Store | undefined>(undefined);
+  const [fromStore, setFromStore] = useState<StoreOld | undefined>(undefined);
+  const [toStore, setToStore] = useState<StoreOld | undefined>(undefined);
   const [groupOption, setGroupOption] = useState<ItemsMovementReportGroupOption | undefined>(undefined);
 
   return (

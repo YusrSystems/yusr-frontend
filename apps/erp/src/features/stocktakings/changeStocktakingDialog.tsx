@@ -5,10 +5,11 @@ import type { CommonChangeDialogPropsOld } from "yusr-ui";
 import { ChangeDialogOld, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormFieldOld, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ItemType } from "../../core/data/item";
 import Stocktaking, { StocktakingItem, StocktakingSlice, StocktakingValidationRules } from "../../core/data/stocktaking";
-import Store, { StoreSlice } from "../../core/data/store";
+import StoreOld from "../../core/data/store";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import StocktakingItemsTable from "./stocktakingItemsTable";
+import { StoreSlice } from "@/core/data/storeSlice";
 
 export default function ChangeStocktakingDialog(
   { entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<Stocktaking>
@@ -70,7 +71,7 @@ export default function ChangeStocktakingDialog(
     }
   }, [entity?.id, mode]);
 
-  const handleStoreChange = (store?: Store) =>
+  const handleStoreChange = (store?: StoreOld) =>
   {
     dispatch(StocktakingSlice.formActions.updateFormData({
       storeId: store?.id,

@@ -1,9 +1,11 @@
+import { Signal, signal } from "@preact/signals-react";
 import { AuthConstants, User, UserDto } from "../index";
 
 export abstract class AuthService
 {
   private _isAuthenticated = false;
   private _loggedInUser: User | undefined;
+  public systemPermissions: Signal<string[]> = signal([]);
 
   get loggedInUser(): User | undefined
   {

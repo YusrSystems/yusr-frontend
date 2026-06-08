@@ -4,7 +4,7 @@ import StoresSearchableSelect from "@/core/components/searchableSelect/storesSea
 import type Account from "@/core/data/account";
 import { InvoiceType } from "@/core/data/invoice";
 import type Item from "@/core/data/item";
-import type Store from "@/core/data/store";
+import type StoreOld from "@/core/data/store";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld } from "yusr-ui";
@@ -24,7 +24,7 @@ export default function InvoicesListDialog()
   });
   const [toDate, setToDate] = useState<Date>(new Date());
   const [account, setAccount] = useState<Account | undefined>(undefined);
-  const [store, setStore] = useState<Store | undefined>(undefined);
+  const [store, setStore] = useState<StoreOld | undefined>(undefined);
   const [items, setItems] = useState<Item[]>([]);
 
   return (

@@ -4,7 +4,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, i18n, PasswordField, TextField, useAppDispatch } from "yusr-ui";
+import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, i18n, PasswordField, TextField, useAppDispatch, UserOld } from "yusr-ui";
 import LoginCubit from "./logic/loginCubit";
 import { LoginLoadingState } from "./logic/loginState";
 
@@ -101,7 +101,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                     await cubit.login((result) =>
                     {
                       dispatch(login(result.data));
-                      dispatch(updateLoggedInUser(result.data?.user ?? {}));
+                      dispatch(updateLoggedInUser((result.data?.user ?? {}) as UserOld));
                     }) }
                   disabled={ isLoading }
                 >

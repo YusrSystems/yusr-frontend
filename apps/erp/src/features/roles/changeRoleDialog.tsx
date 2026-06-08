@@ -1,14 +1,14 @@
+import type { ErpRole, ErpRoleDto } from "@/core/data/erpRole";
+import { Services } from "@/core/services/services";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { type LucideIcon, Pencil, Plus, Trash2 } from "lucide-react";
+import { type LucideIcon, Pencil, Plus, Trash2, WarehouseIcon } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
-import { categorizePermissions, ChangeDialog, type ChangeDialogTabProps, type CommonChangeDialogProps, Loading, PermissionCard, TextField } from "../../components/custom";
-import type { Role, RoleDto } from "../../entities";
-import { SystemApiService } from "../../networking";
-import { BaseServices } from "../../services";
-import type { RequestResult } from "../../types";
+import { categorizePermissions, ChangeDialog, type ChangeDialogTabProps, type CommonChangeDialogProps, Loading, PermissionCard, SystemApiService, SystemPermissionsActions, TextField, YusrSystemPermissionsResources } from "yusr-ui";
+import { StoreCubit } from "../stores/state/storeCubit";
+import { getLabels, getPermissionSections } from "./permissionConfig";
+import StorePermissionsList from "./storePermissionsList";
 
 export const ActionIcons: Record<string, React.ReactNode> = {
   [SystemPermissionsActions.Add]: <Plus className="w-4 h-4 text-blue-500" />,
@@ -23,38 +23,29 @@ export type PermissionSection = {
   resources: string[];
 };
 
-export type ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto> = {
-  labels: Record<string, string>;
-  permissionSecions: PermissionSection[];
-  onMount?: () => void;
-  onGet?: (entity: TRole, result: RequestResult<TRole>) => void;
-  extraTabs?(entity: TRole): ChangeDialogTabProps[];
-};
-
-export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto>(
-  { entity, service, onSuccess, labels, permissionSecions, onGet, onMount, extraTabs }:
-    & CommonChangeDialogProps<TRole, TRoleDto>
-    & ChangeRoleDialog<TRole, TRoleDto>
-)
+export function ChangeRoleDialog({ entity, service, onSuccess }: CommonChangeDialogProps<ErpRole, ErpRoleDto>)
 {
-  const { t } = useTranslation(["commonEntities", "common"]);
+  const { t } = useTranslation(["erpCommon", "commonEntities", "common"]);
   const delimiter = ".";
+  const storesCubit = useMemo(() => new StoreCubit(), []);
   const isLoading = useMemo(() => signal(false), []);
+  const labels = getLabels(t);
+  const permissionSecions = getPermissionSections(t);
 
   useEffect(() =>
   {
     const fetch = async () =>
     {
       isLoading.value = true;
-      if (BaseServices.auth.systemPermissions.value.length === 0)
+      if (Services.auth.systemPermissions.value.length === 0)
       {
         const res = await new SystemApiService().GetSystemPermissions();
-        BaseServices.auth.systemPermissions.value = res.data ?? [];
+        Services.auth.systemPermissions.value = res.data ?? [];
       }
 
-      if (entity.mode.value === "create" && BaseServices.auth.systemPermissions.value.length > 0)
+      if (entity.mode.value === "create" && Services.auth.systemPermissions.value.length > 0)
       {
-        entity.permissions.value = BaseServices.auth.systemPermissions.value;
+        entity.permissions.value = Services.auth.systemPermissions.value;
       }
 
       if (entity.mode.value === "update" && entity?.id.value)
@@ -65,14 +56,14 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
           entity.id.value = res.data.id.value;
           entity.name.value = res.data.name.value;
           entity.permissions.value = res.data.permissions.value;
-          onGet?.(entity, res);
+          entity.authorizedStores.value = res.data.authorizedStores.value;
         }
       }
       isLoading.value = false;
     };
 
     fetch();
-    onMount?.();
+    storesCubit.initFilterAll();
   }, [entity?.id.value]);
 
   const permissionTabs: ChangeDialogTabProps[] = permissionSecions.map((section, index) => ({
@@ -91,9 +82,7 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
           />
         ) }
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          { categorizePermissions(BaseServices.auth.systemPermissions.value, section.resources, delimiter).map((
-            item
-          ) => (
+          { categorizePermissions(Services.auth.systemPermissions.value, section.resources, delimiter).map((item) => (
             <PermissionCard
               key={ item.resource }
               resourceId={ item.resource }
@@ -133,13 +122,23 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
       return <Loading entityName={ t("commonEntities:roles.entityName") } />;
     }
 
-    const tabs = [...permissionTabs, ...(extraTabs?.(entity) ?? [])];
+    const tabs = [...permissionTabs, {
+      active: false,
+      icon: WarehouseIcon,
+      label: t("permissions.resources.authorizedStores"),
+      content: (
+        <StorePermissionsList
+          cubit={ storesCubit }
+          authorizedStoreIds={ entity.authorizedStores }
+        />
+      )
+    }];
 
     return (
       <ChangeDialog.Tabbed tabs={ tabs }>
         <ChangeDialog.Footer>
           <ChangeDialog.Close />
-          <ChangeDialog.SaveButton<TRole, TRoleDto>
+          <ChangeDialog.SaveButton<ErpRole, ErpRoleDto>
             entity={ entity }
             service={ service }
             onSuccess={ (data) => onSuccess?.(data) }

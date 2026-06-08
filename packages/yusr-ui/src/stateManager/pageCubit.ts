@@ -7,7 +7,7 @@ import { PageEmpty, PageInitial, PageLoaded, PageLoading, type PageState } from 
 
 export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends Cubit<PageState>
 {
-  private _service: BaseFilterableApiService<TEntity, TDto>;
+  protected _service: BaseFilterableApiService<TEntity, TDto>;
   public pageSize: Signal<number>;
   public currentPage: Signal<number>;
   public searchText: Signal<string | undefined>;

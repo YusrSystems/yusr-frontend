@@ -9,7 +9,6 @@ import type Invoice from "../../core/data/invoice";
 import { InvoiceRelationType, InvoiceSlice, InvoiceStatus, InvoiceType, InvoiceValidationRules } from "../../core/data/invoice";
 import { ItemType } from "../../core/data/item";
 import { PaymentMethodSlice } from "../../core/data/paymentMethod";
-import { StoreSlice } from "../../core/data/store";
 import InvoicesApiService from "../../core/networking/invoiceApiService";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -20,6 +19,7 @@ import InvoiceBasicTab from "./presentation/basic/invoiceBasicTab";
 import InvoiceCostsTab from "./presentation/costs/invoiceCostsTab";
 import InvoiceFilesTab from "./presentation/files/invoiceFilesTab";
 import InvoicePolicyTab from "./presentation/policy/invoicePolicyTab";
+import { StoreSlice } from "@/core/data/storeSlice";
 
 export type InvoiceSliceType = ReturnType<typeof InvoiceSlice.create>;
 export type InvoiceDialogMode = DialogMode | "return" | "copy" | "quotationToSales";

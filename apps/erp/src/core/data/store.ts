@@ -1,80 +1,64 @@
+import type { Signal } from "@preact/signals-react";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type IEntityState, type ValidationRuleOld, Validators } from "yusr-ui";
-import StoresApiService from "../networking/storeApiService";
+import { BaseEntity, ChangeableEntity, type ChangeableEntityMode, Dto, i18n, type IEntityState, type ValidationRule, type ValidationRuleOld, Validators } from "yusr-ui";
+import StoresApiServiceOld from "../networking/storesApiServiceOld";
 
-export default class Store extends BaseEntity
+export default class StoreOld extends BaseEntity
 {
   public name!: string;
   public createdBy!: number;
   public authorized!: boolean;
 
-  constructor(init?: Partial<Store>)
+  constructor(init?: Partial<StoreOld>)
   {
     super();
     Object.assign(this, init);
   }
 }
 
+export class StoreDto extends Dto
+{
+  public name!: string;
+  public createdBy!: number;
+  public authorized!: boolean;
+}
+
+export class Store extends ChangeableEntity<StoreDto>
+{
+  declare name: Signal<string>;
+  declare createdBy: Signal<number>;
+  declare authorized: Signal<boolean>;
+
+  constructor(dto: Partial<StoreDto>, mode: ChangeableEntityMode = "create")
+  {
+    const rules: ValidationRule<Partial<StoreDto>>[] = [{
+      field: "name",
+      selector: (d) => d.name,
+      validators: [Validators.required(i18n.t("stocking:stores.nameRequired"))]
+    }];
+
+    super(dto, rules, mode);
+  }
+}
+
 export class StoreValidationRules
 {
-  public static validationRules = (t: TFunction<"stocking">): ValidationRuleOld<Partial<Store>>[] => [{
+  public static validationRules = (t: TFunction<"stocking">): ValidationRuleOld<Partial<StoreOld>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("stores.nameRequired"))]
   }];
 }
 
-const storeService = new StoresApiService();
+export const storeService = new StoresApiServiceOld();
 
-const filterAll = createAsyncThunk(
+export const filterAll = createAsyncThunk(
   "store/filterAll",
   async (searchText: string | undefined, { getState }) =>
   {
-    const state = (getState() as never)["store"] as IEntityState<Store>;
+    const state = (getState() as never)["store"] as IEntityState<StoreOld>;
     const result = await storeService.FilterAll(state.currentPage, state.rowsPerPage, searchText);
     return result?.data;
   }
 );
-
-export class StoreSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice(
-    "store",
-    storeService,
-    undefined, // filterMethod
-    {}, // customReducers
-    // extraActions
-    (builder) =>
-    {
-      builder
-        .addCase(filterAll.pending, (state) =>
-        {
-          state.isLoading = true;
-        })
-        .addCase(filterAll.fulfilled, (state, action) =>
-        {
-          state.isLoading = false;
-          state.isLoaded = true;
-          if (action.payload)
-          {
-            state.entities = action.payload as never;
-          }
-        })
-        .addCase(filterAll.rejected, (state) =>
-        {
-          state.isLoading = false;
-        });
-    }
-  );
-  public static entityActions = { ...StoreSlice.entitySliceInstance.actions, filterAll };
-  public static entityReducer = StoreSlice.entitySliceInstance.reducer;
-
-  private static dialogSliceInstance = createGenericDialogSlice<Store>("storeDialog");
-  public static dialogActions = StoreSlice.dialogSliceInstance.actions;
-  public static dialogReducer = StoreSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<Store>("storeForm");
-  public static formActions = StoreSlice.formSliceInstance.actions;
-  public static formReducer = StoreSlice.formSliceInstance.reducer;
-}

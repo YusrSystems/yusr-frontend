@@ -211,7 +211,7 @@ CrudPage.DeleteDialog = function<TEntity extends ChangeableEntity<TDto>, TDto ex
         <DeleteDialog
           { ...props }
           id={ entity.id.value }
-          entityName={ entityNameSelector(entity).value }
+          entityName={ entityNameSelector(entity)?.value ?? "" }
           onSuccess={ () =>
           {
             onSuccess?.(entity);

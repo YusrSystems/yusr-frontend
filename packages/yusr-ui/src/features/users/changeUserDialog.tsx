@@ -23,7 +23,7 @@ export function ChangeUserDialog({ entity, service, onSuccess }: CommonChangeDia
   }
 
   const branchesCubit = useMemo(() => new PageCubit<Branch, BranchDto>(BaseServices.branchesApi), []);
-  const rolesCubit = useMemo(() => new PageCubit<Role, RoleDto>(BaseServices.rolesApi), []);
+  const rolesCubit = useMemo(() => new PageCubit<Role<RoleDto>, RoleDto>(BaseServices.rolesApi), []);
   const { t } = useTranslation(["commonEntities", "common"]);
   const title = entity.mode.value === "create"
     ? t("users.addNewTitle")

@@ -4,13 +4,13 @@ import { useTranslation } from "react-i18next";
 import { ChangeDialogOld, type CommonChangeDialogPropsOld, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormFieldOld, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ItemType } from "../../core/data/item";
 import ItemTransfer, { ItemTransfersItem, ItemTransferSlice, ItemTransferValidationRules } from "../../core/data/itemTransfer";
-import { StoreSlice } from "../../core/data/store";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import StoreItemSelector from "../items/storeItemSelector";
 import { ItemTransferActions } from "./logic/itemTransferActions";
 import { initializeItems } from "./logic/itemTransferSlice";
 import SelectedItemsTable from "./selectedItemsTable";
+import { StoreSlice } from "@/core/data/storeSlice";
 
 export default function ChangeItemTransferDialog({
   entity,

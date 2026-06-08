@@ -5,7 +5,6 @@ import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import { ItemSlice } from "../../core/data/item";
-import { StoreSlice } from "../../core/data/store";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import BalanceSheetDialog from "./BalanceSheetDialog";
 import ItemsMovementDialog from "./ItemsMovementDialog";
@@ -13,6 +12,7 @@ import ItemsTaxStatementDialog from "./ItemsTaxStatementDialog";
 import ProfitAndLossDialog from "./ProfitAndLossDialog";
 import TaxReturnDialog from "./taxReturnDialog";
 import InvoicesListDialog from "./invoicesListDialog";
+import { StoreSlice } from "@/core/data/storeSlice";
 
 interface Report
 {
