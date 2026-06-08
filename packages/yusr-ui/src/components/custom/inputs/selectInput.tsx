@@ -31,29 +31,26 @@ export function SelectInputOld({ value, onValueChange, options, placeholder, isI
 
 export interface SelectInputProps<T>
 {
-  value: Signal<T>;
+  value: Signal<T | undefined>;
   onValueChange?: (value: T) => void;
-  options: { label: string; value: T; }[];
+  options: { label: string; value: T | undefined; }[];
   placeholder?: string;
   disabled?: boolean;
 }
 
-export function SelectInput<T extends string | number | boolean>(
+export function SelectInput<T extends string | number | boolean | undefined>(
   { value, onValueChange, options, placeholder, disabled }: SelectInputProps<T>
 )
 {
   useSignals();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation("common");
   return (
     <Select
-      value={ String(value.value) }
+      value={ String(value.value ?? t("searchableSelect.nullOption")) }
       onValueChange={ (val) =>
       {
         const match = options.find((o) => String(o.value) === val);
-        if (match)
-        {
-          value.value = match.value;
-        }
+        value.value = match ? match.value : undefined;
         onValueChange?.(val as T);
       } }
       dir={ i18n.dir() }

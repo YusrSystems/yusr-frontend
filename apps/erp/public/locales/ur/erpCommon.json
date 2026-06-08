@@ -231,6 +231,8 @@
     "itemsTaxStatementDescription": "فی آئٹم ٹیکس کی تفصیلات",
     "itemsMovement": "آئٹمز کی نقل و حرکت",
     "itemsMovementDescription": "آئٹمز کے لیے انوینٹری کی نقل و حرکت",
+    "itemsList": "اشیاء کی فہرست",
+    "itemsListDescription": "تفصیلات اور مقداریں کے ساتھ تمام اشیاء کی رپورٹ",
     "fromDate": "تاریخ سے",
     "toDate": "تاریخ تک",
     "movementType": "نقل و حرکت کی قسم",

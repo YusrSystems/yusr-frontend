@@ -226,6 +226,8 @@
     "itemsTaxStatementDescription": "تفاصيل الضريبة لكل مادة",
     "itemsMovement": "حركة المواد",
     "itemsMovementDescription": "حركات المخزون للمواد",
+    "itemsList": "قائمة المواد",
+    "itemsListDescription": "تقرير بجميع المواد مع التفاصيل والكميات",
     "fromDate": "من تاريخ",
     "toDate": "إلى تاريخ",
     "movementType": "نوع الحركة",

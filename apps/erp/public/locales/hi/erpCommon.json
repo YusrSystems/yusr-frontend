@@ -231,6 +231,8 @@
     "itemsTaxStatementDescription": "प्रति वस्तु कर विवरण",
     "itemsMovement": "वस्तु संचलन",
     "itemsMovementDescription": "वस्तुओं के लिए सूची संचलन",
+    "itemsList": "आइटम सूची",
+    "itemsListDescription": "विवरण और मात्रा के साथ सभी आइटम की रिपोर्ट",
     "fromDate": "तिथि से",
     "toDate": "तिथि तक",
     "movementType": "संचलन प्रकार",

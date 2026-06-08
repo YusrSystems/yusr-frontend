@@ -231,6 +231,8 @@
     "itemsTaxStatementDescription": "Tax details per item",
     "itemsMovement": "Items Movement",
     "itemsMovementDescription": "Inventory movements for items",
+    "itemsList": "Items List",
+    "itemsListDescription": "Report of all items with details and quantities",
     "toDate": "To Date",
     "fromDate": "From Date",
     "movementType": "Movement Type",

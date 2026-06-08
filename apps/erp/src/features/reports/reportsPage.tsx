@@ -1,4 +1,5 @@
-import { ArrowRightLeft, BarChart2, FileText, type LucideIcon, Percent, ReceiptText, TrendingUp } from "lucide-react";
+import { StoreSlice } from "@/core/data/storeSlice";
+import { ArrowRightLeft, BarChart2, FileText, type LucideIcon, Package, PackageSearch, Percent, ReceiptText, TrendingUp } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
@@ -7,12 +8,12 @@ import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import { ItemSlice } from "../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import BalanceSheetDialog from "./BalanceSheetDialog";
+import InvoicesListDialog from "./invoicesListDialog";
+import ItemsListDialog from "./itemsListDialog";
 import ItemsMovementDialog from "./ItemsMovementDialog";
 import ItemsTaxStatementDialog from "./ItemsTaxStatementDialog";
 import ProfitAndLossDialog from "./ProfitAndLossDialog";
 import TaxReturnDialog from "./taxReturnDialog";
-import InvoicesListDialog from "./invoicesListDialog";
-import { StoreSlice } from "@/core/data/storeSlice";
 
 interface Report
 {
@@ -111,13 +112,13 @@ export default function ReportsPage()
     icon: BarChart2,
     iconColor: "text-blue-600",
     reports: [{
-      comp: <BalanceSheetDialog />,
-      name: t("reports.balanceSheet"),
-      description: t("reports.balanceSheetDescription"),
-      icon: FileText,
+      comp: <InvoicesListDialog />,
+      name: t("reports.InvoicesList"),
+      description: t("reports.InvoicesListDescription"),
+      icon: ReceiptText,
       hasAuth: SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.ReportBalanceSheet,
+        SystemPermissionsResources.ReportInvoiceList,
         SystemPermissionsActions.Get
       )
     }, {
@@ -131,13 +132,13 @@ export default function ReportsPage()
         SystemPermissionsActions.Get
       )
     }, {
-      comp: <InvoicesListDialog />,
-      name: t("reports.InvoicesList"),
-      description: t("reports.InvoicesListDescription"),
-      icon: ReceiptText,
+      comp: <BalanceSheetDialog />,
+      name: t("reports.balanceSheet"),
+      description: t("reports.balanceSheetDescription"),
+      icon: FileText,
       hasAuth: SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.ReportInvoiceList,
+        SystemPermissionsResources.ReportBalanceSheet,
         SystemPermissionsActions.Get
       )
     }]
@@ -168,9 +169,19 @@ export default function ReportsPage()
     }]
   }, {
     label: t("reports.inventory"),
-    icon: ArrowRightLeft,
+    icon: Package,
     iconColor: "text-green-700",
     reports: [{
+      comp: <ItemsListDialog />,
+      name: t("reports.itemsList"),
+      description: t("reports.itemsListDescription"),
+      icon: PackageSearch,
+      hasAuth: SystemPermissions.hasAuth(
+        authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.ReportItemList,
+        SystemPermissionsActions.Get
+      )
+    }, {
       comp: <ItemsMovementDialog />,
       name: t("reports.itemsMovement"),
       description: t("reports.itemsMovementDescription"),

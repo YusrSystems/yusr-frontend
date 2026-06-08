@@ -231,6 +231,8 @@
     "itemsTaxStatementDescription": "প্রতি আইটেমের ট্যাক্সের বিবরণ",
     "itemsMovement": "আইটেম চলাচল",
     "itemsMovementDescription": "আইটেমের জন্য ইনভেন্টরি চলাচল",
+    "itemsList": "আইটেমের তালিকা",
+    "itemsListDescription": "বিবরণ এবং পরিমাণ সহ সমস্ত আইটেমের রিপোর্ট",
     "fromDate": "তারিখ থেকে",
     "toDate": "তারিখ পর্যন্ত",
     "movementType": "চলাচলের ধরন",

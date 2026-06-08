@@ -16,9 +16,9 @@ export function SelectFieldOld(
   );
 }
 
-type SelectFieldProps<T extends string | number | boolean> = SelectInputProps<T> & FormFieldProps;
+type SelectFieldProps<T extends string | number | boolean | undefined> = SelectInputProps<T> & FormFieldProps;
 
-export function SelectField<T extends string | number | boolean>(
+export function SelectField<T extends string | number | boolean | undefined>(
   { label, error, required, ...props }: SelectFieldProps<T>
 )
 {
