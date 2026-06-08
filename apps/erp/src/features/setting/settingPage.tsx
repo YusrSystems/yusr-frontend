@@ -1,3 +1,6 @@
+import { StoreSlice } from "@/core/data/storeSlice";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,10 +14,10 @@ import { updateSetting, useAppDispatch, useAppSelector } from "../../core/state/
 import BasicSection from "./basicSection";
 import DefaultsSection from "./defaultsSection";
 import InvoiceSection from "./invoiceSection";
-import { StoreSlice } from "@/core/data/storeSlice";
 
 export default function SettingPage()
 {
+  useSignals();
   const { t } = useTranslation("erpCommon");
   const { t: tCommon } = useTranslation("common");
 
@@ -96,6 +99,10 @@ export default function SettingPage()
 
     if (result.status === 200)
     {
+      if (Services.auth?.setting)
+      {
+        Services.auth.setting.companyPhone.value = formData.companyPhone as string;
+      }
       dispatch(SettingSlice.formActions.updateFormData(result.data as SettingOld));
       dispatch(updateSetting(result.data as SettingOld));
     }

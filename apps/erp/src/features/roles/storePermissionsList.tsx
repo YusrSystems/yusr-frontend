@@ -13,8 +13,6 @@ export default function StorePermissionsList({ cubit, authorizedStoreIds }: Stor
 {
   useSignals();
 
-  console.log(authorizedStoreIds);
-
   const handleToggle = (storeId: number) =>
   {
     const current = authorizedStoreIds.value;

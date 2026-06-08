@@ -44,6 +44,34 @@ export class ErpAuthService extends AuthService
 
   get isVerifiedAccount(): boolean
   {
-    return !!(this.setting?.companyPhone?.value && this.setting?.crn?.value && this.setting?.vatNumber?.value);
+    return Boolean(this.setting?.companyPhone?.value && this.setting?.branch?.value);
+  }
+  get stepsToComplete(): number
+  {
+    let counter = 0;
+
+    if (!Boolean(this.setting?.companyPhone?.value))
+    {
+      counter += 1;
+    }
+    if (!Boolean(this.setting?.branch?.value))
+    {
+      counter += 1;
+    }
+
+    return counter;
+  }
+
+  get nextRoute(): string
+  {
+    if (!Boolean(this.setting?.branch?.value))
+    {
+      return "/branches";
+    }
+    if (!Boolean(this.setting?.companyPhone?.value))
+    {
+      return "/settings";
+    }
+    return "/";
   }
 }

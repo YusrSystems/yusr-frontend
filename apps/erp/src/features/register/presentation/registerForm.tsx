@@ -228,8 +228,17 @@ function SignInWithGoogle({ cubit }: { cubit: RegistrationCubit; })
           }
           cubit.externalAuthRegister(response.credential, (result) =>
           {
+            const user = result.user
+              ? {
+                ...result.user,
+                role: result.user.role
+                  ? { ...result.user.role, authorizedStores: (result.user.role as any).authorizedStores ?? [] }
+                  : undefined
+              }
+              : {};
+
             dispatch(login(result));
-            dispatch(updateLoggedInUser(result.user ?? {}));
+            dispatch(updateLoggedInUser(user));
           });
         } }
         onError={ () => console.log("Login Failed") }
