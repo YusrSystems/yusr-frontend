@@ -63,7 +63,7 @@ export default function PricingMethodsPage()
         } }
       />
 
-      <CrudPage.DeleteDialog
+      <CrudPage.DeleteDialog<PricingMethod, PricingMethodDto>
         entityNameSelector={ (pricingMethod) => pricingMethod.name }
         service={ Services.pricingMethodsApi }
         onSuccess={ (entity) => Cubits.pricingMethods.delete(entity) }
