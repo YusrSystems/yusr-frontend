@@ -12,7 +12,7 @@ export default class Unit extends ChangeableEntity<UnitDto>
 
   constructor(dto: Partial<UnitDto>, mode: ChangeableEntityMode = "create")
   {
-    super(dto, [{
+    super({ id: 0, name: "", ...dto }, [{
       field: "name",
       selector: (d) => d.name,
       validators: [Validators.required(i18n.t("stocking:units.nameRequired"))]

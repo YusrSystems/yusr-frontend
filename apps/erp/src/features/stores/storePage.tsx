@@ -46,7 +46,7 @@ export default function StoresPage()
             <ChangeStoreDialog
               entity={ dto
                 ? Store.load(dto)
-                : Store.create({ id: 0, name: "", authorized: true }) }
+                : Store.create() }
               service={ Services.storesApi }
               onSuccess={ (data) =>
               {

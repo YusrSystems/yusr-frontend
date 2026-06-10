@@ -12,7 +12,7 @@ export default class PricingMethod extends ChangeableEntity<PricingMethodDto>
 
   constructor(dto: Partial<PricingMethodDto>, mode: ChangeableEntityMode = "create")
   {
-    super(dto, [{
+    super({ id: 0, name: "", ...dto }, [{
       field: "name",
       selector: (d) => d.name,
       validators: [Validators.required(i18n.t("stocking:pricingMethods.nameRequired"))]

@@ -1,7 +1,7 @@
 import { BaseServices } from "yusr-ui";
 import AccountApiService from "../networking/accountApiService";
 import { ErpRoleApiService } from "../networking/erpRoleApiService";
-import PricingMethodsApiService from "../networking/PricingMethodsApiService";
+import PricingMethodsApiService from "../networking/pricingMethodsApiService";
 import { StoresApiService } from "../networking/storeApiService";
 import TaxesApiService from "../networking/taxesApiService";
 import UnitsApiService from "../networking/unitApiService";

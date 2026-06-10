@@ -45,7 +45,7 @@ export default function TaxesPage()
             <ChangeTaxDialog
               entity={ dto
                 ? Tax.load(dto)
-                : Tax.create({ id: 0, name: "", percentage: 1, isPrimary: false }) }
+                : Tax.create() }
               service={ Services.taxesApi }
               onSuccess={ (data) =>
               {

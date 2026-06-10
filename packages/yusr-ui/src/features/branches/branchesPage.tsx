@@ -49,16 +49,7 @@ export function BranchesPage({ onUpdate }: { onUpdate?: (entity: Branch) => void
             <ChangeBranchDialog
               entity={ dto
                 ? Branch.load(dto)
-                : Branch.create({
-                  id: 0,
-                  name: "",
-                  cityId: undefined,
-                  cityName: undefined,
-                  street: undefined,
-                  district: undefined,
-                  buildingNumber: undefined,
-                  postalCode: undefined
-                }) }
+                : Branch.create() }
               service={ BaseServices.branchesApi }
               onSuccess={ (data) =>
               {

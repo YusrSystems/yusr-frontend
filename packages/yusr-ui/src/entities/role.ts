@@ -41,7 +41,7 @@ export class Role<TRoleDto extends RoleDto> extends ChangeableEntity<TRoleDto>
   declare permissions: Signal<string[]>;
 
   constructor(
-    dto: Partial<TRoleDto>,
+    dto: TRoleDto,
     mode: ChangeableEntityMode = "create"
   )
   {

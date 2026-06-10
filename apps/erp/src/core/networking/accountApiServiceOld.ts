@@ -8,7 +8,7 @@ export default class AccountsApiServiceOld extends BaseApiServiceOld<AccountOld>
   async FilterByTypes(
     pageNumber: number,
     rowsPerPage: number,
-    request: FilterByTypeRequest<AccountOld>
+    request: FilterByTypeRequest
   ): Promise<RequestResult<ApiFilterResult<AccountOld>>>
   {
     return await YusrApiHelper.Post(

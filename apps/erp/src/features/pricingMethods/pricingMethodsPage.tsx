@@ -45,7 +45,7 @@ export default function PricingMethodsPage()
             <ChangePricingMethodDialog
               entity={ dto
                 ? PricingMethod.load(dto)
-                : PricingMethod.create({ id: 0, name: "" }) }
+                : PricingMethod.create() }
               service={ Services.pricingMethodsApi }
               onSuccess={ (data) =>
               {

@@ -9,7 +9,7 @@ export default class InvoicesApiService extends BaseApiServiceOld<Invoice>
   async FilterByTypes(
     pageNumber: number,
     rowsPerPage: number,
-    request: FilterByTypeRequest<Invoice>
+    request: FilterByTypeRequest
   ): Promise<RequestResult<ApiFilterResult<Invoice>>>
   {
     return await YusrApiHelper.Post(
