@@ -1,15 +1,14 @@
 import type { UnitDto } from "@/core/data/unit";
 import Unit from "@/core/data/unit";
+import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { BoxIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, PageCubit, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
+import { CrudPage, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import ChangeUnitDialog from "./changeUnitDialog";
-
-const cubit = new PageCubit<Unit, UnitDto>(Services.unitsApi);
 
 export default function UnitsPage()
 {
@@ -20,7 +19,7 @@ export default function UnitsPage()
 
   const { t } = useTranslation("stocking");
 
-  useEffect(() => cubit.init(), []);
+  useEffect(() => Cubits.units.init(), []);
 
   return (
     <CrudPage>
@@ -32,7 +31,7 @@ export default function UnitsPage()
 
       <Cards />
 
-      <CrudPage.SearchInput onSearch={ (searchText) => cubit.search(searchText) } />
+      <CrudPage.SearchInput onSearch={ (searchText) => Cubits.units.search(searchText) } />
 
       <PageTable />
 
@@ -49,12 +48,12 @@ export default function UnitsPage()
               {
                 if (data.mode.value === "create")
                 {
-                  cubit.add(data);
+                  Cubits.units.add(data);
                   closeDialog();
                 }
                 else if (data.mode.value === "update")
                 {
-                  cubit.update(data);
+                  Cubits.units.update(data);
                 }
               } }
             />
@@ -65,25 +64,25 @@ export default function UnitsPage()
       <CrudPage.DeleteDialog
         entityNameSelector={ (unit) => unit.name }
         service={ Services.unitsApi }
-        onSuccess={ (entity) => cubit.delete(entity) }
+        onSuccess={ (entity) => Cubits.units.delete(entity) }
       />
     </CrudPage>
   );
+}
 
-  function Cards()
-  {
-    useSignals();
-    const { t } = useTranslation("stocking");
-    return (
-      <CrudPage.Cards
-        cards={ [{
-          title: t("units.totalUnits"),
-          data: (cubit.count.value ?? 0).toString(),
-          icon: <BoxIcon className="h-4 w-4 text-muted-foreground" />
-        }] }
-      />
-    );
-  }
+function Cards()
+{
+  useSignals();
+  const { t } = useTranslation("stocking");
+  return (
+    <CrudPage.Cards
+      cards={ [{
+        title: t("units.totalUnits"),
+        data: (Cubits.units.count.value ?? 0).toString(),
+        icon: <BoxIcon className="h-4 w-4 text-muted-foreground" />
+      }] }
+    />
+  );
 }
 
 function PageTable()
@@ -91,17 +90,17 @@ function PageTable()
   useSignals();
   const { t } = useTranslation(["stocking", "common"]);
 
-  if (cubit.state.value instanceof PageLoading)
+  if (Cubits.units.state.value instanceof PageLoading)
   {
     return <TablePreview.Loading />;
   }
 
-  if (cubit.state.value instanceof PageLoaded)
+  if (Cubits.units.state.value instanceof PageLoaded)
   {
     return (
       <CrudPage.Table>
         <CrudPage.TableBody<Unit, UnitDto>
-          data={ cubit.entities.value }
+          data={ Cubits.units.entities.value }
           headerRows={ [{ rowBody: "", rowStyles: "text-left w-12.5" }, {
             rowBody: t("units.unitId"),
             rowStyles: "w-30"
@@ -119,19 +118,19 @@ function PageTable()
           ) }
         />
         <CrudPage.TablePagination
-          pageSize={ cubit.pageSize.value }
-          totalNumber={ cubit.count.value }
-          currentPage={ cubit.currentPage.value }
+          pageSize={ Cubits.units.pageSize.value }
+          totalNumber={ Cubits.units.count.value }
+          currentPage={ Cubits.units.currentPage.value }
           onPageChanged={ (newPage) =>
           {
-            cubit.changePage(newPage);
+            Cubits.units.changePage(newPage);
           } }
         />
       </CrudPage.Table>
     );
   }
 
-  if (cubit.state.value instanceof PageError)
+  if (Cubits.units.state.value instanceof PageError)
   {
     return <TablePreview.Error />;
   }

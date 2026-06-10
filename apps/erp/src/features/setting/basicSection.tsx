@@ -8,7 +8,7 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage, BranchesSearchableSelectOld, Button, cn, FieldGroup, FieldsSection, FormFieldOld, Label, StorageFileStatus, StorageType, TextFieldOld, useAppDispatch, useFormErrors, useStorageFile } from "yusr-ui";
-import { type SettingOld, SettingSlice } from "../../core/data/settingOld";
+import { SettingSlice } from "../../core/data/settingOld";
 
 export default function BasicSection()
 {
@@ -24,9 +24,8 @@ export default function BasicSection()
   const dispatch = useAppDispatch();
 
   const { fileInputRef, handleFileChange, handleRemoveFile } = useStorageFile(
-    (updater) =>
-      dispatch(SettingSlice.formActions.updateFormData(updater as (prev: Partial<SettingOld>) => Partial<SettingOld>)),
-    "logo",
+    () => formData.logo ? [formData.logo] : [],
+    (files) => dispatch(SettingSlice.formActions.updateFormData({ logo: Array.isArray(files) ? files[0] : files })),
     StorageType.Public,
     false
   );

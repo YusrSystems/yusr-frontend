@@ -1,24 +1,24 @@
+import { useSignals } from "@preact/signals-react/runtime";
+import { Settings2 } from "lucide-react";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPage, TablePreview, UnauthorizedPage } from "../../components/custom";
 import type { Role, RoleDto } from "../../entities";
 import type { RolesApiService } from "../../networking";
 import { BaseServices } from "../../services";
 import { PageCubit, PageError, PageLoaded, PageLoading } from "../../stateManager";
-import { useSignals } from "@preact/signals-react/runtime";
-import { Settings2 } from "lucide-react";
-import { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { ChangeRoleDialog } from "./changeRoleDialog";
 
 export function RolesPage<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto>(
-  { rolesApiService, toEntity, ...props }: ChangeRoleDialog<TRole, TRoleDto> & {
+  { rolesApiService, cubit, toEntity, ...props }: ChangeRoleDialog<TRole, TRoleDto> & {
     rolesApiService: RolesApiService<TRole, TRoleDto>;
+    cubit: PageCubit<TRole, TRoleDto>;
   } & {
     toEntity: (dto?: TRoleDto) => TRole;
   }
 )
 {
-  const cubit = useMemo(() => new PageCubit<TRole, TRoleDto>(rolesApiService), []);
   const { t } = useTranslation("commonEntities");
 
   if (!BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Roles, SystemPermissionsActions.Get))

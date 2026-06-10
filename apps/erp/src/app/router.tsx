@@ -1,6 +1,6 @@
 import { Services } from "@/core/services/services";
 import LegalDocViewer from "@/features/legal/legaldocviewer";
-import { ErpRolesPage } from "@/features/roles/rolesPage";
+import { ErpRolesPage } from "@/features/roles/erpRolesPage";
 import { createBrowserRouter } from "react-router-dom";
 import { BranchesPage, ErrorFallback, MaintenanceFallback, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
 import BanksAccountsPage from "../features/accounts/banksAccountsPage";

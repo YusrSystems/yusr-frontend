@@ -1,23 +1,22 @@
-import { ErpRole } from "@/core/data/erpRole";
+import { ErpRole, ErpRoleDto } from "@/core/data/erpRole";
+import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { WarehouseIcon } from "lucide-react";
-import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { RolesPage } from "yusr-ui";
-import { StoreCubit } from "../stores/state/storeCubit";
 import { getLabels, getPermissionSections } from "./permissionConfig";
 import StorePermissionsList from "./storePermissionsList";
 
 export function ErpRolesPage()
 {
-  const storesCubit = useMemo(() => new StoreCubit(), []);
   const { t } = useTranslation("erpCommon");
 
   return (
-    <RolesPage
+    <RolesPage<ErpRole, ErpRoleDto>
       labels={ getLabels(t) }
       permissionSecions={ getPermissionSections(t) }
       rolesApiService={ Services.rolesApi }
+      cubit={ Cubits.roles }
       toEntity={ (dto) =>
         dto
           ? ErpRole.load(dto)
@@ -27,7 +26,7 @@ export function ErpRolesPage()
             permissions: [],
             authorizedStores: []
           }) }
-      onMount={ () => storesCubit.initFilterAll() }
+      onMount={ () => Cubits.stores.initFilterAll() }
       onGet={ (entity, result) =>
       {
         if (result.data != undefined)
@@ -41,7 +40,6 @@ export function ErpRolesPage()
         label: t("permissions.resources.authorizedStores"),
         content: (
           <StorePermissionsList
-            cubit={ storesCubit }
             authorizedStoreIds={ entity.authorizedStores }
           />
         )

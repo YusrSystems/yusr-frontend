@@ -1,21 +1,16 @@
-import { ApiConstants, type ApiFilterResult, BaseApiService, FilterByTypeRequest, type RequestResult, YusrApiHelper } from "yusr-ui";
-import type { BarcodeResult, ItemDto } from "../data/item";
-import Item from "../data/item";
+import { ApiConstants, type ApiFilterResult, BaseApiServiceOld, FilterByTypeRequest, type RequestResult, YusrApiHelper } from "yusr-ui";
+import ItemOld, { BarcodeResultOld } from "../data/itemOld";
 
-export default class ItemsApiService extends BaseApiService<Item, ItemDto>
+export default class ItemsApiServiceOld extends BaseApiServiceOld<ItemOld>
 {
   routeName: string = "Items";
-  override createEntity(dto: ItemDto): Item
-  {
-    return new Item(dto);
-  }
 
   async FilterStoreItems(
     pageNumber: number,
     rowsPerPage: number,
     storeId: number | undefined,
-    request: FilterByTypeRequest<Item>
-  ): Promise<RequestResult<ApiFilterResult<Item>>>
+    request: FilterByTypeRequest<ItemOld>
+  ): Promise<RequestResult<ApiFilterResult<ItemOld>>>
   {
     return await YusrApiHelper.Post(
       `${ApiConstants.baseUrl}/${this.routeName}/FilterStoreItems?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}&${
@@ -28,7 +23,7 @@ export default class ItemsApiService extends BaseApiService<Item, ItemDto>
   async GetByBarcode(
     barcode: string,
     storeId: number
-  ): Promise<RequestResult<BarcodeResult>>
+  ): Promise<RequestResult<BarcodeResultOld>>
   {
     return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/GetByBarcode/${barcode}/${storeId}`);
   }

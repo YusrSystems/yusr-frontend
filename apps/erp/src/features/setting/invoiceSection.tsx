@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { FieldGroup, FieldsSection, FormFieldOld, SelectFieldOld, SelectInputOld, TextAreaField, useAppDispatch, useFormErrors } from "yusr-ui";
+import { FieldGroup, FieldsSection, FormFieldOld, SelectFieldOld, SelectInputOld, TextAreaFieldOld, useAppDispatch, useFormErrors } from "yusr-ui";
 import TaxesSearchableSelectOld from "../../core/components/searchableSelect/taxesSearchableSelectOld";
 import { EInvoicingEnvironmentType, InvoicePrintSize, SettingSlice } from "../../core/data/settingOld";
 import { useAppSelector } from "../../core/state/store";
@@ -58,7 +58,7 @@ export default function InvoiceSection()
         </FieldsSection>
 
         <FieldsSection columns={ 1 }>
-          <TextAreaField
+          <TextAreaFieldOld
             label={ t("settings.invoicePolicy") }
             value={ formData.invoicePolicy || "" }
             onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ invoicePolicy: e.target.value })) }

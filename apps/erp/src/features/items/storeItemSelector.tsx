@@ -2,7 +2,7 @@ import { ScanBarcode, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn, FilterByTypeRequest, SearchableSelectOld } from "yusr-ui";
-import Item, { ItemType, ItemUnitPricingMethod } from "../../core/data/item";
+import ItemOld, { ItemType, ItemUnitPricingMethodOld } from "../../core/data/itemOld";
 import { clearBarcodeResult, GetItemByBarcode } from "../../core/state/shared/itemBarcodeSlice";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -11,7 +11,7 @@ interface StoreItemSelectorProps
 {
   storeId?: number;
   itemTypes?: ItemType[];
-  onSelect?: (item: Item, selectedIupm?: ItemUnitPricingMethod) => void;
+  onSelect?: (item: ItemOld, selectedIupm?: ItemUnitPricingMethodOld) => void;
 }
 
 export default function StoreItemSelector({ storeId, itemTypes, onSelect }: StoreItemSelectorProps)
@@ -61,7 +61,7 @@ export default function StoreItemSelector({ storeId, itemTypes, onSelect }: Stor
       </div>
 
       <div className="w-80">
-        <SearchableSelectOld<Item>
+        <SearchableSelectOld<ItemOld>
           items={ storeItemsState.storeItems }
           renderContent={ (item) => (
             <div className="flex items-center gap-3 py-0.5 w-full">

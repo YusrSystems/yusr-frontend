@@ -2,7 +2,7 @@ import type { Store, StoreDto } from "@/core/data/store";
 import { Services } from "@/core/services/services";
 import { PageCubit, PageEmpty, PageLoaded, PageLoading } from "yusr-ui";
 
-export class StoreCubit extends PageCubit<Store, StoreDto>
+export class StoresCubit extends PageCubit<Store, StoreDto>
 {
   private async filterAll()
   {

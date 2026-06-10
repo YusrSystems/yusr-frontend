@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type Item from "../../../core/data/item";
-import type { ItemUnitPricingMethod } from "../../../core/data/item";
+import type ItemOld from "../../../core/data/itemOld";
+import type { ItemUnitPricingMethodOld } from "../../../core/data/itemOld";
 import type { ItemTransfersItem } from "../../../core/data/itemTransfer";
 
 export interface TransferRowItem
@@ -8,7 +8,7 @@ export interface TransferRowItem
   id: string;
   itemId: number;
   itemName: string;
-  itemUnitPricingMethods: ItemUnitPricingMethod[];
+  itemUnitPricingMethods: ItemUnitPricingMethodOld[];
   selectedPricingMethodId: number;
   quantity: number;
   maxQuantity: number;
@@ -44,7 +44,7 @@ export const itemTransferSlice = createSlice({
     },
     addItem: (
       state,
-      action: PayloadAction<{ storeItem: Item; selectedIupm?: ItemUnitPricingMethod; }>
+      action: PayloadAction<{ storeItem: ItemOld; selectedIupm?: ItemUnitPricingMethodOld; }>
     ) =>
     {
       const { storeItem, selectedIupm } = action.payload;

@@ -1,83 +1,61 @@
-import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import type Item from "@/core/data/item";
+import { ItemStore } from "@/core/data/item";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, type DialogMode, FormFieldOld, NumberFieldOld, TextFieldOld, useFormErrors } from "yusr-ui";
-import { ItemSlice, ItemStore, ItemType } from "../../../core/data/item";
-import { useAppDispatch, useAppSelector } from "../../../core/state/store";
+import { Button, FormField, NumberField, TextField } from "yusr-ui";
 
-export default function StorageTab({ mode }: { mode: DialogMode; })
+export default function StorageTab({ entity }: { entity: Item; })
 {
+  useSignals();
   const { t } = useTranslation("stocking");
-  const dispatch = useAppDispatch();
-
-  const { formData, errors } = useAppSelector((state) => state.itemForm);
-  const { getError, isInvalid } = useFormErrors(errors);
 
   const addStore = () =>
-    dispatch(ItemSlice.formActions.updateFormData({
-      itemStores: [...(formData.itemStores || []), new ItemStore({ quantity: 0, initialQuantity: 0 })]
-    }));
-  const updateStore = (index: number, updates: Partial<ItemStore>) =>
-  {
-    const list = [...(formData.itemStores || [])];
-    list[index] = { ...list[index], ...updates };
-
-    if (updates.initialQuantity !== undefined)
-    {
-      const totalInitial = list.reduce(
-        (sum, store) => sum + (Number(store.initialQuantity) || 0),
-        0
-      );
-      dispatch(ItemSlice.formActions.updateFormData({ itemStores: list, initialQuantity: totalInitial }));
-    }
-    else
-    {
-      dispatch(ItemSlice.formActions.updateFormData({ itemStores: list }));
-    }
-  };
+    entity.itemStores.value = [
+      ...entity.itemStores.value,
+      new ItemStore({ itemId: entity.id.value, storeId: undefined, storeName: "", quantity: 0, initialQuantity: 0 })
+    ];
   const removeStore = (index: number) =>
   {
-    const list = [...(formData.itemStores || [])];
-    list.splice(index, 1);
-    const totalInitial = list.reduce(
-      (sum, store) => sum + (Number(store.initialQuantity) || 0),
+    entity.itemStores.value = entity.itemStores.value.filter((_, i) => i !== index);
+    syncInitialQuantity();
+  };
+  const syncInitialQuantity = () =>
+  {
+    entity.initialQuantity.value = entity.itemStores.value.reduce(
+      (sum, store) => sum + (store.initialQuantity.value || 0),
       0
     );
-    dispatch(ItemSlice.formActions.updateFormData({ itemStores: list, initialQuantity: totalInitial }));
   };
 
-  const hasError = isInvalid("itemStores");
-  const errorMessage = getError("itemStores");
-  const isService = formData.type === ItemType.Service;
+  const errorMessage = entity.getError("itemStores");
 
   return (
     <div className="space-y-6 animate-in fade-in">
       <div className="grid grid-cols-3 gap-6">
-        <NumberFieldOld
+        <NumberField
           label={ t("items.minQuantity") }
-          value={ formData.minQuantity || "" }
-          onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ minQuantity: val })) }
+          value={ entity.minQuantity }
         />
-        <NumberFieldOld
+        <NumberField
           label={ t("items.maxQuantity") }
-          value={ formData.maxQuantity || "" }
-          onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ maxQuantity: val })) }
+          value={ entity.maxQuantity }
         />
-        <TextFieldOld
+        <TextField
           label={ t("items.locationInStore") }
-          value={ formData.location || "" }
-          onChange={ (e) => dispatch(ItemSlice.formActions.updateFormData({ location: e.target.value })) }
+          value={ entity.location }
         />
-        <NumberFieldOld
+        <NumberField
           label={ t("items.totalInitialQuantity") }
-          value={ formData.initialQuantity || "0" }
-          disabled={ true }
+          value={ entity.initialQuantity }
+          disabled
           className="bg-muted font-bold"
         />
-        <NumberFieldOld
+        <NumberField
           label={ t("items.totalCurrentQuantity") }
-          value={ formData.quantity || "0" }
-          disabled={ true }
+          value={ entity.quantity }
+          disabled
           className="bg-muted font-bold"
         />
       </div>
@@ -90,7 +68,9 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
           </Button>
         </div>
 
-        <div className={ `bg-muted/20 rounded-lg border overflow-hidden ${hasError ? "border-red-500" : ""}` }>
+        <div
+          className={ `bg-muted/20 rounded-lg border overflow-hidden ${errorMessage.value ? "border-red-500" : ""}` }
+        >
           <table className="w-full text-sm text-right">
             <thead className="bg-muted/50 text-muted-foreground">
               <tr>
@@ -102,44 +82,39 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
               </tr>
             </thead>
             <tbody>
-              { formData.itemStores?.map((store, index) => (
+              { entity.itemStores.value?.map((store, index) => (
                 <tr key={ index } className="border-t border-muted">
                   <td className="p-3 font-bold text-start">{ index + 1 }</td>
                   <td className="p-3">
-                    <FormFieldOld
+                    <FormField
                       label=""
-                      isInvalid={ hasError && !isService && !store.storeId }
+                      error={ store.storeId.value == undefined ? errorMessage : undefined }
                     >
-                      <StoresSearchableSelectOld
-                        selectedId={ formData.itemStores?.[index]?.storeId }
-                        selectedLabel={ formData.itemStores?.[index]?.storeName }
-                        isInvalid={ hasError && !isService && !store.storeId }
-                        onValueChange={ (store) =>
-                        {
-                          updateStore(index, {
-                            storeId: store?.id,
-                            storeName: store?.name
-                          });
-                        } }
+                      <StoresSearchableSelect
+                        id={ store.storeId }
+                        label={ store.storeName }
+                        onSelect={ () => entity.clearError("itemStores") }
                       />
-                    </FormFieldOld>
+                    </FormField>
                   </td>
                   <td className="p-3">
-                    <NumberFieldOld
+                    <NumberField
                       label=""
-                      value={ store.initialQuantity || 0 }
-                      disabled={ mode === "update" }
-                      isInvalid={ hasError && !isService && !store.initialQuantity }
-                      onChange={ (val) =>
-                        updateStore(index, {
-                          initialQuantity: val
-                        }) }
+                      min={ 0 }
+                      value={ store.initialQuantity }
+                      disabled={ entity.mode.value === "update" }
+                      error={ store.initialQuantity.value < 0 ? errorMessage : undefined }
+                      onChange={ () =>
+                      {
+                        entity.clearError("itemStores");
+                        syncInitialQuantity();
+                      } }
                     />
                   </td>
                   <td className="p-3">
-                    <NumberFieldOld
+                    <NumberField
                       label=""
-                      value={ store.quantity || "0" }
+                      value={ store.quantity }
                       disabled
                     />
                   </td>
@@ -158,15 +133,15 @@ export default function StorageTab({ mode }: { mode: DialogMode; })
               )) }
             </tbody>
           </table>
-          { formData.itemStores?.length === 0 && (
+          { entity.itemStores?.value.length === 0 && (
             <div className="p-4 text-center text-muted-foreground">
               { t("items.noStores") }
             </div>
           ) }
         </div>
-        { hasError && errorMessage && (
+        { errorMessage.value && (
           <div className="text-xs font-medium text-red-500 mt-2 animate-in fade-in slide-in-from-top-1">
-            { errorMessage }
+            { errorMessage.value }
           </div>
         ) }
       </div>

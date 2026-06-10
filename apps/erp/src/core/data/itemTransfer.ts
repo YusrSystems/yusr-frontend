@@ -1,7 +1,7 @@
 import { type TFunction } from "i18next";
 import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
 import ItemTransferApiService from "../networking/itemTransferApiService";
-import type { ItemUnitPricingMethod } from "./item";
+import type { ItemUnitPricingMethodOld } from "./itemOld";
 
 export class ItemTransfersItem extends BaseEntity
 {
@@ -11,7 +11,7 @@ export class ItemTransfersItem extends BaseEntity
   public itemUnitPricingMethodId!: number;
   public itemUnitPricingMethodName!: string;
   public quantity!: number;
-  public itemUnitPricingMethods: ItemUnitPricingMethod[] = [];
+  public itemUnitPricingMethods: ItemUnitPricingMethodOld[] = [];
 
   constructor(init?: Partial<ItemTransfersItem>)
   {

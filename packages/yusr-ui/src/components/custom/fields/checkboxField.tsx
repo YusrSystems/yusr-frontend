@@ -1,27 +1,33 @@
-import { Checkbox } from "../../../components/pure";
-import { FormFieldOld } from "./formField";
-import { type InputFieldPropsOld } from "./inputField";
+import type { Signal } from "@preact/signals-react";
+import { Checkbox } from "../../pure";
+import { FormField } from "./formField";
+import { type InputFieldProps } from "./inputField";
+import { useSignals } from "@preact/signals-react/runtime";
 
-interface CheckboxFieldProps extends Omit<InputFieldPropsOld, "value">
+interface CheckboxFieldProps extends Omit<InputFieldProps, "value" | "checked">
 {
-  id: string;
-  checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
+  checked: Signal<boolean>;
+  onCheckedChange?: (checked: boolean) => void;
 }
 
 export function CheckboxField({ id, checked, onCheckedChange, ...formFieldProps }: CheckboxFieldProps)
 {
+  useSignals();
   return (
-    <FormFieldOld { ...formFieldProps }>
+    <FormField { ...formFieldProps }>
       <div
         className="flex items-center gap-3 rounded-lg border p-1.75 cursor-pointer border-border"
-        onClick={ () => onCheckedChange(!checked) }
+        onClick={ () =>
+        {
+          checked.value = !checked.value;
+          onCheckedChange?.(checked.value);
+        } }
       >
         <Checkbox
           id={ id }
-          checked={ checked }
+          checked={ checked.value }
         />
       </div>
-    </FormFieldOld>
+    </FormField>
   );
 }

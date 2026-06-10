@@ -1,24 +1,23 @@
 import type { UnitDto } from "@/core/data/unit";
 import Unit from "@/core/data/unit";
+import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
-import React, { useEffect, useMemo } from "react";
-import { PageCubit, PageLoaded, PageLoading, SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "yusr-ui";
+import React from "react";
+import { PageLoaded, PageLoading, SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "yusr-ui";
 
 export default function UnitsSearchableSelect({ ...props }: SearchableSelectProps<Unit, UnitDto>)
 {
   useSignals();
-  const cubit = useMemo(() => new PageCubit<Unit, UnitDto>(Services.unitsApi), []);
-  useEffect(() => cubit.init(), []);
 
   return (
     <SearchableSelect>
-      <SearchableSelect.Trigger label={ props.label?.value } />
+      <SearchableSelect.Trigger label={ props.label } disabled={ props.disabled } />
       <SearchableSelect.Content>
         <SearchableSelect.SearchInput
           onSearch={ (searchInput) =>
           {
-            cubit.search(searchInput);
+            Cubits.units.search(searchInput);
           } }
         />
         <SearchableSelect.Command>
@@ -32,15 +31,15 @@ export default function UnitsSearchableSelect({ ...props }: SearchableSelectProp
   function CommandItems()
   {
     useSignals();
-    if (cubit.state.value instanceof PageLoading)
+    if (Cubits.units.state.value instanceof PageLoading)
     {
       return <SearchableSelect.Loading />;
     }
 
-    if (cubit.state.value instanceof PageLoaded && cubit.entities.value.length > 0)
+    if (Cubits.units.state.value instanceof PageLoaded && Cubits.units.entities.value.length > 0)
     {
-      return cubit.entities.value.map((entity) => (
-        <Option cubit={ cubit } key={ entity.id.value } item={ entity } { ...props } />
+      return Cubits.units.entities.value.map((entity) => (
+        <Option key={ entity.id.value } item={ entity } { ...props } />
       ));
     }
 
@@ -49,7 +48,7 @@ export default function UnitsSearchableSelect({ ...props }: SearchableSelectProp
         onCreate={ async (searchText) =>
         {
           await Services.unitsApi.Add(Unit.create({ name: searchText }));
-          cubit.init();
+          Cubits.units.init();
         } }
       />
     );
@@ -58,9 +57,7 @@ export default function UnitsSearchableSelect({ ...props }: SearchableSelectProp
 
 const Option = React.memo(
   function Option(
-    { cubit, ...props }: Omit<SearchableSelectOptionProps<Unit, UnitDto>, "labelSelector"> & {
-      cubit: PageCubit<Unit, UnitDto>;
-    }
+    { ...props }: Omit<SearchableSelectOptionProps<Unit, UnitDto>, "labelSelector">
   )
   {
     useSignals();
@@ -76,7 +73,7 @@ const Option = React.memo(
             const result = await Services.unitsApi.Delete(props.item.id.value);
             if (result.status === 200)
             {
-              cubit.delete(props.item);
+              Cubits.units.delete(props.item);
             }
           } }
         />

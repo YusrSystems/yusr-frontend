@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { BarcodeResult } from "../../data/item";
-import ItemsApiService from "../../networking/itemApiService";
+import { BarcodeResultOld } from "../../data/itemOld";
+import ItemsApiServiceOld from "../../networking/itemApiServiceOld";
 
 export interface GetItemByBarcodeProps
 {
@@ -12,7 +12,7 @@ export const GetItemByBarcode = createAsyncThunk("itemBarcode/GetItemByBarcode",
   getItemByBarcodeProps: GetItemByBarcodeProps
 ) =>
 {
-  const res = await new ItemsApiService().GetByBarcode(
+  const res = await new ItemsApiServiceOld().GetByBarcode(
     getItemByBarcodeProps.barcode,
     getItemByBarcodeProps.storeId
   );
@@ -21,7 +21,7 @@ export const GetItemByBarcode = createAsyncThunk("itemBarcode/GetItemByBarcode",
 
 interface ItemBarcodeState
 {
-  barcodeResult?: BarcodeResult;
+  barcodeResult?: BarcodeResultOld;
   isLoading: boolean;
 }
 

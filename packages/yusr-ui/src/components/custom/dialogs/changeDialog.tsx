@@ -62,7 +62,7 @@ ChangeDialog.Header = function({ title, description, children }: ChangeDialogHea
     <>
       <DialogHeader>
         <DialogTitle>{ title }</DialogTitle>
-        <DialogDescription>{ description }</DialogDescription>
+        <DialogDescription>{ description ?? "" }</DialogDescription>
         { children }
       </DialogHeader>
 
@@ -97,9 +97,10 @@ ChangeDialog.SaveButton = function<TEntity extends ChangeableEntity<TDto>, TDto 
   return <SaveButton { ...props } />;
 };
 
-ChangeDialog.Tabbed = function({ tabs, children }: { tabs: ChangeDialogTabProps[]; children?: React.ReactNode; })
+ChangeDialog.Tabbed = function({ tabs }: { tabs: ChangeDialogTabProps[]; })
 {
   const [currentTab, setCurrentTab] = useState(0);
+  const safeTab = Math.min(currentTab, tabs.length - 1);
 
   return (
     <div className="flex flex-col h-[80vh]">
@@ -107,7 +108,7 @@ ChangeDialog.Tabbed = function({ tabs, children }: { tabs: ChangeDialogTabProps[
         { tabs.map((tab, i) => (
           <TabButton
             key={ i }
-            active={ currentTab === i }
+            active={ safeTab === i }
             hasError={ tab.hasError }
             icon={ tab.icon }
             label={ tab.label }
@@ -118,10 +119,8 @@ ChangeDialog.Tabbed = function({ tabs, children }: { tabs: ChangeDialogTabProps[
       </div>
 
       <div className="flex-1 overflow-y-auto px-2 pb-2">
-        { tabs[currentTab].content }
+        { tabs[safeTab].content }
       </div>
-
-      { children }
     </div>
   );
 };

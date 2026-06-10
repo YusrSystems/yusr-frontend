@@ -1,6 +1,7 @@
 import { BaseServices } from "yusr-ui";
 import { ErpRoleApiService } from "../networking/erpRoleApiService";
-import PricingMethodsApiService from "../networking/PricingMethodsApiService";
+import ItemsApiService from "../networking/itemApiService";
+import PricingMethodsApiService from "../networking/pricingMethodsApiService";
 import { StoresApiService } from "../networking/storeApiService";
 import TaxesApiService from "../networking/taxesApiService";
 import UnitsApiService from "../networking/unitApiService";
@@ -10,10 +11,12 @@ export class Services extends BaseServices
 {
   public static override auth: ErpAuthService = new ErpAuthService();
   public static override rolesApi = new ErpRoleApiService();
-  public static taxesApi = new TaxesApiService();
-  public static storesApi = new StoresApiService();
-  public static unitsApi = new UnitsApiService();
-  public static pricingMethodsApi = new PricingMethodsApiService();
+
+  public static readonly taxesApi = new TaxesApiService();
+  public static readonly storesApi = new StoresApiService();
+  public static readonly unitsApi = new UnitsApiService();
+  public static readonly pricingMethodsApi = new PricingMethodsApiService();
+  public static readonly itemsApi = new ItemsApiService();
 
   static
   {

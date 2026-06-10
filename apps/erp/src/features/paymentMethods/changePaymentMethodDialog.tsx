@@ -52,6 +52,27 @@ export default function ChangePaymentMethodDialog({
     dispatch(BanksAndBoxesSlice.entityActions.filter());
   }, []);
 
+  function formatCommission(type: CommissionType, amount: number): string | null
+  {
+    if (type === CommissionType.Amount)
+    {
+      return t("paymentMethods.commissionHintAmount", { amount });
+    }
+
+    let numerator = amount;
+    let denominator = 100;
+
+    while (numerator % 1 !== 0)
+    {
+      numerator *= 10;
+      denominator *= 10;
+    }
+
+    numerator = Math.round(numerator);
+
+    return t("paymentMethods.commissionHintPercent", { n: numerator, d: denominator });
+  }
+
   const title = mode === "create"
     ? t("paymentMethods.addNewTitle")
     : `${t("common:crudRow.edit")} ${t("paymentMethods.entityName")}`;
@@ -104,7 +125,6 @@ export default function ChangePaymentMethodDialog({
           <SelectFieldOld
             label={ t("paymentMethods.commissionType") }
             required
-            disabled={ mode === "update" }
             value={ formData.commissionType?.toString() || CommissionType.Percent.toString() }
             onValueChange={ (val) =>
               dispatch(
@@ -117,16 +137,25 @@ export default function ChangePaymentMethodDialog({
               value: CommissionType.Amount.toString()
             }] }
           />
-
-          <NumberFieldOld
-            label={ t("paymentMethods.commissionValue") }
-            required
-            disabled={ mode === "update" }
-            value={ formData.commissionAmount || "" }
-            onChange={ (e) => dispatch(PaymentMethodSlice.formActions.updateFormData({ commissionAmount: Number(e) })) }
-            isInvalid={ isInvalid("commissionAmount") }
-            error={ getError("commissionAmount") }
-          />
+          <div className="flex flex-col gap-1">
+            <NumberFieldOld
+              label={ t("paymentMethods.commissionValue") }
+              required
+              min={ 0.1 }
+              max={ 100 }
+              value={ formData.commissionAmount || "" }
+              onChange={ (e) =>
+                dispatch(PaymentMethodSlice.formActions.updateFormData({ commissionAmount: Number(e) })) }
+              isInvalid={ isInvalid("commissionAmount") }
+              error={ getError("commissionAmount") }
+            />
+            <p className="text-sm text-red-600 font-bold">
+              { formatCommission(
+                formData.commissionType ?? CommissionType.Percent,
+                formData.commissionAmount ?? 0
+              ) }
+            </p>
+          </div>
         </div>
       </FieldGroup>
     </ChangeDialogOld>

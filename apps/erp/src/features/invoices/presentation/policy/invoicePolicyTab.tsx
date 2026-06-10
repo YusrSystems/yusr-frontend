@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { TextAreaField } from "yusr-ui";
+import { TextAreaFieldOld } from "yusr-ui";
 import type { InvoiceDialogMode } from "../../changeInvoiceDialog";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
@@ -24,7 +24,7 @@ export default function InvoicePolicyTab({ mode }: { mode: InvoiceDialogMode; })
   }, [authState.setting?.invoicePolicy]);
 
   return (
-    <TextAreaField
+    <TextAreaFieldOld
       label={ t("invoices.policyTerms") }
       value={ formData.policy ?? "" }
       onChange={ (e) => dispatch(slice.formActions.updateFormData({ policy: e.target.value })) }

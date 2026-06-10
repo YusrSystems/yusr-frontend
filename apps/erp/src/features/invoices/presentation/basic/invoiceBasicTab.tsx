@@ -1,5 +1,5 @@
 import { InvoiceType } from "@/core/data/invoice";
-import { ItemType } from "@/core/data/item";
+import { ItemType } from "@/core/data/itemOld";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
 import StoreItemSelector from "../../../items/storeItemSelector";

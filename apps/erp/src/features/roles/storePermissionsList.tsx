@@ -1,15 +1,14 @@
-import type { Store, StoreDto } from "@/core/data/store";
+import { Cubits } from "@/core/services/cubits";
 import { type Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { Checkbox, PageCubit, PageLoaded, Skeleton } from "yusr-ui";
+import { Checkbox, PageLoaded, Skeleton } from "yusr-ui";
 
 interface StorePermissionsListProps
 {
-  cubit: PageCubit<Store, StoreDto>;
   authorizedStoreIds: Signal<number[]>;
 }
 
-export default function StorePermissionsList({ cubit, authorizedStoreIds }: StorePermissionsListProps)
+export default function StorePermissionsList({ authorizedStoreIds }: StorePermissionsListProps)
 {
   useSignals();
 
@@ -21,11 +20,11 @@ export default function StorePermissionsList({ cubit, authorizedStoreIds }: Stor
       : [...current, storeId];
   };
 
-  if (cubit.state.value instanceof PageLoaded)
+  if (Cubits.stores.state.value instanceof PageLoaded)
   {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        { cubit.entities.value.map((store) => (
+        { Cubits.stores.entities.value.map((store) => (
           <div
             key={ store.id.value }
             onClick={ () => handleToggle(store.id.value) }

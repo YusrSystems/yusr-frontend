@@ -1,26 +1,25 @@
 import type { PricingMethodDto } from "@/core/data/pricingMethod";
 import PricingMethod from "@/core/data/pricingMethod";
+import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
-import React, { useEffect, useMemo } from "react";
-import { PageCubit, PageLoaded, PageLoading, SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "yusr-ui";
+import React from "react";
+import { PageLoaded, PageLoading, SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "yusr-ui";
 
 export default function PricingMethodsSearchableSelect(
   { ...props }: SearchableSelectProps<PricingMethod, PricingMethodDto>
 )
 {
   useSignals();
-  const cubit = useMemo(() => new PageCubit<PricingMethod, PricingMethodDto>(Services.pricingMethodsApi), []);
-  useEffect(() => cubit.init(), []);
 
   return (
     <SearchableSelect>
-      <SearchableSelect.Trigger label={ props.label?.value } />
+      <SearchableSelect.Trigger label={ props.label } disabled={ props.disabled } />
       <SearchableSelect.Content>
         <SearchableSelect.SearchInput
           onSearch={ (searchInput) =>
           {
-            cubit.search(searchInput);
+            Cubits.pricingMethods.search(searchInput);
           } }
         />
         <SearchableSelect.Command>
@@ -34,15 +33,18 @@ export default function PricingMethodsSearchableSelect(
   function CommandItems()
   {
     useSignals();
-    if (cubit.state.value instanceof PageLoading)
+    if (Cubits.pricingMethods.state.value instanceof PageLoading)
     {
       return <SearchableSelect.Loading />;
     }
 
-    if (cubit.state.value instanceof PageLoaded && cubit.entities.value.length > 0)
+    if (
+      Cubits.pricingMethods.state.value instanceof PageLoaded
+      && Cubits.pricingMethods.entities.value.length > 0
+    )
     {
-      return cubit.entities.value.map((entity) => (
-        <Option cubit={ cubit } key={ entity.id.value } item={ entity } { ...props } />
+      return Cubits.pricingMethods.entities.value.map((entity) => (
+        <Option key={ entity.id.value } item={ entity } { ...props } />
       ));
     }
 
@@ -51,7 +53,7 @@ export default function PricingMethodsSearchableSelect(
         onCreate={ async (searchText) =>
         {
           await Services.pricingMethodsApi.Add(PricingMethod.create({ name: searchText }));
-          cubit.init();
+          Cubits.pricingMethods.init();
         } }
       />
     );
@@ -60,9 +62,7 @@ export default function PricingMethodsSearchableSelect(
 
 const Option = React.memo(
   function Option(
-    { cubit, ...props }: Omit<SearchableSelectOptionProps<PricingMethod, PricingMethodDto>, "labelSelector"> & {
-      cubit: PageCubit<PricingMethod, PricingMethodDto>;
-    }
+    { ...props }: Omit<SearchableSelectOptionProps<PricingMethod, PricingMethodDto>, "labelSelector">
   )
   {
     useSignals();
@@ -78,7 +78,7 @@ const Option = React.memo(
             const result = await Services.unitsApi.Delete(props.item.id.value);
             if (result.status === 200)
             {
-              cubit.delete(props.item);
+              Cubits.pricingMethods.delete(props.item);
             }
           } }
         />

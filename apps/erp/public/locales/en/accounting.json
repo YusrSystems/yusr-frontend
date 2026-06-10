@@ -258,6 +258,8 @@
     "nameRequired": "Please enter payment method name",
     "accountRequired": "Please select the account",
     "commissionTypeRequired": "Please select commission type",
-    "commissionValueRequired": "Please enter commission value"
+    "commissionValueRequired": "Please enter commission value",
+    "commissionHintPercent": "{{n}} of every {{d}}",
+    "commissionHintAmount": "flat {{amount}} per transaction"
   }
 }

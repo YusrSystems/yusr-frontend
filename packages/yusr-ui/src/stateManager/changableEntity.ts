@@ -1,5 +1,5 @@
-import type { ValidationRule } from "../validation";
 import { Signal, signal } from "@preact/signals-react";
+import type { ValidationRule } from "../validation";
 import type { Dto } from "./dto";
 import { ValidatableEntity } from "./validatableEntity";
 
@@ -8,6 +8,7 @@ export type ChangeableEntityMode = "create" | "update";
 export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEntity<TDto>
 {
   public readonly mode: Signal<ChangeableEntityMode>;
+  public readonly isDirty: Signal<boolean> = signal(false);
 
   protected constructor(
     dto: Partial<TDto>,
@@ -17,6 +18,12 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
   {
     super(dto, validationRules);
     this.mode = signal(mode);
+  }
+
+  protected onFieldChange(field: keyof TDto, newValue: any): void
+  {
+    this.isDirty.value = true;
+    super.onFieldChange(field, newValue);
   }
 
   static create<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
@@ -33,5 +40,10 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
   ): TEntity
   {
     return new this(dto, "update");
+  }
+
+  resetDirty()
+  {
+    this.isDirty.value = false;
   }
 }

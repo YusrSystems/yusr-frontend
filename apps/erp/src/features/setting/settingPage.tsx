@@ -28,9 +28,8 @@ export default function SettingPage()
     (errors) => dispatch(SettingSlice.formActions.setErrors(errors))
   );
   const { commitFiles } = useStorageFile(
-    (updater) =>
-      dispatch(SettingSlice.formActions.updateFormData(updater as (prev: Partial<SettingOld>) => Partial<SettingOld>)),
-    "logo",
+    () => formData.logo ? [formData.logo] : [],
+    (files) => dispatch(SettingSlice.formActions.updateFormData({ logo: Array.isArray(files) ? files[0] : files })),
     StorageType.Public,
     false
   );

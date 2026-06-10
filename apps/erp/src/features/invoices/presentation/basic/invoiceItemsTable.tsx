@@ -1,7 +1,7 @@
 import { GripVertical, Trash2 } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { cn, type ColumnDef, ColumnVisibilityToggle, i18n, NumberFieldOld, SelectFieldOld, SystemPermissions, SystemPermissionsActions, TextAreaField, Tooltip, TooltipContent, TooltipTrigger, useColumnVisibility } from "yusr-ui";
+import { cn, type ColumnDef, ColumnVisibilityToggle, i18n, NumberFieldOld, SelectFieldOld, SystemPermissions, SystemPermissionsActions, TextAreaFieldOld, Tooltip, TooltipContent, TooltipTrigger, useColumnVisibility } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
 import { InvoiceType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
@@ -372,7 +372,7 @@ export default function InvoiceItemsTable()
                     onDrop={ handleRowDrop }
                   >
                     <td colSpan={ totalColSpan } className="px-5 pt-1 pb-3">
-                      <TextAreaField
+                      <TextAreaFieldOld
                         collapsible
                         collapsedHeight={ 36 }
                         expandedHeight={ 150 }

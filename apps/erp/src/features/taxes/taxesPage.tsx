@@ -1,14 +1,13 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import { Tax, type TaxDto } from "@/core/data/tax";
+import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Percent } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, PageCubit, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
+import { CrudPage, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
 import ChangeTaxDialog from "./changeTaxDialog";
-
-const cubit = new PageCubit<Tax, TaxDto>(Services.taxesApi);
 
 export default function TaxesPage()
 {
@@ -21,7 +20,7 @@ export default function TaxesPage()
 
   useEffect(() =>
   {
-    cubit.init();
+    Cubits.taxes.init();
   }, []);
 
   return (
@@ -34,7 +33,7 @@ export default function TaxesPage()
 
       <Cards />
 
-      <CrudPage.SearchInput onSearch={ (searchText) => cubit.search(searchText) } />
+      <CrudPage.SearchInput onSearch={ (searchText) => Cubits.taxes.search(searchText) } />
 
       <PageTable />
 
@@ -51,12 +50,12 @@ export default function TaxesPage()
               {
                 if (data.mode.value === "create")
                 {
-                  cubit.add(data);
+                  Cubits.taxes.add(data);
                   closeDialog();
                 }
                 else if (data.mode.value === "update")
                 {
-                  cubit.update(data);
+                  Cubits.taxes.update(data);
                 }
               } }
             />
@@ -67,7 +66,7 @@ export default function TaxesPage()
       <CrudPage.DeleteDialog
         entityNameSelector={ (tax) => tax.name }
         service={ Services.taxesApi }
-        onSuccess={ (entity) => cubit.delete(entity) }
+        onSuccess={ (entity) => Cubits.taxes.delete(entity) }
       />
     </CrudPage>
   );
@@ -81,7 +80,7 @@ function Cards()
     <CrudPage.Cards
       cards={ [{
         title: t("taxes.totalTaxes"),
-        data: cubit.count.value.toString(),
+        data: Cubits.taxes.count.value.toString(),
         icon: <Percent className="h-4 w-4 text-muted-foreground" />
       }] }
     />
@@ -93,17 +92,17 @@ function PageTable()
   useSignals();
   const { t } = useTranslation(["accounting", "common"]);
 
-  if (cubit.state.value instanceof PageLoading)
+  if (Cubits.taxes.state.value instanceof PageLoading)
   {
     return <TablePreview.Loading />;
   }
 
-  if (cubit.state.value instanceof PageLoaded)
+  if (Cubits.taxes.state.value instanceof PageLoaded)
   {
     return (
       <CrudPage.Table>
         <CrudPage.TableBody<Tax, TaxDto>
-          data={ cubit.entities.value }
+          data={ Cubits.taxes.entities.value }
           headerRows={ [
             { rowBody: "", rowStyles: "text-left w-12.5" },
             { rowBody: t("taxes.taxNumber"), rowStyles: "w-30" },
@@ -137,19 +136,19 @@ function PageTable()
           ) }
         />
         <CrudPage.TablePagination
-          pageSize={ cubit.pageSize.value }
-          totalNumber={ cubit.count.value }
-          currentPage={ cubit.currentPage.value }
+          pageSize={ Cubits.taxes.pageSize.value }
+          totalNumber={ Cubits.taxes.count.value }
+          currentPage={ Cubits.taxes.currentPage.value }
           onPageChanged={ (newPage) =>
           {
-            cubit.changePage(newPage);
+            Cubits.taxes.changePage(newPage);
           } }
         />
       </CrudPage.Table>
     );
   }
 
-  if (cubit.state.value instanceof PageError)
+  if (Cubits.taxes.state.value instanceof PageError)
   {
     return <TablePreview.Error />;
   }

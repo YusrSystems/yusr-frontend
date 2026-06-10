@@ -259,6 +259,8 @@
     "nameRequired": "يرجى إدخال اسم طريقة الدفع",
     "accountRequired": "يرجى اختيار الحساب",
     "commissionTypeRequired": "يرجى اختيار نوع العمولة",
-    "commissionValueRequired": "يرجى إدخال قيمة العمولة"
+    "commissionValueRequired": "يرجى إدخال قيمة العمولة",
+    "commissionHintPercent": "{{n}} من كل {{d}}",
+    "commissionHintAmount": "{{amount}} ثابتة لكل معاملة"
   }
 }

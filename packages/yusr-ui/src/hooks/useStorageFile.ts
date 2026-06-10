@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { StorageFile, StorageFileStatus, StorageType } from "../entities";
 import { StorageApiService } from "../networking/storageApiService";
 
-export function useStorageFile<T>(
-  setFormData: React.Dispatch<React.SetStateAction<T>>,
-  fieldName: keyof T,
+export function useStorageFile(
+  getValue: () => StorageFile[] | undefined,
+  update: (value: StorageFile | StorageFile[]) => void,
   storageType: StorageType,
   multiple: boolean = true
 )
@@ -61,21 +61,8 @@ export function useStorageFile<T>(
       })
     );
 
-    setFormData((prev) =>
-    {
-      const existingData = prev[fieldName];
-      const existingArray: StorageFile[] = Array.isArray(existingData)
-        ? existingData
-        : existingData
-        ? [existingData as unknown as StorageFile]
-        : [];
-
-      const newValue = multiple
-        ? [...existingArray, ...newStorageFiles]
-        : newStorageFiles[0];
-
-      return { ...prev, [fieldName]: newValue as any };
-    });
+    const existing = getValue() ?? [];
+    update(multiple ? [...existing, ...newStorageFiles] : [newStorageFiles[0]]);
 
     if (fileInputRef.current)
     {
@@ -85,48 +72,29 @@ export function useStorageFile<T>(
 
   const handleRemoveFile = (index: number) =>
   {
-    setFormData((prev) =>
+    const files = [...(getValue() ?? [])];
+
+    const removeFile = (file: StorageFile): StorageFile | undefined =>
     {
-      const value = prev[fieldName];
-
-      const removeFile = (file: StorageFile) =>
+      if (file.status === StorageFileStatus.New)
       {
-        if (file.status === StorageFileStatus.New)
-        {
-          URL.revokeObjectURL(file.url ?? "");
-          return undefined;
-        }
-
-        return new StorageFile({
-          ...file,
-          status: StorageFileStatus.Delete
-        });
-      };
-
-      if (Array.isArray(value))
-      {
-        const files = [...value];
-        const updated = removeFile(files[index]);
-
-        if (updated === undefined)
-        {
-          files.splice(index, 1);
-        }
-        else
-        {
-          files[index] = updated;
-        }
-
-        return {
-          ...prev,
-          [fieldName]: files as any
-        };
+        URL.revokeObjectURL(file.url ?? "");
+        return undefined;
       }
-      return {
-        ...prev,
-        [fieldName]: removeFile(value as StorageFile) as any
-      };
-    });
+      return new StorageFile({ ...file, status: StorageFileStatus.Delete });
+    };
+
+    const updated = removeFile(files[index]);
+    if (updated === undefined)
+    {
+      files.splice(index, 1);
+    }
+    else
+    {
+      files[index] = updated;
+    }
+
+    update(files);
   };
 
   const commitFiles = async (
@@ -241,20 +209,13 @@ export function useStorageFile<T>(
 
   const handleSetPrimary = (index: number) =>
   {
-    setFormData((prev) =>
+    const files = [...(getValue() ?? [])];
+    if (index === 0)
     {
-      const value = prev[fieldName];
-      if (!Array.isArray(value) || index === 0)
-      {
-        return prev;
-      }
-
-      const files = [...value];
-      // Swap with index 0
-      [files[0], files[index]] = [files[index], files[0]];
-
-      return { ...prev, [fieldName]: files as any };
-    });
+      return;
+    }
+    [files[0], files[index]] = [files[index], files[0]];
+    update(files);
   };
 
   return {

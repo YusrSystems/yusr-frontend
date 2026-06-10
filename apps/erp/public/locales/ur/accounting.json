@@ -258,6 +258,8 @@
     "nameRequired": "براہ کرم ادائیگی کے طریقہ کا نام درج کریں",
     "accountRequired": "براہ کرم اکاؤنٹ منتخب کریں",
     "commissionTypeRequired": "براہ کرم کمیشن کی قسم منتخب کریں",
-    "commissionValueRequired": "براہ کرم کمیشن کی رقم درج کریں"
+    "commissionValueRequired": "براہ کرم کمیشن کی رقم درج کریں",
+    "commissionHintPercent": "ہر {{d}} میں سے {{n}}",
+    "commissionHintAmount": "{{amount}} فی لین دین مقررہ"
   }
 }

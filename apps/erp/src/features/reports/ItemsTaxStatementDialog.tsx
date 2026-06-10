@@ -2,7 +2,7 @@ import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearc
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld, SelectFieldOld } from "yusr-ui";
-import Item from "../../core/data/item";
+import ItemOld from "../../core/data/itemOld";
 import { ItemsTaxStatementReportRequest, ItemsTaxStatementReportType } from "../../core/data/report/itemsTaxStatementReportRequest";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
@@ -12,7 +12,7 @@ export default function ItemsTaxStatementDialog()
   const { t, i18n } = useTranslation("erpCommon");
   const [isOpen, setIsOpen] = useState(false);
   const [type, setType] = useState<ItemsTaxStatementReportType>(ItemsTaxStatementReportType.Sales);
-  const [item, setItem] = useState<Item | undefined>(undefined);
+  const [item, setItem] = useState<ItemOld | undefined>(undefined);
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   const [toDate, setToDate] = useState<Date | undefined>(undefined);
 

@@ -1,21 +1,19 @@
 import { useSignals } from "@preact/signals-react/runtime";
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { Role, RoleDto } from "../../../entities";
-import { BaseServices } from "../../../services/baseServices";
-import { PageCubit, PageLoaded, PageLoading } from "../../../stateManager";
+import { BaseCubits } from "../../../services";
+import { PageLoaded, PageLoading } from "../../../stateManager";
 import { SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "./searchableSelect";
 
 export function RolesSearchableSelect({ ...props }: SearchableSelectProps<Role<RoleDto>, RoleDto>)
 {
   useSignals();
-  const cubit = useMemo(() => new PageCubit<Role<RoleDto>, RoleDto>(BaseServices.rolesApi), []);
-  useEffect(() => cubit.init(), []);
 
   return (
     <SearchableSelect>
-      <SearchableSelect.Trigger label={ props.label?.value } />
+      <SearchableSelect.Trigger label={ props.label } disabled={ props.disabled } />
       <SearchableSelect.Content>
-        <SearchableSelect.SearchInput onSearch={ (searchInput) => cubit.search(searchInput) } />
+        <SearchableSelect.SearchInput onSearch={ (searchInput) => BaseCubits.roles.search(searchInput) } />
         <SearchableSelect.Command>
           <SearchableSelect.NullOption { ...props } />
           <CommandItems />
@@ -27,14 +25,16 @@ export function RolesSearchableSelect({ ...props }: SearchableSelectProps<Role<R
   function CommandItems()
   {
     useSignals();
-    if (cubit.state.value instanceof PageLoading)
+    if (BaseCubits.roles.state.value instanceof PageLoading)
     {
       return <SearchableSelect.Loading />;
     }
 
-    if (cubit.state.value instanceof PageLoaded && cubit.entities.value.length > 0)
+    if (BaseCubits.roles.state.value instanceof PageLoaded && BaseCubits.roles.entities.value.length > 0)
     {
-      return cubit.entities.value.map((entity) => <Option key={ entity.id.value } item={ entity } { ...props } />);
+      return BaseCubits.roles.entities.value.map((entity) => (
+        <Option key={ entity.id.value } item={ entity } { ...props } />
+      ));
     }
 
     return <SearchableSelect.Empty />;

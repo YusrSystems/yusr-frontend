@@ -258,6 +258,8 @@
     "nameRequired": "कृपया भुगतान विधि का नाम दर्ज करें",
     "accountRequired": "कृपया खाता चुनें",
     "commissionTypeRequired": "कृपया कमीशन प्रकार चुनें",
-    "commissionValueRequired": "कृपया कमीशन मान दर्ज करें"
+    "commissionValueRequired": "कृपया कमीशन मान दर्ज करें",
+    "commissionHintPercent": "हर {{d}} में से {{n}}",
+    "commissionHintAmount": "प्रति लेनदेन {{amount}} निर्धारित"
   }
 }

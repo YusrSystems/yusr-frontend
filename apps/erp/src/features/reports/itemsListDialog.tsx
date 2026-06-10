@@ -1,5 +1,5 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
-import { ItemType } from "@/core/data/item";
+import { ItemType } from "@/core/data/itemOld";
 import { ItemsListReportRequest } from "@/core/data/report/itemsListReportRequest";
 import { Store } from "@/core/data/store";
 import { signal } from "@preact/signals-react";

@@ -7,7 +7,7 @@ import registerReducer from "../../features/register/logic/registerSlice";
 import { BanksAndBoxesSlice, BanksSlice, BoxesSlice, ClientsAndSuppliersSlice, ClientsSlice, EmployeesSlice, SuppliersSlice } from "../data/account";
 import { BalanceTransferSlice } from "../data/balanceTransfer";
 import { PurchasesSlice, QuotationSlice, SalesSlice } from "../data/invoice";
-import { ItemSlice } from "../data/item";
+import { ItemSlice } from "../data/itemOld";
 import { ItemsSettlementSlice } from "../data/itemsSettlement";
 import { ItemTransferSlice } from "../data/itemTransfer";
 import { PaymentMethodSlice } from "../data/paymentMethod";

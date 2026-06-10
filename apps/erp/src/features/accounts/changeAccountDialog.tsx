@@ -4,7 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld, IEntityState, IFormState } from "yusr-ui";
-import { Button, ChangeDialogOld, CitiesSearchableSelectOld, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormFieldOld, InputOld, NumberFieldOld, SelectFieldOld, SystemPermissions, SystemPermissionsActions, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { Button, ChangeDialogOld, CitiesSearchableSelectOld, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormFieldOld, InputOld, NumberFieldOld, SelectFieldOld, SystemPermissions, SystemPermissionsActions, TextAreaFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import Account, { AccountContact, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/account";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -382,7 +382,7 @@ export default function ChangeAccountDialog({
           ) }
 
           <FieldsSection title={ t("accounts.additionalInfo") } columns={ 1 }>
-            <TextAreaField
+            <TextAreaFieldOld
               label={ t("accounts.notes") }
               value={ formData.notes || "" }
               onChange={ (e) => dispatch(slice.formActions.updateFormData({ notes: e.target.value })) }

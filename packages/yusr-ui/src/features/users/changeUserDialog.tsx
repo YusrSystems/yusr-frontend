@@ -1,12 +1,11 @@
 import { useSignals } from "@preact/signals-react/runtime";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { ChangeDialog, type CommonChangeDialogProps, FieldsSection, FormField, RolesSearchableSelect, SelectField, TextField } from "../../components/custom";
 import { BranchesSearchableSelect } from "../../components/custom/select/branchesSearchableSelect";
-import { Branch, BranchDto, Role, RoleDto, User, UserDto } from "../../entities";
-import { BaseServices } from "../../services";
-import { PageCubit } from "../../stateManager";
+import { User, UserDto } from "../../entities";
+import { BaseCubits, BaseServices } from "../../services";
 
 export function ChangeUserDialog({ entity, service, onSuccess }: CommonChangeDialogProps<User, UserDto>)
 {
@@ -22,8 +21,6 @@ export function ChangeUserDialog({ entity, service, onSuccess }: CommonChangeDia
     return <ChangeDialog.Unauthorized />;
   }
 
-  const branchesCubit = useMemo(() => new PageCubit<Branch, BranchDto>(BaseServices.branchesApi), []);
-  const rolesCubit = useMemo(() => new PageCubit<Role<RoleDto>, RoleDto>(BaseServices.rolesApi), []);
   const { t } = useTranslation(["commonEntities", "common"]);
   const title = entity.mode.value === "create"
     ? t("users.addNewTitle")
@@ -31,8 +28,8 @@ export function ChangeUserDialog({ entity, service, onSuccess }: CommonChangeDia
 
   useEffect(() =>
   {
-    branchesCubit.init();
-    rolesCubit.init();
+    BaseCubits.branches.init();
+    BaseCubits.roles.init();
   }, []);
 
   return (

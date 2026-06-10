@@ -5,11 +5,10 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { Warehouse } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, PageCubit, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
+import { CrudPage, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
 import ItemsListDialog from "../reports/itemsListDialog";
 import ChangeStoreDialog from "./changeStoreDialog";
-
-const cubit = new PageCubit<Store, StoreDto>(Services.storesApi);
+import { Cubits } from "@/core/services/cubits";
 
 export default function StoresPage()
 {
@@ -22,7 +21,7 @@ export default function StoresPage()
 
   useEffect(() =>
   {
-    cubit.init();
+    Cubits.stores.init();
   }, []);
 
   return (
@@ -35,7 +34,7 @@ export default function StoresPage()
 
       <Cards />
 
-      <CrudPage.SearchInput onSearch={ (searchText) => cubit.search(searchText) } />
+      <CrudPage.SearchInput onSearch={ (searchText) => Cubits.stores.search(searchText) } />
 
       <PageTable />
 
@@ -52,12 +51,12 @@ export default function StoresPage()
               {
                 if (data.mode.value === "create")
                 {
-                  cubit.add(data);
+                  Cubits.stores.add(data);
                   closeDialog();
                 }
                 else if (data.mode.value === "update")
                 {
-                  cubit.update(data);
+                  Cubits.stores.update(data);
                 }
               } }
             />
@@ -68,7 +67,7 @@ export default function StoresPage()
       <CrudPage.DeleteDialog
         entityNameSelector={ (store) => store.name }
         service={ Services.storesApi }
-        onSuccess={ (entity) => cubit.delete(entity) }
+        onSuccess={ (entity) => Cubits.stores.delete(entity) }
       />
     </CrudPage>
   );
@@ -82,7 +81,7 @@ function Cards()
     <CrudPage.Cards
       cards={ [{
         title: t("stores.totalStores"),
-        data: cubit.count.value.toString(),
+        data: Cubits.stores.count.value.toString(),
         icon: <Warehouse className="h-4 w-4 text-muted-foreground" />
       }] }
     />
@@ -94,17 +93,17 @@ function PageTable()
   useSignals();
   const { t } = useTranslation(["stocking", "common", "erpCommon"]);
 
-  if (cubit.state.value instanceof PageLoading)
+  if (Cubits.stores.state.value instanceof PageLoading)
   {
     return <TablePreview.Loading />;
   }
 
-  if (cubit.state.value instanceof PageLoaded)
+  if (Cubits.stores.state.value instanceof PageLoaded)
   {
     return (
       <CrudPage.Table>
         <CrudPage.TableBody<Store, StoreDto>
-          data={ cubit.entities.value }
+          data={ Cubits.stores.entities.value }
           headerRows={ [
             { rowBody: "", rowStyles: "text-left w-12.5" },
             {
@@ -144,19 +143,19 @@ function PageTable()
           ) }
         />
         <CrudPage.TablePagination
-          pageSize={ cubit.pageSize.value }
-          totalNumber={ cubit.count.value }
-          currentPage={ cubit.currentPage.value }
+          pageSize={ Cubits.stores.pageSize.value }
+          totalNumber={ Cubits.stores.count.value }
+          currentPage={ Cubits.stores.currentPage.value }
           onPageChanged={ (newPage) =>
           {
-            cubit.changePage(newPage);
+            Cubits.stores.changePage(newPage);
           } }
         />
       </CrudPage.Table>
     );
   }
 
-  if (cubit.state.value instanceof PageError)
+  if (Cubits.stores.state.value instanceof PageError)
   {
     return <TablePreview.Error />;
   }

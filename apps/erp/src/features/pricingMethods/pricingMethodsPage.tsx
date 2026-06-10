@@ -1,15 +1,14 @@
 import type { PricingMethodDto } from "@/core/data/pricingMethod";
 import PricingMethod from "@/core/data/pricingMethod";
+import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { TagIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, PageCubit, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
+import { CrudPage, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import ChangePricingMethodDialog from "./changePricingMethodDialog";
-
-const cubit = new PageCubit<PricingMethod, PricingMethodDto>(Services.pricingMethodsApi);
 
 export default function PricingMethodsPage()
 {
@@ -20,7 +19,7 @@ export default function PricingMethodsPage()
 
   const { t } = useTranslation("stocking");
 
-  useEffect(() => cubit.init(), []);
+  useEffect(() => Cubits.pricingMethods.init(), []);
 
   return (
     <CrudPage>
@@ -34,7 +33,7 @@ export default function PricingMethodsPage()
       />
       <Cards />
 
-      <CrudPage.SearchInput onSearch={ (searchText) => cubit.search(searchText) } />
+      <CrudPage.SearchInput onSearch={ (searchText) => Cubits.pricingMethods.search(searchText) } />
 
       <PageTable />
 
@@ -51,12 +50,12 @@ export default function PricingMethodsPage()
               {
                 if (data.mode.value === "create")
                 {
-                  cubit.add(data);
+                  Cubits.pricingMethods.add(data);
                   closeDialog();
                 }
                 else if (data.mode.value === "update")
                 {
-                  cubit.update(data);
+                  Cubits.pricingMethods.update(data);
                 }
               } }
             />
@@ -67,25 +66,25 @@ export default function PricingMethodsPage()
       <CrudPage.DeleteDialog
         entityNameSelector={ (pricingMethod) => pricingMethod.name }
         service={ Services.pricingMethodsApi }
-        onSuccess={ (entity) => cubit.delete(entity) }
+        onSuccess={ (entity) => Cubits.pricingMethods.delete(entity) }
       />
     </CrudPage>
   );
+}
 
-  function Cards()
-  {
-    useSignals();
-    const { t } = useTranslation("stocking");
-    return (
-      <CrudPage.Cards
-        cards={ [{
-          title: t("pricingMethods.totalMethods"),
-          data: (cubit.count.value ?? 0).toString(),
-          icon: <TagIcon className="h-4 w-4 text-muted-foreground" />
-        }] }
-      />
-    );
-  }
+function Cards()
+{
+  useSignals();
+  const { t } = useTranslation("stocking");
+  return (
+    <CrudPage.Cards
+      cards={ [{
+        title: t("pricingMethods.totalMethods"),
+        data: (Cubits.pricingMethods.count.value ?? 0).toString(),
+        icon: <TagIcon className="h-4 w-4 text-muted-foreground" />
+      }] }
+    />
+  );
 }
 
 function PageTable()
@@ -93,17 +92,17 @@ function PageTable()
   useSignals();
   const { t } = useTranslation(["stocking", "common"]);
 
-  if (cubit.state.value instanceof PageLoading)
+  if (Cubits.pricingMethods.state.value instanceof PageLoading)
   {
     return <TablePreview.Loading />;
   }
 
-  if (cubit.state.value instanceof PageLoaded)
+  if (Cubits.pricingMethods.state.value instanceof PageLoaded)
   {
     return (
       <CrudPage.Table>
         <CrudPage.TableBody<PricingMethod, PricingMethodDto>
-          data={ cubit.entities.value }
+          data={ Cubits.pricingMethods.entities.value }
           headerRows={ [{ rowBody: "", rowStyles: "text-left w-12.5" }, {
             rowBody: t("pricingMethods.methodId"),
             rowStyles: "w-30"
@@ -124,19 +123,19 @@ function PageTable()
           ) }
         />
         <CrudPage.TablePagination
-          pageSize={ cubit.pageSize.value }
-          totalNumber={ cubit.count.value }
-          currentPage={ cubit.currentPage.value }
+          pageSize={ Cubits.pricingMethods.pageSize.value }
+          totalNumber={ Cubits.pricingMethods.count.value }
+          currentPage={ Cubits.pricingMethods.currentPage.value }
           onPageChanged={ (newPage) =>
           {
-            cubit.changePage(newPage);
+            Cubits.pricingMethods.changePage(newPage);
           } }
         />
       </CrudPage.Table>
     );
   }
 
-  if (cubit.state.value instanceof PageError)
+  if (Cubits.pricingMethods.state.value instanceof PageError)
   {
     return <TablePreview.Error />;
   }

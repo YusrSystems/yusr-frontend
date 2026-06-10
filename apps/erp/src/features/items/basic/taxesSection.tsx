@@ -1,118 +1,90 @@
-import TaxesSearchableSelectOld from "@/core/components/searchableSelect/taxesSearchableSelectOld";
+import TaxesSearchableSelect from "@/core/components/searchableSelect/taxesSearchableSelect";
+import type Item from "@/core/data/item";
+import { ItemTax } from "@/core/data/item";
+import { Cubits } from "@/core/services/cubits";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Checkbox, type DialogMode, NumberFieldOld, TextFieldOld } from "yusr-ui";
-import { ItemSlice, ItemTax } from "../../../core/data/item";
-import { type TaxOld } from "../../../core/data/tax";
-import { useAppDispatch, useAppSelector } from "../../../core/state/store";
+import { Button, CheckboxField, TextField } from "yusr-ui";
+import { Tax } from "../../../core/data/tax";
 
-export default function TaxesSection({ mode }: { mode: DialogMode; })
+export default function TaxesSection({ entity }: { entity: Item; })
 {
+  useSignals();
   const { t } = useTranslation("stocking");
-  const dispatch = useAppDispatch();
-  const taxState = useAppSelector((state) => state.tax);
-  const { formData, isDirty } = useAppSelector((state) => state.itemForm);
 
   useEffect(() =>
   {
-    if (mode === "create" && !isDirty && taxState.entities?.data?.length)
+    if (entity.mode.value === "create" && !entity.isDirty.value && Cubits.taxes.entities?.value.length)
     {
       handleTaxableChange(true);
     }
-  }, [taxState.entities?.data]);
+  }, [Cubits.taxes.entities?.value]);
 
   const handleTaxableChange = (isTaxable: boolean) =>
   {
+    entity.taxable.value = isTaxable;
     if (isTaxable)
     {
-      const primaryTaxes = (taxState.entities?.data || [])
-        .filter((t: TaxOld) => t.isPrimary)
-        .map(
-          (t: TaxOld) =>
-            ({
-              taxId: t.id,
-              taxName: t.name,
-              taxPercentage: t.percentage
-            }) as ItemTax
+      const primaryTaxes = (Cubits.taxes.entities?.value || [])
+        .filter((t: Tax) => t.isPrimary)
+        .map((t: Tax) =>
+          new ItemTax({
+            itemId: entity.id.value,
+            taxId: t.id.value,
+            taxName: t.name.value,
+            taxPercentage: t.percentage.value
+          })
         );
 
-      dispatch(ItemSlice.formActions.updateFormData((prev) => ({
-        ...prev,
-        taxable: true,
-        itemTaxes: primaryTaxes,
-        exemptionReason: "",
-        exemptionReasonCode: ""
-      })));
+      entity.itemTaxes.value = primaryTaxes;
+      entity.exemptionReason.value = "";
+      entity.exemptionReasonCode.value = "";
     }
     else
     {
-      dispatch(ItemSlice.formActions.updateFormData((prev) => ({
-        ...prev,
-        taxable: false,
-        itemTaxes: []
-      })));
+      entity.itemTaxes.value = [];
     }
   };
 
   const addTax = () =>
-    dispatch(ItemSlice.formActions.updateFormData({ itemTaxes: [...(formData.itemTaxes || []), new ItemTax()] }));
-  const updateTax = (index: number, updates: Partial<ItemTax>) =>
   {
-    const list = [...(formData.itemTaxes || [])];
-    list[index] = { ...list[index], ...updates };
-    dispatch(ItemSlice.formActions.updateFormData({ itemTaxes: list }));
-  };
-  const removeTax = (index: number) =>
-  {
-    const list = [...(formData.itemTaxes || [])];
-    list.splice(index, 1);
-    dispatch(ItemSlice.formActions.updateFormData({ itemTaxes: list }));
+    entity.itemTaxes.value = [
+      ...entity.itemTaxes.value,
+      new ItemTax({ itemId: entity.id.value, taxId: undefined, taxName: "", taxPercentage: 0 })
+    ];
   };
 
   return (
     <div className="pt-6 border-t">
-      <div className="flex items-center mb-4 justify-between">
-        <div className="flex items-center gap-2">
-          <Checkbox
-            id="taxable"
-            checked={ formData.taxable || false }
-            onCheckedChange={ (checked) => handleTaxableChange(checked as boolean) }
-          />
-          <label htmlFor="taxable" className="text-sm font-bold">
-            { t("items.taxable") }
-          </label>
-        </div>
+      <div className="flex mb-4 justify-between gap-3 items-end">
+        <CheckboxField
+          label={ t("items.taxable") }
+          error={ entity.getError("taxable") }
+          checked={ entity.taxable }
+          onCheckedChange={ handleTaxableChange }
+        />
 
-        { formData.taxable && (
-          <Button type="button" size="sm" onClick={ addTax } className="flex items-center justify-center">
+        { entity.taxable.value && (
+          <Button type="button" size="lg" onClick={ addTax } className="flex items-center justify-center h-8">
             <Plus className="w-4 h-4 me-2" /> { t("items.addTax") }
           </Button>
         ) }
       </div>
 
-      { !formData.taxable
+      { !entity.taxable.value
         ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 bg-muted/10 p-4 rounded-lg border">
-            <TextFieldOld
+            <TextField
               label={ t("items.exemptionReasonCode") }
               placeholder={ t("items.exemptionReasonCodePlaceholder") }
-              value={ formData.exemptionReasonCode || "" }
-              onChange={ (e) =>
-                dispatch(ItemSlice.formActions.updateFormData((prev) => ({
-                  ...prev,
-                  exemptionReasonCode: e.target.value
-                }))) }
+              value={ entity.exemptionReasonCode }
             />
-            <TextFieldOld
+            <TextField
               label={ t("items.exemptionReason") }
               placeholder={ t("items.exemptionReasonPlaceholder") }
-              value={ formData.exemptionReason || "" }
-              onChange={ (e) =>
-                dispatch(ItemSlice.formActions.updateFormData((prev) => ({
-                  ...prev,
-                  exemptionReason: e.target.value
-                }))) }
+              value={ entity.exemptionReason }
             />
           </div>
         )
@@ -129,31 +101,26 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
                   </tr>
                 </thead>
                 <tbody>
-                  { formData.itemTaxes?.map((tax, index) =>
+                  { entity.itemTaxes?.value.map((tax, index) =>
                   {
                     return (
                       <tr key={ index } className="border-t border-muted">
                         <td className="p-3 font-bold">{ index + 1 }</td>
                         <td className="p-3">
-                          <TaxesSearchableSelectOld
-                            selectedId={ formData.itemTaxes?.[index].taxId }
-                            selectedLabel={ formData.itemTaxes?.[index].taxName }
-                            onValueChange={ (tax) =>
+                          <TaxesSearchableSelect
+                            id={ tax.taxId }
+                            label={ tax.taxName }
+                            onSelect={ (selectedTax) =>
                             {
-                              updateTax(index, {
-                                taxId: tax?.id,
-                                taxName: tax?.name,
-                                taxPercentage: tax?.percentage
-                              });
+                              tax.taxPercentage.value = selectedTax?.percentage.value;
                             } }
                           />
                         </td>
                         <td className="p-3">
-                          <NumberFieldOld
+                          <TextField
                             label=""
-                            value={ tax.taxPercentage || 0 }
+                            value={ tax.taxPercentage }
                             disabled
-                            onChange={ (val) => updateTax(index, { taxPercentage: val }) }
                           />
                         </td>
                         <td className="p-3 text-center">
@@ -162,7 +129,10 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
                             variant="ghost"
                             size="icon"
                             className={ `text-red-500 hover:text-red-700 hover:bg-red-100` }
-                            onClick={ () => removeTax(index) }
+                            onClick={ () =>
+                            {
+                              entity.itemTaxes.value = entity.itemTaxes.value.filter((_, i) => i !== index);
+                            } }
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -172,7 +142,7 @@ export default function TaxesSection({ mode }: { mode: DialogMode; })
                   }) }
                 </tbody>
               </table>
-              { (!formData.itemTaxes || formData.itemTaxes.length === 0) && (
+              { (!entity.itemTaxes.value || entity.itemTaxes.value.length === 0) && (
                 <div className="p-4 text-center text-muted-foreground">
                   { t("items.noTaxes") }
                 </div>

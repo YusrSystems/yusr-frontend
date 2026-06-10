@@ -1,24 +1,22 @@
+import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
-import { StoreCubit } from "@/features/stores/state/storeCubit";
 import { useSignals } from "@preact/signals-react/runtime";
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { PageLoaded, PageLoading, SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "yusr-ui";
 import { Store, type StoreDto } from "../../data/store";
 
 export default function StoresSearchableSelect({ ...props }: SearchableSelectProps<Store, StoreDto>)
 {
   useSignals();
-  const cubit = useMemo(() => new StoreCubit(), []);
-  useEffect(() => cubit.init(), []);
 
   return (
     <SearchableSelect>
-      <SearchableSelect.Trigger label={ props.label?.value } />
+      <SearchableSelect.Trigger label={ props.label } disabled={ props.disabled } />
       <SearchableSelect.Content>
         <SearchableSelect.SearchInput
           onSearch={ (searchInput) =>
           {
-            cubit.search(searchInput);
+            Cubits.stores.search(searchInput);
           } }
         />
         <SearchableSelect.Command>
@@ -32,15 +30,15 @@ export default function StoresSearchableSelect({ ...props }: SearchableSelectPro
   function CommandItems()
   {
     useSignals();
-    if (cubit.state.value instanceof PageLoading)
+    if (Cubits.stores.state.value instanceof PageLoading)
     {
       return <SearchableSelect.Loading />;
     }
 
-    if (cubit.state.value instanceof PageLoaded && cubit.entities.value.length > 0)
+    if (Cubits.stores.state.value instanceof PageLoaded && Cubits.stores.entities.value.length > 0)
     {
-      return cubit.entities.value.map((entity) => (
-        <Option cubit={ cubit } key={ entity.id.value } item={ entity } { ...props } />
+      return Cubits.stores.entities.value.map((entity) => (
+        <Option key={ entity.id.value } item={ entity } { ...props } />
       ));
     }
 
@@ -49,7 +47,7 @@ export default function StoresSearchableSelect({ ...props }: SearchableSelectPro
         onCreate={ async (searchText) =>
         {
           await Services.storesApi.Add(Store.create({ name: searchText }));
-          cubit.init();
+          Cubits.stores.init();
         } }
       />
     );
@@ -58,7 +56,7 @@ export default function StoresSearchableSelect({ ...props }: SearchableSelectPro
 
 const Option = React.memo(
   function Option(
-    { cubit, ...props }: Omit<SearchableSelectOptionProps<Store, StoreDto>, "labelSelector"> & { cubit: StoreCubit; }
+    { ...props }: Omit<SearchableSelectOptionProps<Store, StoreDto>, "labelSelector">
   )
   {
     useSignals();
@@ -74,7 +72,7 @@ const Option = React.memo(
             const result = await Services.storesApi.Delete(props.item.id.value);
             if (result.status === 200)
             {
-              cubit.delete(props.item);
+              Cubits.stores.delete(props.item);
             }
           } }
         />

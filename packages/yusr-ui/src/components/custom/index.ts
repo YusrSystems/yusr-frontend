@@ -25,6 +25,7 @@ export * from "./currency/currencyIcon";
 
 // Fields
 export * from "./fields/checkboxField";
+export * from "./fields/checkboxFieldOld";
 export * from "./fields/dateField";
 export * from "./fields/dateTimeField";
 export * from "./fields/fieldsSection";
@@ -51,7 +52,7 @@ export * from "./inputs/numberInputOld";
 export * from "./inputs/otpInput";
 export * from "./inputs/searchInput";
 export * from "./inputs/selectInput";
-export * from "./inputs/textAreaInput";
+export * from "./inputs/textAreaInputOld";
 
 // locale
 export * from "./locale/languageToggle";

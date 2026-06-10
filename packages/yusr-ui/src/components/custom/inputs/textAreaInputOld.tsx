@@ -1,25 +1,18 @@
-import { type Signal, signal } from "@preact/signals-react";
-import { useSignals } from "@preact/signals-react/runtime";
 import { ChevronDown } from "lucide-react";
-import React, { useMemo } from "react";
+import React from "react";
 import { cn } from "../../../utils/cn";
 import { Textarea } from "../../pure/textarea";
 
-export interface TextAreaInputProps
-  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "onChange">
+export interface TextAreaInputPropsOld extends React.TextareaHTMLAttributes<HTMLTextAreaElement>
 {
-  error?: Signal<string | undefined>;
-  value?: Signal<string | undefined>;
-  onChange?: (value: string) => void;
+  isInvalid?: boolean;
   collapsible?: boolean;
   collapsedHeight?: number;
   expandedHeight?: number;
 }
 
-export function TextAreaInput({
-  error,
-  value,
-  onChange,
+export function TextAreaInputOld({
+  isInvalid,
   className,
   collapsible = false,
   collapsedHeight = 36,
@@ -28,25 +21,15 @@ export function TextAreaInput({
   onFocus,
   onBlur,
   ...props
-}: TextAreaInputProps)
+}: TextAreaInputPropsOld)
 {
-  useSignals();
-  const isFocused = useMemo(() => signal(false), []);
-  const isCollapsed = collapsible && !isFocused.value;
+  const [isFocused, setIsFocused] = React.useState(false);
+  const isCollapsed = collapsible && !isFocused;
 
   return (
     <div className="relative w-full">
       <Textarea
         { ...props }
-        value={ value ? value.value : undefined }
-        onChange={ (event) =>
-        {
-          if (value)
-          {
-            value.value = event.target.value;
-          }
-          onChange?.(event.target.value);
-        } }
         style={ {
           ...style,
           ...(collapsible && {
@@ -59,19 +42,15 @@ export function TextAreaInput({
         } }
         onFocus={ (e) =>
         {
-          isFocused.value = true;
+          setIsFocused(true);
           onFocus?.(e);
         } }
         onBlur={ (e) =>
         {
-          isFocused.value = false;
+          setIsFocused(false);
           onBlur?.(e);
         } }
-        className={ cn(
-          className,
-          collapsible && "min-h-0",
-          error?.value && "border-red-600 focus-visible:ring-red-600"
-        ) }
+        className={ cn(className, collapsible && "min-h-0", isInvalid && "border-red-600 focus-visible:ring-red-600") }
       />
       { collapsible && isCollapsed && (
         <ChevronDown

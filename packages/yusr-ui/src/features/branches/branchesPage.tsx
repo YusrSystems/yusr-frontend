@@ -5,11 +5,10 @@ import { useTranslation } from "react-i18next";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPage, TablePreview, UnauthorizedPage } from "../../components/custom";
 import { Branch, type BranchDto } from "../../entities";
+import { BaseCubits } from "../../services";
 import { BaseServices } from "../../services/baseServices";
-import { PageCubit, PageError, PageLoaded, PageLoading } from "../../stateManager";
+import { PageError, PageLoaded, PageLoading } from "../../stateManager";
 import { ChangeBranchDialog } from "./changeBranchDialog";
-
-const cubit = new PageCubit<Branch, BranchDto>(BaseServices.branchesApi);
 
 export function BranchesPage()
 {
@@ -22,7 +21,7 @@ export function BranchesPage()
 
   useEffect(() =>
   {
-    cubit.init();
+    BaseCubits.branches.init();
   }, []);
 
   return (
@@ -38,7 +37,7 @@ export function BranchesPage()
 
       <Cards />
 
-      <CrudPage.SearchInput onSearch={ (searchText) => cubit.search(searchText) } />
+      <CrudPage.SearchInput onSearch={ (searchText) => BaseCubits.branches.search(searchText) } />
 
       <PageTable />
 
@@ -64,11 +63,11 @@ export function BranchesPage()
               {
                 if (data.mode.value === "create")
                 {
-                  cubit.add(data);
+                  BaseCubits.branches.add(data);
                 }
                 else if (data.mode.value === "update")
                 {
-                  cubit.update(data);
+                  BaseCubits.branches.update(data);
                 }
               } }
             />
@@ -79,7 +78,7 @@ export function BranchesPage()
       <CrudPage.DeleteDialog
         entityNameSelector={ (entity) => entity.name }
         service={ BaseServices.branchesApi }
-        onSuccess={ (entity) => cubit.delete(entity) }
+        onSuccess={ (entity) => BaseCubits.branches.delete(entity) }
       />
     </CrudPage>
   );
@@ -93,7 +92,7 @@ function Cards()
     <CrudPage.Cards
       cards={ [{
         title: t("branches.totalBranches"),
-        data: cubit.count.value.toString(),
+        data: BaseCubits.branches.count.value.toString(),
         icon: <Building className="h-4 w-4 text-muted-foreground" />
       }] }
     />
@@ -105,17 +104,17 @@ function PageTable()
   useSignals();
   const { t } = useTranslation(["commonEntities", "common"]);
 
-  if (cubit.state.value instanceof PageLoading)
+  if (BaseCubits.branches.state.value instanceof PageLoading)
   {
     return <TablePreview.Loading />;
   }
 
-  if (cubit.state.value instanceof PageLoaded)
+  if (BaseCubits.branches.state.value instanceof PageLoaded)
   {
     return (
       <CrudPage.Table>
         <CrudPage.TableBody<Branch, BranchDto>
-          data={ cubit.entities.value }
+          data={ BaseCubits.branches.entities.value }
           headerRows={ [
             { rowBody: "", rowStyles: "text-left w-12.5" },
             { rowBody: t("branches.branchId"), rowStyles: "w-30" },
@@ -139,19 +138,19 @@ function PageTable()
           ) }
         />
         <CrudPage.TablePagination
-          pageSize={ cubit.pageSize.value }
-          totalNumber={ cubit.count.value }
-          currentPage={ cubit.currentPage.value }
+          pageSize={ BaseCubits.branches.pageSize.value }
+          totalNumber={ BaseCubits.branches.count.value }
+          currentPage={ BaseCubits.branches.currentPage.value }
           onPageChanged={ (newPage) =>
           {
-            cubit.changePage(newPage);
+            BaseCubits.branches.changePage(newPage);
           } }
         />
       </CrudPage.Table>
     );
   }
 
-  if (cubit.state.value instanceof PageError)
+  if (BaseCubits.branches.state.value instanceof PageError)
   {
     return <TablePreview.Error />;
   }

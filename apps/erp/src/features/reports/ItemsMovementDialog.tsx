@@ -2,7 +2,7 @@ import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSel
 import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
 import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
 import type Account from "@/core/data/account";
-import type Item from "@/core/data/item";
+import type ItemOld from "@/core/data/itemOld";
 import type StoreOld from "@/core/data/store";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -17,7 +17,7 @@ export default function ItemsMovementDialog()
 
   const [isOpen, setIsOpen] = useState(false);
   const [transTypeId, setTransTypeId] = useState<ItemsMovementReportTransType | undefined>(undefined);
-  const [item, setItem] = useState<Item | undefined>(undefined);
+  const [item, setItem] = useState<ItemOld | undefined>(undefined);
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   const [toDate, setToDate] = useState<Date | undefined>(undefined);
   const [fromAccount, setFromAccount] = useState<Account | undefined>(undefined);

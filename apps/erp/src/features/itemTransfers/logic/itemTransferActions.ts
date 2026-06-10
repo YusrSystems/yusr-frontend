@@ -1,6 +1,6 @@
 import { type TFunction } from "i18next";
-import type Item from "../../../core/data/item";
-import type { ItemUnitPricingMethod } from "../../../core/data/item";
+import type ItemOld from "../../../core/data/itemOld";
+import type { ItemUnitPricingMethodOld } from "../../../core/data/itemOld";
 import type { ItemTransfersItem } from "../../../core/data/itemTransfer";
 import type { AppDispatch } from "../../../core/state/store";
 import { addItem, clearTransfer, initializeItems, removeItem, setErrors, type TransferRowItem, updatePricingMethod, updateQuantity } from "./itemTransferSlice";
@@ -14,8 +14,8 @@ export class ItemTransferActions
 
   public static addItem(
     dispatch: AppDispatch,
-    storeItem: Item,
-    selectedIupm?: ItemUnitPricingMethod
+    storeItem: ItemOld,
+    selectedIupm?: ItemUnitPricingMethodOld
   )
   {
     dispatch(addItem({ storeItem, selectedIupm }));

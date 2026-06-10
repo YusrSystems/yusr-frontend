@@ -83,6 +83,14 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
           : `${t("common:crudRow.edit")} ${t("commonEntities:roles.entityName")}` }
       />
       <DialogBody />
+      <ChangeDialog.Footer>
+        <ChangeDialog.Close />
+        <ChangeDialog.SaveButton<TRole, TRoleDto>
+          entity={ entity }
+          service={ service }
+          onSuccess={ (data) => onSuccess?.(data) }
+        />
+      </ChangeDialog.Footer>
     </ChangeDialog>
   );
 
@@ -135,17 +143,6 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 
     const tabs = [...permissionTabs, ...(extraTabs?.(entity) ?? [])];
 
-    return (
-      <ChangeDialog.Tabbed tabs={ tabs }>
-        <ChangeDialog.Footer>
-          <ChangeDialog.Close />
-          <ChangeDialog.SaveButton<TRole, TRoleDto>
-            entity={ entity }
-            service={ service }
-            onSuccess={ (data) => onSuccess?.(data) }
-          />
-        </ChangeDialog.Footer>
-      </ChangeDialog.Tabbed>
-    );
+    return <ChangeDialog.Tabbed tabs={ tabs } />;
   }
 }

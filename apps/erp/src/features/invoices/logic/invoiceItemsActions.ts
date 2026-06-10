@@ -1,4 +1,4 @@
-import type Item from "@/core/data/item";
+import type ItemOld from "@/core/data/itemOld";
 import { type PayloadAction } from "@reduxjs/toolkit";
 import type { IFormState } from "yusr-ui";
 import Invoice, { InvoiceItem } from "../../../core/data/invoice";
@@ -29,7 +29,7 @@ export default class InvoiceItemsActions
     }
   }
 
-  public static addItem(state: IFormState<Invoice>, action: PayloadAction<Item>)
+  public static addItem(state: IFormState<Invoice>, action: PayloadAction<ItemOld>)
   {
     const storeItem = action.payload;
 

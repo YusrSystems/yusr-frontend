@@ -3,7 +3,7 @@ import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearc
 import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
 import type Account from "@/core/data/account";
 import { InvoiceType } from "@/core/data/invoice";
-import type Item from "@/core/data/item";
+import type ItemOld from "@/core/data/itemOld";
 import type StoreOld from "@/core/data/store";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,7 +25,7 @@ export default function InvoicesListDialog()
   const [toDate, setToDate] = useState<Date>(new Date());
   const [account, setAccount] = useState<Account | undefined>(undefined);
   const [store, setStore] = useState<StoreOld | undefined>(undefined);
-  const [items, setItems] = useState<Item[]>([]);
+  const [items, setItems] = useState<ItemOld[]>([]);
 
   return (
     <>

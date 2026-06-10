@@ -1,3 +1,4 @@
+import { StoreSlice } from "@/core/data/storeSlice";
 import { BanknoteArrowUp, Box, CheckCircle2, FolderKanban, Siren } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,7 +8,7 @@ import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescripti
 import Account, { type AccountSliceType } from "../../core/data/account";
 import type Invoice from "../../core/data/invoice";
 import { InvoiceRelationType, InvoiceSlice, InvoiceStatus, InvoiceType, InvoiceValidationRules } from "../../core/data/invoice";
-import { ItemType } from "../../core/data/item";
+import { ItemType } from "../../core/data/itemOld";
 import { PaymentMethodSlice } from "../../core/data/paymentMethod";
 import InvoicesApiService from "../../core/networking/invoiceApiService";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
@@ -19,7 +20,6 @@ import InvoiceBasicTab from "./presentation/basic/invoiceBasicTab";
 import InvoiceCostsTab from "./presentation/costs/invoiceCostsTab";
 import InvoiceFilesTab from "./presentation/files/invoiceFilesTab";
 import InvoicePolicyTab from "./presentation/policy/invoicePolicyTab";
-import { StoreSlice } from "@/core/data/storeSlice";
 
 export type InvoiceSliceType = ReturnType<typeof InvoiceSlice.create>;
 export type InvoiceDialogMode = DialogMode | "return" | "copy" | "quotationToSales";
@@ -55,11 +55,8 @@ export default function ChangeInvoiceDialog({
   const { createInitialPaymentVoucher } = useInvoiceLogic(authState);
   const invoiceTaxInclusivePrice = () => InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(formData?.invoiceItems ?? []);
   const { commitFiles } = useStorageFile(
-    (updater) =>
-      dispatch(slice.formActions.updateFormData(
-        updater as (prev: Partial<Invoice>) => Partial<Invoice>
-      )),
-    "invoiceFiles",
+      () => formData.invoiceFiles ?? [],
+      (files) => dispatch(slice.formActions.updateFormData({ invoiceFiles: Array.isArray(files) ? files : [files] })),
     StorageType.Private
   );
 

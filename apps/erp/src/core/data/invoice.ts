@@ -4,7 +4,7 @@ import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createG
 import InvoiceItemsActions from "../../features/invoices/logic/invoiceItemsActions";
 import InvoiceVouchersActions from "../../features/invoices/logic/invoiceVouchersActions";
 import InvoicesApiService from "../networking/invoiceApiService";
-import type { ItemUnitPricingMethod } from "./item";
+import type { ItemUnitPricingMethodOld } from "./itemOld";
 
 export const InvoiceType = {
   Sell: 1,
@@ -72,7 +72,7 @@ export class InvoiceItem extends BaseEntity
   public notes?: string;
   public itemName!: string;
   public itemUnitPricingMethodName!: string;
-  public itemUnitPricingMethods: ItemUnitPricingMethod[] = [];
+  public itemUnitPricingMethods: ItemUnitPricingMethodOld[] = [];
 
   constructor(init?: Partial<InvoiceItem>)
   {

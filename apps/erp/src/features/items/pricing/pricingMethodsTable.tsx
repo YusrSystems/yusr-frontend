@@ -1,30 +1,47 @@
-import PricingMethodsSearchableSelectOld from "@/core/components/searchableSelect/pricingMethodsSearchableSelectOld";
-import UnitsSearchableSelectOld from "@/core/components/searchableSelect/unitsSearchableSelectOld";
+import PricingMethodsSearchableSelect from "@/core/components/searchableSelect/pricingMethodsSearchableSelect";
+import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
+import type Item from "@/core/data/item";
+import { generateBarcode, ItemUnitPricingMethod } from "@/core/data/item";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, CurrencyIcon, FormFieldOld, NumberFieldOld, SystemPermissions, SystemPermissionsActions, TextFieldOld } from "yusr-ui";
+import { Button, CurrencyIcon, FormField, NumberField, SystemPermissionsActions, TextField } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../core/auth/systemPermissionsResources";
-import Item, { ItemType } from "../../../core/data/item";
-import { useAppSelector } from "../../../core/state/store";
+import { ItemType } from "../../../core/data/itemOld";
 import ItemBarcodeButton from "../../reports/itemBarcodeDialog";
-import usePricingMethodsTable from "./usePricingMethodsTable";
 
-export default function PricingMethodsTable()
+export default function PricingMethodsTable({ entity }: { entity: Item; })
 {
+  useSignals();
   const { t } = useTranslation("stocking");
-  const {
-    formData,
-    addPricingMethod,
-    updatePricingMethod,
-    removePricingMethod,
-    isInvalid,
-    getError
-  } = usePricingMethodsTable();
+  const errorMessage = entity.getError("itemUnitPricingMethods");
+  const isService = entity.type.value === ItemType.Service;
 
-  const hasError = isInvalid("itemUnitPricingMethods");
-  const errorMessage = getError("itemUnitPricingMethods");
-  const authState = useAppSelector((state) => state.auth);
-  const isService = formData.type === ItemType.Service;
+  const addPricingMethod = () =>
+  {
+    const newItem = new ItemUnitPricingMethod({
+      itemId: entity.id.value,
+      unitId: undefined,
+      itemUnitPricingMethodName: undefined,
+      unitName: undefined,
+      pricingMethodId: undefined,
+      pricingMethodName: undefined,
+      quantityMultiplier: 1,
+      unitPrice: 0,
+      price: 0,
+      barcode: generateBarcode()
+    });
+    entity.itemUnitPricingMethods.value = [...entity.itemUnitPricingMethods.value, newItem];
+  };
+
+  const suggestIUPMName = (index: number) =>
+  {
+    const suggestName = `${entity.itemUnitPricingMethods.value[index]?.unitName.value || ""} ${
+      entity.itemUnitPricingMethods.value[index]?.pricingMethodName.value || ""
+    }`;
+    entity.itemUnitPricingMethods.value[index].itemUnitPricingMethodName.value = suggestName;
+  };
 
   return (
     <div className="pt-4">
@@ -39,7 +56,7 @@ export default function PricingMethodsTable()
 
       <div
         className={ `bg-muted/20 rounded-lg border overflow-hidden overflow-x-auto transition-colors ${
-          hasError ? "border-red-500" : ""
+          errorMessage.value ? "border-red-500" : ""
         }` }
       >
         <table className="w-full text-sm text-right min-w-200">
@@ -49,11 +66,10 @@ export default function PricingMethodsTable()
               <th className="p-3 w-32 text-start">{ t("items.unit") }</th>
               <th className="p-3 w-40 text-start">{ t("items.pricingMethod") }</th>
               <th className="p-3 w-32 text-start">{ t("items.quantityInUnit") }</th>
-              <th className="p-3 w-32 text-start">{ t("items.sellingPrice", { unit: formData.sellUnitName }) }</th>
+              <th className="p-3 w-32 text-start">{ t("items.sellingPrice", { unit: entity.sellUnitName.value }) }</th>
               <th className="p-3 w-40 text-start">{ t("items.barcode") }</th>
               <th className="p-3 w-40 text-start">{ t("items.name") }</th>
-              { SystemPermissions.hasAuth(
-                authState.loggedInUser?.role?.permissions ?? [],
+              { Services.auth.hasAuth(
                 SystemPermissionsResources.ReportItemBarcode,
                 SystemPermissionsActions.Get
               ) && <th className="p-3 w-12 text-center"></th> }
@@ -61,99 +77,95 @@ export default function PricingMethodsTable()
             </tr>
           </thead>
           <tbody>
-            { formData.itemUnitPricingMethods?.map((method, index) =>
+            { entity.itemUnitPricingMethods?.value.map((method, index) =>
             {
-              const multiplier = method.quantityMultiplier && method.quantityMultiplier !== 0
-                ? method.quantityMultiplier
-                : 1;
-
               return (
                 <tr key={ index } className="border-t border-muted">
                   <td className="p-3 font-bold">{ index + 1 }</td>
                   <td className="p-3">
-                    <FormFieldOld
+                    <FormField
                       label=""
-                      isInvalid={ hasError && !isService && !method.unitId }
+                      error={ method.unitId.value == undefined ? errorMessage : undefined }
                     >
-                      <UnitsSearchableSelectOld
-                        selectedId={ formData.itemUnitPricingMethods?.[index].unitId }
-                        selectedLabel={ formData.itemUnitPricingMethods?.[index].unitName }
+                      <UnitsSearchableSelect
+                        id={ method.unitId }
+                        label={ method.unitName }
                         disabled={ isService }
-                        isInvalid={ hasError && !isService && !method.unitId }
-                        onValueChange={ (unit) =>
+                        onSelect={ (unit) =>
                         {
-                          updatePricingMethod(index, {
-                            unitId: unit?.id,
-                            unitName: unit?.name
-                          });
+                          if (unit?.id.value === entity.sellUnitId.value)
+                          {
+                            method.quantityMultiplier.value = 1;
+                          }
+                          suggestIUPMName(index);
+                          entity.clearError("itemUnitPricingMethods");
                         } }
                       />
-                    </FormFieldOld>
+                    </FormField>
                   </td>
                   <td className="p-3">
-                    <FormFieldOld
+                    <FormField
                       label=""
-                      isInvalid={ hasError && !isService && !method.pricingMethodId }
+                      error={ method.pricingMethodId.value == undefined ? errorMessage : undefined }
                     >
-                      <PricingMethodsSearchableSelectOld
-                        selectedId={ formData.itemUnitPricingMethods?.[index].pricingMethodId }
-                        selectedLabel={ formData.itemUnitPricingMethods?.[index].pricingMethodName }
+                      <PricingMethodsSearchableSelect
+                        id={ entity.itemUnitPricingMethods?.value[index].pricingMethodId }
+                        label={ entity.itemUnitPricingMethods?.value[index].pricingMethodName }
                         disabled={ isService }
-                        isInvalid={ hasError && !isService && !method.pricingMethodId }
-                        onValueChange={ (pricingMethod) =>
+                        onSelect={ () =>
                         {
-                          updatePricingMethod(index, {
-                            pricingMethodId: pricingMethod?.id,
-                            pricingMethodName: pricingMethod?.name
-                          });
+                          entity.clearError("itemUnitPricingMethods");
+                          suggestIUPMName(index);
                         } }
                       />
-                    </FormFieldOld>
+                    </FormField>
                   </td>
                   <td className="p-3">
-                    <NumberFieldOld
+                    <NumberField
                       label=""
                       min={ 1 }
-                      disabled={ method.unitId === formData.sellUnitId }
-                      value={ method.quantityMultiplier ?? 1 }
-                      onChange={ (val) => updatePricingMethod(index, { quantityMultiplier: val }) }
-                      isInvalid={ hasError
-                        && (method.quantityMultiplier == undefined || method.quantityMultiplier <= 0) }
+                      disabled={ method.unitId.value === entity.sellUnitId.value }
+                      value={ method.quantityMultiplier }
+                      error={ method.quantityMultiplier.value < 1 ? errorMessage : undefined }
+                      onChange={ () => entity.clearError("itemUnitPricingMethods") }
                     />
                   </td>
                   <td className="p-3">
-                    <NumberFieldOld
+                    <NumberField
                       label=""
                       min={ 0 }
-                      value={ parseFloat((method.price / multiplier).toFixed(2)) ?? 0 }
+                      value={ method.unitPrice }
                       onChange={ (val) =>
-                        updatePricingMethod(index, { price: parseFloat(((val ?? 0) * multiplier).toFixed(2)) }) }
-                      isInvalid={ hasError && (method.price == undefined || method.price <= 0) }
+                      {
+                        entity.clearError("itemUnitPricingMethods");
+                        const multiplier = method.quantityMultiplier.value && method.quantityMultiplier.value !== 0
+                          ? method.quantityMultiplier.value
+                          : 1;
+                        method.price.value = val ? val * multiplier : 0;
+                      } }
+                      error={ errorMessage }
                       currency={ <CurrencyIcon /> }
                     />
                   </td>
                   <td className="p-3">
-                    <TextFieldOld
+                    <TextField
                       label=""
-                      value={ method.barcode || "" }
-                      onChange={ (e) => updatePricingMethod(index, { barcode: e.target.value }) }
+                      value={ method.barcode }
                     />
                   </td>
                   <td className="p-3">
-                    <TextFieldOld
+                    <TextField
                       label=""
-                      value={ method.itemUnitPricingMethodName || "" }
-                      onChange={ (e) => updatePricingMethod(index, { itemUnitPricingMethodName: e.target.value }) }
+                      value={ method.itemUnitPricingMethodName }
                     />
                   </td>
 
-                  { SystemPermissions.hasAuth(
-                    authState.loggedInUser?.role?.permissions ?? [],
+                  { Services.auth.hasAuth(
                     SystemPermissionsResources.ReportItemBarcode,
                     SystemPermissionsActions.Get
                   ) && (
                     <td className="p-3 text-center">
-                      <ItemBarcodeButton item={ formData as Item } iupm={ method } />
+                      <ItemBarcodeButton item={ entity } iupm={ method } />
                     </td>
                   ) }
 
@@ -164,7 +176,10 @@ export default function PricingMethodsTable()
                         variant="ghost"
                         size="icon"
                         className="text-red-500 hover:text-red-700 hover:bg-red-100"
-                        onClick={ () => removePricingMethod(index) }
+                        onClick={ () =>
+                          entity.itemUnitPricingMethods.value = entity.itemUnitPricingMethods.value.filter((_, i) =>
+                            i !== index
+                          ) }
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -175,14 +190,14 @@ export default function PricingMethodsTable()
             }) }
           </tbody>
         </table>
-        { formData.itemUnitPricingMethods?.length === 0 && (
+        { entity.itemUnitPricingMethods?.value.length === 0 && (
           <div className="p-4 text-center text-muted-foreground">
             { t("items.noPricingMethods") }
           </div>
         ) }
       </div>
 
-      { hasError && errorMessage && (
+      { errorMessage.value && (
         <div className="text-xs font-medium text-red-500 mt-2 animate-in fade-in slide-in-from-top-1">
           { errorMessage }
         </div>

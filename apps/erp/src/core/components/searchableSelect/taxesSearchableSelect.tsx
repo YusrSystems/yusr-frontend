@@ -1,20 +1,18 @@
-import { Services } from "@/core/services/services";
+import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
-import React, { useEffect, useMemo } from "react";
-import { PageCubit, PageLoaded, PageLoading, SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "yusr-ui";
+import React from "react";
+import { PageLoaded, PageLoading, SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "yusr-ui";
 import { Tax, TaxDto } from "../../data/tax";
 
 export default function TaxesSearchableSelect({ ...props }: SearchableSelectProps<Tax, TaxDto>)
 {
   useSignals();
-  const cubit = useMemo(() => new PageCubit<Tax, TaxDto>(Services.taxesApi), []);
-  useEffect(() => cubit.init(), []);
 
   return (
     <SearchableSelect>
-      <SearchableSelect.Trigger label={ props.label?.value } />
+      <SearchableSelect.Trigger label={ props.label } disabled={ props.disabled } />
       <SearchableSelect.Content>
-        <SearchableSelect.SearchInput onSearch={ (searchInput) => cubit.search(searchInput) } />
+        <SearchableSelect.SearchInput onSearch={ (searchInput) => Cubits.taxes.search(searchInput) } />
         <SearchableSelect.Command>
           <SearchableSelect.NullOption { ...props } />
           <CommandItems />
@@ -26,14 +24,16 @@ export default function TaxesSearchableSelect({ ...props }: SearchableSelectProp
   function CommandItems()
   {
     useSignals();
-    if (cubit.state.value instanceof PageLoading)
+    if (Cubits.taxes.state.value instanceof PageLoading)
     {
       return <SearchableSelect.Loading />;
     }
 
-    if (cubit.state.value instanceof PageLoaded && cubit.entities.value.length > 0)
+    if (Cubits.taxes.state.value instanceof PageLoaded && Cubits.taxes.entities.value.length > 0)
     {
-      return cubit.entities.value.map((entity) => <Option key={ entity.id.value } item={ entity } { ...props } />);
+      return Cubits.taxes.entities.value.map((entity) => (
+        <Option key={ entity.id.value } item={ entity } { ...props } />
+      ));
     }
 
     return <SearchableSelect.Empty />;

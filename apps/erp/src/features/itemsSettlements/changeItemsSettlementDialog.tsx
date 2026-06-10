@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld } from "yusr-ui";
 import { ChangeDialogOld, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormFieldOld, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { ItemType } from "../../core/data/item";
+import { ItemType } from "../../core/data/itemOld";
 import ItemsSettlement, { ItemsSettlementItem, ItemsSettlementSlice, ItemsSettlementValidationRules } from "../../core/data/itemsSettlement";
 import type { IStocktaking } from "../../core/data/stocktaking";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";

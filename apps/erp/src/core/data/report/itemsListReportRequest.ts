@@ -1,4 +1,4 @@
-import type { ItemType } from "../item";
+import type { ItemType } from "../itemOld";
 import type { BaseReportRequest } from "./baseReportRequest";
 
 export class ItemsListReportRequest implements BaseReportRequest

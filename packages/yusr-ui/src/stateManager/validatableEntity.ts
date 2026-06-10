@@ -18,21 +18,17 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
     this._validationRules = validationRules;
     this._validationRules.forEach((rule) =>
     {
-      const field = rule.field;
-      this.errors[field] = signal(undefined);
-
-      const original = (this as any)[field] as Signal<unknown>;
-      (this as any)[field] = new Proxy(original, {
-        set: (target, prop, value) =>
-        {
-          if (prop === "value")
-          {
-            this.errors[field].value = undefined;
-          }
-          return Reflect.set(target, prop, value);
-        }
-      });
+      this.errors[rule.field] = signal(undefined);
     });
+  }
+
+  protected onFieldChange(field: keyof TDto, newValue: any): void
+  {
+    if (this.errors[field])
+    {
+      this.errors[field].value = undefined;
+    }
+    super.onFieldChange(field, newValue);
   }
 
   validate(dto?: Partial<TDto>): boolean
@@ -52,6 +48,7 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
         }
       }
     });
+    console.log(this.errors);
 
     return Object.values(this.errors).every(
       (s) => (s as Signal<string | undefined>).value === undefined

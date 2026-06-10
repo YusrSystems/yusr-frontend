@@ -1,9 +1,9 @@
+import type Item from "@/core/data/item";
+import type { ItemUnitPricingMethod } from "@/core/data/item";
 import { ScanBarcode } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, NumberFieldOld } from "yusr-ui";
-import type Item from "../../core/data/item";
-import type { ItemUnitPricingMethod } from "../../core/data/item";
 import ReportConstants from "../../core/data/report/reportConstants";
 import { useAppSelector } from "../../core/state/store";
 import ReportButton from "./reportButton";
@@ -20,7 +20,7 @@ export default function ItemBarcodeButton({ item, iupm }: { item: Item; iupm: It
 
   const onOpen = () =>
   {
-    if (iupm.barcode)
+    if (iupm.barcode.value)
     {
       setIsOpen(true);
     }
@@ -40,7 +40,7 @@ export default function ItemBarcodeButton({ item, iupm }: { item: Item; iupm: It
         <DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>{ t("reports.itemBarcode") }</DialogTitle>
-            <DialogDescription>{ item.name } - { iupm.itemUnitPricingMethodName }</DialogDescription>
+            <DialogDescription>{ item.name.value } - { iupm.itemUnitPricingMethodName.value }</DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col items-center gap-3 py-4 text-center text-red-600">
@@ -58,7 +58,7 @@ export default function ItemBarcodeButton({ item, iupm }: { item: Item; iupm: It
         <DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>{ t("reports.itemBarcode") }</DialogTitle>
-            <DialogDescription>{ item.name } - { iupm.itemUnitPricingMethodName }</DialogDescription>
+            <DialogDescription>{ item.name.value } - { iupm.itemUnitPricingMethodName.value }</DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col gap-4 py-2">
@@ -89,11 +89,11 @@ export default function ItemBarcodeButton({ item, iupm }: { item: Item; iupm: It
             <ReportButton
               reportName={ ReportConstants.ItemBarcode }
               request={ {
-                barcode: iupm.barcode ?? "",
+                barcode: iupm.barcode.value ?? "",
                 companyName: authState.setting?.companyName,
-                itemName: item.name,
-                iupmName: iupm.itemUnitPricingMethodName,
-                price: iupm.price,
+                itemName: item.name.value,
+                iupmName: iupm.itemUnitPricingMethodName.value,
+                price: iupm.price.value,
                 barcodesQtn: barcodesQtn,
                 currency: authState.setting?.currency?.name
               } }

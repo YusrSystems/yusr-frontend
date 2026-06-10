@@ -3,7 +3,7 @@ import { StoreSlice } from "@/core/data/storeSlice";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChangeDialogOld, type CommonChangeDialogPropsOld, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormFieldOld, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { ItemType } from "../../core/data/item";
+import { ItemType } from "../../core/data/itemOld";
 import ItemTransfer, { ItemTransfersItem, ItemTransferSlice, ItemTransferValidationRules } from "../../core/data/itemTransfer";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";

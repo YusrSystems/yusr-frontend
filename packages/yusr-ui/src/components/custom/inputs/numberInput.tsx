@@ -20,7 +20,7 @@ export function NumberInput(
 
   const localValue: Signal<string> = useMemo(
     () => signal(value.value != undefined ? value.value.toString() : ""),
-    [value]
+    [value.value]
   );
 
   const input = (
@@ -95,6 +95,13 @@ export function NumberInput(
         localValue.value = String(val);
         value.value = val;
         onChange?.(val);
+      } }
+      onBlur={ (e) =>
+      {
+        if (!e.target.value && min != undefined)
+        {
+          value.value = Number(min);
+        }
       } }
     />
   );

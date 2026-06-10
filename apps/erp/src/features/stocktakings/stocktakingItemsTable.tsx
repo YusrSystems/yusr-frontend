@@ -2,7 +2,7 @@ import { AlertCircle, Trash2, X } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, type DialogMode, NumberFieldOld, SearchableSelectOld, useFormErrors } from "yusr-ui";
-import Item, { ItemType, ItemUnitPricingMethod } from "../../core/data/item";
+import ItemOld, { ItemType, ItemUnitPricingMethodOld } from "../../core/data/itemOld";
 import type { IStocktaking, IStocktakingItem } from "../../core/data/stocktaking";
 import { useAppSelector } from "../../core/state/store";
 import StoreItemSelector from "../items/storeItemSelector";
@@ -126,7 +126,7 @@ export default function StocktakingItemsTable(
     handleChange({ stocktakingItems: [...(formData.stocktakingItems || []), newItem] });
   };
 
-  const handleStoreItemSelect = (item: Item, selectedIupm?: ItemUnitPricingMethod) =>
+  const handleStoreItemSelect = (item: ItemOld, selectedIupm?: ItemUnitPricingMethodOld) =>
   {
     const unit = selectedIupm || item.itemUnitPricingMethods?.[0];
 
@@ -254,7 +254,7 @@ export default function StocktakingItemsTable(
 
                           { mode === "create" && availableUnits.length > 0 && (
                             <div className="mt-1">
-                              <SearchableSelectOld<ItemUnitPricingMethod>
+                              <SearchableSelectOld<ItemUnitPricingMethodOld>
                                 items={ availableUnits }
                                 renderContent={ (item) => (
                                   <span className="flex-1 truncate">{ item.itemUnitPricingMethodName }</span>

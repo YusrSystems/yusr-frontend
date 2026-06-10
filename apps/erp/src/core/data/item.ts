@@ -1,6 +1,5 @@
-import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type StorageFile, type ValidationRuleOld, Validators } from "yusr-ui";
-import ItemsApiService from "../networking/itemApiService";
+import type { Signal } from "@preact/signals-react";
+import { ChangeableEntity, type ChangeableEntityMode, Dto, Entity, i18n, type StorageFile, Validators } from "yusr-ui";
 
 export const ItemType = {
   Product: 1,
@@ -8,7 +7,7 @@ export const ItemType = {
 };
 export type ItemType = (typeof ItemType)[keyof typeof ItemType];
 
-export class ItemUnitPricingMethod extends BaseEntity
+export class ItemUnitPricingMethodDto extends Dto
 {
   public itemId!: number;
   public unitId!: number;
@@ -17,46 +16,60 @@ export class ItemUnitPricingMethod extends BaseEntity
   public pricingMethodId!: number;
   public pricingMethodName?: string;
   public quantityMultiplier!: number;
+  public unitPrice!: number;
   public price!: number;
   public barcode?: string;
-
-  constructor(init?: Partial<ItemUnitPricingMethod>)
-  {
-    super();
-    Object.assign(this, init);
-  }
 }
 
-export class ItemTax extends BaseEntity
+export class ItemUnitPricingMethod extends Entity<ItemUnitPricingMethodDto>
+{
+  declare itemId: Signal<number>;
+  declare unitId: Signal<number>;
+  declare itemUnitPricingMethodName: Signal<string>;
+  declare unitName: Signal<string | undefined>;
+  declare pricingMethodId: Signal<number>;
+  declare pricingMethodName: Signal<string | undefined>;
+  declare quantityMultiplier: Signal<number>;
+  declare unitPrice: Signal<number>;
+  declare price: Signal<number>;
+  declare barcode: Signal<string | undefined>;
+}
+
+export class ItemTaxDto extends Dto
 {
   public itemId!: number;
   public taxId!: number;
   public taxName?: string;
   public taxPercentage!: number;
-
-  constructor(init?: Partial<ItemTax>)
-  {
-    super();
-    Object.assign(this, init);
-  }
 }
 
-export class ItemStore extends BaseEntity
+export class ItemTax extends Entity<ItemTaxDto>
+{
+  declare itemId: Signal<number>;
+  declare taxId: Signal<number>;
+  declare taxName: Signal<string | undefined>;
+  declare taxPercentage: Signal<number | undefined>;
+}
+
+export class ItemStoreDto extends Dto
 {
   public itemId!: number;
   public storeId!: number;
   public storeName?: string;
   public initialQuantity!: number;
   public quantity!: number;
-
-  constructor(init?: Partial<ItemStore>)
-  {
-    super();
-    Object.assign(this, init);
-  }
 }
 
-export default class Item extends BaseEntity
+export class ItemStore extends Entity<ItemStoreDto>
+{
+  declare itemId: Signal<number>;
+  declare storeId: Signal<number>;
+  declare storeName: Signal<string | undefined>;
+  declare initialQuantity: Signal<number>;
+  declare quantity: Signal<number>;
+}
+
+export class ItemDto extends Dto
 {
   public type!: ItemType;
   public name!: string;
@@ -81,157 +94,151 @@ export default class Item extends BaseEntity
   public location?: string;
   public notes?: string;
   public totalTaxes!: number;
-
   public itemUnitPricingMethods: ItemUnitPricingMethod[] = [];
   public itemTaxes: ItemTax[] = [];
   public itemStores: ItemStore[] = [];
   public itemImages: StorageFile[] = [];
+}
 
-  constructor(init?: Partial<Item>)
+export default class Item extends ChangeableEntity<ItemDto>
+{
+  declare type: Signal<ItemType>;
+  declare name: Signal<string>;
+  declare description: Signal<string | undefined>;
+  declare class: Signal<string | undefined>;
+  declare brand: Signal<string | undefined>;
+  declare sellUnitId: Signal<number | undefined>;
+  declare sellUnitName: Signal<string | undefined>;
+  declare minQuantity: Signal<number | undefined>;
+  declare maxQuantity: Signal<number | undefined>;
+  declare initialQuantity: Signal<number>;
+  declare quantity: Signal<number>;
+  declare storeQuantity: Signal<number>;
+  declare lastBuyPrice: Signal<number>;
+  declare initialCost: Signal<number>;
+  declare cost: Signal<number>;
+  declare taxIncluded: Signal<boolean>;
+  declare taxable: Signal<boolean>;
+  declare exemptionReasonCode: Signal<string | undefined>;
+  declare exemptionReason: Signal<string | undefined>;
+  declare statusId: Signal<number>;
+  declare location: Signal<string | undefined>;
+  declare notes: Signal<string | undefined>;
+  declare totalTaxes: Signal<number>;
+  declare itemUnitPricingMethods: Signal<ItemUnitPricingMethod[]>;
+  declare itemTaxes: Signal<ItemTax[]>;
+  declare itemStores: Signal<ItemStore[]>;
+  declare itemImages: Signal<StorageFile[]>;
+
+  constructor(dto: Partial<ItemDto>, mode: ChangeableEntityMode = "create")
   {
-    super();
-    Object.assign(this, init);
-    if (init?.itemUnitPricingMethods)
-    {
-      this.itemUnitPricingMethods = init.itemUnitPricingMethods.map((x) => new ItemUnitPricingMethod(x));
-    }
-    if (init?.itemTaxes)
-    {
-      this.itemTaxes = init.itemTaxes.map((x) => new ItemTax(x));
-    }
-    if (init?.itemStores)
-    {
-      this.itemStores = init.itemStores.map((x) => new ItemStore(x));
-    }
-    if (init?.itemImages)
-    {
-      this.itemImages = init.itemImages;
-    }
+    super({
+      ...dto,
+      itemTaxes: (dto.itemTaxes ?? []).map((t) => t instanceof ItemTax ? t : new ItemTax(t)),
+      itemStores: (dto.itemStores ?? []).map((s) => s instanceof ItemStore ? s : new ItemStore(s)),
+      itemUnitPricingMethods: (dto.itemUnitPricingMethods ?? []).map((m) =>
+        m instanceof ItemUnitPricingMethod ? m : new ItemUnitPricingMethod(m)
+      )
+    }, [{
+      field: "name",
+      selector: (d) => d.name,
+      validators: [Validators.required(i18n.t("stocking:items.nameRequired"))]
+    }, {
+      field: "type",
+      selector: (d) => d.type,
+      validators: [Validators.required(i18n.t("stocking:items.typeRequired"))]
+    }, {
+      field: "itemUnitPricingMethods",
+      selector: (d) => d.itemUnitPricingMethods,
+      validators: [
+        Validators.arrayMinLength(1, i18n.t("stocking:items.pricingMethodsRequired")),
+        Validators.custom(
+          (methods: ItemUnitPricingMethodDto[]) =>
+          {
+            if (!methods || methods.length === 0)
+            {
+              return true;
+            }
+
+            for (let i = 0; i < methods.length; i++)
+            {
+              const m = methods[i];
+              if (!m.unitId)
+              {
+                return false;
+              }
+              if (!m.pricingMethodId)
+              {
+                return false;
+              }
+
+              if (m.quantityMultiplier == undefined || m.quantityMultiplier <= 0)
+              {
+                return false;
+              }
+              if (m.price == undefined || m.price < 0)
+              {
+                return false;
+              }
+            }
+            return true;
+          },
+          i18n.t("stocking:items.pricingMethodsValidationError")
+        )
+      ]
+    }, {
+      field: "itemStores",
+      selector: (d) => d.itemStores,
+      validators: [Validators.custom(
+        (stores: ItemStoreDto[], form: ItemDto) =>
+        {
+          if (form.type === ItemType.Service)
+          {
+            return true;
+          }
+
+          if (stores.length <= 0)
+          {
+            return false;
+          }
+
+          for (let i = 0; i < stores.length; i++)
+          {
+            const s = stores[i];
+            if (!s.storeId || s.initialQuantity == undefined || s.initialQuantity < 0)
+            {
+              return false;
+            }
+          }
+
+          return true;
+        },
+        i18n.t("stocking:items.storesValidationError")
+      )]
+    }, {
+      field: "sellUnitId",
+      selector: (d) => d.sellUnitId,
+      validators: [Validators.custom(
+        (val, form) => form.type === ItemType.Service || !!val,
+        i18n.t("stocking:items.baseUnitRequired")
+      )]
+    }, {
+      field: "initialCost",
+      selector: (d) => d.initialCost,
+      validators: [Validators.required(i18n.t("stocking:items.initialCostRequired"))]
+    }], mode);
   }
 }
 
 export class BarcodeResult
 {
-  public item!: Item;
+  public item!: ItemDto;
   public selectedIupm!: ItemUnitPricingMethod;
 
   constructor(init?: Partial<BarcodeResult>)
   {
     Object.assign(this, init);
   }
-}
-
-export class ItemValidationRules
-{
-  public static validationRules = (t: TFunction<"stocking">): ValidationRuleOld<Partial<Item>>[] => [{
-    field: "name",
-    selector: (d) => d.name,
-    validators: [Validators.required(t("items.nameRequired"))]
-  }, {
-    field: "type",
-    selector: (d) => d.type,
-    validators: [Validators.required(t("items.typeRequired"))]
-  }, {
-    field: "itemUnitPricingMethods",
-    selector: (d) => d.itemUnitPricingMethods,
-    validators: [
-      Validators.arrayMinLength(1, t("items.pricingMethodsRequired")),
-      Validators.custom(
-        (methods: any[], form) =>
-        {
-          if (!methods || methods.length === 0)
-          {
-            return true;
-          }
-
-          const isService = form.type === ItemType.Service;
-
-          for (let i = 0; i < methods.length; i++)
-          {
-            const m = methods[i];
-            if (!isService && !m.unitId)
-            {
-              return false;
-            }
-            if (!isService && !m.pricingMethodId)
-            {
-              return false;
-            }
-
-            if (m.quantityMultiplier === undefined || m.quantityMultiplier === null || m.quantityMultiplier <= 0)
-            {
-              return false;
-            }
-            if (m.price === undefined || m.price === null || m.price < 0)
-            {
-              return false;
-            }
-          }
-          return true;
-        },
-        t("items.pricingMethodsValidationError")
-      )
-    ]
-  }, {
-    field: "itemStores",
-    selector: (d) => d.itemStores,
-    validators: [Validators.custom(
-      (stores: any[], form) =>
-      {
-        if (form.type === ItemType.Service || (!stores || stores.length === 0))
-        {
-          return true;
-        }
-
-        if (stores.length < 0)
-        {
-          return false;
-        }
-
-        for (let i = 0; i < stores.length; i++)
-        {
-          const s = stores[i];
-          if (!s.storeId)
-          {
-            return false;
-          }
-          if ((s.initialQuantity == undefined || s.initialQuantity < 0))
-          {
-            return false;
-          }
-        }
-
-        return true;
-      },
-      t("items.storesValidationError")
-    )]
-  }, {
-    field: "sellUnitId",
-    selector: (d) => d.sellUnitId,
-    validators: [Validators.custom(
-      (val, form) => form.type === ItemType.Service || (val !== null && val !== undefined && val !== ""),
-      t("items.baseUnitRequired")
-    )]
-  }, {
-    field: "initialCost",
-    selector: (d) => d.initialCost,
-    validators: [Validators.required(t("items.initialCostRequired"))]
-  }];
-}
-
-export class ItemSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("item", new ItemsApiService());
-  public static entityActions = ItemSlice.entitySliceInstance.actions;
-  public static entityReducer = ItemSlice.entitySliceInstance.reducer;
-
-  private static dialogSliceInstance = createGenericDialogSlice<Item>("itemDialog");
-  public static dialogActions = ItemSlice.dialogSliceInstance.actions;
-  public static dialogReducer = ItemSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<Item>("itemForm");
-  public static formActions = ItemSlice.formSliceInstance.actions;
-  public static formReducer = ItemSlice.formSliceInstance.reducer;
 }
 
 export function generateBarcode(length = 12)

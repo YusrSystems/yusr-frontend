@@ -18,6 +18,7 @@ export type SearchableSelectOptionProps<TEntity extends Entity<TDto>, TDto exten
   label?: Signal<string | undefined>;
   labelSelector: keyof TEntity;
   item: TEntity;
+  disabled?: boolean;
   onSelect?: (item?: TEntity) => void;
 };
 
@@ -50,11 +51,13 @@ export function SearchableSelect<T extends BaseEntity>({ children }: PropsWithCh
 }
 
 SearchableSelect.Trigger = function(
-  { className, label, ...props }: React.ComponentProps<"button"> & { label?: string; }
+  { className, label, ...props }: React.ComponentProps<"button"> & { label?: Signal<string | undefined>; }
 )
 {
   useSignals();
   const data = useSearchableSelectContext();
+  const resolvedLabel = label instanceof Signal ? label.value : label;
+
   return (
     <PopoverTrigger asChild>
       <Button
@@ -68,7 +71,7 @@ SearchableSelect.Trigger = function(
         ) }
         { ...props }
       >
-        <span className="truncate text-start">{ label || data.t("searchableSelect.placeholder") }</span>
+        <span className="truncate text-start">{ resolvedLabel || data.t("searchableSelect.placeholder") }</span>
         <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50 ltr:ml-2 rtl:mr-2" />
       </Button>
     </PopoverTrigger>
@@ -246,6 +249,11 @@ SearchableSelect.AddOptionButton = function(
   useSignals();
   const isAdding = useMemo(() => signal(false), []);
   const data = useSearchableSelectContext();
+
+  if (!data.searchInput.value)
+  {
+    return null;
+  }
 
   return (
     <CommandItem

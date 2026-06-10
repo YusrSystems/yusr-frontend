@@ -258,6 +258,8 @@
     "nameRequired": "অনুগ্রহ করে পেমেন্ট পদ্ধতির নাম লিখুন",
     "accountRequired": "অনুগ্রহ করে অ্যাকাউন্ট নির্বাচন করুন",
     "commissionTypeRequired": "অনুগ্রহ করে কমিশনের ধরন নির্বাচন করুন",
-    "commissionValueRequired": "অনুগ্রহ করে কমিশনের মান লিখুন"
+    "commissionValueRequired": "অনুগ্রহ করে কমিশনের মান লিখুন",
+    "commissionHintPercent": "প্রতি {{d}} টির মধ্যে {{n}} টি",
+    "commissionHintAmount": "লেনদেন প্রতি {{amount}} নির্ধারিত"
   }
 }
