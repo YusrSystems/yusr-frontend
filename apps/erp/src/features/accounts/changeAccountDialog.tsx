@@ -154,6 +154,7 @@ function BankFields({ entity }: { entity: Account; })
 
 function TaxFields({ entity }: { entity: Account; })
 {
+  useSignals();
   const { t } = useTranslation(["accounting", "common"]);
   return (
     <FieldsSection title={ t("accounts.taxCommercialInfo") } columns={ 2 }>

@@ -176,6 +176,7 @@ export function AccountsPage(
   }
 )
 {
+  useSignals();
   const accountCubit = useMemo(() => new PageCubit<Account, AccountDto>(Services.accountsApi), []);
   if (!hasPagePermission)
   {
@@ -216,6 +217,7 @@ export function AccountsPage(
       <CrudPage.ChangeDialog
         changeDialog={ (dto: AccountDto | undefined, closeDialog) =>
         {
+          console.log(dto);
           return (
             <ChangeAccountDialog
               entity={ dto
