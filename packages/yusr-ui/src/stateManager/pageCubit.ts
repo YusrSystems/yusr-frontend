@@ -11,6 +11,7 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
   public pageSize: Signal<number>;
   public currentPage: Signal<number>;
   public searchText: Signal<string | undefined>;
+  public types: Signal<number[] | undefined>;
   entities: Signal<TEntity[]>;
   count: Signal<number>;
 
@@ -21,19 +22,20 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
     this.pageSize = signal(pageSize);
     this.currentPage = signal(1);
     this.searchText = signal(undefined);
+    this.types = signal([]);
     this.entities = signal<TEntity[]>([]);
     this.count = signal(0);
   }
 
-  private async _filter(types?: number[])
+  private async _filter()
   {
     this.emit(new PageLoading());
 
     let result;
-    if (Boolean(types))
+    if (Boolean(this.types.value))
     {
       result = await this._service.Filter(this.currentPage.value, this.pageSize.value, this.searchText.value, {
-        types: types ?? [],
+        types: this.types.value ?? [],
         searchText: this.searchText.value
       });
     }
@@ -59,7 +61,8 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
   {
     this.searchText.value = undefined;
     this.currentPage.value = 1;
-    this._filter(types);
+    this.types.value = types;
+    this._filter();
   }
 
   changePage(pageNumber: number)

@@ -41,12 +41,10 @@ export function BanksAccountsPage()
     <AccountsPage
       title={ t("banks.title") }
       fixedType={ AccountType.Bank }
-      hasPagePermission={ SystemPermissions.hasAuth(
-        Services.auth.loggedInUser?.role.value.permissions ?? [],
+      hasPagePermission={ Services.auth.hasAuth(
         SystemPermissionsResources.AccountBank,
         SystemPermissionsActions.Get
-      ) && SystemPermissions.hasAuth(
-        Services.auth.loggedInUser?.role.value.permissions ?? [],
+      ) && Services.auth.hasAuth(
         SystemPermissionsResources.Accounts,
         SystemPermissionsActions.Get
       ) }

@@ -40,12 +40,10 @@ export function EmployeesAccountsPage()
     <AccountsPage
       title={ t("employees.title") }
       fixedType={ AccountType.Client }
-      hasPagePermission={ SystemPermissions.hasAuth(
-        Services.auth.loggedInUser?.role?.value.permissions ?? [],
+      hasPagePermission={ Services.auth.hasAuth(
         SystemPermissionsResources.AccountEmployee,
         SystemPermissionsActions.Get
-      ) && SystemPermissions.hasAuth(
-        Services.auth.loggedInUser?.role?.value.permissions ?? [],
+      ) && Services.auth.hasAuth(
         SystemPermissionsResources.Accounts,
         SystemPermissionsActions.Get
       ) }

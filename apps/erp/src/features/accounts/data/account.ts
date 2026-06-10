@@ -118,7 +118,7 @@ export class Account extends ChangeableEntity<AccountDto>
       buildingNumber: dto?.buildingNumber,
       postalCode: dto?.postalCode,
       notes: dto?.notes,
-      accountContacts: dto?.accountContacts ?? []
+      accountContacts: dto?.accountContacts ?? [{ id: 0, accountId: dto?.id ?? 0, number: "" } as AccountContactDto]
     };
   }
 }

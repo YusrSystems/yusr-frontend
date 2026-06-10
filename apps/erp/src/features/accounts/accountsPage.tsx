@@ -183,8 +183,9 @@ export function AccountsPage(
   }
 
   const { t } = useTranslation("accounting");
-  useEffect(() => accountCubit.init(), []);
+  useEffect(() => accountCubit.init([fixedType]), []);
 
+  // TODO: replace it wuth Cubits.accounts.searchText
   const searchText = useMemo(() => accountCubit.searchText, [accountCubit.searchText]);
 
   return (
@@ -193,8 +194,7 @@ export function AccountsPage(
         title={ title }
         addButtonTitle={ t("accounts.addNewTitle") }
         isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Add) }
-        actionButtons={ SystemPermissions.hasAuth(
-            Services.auth.loggedInUser?.role?.value.permissions ?? [],
+        actionButtons={ Services.auth.hasAuth(
             SystemPermissionsResources.ReportAccountList,
             SystemPermissionsActions.Get
           )
@@ -247,6 +247,7 @@ export function AccountsPage(
     </CrudPage>
   );
 }
+
 function Cards({ count }: { count: Signal<number>; })
 {
   useSignals();
@@ -275,8 +276,7 @@ function PageTable(
     return <TablePreview.Loading />;
   }
 
-  const canShowBalance = SystemPermissions.hasAuth(
-    Services.auth.loggedInUser?.role?.value.permissions ?? [],
+  const canShowBalance = Services.auth.hasAuth(
     SystemPermissionsResources.ReportAccountStatement,
     SystemPermissionsActions.Get
   );
@@ -295,8 +295,7 @@ function PageTable(
               rowStyles: "w-40"
             },
             ...(canShowBalance ? [{ rowBody: t("accounts.balance"), rowStyles: "w-32" }] : []),
-            ...(SystemPermissions.hasAuth(
-                Services.auth.loggedInUser?.role?.value.permissions ?? [],
+            ...(Services.auth.hasAuth(
                 SystemPermissionsResources.ReportAccountStatement,
                 SystemPermissionsActions.Get
               )
@@ -329,8 +328,7 @@ function PageTable(
                   rowStyles: `font-semibold ${colorStyle}`
                 }]
                 : []),
-              ...(SystemPermissions.hasAuth(
-                  Services.auth.loggedInUser?.role?.value.permissions ?? [],
+              ...(Services.auth.hasAuth(
                   SystemPermissionsResources.ReportAccountStatement,
                   SystemPermissionsActions.Get
                 )

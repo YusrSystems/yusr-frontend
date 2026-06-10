@@ -1,14 +1,12 @@
-import AccountsApiService from "@/core/networking/accountApiService";
+import AccountsApiServiceOld from "@/core/networking/accountApiServiceOld";
 import { Services } from "@/core/services/services";
 import { type RootState, useAppSelector } from "@/core/state/store";
-import ChangeAccountDialog from "@/features/accounts/changeAccountDialog";
 import type { Account, AccountDto } from "@/features/accounts/data/account";
-import type { Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import React, { useEffect, useMemo } from "react";
 import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect, type IEntityState, type IFormState, PageCubit, PageLoaded, PageLoading, SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
-import { type AccountSliceType, AccountType } from "../../data/account";
+import AccountOld, { type AccountSliceType, AccountType } from "../../data/account";
 
 export default function AccountsSearchableSelectOld(
   {
@@ -27,11 +25,11 @@ export default function AccountsSearchableSelectOld(
     items,
     ...props
   }:
-    & BasicSearchableSelectParamsOld<Account>
+    & BasicSearchableSelectParamsOld<AccountOld>
     & {
       slice: AccountSliceType;
-      selectEntityState: (state: RootState) => IEntityState<Account>;
-      selectFormState: (state: RootState) => IFormState<Account>;
+      selectEntityState: (state: RootState) => IEntityState<AccountOld>;
+      selectFormState: (state: RootState) => IFormState<AccountOld>;
       selectTypes?: {
         label: string;
         value: string;
@@ -39,18 +37,18 @@ export default function AccountsSearchableSelectOld(
       fixedType?: AccountType;
       allowAdd?: boolean;
       allowUpdate?: boolean;
-      items?: Account[];
+      items?: AccountOld[];
     }
 )
 {
-  const accountState = useAppSelector(selectEntityState) as IEntityState<Account>;
+  const accountState = useAppSelector(selectEntityState) as IEntityState<AccountOld>;
   const authState = useAppSelector((state) => state.auth);
 
   return (
-    <ChangableSearchableSelect<Account, {
+    <ChangableSearchableSelect<AccountOld, {
       slice: AccountSliceType;
-      selectEntityState: (state: RootState) => IEntityState<Account>;
-      selectFormState: (state: any) => IFormState<Account>;
+      selectEntityState: (state: RootState) => IEntityState<AccountOld>;
+      selectFormState: (state: any) => IFormState<AccountOld>;
       selectTypes?: {
         label: string;
         value: string;
@@ -64,7 +62,7 @@ export default function AccountsSearchableSelectOld(
       selectedLabel={ selectedLabel }
       items={ items }
       state={ accountState }
-      apiService={ new AccountsApiService() }
+      apiService={ new AccountsApiServiceOld() }
       disabled={ disabled }
       isInvalid={ isInvalid }
       systemPermissionsResources={ SystemPermissionsResources.Accounts }
@@ -75,7 +73,6 @@ export default function AccountsSearchableSelectOld(
         filter: slice.entityActions.filter,
         refresh: slice.entityActions.refresh
       } }
-      changeDialog={ ChangeAccountDialog }
       changeDialogProps={ {
         slice: slice,
         selectEntityState: selectEntityState,
@@ -91,12 +88,12 @@ export default function AccountsSearchableSelectOld(
 }
 
 export function AccountsSearchableSelect(
-  { type, ...props }: SearchableSelectProps<Account, AccountDto> & { type: Signal<number>; }
+  { types, ...props }: SearchableSelectProps<Account, AccountDto> & { types: number[]; }
 )
 {
   useSignals();
   const cubit = useMemo(() => new PageCubit<Account, AccountDto>(Services.accountsApi), []);
-  useEffect(() => cubit.init([type.value]), []);
+  useEffect(() => cubit.init(types), []);
 
   return (
     <SearchableSelect>

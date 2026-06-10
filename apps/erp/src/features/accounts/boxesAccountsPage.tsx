@@ -41,12 +41,10 @@ export function BoxesAccountsPage()
     <AccountsPage
       fixedType={ AccountType.Box }
       title={ t("boxes.title") }
-      hasPagePermission={ SystemPermissions.hasAuth(
-        Services.auth.loggedInUser?.role?.value.permissions ?? [],
+      hasPagePermission={ Services.auth.hasAuth(
         SystemPermissionsResources.AccountBox,
         SystemPermissionsActions.Get
-      ) && SystemPermissions.hasAuth(
-        Services.auth.loggedInUser?.role?.value.permissions ?? [],
+      ) && Services.auth.hasAuth(
         SystemPermissionsResources.Accounts,
         SystemPermissionsActions.Get
       ) }

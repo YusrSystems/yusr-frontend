@@ -1,11 +1,10 @@
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { type CommonChangeDialogProps, NumberField, SystemPermissions } from "yusr-ui";
+import { type CommonChangeDialogProps, NumberField, TablePreviewCompact } from "yusr-ui";
 
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import { AccountsSearchableSelect } from "@/core/components/searchableSelect/accountsSearchableSelect";
-import { Signal, signal } from "@preact/signals-react";
 import { Plus, Trash2 } from "lucide-react";
 import { Button, ChangeDialog, CitiesSearchableSelect, CurrencyIcon, FieldGroup, FieldsSection, FormField, Input, SystemPermissionsActions, TextAreaField, TextField } from "yusr-ui";
 import { type Account, AccountContact, type AccountDto, AccountType } from "./data/account";
@@ -15,7 +14,7 @@ export default function ChangeAccountDialog(
 )
 {
   useSignals();
-  const { t } = useTranslation(["accounting", "common"]);
+
   if (
     (entity.mode.value === "create"
       && !Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Add))
@@ -26,12 +25,13 @@ export default function ChangeAccountDialog(
     return <ChangeDialog.Unauthorized />;
   }
 
+  const { t } = useTranslation(["accounting", "common"]);
+
   const title = entity.mode.value === "create"
     ? t("accounts.addNewTitle")
     : `${t("common:crudRow.edit")} ${t("accounts.entityName")}`;
 
-  const canShowBalance = SystemPermissions.hasAuth(
-    Services.auth?.loggedInUser?.role?.value.permissions ?? [],
+  const canShowBalance = Services.auth.hasAuth(
     SystemPermissionsResources.AccountShowBalance,
     SystemPermissionsActions.Get
   );
@@ -41,12 +41,12 @@ export default function ChangeAccountDialog(
     || entity?.type.value === AccountType.Employee;
 
   const isBox = entity?.type.value === AccountType.Box;
-
   const isBank = entity?.type.value === AccountType.Bank;
   const requiresAddress = !isBank;
   const requiresContacts = !isBank && !isBox;
+
   return (
-    <ChangeDialog className="sm:max-w-lg">
+    <ChangeDialog className="sm:max-w-4xl">
       <ChangeDialog.Header title={ title } />
       <FieldGroup>
         <FieldsSection title={ t("accounts.basicInfo") } columns={ 2 }>
@@ -70,31 +70,48 @@ export default function ChangeAccountDialog(
             error={ entity.getError("name") }
           />
 
-          <ClientAndSupplierAccountsFields entity={ entity } />
+          { (entity.type.value === AccountType.Client || entity.type.value === AccountType.Supplier) && (
+            <FormField label={ t("accounts.parentAccount") }>
+              <AccountsSearchableSelect
+                types={ entity.type.value === AccountType.Client ? [AccountType.Client] : [AccountType.Supplier] }
+                id={ entity.parentId }
+                label={ entity.parentName }
+              />
+            </FormField>
+          ) }
 
-          <NumberField
-            label={ t("accounts.openingBalance") }
-            value={ canShowBalance ? entity.initialBalance : signal<number>(0) }
-            currency={ <CurrencyIcon /> }
-          />
+          { canShowBalance && (
+            <NumberField
+              label={ t("accounts.openingBalance") }
+              value={ entity.initialBalance }
+              currency={ <CurrencyIcon /> }
+            />
+          ) }
 
-          <NumberField
-            label={ t("accounts.balance") }
-            disabled
-            value={ canShowBalance ? entity.balance : signal<number>(0) }
-            currency={ <CurrencyIcon /> }
-          />
+          { canShowBalance && (
+            <NumberField
+              label={ t("accounts.balance") }
+              disabled
+              value={ entity.balance }
+              currency={ <CurrencyIcon /> }
+            />
+          ) }
         </FieldsSection>
 
-        { (requiresTaxInfo || isBank) && (
-          <RequiresTaxAndBankInfo entity={ entity } isBank={ isBank } isRequiresTaxInfo={ requiresTaxInfo } />
-        ) }
+        { requiresTaxInfo && <TaxFields entity={ entity } /> }
 
-        <RequiresAddressAndContacts
-          entity={ entity }
-          requiresAddress={ requiresAddress }
-          requiresContacts={ requiresContacts }
-        />
+        { isBank && <BankFields entity={ entity } /> }
+
+        <div
+          className={ `grid gap-6 ${
+            requiresAddress && requiresContacts
+              ? "grid-cols-1 md:grid-cols-2"
+              : "grid-cols-1"
+          }` }
+        >
+          { requiresAddress && <AddressFields entity={ entity } /> }
+          { requiresContacts && <ContactsFields entity={ entity } /> }
+        </div>
 
         <FieldsSection title={ t("accounts.additionalInfo") } columns={ 1 }>
           <TextAreaField
@@ -110,58 +127,36 @@ export default function ChangeAccountDialog(
           entity={ entity }
           service={ service }
           onSuccess={ (data) => onSuccess?.(data) }
+          transformData={ (entity) =>
+          {
+            entity.accountContacts.value = entity.accountContacts.value.filter((c) => Boolean(c.number.value));
+            return entity;
+          } }
         />
       </ChangeDialog.Footer>
     </ChangeDialog>
   );
 }
 
-// to do later
-function ClientAndSupplierAccountsFields({ entity }: { entity: Account; })
-{
-  useSignals();
-  const { t } = useTranslation(["accounting", "common"]);
-
-  return (
-    <>
-      { entity.type.value === AccountType.Client && (
-        <FormField label={ t("accounts.parentAccount") }>
-          <AccountsSearchableSelect
-            type={ entity.type }
-            id={ entity.parentId }
-            label={ entity.parentName }
-          />
-        </FormField>
-      ) }
-    </>
-  );
-}
-
-function RequiresTaxAndBankInfo(
-  { entity, isBank, isRequiresTaxInfo }: { entity: Account; isBank: boolean; isRequiresTaxInfo: boolean; }
-)
+function BankFields({ entity }: { entity: Account; })
 {
   useSignals();
   const { t } = useTranslation(["accounting", "common"]);
   return (
-    <FieldsSection title={ isBank ? t("accounts.bankingInfo") : t("accounts.taxCommercialInfo") } columns={ 2 }>
-      { isRequiresTaxInfo && <TaxFields entity={ entity } /> }
-      { isBank && (
-        <TextField
-          label={ t("accounts.bankAccountNumber") }
-          value={ entity.bankAccountNumber || "" }
-        />
-      ) }
+    <FieldsSection title={ t("accounts.bankingInfo") } columns={ 2 }>
+      <TextField
+        label={ t("accounts.bankAccountNumber") }
+        value={ entity.bankAccountNumber || "" }
+      />
     </FieldsSection>
   );
 }
 
 function TaxFields({ entity }: { entity: Account; })
 {
-  useSignals();
   const { t } = useTranslation(["accounting", "common"]);
   return (
-    <>
+    <FieldsSection title={ t("accounts.taxCommercialInfo") } columns={ 2 }>
       <TextField
         label={ t("accounts.vatNumber") }
         value={ entity.vatNumber }
@@ -172,130 +167,102 @@ function TaxFields({ entity }: { entity: Account; })
         value={ entity.crn }
         error={ entity.getError("crn") }
       />
-    </>
+    </FieldsSection>
   );
 }
 
-function RequiresAddressAndContacts(
-  { entity, requiresAddress, requiresContacts }: {
-    entity: Account;
-    requiresAddress: boolean;
-    requiresContacts: boolean;
-  }
-)
+function ContactsFields({ entity }: { entity: Account; })
 {
   useSignals();
   const { t } = useTranslation(["accounting", "common"]);
 
   return (
-    <>
-      { (requiresAddress || requiresContacts) && (
-        <div
-          className={ `grid gap-6 ${
-            requiresAddress && requiresContacts
-              ? "grid-cols-1 md:grid-cols-2"
-              : "grid-cols-1"
-          }` }
-        >
-          { requiresAddress && (
-            <FieldsSection title={ t("accounts.addressInfo") } columns={ 1 }>
-              <div className="flex flex-col gap-1.5 w-full">
-                <label className="text-sm font-medium">{ t("accounts.city") }</label>
-                <CitiesSearchableSelect
-                  id={ entity.cityId }
-                  label={ entity.cityName }
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <TextField
-                  label={ t("accounts.district") }
-                  value={ entity.district }
-                />
-                <TextField
-                  label={ t("accounts.street") }
-                  value={ entity.street }
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <TextField
-                  label={ t("accounts.buildingNumber") }
-                  value={ entity.buildingNumber }
-                  error={ entity.getError("buildingNumber") }
-                />
-                <TextField
-                  label={ t("accounts.postalCode") }
-                  value={ entity.postalCode }
-                  error={ entity.getError("postalCode") }
-                />
-              </div>
-            </FieldsSection>
-          ) }
-
-          { requiresContacts && (
-            <FieldsSection title={ t("accounts.contactNumbers") } columns={ 1 }>
-              <div className="relative flex flex-col max-h-50 border rounded-md">
-                <div className="space-y-3 overflow-y-auto p-3 flex-1">
-                  <BuildContacts accountContacts={ entity.accountContacts } />
+    <FieldsSection title={ t("accounts.contactNumbers") } columns={ 1 }>
+      <div className="relative flex flex-col max-h-50 border rounded-md overflow-hidden">
+        <div className="space-y-3 overflow-y-auto p-3 flex-1 min-h-0">
+          { entity.accountContacts?.value.length === 0 && <TablePreviewCompact.Empty /> }
+          { entity.accountContacts?.value.length > 0
+            && entity.accountContacts?.value.map((contact, index) => (
+              <div key={ index } className="flex items-center gap-3">
+                <div className="flex-1">
+                  <Input
+                    value={ contact.number }
+                    placeholder="05xxxxxxxx"
+                  />
                 </div>
-
-                <div className="sticky bottom-0 p-3 border-t">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={ () =>
-                    {
-                      entity.accountContacts.value = [
-                        ...entity.accountContacts.value,
-                        new AccountContact({ number: "" })
-                      ];
-                    } }
-                    className="w-full border-dashed"
-                  >
-                    <Plus className="h-4 w-4 ml-2" />
-                    { t("accounts.addContact") }
-                  </Button>
-                </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="icon"
+                  onClick={ () =>
+                  {
+                    entity.accountContacts.value = entity.accountContacts.value.filter((_, i) =>
+                      i !== index
+                    );
+                  } }
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
-            </FieldsSection>
-          ) }
+            )) }
         </div>
-      ) }
-    </>
+
+        <div className="p-3 border-t bg-background shrink-0">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={ () =>
+            {
+              entity.accountContacts.value = [...entity.accountContacts.value, new AccountContact({ number: "" })];
+            } }
+            className="w-full border-dashed"
+          >
+            <Plus className="h-4 w-4 ml-2" />
+            { t("accounts.addContact") }
+          </Button>
+        </div>
+      </div>
+    </FieldsSection>
   );
 }
 
-function BuildContacts({ accountContacts }: { accountContacts: Signal<AccountContact[]>; })
+function AddressFields({ entity }: { entity: Account; })
 {
   useSignals();
+  const { t } = useTranslation(["accounting", "common"]);
 
   return (
-    <>
-      { accountContacts?.value.map((contact, index) => (
-        <div key={ index } className="flex items-center gap-3">
-          <div className="flex-1">
-            <Input
-              value={ contact.number }
-              placeholder="05xxxxxxxx"
-            />
-          </div>
-          <Button
-            type="button"
-            variant="destructive"
-            size="icon"
-            className="sticky"
-            onClick={ () =>
-            {
-              console.log(contact.number);
-
-              const newArray = accountContacts.value.filter((_, i) => i !== index);
-              accountContacts.value = newArray;
-            } }
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      )) }
-    </>
+    <FieldsSection title={ t("accounts.addressInfo") } columns={ 1 }>
+      <div className="flex flex-col gap-1.5 w-full">
+        <label className="text-sm font-medium">{ t("accounts.city") }</label>
+        <CitiesSearchableSelect
+          id={ entity.cityId }
+          label={ entity.cityName }
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <TextField
+          label={ t("accounts.district") }
+          value={ entity.district }
+        />
+        <TextField
+          label={ t("accounts.street") }
+          value={ entity.street }
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <TextField
+          label={ t("accounts.buildingNumber") }
+          value={ entity.buildingNumber }
+          error={ entity.getError("buildingNumber") }
+        />
+        <TextField
+          label={ t("accounts.postalCode") }
+          value={ entity.postalCode }
+          error={ entity.getError("postalCode") }
+        />
+      </div>
+    </FieldsSection>
   );
 }
