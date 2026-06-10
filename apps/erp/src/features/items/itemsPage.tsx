@@ -3,10 +3,9 @@ import Item from "@/core/data/item";
 import type { ItemsListReportRequest } from "@/core/data/report/itemsListReportRequest";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
-import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Package } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { CrudPage, ImagePreview, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
@@ -24,7 +23,6 @@ export default function ItemsPage()
   }
 
   const { t } = useTranslation("stocking");
-  const searchText = useMemo(() => signal<string | undefined>(""), []);
 
   useEffect(() => Cubits.items.init(), []);
 
@@ -38,12 +36,7 @@ export default function ItemsPage()
             SystemPermissionsResources.ReportItemList,
             SystemPermissionsActions.Get
           )
-          ? [
-            <ReportButton<ItemsListReportRequest>
-              reportName={ ReportConstants.ItemsList }
-              request={ { searchText: searchText.value } }
-            />
-          ]
+          ? [<ItemsReportButton />]
           : [] }
       />
 
@@ -52,7 +45,6 @@ export default function ItemsPage()
       <CrudPage.SearchInput
         onSearch={ (text) =>
         {
-          searchText.value = text;
           Cubits.items.search(text);
         } }
       />
@@ -121,21 +113,32 @@ export default function ItemsPage()
       />
     </CrudPage>
   );
+}
 
-  function Cards()
-  {
-    useSignals();
-    const { t } = useTranslation("stocking");
-    return (
-      <CrudPage.Cards
-        cards={ [{
-          title: t("items.totalItems"),
-          data: (Cubits.items.count.value ?? 0).toString(),
-          icon: <Package className="h-4 w-4 text-muted-foreground" />
-        }] }
-      />
-    );
-  }
+function ItemsReportButton()
+{
+  useSignals();
+  return (
+    <ReportButton<ItemsListReportRequest>
+      reportName={ ReportConstants.ItemsList }
+      request={ { searchText: Cubits.items.searchText.value } }
+    />
+  );
+}
+
+function Cards()
+{
+  useSignals();
+  const { t } = useTranslation("stocking");
+  return (
+    <CrudPage.Cards
+      cards={ [{
+        title: t("items.totalItems"),
+        data: (Cubits.items.count.value ?? 0).toString(),
+        icon: <Package className="h-4 w-4 text-muted-foreground" />
+      }] }
+    />
+  );
 }
 
 function PageTable()
