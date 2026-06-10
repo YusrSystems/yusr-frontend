@@ -10,7 +10,7 @@ import { BaseServices } from "../../services/baseServices";
 import { PageError, PageLoaded, PageLoading } from "../../stateManager";
 import { ChangeBranchDialog } from "./changeBranchDialog";
 
-export function BranchesPage()
+export function BranchesPage({ onUpdate }: { onUpdate?: (entity: Branch) => void; })
 {
   const { t } = useTranslation("commonEntities");
 
@@ -68,6 +68,7 @@ export function BranchesPage()
                 else if (data.mode.value === "update")
                 {
                   BaseCubits.branches.update(data);
+                  onUpdate?.(data);
                 }
               } }
             />

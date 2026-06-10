@@ -1,8 +1,9 @@
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
+import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router-dom";
 import { toast } from "sonner";
-import { Button, i18n, SidebarInset, SidebarProvider, SidebarTrigger } from "yusr-ui";
+import { Button, SidebarInset, SidebarProvider, SidebarTrigger } from "yusr-ui";
 import { SideBar } from "../features/sideBar/sideBar";
 import { AppNavigator } from "./appNavigator";
 const AppLayout = () =>
@@ -28,6 +29,10 @@ const AppLayout = () =>
 function CompleteAccountVerificationFixedItem()
 {
   useSignals();
+  const { t } = useTranslation("common");
+  const branch = Services.auth.setting!.branch!.value;
+  console.log(branch);
+
   const nextRoute = Services.auth.nextRoute;
   return (
     <Button
@@ -37,15 +42,15 @@ function CompleteAccountVerificationFixedItem()
         AppNavigator.navigate(nextRoute, true);
         if (nextRoute === "/branches")
         {
-          toast.info("قم باضافة مدينة للفرع الرئيسي, ايضا يمكنك تعديل إسم الفرع بما يناسب مؤسستك");
+          toast.info(t("accountVerification.addCityToBranch"));
         }
         else if (nextRoute === "/settings")
         {
-          toast.info("قم باضافة رقم هاتف المؤسسة");
+          toast.info(t("accountVerification.addCompanyPhone"));
         }
       } }
     >
-      { i18n.t("common:accountVerification.completeButton") }
+      { t("accountVerification.completeButton") }
     </Button>
   );
 }

@@ -44,7 +44,7 @@ export class ErpAuthService extends AuthService
 
   get isVerifiedAccount(): boolean
   {
-    return Boolean(this.setting?.companyPhone?.value && this.setting?.branch?.value);
+    return Boolean(this.setting?.companyPhone?.value && this.setting?.branch?.value.cityId);
   }
   get stepsToComplete(): number
   {
@@ -54,7 +54,7 @@ export class ErpAuthService extends AuthService
     {
       counter += 1;
     }
-    if (!Boolean(this.setting?.branch?.value))
+    if (!Boolean(this.setting?.branch?.value.cityId))
     {
       counter += 1;
     }
@@ -64,7 +64,7 @@ export class ErpAuthService extends AuthService
 
   get nextRoute(): string
   {
-    if (!Boolean(this.setting?.branch?.value))
+    if (!Boolean(this.setting?.branch?.value.cityId))
     {
       return "/branches";
     }
