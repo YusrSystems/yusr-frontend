@@ -43,7 +43,7 @@ export default function UnitsPage()
             <ChangeUnitDialog
               entity={ dto
                 ? Unit.load(dto)
-                : Unit.create({ id: 0, name: "" }) }
+                : Unit.create() }
               service={ Services.unitsApi }
               onSuccess={ (data) =>
               {

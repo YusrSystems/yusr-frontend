@@ -49,16 +49,7 @@ export function UsersPage()
             <ChangeUserDialog
               entity={ dto
                 ? User.load(dto)
-                : User.create({
-                  id: 0,
-                  username: "",
-                  password: "",
-                  isActive: true,
-                  branchId: undefined,
-                  branchName: "",
-                  roleId: undefined,
-                  roleName: ""
-                }) }
+                : User.create() }
               service={ BaseServices.usersApi }
               onSuccess={ (data) =>
               {

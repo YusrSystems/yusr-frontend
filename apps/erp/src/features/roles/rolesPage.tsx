@@ -21,12 +21,7 @@ export function ErpRolesPage()
       toEntity={ (dto) =>
         dto
           ? ErpRole.load(dto)
-          : ErpRole.create({
-            id: 0,
-            name: "",
-            permissions: [],
-            authorizedStores: []
-          }) }
+          : ErpRole.create() }
       onMount={ () => storesCubit.initFilterAll() }
       onGet={ (entity, result) =>
       {

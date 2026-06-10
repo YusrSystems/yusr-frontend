@@ -1,4 +1,4 @@
-import PricingMethodsApiServiceOld from "@/core/networking/PricingMethodsApiServiceOld";
+import PricingMethodsApiServiceOld from "@/core/networking/pricingMethodsApiServiceOld";
 import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import type PricingMethodOld from "../../data/pricingMethodOld";

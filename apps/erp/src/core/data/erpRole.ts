@@ -12,6 +12,12 @@ export class ErpRole extends Role<ErpRoleDto>
 
   constructor(dto: Partial<ErpRoleDto>, mode: ChangeableEntityMode = "create")
   {
-    super(dto, mode);
+    super({
+      id: 0,
+      name: "",
+      permissions: [],
+      authorizedStores: [],
+      ...dto
+    }, mode);
   }
 }

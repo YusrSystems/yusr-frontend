@@ -36,7 +36,7 @@ export class Store extends ChangeableEntity<StoreDto>
       validators: [Validators.required(i18n.t("stocking:stores.nameRequired"))]
     }];
 
-    super(dto, rules, mode);
+    super({ id: 0, name: "", authorized: true, ...dto }, rules, mode);
   }
 }
 

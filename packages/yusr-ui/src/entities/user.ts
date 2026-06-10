@@ -2,16 +2,16 @@ import type { Signal } from "@preact/signals-react";
 import { i18n } from "../locales";
 import { ChangeableEntity, type ChangeableEntityMode, Dto } from "../stateManager";
 import { type ValidationRule, Validators } from "../validation";
-import type { RoleDto } from "./role";
+import { RoleDto } from "./role";
 
 export class UserDto extends Dto
 {
   public username!: string;
   public password!: string;
   public isActive!: boolean;
-  public branchId!: number;
+  public branchId!: number | undefined;
   public branchName!: string;
-  public roleId!: number;
+  public roleId!: number | undefined;
   public roleName!: string;
   public role!: RoleDto;
 }
@@ -47,6 +47,21 @@ export class User extends ChangeableEntity<UserDto>
       validators: [Validators.required(i18n.t("commonEntities:users.branchRequired"))]
     }];
 
-    super(dto, rules, mode);
+    super(
+      {
+        id: 0,
+        username: "",
+        password: "",
+        isActive: true,
+        branchId: undefined,
+        branchName: "",
+        roleId: undefined,
+        roleName: "",
+        role: new RoleDto(),
+        ...dto
+      },
+      rules,
+      mode
+    );
   }
 }

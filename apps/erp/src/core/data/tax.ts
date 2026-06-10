@@ -77,6 +77,6 @@ export class Tax extends ChangeableEntity<TaxDto>
       ]
     }];
 
-    super(dto, rules, mode);
+    super({ id: 0, name: "", percentage: 1, isPrimary: false, ...dto }, rules, mode);
   }
 }

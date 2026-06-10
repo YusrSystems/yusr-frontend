@@ -18,7 +18,7 @@ export default function ItemsListDialog({ store, buttonLabel }: { store?: Store;
   const itemType = useMemo(() => signal<ItemType | undefined>(undefined), []);
   const itemClass = useMemo(() => signal<string | undefined>(undefined), []);
   const brand = useMemo(() => signal<string | undefined>(undefined), []);
-  const selectedStore = useMemo(() => signal<Store>(store ?? Store.create({ id: undefined, name: "" })), []);
+  const selectedStore = useMemo(() => signal<Store>(store ?? Store.create()), []);
 
   return (
     <>
