@@ -97,7 +97,7 @@ export function AccountsSearchableSelect(
 
   return (
     <SearchableSelect>
-      <SearchableSelect.Trigger label={ props.label } />
+      <SearchableSelect.Trigger label={ props.label } disabled={ props.disabled } />
       <SearchableSelect.Content>
         <SearchableSelect.SearchInput onSearch={ (searchInput) => cubit.search(searchInput) } />
         <SearchableSelect.Command>

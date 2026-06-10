@@ -73,6 +73,7 @@ export default function ChangeAccountDialog(
           { (entity.type.value === AccountType.Client || entity.type.value === AccountType.Supplier) && (
             <FormField label={ t("accounts.parentAccount") }>
               <AccountsSearchableSelect
+                disabled={ entity.mode.value === "update" }
                 types={ entity.type.value === AccountType.Client ? [AccountType.Client] : [AccountType.Supplier] }
                 id={ entity.parentId }
                 label={ entity.parentName }
