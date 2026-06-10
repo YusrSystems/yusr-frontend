@@ -59,6 +59,8 @@ export default function BasicTab(
                 entity.itemUnitPricingMethods.value = numericType === ItemType.Service
                   ? [
                     new ItemUnitPricingMethod({
+                      id: 0,
+                      itemId: entity.id.value,
                       unitId: serviceIds.value?.unitId,
                       pricingMethodId: serviceIds.value?.pricingMethodId,
                       unitName: t("items.service"),

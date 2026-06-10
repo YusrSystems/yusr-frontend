@@ -155,6 +155,14 @@
     "storesValidationError": "कृपया तालिका में सभी आवश्यक फ़ील्ड भरें (गोदाम, प्रारंभिक मात्रा)",
     "baseUnitRequired": "कृपया वस्तु के लिए मूल इकाई चुनें",
     "initialCostRequired": "कृपया प्रारंभिक लागत दर्ज करें",
-    "noBarcodeAssigned": "इस यूनिट मूल्य निर्धारण विधि के लिए कोई बारकोड निर्दिष्ट नहीं किया गया है"
+    "noBarcodeAssigned": "इस यूनिट मूल्य निर्धारण विधि के लिए कोई बारकोड निर्दिष्ट नहीं किया गया है",
+    "storeRequired": "गोदाम आवश्यक है",
+    "initialQuantityMin": "प्रारंभिक मात्रा 0 या अधिक होनी चाहिए",
+    "taxRequired": "कर आवश्यक है",
+    "unitRequired": "यूनिट आवश्यक है",
+    "pricingMethodRequired": "मूल्य निर्धारण विधि आवश्यक है",
+    "quantityMultiplierMin": "मात्रा गुणक 1 या अधिक होना चाहिए",
+    "unitPriceMin": "इकाई मूल्य 0 या अधिक होना चाहिए",
+    "itemUnitPricingMethodNameRequired": "मूल्य निर्धारण विधि का नाम आवश्यक है"
   }
 }

@@ -155,6 +155,14 @@
     "storesValidationError": "Please fill all required fields in the table (Store, Initial Quantity)",
     "baseUnitRequired": "Please select the base unit for the item",
     "initialCostRequired": "Please enter the initial cost",
-    "noBarcodeAssigned": "No barcode has been assigned to this unit pricing method"
+    "noBarcodeAssigned": "No barcode has been assigned to this unit pricing method",
+    "storeRequired": "Warehouse is required",
+    "initialQuantityMin": "Initial quantity must be 0 or greater",
+    "taxRequired": "Tax is required",
+    "unitRequired": "Unit is required",
+    "pricingMethodRequired": "Pricing method is required",
+    "quantityMultiplierMin": "Quantity multiplier must be 1 or greater",
+    "unitPriceMin": "Unit price must be 0 or greater",
+    "itemUnitPricingMethodNameRequired": "Pricing method name is required"
   }
 }
