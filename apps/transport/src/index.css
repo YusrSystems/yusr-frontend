@@ -1,9 +1,0 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "@fontsource/ibm-plex-sans-arabic/100.css";
-@import "@fontsource/ibm-plex-sans-arabic/400.css";
-@import "@fontsource/ibm-plex-sans-arabic/700.css";
-@import "../../../packages/yusr-ui/src/styles/style.css";
-
-@source "../../../packages/yusr-ui/src/**/*.{ts,tsx}";
