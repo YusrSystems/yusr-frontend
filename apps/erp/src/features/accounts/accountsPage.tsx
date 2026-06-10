@@ -217,7 +217,6 @@ export function AccountsPage(
       <CrudPage.ChangeDialog
         changeDialog={ (dto: AccountDto | undefined, closeDialog) =>
         {
-          console.log(dto);
           return (
             <ChangeAccountDialog
               entity={ dto

@@ -149,8 +149,6 @@ export class Validators
     const defaultMessage = message || t("validators.exactLength", { length });
     return (value) =>
     {
-      console.log(value);
-
       if (value.length !== length)
       {
         return defaultMessage;

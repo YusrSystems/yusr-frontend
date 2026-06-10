@@ -35,7 +35,6 @@ export function PhoneField({ error, required, ...props }: PhoneInputProps)
 export function PhoneInput({ value, onChange, ...props }: PhoneInputProps)
 {
   useSignals();
-  console.log(typeof value.value);
 
   const localValue: Signal<string> = useMemo(
     () =>

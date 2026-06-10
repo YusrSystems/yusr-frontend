@@ -48,7 +48,18 @@ export class AccountContact extends ValidatableEntity<AccountContactDto>
     super(dto, [{
       field: "number",
       selector: (d) => d.number,
-      validators: [Validators.exactLength(10, i18n.t("accounting:accounts.contactNumberLength"))]
+      validators: [Validators.custom(
+        (number: string) =>
+        {
+          if (number.length > 0 && number.length !== 10)
+          {
+            return false;
+          }
+
+          return true;
+        },
+        i18n.t("accounting:accounts.contactNumberLength")
+      )]
     }]);
   }
 }
@@ -76,8 +87,7 @@ export class Account extends ChangeableEntity<AccountDto>
       buildingNumber: dto?.buildingNumber,
       postalCode: dto?.postalCode,
       notes: dto?.notes,
-      accountContacts: (dto?.accountContacts ?? [{ id: 0, accountId: dto?.id ?? 0, number: "" } as AccountContactDto])
-        .map((t) => t instanceof AccountContact ? t : new AccountContact(t)) as unknown[] as AccountContactDto[]
+      accountContacts: dto?.accountContacts ?? [{ id: 0, accountId: dto?.id ?? 0, number: "" }]
     };
   }
   declare type: Signal<number>;
@@ -102,7 +112,11 @@ export class Account extends ChangeableEntity<AccountDto>
   constructor(dto: AccountDto, mode: ChangeableEntityMode = "create")
   {
     super(
-      dto,
+      {
+        ...dto,
+        accountContacts: (dto?.accountContacts ?? [{ id: 0, accountId: dto?.id ?? 0, number: "" } as AccountContactDto])
+          .map((t) => t instanceof AccountContact ? t : new AccountContact(t)) as unknown[] as AccountContactDto[]
+      },
       [{
         field: "type",
         selector: (d) => d.type,
