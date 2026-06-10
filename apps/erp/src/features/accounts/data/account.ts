@@ -72,7 +72,12 @@ export class Account extends ChangeableEntity<AccountDto>
 
   constructor(dto: AccountDto, mode: ChangeableEntityMode = "create")
   {
-    super(dto, [{
+    super({
+      ...dto,
+      accountContacts: (dto.accountContacts ?? []).map((t) =>
+        t instanceof AccountContact ? t : new AccountContact(t)
+      ) as unknown[] as AccountContactDto[]
+    }, [{
       field: "type",
       selector: (d) => d.type,
       validators: [Validators.required(i18n.t("accounting:accounts.typeRequired"))]
