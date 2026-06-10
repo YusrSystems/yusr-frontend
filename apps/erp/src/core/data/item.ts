@@ -33,6 +33,20 @@ export class ItemUnitPricingMethod extends Entity<ItemUnitPricingMethodDto>
   declare unitPrice: Signal<number>;
   declare price: Signal<number>;
   declare barcode: Signal<string | undefined>;
+
+  generateBarcode(length = 12): void
+  {
+    this.barcode.value = ItemUnitPricingMethod.generateBarcode(length);
+  }
+
+  static generateBarcode(length = 12)
+  {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    return Array.from(
+      { length },
+      () => chars[Math.floor(Math.random() * chars.length)]
+    ).join("");
+  }
 }
 
 export class ItemTaxDto extends Dto
@@ -274,13 +288,4 @@ export class BarcodeResult
   {
     Object.assign(this, init);
   }
-}
-
-export function generateBarcode(length = 12)
-{
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  return Array.from(
-    { length },
-    () => chars[Math.floor(Math.random() * chars.length)]
-  ).join("");
 }

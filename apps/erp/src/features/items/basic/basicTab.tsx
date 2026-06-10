@@ -1,5 +1,5 @@
 import type Item from "@/core/data/item";
-import { generateBarcode, ItemUnitPricingMethod } from "@/core/data/item";
+import { ItemUnitPricingMethod } from "@/core/data/item";
 import type ServiceIds from "@/core/data/serviceIds";
 import type { Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -67,7 +67,7 @@ export default function BasicTab(
                       itemUnitPricingMethodName: t("items.service"),
                       unitPrice: 0,
                       price: 0,
-                      barcode: generateBarcode()
+                      barcode: ItemUnitPricingMethod.generateBarcode()
                     })
                   ]
                   : [];
