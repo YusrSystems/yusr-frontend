@@ -1,6 +1,6 @@
 import { type TFunction } from "i18next";
 import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
-import PricingMethodsApiServiceOld from "../networking/pricingMethodsApiServiceOld";
+import PricingMethodsApiServiceOld from "../networking/ppricingMethodsApiServiceOld";
 
 export default class PricingMethodOld extends BaseEntity
 {
