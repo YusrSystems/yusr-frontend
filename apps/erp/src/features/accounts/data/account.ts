@@ -1,5 +1,5 @@
 import { type Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, City, CityDto, Dto, Entity, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, type ChangeableEntityMode, City, CityDto, Dto, i18n, ValidatableEntity, Validators } from "yusr-ui";
 
 export const AccountType = {
   Client: 1,
@@ -38,14 +38,18 @@ export class AccountDto extends Dto
   public accountContacts: AccountContactDto[] = [];
 }
 
-export class AccountContact extends Entity<AccountContactDto>
+export class AccountContact extends ValidatableEntity<AccountContactDto>
 {
   declare accountId: Signal<number>;
   declare number: Signal<string>;
 
   constructor(dto: Partial<AccountContactDto>)
   {
-    super(dto);
+    super(dto, [{
+      field: "number",
+      selector: (d) => d.number,
+      validators: [Validators.exactLength(10, i18n.t("accounting:accounts.contactNumberLength"))]
+    }]);
   }
 }
 
@@ -120,5 +124,14 @@ export class Account extends ChangeableEntity<AccountDto>
       }],
       mode
     );
+  }
+
+  override validate(dto?: Partial<AccountDto>): boolean
+  {
+    if (!super.validate(dto))
+    {
+      return false;
+    }
+    return this.accountContacts.value.every((c) => c.validate());
   }
 }

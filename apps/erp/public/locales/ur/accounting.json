@@ -52,7 +52,8 @@
     "buildingNumberLength": "عمارت نمبر چار ہندسوں پر مشتمل ہونا چاہیے",
     "buildingNumberNumeric": "عمارت نمبر صرف عددی ہونا چاہیے",
     "postalCodeLength": "پوسٹل کوڈ پانچ ہندسوں پر مشتمل ہونا چاہیے",
-    "postalCodeNumeric": "پوسٹل کوڈ صرف عددی ہونا چاہیے"
+    "postalCodeNumeric": "پوسٹل کوڈ صرف عددی ہونا چاہیے",
+    "contactNumberLength": "نمبر میں 10 ہندسے ہونے چاہئیں"
   },
   "clients": {
     "title": "گاہک اکاؤنٹس کا نظم"

@@ -6,7 +6,7 @@ import { type CommonChangeDialogProps, NumberField, TablePreviewCompact } from "
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import { AccountsSearchableSelect } from "@/core/components/searchableSelect/accountsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
-import { Button, ChangeDialog, CitiesSearchableSelect, CurrencyIcon, FieldGroup, FieldsSection, FormField, Input, SystemPermissionsActions, TextAreaField, TextField } from "yusr-ui";
+import { Button, ChangeDialog, CitiesSearchableSelect, CurrencyIcon, FieldGroup, FieldsSection, FormField, PhoneField, SystemPermissionsActions, TextAreaField, TextField } from "yusr-ui";
 import { type Account, AccountContact, type AccountDto, AccountType } from "./data/account";
 
 export default function ChangeAccountDialog(
@@ -185,9 +185,10 @@ function ContactsFields({ entity }: { entity: Account; })
             && entity.accountContacts?.value.map((contact, index) => (
               <div key={ index } className="flex items-center gap-3">
                 <div className="flex-1">
-                  <Input
+                  <PhoneField
                     value={ contact.number }
                     placeholder="05xxxxxxxx"
+                    error={ contact.getError("number") }
                   />
                 </div>
                 <Button
