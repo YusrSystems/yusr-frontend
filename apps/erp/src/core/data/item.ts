@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, Dto, Entity, i18n, type StorageFile, Validators } from "yusr-ui";
+import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, type StorageFile, ValidatableEntity, Validators } from "yusr-ui";
 
 export const ItemType = {
   Product: 1,
@@ -10,10 +10,10 @@ export type ItemType = (typeof ItemType)[keyof typeof ItemType];
 export class ItemUnitPricingMethodDto extends Dto
 {
   public itemId!: number;
-  public unitId!: number;
-  public itemUnitPricingMethodName!: string;
+  public unitId!: number | undefined;
+  public itemUnitPricingMethodName!: string | undefined;
   public unitName?: string;
-  public pricingMethodId!: number;
+  public pricingMethodId!: number | undefined;
   public pricingMethodName?: string;
   public quantityMultiplier!: number;
   public unitPrice!: number;
@@ -21,7 +21,7 @@ export class ItemUnitPricingMethodDto extends Dto
   public barcode?: string;
 }
 
-export class ItemUnitPricingMethod extends Entity<ItemUnitPricingMethodDto>
+export class ItemUnitPricingMethod extends ValidatableEntity<ItemUnitPricingMethodDto>
 {
   declare itemId: Signal<number>;
   declare unitId: Signal<number>;
@@ -33,6 +33,31 @@ export class ItemUnitPricingMethod extends Entity<ItemUnitPricingMethodDto>
   declare unitPrice: Signal<number>;
   declare price: Signal<number>;
   declare barcode: Signal<string | undefined>;
+
+  constructor(dto: ItemUnitPricingMethodDto)
+  {
+    super(dto, [{
+      field: "unitId",
+      selector: (d) => d.unitId,
+      validators: [Validators.required(i18n.t("stocking:items.unitRequired"))]
+    }, {
+      field: "pricingMethodId",
+      selector: (d) => d.pricingMethodId,
+      validators: [Validators.required(i18n.t("stocking:items.pricingMethodRequired"))]
+    }, {
+      field: "quantityMultiplier",
+      selector: (d) => d.quantityMultiplier,
+      validators: [Validators.min(1, i18n.t("stocking:items.quantityMultiplierMin"))]
+    }, {
+      field: "unitPrice",
+      selector: (d) => d.unitPrice,
+      validators: [Validators.min(0, i18n.t("stocking:items.unitPriceMin"))]
+    }, {
+      field: "itemUnitPricingMethodName",
+      selector: (d) => d.itemUnitPricingMethodName,
+      validators: [Validators.required(i18n.t("stocking:items.itemUnitPricingMethodNameRequired"))]
+    }]);
+  }
 
   generateBarcode(length = 12): void
   {
@@ -52,35 +77,57 @@ export class ItemUnitPricingMethod extends Entity<ItemUnitPricingMethodDto>
 export class ItemTaxDto extends Dto
 {
   public itemId!: number;
-  public taxId!: number;
+  public taxId!: number | undefined;
   public taxName?: string;
   public taxPercentage!: number;
 }
 
-export class ItemTax extends Entity<ItemTaxDto>
+export class ItemTax extends ValidatableEntity<ItemTaxDto>
 {
   declare itemId: Signal<number>;
   declare taxId: Signal<number>;
   declare taxName: Signal<string | undefined>;
   declare taxPercentage: Signal<number | undefined>;
+
+  constructor(dto: ItemTaxDto)
+  {
+    super(dto, [{
+      field: "taxId",
+      selector: (d) => d.taxId,
+      validators: [Validators.required(i18n.t("stocking:items.taxRequired"))]
+    }]);
+  }
 }
 
 export class ItemStoreDto extends Dto
 {
   public itemId!: number;
-  public storeId!: number;
+  public storeId!: number | undefined;
   public storeName?: string;
   public initialQuantity!: number;
   public quantity!: number;
 }
 
-export class ItemStore extends Entity<ItemStoreDto>
+export class ItemStore extends ValidatableEntity<ItemStoreDto>
 {
   declare itemId: Signal<number>;
   declare storeId: Signal<number>;
   declare storeName: Signal<string | undefined>;
   declare initialQuantity: Signal<number>;
   declare quantity: Signal<number>;
+
+  constructor(dto: ItemStoreDto)
+  {
+    super(dto, [{
+      field: "storeId",
+      selector: (d) => d.storeId,
+      validators: [Validators.required(i18n.t("stocking:items.storeRequired"))]
+    }, {
+      field: "initialQuantity",
+      selector: (d) => d.initialQuantity,
+      validators: [Validators.min(0, i18n.t("stocking:items.initialQuantityMin"))]
+    }]);
+  }
 }
 
 export class ItemDto extends Dto
@@ -199,42 +246,7 @@ export default class Item extends ChangeableEntity<ItemDto>
     }, {
       field: "itemUnitPricingMethods",
       selector: (d) => d.itemUnitPricingMethods,
-      validators: [
-        Validators.arrayMinLength(1, i18n.t("stocking:items.pricingMethodsRequired")),
-        Validators.custom(
-          (methods: ItemUnitPricingMethodDto[]) =>
-          {
-            if (!methods || methods.length === 0)
-            {
-              return true;
-            }
-
-            for (let i = 0; i < methods.length; i++)
-            {
-              const m = methods[i];
-              if (!m.unitId)
-              {
-                return false;
-              }
-              if (!m.pricingMethodId)
-              {
-                return false;
-              }
-
-              if (m.quantityMultiplier == undefined || m.quantityMultiplier <= 0)
-              {
-                return false;
-              }
-              if (m.price == undefined || m.price < 0)
-              {
-                return false;
-              }
-            }
-            return true;
-          },
-          i18n.t("stocking:items.pricingMethodsValidationError")
-        )
-      ]
+      validators: [Validators.arrayMinLength(1, i18n.t("stocking:items.pricingMethodsRequired"))]
     }, {
       field: "itemStores",
       selector: (d) => d.itemStores,
@@ -249,15 +261,6 @@ export default class Item extends ChangeableEntity<ItemDto>
           if (stores.length <= 0)
           {
             return false;
-          }
-
-          for (let i = 0; i < stores.length; i++)
-          {
-            const s = stores[i];
-            if (!s.storeId || s.initialQuantity == undefined || s.initialQuantity < 0)
-            {
-              return false;
-            }
           }
 
           return true;
@@ -276,6 +279,15 @@ export default class Item extends ChangeableEntity<ItemDto>
       selector: (d) => d.initialCost,
       validators: [Validators.required(i18n.t("stocking:items.initialCostRequired"))]
     }], mode);
+  }
+
+  override validate(dto?: Partial<ItemDto>): boolean
+  {
+    const itemResult = super.validate(dto);
+    const taxesResult = this.itemTaxes.value.every((t) => t.validate());
+    const iupmResult = this.itemUnitPricingMethods.value.every((m) => m.validate());
+    const storesResult = this.itemStores.value.every((s) => s.validate());
+    return itemResult && taxesResult && iupmResult && storesResult;
   }
 }
 

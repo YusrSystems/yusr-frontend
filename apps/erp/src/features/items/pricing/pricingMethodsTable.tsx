@@ -21,6 +21,7 @@ export default function PricingMethodsTable({ entity }: { entity: Item; })
   const addPricingMethod = () =>
   {
     const newItem = new ItemUnitPricingMethod({
+      id: 0,
       itemId: entity.id.value,
       unitId: undefined,
       itemUnitPricingMethodName: undefined,
@@ -29,9 +30,9 @@ export default function PricingMethodsTable({ entity }: { entity: Item; })
       pricingMethodName: undefined,
       quantityMultiplier: 1,
       unitPrice: 0,
-      price: 0
+      price: 0,
+      barcode: ItemUnitPricingMethod.generateBarcode()
     });
-    newItem.generateBarcode();
     entity.itemUnitPricingMethods.value = [...entity.itemUnitPricingMethods.value, newItem];
   };
 
@@ -85,7 +86,7 @@ export default function PricingMethodsTable({ entity }: { entity: Item; })
                   <td className="p-3">
                     <FormField
                       label=""
-                      error={ method.unitId.value == undefined ? errorMessage : undefined }
+                      error={ method.getError("unitId") }
                     >
                       <UnitsSearchableSelect
                         id={ method.unitId }
@@ -106,7 +107,7 @@ export default function PricingMethodsTable({ entity }: { entity: Item; })
                   <td className="p-3">
                     <FormField
                       label=""
-                      error={ method.pricingMethodId.value == undefined ? errorMessage : undefined }
+                      error={ method.getError("pricingMethodId") }
                     >
                       <PricingMethodsSearchableSelect
                         id={ entity.itemUnitPricingMethods?.value[index].pricingMethodId }
@@ -126,7 +127,7 @@ export default function PricingMethodsTable({ entity }: { entity: Item; })
                       min={ 1 }
                       disabled={ method.unitId.value === entity.sellUnitId.value }
                       value={ method.quantityMultiplier }
-                      error={ method.quantityMultiplier.value < 1 ? errorMessage : undefined }
+                      error={ method.getError("quantityMultiplier") }
                       onChange={ () => entity.clearError("itemUnitPricingMethods") }
                     />
                   </td>
@@ -143,7 +144,7 @@ export default function PricingMethodsTable({ entity }: { entity: Item; })
                           : 1;
                         method.price.value = val ? val * multiplier : 0;
                       } }
-                      error={ errorMessage }
+                      error={ method.getError("unitPrice") }
                       currency={ <CurrencyIcon /> }
                     />
                   </td>
@@ -161,6 +162,7 @@ export default function PricingMethodsTable({ entity }: { entity: Item; })
                     <TextField
                       label=""
                       value={ method.itemUnitPricingMethodName }
+                      error={ method.getError("itemUnitPricingMethodName") }
                     />
                   </td>
 

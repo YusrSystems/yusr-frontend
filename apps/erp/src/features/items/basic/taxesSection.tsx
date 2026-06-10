@@ -6,7 +6,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, CheckboxField, TextField } from "yusr-ui";
+import { Button, CheckboxField, FormField, TextField } from "yusr-ui";
 import { Tax } from "../../../core/data/tax";
 
 export default function TaxesSection({ entity }: { entity: Item; })
@@ -31,6 +31,7 @@ export default function TaxesSection({ entity }: { entity: Item; })
         .filter((t: Tax) => t.isPrimary)
         .map((t: Tax) =>
           new ItemTax({
+            id: 0,
             itemId: entity.id.value,
             taxId: t.id.value,
             taxName: t.name.value,
@@ -52,7 +53,7 @@ export default function TaxesSection({ entity }: { entity: Item; })
   {
     entity.itemTaxes.value = [
       ...entity.itemTaxes.value,
-      new ItemTax({ itemId: entity.id.value, taxId: undefined, taxName: "", taxPercentage: 0 })
+      new ItemTax({ id: 0, itemId: entity.id.value, taxId: undefined, taxName: "", taxPercentage: 0 })
     ];
   };
 
@@ -107,14 +108,19 @@ export default function TaxesSection({ entity }: { entity: Item; })
                       <tr key={ index } className="border-t border-muted">
                         <td className="p-3 font-bold">{ index + 1 }</td>
                         <td className="p-3">
-                          <TaxesSearchableSelect
-                            id={ tax.taxId }
-                            label={ tax.taxName }
-                            onSelect={ (selectedTax) =>
-                            {
-                              tax.taxPercentage.value = selectedTax?.percentage.value;
-                            } }
-                          />
+                          <FormField
+                            label=""
+                            error={ tax.getError("taxId") }
+                          >
+                            <TaxesSearchableSelect
+                              id={ tax.taxId }
+                              label={ tax.taxName }
+                              onSelect={ (selectedTax) =>
+                              {
+                                tax.taxPercentage.value = selectedTax?.percentage.value;
+                              } }
+                            />
+                          </FormField>
                         </td>
                         <td className="p-3">
                           <TextField

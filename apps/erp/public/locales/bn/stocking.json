@@ -155,6 +155,14 @@
     "storesValidationError": "অনুগ্রহ করে টেবিলে সবগুলো প্রয়োজনীয় ফিল্ড পূরণ করুন (গুদাম, প্রাথমিক পরিমাণ)",
     "baseUnitRequired": "অনুগ্রহ করে আইটেমের জন্য মূল ইউনিট নির্বাচন করুন",
     "initialCostRequired": "অনুগ্রহ করে প্রাথমিক খরচ লিখুন",
-    "noBarcodeAssigned": "এই ইউনিট মূল্য নির্ধারণ পদ্ধতিতে কোনো বারকোড বরাদ্দ করা হয়নি"
+    "noBarcodeAssigned": "এই ইউনিট মূল্য নির্ধারণ পদ্ধতিতে কোনো বারকোড বরাদ্দ করা হয়নি",
+    "storeRequired": "গুদাম প্রয়োজন",
+    "initialQuantityMin": "প্রাথমিক পরিমাণ 0 বা তার বেশি হতে হবে",
+    "taxRequired": "ট্যাক্স প্রয়োজন",
+    "unitRequired": "ইউনিট প্রয়োজন",
+    "pricingMethodRequired": "মূল্য নির্ধারণ পদ্ধতি প্রয়োজন",
+    "quantityMultiplierMin": "পরিমাণ গুণক 1 বা তার বেশি হতে হবে",
+    "unitPriceMin": "ইউনিট মূল্য 0 বা তার বেশি হতে হবে",
+    "itemUnitPricingMethodNameRequired": "মূল্য নির্ধারণ পদ্ধতির নাম প্রয়োজন"
   }
 }

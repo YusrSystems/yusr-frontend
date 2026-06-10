@@ -155,6 +155,14 @@
     "storesValidationError": "براہ کرم ٹیبل میں تمام مطلوبہ فیلڈز پُر کریں (گودام، ابتدائی مقدار)",
     "baseUnitRequired": "براہ کرم آئٹم کے لیے بنیادی یونٹ منتخب کریں",
     "initialCostRequired": "براہ کرم ابتدائی لاگت درج کریں",
-    "noBarcodeAssigned": "اس یونٹ قیمت کے طریقہ کار کے لیے کوئی بارکوڈ تفویض نہیں کیا گیا ہے"
+    "noBarcodeAssigned": "اس یونٹ قیمت کے طریقہ کار کے لیے کوئی بارکوڈ تفویض نہیں کیا گیا ہے",
+    "storeRequired": "گودام درکار ہے",
+    "initialQuantityMin": "ابتدائی مقدار 0 یا اس سے زیادہ ہونی چاہیے",
+    "taxRequired": "ٹیکس درکار ہے",
+    "unitRequired": "یونٹ درکار ہے",
+    "pricingMethodRequired": "قیمت کا طریقہ درکار ہے",
+    "quantityMultiplierMin": "مقدار ضریب 1 یا اس سے زیادہ ہونا چاہیے",
+    "unitPriceMin": "یونٹ قیمت 0 یا اس سے زیادہ ہونی چاہیے",
+    "itemUnitPricingMethodNameRequired": "قیمت کے طریقہ کار کا نام درکار ہے"
   }
 }

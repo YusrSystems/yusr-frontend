@@ -14,7 +14,14 @@ export default function StorageTab({ entity }: { entity: Item; })
   const addStore = () =>
     entity.itemStores.value = [
       ...entity.itemStores.value,
-      new ItemStore({ itemId: entity.id.value, storeId: undefined, storeName: "", quantity: 0, initialQuantity: 0 })
+      new ItemStore({
+        id: 0,
+        itemId: entity.id.value,
+        storeId: undefined,
+        storeName: "",
+        quantity: 0,
+        initialQuantity: 0
+      })
     ];
   const removeStore = (index: number) =>
   {
@@ -88,7 +95,7 @@ export default function StorageTab({ entity }: { entity: Item; })
                   <td className="p-3">
                     <FormField
                       label=""
-                      error={ store.storeId.value == undefined ? errorMessage : undefined }
+                      error={ store.getError("storeId") }
                     >
                       <StoresSearchableSelect
                         id={ store.storeId }
@@ -103,7 +110,7 @@ export default function StorageTab({ entity }: { entity: Item; })
                       min={ 0 }
                       value={ store.initialQuantity }
                       disabled={ entity.mode.value === "update" }
-                      error={ store.initialQuantity.value < 0 ? errorMessage : undefined }
+                      error={ store.getError("initialQuantity") }
                       onChange={ () =>
                       {
                         entity.clearError("itemStores");
