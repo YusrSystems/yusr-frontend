@@ -1,7 +1,7 @@
 import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
 import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
 import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
-import type Account from "@/core/data/account";
+import type AccountOld from "@/core/data/account";
 import { InvoiceType } from "@/core/data/invoice";
 import type Item from "@/core/data/item";
 import type StoreOld from "@/core/data/store";
@@ -23,7 +23,7 @@ export default function InvoicesListDialog()
     return date;
   });
   const [toDate, setToDate] = useState<Date>(new Date());
-  const [account, setAccount] = useState<Account | undefined>(undefined);
+  const [account, setAccount] = useState<AccountOld | undefined>(undefined);
   const [store, setStore] = useState<StoreOld | undefined>(undefined);
   const [items, setItems] = useState<Item[]>([]);
 

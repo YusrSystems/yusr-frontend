@@ -1,5 +1,5 @@
-import type { ValidationRule } from "../validation";
 import { Signal, signal } from "@preact/signals-react";
+import type { ValidationRule } from "../validation";
 import type { Dto } from "./dto";
 import { ValidatableEntity } from "./validatableEntity";
 
@@ -8,9 +8,9 @@ export type ChangeableEntityMode = "create" | "update";
 export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEntity<TDto>
 {
   public readonly mode: Signal<ChangeableEntityMode>;
-
+  public abstract initialValue(dto?: Partial<TDto>): TDto;
   protected constructor(
-    dto: Partial<TDto>,
+    dto: TDto,
     validationRules: ValidationRule<Partial<TDto>>[],
     mode: ChangeableEntityMode = "create"
   )
@@ -20,16 +20,16 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
   }
 
   static create<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
-    this: new(dto: Partial<TDto>, mode: ChangeableEntityMode) => TEntity,
-    dto: Partial<TDto> = {}
+    this: new(dto: TDto, mode: ChangeableEntityMode) => TEntity,
+    dto?: Partial<TDto>
   ): TEntity
   {
-    return new this(dto, "create");
+    return new this(this.prototype.initialValue(dto), "create");
   }
 
   static load<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
-    this: new(dto: Partial<TDto>, mode: ChangeableEntityMode) => TEntity,
-    dto: Partial<TDto>
+    this: new(dto: TDto, mode: ChangeableEntityMode) => TEntity,
+    dto: TDto
   ): TEntity
   {
     return new this(dto, "update");

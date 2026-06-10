@@ -1,7 +1,7 @@
 import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
 import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
 import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
-import type Account from "@/core/data/account";
+import type AccountOld from "@/core/data/account";
 import type Item from "@/core/data/item";
 import type StoreOld from "@/core/data/store";
 import { useState } from "react";
@@ -20,8 +20,8 @@ export default function ItemsMovementDialog()
   const [item, setItem] = useState<Item | undefined>(undefined);
   const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
   const [toDate, setToDate] = useState<Date | undefined>(undefined);
-  const [fromAccount, setFromAccount] = useState<Account | undefined>(undefined);
-  const [toAccount, setToAccount] = useState<Account | undefined>(undefined);
+  const [fromAccount, setFromAccount] = useState<AccountOld | undefined>(undefined);
+  const [toAccount, setToAccount] = useState<AccountOld | undefined>(undefined);
   const [fromStore, setFromStore] = useState<StoreOld | undefined>(undefined);
   const [toStore, setToStore] = useState<StoreOld | undefined>(undefined);
   const [groupOption, setGroupOption] = useState<ItemsMovementReportGroupOption | undefined>(undefined);

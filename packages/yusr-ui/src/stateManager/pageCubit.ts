@@ -25,11 +25,22 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
     this.count = signal(0);
   }
 
-  private async _filter()
+  private async _filter(types?: number[])
   {
     this.emit(new PageLoading());
 
-    const result = await this._service.Filter(this.currentPage.value, this.pageSize.value, this.searchText.value);
+    let result;
+    if (Boolean(types))
+    {
+      result = await this._service.Filter(this.currentPage.value, this.pageSize.value, this.searchText.value, {
+        types: types ?? [],
+        searchText: this.searchText.value
+      });
+    }
+    else
+    {
+      result = await this._service.Filter(this.currentPage.value, this.pageSize.value, this.searchText.value);
+    }
 
     if (!result.data?.length)
     {
@@ -44,11 +55,11 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
     this.emit(new PageLoaded());
   }
 
-  init()
+  init(types?: number[])
   {
     this.searchText.value = undefined;
     this.currentPage.value = 1;
-    this._filter();
+    this._filter(types);
   }
 
   changePage(pageNumber: number)

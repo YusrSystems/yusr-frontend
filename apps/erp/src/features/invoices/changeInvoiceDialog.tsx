@@ -1,10 +1,11 @@
+import { StoreSlice } from "@/core/data/storeSlice";
 import { BanknoteArrowUp, Box, CheckCircle2, FolderKanban, Siren } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import type { CommonChangeDialogPropsOld, DialogMode, IEntityState } from "yusr-ui";
 import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, StorageType, useFormErrors, useFormInit, useStorageFile, useValidate } from "yusr-ui";
-import Account, { type AccountSliceType } from "../../core/data/account";
+import AccountOld, { type AccountSliceType } from "../../core/data/account";
 import type Invoice from "../../core/data/invoice";
 import { InvoiceRelationType, InvoiceSlice, InvoiceStatus, InvoiceType, InvoiceValidationRules } from "../../core/data/invoice";
 import { ItemType } from "../../core/data/item";
@@ -19,7 +20,6 @@ import InvoiceBasicTab from "./presentation/basic/invoiceBasicTab";
 import InvoiceCostsTab from "./presentation/costs/invoiceCostsTab";
 import InvoiceFilesTab from "./presentation/files/invoiceFilesTab";
 import InvoicePolicyTab from "./presentation/policy/invoicePolicyTab";
-import { StoreSlice } from "@/core/data/storeSlice";
 
 export type InvoiceSliceType = ReturnType<typeof InvoiceSlice.create>;
 export type InvoiceDialogMode = DialogMode | "return" | "copy" | "quotationToSales";
@@ -42,7 +42,7 @@ export default function ChangeInvoiceDialog({
   fixedType?: InvoiceType;
   selectFormState: (state: any) => { formData: Partial<Invoice>; errors: Record<string, string>; };
   accountSlice: AccountSliceType;
-  accountState: IEntityState<Account>;
+  accountState: IEntityState<AccountOld>;
 })
 {
   const { t, i18n } = useTranslation("accounting");

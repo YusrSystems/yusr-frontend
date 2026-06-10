@@ -1,4 +1,5 @@
 import { BaseServices } from "yusr-ui";
+import AccountApiService from "../networking/accountApiService";
 import { ErpRoleApiService } from "../networking/erpRoleApiService";
 import PricingMethodsApiService from "../networking/PricingMethodsApiService";
 import { StoresApiService } from "../networking/storeApiService";
@@ -15,6 +16,7 @@ export class Services extends BaseServices
   public static unitsApi = new UnitsApiService();
   public static pricingMethodsApi = new PricingMethodsApiService();
 
+  public static accountsApi = new AccountApiService();
   static
   {
     BaseServices.auth = Services.auth;

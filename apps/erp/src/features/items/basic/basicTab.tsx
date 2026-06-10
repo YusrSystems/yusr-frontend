@@ -1,6 +1,6 @@
 import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { type DialogMode, SelectFieldOld, StorageFileField, StorageType, TextAreaField, TextFieldOld, useFormErrors, useStorageFile } from "yusr-ui";
+import { type DialogMode, SelectFieldOld, StorageFileField, StorageType, TextAreaFieldOld, TextFieldOld, useFormErrors, useStorageFile } from "yusr-ui";
 import Item, { ItemSlice, ItemType, ItemUnitPricingMethod } from "../../../core/data/item";
 import { useAppDispatch, useAppSelector } from "../../../core/state/store";
 import TaxesSection from "./taxesSection";
@@ -94,14 +94,14 @@ export default function BasicTab({ mode }: { mode: DialogMode; })
             />
           </div>
 
-          <TextAreaField
+          <TextAreaFieldOld
             label={ t("items.description") }
             value={ formData.description || "" }
             onChange={ (e) => dispatch(ItemSlice.formActions.updateFormData({ description: e.target.value })) }
             rows={ 2 }
           />
 
-          <TextAreaField
+          <TextAreaFieldOld
             label={ t("items.notes") }
             value={ formData.notes || "" }
             onChange={ (e) => dispatch(ItemSlice.formActions.updateFormData({ notes: e.target.value })) }

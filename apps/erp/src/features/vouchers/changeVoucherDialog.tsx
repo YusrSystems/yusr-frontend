@@ -3,7 +3,7 @@ import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld } from "yusr-ui";
-import { ChangeDialogOld, CheckboxField, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberFieldOld, NumbertoWordsService, SelectFieldOld, TextAreaField, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
+import { ChangeDialogOld, CheckboxField, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberFieldOld, NumbertoWordsService, SelectFieldOld, TextAreaFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
 import PaymentMethod, { CommissionType, PaymentMethodSlice } from "../../core/data/paymentMethod";
 import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
@@ -243,7 +243,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
           ) }
 
           <FieldsSection columns={ 1 }>
-            <TextAreaField
+            <TextAreaFieldOld
               label={ t("vouchers.description") }
               value={ formData.description || "" }
               onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ description: e.target.value })) }

@@ -1,10 +1,10 @@
 import ClientsSearchableSelect from "@/core/components/searchableSelect/clientsSearchableSelect";
 import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
-import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
+import SuppliersSearchableSelectOld from "@/core/components/searchableSelect/suppliersSearchableSelect";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Checkbox, DateField, FieldsSection, FormFieldOld, SelectFieldOld, TextFieldOld } from "yusr-ui";
-import Account from "../../../../core/data/account";
+import AccountOld from "../../../../core/data/account";
 import { ImportExportType, InvoiceType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
@@ -21,7 +21,7 @@ export default function InvoiceBasicInfo()
     dispatch,
     accountState
   } = useInvoiceContext();
-  let selectedAccount: Account | undefined = accountState.entities?.data?.find((account) =>
+  let selectedAccount: AccountOld | undefined = accountState.entities?.data?.find((account) =>
     account.id === formData.actionAccountId
   );
 
@@ -128,7 +128,7 @@ export default function InvoiceBasicInfo()
         error={ getError("actionAccountId") }
       >
         { isPurchaseInvoice() && (
-          <SuppliersSearchableSelect
+          <SuppliersSearchableSelectOld
             selectedId={ formData.actionAccountId }
             selectedLabel={ formData.actionAccountName }
             isInvalid={ isInvalid("actionAccountId") }

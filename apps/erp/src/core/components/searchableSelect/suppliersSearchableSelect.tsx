@@ -1,13 +1,13 @@
-import Account, { AccountType, SuppliersSlice } from "@/core/data/account";
+import AccountOld, { AccountType, SuppliersSlice } from "@/core/data/account";
 import type { BasicSearchableSelectParamsOld } from "yusr-ui";
-import AccountsSearchableSelect from "./accountsSearchableSelect";
+import AccountsSearchableSelectOld from "./accountsSearchableSelect";
 
-export default function SuppliersSearchableSelect(
-  { ...props }: BasicSearchableSelectParamsOld<Account>
+export default function SuppliersSearchableSelectOld(
+  { ...props }: BasicSearchableSelectParamsOld<AccountOld>
 )
 {
   return (
-    <AccountsSearchableSelect
+    <AccountsSearchableSelectOld
       slice={ SuppliersSlice }
       selectEntityState={ (state) => state.suppliers }
       selectFormState={ (state) => state.suppliersForm }
@@ -16,3 +16,16 @@ export default function SuppliersSearchableSelect(
     />
   );
 }
+
+// export function SuppliersSearchableSelect(
+//   { ...props }: BasicSearchableSelectParamsOld<Account>
+// )
+// {
+//   return (
+//     <AccountsSearchableSelect
+//     id={}
+
+//       { ...props }
+//     />
+//   );
+// }

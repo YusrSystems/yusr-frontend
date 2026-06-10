@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button, ContextMenuItem, CrudPageOld, CurrencyIcon, DropdownMenuItem, type IDialogState, type IEntityState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, type TableBodyRowInfo, Tooltip, TooltipContent, TooltipTrigger } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import type Account from "../../core/data/account";
+import type AccountOld from "../../core/data/account";
 import type { AccountSliceType } from "../../core/data/account";
 import Invoice, { EInvoiceStatus, InvoiceSlice, InvoiceStatus, InvoiceType } from "../../core/data/invoice";
 import { InvoicesListReportRequest, InvoicesListReportType } from "../../core/data/report/invoicesListReportType";
@@ -42,7 +42,7 @@ export default function InvoicesPage({
   fixedType?: InvoiceType;
   selectFormState: (state: any) => { formData: Partial<Invoice>; errors: Record<string, string>; };
   accountSlice: AccountSliceType;
-  accountState: IEntityState<Account>;
+  accountState: IEntityState<AccountOld>;
   hasPagePermission: boolean;
   basePath?: string;
 })

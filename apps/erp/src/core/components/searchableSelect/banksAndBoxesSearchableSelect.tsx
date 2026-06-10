@@ -3,7 +3,7 @@ import Account, { AccountType, BanksAndBoxesSlice } from "@/core/data/account";
 import { useAppSelector } from "@/core/state/store";
 import { useTranslation } from "react-i18next";
 import { type BasicSearchableSelectParamsOld, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
-import AccountsSearchableSelect from "./accountsSearchableSelect";
+import AccountsSearchableSelectOld from "./accountsSearchableSelect";
 
 export default function BanksAndBoxesSearchableSelect(
   { ...props }: BasicSearchableSelectParamsOld<Account> & { items?: Account[]; }
@@ -25,7 +25,7 @@ export default function BanksAndBoxesSearchableSelect(
   );
 
   return (
-    <AccountsSearchableSelect
+    <AccountsSearchableSelectOld
       slice={ BanksAndBoxesSlice }
       selectEntityState={ (state) => state.banksAndBoxes }
       selectFormState={ (state) => state.banksAndBoxesForm }

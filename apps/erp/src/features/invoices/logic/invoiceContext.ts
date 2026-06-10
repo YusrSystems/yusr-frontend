@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import type { ThunkDispatch } from "redux-thunk";
 import type { AuthState, IEntityState, UserOld } from "yusr-ui";
-import type Account from "../../../core/data/account";
+import type AccountOld from "../../../core/data/account";
 import type { AccountSliceType } from "../../../core/data/account";
 import type Invoice from "../../../core/data/invoice";
 import type { SettingOld } from "../../../core/data/settingOld";
@@ -17,7 +17,7 @@ export type InvoiceContextType = {
   authState: AuthState<UserOld, SettingOld>;
   dispatch: ThunkDispatch<any, any, any>;
   disabled: boolean;
-  accountState: IEntityState<Account>;
+  accountState: IEntityState<AccountOld>;
   accountSlice: AccountSliceType;
 };
 export const InvoiceContext = createContext<InvoiceContextType | undefined>(

@@ -1,19 +1,29 @@
-import { ApiConstants, type ApiFilterResult, BaseApiServiceOld, FilterByTypeRequest, type RequestResult, YusrApiHelper } from "yusr-ui";
-import type Account from "../data/account";
+import { Account, type AccountDto } from "@/features/accounts/data/account";
+import { ApiConstants, type ApiFilterResult, BaseApiService, FilterByTypeRequest, type FilterResult, YusrApiHelper } from "yusr-ui";
 
-export default class AccountsApiService extends BaseApiServiceOld<Account>
+export default class AccountApiService extends BaseApiService<Account, AccountDto>
 {
   routeName: string = "Accounts";
+
+  override createEntity(dto: AccountDto): Account
+  {
+    return new Account(dto);
+  }
 
   async FilterByTypes(
     pageNumber: number,
     rowsPerPage: number,
-    request: FilterByTypeRequest<Account>
-  ): Promise<RequestResult<ApiFilterResult<Account>>>
+    request: FilterByTypeRequest
+  ): Promise<FilterResult<Account, AccountDto>>
   {
-    return await YusrApiHelper.Post(
+    const res = await YusrApiHelper.Post<ApiFilterResult<AccountDto>>(
       `${ApiConstants.baseUrl}/${this.routeName}/FilterByTypes?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
       request
     );
+
+    return {
+      data: res?.data?.data?.map((dto: AccountDto) => this.createEntity(dto)) ?? [],
+      count: res?.data?.count ?? 0
+    };
   }
 }

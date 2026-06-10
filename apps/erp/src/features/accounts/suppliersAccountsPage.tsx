@@ -1,17 +1,18 @@
+import { Services } from "@/core/services/services";
 import { useTranslation } from "react-i18next";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import { AccountType, SuppliersSlice } from "../../core/data/account";
 import { useAppSelector } from "../../core/state/store";
-import AccountsPage from "./accountsPage";
+import AccountsPageOld, { AccountsPage } from "./accountsPage";
 
-export default function SuppliersAccountsPage()
+export default function SuppliersAccountsPageOld()
 {
   const { t } = useTranslation("accounting");
   const authState = useAppSelector((state) => state.auth);
 
   return (
-    <AccountsPage
+    <AccountsPageOld
       title={ t("suppliers.title") }
       slice={ SuppliersSlice }
       fixedType={ AccountType.Supplier }
@@ -24,6 +25,27 @@ export default function SuppliersAccountsPage()
         SystemPermissionsActions.Get
       ) && SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
+        SystemPermissionsResources.Accounts,
+        SystemPermissionsActions.Get
+      ) }
+    />
+  );
+}
+
+export function SuppliersAccountsPage()
+{
+  const { t } = useTranslation("accounting");
+
+  return (
+    <AccountsPage
+      title={ t("suppliers.title") }
+      fixedType={ AccountType.Supplier }
+      hasPagePermission={ SystemPermissions.hasAuth(
+        Services.auth.loggedInUser?.role?.value.permissions ?? [],
+        SystemPermissionsResources.AccountSupplier,
+        SystemPermissionsActions.Get
+      ) && SystemPermissions.hasAuth(
+        Services.auth.loggedInUser?.role?.value.permissions ?? [],
         SystemPermissionsResources.Accounts,
         SystemPermissionsActions.Get
       ) }

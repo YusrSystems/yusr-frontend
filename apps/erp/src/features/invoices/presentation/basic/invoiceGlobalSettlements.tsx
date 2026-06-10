@@ -1,7 +1,7 @@
 // InvoiceGlobalSettlements.tsx
 
 import { useTranslation } from "react-i18next";
-import { FieldsSection, NumberFieldOld, TextAreaField } from "yusr-ui";
+import { FieldsSection, NumberFieldOld, TextAreaFieldOld } from "yusr-ui";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function InvoiceGlobalSettlements()
@@ -54,7 +54,7 @@ export default function InvoiceGlobalSettlements()
           />
         </FieldsSection>
 
-        <TextAreaField
+        <TextAreaFieldOld
           label={ t("invoices.settlementReason") }
           value={ formData.settlementReason }
           onChange={ (e) =>
