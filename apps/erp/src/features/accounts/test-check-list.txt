@@ -1,9 +1,10 @@
+# Last test date: 6/10/2026 at 6:05 PM
 Page:
-- authroization works well, for all CRUD
-- data loaded success from backend
-- search is working 
-- pagination working  
-- context menu works well
+- authroization works well, for all CRUD ✅
+- data loaded success from backend ✅
+- search is working  ✅
+- pagination working  ✅
+- context menu works well ✅
 
 dialog:
 - initial defualt values (if needed) - IN CREATE MODE

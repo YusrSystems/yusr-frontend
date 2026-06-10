@@ -71,7 +71,7 @@ export function AccountStatementButton({ account }: { account: Account; })
 
   return (
     <>
-      <Button variant="outline" size="sm" onClick={ () => setIsOpen(true) }>
+      <Button variant="outline" size="sm" className="cursor-pointer" onClick={ () => setIsOpen(true) }>
         { t("accountStatement.button") }
       </Button>
 
