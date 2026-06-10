@@ -18,6 +18,21 @@ export class UserDto extends Dto
 
 export class User extends ChangeableEntity<UserDto>
 {
+  protected initialValue(dto?: Partial<UserDto> | undefined): UserDto
+  {
+    return {
+      id: 0,
+      username: "",
+      password: "",
+      isActive: true,
+      branchId: undefined,
+      branchName: "",
+      roleId: undefined,
+      roleName: "",
+      role: new RoleDto(),
+      ...dto
+    };
+  }
   declare username: Signal<string>;
   declare password: Signal<string>;
   declare isActive: Signal<boolean>;
@@ -27,7 +42,7 @@ export class User extends ChangeableEntity<UserDto>
   declare roleName: Signal<string>;
   declare role: Signal<RoleDto>;
 
-  constructor(dto: Partial<UserDto>, mode: ChangeableEntityMode = "create")
+  constructor(dto: UserDto, mode: ChangeableEntityMode = "create")
   {
     const rules: ValidationRule<Partial<UserDto>>[] = [{
       field: "username",
@@ -48,18 +63,7 @@ export class User extends ChangeableEntity<UserDto>
     }];
 
     super(
-      {
-        id: 0,
-        username: "",
-        password: "",
-        isActive: true,
-        branchId: undefined,
-        branchName: "",
-        roleId: undefined,
-        roleName: "",
-        role: new RoleDto(),
-        ...dto
-      },
+      dto,
       rules,
       mode
     );

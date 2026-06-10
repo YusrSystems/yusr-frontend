@@ -8,6 +8,7 @@ export type ChangeableEntityMode = "create" | "update";
 export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEntity<TDto>
 {
   public readonly mode: Signal<ChangeableEntityMode>;
+  protected abstract initialValue(dto?: Partial<TDto>): TDto;
 
   protected constructor(
     dto: TDto,
@@ -20,7 +21,7 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
   }
 
   static create<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
-    this: new(dto: Partial<TDto>, mode: ChangeableEntityMode) => TEntity,
+    this: new(dto: TDto, mode: ChangeableEntityMode) => TEntity,
     dto?: Partial<TDto>
   ): TEntity
   {

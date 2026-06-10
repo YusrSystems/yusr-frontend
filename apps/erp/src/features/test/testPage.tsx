@@ -39,7 +39,7 @@ export default function TestPage()
       <TestPageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ (dto) =>
+        changeDialog={ (dto: TaxDto | undefined) =>
         {
           return (
             <ChangeTaxDialog

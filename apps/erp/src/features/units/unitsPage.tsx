@@ -37,7 +37,7 @@ export default function UnitsPage()
       <PageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ (dto, closeDialog) =>
+        changeDialog={ (dto: UnitDto | undefined, closeDialog) =>
         {
           return (
             <ChangeUnitDialog

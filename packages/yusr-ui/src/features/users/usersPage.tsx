@@ -43,7 +43,7 @@ export function UsersPage()
       <PageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ (dto, closeDialog) =>
+        changeDialog={ (dto: UserDto | undefined, closeDialog) =>
         {
           return (
             <ChangeUserDialog

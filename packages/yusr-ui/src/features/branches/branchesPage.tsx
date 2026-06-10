@@ -43,7 +43,7 @@ export function BranchesPage({ onUpdate }: { onUpdate?: (entity: Branch) => void
       <PageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ (dto) =>
+        changeDialog={ (dto: BranchDto | undefined) =>
         {
           return (
             <ChangeBranchDialog

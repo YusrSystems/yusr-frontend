@@ -39,7 +39,7 @@ export default function TaxesPage()
       <PageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ (dto, closeDialog) =>
+        changeDialog={ (dto: TaxDto | undefined, closeDialog) =>
         {
           return (
             <ChangeTaxDialog

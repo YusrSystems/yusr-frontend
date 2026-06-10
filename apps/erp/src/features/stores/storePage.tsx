@@ -40,7 +40,7 @@ export default function StoresPage()
       <PageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ (dto, closeDialog) =>
+        changeDialog={ (dto: StoreDto | undefined, closeDialog) =>
         {
           return (
             <ChangeStoreDialog

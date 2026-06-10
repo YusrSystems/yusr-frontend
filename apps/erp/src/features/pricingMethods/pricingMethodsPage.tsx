@@ -39,7 +39,7 @@ export default function PricingMethodsPage()
       <PageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ (dto, closeDialog) =>
+        changeDialog={ (dto: PricingMethodDto | undefined, closeDialog) =>
         {
           return (
             <ChangePricingMethodDialog

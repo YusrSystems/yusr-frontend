@@ -55,6 +55,31 @@ export class AccountContact extends ValidatableEntity<AccountContactDto>
 
 export class Account extends ChangeableEntity<AccountDto>
 {
+  protected initialValue(dto?: Partial<AccountDto> | undefined): AccountDto
+  {
+    return {
+      id: dto?.id ?? 0,
+      type: dto?.type ?? 0,
+      name: dto?.name ?? "",
+      initialBalance: dto?.initialBalance ?? 0,
+      balance: dto?.balance ?? 0,
+      vatNumber: dto?.vatNumber,
+      crn: dto?.crn,
+      parentId: dto?.parentId,
+      parentName: dto?.parentName,
+      bankAccountNumber: dto?.bankAccountNumber,
+      cityId: dto?.cityId,
+      cityName: dto?.city?.name,
+      city: dto?.city,
+      street: dto?.street,
+      district: dto?.district,
+      buildingNumber: dto?.buildingNumber,
+      postalCode: dto?.postalCode,
+      notes: dto?.notes,
+      accountContacts: (dto?.accountContacts ?? [{ id: 0, accountId: dto?.id ?? 0, number: "" } as AccountContactDto])
+        .map((t) => t instanceof AccountContact ? t : new AccountContact(t)) as unknown[] as AccountContactDto[]
+    };
+  }
   declare type: Signal<number>;
   declare name: Signal<string>;
   declare initialBalance: Signal<number>;
@@ -74,31 +99,10 @@ export class Account extends ChangeableEntity<AccountDto>
   declare notes: Signal<string | undefined>;
   declare accountContacts: Signal<AccountContact[]>;
 
-  constructor(dto: Partial<AccountDto>, mode: ChangeableEntityMode = "create")
+  constructor(dto: AccountDto, mode: ChangeableEntityMode = "create")
   {
     super(
-      {
-        id: dto?.id ?? 0,
-        type: dto?.type ?? 0,
-        name: dto?.name ?? "",
-        initialBalance: dto?.initialBalance ?? 0,
-        balance: dto?.balance ?? 0,
-        vatNumber: dto?.vatNumber,
-        crn: dto?.crn,
-        parentId: dto?.parentId,
-        parentName: dto?.parentName,
-        bankAccountNumber: dto?.bankAccountNumber,
-        cityId: dto?.cityId,
-        cityName: dto?.city?.name,
-        city: dto?.city,
-        street: dto?.street,
-        district: dto?.district,
-        buildingNumber: dto?.buildingNumber,
-        postalCode: dto?.postalCode,
-        notes: dto?.notes,
-        accountContacts: (dto.accountContacts ?? [{ id: 0, accountId: dto?.id ?? 0, number: "" } as AccountContactDto])
-          .map((t) => t instanceof AccountContact ? t : new AccountContact(t)) as unknown[] as AccountContactDto[]
-      },
+      dto,
       [{
         field: "type",
         selector: (d) => d.type,
