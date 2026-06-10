@@ -52,7 +52,8 @@
     "buildingNumberLength": "Building number must consist of 4 digits",
     "buildingNumberNumeric": "Building number must be numeric only",
     "postalCodeLength": "Postal code must consist of 5 digits",
-    "postalCodeNumeric": "Postal code must be numeric only"
+    "postalCodeNumeric": "Postal code must be numeric only",
+    "contactNumberLength": "The number must contain 10 digits"
   },
   "clients": {
     "title": "Customer Accounts Management"

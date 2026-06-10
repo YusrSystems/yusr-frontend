@@ -33,7 +33,7 @@ export class Validators
       "validators.arrayMinLength": "يجب اختيار عنصر واحد على الأقل"
     };
 
-    const fallbackT = ((key: string, options?: { [key: string]: any }) =>
+    const fallbackT = ((key: string, options?: { [key: string]: any; }) =>
     {
       let message = fallbackMessages[key] || key;
       if (options)
@@ -149,6 +149,8 @@ export class Validators
     const defaultMessage = message || t("validators.exactLength", { length });
     return (value) =>
     {
+      console.log(value);
+
       if (value.length !== length)
       {
         return defaultMessage;
