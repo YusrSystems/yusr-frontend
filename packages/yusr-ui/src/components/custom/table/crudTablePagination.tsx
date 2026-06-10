@@ -45,12 +45,16 @@ export function CrudTablePagination({ pageSize, totalNumber, currentPage, onPage
       <Pagination dir={ i18n.dir() } className="justify-end w-auto mx-0">
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious onClick={ handlePrevious } text={ t("pagination.previous") } />
+            <PaginationPrevious
+              onClick={ handlePrevious }
+              text={ t("pagination.previous") }
+              className="cursor-pointer"
+            />
           </PaginationItem>
 
           <DropdownMenu dir={ i18n.dir() }>
             <DropdownMenuTrigger asChild>
-              <SidebarMenuButton className="w-full h-5 justify-start gap-2 text-base">
+              <SidebarMenuButton className="w-full h-5 justify-start gap-2 text-base cursor-pointer">
                 <span>{ currentPage }</span>
               </SidebarMenuButton>
             </DropdownMenuTrigger>
@@ -70,7 +74,7 @@ export function CrudTablePagination({ pageSize, totalNumber, currentPage, onPage
           </DropdownMenu>
 
           <PaginationItem>
-            <PaginationNext onClick={ handleNext } text={ t("pagination.next") } />
+            <PaginationNext onClick={ handleNext } text={ t("pagination.next") } className="cursor-pointer" />
           </PaginationItem>
         </PaginationContent>
       </Pagination>
