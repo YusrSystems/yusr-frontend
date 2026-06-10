@@ -36,13 +36,13 @@ export default function UnitsPage()
       <PageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ (dto, closeDialog) =>
+        changeDialog={ (dto: UnitDto | undefined, closeDialog) =>
         {
           return (
             <ChangeUnitDialog
               entity={ dto
                 ? Unit.load(dto)
-                : Unit.create({ id: 0, name: "" }) }
+                : Unit.create() }
               service={ Services.unitsApi }
               onSuccess={ (data) =>
               {

@@ -8,9 +8,19 @@ export class ErpRoleDto extends RoleDto
 
 export class ErpRole extends Role<ErpRoleDto>
 {
+  protected initialValue(dto?: Partial<ErpRoleDto> | undefined): ErpRoleDto
+  {
+    return {
+      id: 0,
+      name: "",
+      permissions: [],
+      authorizedStores: [],
+      ...dto
+    };
+  }
   declare authorizedStores: Signal<number[]>;
 
-  constructor(dto: Partial<ErpRoleDto>, mode: ChangeableEntityMode = "create")
+  constructor(dto: ErpRoleDto, mode: ChangeableEntityMode = "create")
   {
     super(dto, mode);
   }

@@ -8,7 +8,7 @@ export interface FetchStoreItemsProps
   pageNumber: number;
   rowsPerPage: number;
   storeId: number | undefined;
-  request: FilterByTypeRequest<ItemOld>;
+  request: FilterByTypeRequest;
 }
 export const fetchStoreItems = createAsyncThunk<ApiFilterResult<ItemOld>, FetchStoreItemsProps>(
   "storeItems/fetch",

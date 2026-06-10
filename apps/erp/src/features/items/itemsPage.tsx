@@ -52,42 +52,13 @@ export default function ItemsPage()
       <PageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ (dto, closeDialog) =>
+        changeDialog={ (dto: ItemDto | undefined, closeDialog) =>
         {
           return (
             <ChangeItemDialog
               entity={ dto
                 ? Item.load(dto)
-                : Item.create({
-                  id: 0,
-                  type: ItemType.Product,
-                  name: "",
-                  description: "",
-                  class: "",
-                  brand: "",
-                  sellUnitId: 0,
-                  sellUnitName: "",
-                  minQuantity: 0,
-                  maxQuantity: 0,
-                  initialQuantity: 0,
-                  quantity: 0,
-                  storeQuantity: 0,
-                  lastBuyPrice: 0,
-                  initialCost: 0,
-                  cost: 0,
-                  taxIncluded: false,
-                  taxable: false,
-                  exemptionReasonCode: "",
-                  exemptionReason: "",
-                  statusId: 1,
-                  location: "",
-                  notes: "",
-                  totalTaxes: 0,
-                  itemUnitPricingMethods: [],
-                  itemTaxes: [],
-                  itemStores: [],
-                  itemImages: []
-                }) }
+                : Item.create() }
               service={ Services.itemsApi }
               onSuccess={ (data) =>
               {

@@ -130,7 +130,42 @@ export default class Item extends ChangeableEntity<ItemDto>
   declare itemStores: Signal<ItemStore[]>;
   declare itemImages: Signal<StorageFile[]>;
 
-  constructor(dto: Partial<ItemDto>, mode: ChangeableEntityMode = "create")
+  protected initialValue(dto?: Partial<ItemDto> | undefined): ItemDto
+  {
+    return {
+      id: 0,
+      type: ItemType.Product,
+      name: "",
+      description: "",
+      class: "",
+      brand: "",
+      sellUnitId: 0,
+      sellUnitName: "",
+      minQuantity: 0,
+      maxQuantity: 0,
+      initialQuantity: 0,
+      quantity: 0,
+      storeQuantity: 0,
+      lastBuyPrice: 0,
+      initialCost: 0,
+      cost: 0,
+      taxIncluded: false,
+      taxable: false,
+      exemptionReasonCode: "",
+      exemptionReason: "",
+      statusId: 1,
+      location: "",
+      notes: "",
+      totalTaxes: 0,
+      itemUnitPricingMethods: [],
+      itemTaxes: [],
+      itemStores: [],
+      itemImages: [],
+      ...dto
+    };
+  }
+
+  constructor(dto: ItemDto, mode: ChangeableEntityMode = "create")
   {
     super({
       ...dto,

@@ -1,4 +1,4 @@
-export class Dto 
+export class Dto
 {
   public id!: number;
 }

@@ -1,4 +1,4 @@
-import { RolesApiServiceOld } from "../networking/rolesApiService";
+import { RolesApiServiceOld } from "../networking/rolesApiServiceOld";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
 import type { RoleOld } from "./role";
 

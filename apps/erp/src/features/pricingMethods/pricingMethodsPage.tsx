@@ -38,13 +38,13 @@ export default function PricingMethodsPage()
       <PageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ (dto, closeDialog) =>
+        changeDialog={ (dto: PricingMethodDto | undefined, closeDialog) =>
         {
           return (
             <ChangePricingMethodDialog
               entity={ dto
                 ? PricingMethod.load(dto)
-                : PricingMethod.create({ id: 0, name: "" }) }
+                : PricingMethod.create() }
               service={ Services.pricingMethodsApi }
               onSuccess={ (data) =>
               {

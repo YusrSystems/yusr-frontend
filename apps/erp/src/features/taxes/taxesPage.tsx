@@ -38,13 +38,13 @@ export default function TaxesPage()
       <PageTable />
 
       <CrudPage.ChangeDialog
-        changeDialog={ (dto, closeDialog) =>
+        changeDialog={ (dto: TaxDto | undefined, closeDialog) =>
         {
           return (
             <ChangeTaxDialog
               entity={ dto
                 ? Tax.load(dto)
-                : Tax.create({ id: 0, name: "", percentage: 1, isPrimary: false }) }
+                : Tax.create() }
               service={ Services.taxesApi }
               onSuccess={ (data) =>
               {

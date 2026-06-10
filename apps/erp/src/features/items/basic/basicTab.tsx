@@ -6,7 +6,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FieldsSection, SelectField, StorageFileField, StorageType, TextAreaField, TextField, useStorageFile } from "yusr-ui";
-import { ItemType } from "../../../core/data/itemOld";
+import { ItemType } from "../../../core/data/item";
 import TaxesSection from "./taxesSection";
 
 export default function BasicTab(

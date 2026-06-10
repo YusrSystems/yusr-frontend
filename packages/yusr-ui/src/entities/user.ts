@@ -2,22 +2,37 @@ import type { Signal } from "@preact/signals-react";
 import { i18n } from "../locales";
 import { ChangeableEntity, type ChangeableEntityMode, Dto } from "../stateManager";
 import { type ValidationRule, Validators } from "../validation";
-import type { RoleDto } from "./role";
+import { RoleDto } from "./role";
 
 export class UserDto extends Dto
 {
   public username!: string;
   public password!: string;
   public isActive!: boolean;
-  public branchId!: number;
+  public branchId!: number | undefined;
   public branchName!: string;
-  public roleId!: number;
+  public roleId!: number | undefined;
   public roleName!: string;
   public role!: RoleDto;
 }
 
 export class User extends ChangeableEntity<UserDto>
 {
+  protected initialValue(dto?: Partial<UserDto> | undefined): UserDto
+  {
+    return {
+      id: 0,
+      username: "",
+      password: "",
+      isActive: true,
+      branchId: undefined,
+      branchName: "",
+      roleId: undefined,
+      roleName: "",
+      role: new RoleDto(),
+      ...dto
+    };
+  }
   declare username: Signal<string>;
   declare password: Signal<string>;
   declare isActive: Signal<boolean>;
@@ -27,7 +42,7 @@ export class User extends ChangeableEntity<UserDto>
   declare roleName: Signal<string>;
   declare role: Signal<RoleDto>;
 
-  constructor(dto: Partial<UserDto>, mode: ChangeableEntityMode = "create")
+  constructor(dto: UserDto, mode: ChangeableEntityMode = "create")
   {
     const rules: ValidationRule<Partial<UserDto>>[] = [{
       field: "username",
@@ -47,6 +62,10 @@ export class User extends ChangeableEntity<UserDto>
       validators: [Validators.required(i18n.t("commonEntities:users.branchRequired"))]
     }];
 
-    super(dto, rules, mode);
+    super(
+      dto,
+      rules,
+      mode
+    );
   }
 }

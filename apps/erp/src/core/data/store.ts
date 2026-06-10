@@ -28,7 +28,17 @@ export class Store extends ChangeableEntity<StoreDto>
   declare name: Signal<string>;
   declare authorized: Signal<boolean>;
 
-  constructor(dto: Partial<StoreDto>, mode: ChangeableEntityMode = "create")
+  protected initialValue(dto?: Partial<StoreDto> | undefined): StoreDto
+  {
+    return {
+      id: 0,
+      name: "",
+      authorized: true,
+      ...dto
+    };
+  }
+
+  constructor(dto: StoreDto, mode: ChangeableEntityMode = "create")
   {
     const rules: ValidationRule<Partial<StoreDto>>[] = [{
       field: "name",

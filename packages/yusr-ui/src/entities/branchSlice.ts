@@ -1,4 +1,4 @@
-import { BranchesApiServiceOld } from "../networking/branchesApiService";
+import { BranchesApiServiceOld } from "../networking/branchesApiServiceOld";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
 import type { BranchOld } from "./branch";
 

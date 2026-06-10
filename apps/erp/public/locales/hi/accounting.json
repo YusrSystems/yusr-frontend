@@ -52,7 +52,8 @@
     "buildingNumberLength": "भवन संख्या 4 अंकों की होनी चाहिए",
     "buildingNumberNumeric": "भवन संख्या केवल संख्यात्मक होनी चाहिए",
     "postalCodeLength": "पोस्टल कोड 5 अंकों का होना चाहिए",
-    "postalCodeNumeric": "पोस्टल कोड केवल संख्यात्मक होना चाहिए"
+    "postalCodeNumeric": "पोस्टल कोड केवल संख्यात्मक होना चाहिए",
+    "contactNumberLength": "नंबर में 10 अंक होने चाहिए"
   },
   "clients": {
     "title": "ग्राहक खाता प्रबंधन"

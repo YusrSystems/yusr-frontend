@@ -14,7 +14,7 @@ export default class ItemsApiService extends BaseApiService<Item, ItemDto>
     pageNumber: number,
     rowsPerPage: number,
     storeId: number | undefined,
-    request: FilterByTypeRequest<Item>
+    request: FilterByTypeRequest
   ): Promise<RequestResult<ApiFilterResult<Item>>>
   {
     return await YusrApiHelper.Post(

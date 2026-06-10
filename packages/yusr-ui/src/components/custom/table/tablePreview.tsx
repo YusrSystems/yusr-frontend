@@ -27,6 +27,20 @@ export function TablePreview({ title, description, children }: TablePreviewProps
   );
 }
 
+export function TablePreviewCompact({ description }: Omit<TablePreviewProps, "title" | "children">)
+{
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <Table />
+        </EmptyMedia>
+        <EmptyDescription>{ description }</EmptyDescription>
+      </EmptyHeader>
+    </Empty>
+  );
+}
+
 TablePreview.Loading = function()
 {
   const { t } = useTranslation("common");
@@ -51,4 +65,10 @@ TablePreview.Empty = function()
 {
   const { t } = useTranslation("common");
   return <TablePreview title={ t("crudEmptyTable.emptyTitle") } description={ t("crudEmptyTable.emptyDescription") } />;
+};
+
+TablePreviewCompact.Empty = function()
+{
+  const { t } = useTranslation("common");
+  return <TablePreviewCompact description={ t("crudEmptyTable.emptyDescription") } />;
 };

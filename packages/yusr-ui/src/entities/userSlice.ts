@@ -1,4 +1,4 @@
-import { UsersApiServiceOld } from "../networking/usersApiService";
+import { UsersApiServiceOld } from "../networking/usersApiServiceOld";
 import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
 import type { UserOld } from "./userOld";
 

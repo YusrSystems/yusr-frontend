@@ -52,7 +52,8 @@
     "buildingNumberLength": "رقم المبنى يجب أن يتكون من أربع أرقام",
     "buildingNumberNumeric": "رقم المبنى يجب أن يكون أرقاماً فقط",
     "postalCodeLength": "الرمز البريدي يجب أن يتكون من خمس أرقام",
-    "postalCodeNumeric": "الرمز البريدي يجب أن يكون أرقاماً فقط"
+    "postalCodeNumeric": "الرمز البريدي يجب أن يكون أرقاماً فقط",
+    "contactNumberLength": "يجب ان يحتوي الرقم على 10 خانات"
   },
   "clients": {
     "title": "إدارة حسابات العملاء"

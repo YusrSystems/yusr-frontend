@@ -35,13 +35,13 @@ export class RoleDto extends Dto
   public permissions!: string[];
 }
 
-export class Role<TRoleDto extends RoleDto> extends ChangeableEntity<TRoleDto>
+export abstract class Role<TRoleDto extends RoleDto> extends ChangeableEntity<TRoleDto>
 {
   declare name: Signal<string>;
   declare permissions: Signal<string[]>;
 
   constructor(
-    dto: Partial<TRoleDto>,
+    dto: TRoleDto,
     mode: ChangeableEntityMode = "create"
   )
   {

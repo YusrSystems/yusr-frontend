@@ -4,7 +4,7 @@ import { useAppSelector } from "@/core/state/store";
 import { useTranslation } from "react-i18next";
 import type { BasicSearchableSelectParamsOld } from "yusr-ui";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
-import AccountsSearchableSelect from "./accountsSearchableSelect";
+import AccountsSearchableSelectOld from "./accountsSearchableSelect";
 
 export default function ClientsAndSuppliersSearchableSelect(
   { ...props }: BasicSearchableSelectParamsOld<Account>
@@ -26,7 +26,7 @@ export default function ClientsAndSuppliersSearchableSelect(
   );
 
   return (
-    <AccountsSearchableSelect
+    <AccountsSearchableSelectOld
       slice={ ClientsAndSuppliersSlice }
       selectEntityState={ (state) => state.clientsAndSuppliers }
       selectFormState={ (state) => state.clientsAndSuppliersForm }

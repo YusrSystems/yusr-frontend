@@ -1,7 +1,7 @@
 import { type TFunction } from "i18next";
 import { BaseEntity, CityOld, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterByTypeRequest, type ValidationRuleOld, Validators } from "yusr-ui";
 import { SystemPermissionsResources } from "../auth/systemPermissionsResources";
-import AccountsApiService from "../networking/accountApiService";
+import AccountsApiServiceOld from "../networking/accountApiServiceOld";
 
 export const AccountType = {
   Client: 1,
@@ -21,19 +21,19 @@ export const accountTypeToResource: Record<AccountType, string> = {
   [AccountType.Box]: SystemPermissionsResources.AccountBox
 };
 
-export class AccountContact extends BaseEntity
+export class AccountContactOld extends BaseEntity
 {
   public accountId!: number;
   public number!: string;
 
-  constructor(init?: Partial<AccountContact>)
+  constructor(init?: Partial<AccountContactOld>)
   {
     super();
     Object.assign(this, init);
   }
 }
 
-export default class Account extends BaseEntity
+export default class AccountOld extends BaseEntity
 {
   public type!: AccountType;
   public name!: string;
@@ -51,16 +51,16 @@ export default class Account extends BaseEntity
   public buildingNumber?: string;
   public postalCode?: string;
   public notes?: string;
-  public accountContacts: AccountContact[] = [];
+  public accountContacts: AccountContactOld[] = [];
 
-  constructor(init?: Partial<Account>)
+  constructor(init?: Partial<AccountOld>)
   {
     super();
     Object.assign(this, init);
     if (init?.accountContacts)
     {
       this.accountContacts = init.accountContacts.map(
-        (c) => new AccountContact(c)
+        (c) => new AccountContactOld(c)
       );
     }
   }
@@ -68,7 +68,7 @@ export default class Account extends BaseEntity
 
 export class AccountValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<Account>>[] => [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<AccountOld>>[] => [{
     field: "name",
     selector: (d) => d.name,
     validators: [Validators.required(t("accounts.nameRequired"))]
@@ -101,19 +101,19 @@ export class AccountSlice
   {
     const entitySliceInstance = createGenericEntitySlice(
       sliceName,
-      new AccountsApiService(),
+      new AccountsApiServiceOld(),
       (pageNumber, rowsPerPage, searchText) =>
-        new AccountsApiService().FilterByTypes(
+        new AccountsApiServiceOld().FilterByTypes(
           pageNumber,
           rowsPerPage,
           new FilterByTypeRequest({ types, searchText })
         )
     );
 
-    const dialogSliceInstance = createGenericDialogSlice<Account>(
+    const dialogSliceInstance = createGenericDialogSlice<AccountOld>(
       sliceName + "Dialog"
     );
-    const formSliceInstance = createGenericFormSlice<Account>(
+    const formSliceInstance = createGenericFormSlice<AccountOld>(
       sliceName + "Form"
     );
 

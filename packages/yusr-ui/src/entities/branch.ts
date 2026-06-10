@@ -55,8 +55,8 @@ export class BranchValidationRules
 export class BranchDto extends Dto
 {
   public name!: string;
-  public cityId!: number;
-  public cityName!: number;
+  public cityId!: number | undefined;
+  public cityName!: number | undefined;
   public street?: string;
   public district?: string;
   public buildingNumber?: string;
@@ -65,15 +65,29 @@ export class BranchDto extends Dto
 
 export class Branch extends ChangeableEntity<BranchDto>
 {
+  protected initialValue(dto?: Partial<BranchDto> | undefined): BranchDto
+  {
+    return {
+      id: 0,
+      name: "",
+      cityId: undefined,
+      cityName: undefined,
+      street: undefined,
+      district: undefined,
+      buildingNumber: undefined,
+      postalCode: undefined,
+      ...dto
+    };
+  }
   declare name: Signal<string>;
-  declare cityId: Signal<number>;
-  declare cityName: Signal<string>;
+  declare cityId: Signal<number | undefined>;
+  declare cityName: Signal<string | undefined>;
   declare street: Signal<string | undefined>;
   declare district: Signal<string | undefined>;
   declare buildingNumber: Signal<string | undefined>;
   declare postalCode: Signal<string | undefined>;
 
-  constructor(dto: Partial<BranchDto>, mode: ChangeableEntityMode = "create")
+  constructor(dto: BranchDto, mode: ChangeableEntityMode = "create")
   {
     const rules: ValidationRule<Partial<BranchDto>>[] = [{
       field: "name",
@@ -99,6 +113,10 @@ export class Branch extends ChangeableEntity<BranchDto>
       )]
     }];
 
-    super(dto, rules, mode);
+    super(
+      dto,
+      rules,
+      mode
+    );
   }
 }

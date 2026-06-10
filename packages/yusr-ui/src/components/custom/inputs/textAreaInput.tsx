@@ -38,7 +38,7 @@ export function TextAreaInput({
     <div className="relative w-full">
       <Textarea
         { ...props }
-        value={ value ? value.value : undefined }
+        value={ value?.value ?? "" }
         onChange={ (event) =>
         {
           if (value)

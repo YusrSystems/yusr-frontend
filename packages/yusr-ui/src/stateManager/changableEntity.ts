@@ -9,9 +9,10 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
 {
   public readonly mode: Signal<ChangeableEntityMode>;
   public readonly isDirty: Signal<boolean> = signal(false);
+  protected abstract initialValue(dto?: Partial<TDto>): TDto;
 
   protected constructor(
-    dto: Partial<TDto>,
+    dto: TDto,
     validationRules: ValidationRule<Partial<TDto>>[],
     mode: ChangeableEntityMode = "create"
   )
@@ -27,16 +28,16 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
   }
 
   static create<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
-    this: new(dto: Partial<TDto>, mode: ChangeableEntityMode) => TEntity,
-    dto: Partial<TDto> = {}
+    this: new(dto: TDto, mode: ChangeableEntityMode) => TEntity,
+    dto?: Partial<TDto>
   ): TEntity
   {
-    return new this(dto, "create");
+    return new this(this.prototype.initialValue(dto), "create");
   }
 
   static load<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
-    this: new(dto: Partial<TDto>, mode: ChangeableEntityMode) => TEntity,
-    dto: Partial<TDto>
+    this: new(dto: TDto, mode: ChangeableEntityMode) => TEntity,
+    dto: TDto
   ): TEntity
   {
     return new this(dto, "update");
