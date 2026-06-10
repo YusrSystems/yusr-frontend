@@ -1,10 +1,10 @@
 import PricingMethodsSearchableSelect from "@/core/components/searchableSelect/pricingMethodsSearchableSelect";
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import type Item from "@/core/data/item";
-import { generateBarcode, ItemUnitPricingMethod } from "@/core/data/item";
+import { ItemUnitPricingMethod } from "@/core/data/item";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
-import { Plus, Trash2 } from "lucide-react";
+import { Barcode, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, CurrencyIcon, FormField, NumberField, SystemPermissionsActions, TextField } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../core/auth/systemPermissionsResources";
@@ -29,9 +29,9 @@ export default function PricingMethodsTable({ entity }: { entity: Item; })
       pricingMethodName: undefined,
       quantityMultiplier: 1,
       unitPrice: 0,
-      price: 0,
-      barcode: generateBarcode()
+      price: 0
     });
+    newItem.generateBarcode();
     entity.itemUnitPricingMethods.value = [...entity.itemUnitPricingMethods.value, newItem];
   };
 
@@ -64,10 +64,10 @@ export default function PricingMethodsTable({ entity }: { entity: Item; })
             <tr>
               <th className="p-3 w-12 text-start">{ t("items.number") }</th>
               <th className="p-3 w-32 text-start">{ t("items.unit") }</th>
-              <th className="p-3 w-40 text-start">{ t("items.pricingMethod") }</th>
+              <th className="p-3 w-32 text-start">{ t("items.pricingMethod") }</th>
               <th className="p-3 w-32 text-start">{ t("items.quantityInUnit") }</th>
               <th className="p-3 w-32 text-start">{ t("items.sellingPrice", { unit: entity.sellUnitName.value }) }</th>
-              <th className="p-3 w-40 text-start">{ t("items.barcode") }</th>
+              <th className="p-3 w-45 text-start">{ t("items.barcode") }</th>
               <th className="p-3 w-40 text-start">{ t("items.name") }</th>
               { Services.auth.hasAuth(
                 SystemPermissionsResources.ReportItemBarcode,
@@ -147,11 +147,15 @@ export default function PricingMethodsTable({ entity }: { entity: Item; })
                       currency={ <CurrencyIcon /> }
                     />
                   </td>
-                  <td className="p-3">
+                  <td className="p-3 flex">
                     <TextField
+                      className="rounded-e-none"
                       label=""
                       value={ method.barcode }
                     />
+                    <Button type="button" className="rounded-s-none" onClick={ () => method.generateBarcode() }>
+                      <Barcode className="w-4 h-4" />
+                    </Button>
                   </td>
                   <td className="p-3">
                     <TextField
