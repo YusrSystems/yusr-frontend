@@ -5,9 +5,9 @@ const CommissionType = {
   Amount: 2
 } as const;
 
-type CommissionType = typeof CommissionType[keyof typeof CommissionType];
+export type CommissionType = typeof CommissionType[keyof typeof CommissionType];
 
-class PaymentMethodDto extends Dto
+export class PaymentMethodDto extends Dto
 {
   name!: string;
   accountId!: number;
@@ -16,7 +16,7 @@ class PaymentMethodDto extends Dto
   commissionAmount!: number;
 }
 
-class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
+export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
 {
   declare name: Signal<string>;
   declare accountId: Signal<number>;
@@ -57,5 +57,3 @@ class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
     };
   }
 }
-
-export { CommissionType, PaymentMethod, PaymentMethodDto };

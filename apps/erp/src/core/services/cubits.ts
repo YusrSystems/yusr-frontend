@@ -1,3 +1,4 @@
+import type { PaymentMethod, PaymentMethodDto } from "@/features/paymentMethods/data/paymentMethod";
 import { StoresCubit } from "@/features/stores/state/storeCubit";
 import { BaseCubits, PageCubit } from "yusr-ui";
 import type { ErpRole, ErpRoleDto } from "../data/erpRole";
@@ -16,6 +17,7 @@ export class Cubits extends BaseCubits
   public static readonly stores = new StoresCubit();
   public static readonly units = new PageCubit<Unit, UnitDto>(Services.unitsApi);
   public static readonly pricingMethods = new PageCubit<PricingMethod, PricingMethodDto>(Services.pricingMethodsApi);
+  public static readonly paymentMethods = new PageCubit<PaymentMethod, PaymentMethodDto>(Services.paymentMethodsApi);
   public static readonly items = new PageCubit<Item, ItemDto>(Services.itemsApi);
   public static override roles = new PageCubit<ErpRole, ErpRoleDto>(Services.rolesApi);
 
