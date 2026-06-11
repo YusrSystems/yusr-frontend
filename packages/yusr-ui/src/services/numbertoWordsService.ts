@@ -1,6 +1,6 @@
 import { type TFunction } from "i18next";
 import * as numberToWords from "number-to-words";
-import type { Currency, CurrencyOld } from "../entities";
+import { Currency, CurrencyOld } from "../entities";
 // mark methods that uses old currencies methods as old
 // allowing the normal methods to accept Currency entity
 // so now it can work will in old version of balance transfer and new version
@@ -176,6 +176,8 @@ export class NumbertoWordsService
   }
   static ConvertAmount(amount: number, currency: Currency): string
   {
+    console.log(currency.code.value);
+
     const integerPart = Math.floor(amount);
     const fractionPart = Math.round((amount - integerPart) * 100);
 
@@ -200,7 +202,7 @@ export class NumbertoWordsService
 
       if (integerPart === 0 && fractionPart === 0)
       {
-        result = `zero ${currency.name}`;
+        result = `zero ${currency.name.value}`;
       }
 
       return result;
@@ -228,7 +230,7 @@ export class NumbertoWordsService
 
     if (integerPart === 0 && fractionPart === 0)
     {
-      result = `${t("numberToWords.zero")} ${currency.name}`;
+      result = `${t("numberToWords.zero")} ${currency.name.value}`;
     }
 
     return result;

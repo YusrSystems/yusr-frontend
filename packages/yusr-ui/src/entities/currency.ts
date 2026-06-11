@@ -39,4 +39,9 @@ export class Currency extends Entity<CurrencyDto>
   declare subName: Signal<string>;
   declare subIsFeminine: Signal<boolean>;
   declare subPlural: Signal<string>;
+
+  constructor(dto: CurrencyDto)
+  {
+    super(dto);
+  }
 }

@@ -8,7 +8,8 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { CrudPage, CurrencyIcon, NumbertoWordsService, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
 import ReportButton from "../reports/reportButton";
-import type { BalanceTransfer, BalanceTransferDto } from "./data/balanceTransfer";
+import ChangeBalanceTransferDialog from "./changeBalanceTransferDialog";
+import { BalanceTransfer, BalanceTransferDto } from "./data/balanceTransfer";
 
 export default function BalanceTransfersPage()
 {
@@ -36,6 +37,32 @@ export default function BalanceTransfersPage()
       <Cards />
 
       <Table />
+
+      <CrudPage.ChangeDialog
+        changeDialog={ (dto: BalanceTransferDto | undefined, closeDialog) =>
+        {
+          return (
+            <ChangeBalanceTransferDialog
+              entity={ dto
+                ? BalanceTransfer.load(dto)
+                : BalanceTransfer.create() }
+              service={ Services.balanceTransfersApi }
+              onSuccess={ (data) =>
+              {
+                if (data.mode.value === "create")
+                {
+                  Cubits.balanceTransfers.add(data);
+                  closeDialog();
+                }
+                else if (data.mode.value === "update")
+                {
+                  Cubits.balanceTransfers.update(data);
+                }
+              } }
+            />
+          );
+        } }
+      />
 
       <CrudPage.DeleteDialog
         entityNameSelector={ (balanceTransfer) => balanceTransfer.description }
