@@ -5,11 +5,11 @@ import { CrudPageOld, selectPermissionsByResource, SystemPermissions, SystemPerm
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type PaymentMethodOld from "../../core/data/paymentMethod";
 import { CommissionTypeOld, PaymentMethodSlice } from "../../core/data/paymentMethod";
-import PaymentMethodsApiService from "../../core/networking/paymentMethodApiService";
+import PaymentMethodsApiServiceOld from "../../core/networking/paymentMethodApiServiceOld";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
-import ChangePaymentMethodDialog from "./changePaymentMethodDialog";
+import ChangePaymentMethodDialogOld from "./changePaymentMethodDialog";
 
-export default function PaymentMethodsPage()
+export default function PaymentMethodsPageOld()
 {
   const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
@@ -26,7 +26,7 @@ export default function PaymentMethodsPage()
     )
   );
 
-  const service = useMemo(() => new PaymentMethodsApiService(), []);
+  const service = useMemo(() => new PaymentMethodsApiServiceOld(), []);
 
   return (
     <CrudPageOld<PaymentMethodOld>
@@ -82,7 +82,7 @@ export default function PaymentMethodsPage()
         setCurrentPage: (page) => PaymentMethodSlice.entityActions.setCurrentPage(page)
       } }
       ChangeDialog={ 
-        <ChangePaymentMethodDialog
+        <ChangePaymentMethodDialogOld
           entity={ paymentMethodDialogState.selectedRow || undefined }
           mode={ paymentMethodDialogState.selectedRow ? "update" : "create" }
           service={ service }

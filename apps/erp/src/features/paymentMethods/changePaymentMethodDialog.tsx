@@ -8,7 +8,7 @@ import type PaymentMethodOld from "../../core/data/paymentMethod";
 import { CommissionTypeOld, PaymentMethodSlice, PaymentMethodValidationRules } from "../../core/data/paymentMethod";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
-export default function ChangePaymentMethodDialog({
+export default function ChangePaymentMethodDialogOld({
   entity,
   mode,
   service,

@@ -1,7 +1,7 @@
 import type PaymentMethodOld from "@/core/data/paymentMethod";
 import { PaymentMethodSlice } from "@/core/data/paymentMethod";
-import PaymentMethodsApiService from "@/core/networking/paymentMethodApiService";
-import ChangePaymentMethodDialog from "@/features/paymentMethods/changePaymentMethodDialog";
+import PaymentMethodsApiServiceOld from "@/core/networking/paymentMethodApiServiceOld";
+import ChangePaymentMethodDialogOld from "@/features/paymentMethods/changePaymentMethodDialog";
 import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import { useAppSelector } from "../../state/store";
@@ -20,7 +20,7 @@ export default function PaymentMethodsSearchableSelect(
       labelKey="name"
       createKey="name"
       state={ PaymentMethodState }
-      apiService={ new PaymentMethodsApiService() }
+      apiService={ new PaymentMethodsApiServiceOld() }
       systemPermissionsResources={ SystemPermissionsResources.PaymentMethods }
       entityActions={ {
         filter: PaymentMethodSlice.entityActions.filter,
@@ -28,7 +28,7 @@ export default function PaymentMethodsSearchableSelect(
       } }
       allowAdd={ false }
       allowUpdate={ false }
-      changeDialog={ ChangePaymentMethodDialog }
+      changeDialog={ ChangePaymentMethodDialogOld }
       changeDialogProps={ {
         filterDataOutside: true
       } }

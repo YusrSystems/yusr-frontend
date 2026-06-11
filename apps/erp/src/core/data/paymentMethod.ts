@@ -1,6 +1,6 @@
 import { type TFunction } from "i18next";
 import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
-import PaymentMethodsApiService from "../networking/paymentMethodApiService";
+import PaymentMethodsApiServiceOld from "../networking/paymentMethodApiServiceOld";
 
 export const CommissionTypeOld = {
   Percent: 1,
@@ -46,7 +46,7 @@ export class PaymentMethodValidationRules
 
 export class PaymentMethodSlice
 {
-  private static entitySliceInstance = createGenericEntitySlice("paymentMethod", new PaymentMethodsApiService());
+  private static entitySliceInstance = createGenericEntitySlice("paymentMethod", new PaymentMethodsApiServiceOld());
   public static entityActions = PaymentMethodSlice.entitySliceInstance.actions;
   public static entityReducer = PaymentMethodSlice.entitySliceInstance.reducer;
 

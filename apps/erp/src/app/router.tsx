@@ -18,7 +18,7 @@ import ItemsSettlementsPage from "../features/itemsSettlements/itemsSettlementsP
 import ItemTransfersPage from "../features/itemTransfers/itemTransfersPage";
 import LandingPage from "../features/landing/landingPage";
 import LoginPage from "../features/login/loginPage";
-import PaymentMethodsPage from "../features/paymentMethods/paymentMethodsPage";
+import PaymentMethodsPageOld from "../features/paymentMethods/paymentMethodsPage";
 import PricingMethodsPage from "../features/pricingMethods/pricingMethodsPage";
 import RegisterPage from "../features/register/presentation/registerPage";
 import ReportsPage from "../features/reports/reportsPage";
@@ -87,7 +87,7 @@ export const router = createBrowserRouter([{
           { path: "/employees", element: <EmployeesAccountsPage /> },
           { path: "/banks", element: <BanksAccountsPage /> },
           { path: "/boxes", element: <BoxesAccountsPage /> },
-          { path: "/paymentMethods", element: <PaymentMethodsPage /> },
+          { path: "/paymentMethods", element: <PaymentMethodsPageOld /> },
           { path: "/balanceTransfer", element: <BalanceTransfersPage /> },
           { path: "/sales", element: <SellInvoicesPage /> },
           { path: "/sales/:id", element: <SellInvoicesPage /> },
