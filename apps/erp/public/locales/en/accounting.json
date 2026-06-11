@@ -261,6 +261,7 @@
     "commissionTypeRequired": "Please select commission type",
     "commissionValueRequired": "Please enter commission value",
     "commissionHintPercent": "{{n}} of every {{d}}",
-    "commissionHintAmount": "flat {{amount}} per transaction"
+    "commissionHintAmount": "flat {{amount}} per transaction",
+    "noPermissionToEditAdmin": "You cannot edit the admin account because you do not have the required permissions"
   }
 }

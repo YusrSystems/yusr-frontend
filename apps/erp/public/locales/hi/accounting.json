@@ -261,6 +261,7 @@
     "commissionTypeRequired": "कृपया कमीशन प्रकार चुनें",
     "commissionValueRequired": "कृपया कमीशन मान दर्ज करें",
     "commissionHintPercent": "हर {{d}} में से {{n}}",
-    "commissionHintAmount": "प्रति लेनदेन {{amount}} निर्धारित"
+    "commissionHintAmount": "प्रति लेनदेन {{amount}} निर्धारित",
+    "noPermissionToEditAdmin": "आप एडमिन खाते को संपादित नहीं कर सकते क्योंकि आपके पास आवश्यक अनुमतियाँ नहीं हैं"
   }
 }

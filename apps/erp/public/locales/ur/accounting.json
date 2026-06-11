@@ -261,6 +261,7 @@
     "commissionTypeRequired": "براہ کرم کمیشن کی قسم منتخب کریں",
     "commissionValueRequired": "براہ کرم کمیشن کی رقم درج کریں",
     "commissionHintPercent": "ہر {{d}} میں سے {{n}}",
-    "commissionHintAmount": "{{amount}} فی لین دین مقررہ"
+    "commissionHintAmount": "{{amount}} فی لین دین مقررہ",
+    "noPermissionToEditAdmin": "آپ ایڈمن اکاؤنٹ میں ترمیم نہیں کر سکتے کیونکہ آپ کے پاس مطلوبہ اجازتیں نہیں ہیں"
   }
 }

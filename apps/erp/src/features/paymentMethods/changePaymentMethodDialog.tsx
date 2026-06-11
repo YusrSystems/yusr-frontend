@@ -4,6 +4,7 @@ import { AccountType } from "@/core/data/account";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { ChangeDialog, type CommonChangeDialogProps, FieldGroup, FormField, NumberField, SelectField, SystemPermissionsActions, TextField } from "yusr-ui";
 import { CommissionTypeOld } from "../../core/data/paymentMethod";
 import type { PaymentMethod, PaymentMethodDto } from "./data/paymentMethod";
@@ -72,6 +73,11 @@ export default function ChangePaymentMethodDialog(
 
   const canChangeBankAccount = (hasBankPerm || hasBoxPerm) && entity.mode.value === "create";
 
+  if (!canChangeBankAccount)
+  {
+    toast.warning(t("paymentMethods.noPermissionToEditAdmin"));
+  }
+
   return (
     <ChangeDialog className="sm:max-w-lg">
       <ChangeDialog.Header title={ title } />
@@ -137,6 +143,7 @@ export default function ChangePaymentMethodDialog(
           entity={ entity }
           service={ service }
           onSuccess={ (data) => onSuccess?.(data) }
+          disabled={ !canChangeBankAccount }
         />
       </ChangeDialog.Footer>
     </ChangeDialog>
