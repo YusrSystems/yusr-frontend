@@ -1,5 +1,6 @@
 import { Services } from "@/core/services/services";
 import LegalDocViewer from "@/features/legal/legaldocviewer";
+import { PaymentMethodsPage } from "@/features/paymentMethods/paymentMethodsPage";
 import { ErpRolesPage } from "@/features/roles/erpRolesPage";
 import { createBrowserRouter } from "react-router-dom";
 import { BranchesPage, BranchOld, ErrorFallback, MaintenanceFallback, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
@@ -18,7 +19,6 @@ import ItemsSettlementsPage from "../features/itemsSettlements/itemsSettlementsP
 import ItemTransfersPage from "../features/itemTransfers/itemTransfersPage";
 import LandingPage from "../features/landing/landingPage";
 import LoginPage from "../features/login/loginPage";
-import PaymentMethodsPageOld from "../features/paymentMethods/paymentMethodsPage";
 import PricingMethodsPage from "../features/pricingMethods/pricingMethodsPage";
 import RegisterPage from "../features/register/presentation/registerPage";
 import ReportsPage from "../features/reports/reportsPage";
@@ -87,7 +87,7 @@ export const router = createBrowserRouter([{
           { path: "/employees", element: <EmployeesAccountsPage /> },
           { path: "/banks", element: <BanksAccountsPage /> },
           { path: "/boxes", element: <BoxesAccountsPage /> },
-          { path: "/paymentMethods", element: <PaymentMethodsPageOld /> },
+          { path: "/paymentMethods", element: <PaymentMethodsPage /> },
           { path: "/balanceTransfer", element: <BalanceTransfersPage /> },
           { path: "/sales", element: <SellInvoicesPage /> },
           { path: "/sales/:id", element: <SellInvoicesPage /> },
