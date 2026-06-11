@@ -1,6 +1,6 @@
 import { type TFunction } from "i18next";
 import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
-import BalanceTransfersApiService from "../networking/balanceTransferApiService";
+import BalanceTransfersApiServiceOld from "../networking/balanceTransferApiServiceOld";
 
 export default class BalanceTransfer extends BaseEntity
 {
@@ -42,7 +42,7 @@ export class BalanceTransferValidationRules
 
 export class BalanceTransferSlice
 {
-  private static entitySliceInstance = createGenericEntitySlice("balanceTransfer", new BalanceTransfersApiService());
+  private static entitySliceInstance = createGenericEntitySlice("balanceTransfer", new BalanceTransfersApiServiceOld());
   public static entityActions = BalanceTransferSlice.entitySliceInstance.actions;
   public static entityReducer = BalanceTransferSlice.entitySliceInstance.reducer;
 

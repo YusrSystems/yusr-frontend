@@ -1,5 +1,6 @@
 import { BaseServices } from "yusr-ui";
 import AccountApiService from "../networking/accountApiService";
+import BalanceTransfersApiService from "../networking/balanceTransferApiService";
 import { ErpRoleApiService } from "../networking/erpRoleApiService";
 import ItemsApiService from "../networking/itemApiService";
 import PaymentMethodsApiService from "../networking/paymentMethodApiService";
@@ -22,6 +23,7 @@ export class Services extends BaseServices
 
   public static accountsApi = new AccountApiService();
   public static paymentMethodsApi = new PaymentMethodsApiService();
+  public static balanceTransfersApi = new BalanceTransfersApiService();
   static
   {
     BaseServices.auth = Services.auth;
