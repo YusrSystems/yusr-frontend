@@ -42,7 +42,7 @@ export default function ChangeBalanceTransferDialogOld(
   {
     if (formData.amount !== undefined && authState.setting?.currency)
     {
-      setAmountToWords(NumbertoWordsService.ConvertAmount(formData.amount, authState.setting.currency));
+      setAmountToWords(NumbertoWordsService.ConvertAmountOld(formData.amount, authState.setting.currency));
     }
   }, [formData.amount, authState.setting?.currency]);
 
