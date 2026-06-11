@@ -9,7 +9,7 @@ import { BoxesAccountsPage } from "../features/accounts/boxesAccountsPage";
 import { ClientsAccountsPage } from "../features/accounts/clientsAccountsPage";
 import { EmployeesAccountsPage } from "../features/accounts/employeesAccountsPage";
 import { SuppliersAccountsPage } from "../features/accounts/suppliersAccountsPage";
-import BalanceTransfersPage from "../features/balanceTransfer/balanceTransfersPage";
+import BalanceTransfersPageOld from "../features/balanceTransfer/balanceTransfersPageOld";
 import DashboardPage from "../features/dashboard/dashboardPage";
 import PurchaseInvoicesPage from "../features/invoices/purchaseInvoices";
 import QuotationInvoicesPage from "../features/invoices/quotationInvoicesPage";
@@ -88,7 +88,7 @@ export const router = createBrowserRouter([{
           { path: "/banks", element: <BanksAccountsPage /> },
           { path: "/boxes", element: <BoxesAccountsPage /> },
           { path: "/paymentMethods", element: <PaymentMethodsPage /> },
-          { path: "/balanceTransfer", element: <BalanceTransfersPage /> },
+          { path: "/balanceTransfer", element: <BalanceTransfersPageOld /> },
           { path: "/sales", element: <SellInvoicesPage /> },
           { path: "/sales/:id", element: <SellInvoicesPage /> },
           { path: "/purchases", element: <PurchaseInvoicesPage /> },
