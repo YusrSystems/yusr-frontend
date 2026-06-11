@@ -1,7 +1,7 @@
 import PricingMethodsSearchableSelect from "@/core/components/searchableSelect/pricingMethodsSearchableSelect";
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import type Item from "@/core/data/item";
-import { ItemUnitPricingMethod } from "@/core/data/item";
+import { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Barcode, Plus, Trash2 } from "lucide-react";
@@ -20,19 +20,7 @@ export default function PricingMethodsTable({ entity }: { entity: Item; })
 
   const addPricingMethod = () =>
   {
-    const newItem = new ItemUnitPricingMethod({
-      id: 0,
-      itemId: entity.id.value,
-      unitId: undefined,
-      itemUnitPricingMethodName: undefined,
-      unitName: undefined,
-      pricingMethodId: undefined,
-      pricingMethodName: undefined,
-      quantityMultiplier: 1,
-      unitPrice: 0,
-      price: 0,
-      barcode: ItemUnitPricingMethod.generateBarcode()
-    });
+    const newItem = ItemUnitPricingMethod.create();
     entity.itemUnitPricingMethods.value = [...entity.itemUnitPricingMethods.value, newItem];
   };
 

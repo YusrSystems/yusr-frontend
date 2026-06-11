@@ -1,6 +1,6 @@
 import TaxesSearchableSelect from "@/core/components/searchableSelect/taxesSearchableSelect";
 import type Item from "@/core/data/item";
-import { ItemTax } from "@/core/data/item";
+import { ItemTax } from "@/core/data/itemTax";
 import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";

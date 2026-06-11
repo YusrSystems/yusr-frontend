@@ -1,10 +1,11 @@
 import { useSignals } from "@preact/signals-react/runtime";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { ChangeDialog, CitiesSearchableSelect, type CommonChangeDialogProps, FieldsSection, FormField, TextField } from "../../components/custom";
 import { FieldGroup } from "../../components/pure";
 import { Branch, BranchDto } from "../../entities";
-import { BaseServices } from "../../services";
+import { BaseCubits, BaseServices } from "../../services";
 
 export function ChangeBranchDialog({ entity, service, onSuccess }: CommonChangeDialogProps<Branch, BranchDto>)
 {
@@ -19,6 +20,8 @@ export function ChangeBranchDialog({ entity, service, onSuccess }: CommonChangeD
   {
     return <ChangeDialog.Unauthorized />;
   }
+
+  useEffect(() => BaseCubits.cities.init(), []);
 
   const { t } = useTranslation(["commonEntities", "common"]);
   const title = entity.mode.value === "create"

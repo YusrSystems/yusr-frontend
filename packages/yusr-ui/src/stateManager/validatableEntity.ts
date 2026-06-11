@@ -48,8 +48,7 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
         }
       }
     });
-    console.log(this.errors);
-
+    
     return Object.values(this.errors).every(
       (s) => (s as Signal<string | undefined>).value === undefined
     );

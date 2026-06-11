@@ -355,8 +355,6 @@ function PageTable(
           currentPage={ cubit.currentPage.value }
           onPageChanged={ (newPage) =>
           {
-            console.log(newPage);
-
             cubit.changePage(newPage);
           } }
         />

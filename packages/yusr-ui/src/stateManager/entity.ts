@@ -1,5 +1,6 @@
 import { Signal, signal } from "@preact/signals-react";
 import type { Dto } from "./dto";
+import { EntitySignal } from "./entitySignal";
 
 export abstract class Entity<TDto extends Dto>
 {
@@ -11,19 +12,9 @@ export abstract class Entity<TDto extends Dto>
 
     (Object.keys(dto) as (keyof TDto)[]).forEach((key) =>
     {
-      const sig = signal(dto[key]);
-
-      (this as any)[key] = new Proxy(sig, {
-        set: (target, prop, value) =>
-        {
-          if (prop === "value" && Reflect.get(target, prop) !== value)
-          {
-            const success = Reflect.set(target, prop, value);
-            this.onFieldChange(key, value);
-            return success;
-          }
-          return Reflect.set(target, prop, value);
-        }
+      (this as any)[key] = new EntitySignal(dto[key], (value) =>
+      {
+        this.onFieldChange(key, value);
       });
     });
   }

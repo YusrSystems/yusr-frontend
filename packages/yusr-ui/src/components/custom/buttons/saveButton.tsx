@@ -62,6 +62,8 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
     if (result?.data)
     {
       result.data.mode.value = payload.mode.value;
+      entity.resetChanged();
+      entity.resetDirty();
     }
 
     loading.value = false;
@@ -101,7 +103,7 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
   return (
     <>
       <Button
-        disabled={ loading.value || pendingIgnore.value || disabled }
+        disabled={ loading.value || pendingIgnore.value || !entity.hasChanges.value || disabled }
         onClick={ () => Save() }
         variant={ variant }
         className={ className }

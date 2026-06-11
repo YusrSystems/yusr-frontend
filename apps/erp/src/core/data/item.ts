@@ -1,134 +1,14 @@
-import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, type StorageFile, ValidatableEntity, Validators } from "yusr-ui";
+import { type Signal } from "@preact/signals-react";
+import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, type StorageFile, Validators } from "yusr-ui";
+import { ItemStore, type ItemStoreDto } from "./itemStore";
+import { ItemTax } from "./itemTax";
+import { ItemUnitPricingMethod } from "./itemUnitPricingMethod";
 
 export const ItemType = {
   Product: 1,
   Service: 2
 };
 export type ItemType = (typeof ItemType)[keyof typeof ItemType];
-
-export class ItemUnitPricingMethodDto extends Dto
-{
-  public itemId!: number;
-  public unitId!: number | undefined;
-  public itemUnitPricingMethodName!: string | undefined;
-  public unitName?: string;
-  public pricingMethodId!: number | undefined;
-  public pricingMethodName?: string;
-  public quantityMultiplier!: number;
-  public unitPrice!: number;
-  public price!: number;
-  public barcode?: string;
-}
-
-export class ItemUnitPricingMethod extends ValidatableEntity<ItemUnitPricingMethodDto>
-{
-  declare itemId: Signal<number>;
-  declare unitId: Signal<number>;
-  declare itemUnitPricingMethodName: Signal<string>;
-  declare unitName: Signal<string | undefined>;
-  declare pricingMethodId: Signal<number>;
-  declare pricingMethodName: Signal<string | undefined>;
-  declare quantityMultiplier: Signal<number>;
-  declare unitPrice: Signal<number>;
-  declare price: Signal<number>;
-  declare barcode: Signal<string | undefined>;
-
-  constructor(dto: ItemUnitPricingMethodDto)
-  {
-    super(dto, [{
-      field: "unitId",
-      selector: (d) => d.unitId,
-      validators: [Validators.required(i18n.t("stocking:items.unitRequired"))]
-    }, {
-      field: "pricingMethodId",
-      selector: (d) => d.pricingMethodId,
-      validators: [Validators.required(i18n.t("stocking:items.pricingMethodRequired"))]
-    }, {
-      field: "quantityMultiplier",
-      selector: (d) => d.quantityMultiplier,
-      validators: [Validators.min(1, i18n.t("stocking:items.quantityMultiplierMin"))]
-    }, {
-      field: "unitPrice",
-      selector: (d) => d.unitPrice,
-      validators: [Validators.min(0, i18n.t("stocking:items.unitPriceMin"))]
-    }, {
-      field: "itemUnitPricingMethodName",
-      selector: (d) => d.itemUnitPricingMethodName,
-      validators: [Validators.required(i18n.t("stocking:items.itemUnitPricingMethodNameRequired"))]
-    }]);
-  }
-
-  generateBarcode(length = 12): void
-  {
-    this.barcode.value = ItemUnitPricingMethod.generateBarcode(length);
-  }
-
-  static generateBarcode(length = 12)
-  {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    return Array.from(
-      { length },
-      () => chars[Math.floor(Math.random() * chars.length)]
-    ).join("");
-  }
-}
-
-export class ItemTaxDto extends Dto
-{
-  public itemId!: number;
-  public taxId!: number | undefined;
-  public taxName?: string;
-  public taxPercentage!: number;
-}
-
-export class ItemTax extends ValidatableEntity<ItemTaxDto>
-{
-  declare itemId: Signal<number>;
-  declare taxId: Signal<number>;
-  declare taxName: Signal<string | undefined>;
-  declare taxPercentage: Signal<number | undefined>;
-
-  constructor(dto: ItemTaxDto)
-  {
-    super(dto, [{
-      field: "taxId",
-      selector: (d) => d.taxId,
-      validators: [Validators.required(i18n.t("stocking:items.taxRequired"))]
-    }]);
-  }
-}
-
-export class ItemStoreDto extends Dto
-{
-  public itemId!: number;
-  public storeId!: number | undefined;
-  public storeName?: string;
-  public initialQuantity!: number;
-  public quantity!: number;
-}
-
-export class ItemStore extends ValidatableEntity<ItemStoreDto>
-{
-  declare itemId: Signal<number>;
-  declare storeId: Signal<number>;
-  declare storeName: Signal<string | undefined>;
-  declare initialQuantity: Signal<number>;
-  declare quantity: Signal<number>;
-
-  constructor(dto: ItemStoreDto)
-  {
-    super(dto, [{
-      field: "storeId",
-      selector: (d) => d.storeId,
-      validators: [Validators.required(i18n.t("stocking:items.storeRequired"))]
-    }, {
-      field: "initialQuantity",
-      selector: (d) => d.initialQuantity,
-      validators: [Validators.min(0, i18n.t("stocking:items.initialQuantityMin"))]
-    }]);
-  }
-}
 
 export class ItemDto extends Dto
 {
@@ -279,6 +159,17 @@ export default class Item extends ChangeableEntity<ItemDto>
       selector: (d) => d.initialCost,
       validators: [Validators.required(i18n.t("stocking:items.initialCostRequired"))]
     }], mode);
+
+    const checkChildren = () =>
+    {
+      const childrenChanged = this.itemUnitPricingMethods.value.some((m) => m.hasChanges.value)
+        || this.itemTaxes.value.some((t) => t.hasChanges.value)
+        || this.itemStores.value.some((s) => s.hasChanges.value);
+      this.hasChanges.value = childrenChanged;
+    };
+    this.itemTaxes.value.forEach((t) => t.hasChanges.subscribe(checkChildren));
+    this.itemStores.value.forEach((s) => s.hasChanges.subscribe(checkChildren));
+    this.itemUnitPricingMethods.value.forEach((m) => m.hasChanges.subscribe(checkChildren));
   }
 
   override validate(dto?: Partial<ItemDto>): boolean

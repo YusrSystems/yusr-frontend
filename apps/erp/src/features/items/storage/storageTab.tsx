@@ -1,6 +1,6 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import type Item from "@/core/data/item";
-import { ItemStore } from "@/core/data/item";
+import { ItemStore } from "@/core/data/itemStore";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -11,18 +11,7 @@ export default function StorageTab({ entity }: { entity: Item; })
   useSignals();
   const { t } = useTranslation("stocking");
 
-  const addStore = () =>
-    entity.itemStores.value = [
-      ...entity.itemStores.value,
-      new ItemStore({
-        id: 0,
-        itemId: entity.id.value,
-        storeId: undefined,
-        storeName: "",
-        quantity: 0,
-        initialQuantity: 0
-      })
-    ];
+  const addStore = () => entity.itemStores.value = [...entity.itemStores.value, ItemStore.create()];
   const removeStore = (index: number) =>
   {
     entity.itemStores.value = entity.itemStores.value.filter((_, i) => i !== index);

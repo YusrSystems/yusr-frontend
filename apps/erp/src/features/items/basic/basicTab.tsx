@@ -1,5 +1,5 @@
 import type Item from "@/core/data/item";
-import { ItemUnitPricingMethod } from "@/core/data/item";
+import { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
 import type ServiceIds from "@/core/data/serviceIds";
 import type { Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -57,21 +57,7 @@ export default function BasicTab(
                 entity.sellUnitId.value = numericType === ItemType.Service ? serviceIds.value?.unitId : undefined;
                 entity.sellUnitName.value = numericType === ItemType.Service ? t("items.service") : undefined;
                 entity.itemUnitPricingMethods.value = numericType === ItemType.Service
-                  ? [
-                    new ItemUnitPricingMethod({
-                      id: 0,
-                      itemId: entity.id.value,
-                      unitId: serviceIds.value?.unitId,
-                      pricingMethodId: serviceIds.value?.pricingMethodId,
-                      unitName: t("items.service"),
-                      pricingMethodName: t("items.service"),
-                      quantityMultiplier: 1,
-                      itemUnitPricingMethodName: t("items.service"),
-                      unitPrice: 0,
-                      price: 0,
-                      barcode: ItemUnitPricingMethod.generateBarcode()
-                    })
-                  ]
+                  ? [ItemUnitPricingMethod.create()]
                   : [];
               } }
               options={ [{ label: t("items.product"), value: ItemType.Product }, {

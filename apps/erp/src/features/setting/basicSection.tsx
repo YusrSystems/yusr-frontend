@@ -13,8 +13,6 @@ import { SettingSlice } from "../../core/data/settingOld";
 export default function BasicSection()
 {
   useSignals();
-  const companyPhne = Services.auth.setting?.companyPhone?.value;
-  console.log(companyPhne);
 
   const { t } = useTranslation("erpCommon");
   const { formData, errors } = useAppSelector((state) => state.settingForm);

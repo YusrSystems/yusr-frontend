@@ -9,6 +9,11 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
 {
   public readonly mode: Signal<ChangeableEntityMode>;
   public readonly isDirty: Signal<boolean> = signal(false);
+
+  private originalDto: TDto;
+  private modifiedFields: Set<keyof TDto> = new Set();
+  readonly hasChanges: Signal<boolean> = signal(false);
+
   protected abstract initialValue(dto?: Partial<TDto>): TDto;
 
   protected constructor(
@@ -19,12 +24,7 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
   {
     super(dto, validationRules);
     this.mode = signal(mode);
-  }
-
-  protected onFieldChange(field: keyof TDto, newValue: any): void
-  {
-    this.isDirty.value = true;
-    super.onFieldChange(field, newValue);
+    this.originalDto = dto;
   }
 
   static create<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
@@ -43,8 +43,53 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
     return new this(dto, "update");
   }
 
+  protected normalizeForComparison(value: any): any
+  {
+    if (value === null || value === undefined)
+    {
+      return "";
+    }
+
+    if (typeof value === "string")
+    {
+      return value.trim();
+    }
+
+    return value;
+  }
+
+  protected onFieldChange(field: keyof TDto, newValue: any): void
+  {
+    super.onFieldChange(field, newValue);
+    this.isDirty.value = true;
+
+    const originalValue = this.originalDto[field];
+    const normOriginal = this.normalizeForComparison(originalValue);
+    const normNew = this.normalizeForComparison(newValue);
+    console.log(JSON.stringify(normOriginal), JSON.stringify(normNew));
+    const isDifferent = JSON.stringify(normOriginal) !== JSON.stringify(normNew);
+
+    if (isDifferent)
+    {
+      this.modifiedFields.add(field);
+    }
+    else
+    {
+      this.modifiedFields.delete(field);
+    }
+
+    this.hasChanges.value = this.modifiedFields.size > 0;
+  }
+
   resetDirty()
   {
     this.isDirty.value = false;
+  }
+
+  resetChanged()
+  {
+    this.hasChanges.value = false;
+    this.modifiedFields.clear();
+    this.originalDto = JSON.parse(JSON.stringify(this.toJson()));
   }
 }
