@@ -88,7 +88,7 @@ export default function BalanceTransfersPageOld()
                 request={ {
                   balanceTransferId: transfer.id,
                   tafqit: authState.setting?.currency
-                    ? NumbertoWordsService.ConvertAmount(transfer.amount, authState.setting.currency)
+                    ? NumbertoWordsService.ConvertAmountOld(transfer.amount, authState.setting.currency)
                     : NumbertoWordsService.Convert(transfer.amount)
                 } }
               />
