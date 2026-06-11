@@ -1,7 +1,7 @@
 import { BaseApiServiceOld } from "yusr-ui";
-import type PaymentMethod from "../data/paymentMethod";
+import type PaymentMethodOld from "../data/paymentMethod";
 
-export default class PaymentMethodsApiService extends BaseApiServiceOld<PaymentMethod>
+export default class PaymentMethodsApiService extends BaseApiServiceOld<PaymentMethodOld>
 {
   routeName: string = "PaymentMethods";
 }

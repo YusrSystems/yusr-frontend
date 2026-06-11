@@ -1,7 +1,7 @@
 import { type TFunction } from "i18next";
 import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
 import VouchersApiService from "../networking/voucherApiService";
-import type PaymentMethod from "./paymentMethod";
+import type PaymentMethodOld from "./paymentMethod";
 
 export const VoucherType = {
   Payment: 1,
@@ -25,7 +25,7 @@ export default class Voucher extends BaseEntity
   public recipient?: string;
 
   public accountName?: string;
-  public paymentMethod?: PaymentMethod;
+  public paymentMethod?: PaymentMethodOld;
 
   constructor(init?: Partial<Voucher>)
   {

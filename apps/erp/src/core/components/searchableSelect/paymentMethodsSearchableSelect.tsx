@@ -1,4 +1,4 @@
-import type PaymentMethod from "@/core/data/paymentMethod";
+import type PaymentMethodOld from "@/core/data/paymentMethod";
 import { PaymentMethodSlice } from "@/core/data/paymentMethod";
 import PaymentMethodsApiService from "@/core/networking/paymentMethodApiService";
 import ChangePaymentMethodDialog from "@/features/paymentMethods/changePaymentMethodDialog";
@@ -7,14 +7,14 @@ import { SystemPermissionsResources } from "../../auth/systemPermissionsResource
 import { useAppSelector } from "../../state/store";
 
 export default function PaymentMethodsSearchableSelect(
-  { ...props }: BasicSearchableSelectParamsOld<PaymentMethod>
+  { ...props }: BasicSearchableSelectParamsOld<PaymentMethodOld>
 )
 {
   const PaymentMethodState = useAppSelector((state) => state.paymentMethod);
   const authState = useAppSelector((state) => state.auth);
 
   return (
-    <ChangableSearchableSelect<PaymentMethod, {
+    <ChangableSearchableSelect<PaymentMethodOld, {
       filterDataOutside?: boolean;
     }>
       labelKey="name"

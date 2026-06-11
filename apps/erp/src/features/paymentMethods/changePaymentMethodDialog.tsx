@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld } from "yusr-ui";
 import { ChangeDialogOld, FieldGroup, FormFieldOld, NumberFieldOld, SelectFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { BanksAndBoxesSlice } from "../../core/data/account";
-import type PaymentMethod from "../../core/data/paymentMethod";
-import { CommissionType, PaymentMethodSlice, PaymentMethodValidationRules } from "../../core/data/paymentMethod";
+import type PaymentMethodOld from "../../core/data/paymentMethod";
+import { CommissionTypeOld, PaymentMethodSlice, PaymentMethodValidationRules } from "../../core/data/paymentMethod";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
 export default function ChangePaymentMethodDialog({
@@ -14,7 +14,7 @@ export default function ChangePaymentMethodDialog({
   service,
   filterDataOutside,
   onSuccess
-}: CommonChangeDialogPropsOld<PaymentMethod> & {
+}: CommonChangeDialogPropsOld<PaymentMethodOld> & {
   filterDataOutside?: boolean;
 })
 {
@@ -28,7 +28,7 @@ export default function ChangePaymentMethodDialog({
       name: entity?.name || "",
       accountId: entity?.accountId || undefined,
       accountName: entity?.accountName || "",
-      commissionType: entity?.commissionType || CommissionType.Percent,
+      commissionType: entity?.commissionType || CommissionTypeOld.Percent,
       commissionAmount: entity?.commissionAmount || 0
     }),
     [entity]
@@ -52,9 +52,9 @@ export default function ChangePaymentMethodDialog({
     dispatch(BanksAndBoxesSlice.entityActions.filter());
   }, []);
 
-  function formatCommission(type: CommissionType, amount: number): string | null
+  function formatCommission(type: CommissionTypeOld, amount: number): string | null
   {
-    if (type === CommissionType.Amount)
+    if (type === CommissionTypeOld.Amount)
     {
       return t("paymentMethods.commissionHintAmount", { amount });
     }
@@ -78,7 +78,7 @@ export default function ChangePaymentMethodDialog({
     : `${t("common:crudRow.edit")} ${t("paymentMethods.entityName")}`;
 
   return (
-    <ChangeDialogOld<PaymentMethod>
+    <ChangeDialogOld<PaymentMethodOld>
       title={ title }
       className="sm:max-w-xl"
       formData={ formData }
@@ -125,16 +125,16 @@ export default function ChangePaymentMethodDialog({
           <SelectFieldOld
             label={ t("paymentMethods.commissionType") }
             required
-            value={ formData.commissionType?.toString() || CommissionType.Percent.toString() }
+            value={ formData.commissionType?.toString() || CommissionTypeOld.Percent.toString() }
             onValueChange={ (val) =>
               dispatch(
-                PaymentMethodSlice.formActions.updateFormData({ commissionType: Number(val) as CommissionType })
+                PaymentMethodSlice.formActions.updateFormData({ commissionType: Number(val) as CommissionTypeOld })
               ) }
             isInvalid={ isInvalid("commissionType") }
             error={ getError("commissionType") }
-            options={ [{ label: t("paymentMethods.percentage"), value: CommissionType.Percent.toString() }, {
+            options={ [{ label: t("paymentMethods.percentage"), value: CommissionTypeOld.Percent.toString() }, {
               label: t("paymentMethods.fixedAmount"),
-              value: CommissionType.Amount.toString()
+              value: CommissionTypeOld.Amount.toString()
             }] }
           />
           <div className="flex flex-col gap-1">
@@ -151,7 +151,7 @@ export default function ChangePaymentMethodDialog({
             />
             <p className="text-sm text-red-600 font-bold">
               { formatCommission(
-                formData.commissionType ?? CommissionType.Percent,
+                formData.commissionType ?? CommissionTypeOld.Percent,
                 formData.commissionAmount ?? 0
               ) }
             </p>

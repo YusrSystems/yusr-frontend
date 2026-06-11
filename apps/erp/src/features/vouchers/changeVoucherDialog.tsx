@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld } from "yusr-ui";
 import { ChangeDialogOld, CheckboxFieldOld, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberFieldOld, NumbertoWordsService, SelectFieldOld, TextAreaFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/account";
-import PaymentMethod, { CommissionType, PaymentMethodSlice } from "../../core/data/paymentMethod";
+import PaymentMethodOld, { CommissionTypeOld, PaymentMethodSlice } from "../../core/data/paymentMethod";
 import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
@@ -50,18 +50,18 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
     }
   }, [formData.amount, authState.setting?.currency]);
 
-  const calculateCommission = (type?: VoucherType, amount?: number, method?: PaymentMethod): number =>
+  const calculateCommission = (type?: VoucherType, amount?: number, method?: PaymentMethodOld): number =>
   {
     if (type == undefined || amount == undefined || method == undefined || type === VoucherType.Payment)
     {
       return 0;
     }
 
-    if (method.commissionType === CommissionType.Percent)
+    if (method.commissionType === CommissionTypeOld.Percent)
     {
       return (amount * (method.commissionAmount || 0)) / 100;
     }
-    else if (method.commissionType === CommissionType.Amount)
+    else if (method.commissionType === CommissionTypeOld.Amount)
     {
       return method.commissionAmount || 0;
     }
@@ -69,7 +69,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
     return 0;
   };
 
-  const getPaymentMethod = (paymentMethodId?: number): PaymentMethod | undefined =>
+  const getPaymentMethod = (paymentMethodId?: number): PaymentMethodOld | undefined =>
   {
     return paymentMethodState.entities.data?.find((pm) => pm.id === paymentMethodId);
   };
@@ -92,7 +92,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
     }));
   };
 
-  const handlePaymentMethodChange = (paymentMethod?: PaymentMethod) =>
+  const handlePaymentMethodChange = (paymentMethod?: PaymentMethodOld) =>
   {
     dispatch(VoucherSlice.formActions.updateFormData({
       paymentMethodId: paymentMethod?.id,
