@@ -1,4 +1,6 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import { AccountsSearchableSelect } from "@/core/components/searchableSelect/accountsSearchableSelect";
+import { AccountType } from "@/core/data/account";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
@@ -47,6 +49,29 @@ export default function ChangePaymentMethodDialog(
 
     return t("paymentMethods.commissionHintPercent", { n: numerator, d: denominator });
   }
+
+  const hasBankPerm = Services.auth.hasAuth(
+    SystemPermissionsResources.AccountBank,
+    SystemPermissionsActions.Get
+  );
+
+  const hasBoxPerm = Services.auth.hasAuth(
+    SystemPermissionsResources.AccountBox,
+    SystemPermissionsActions.Get
+  );
+  let types: number[] = [];
+  if (hasBankPerm)
+  {
+    types.push(AccountType.Bank);
+  }
+
+  if (hasBoxPerm)
+  {
+    types.push(AccountType.Box);
+  }
+
+  const canChangeBankAccount = (hasBankPerm || hasBoxPerm) && entity.mode.value === "create";
+
   return (
     <ChangeDialog className="sm:max-w-lg">
       <ChangeDialog.Header title={ title } />
@@ -64,7 +89,12 @@ export default function ChangePaymentMethodDialog(
             required
             error={ entity.getError("accountId") }
           >
-            { /* <BanksAndBoxesSearchableSelect/> in new state manager format, next commit */ }
+            <AccountsSearchableSelect
+              label={ entity.accountName }
+              id={ entity.accountId }
+              types={ types }
+              disabled={ !canChangeBankAccount }
+            />
           </FormField>
         </div>
 
