@@ -32,7 +32,10 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
     dto?: Partial<TDto>
   ): TEntity
   {
-    return new this(this.prototype.initialValue(dto), "create");
+    const value = new this(this.prototype.initialValue(dto), "create");
+    value.initChanged();
+    value.resetDirty();
+    return value;
   }
 
   static load<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
@@ -84,6 +87,13 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
   resetDirty()
   {
     this.isDirty.value = false;
+  }
+
+  private initChanged()
+  {
+    this.hasChanges.value = true;
+    this.modifiedFields.clear();
+    this.originalDto = {} as TDto;
   }
 
   resetChanged()

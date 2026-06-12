@@ -35,6 +35,8 @@ export function PaymentMethodsPage()
 
       <Cards />
 
+      <CrudPage.SearchInput onSearch={ (searchText) => Cubits.paymentMethods.search(searchText) } />
+
       <PageTable />
       <CrudPage.ChangeDialog
         changeDialog={ (dto: PaymentMethodDto | undefined, closeDialog) =>

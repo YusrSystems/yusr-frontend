@@ -9,6 +9,8 @@ export const AccountType = {
   Box: 5
 } as const;
 
+export type AccountType = (typeof AccountType)[keyof typeof AccountType];
+
 export class AccountContactDto extends Dto
 {
   public accountId!: number;

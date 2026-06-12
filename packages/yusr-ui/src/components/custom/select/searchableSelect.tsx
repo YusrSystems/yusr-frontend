@@ -243,7 +243,7 @@ SearchableSelect.DeleteOptionButton = function({ onDelete }: { onDelete: () => P
 };
 
 SearchableSelect.AddOptionButton = function(
-  { onCreate }: { onCreate: (searchText?: string) => Promise<void>; }
+  { onCreate }: { onCreate: (searchText: string | undefined, closeCommand: () => void) => Promise<void>; }
 )
 {
   useSignals();
@@ -261,7 +261,11 @@ SearchableSelect.AddOptionButton = function(
       onSelect={ async () =>
       {
         isAdding.value = true;
-        await onCreate(data.searchInput.value);
+        await onCreate(data.searchInput.value, () =>
+        {
+          data.isOpen.value = false;
+          data.searchInput.value = undefined;
+        });
         isAdding.value = false;
       } }
       className="cursor-pointer text-primary"

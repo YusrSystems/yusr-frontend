@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { ChangeDialog, type CommonChangeDialogProps, FieldGroup, FormField, NumberField, SelectField, SystemPermissionsActions, TextField } from "yusr-ui";
 import { CommissionTypeOld } from "../../core/data/paymentMethod";
 import type { PaymentMethod, PaymentMethodDto } from "./data/paymentMethod";
+import { useEffect } from "react";
+import { Cubits } from "@/core/services/cubits";
 
 export default function ChangePaymentMethodDialog(
   { entity, service, onSuccess }: CommonChangeDialogProps<PaymentMethod, PaymentMethodDto>
@@ -24,6 +26,11 @@ export default function ChangePaymentMethodDialog(
   {
     return <ChangeDialog.Unauthorized />;
   }
+
+  useEffect(() =>
+  {
+    Cubits.accounts.init([AccountType.Bank, AccountType.Box]);
+  }, []);
 
   const { t } = useTranslation(["accounting", "common"]);
   const title = entity.mode.value === "create"
@@ -60,7 +67,7 @@ export default function ChangePaymentMethodDialog(
     SystemPermissionsResources.AccountBox,
     SystemPermissionsActions.Get
   );
-  let types: number[] = [];
+  let types: AccountType[] = [];
   if (hasBankPerm)
   {
     types.push(AccountType.Bank);

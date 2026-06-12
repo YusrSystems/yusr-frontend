@@ -1,7 +1,7 @@
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { type CommonChangeDialogProps, NumberField, TablePreviewCompact } from "yusr-ui";
+import { type CommonChangeDialogProps, NumberField, SelectField, TablePreviewCompact } from "yusr-ui";
 
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import { AccountsSearchableSelect } from "@/core/components/searchableSelect/accountsSearchableSelect";
@@ -10,7 +10,9 @@ import { Button, ChangeDialog, CitiesSearchableSelect, CurrencyIcon, FieldGroup,
 import { type Account, AccountContact, type AccountDto, AccountType } from "../../core/data/account";
 
 export default function ChangeAccountDialog(
-  { entity, service, onSuccess }: CommonChangeDialogProps<Account, AccountDto>
+  { entity, service, onSuccess, selectTypes }: CommonChangeDialogProps<Account, AccountDto> & {
+    selectTypes?: AccountType[];
+  }
 )
 {
   useSignals();
@@ -45,23 +47,32 @@ export default function ChangeAccountDialog(
   const requiresAddress = !isBank;
   const requiresContacts = !isBank && !isBox;
 
+  const accountTypeLabels: Record<AccountType, string> = {
+    [AccountType.Client]: t("accounts.client"),
+    [AccountType.Supplier]: t("accounts.supplier"),
+    [AccountType.Employee]: t("accounts.employee"),
+    [AccountType.Bank]: t("accounts.bank"),
+    [AccountType.Box]: t("accounts.box")
+  };
+
   return (
     <ChangeDialog className="sm:max-w-4xl">
       <ChangeDialog.Header title={ title } />
       <FieldGroup>
         <FieldsSection title={ t("accounts.basicInfo") } columns={ 2 }>
-          {
-            /* { (selectTypes && selectTypes.length > 0)
+          { (selectTypes && selectTypes.length > 0)
             && (
               <SelectField
                 label={ t("accounts.accountType") }
                 required
                 value={ entity.type }
                 error={ entity.getError("type") }
-                options={ selectTypes }
+                options={ selectTypes.map((type) => ({
+                  value: type,
+                  label: accountTypeLabels[type]
+                })) }
               />
-            ) } */
-          }
+            ) }
 
           <TextField
             label={ t("accounts.accountName") }
@@ -77,6 +88,7 @@ export default function ChangeAccountDialog(
                 types={ entity.type.value === AccountType.Client ? [AccountType.Client] : [AccountType.Supplier] }
                 id={ entity.parentId }
                 label={ entity.parentName }
+                showAddButton={ false }
               />
             </FormField>
           ) }

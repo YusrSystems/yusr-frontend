@@ -53,7 +53,7 @@ export default function ChangeBalanceTransferDialog(
     SystemPermissionsResources.AccountBox,
     SystemPermissionsActions.Get
   );
-  let types: number[] = [];
+  let types: AccountType[] = [];
   if (hasBankPerm)
   {
     types.push(AccountType.Bank);
