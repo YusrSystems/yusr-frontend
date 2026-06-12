@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld } from "yusr-ui";
 import { ChangeDialogOld, CheckboxFieldOld, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberFieldOld, NumbertoWordsService, SelectFieldOld, TextAreaFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { ClientsAndSuppliersSlice } from "../../core/data/account";
+import { ClientsAndSuppliersSlice } from "../../core/data/accountOld";
 import PaymentMethodOld, { CommissionTypeOld, PaymentMethodSlice } from "../../core/data/paymentMethod";
 import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -46,7 +46,7 @@ export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }
   {
     if (formData.amount !== undefined && authState.setting?.currency)
     {
-      setAmountToWords(NumbertoWordsService.ConvertAmount(formData.amount, authState.setting.currency));
+      setAmountToWords(NumbertoWordsService.ConvertAmountOld(formData.amount, authState.setting.currency));
     }
   }, [formData.amount, authState.setting?.currency]);
 

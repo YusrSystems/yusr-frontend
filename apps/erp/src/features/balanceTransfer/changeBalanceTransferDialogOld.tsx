@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld } from "yusr-ui";
 import { ChangeDialogOld, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberFieldOld, NumbertoWordsService, TextAreaFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { BanksAndBoxesSlice } from "../../core/data/account";
+import { BanksAndBoxesSlice } from "../../core/data/accountOld";
 import type BalanceTransfer from "../../core/data/balanceTransfer";
 import { BalanceTransferSlice, BalanceTransferValidationRules } from "../../core/data/balanceTransfer";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";

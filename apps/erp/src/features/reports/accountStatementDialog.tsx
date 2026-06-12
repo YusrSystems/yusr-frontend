@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "yusr-ui";
-import type AccountOld from "../../core/data/account";
+import type { Account } from "../../core/data/account";
+import type AccountOld from "../../core/data/accountOld";
 import ReportConstants from "../../core/data/report/reportConstants";
-import type { Account } from "../accounts/data/account";
 import ReportButton from "./reportButton";
 
 export default function AccountStatementButtonOld({ account }: { account: AccountOld; })

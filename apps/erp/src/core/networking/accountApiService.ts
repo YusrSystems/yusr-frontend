@@ -1,4 +1,4 @@
-import { Account, type AccountDto } from "@/features/accounts/data/account";
+import { Account, type AccountDto } from "@/core/data/account";
 import { ApiConstants, type ApiFilterResult, BaseApiService, FilterByTypeRequest, type FilterResult, YusrApiHelper } from "yusr-ui";
 
 export default class AccountApiService extends BaseApiService<Account, AccountDto>

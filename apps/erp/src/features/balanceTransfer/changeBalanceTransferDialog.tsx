@@ -1,6 +1,6 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import { AccountsSearchableSelect } from "@/core/components/searchableSelect/accountsSearchableSelect";
-import { AccountType } from "@/core/data/account";
+import { AccountType } from "@/core/data/accountOld";
 import { Services } from "@/core/services/services";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";

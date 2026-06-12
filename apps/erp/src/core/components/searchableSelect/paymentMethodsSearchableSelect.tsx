@@ -1,7 +1,7 @@
 import type PaymentMethodOld from "@/core/data/paymentMethod";
 import { PaymentMethodSlice } from "@/core/data/paymentMethod";
 import PaymentMethodsApiServiceOld from "@/core/networking/paymentMethodApiServiceOld";
-import ChangePaymentMethodDialogOld from "@/features/paymentMethods/changePaymentMethodDialog";
+import ChangePaymentMethodDialogOld from "@/features/paymentMethods/changePaymentMethodDialogOld";
 import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
 import { useAppSelector } from "../../state/store";

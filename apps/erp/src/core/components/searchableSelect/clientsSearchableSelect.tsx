@@ -1,4 +1,4 @@
-import Account, { AccountType, ClientsSlice } from "@/core/data/account";
+import Account, { AccountType, ClientsSlice } from "@/core/data/accountOld";
 import type { BasicSearchableSelectParamsOld } from "yusr-ui";
 import AccountsSearchableSelectOld from "./accountsSearchableSelect";
 

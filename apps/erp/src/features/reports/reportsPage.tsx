@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { ClientsAndSuppliersSlice } from "../../core/data/account";
+import { ClientsAndSuppliersSlice } from "../../core/data/accountOld";
 import { ItemSlice } from "../../core/data/itemOld";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import BalanceSheetDialog from "./BalanceSheetDialog";

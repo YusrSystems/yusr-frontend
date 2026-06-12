@@ -3,7 +3,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { AccountType, BanksSlice } from "../../core/data/account";
+import { AccountType, BanksSlice } from "../../core/data/accountOld";
 import { useAppSelector } from "../../core/state/store";
 import AccountsPageOld, { AccountsPage } from "./accountsPage";
 

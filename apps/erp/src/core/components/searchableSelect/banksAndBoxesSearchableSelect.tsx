@@ -1,5 +1,5 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import Account, { AccountType, BanksAndBoxesSlice } from "@/core/data/account";
+import Account, { AccountType, BanksAndBoxesSlice } from "@/core/data/accountOld";
 import { useAppSelector } from "@/core/state/store";
 import { useTranslation } from "react-i18next";
 import { type BasicSearchableSelectParamsOld, SystemPermissions, SystemPermissionsActions } from "yusr-ui";

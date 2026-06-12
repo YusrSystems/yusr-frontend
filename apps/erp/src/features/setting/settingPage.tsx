@@ -5,7 +5,7 @@ import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BranchSlice, Button, Card, CardContent, CardFooter, CurrencySlice, StorageType, TabButton, useStorageFile, useValidate } from "yusr-ui";
-import { ClientsAndSuppliersSlice } from "../../core/data/account";
+import { ClientsAndSuppliersSlice } from "../../core/data/accountOld";
 import { PaymentMethodSlice } from "../../core/data/paymentMethod";
 import { SettingOld, SettingSlice, SettingValidationRules } from "../../core/data/settingOld";
 import { TaxSlice } from "../../core/data/tax";

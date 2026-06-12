@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld } from "yusr-ui";
 import { ChangeDialogOld, FieldGroup, FormFieldOld, NumberFieldOld, SelectFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { BanksAndBoxesSlice } from "../../core/data/account";
+import { BanksAndBoxesSlice } from "../../core/data/accountOld";
 import type PaymentMethodOld from "../../core/data/paymentMethod";
 import { CommissionTypeOld, PaymentMethodSlice, PaymentMethodValidationRules } from "../../core/data/paymentMethod";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";

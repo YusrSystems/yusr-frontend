@@ -1,4 +1,4 @@
-import type { AccountType } from "../account";
+import type { AccountType } from "../accountOld";
 import type { BaseReportRequest } from "./baseReportRequest";
 
 export class AccountsListReportRequest implements BaseReportRequest

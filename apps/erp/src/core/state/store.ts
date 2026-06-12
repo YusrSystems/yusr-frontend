@@ -4,7 +4,7 @@ import { BranchSlice, CitySlice, CountrySlice, createAuthSlice, CurrencySlice, R
 import dashboardReducer from "../../features/dashboard/logic/dashboardSlice";
 import { itemTransferReducer } from "../../features/itemTransfers/logic/itemTransferSlice";
 import registerReducer from "../../features/register/logic/registerSlice";
-import { BanksAndBoxesSlice, BanksSlice, BoxesSlice, ClientsAndSuppliersSlice, ClientsSlice, EmployeesSlice, SuppliersSlice } from "../data/account";
+import { BanksAndBoxesSlice, BanksSlice, BoxesSlice, ClientsAndSuppliersSlice, ClientsSlice, EmployeesSlice, SuppliersSlice } from "../data/accountOld";
 import { BalanceTransferSlice } from "../data/balanceTransfer";
 import { PurchasesSlice, QuotationSlice, SalesSlice } from "../data/invoice";
 import { ItemSlice } from "../data/itemOld";

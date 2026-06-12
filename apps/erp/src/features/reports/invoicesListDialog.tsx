@@ -1,7 +1,7 @@
 import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
 import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
 import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
-import type AccountOld from "@/core/data/account";
+import type AccountOld from "@/core/data/accountOld";
 import { InvoiceType } from "@/core/data/invoice";
 import type ItemOld from "@/core/data/itemOld";
 import type StoreOld from "@/core/data/store";

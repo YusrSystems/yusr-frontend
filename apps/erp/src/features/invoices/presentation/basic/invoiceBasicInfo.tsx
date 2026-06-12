@@ -4,7 +4,7 @@ import SuppliersSearchableSelectOld from "@/core/components/searchableSelect/sup
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Checkbox, DateField, FieldsSection, FormFieldOld, SelectFieldOld, TextFieldOld } from "yusr-ui";
-import AccountOld from "../../../../core/data/account";
+import AccountOld from "../../../../core/data/accountOld";
 import { ImportExportType, InvoiceType } from "../../../../core/data/invoice";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 

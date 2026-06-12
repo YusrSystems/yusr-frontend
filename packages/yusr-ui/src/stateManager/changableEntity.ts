@@ -11,7 +11,7 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
   public readonly isDirty: Signal<boolean> = signal(false);
 
   private originalDto: TDto;
-  private modifiedFields: Set<keyof TDto> = new Set();
+  private modifiedFields: Set<string> = new Set();
   readonly hasChanges: Signal<boolean> = signal(false);
 
   protected abstract initialValue(dto?: Partial<TDto>): TDto;
@@ -71,11 +71,11 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
 
     if (isDifferent)
     {
-      this.modifiedFields.add(field);
+      this.modifiedFields.add(field as string);
     }
     else
     {
-      this.modifiedFields.delete(field);
+      this.modifiedFields.delete(field as string);
     }
 
     this.hasChanges.value = this.modifiedFields.size > 0;

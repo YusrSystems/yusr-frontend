@@ -1,5 +1,4 @@
 import type Item from "@/core/data/item";
-import type { ItemUnitPricingMethod } from "@/core/data/item";
 import { ScanBarcode } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,6 +6,7 @@ import { Button, Dialog, DialogClose, DialogContent, DialogDescription, DialogFo
 import ReportConstants from "../../core/data/report/reportConstants";
 import { useAppSelector } from "../../core/state/store";
 import ReportButton from "./reportButton";
+import type { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
 
 export default function ItemBarcodeButton({ item, iupm }: { item: Item; iupm: ItemUnitPricingMethod; })
 {

@@ -112,7 +112,7 @@ export default function VouchersPage()
                 request={ {
                   voucherId: voucher.id,
                   tafqit: authState.setting?.currency
-                    ? NumbertoWordsService.ConvertAmount(voucher.amount, authState.setting.currency)
+                    ? NumbertoWordsService.ConvertAmountOld(voucher.amount, authState.setting.currency)
                     : NumbertoWordsService.Convert(voucher.amount)
                 } }
               />

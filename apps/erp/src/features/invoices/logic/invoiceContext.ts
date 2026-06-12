@@ -1,8 +1,8 @@
 import { createContext, useContext } from "react";
 import type { ThunkDispatch } from "redux-thunk";
 import type { AuthState, IEntityState, UserOld } from "yusr-ui";
-import type AccountOld from "../../../core/data/account";
-import type { AccountSliceType } from "../../../core/data/account";
+import type AccountOld from "../../../core/data/accountOld";
+import type { AccountSliceType } from "../../../core/data/accountOld";
 import type Invoice from "../../../core/data/invoice";
 import type { SettingOld } from "../../../core/data/settingOld";
 import type { InvoiceDialogMode, InvoiceSliceType } from "../changeInvoiceDialog";

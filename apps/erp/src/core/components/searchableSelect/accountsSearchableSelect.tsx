@@ -1,12 +1,12 @@
+import type { Account, AccountDto } from "@/core/data/account";
 import AccountsApiServiceOld from "@/core/networking/accountApiServiceOld";
-import { Services } from "@/core/services/services";
+import { Cubits } from "@/core/services/cubits";
 import { type RootState, useAppSelector } from "@/core/state/store";
-import type { Account, AccountDto } from "@/features/accounts/data/account";
 import { useSignals } from "@preact/signals-react/runtime";
-import React, { useEffect, useMemo } from "react";
-import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect, type IEntityState, type IFormState, PageCubit, PageLoaded, PageLoading, SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "yusr-ui";
+import React, { useEffect } from "react";
+import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect, type IEntityState, type IFormState, PageLoaded, PageLoading, SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "yusr-ui";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
-import AccountOld, { type AccountSliceType, AccountType } from "../../data/account";
+import AccountOld, { type AccountSliceType, AccountType } from "../../data/accountOld";
 
 export default function AccountsSearchableSelectOld(
   {
@@ -92,14 +92,13 @@ export function AccountsSearchableSelect(
 )
 {
   useSignals();
-  const cubit = useMemo(() => new PageCubit<Account, AccountDto>(Services.accountsApi), []);
-  useEffect(() => cubit.init(types), []);
+  useEffect(() => Cubits.accounts.init(types), []);
 
   return (
     <SearchableSelect>
       <SearchableSelect.Trigger label={ props.label } disabled={ props.disabled } />
       <SearchableSelect.Content>
-        <SearchableSelect.SearchInput onSearch={ (searchInput) => cubit.search(searchInput) } />
+        <SearchableSelect.SearchInput onSearch={ (searchInput) => Cubits.accounts.search(searchInput) } />
         <SearchableSelect.Command>
           <SearchableSelect.NullOption { ...props } />
           <CommandItems />
@@ -111,14 +110,14 @@ export function AccountsSearchableSelect(
   function CommandItems()
   {
     useSignals();
-    if (cubit.state.value instanceof PageLoading)
+    if (Cubits.accounts.state.value instanceof PageLoading)
     {
       return <SearchableSelect.Loading />;
     }
 
-    if (cubit.state.value instanceof PageLoaded && cubit.entities.value.length > 0)
+    if (Cubits.accounts.state.value instanceof PageLoaded && Cubits.accounts.entities.value.length > 0)
     {
-      return cubit.entities.value.map((entity) => <Option key={ entity.id.value } item={ entity } { ...props } />);
+      return Cubits.accounts.entities.value.map((entity) => <Option key={ entity.id.value } item={ entity } { ...props } />);
     }
 
     return <SearchableSelect.Empty />;

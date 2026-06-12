@@ -1,13 +1,15 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import type { AccountsListReportRequest } from "@/core/data/report/accountsListReportRequest";
+import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import type { Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { BoxIcon, WalletIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, CrudPageOld, CurrencyIcon, type IDialogState, type IEntityState, type IFormState, PageCubit, PageError, PageLoaded, PageLoading, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
-import AccountOld, { AccountSlice, AccountType } from "../../core/data/account";
+import { CrudPage, CrudPageOld, CurrencyIcon, type IDialogState, type IEntityState, type IFormState, PageError, PageLoaded, PageLoading, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
+import { Account, type AccountDto } from "../../core/data/account";
+import AccountOld, { AccountSlice, AccountType } from "../../core/data/accountOld";
 import ReportConstants from "../../core/data/report/reportConstants";
 import AccountsApiServiceOld from "../../core/networking/accountApiServiceOld";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
@@ -15,7 +17,6 @@ import AccountStatementButtonOld, { AccountStatementButton } from "../reports/ac
 import ReportButton from "../reports/reportButton";
 import ChangeAccountDialog from "./changeAccountDialog";
 import ChangeAccountDialogOld from "./changeAccountDialogOld";
-import { Account, type AccountDto } from "./data/account";
 
 export default function AccountsPageOld({
   title,
@@ -177,17 +178,16 @@ export function AccountsPage(
 )
 {
   useSignals();
-  const accountCubit = useMemo(() => new PageCubit<Account, AccountDto>(Services.accountsApi), []);
   if (!hasPagePermission)
   {
     return <UnauthorizedPage />;
   }
 
   const { t } = useTranslation("accounting");
-  useEffect(() => accountCubit.init([fixedType]), []);
+  useEffect(() => Cubits.accounts.init([fixedType]), []);
 
   // TODO: replace it wuth Cubits.accounts.searchText
-  const searchText = useMemo(() => accountCubit.searchText, [accountCubit.searchText]);
+  const searchText = useMemo(() => Cubits.accounts.searchText, [Cubits.accounts.searchText]);
 
   return (
     <CrudPage>
@@ -208,11 +208,11 @@ export function AccountsPage(
           : [] }
       />
 
-      <Cards count={ accountCubit.count } />
+      <Cards count={ Cubits.accounts.count } />
 
-      <CrudPage.SearchInput onSearch={ (searchText) => accountCubit.search(searchText) } />
+      <CrudPage.SearchInput onSearch={ (searchText) => Cubits.accounts.search(searchText) } />
 
-      <PageTable cubit={ accountCubit } />
+      <PageTable />
 
       <CrudPage.ChangeDialog
         changeDialog={ (dto: AccountDto | undefined, closeDialog) =>
@@ -227,12 +227,12 @@ export function AccountsPage(
               {
                 if (data.mode.value === "create")
                 {
-                  accountCubit.add(data);
+                  Cubits.accounts.add(data);
                   closeDialog();
                 }
                 else if (data.mode.value === "update")
                 {
-                  accountCubit.update(data);
+                  Cubits.accounts.update(data);
                 }
               } }
             />
@@ -243,7 +243,7 @@ export function AccountsPage(
       <CrudPage.DeleteDialog
         entityNameSelector={ (account) => account.name }
         service={ Services.accountsApi }
-        onSuccess={ (entity) => accountCubit.delete(entity) }
+        onSuccess={ (entity) => Cubits.accounts.delete(entity) }
       />
     </CrudPage>
   );
@@ -264,15 +264,13 @@ function Cards({ count }: { count: Signal<number>; })
   );
 }
 
-function PageTable(
-  { cubit }: { cubit: PageCubit<Account, AccountDto>; }
-)
+function PageTable()
 {
   useSignals();
 
   const { t } = useTranslation(["accounting", "common"]);
 
-  if (cubit.state.value instanceof PageLoading)
+  if (Cubits.accounts.state.value instanceof PageLoading)
   {
     return <TablePreview.Loading />;
   }
@@ -282,12 +280,12 @@ function PageTable(
     SystemPermissionsActions.Get
   );
 
-  if (cubit.state.value instanceof PageLoaded)
+  if (Cubits.accounts.state.value instanceof PageLoaded)
   {
     return (
       <CrudPage.Table>
         <CrudPage.TableBody<Account, AccountDto>
-          data={ cubit.entities.value }
+          data={ Cubits.accounts.entities.value }
           headerRows={ [
             { rowBody: "", rowStyles: "text-left w-12.5" },
             { rowBody: t("accounts.accountId"), rowStyles: "w-24" },
@@ -350,19 +348,19 @@ function PageTable(
           ) }
         />
         <CrudPage.TablePagination
-          pageSize={ cubit.pageSize.value }
-          totalNumber={ cubit.count.value }
-          currentPage={ cubit.currentPage.value }
+          pageSize={ Cubits.accounts.pageSize.value }
+          totalNumber={ Cubits.accounts.count.value }
+          currentPage={ Cubits.accounts.currentPage.value }
           onPageChanged={ (newPage) =>
           {
-            cubit.changePage(newPage);
+            Cubits.accounts.changePage(newPage);
           } }
         />
       </CrudPage.Table>
     );
   }
 
-  if (cubit.state.value instanceof PageError)
+  if (Cubits.accounts.state.value instanceof PageError)
   {
     return <TablePreview.Error />;
   }

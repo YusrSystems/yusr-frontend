@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld, IEntityState, IFormState } from "yusr-ui";
 import { Button, ChangeDialogOld, CitiesSearchableSelectOld, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormFieldOld, InputOld, NumberFieldOld, SelectFieldOld, SystemPermissions, SystemPermissionsActions, TextAreaFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import AccountOld, { AccountContactOld, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/account";
+import AccountOld, { AccountContactOld, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/accountOld";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
 
 export default function ChangeAccountDialogOld({

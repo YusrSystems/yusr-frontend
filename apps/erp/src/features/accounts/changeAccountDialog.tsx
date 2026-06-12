@@ -7,7 +7,7 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { AccountsSearchableSelect } from "@/core/components/searchableSelect/accountsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { Button, ChangeDialog, CitiesSearchableSelect, CurrencyIcon, FieldGroup, FieldsSection, FormField, PhoneField, SystemPermissionsActions, TextAreaField, TextField } from "yusr-ui";
-import { type Account, AccountContact, type AccountDto, AccountType } from "./data/account";
+import { type Account, AccountContact, type AccountDto, AccountType } from "../../core/data/account";
 
 export default function ChangeAccountDialog(
   { entity, service, onSuccess }: CommonChangeDialogProps<Account, AccountDto>
