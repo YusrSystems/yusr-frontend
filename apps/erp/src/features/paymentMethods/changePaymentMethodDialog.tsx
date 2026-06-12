@@ -73,7 +73,7 @@ export default function ChangePaymentMethodDialog(
 
   const canChangeBankAccount = (hasBankPerm || hasBoxPerm) && entity.mode.value === "create";
 
-  if (!canChangeBankAccount)
+  if (!hasBankPerm && !hasBoxPerm)
   {
     toast.warning(t("paymentMethods.noPermissionToEditAdmin"));
   }
