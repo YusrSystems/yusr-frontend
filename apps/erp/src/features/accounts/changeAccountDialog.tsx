@@ -229,7 +229,7 @@ function ContactsFields({ entity }: { entity: Account; })
             size="sm"
             onClick={ () =>
             {
-              entity.accountContacts.value = [...entity.accountContacts.value, new AccountContact({ number: "" })];
+              entity.accountContacts.value = [...entity.accountContacts.value, AccountContact.create()];
             } }
             className="w-full border-dashed"
           >

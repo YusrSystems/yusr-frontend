@@ -1,5 +1,5 @@
 import { type Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, City, CityDto, Dto, i18n, ValidatableEntity, Validators } from "yusr-ui";
+import { ChangeableEntity, type ChangeableEntityMode, City, CityDto, Dto, i18n, Validators } from "yusr-ui";
 
 export const AccountType = {
   Client: 1,
@@ -40,12 +40,22 @@ export class AccountDto extends Dto
   public accountContacts: AccountContactDto[] = [];
 }
 
-export class AccountContact extends ValidatableEntity<AccountContactDto>
+export class AccountContact extends ChangeableEntity<AccountContactDto>
 {
   declare accountId: Signal<number>;
   declare number: Signal<string>;
 
-  constructor(dto: Partial<AccountContactDto>)
+  protected initialValue(dto?: Partial<AccountContactDto> | undefined): AccountContactDto
+  {
+    return {
+      id: 0,
+      accountId: 0,
+      number: "",
+      ...dto
+    };
+  }
+
+  constructor(dto: AccountContactDto)
   {
     super(dto, [{
       field: "number",
@@ -144,6 +154,13 @@ export class Account extends ChangeableEntity<AccountDto>
       }],
       mode
     );
+
+    const checkChildren = () =>
+    {
+      const childrenChanged = this.accountContacts.value.some((m) => m.hasChanges.value);
+      this.hasChanges.value = childrenChanged;
+    };
+    this.accountContacts.value.forEach((t) => t.hasChanges.subscribe(checkChildren));
   }
 
   override validate(dto?: Partial<AccountDto>): boolean
