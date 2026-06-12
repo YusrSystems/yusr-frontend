@@ -1,4 +1,5 @@
 import { Services } from "@/core/services/services";
+import { Analytics } from "@vercel/analytics/react";
 import type { i18n } from "i18next";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -30,6 +31,7 @@ function AppBody({ i18n }: { i18n: i18n; })
       <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
         <RouterProvider router={ router } />
         <Toaster richColors closeButton position="top-center" dir={ i18n.dir() } />
+        <Analytics />
       </ThemeProvider>
     </TooltipProvider>
   );
