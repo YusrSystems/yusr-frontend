@@ -280,6 +280,12 @@ function PageTable()
     SystemPermissionsActions.Get
   );
 
+  const balanceLabels: Record<"debit" | "credit" | "zero", string> = {
+    debit: t("accounts.debit"),
+    credit: t("accounts.credit"),
+    zero: ""
+  };
+
   if (Cubits.accounts.state.value instanceof PageLoaded)
   {
     return (
@@ -306,9 +312,9 @@ function PageTable()
             account
           ) =>
           {
-            const isCredit = account.balance.value <= 0;
-            const label = isCredit ? t("accounts.debit") : t("accounts.credit");
-            const colorStyle = isCredit ? "text-red-600" : "text-green-600";
+            const balanceType = account.balance.value > 0 ? "debit" : account.balance.value < 0 ? "credit" : "zero";
+            const balanceLabel = balanceLabels[balanceType];
+            const colorStyle = balanceType === "credit" ? "text-red-600" : "text-green-600";
 
             return [
               { rowBody: `#${account.id}`, rowStyles: "" },
@@ -323,7 +329,7 @@ function PageTable()
                   ),
                   rowStyles: `font-mono ${colorStyle}`
                 }, {
-                  rowBody: label,
+                  rowBody: balanceLabel,
                   rowStyles: `font-semibold ${colorStyle}`
                 }]
                 : []),
