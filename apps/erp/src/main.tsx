@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import { i18n, YusrApp } from "yusr-ui";
 import App from "./app/app.tsx";
 import { store } from "./core/state/store.ts";
+import { Analytics } from '@vercel/analytics/next';
 import "./index.css";
 
 function revealApp()
@@ -34,5 +35,6 @@ createRoot(document.getElementById("root")!).render(
     onReady={ revealApp }
   >
     <App />
+    <Analytics />
   </YusrApp>
 );
