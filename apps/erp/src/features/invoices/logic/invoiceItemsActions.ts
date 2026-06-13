@@ -255,12 +255,20 @@ export default class InvoiceItemsActions
   {
     state.formData.settlementAmount = action.payload || 0;
     state.formData.settlementPercent = 0;
-    state.formData.invoiceItems?.forEach((_, i) =>
+
+    state.formData.invoiceItems?.forEach((item, i) =>
+    {
+      const newSettlementPerItem = Number(
+        ((state.formData.settlementAmount ?? 0) / (state.formData.invoiceItems?.length ?? 0)).toFixed(2)
+      );
+
+      const newSettlementPerQtn = newSettlementPerItem / item.quantity;
+
       InvoiceItemsActions.onInvoiceItemSettlementChange(state, {
-        payload: { index: i, newSettlement: state.formData.settlementAmount, resetInvoiceSettlements: false },
+        payload: { index: i, newSettlement: newSettlementPerQtn, resetInvoiceSettlements: false },
         type: "onInvoiceItemSettlementChange"
-      })
-    );
+      });
+    });
   }
 
   public static onInvoiceSettlementPercentChange(state: IFormState<Invoice>, action: PayloadAction<number>)
