@@ -17,34 +17,16 @@ export class ItemUnitPricingMethodDto extends Dto
 
 export class ItemUnitPricingMethod extends ChangeableEntity<ItemUnitPricingMethodDto>
 {
-  declare itemId: Signal<number | undefined>;
-  declare unitId: Signal<number | undefined>;
-  declare itemUnitPricingMethodName: Signal<string>;
-  declare unitName: Signal<string | undefined>;
-  declare pricingMethodId: Signal<number>;
-  declare pricingMethodName: Signal<string | undefined>;
-  declare quantityMultiplier: Signal<number>;
-  declare unitPrice: Signal<number>;
-  declare price: Signal<number>;
-  declare barcode: Signal<string | undefined>;
-
-  initialValue(dto?: Partial<ItemUnitPricingMethodDto> | undefined): ItemUnitPricingMethodDto
-  {
-    return {
-      id: 0,
-      itemId: undefined,
-      unitId: undefined,
-      itemUnitPricingMethodName: undefined,
-      unitName: undefined,
-      pricingMethodId: undefined,
-      pricingMethodName: undefined,
-      quantityMultiplier: 1,
-      unitPrice: 0,
-      price: 0,
-      barcode: ItemUnitPricingMethod.generateBarcode(),
-      ...dto
-    };
-  }
+  public itemId: Signal<number | undefined>;
+  public unitId: Signal<number | undefined>;
+  public itemUnitPricingMethodName: Signal<string>;
+  public unitName: Signal<string | undefined>;
+  public pricingMethodId: Signal<number>;
+  public pricingMethodName: Signal<string | undefined>;
+  public quantityMultiplier: Signal<number>;
+  public unitPrice: Signal<number>;
+  public price: Signal<number>;
+  public barcode: Signal<string | undefined>;
 
   constructor(dto: ItemUnitPricingMethodDto)
   {
@@ -69,6 +51,16 @@ export class ItemUnitPricingMethod extends ChangeableEntity<ItemUnitPricingMetho
       selector: (d) => d.itemUnitPricingMethodName,
       validators: [Validators.required(i18n.t("stocking:items.itemUnitPricingMethodNameRequired"))]
     }]);
+    this.itemId = this.assign("itemId", dto.itemId ?? 0);
+    this.unitId = this.assign("unitId", dto.unitId ?? 0);
+    this.itemUnitPricingMethodName = this.assign("itemUnitPricingMethodName", dto.itemUnitPricingMethodName ?? "");
+    this.unitName = this.assign("unitName", dto.unitName ?? "");
+    this.pricingMethodId = this.assign("pricingMethodId", dto.pricingMethodId ?? 0);
+    this.pricingMethodName = this.assign("pricingMethodName", dto.pricingMethodName ?? "");
+    this.quantityMultiplier = this.assign("quantityMultiplier", dto.quantityMultiplier ?? 0);
+    this.unitPrice = this.assign("unitPrice", dto.unitPrice ?? 0);
+    this.price = this.assign("price", dto.price ?? 0);
+    this.barcode = this.assign("barcode", dto.barcode ?? "");
   }
 
   generateBarcode(length = 12): void

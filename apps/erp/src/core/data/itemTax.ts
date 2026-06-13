@@ -11,29 +11,22 @@ export class ItemTaxDto extends Dto
 
 export class ItemTax extends ChangeableEntity<ItemTaxDto>
 {
-  declare itemId: Signal<number>;
-  declare taxId: Signal<number>;
-  declare taxName: Signal<string | undefined>;
-  declare taxPercentage: Signal<number | undefined>;
+  public itemId: Signal<number>;
+  public taxId: Signal<number>;
+  public taxName: Signal<string | undefined>;
+  public taxPercentage: Signal<number | undefined>;
 
-  initialValue(dto?: Partial<ItemTaxDto> | undefined): ItemTaxDto
-  {
-    return {
-      id: 0,
-      itemId: 0,
-      taxId: undefined,
-      taxName: undefined,
-      taxPercentage: 0,
-      ...dto
-    };
-  }
-
-  constructor(dto: ItemTaxDto)
+  constructor(dto?: Partial<ItemTaxDto>)
   {
     super(dto, [{
       field: "taxId",
       selector: (d) => d.taxId,
       validators: [Validators.required(i18n.t("stocking:items.taxRequired"))]
     }]);
+
+    this.itemId = this.assign("itemId", dto?.itemId ?? 0);
+    this.taxId = this.assign("taxId", dto?.taxId ?? 0);
+    this.taxName = this.assign("taxName", dto?.taxName ?? "");
+    this.taxPercentage = this.assign("taxPercentage", dto?.taxPercentage ?? 0);
   }
 }

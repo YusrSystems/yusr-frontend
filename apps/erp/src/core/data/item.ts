@@ -43,70 +43,35 @@ export class ItemDto extends Dto
 
 export default class Item extends ChangeableEntity<ItemDto>
 {
-  declare type: Signal<ItemType>;
-  declare name: Signal<string>;
-  declare description: Signal<string | undefined>;
-  declare class: Signal<string | undefined>;
-  declare brand: Signal<string | undefined>;
-  declare sellUnitId: Signal<number | undefined>;
-  declare sellUnitName: Signal<string | undefined>;
-  declare minQuantity: Signal<number | undefined>;
-  declare maxQuantity: Signal<number | undefined>;
-  declare initialQuantity: Signal<number>;
-  declare quantity: Signal<number>;
-  declare storeQuantity: Signal<number>;
-  declare lastBuyPrice: Signal<number>;
-  declare initialCost: Signal<number>;
-  declare cost: Signal<number>;
-  declare taxIncluded: Signal<boolean>;
-  declare taxable: Signal<boolean>;
-  declare exemptionReasonCode: Signal<string | undefined>;
-  declare exemptionReason: Signal<string | undefined>;
-  declare statusId: Signal<number>;
-  declare location: Signal<string | undefined>;
-  declare notes: Signal<string | undefined>;
-  declare totalTaxes: Signal<number>;
-  declare itemUnitPricingMethods: Signal<ItemUnitPricingMethod[]>;
-  declare itemTaxes: Signal<ItemTax[]>;
-  declare itemStores: Signal<ItemStore[]>;
-  declare itemImages: Signal<StorageFile[]>;
+  public type: Signal<ItemType>;
+  public name: Signal<string>;
+  public description: Signal<string | undefined>;
+  public class: Signal<string | undefined>;
+  public brand: Signal<string | undefined>;
+  public sellUnitId: Signal<number | undefined>;
+  public sellUnitName: Signal<string | undefined>;
+  public minQuantity: Signal<number | undefined>;
+  public maxQuantity: Signal<number | undefined>;
+  public initialQuantity: Signal<number>;
+  public quantity: Signal<number>;
+  public storeQuantity: Signal<number>;
+  public lastBuyPrice: Signal<number>;
+  public initialCost: Signal<number>;
+  public cost: Signal<number>;
+  public taxIncluded: Signal<boolean>;
+  public taxable: Signal<boolean>;
+  public exemptionReasonCode: Signal<string | undefined>;
+  public exemptionReason: Signal<string | undefined>;
+  public statusId: Signal<number>;
+  public location: Signal<string | undefined>;
+  public notes: Signal<string | undefined>;
+  public totalTaxes: Signal<number>;
+  public itemUnitPricingMethods: Signal<ItemUnitPricingMethod[]>;
+  public itemTaxes: Signal<ItemTax[]>;
+  public itemStores: Signal<ItemStore[]>;
+  public itemImages: Signal<StorageFile[]>;
 
-  protected initialValue(dto?: Partial<ItemDto> | undefined): ItemDto
-  {
-    return {
-      id: 0,
-      type: ItemType.Product,
-      name: "",
-      description: "",
-      class: "",
-      brand: "",
-      sellUnitId: 0,
-      sellUnitName: "",
-      minQuantity: 0,
-      maxQuantity: 0,
-      initialQuantity: 0,
-      quantity: 0,
-      storeQuantity: 0,
-      lastBuyPrice: 0,
-      initialCost: 0,
-      cost: 0,
-      taxIncluded: false,
-      taxable: false,
-      exemptionReasonCode: "",
-      exemptionReason: "",
-      statusId: 1,
-      location: "",
-      notes: "",
-      totalTaxes: 0,
-      itemUnitPricingMethods: [],
-      itemTaxes: [],
-      itemStores: [],
-      itemImages: [],
-      ...dto
-    };
-  }
-
-  constructor(dto: ItemDto, mode: ChangeableEntityMode = "create")
+  constructor(dto: Partial<ItemDto>, mode: ChangeableEntityMode = "create")
   {
     super({
       ...dto,
@@ -159,6 +124,39 @@ export default class Item extends ChangeableEntity<ItemDto>
       selector: (d) => d.initialCost,
       validators: [Validators.required(i18n.t("stocking:items.initialCostRequired"))]
     }], mode);
+
+    this.type = this.assign("type", dto.type ?? 1);
+    this.name = this.assign("name", dto.name ?? "");
+    this.description = this.assign("description", dto.description ?? "");
+    this.class = this.assign("class", dto.class ?? "");
+    this.brand = this.assign("brand", dto.brand ?? "");
+    this.sellUnitId = this.assign("sellUnitId", dto.sellUnitId ?? 0);
+    this.sellUnitName = this.assign("sellUnitName", dto.sellUnitName ?? "");
+    this.minQuantity = this.assign("minQuantity", dto.minQuantity ?? 0);
+    this.maxQuantity = this.assign("maxQuantity", dto.maxQuantity ?? 0);
+    this.initialQuantity = this.assign("initialQuantity", dto.initialQuantity ?? 0);
+    this.quantity = this.assign("quantity", dto.quantity ?? 0);
+    this.storeQuantity = this.assign("storeQuantity", dto.storeQuantity ?? 0);
+    this.lastBuyPrice = this.assign("lastBuyPrice", dto.lastBuyPrice ?? 0);
+    this.initialCost = this.assign("initialCost", dto.initialCost ?? 0);
+    this.cost = this.assign("cost", dto.cost ?? 0);
+    this.taxIncluded = this.assign("taxIncluded", dto.taxIncluded ?? false);
+    this.taxable = this.assign("taxable", dto.taxable ?? false);
+    this.exemptionReasonCode = this.assign("exemptionReasonCode", dto.exemptionReasonCode ?? "");
+    this.exemptionReason = this.assign("exemptionReason", dto.exemptionReason ?? "");
+    this.statusId = this.assign("statusId", dto.statusId ?? 0);
+    this.location = this.assign("location", dto.location ?? "");
+    this.notes = this.assign("notes", dto.notes ?? "");
+    this.totalTaxes = this.assign("totalTaxes", dto.totalTaxes ?? 0);
+    const itemUnitPricingMethodsSignalArray = (dto.itemUnitPricingMethods ?? []).map((m) =>
+      m instanceof ItemUnitPricingMethod ? m : new ItemUnitPricingMethod(m)
+    );
+    this.itemUnitPricingMethods = this.assign("itemUnitPricingMethods", itemUnitPricingMethodsSignalArray);
+    const itemTaxesSignalArray = (dto.itemTaxes ?? []).map((t) => t instanceof ItemTax ? t : new ItemTax(t));
+    this.itemTaxes = this.assign("itemTaxes", itemTaxesSignalArray);
+    const itemStoresSignalArray = (dto.itemStores ?? []).map((s) => s instanceof ItemStore ? s : new ItemStore(s));
+    this.itemStores = this.assign("itemStores", itemStoresSignalArray);
+    this.itemImages = this.assign("itemImages", dto.itemImages ?? []);
 
     const checkChildren = () =>
     {

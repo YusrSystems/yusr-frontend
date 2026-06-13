@@ -8,12 +8,7 @@ export class PricingMethodDto extends Dto
 
 export default class PricingMethod extends ChangeableEntity<PricingMethodDto>
 {
-  protected initialValue(dto?: Partial<PricingMethodDto> | undefined): PricingMethodDto
-  {
-    return { id: 0, name: "", ...dto };
-  }
-
-  declare name: Signal<string>;
+  public name: Signal<string>;
 
   constructor(dto: PricingMethodDto, mode: ChangeableEntityMode = "create")
   {
@@ -22,5 +17,7 @@ export default class PricingMethod extends ChangeableEntity<PricingMethodDto>
       selector: (d) => d.name,
       validators: [Validators.required(i18n.t("stocking:pricingMethods.nameRequired"))]
     }], mode);
+
+    this.name = this.assign("name", dto?.name ?? "");
   }
 }

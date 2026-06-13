@@ -12,26 +12,13 @@ export class ItemStoreDto extends Dto
 
 export class ItemStore extends ChangeableEntity<ItemStoreDto>
 {
-  declare itemId: Signal<number>;
-  declare storeId: Signal<number>;
-  declare storeName: Signal<string | undefined>;
-  declare initialQuantity: Signal<number>;
-  declare quantity: Signal<number>;
+  public itemId: Signal<number>;
+  public storeId: Signal<number>;
+  public storeName: Signal<string | undefined>;
+  public initialQuantity: Signal<number>;
+  public quantity: Signal<number>;
 
-  protected initialValue(dto?: Partial<ItemStoreDto> | undefined): ItemStoreDto
-  {
-    return {
-      id: 0,
-      itemId: 0,
-      storeId: undefined,
-      storeName: undefined,
-      initialQuantity: 0,
-      quantity: 0,
-      ...dto
-    };
-  }
-
-  constructor(dto: ItemStoreDto)
+  constructor(dto?: Partial<ItemStoreDto>)
   {
     super(dto, [{
       field: "storeId",
@@ -42,5 +29,11 @@ export class ItemStore extends ChangeableEntity<ItemStoreDto>
       selector: (d) => d.initialQuantity,
       validators: [Validators.min(0, i18n.t("stocking:items.initialQuantityMin"))]
     }]);
+
+    this.itemId = this.assign("itemId", dto?.itemId ?? 0);
+    this.storeId = this.assign("storeId", dto?.storeId ?? 0);
+    this.storeName = this.assign("storeName", dto?.storeName ?? "");
+    this.initialQuantity = this.assign("initialQuantity", dto?.initialQuantity ?? 0);
+    this.quantity = this.assign("quantity", dto?.quantity ?? 0);
   }
 }
