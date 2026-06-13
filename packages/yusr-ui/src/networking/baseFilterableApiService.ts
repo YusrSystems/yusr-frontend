@@ -39,8 +39,11 @@ export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDt
       ? new FilterByTypeRequest({ searchText, types })
       : searchText;
 
+    const containTypes = types !== undefined && types.length > 0;
     const rawResult = await YusrApiHelper.Post<ApiFilterResult<TDto>>(
-      `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}${extraQuery}`,
+      `${ApiConstants.baseUrl}/${this.routeName}/Filter${
+        containTypes ? "ByTypes" : ""
+      }?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}${extraQuery}`,
       body
     );
 

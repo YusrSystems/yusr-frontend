@@ -42,20 +42,10 @@ export class AccountDto extends Dto
 
 export class AccountContact extends ChangeableEntity<AccountContactDto>
 {
-  declare accountId: Signal<number>;
-  declare number: Signal<string>;
+  public accountId: Signal<number>;
+  public number: Signal<string>;
 
-  protected initialValue(dto?: Partial<AccountContactDto> | undefined): AccountContactDto
-  {
-    return {
-      id: 0,
-      accountId: 0,
-      number: "",
-      ...dto
-    };
-  }
-
-  constructor(dto: AccountContactDto)
+  constructor(dto?: Partial<AccountContactDto>)
   {
     super(dto, [{
       field: "number",
@@ -73,55 +63,34 @@ export class AccountContact extends ChangeableEntity<AccountContactDto>
         i18n.t("accounting:accounts.contactNumberLength")
       )]
     }]);
+
+    this.accountId = this.assign("accountId", dto?.accountId ?? 0);
+    this.number = this.assign("number", dto?.number ?? 0);
   }
 }
 
 export class Account extends ChangeableEntity<AccountDto>
 {
-  protected initialValue(dto?: Partial<AccountDto> | undefined): AccountDto
-  {
-    return {
-      id: dto?.id ?? 0,
-      type: dto?.type ?? 0,
-      name: dto?.name ?? "",
-      initialBalance: dto?.initialBalance ?? 0,
-      balance: dto?.balance ?? 0,
-      vatNumber: dto?.vatNumber,
-      crn: dto?.crn,
-      parentId: dto?.parentId,
-      parentName: dto?.parentName,
-      bankAccountNumber: dto?.bankAccountNumber,
-      cityId: dto?.cityId,
-      cityName: dto?.city?.name,
-      city: dto?.city,
-      street: dto?.street,
-      district: dto?.district,
-      buildingNumber: dto?.buildingNumber,
-      postalCode: dto?.postalCode,
-      notes: dto?.notes,
-      accountContacts: dto?.accountContacts ?? [{ id: 0, accountId: dto?.id ?? 0, number: "" }]
-    };
-  }
-  declare type: Signal<number>;
-  declare name: Signal<string>;
-  declare initialBalance: Signal<number>;
-  declare balance: Signal<number>;
-  declare vatNumber: Signal<string | undefined>;
-  declare crn: Signal<string | undefined>;
-  declare parentId: Signal<number | undefined>;
-  declare parentName: Signal<string | undefined>;
-  declare bankAccountNumber: Signal<string | undefined>;
-  declare cityId: Signal<number | undefined>;
-  declare cityName: Signal<string | undefined>;
-  declare city: Signal<City | undefined>;
-  declare street: Signal<string | undefined>;
-  declare district: Signal<string | undefined>;
-  declare buildingNumber: Signal<string | undefined>;
-  declare postalCode: Signal<string | undefined>;
-  declare notes: Signal<string | undefined>;
-  declare accountContacts: Signal<AccountContact[]>;
+  public type: Signal<number>;
+  public name: Signal<string>;
+  public initialBalance: Signal<number>;
+  public balance: Signal<number>;
+  public vatNumber: Signal<string | undefined>;
+  public crn: Signal<string | undefined>;
+  public parentId: Signal<number | undefined>;
+  public parentName: Signal<string | undefined>;
+  public bankAccountNumber: Signal<string | undefined>;
+  public cityId: Signal<number | undefined>;
+  public cityName: Signal<string | undefined>;
+  public city: Signal<City | undefined>;
+  public street: Signal<string | undefined>;
+  public district: Signal<string | undefined>;
+  public buildingNumber: Signal<string | undefined>;
+  public postalCode: Signal<string | undefined>;
+  public notes: Signal<string | undefined>;
+  public accountContacts: Signal<AccountContact[]>;
 
-  constructor(dto: AccountDto, mode: ChangeableEntityMode = "create")
+  constructor(dto?: Partial<AccountDto>, mode: ChangeableEntityMode = "create")
   {
     super(
       {
@@ -154,6 +123,30 @@ export class Account extends ChangeableEntity<AccountDto>
       }],
       mode
     );
+
+    console.log("matching accout dto with account entity");
+
+    this.type = this.assign("type", dto?.type ?? 0);
+    this.name = this.assign("name", dto?.name ?? "");
+    this.initialBalance = this.assign("initialBalance", dto?.initialBalance ?? 0);
+    this.balance = this.assign("balance", dto?.balance ?? 0);
+    this.vatNumber = this.assign("vatNumber", dto?.vatNumber);
+    this.crn = this.assign("crn", dto?.crn);
+    this.parentId = this.assign("parentId", dto?.parentId);
+    this.parentName = this.assign("parentName", dto?.parentName);
+    this.bankAccountNumber = this.assign("bankAccountNumber", dto?.bankAccountNumber);
+    this.cityId = this.assign("cityId", dto?.cityId);
+    this.cityName = this.assign("cityName", dto?.cityName);
+    this.city = this.assign("city", dto?.city);
+    this.street = this.assign("street", dto?.street);
+    this.district = this.assign("district", dto?.district);
+    this.buildingNumber = this.assign("buildingNumber", dto?.buildingNumber);
+    this.postalCode = this.assign("postalCode", dto?.postalCode);
+    this.notes = this.assign("notes", dto?.notes);
+    const accountContactsList = (dto?.accountContacts ?? []).map((t) => new AccountContact(t));
+    console.log("accountContactsList ", accountContactsList);
+
+    this.accountContacts = this.assign("accountContacts", accountContactsList);
 
     const checkChildren = () =>
     {
