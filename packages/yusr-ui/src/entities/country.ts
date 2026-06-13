@@ -1,13 +1,20 @@
-import { BaseEntity } from "./baseEntity";
+import type { Signal } from "@preact/signals-react";
+import { Dto, Entity } from "../stateManager";
 
-export class Country extends BaseEntity
+export class CountryDto extends Dto
 {
   public name!: string;
   public code!: string;
+}
+export class Country extends Entity<CountryDto>
+{
+  public name!: Signal<string>;
+  public code!: Signal<string>;
 
-  constructor(init?: Partial<Country>)
+  constructor(dto?: Partial<Country>)
   {
     super();
-    Object.assign(this, init);
+    this.name = this.assign("name", dto?.name ?? "");
+    this.code = this.assign("code", dto?.code ?? "");
   }
 }

@@ -1,6 +1,6 @@
 import type { Signal } from "@preact/signals-react";
-import { type BranchOld, CityOld, type Currency, Dto, i18n, type StorageFile, ValidatableEntity, Validators } from "yusr-ui";
-import type { TaxOld } from "./tax";
+import { Branch, type BranchOld, CityOld, Currency, CurrencyDto, Dto, i18n, type StorageFile, ValidatableEntity, Validators } from "yusr-ui";
+import { Tax, type TaxDto } from "./tax";
 
 export const EInvoicingEnvironmentType = {
   Production: 0,
@@ -29,7 +29,7 @@ export class SettingDto extends Dto
   public vatNumber?: string;
 
   public currencyId!: number;
-  public currency?: Currency;
+  public currency?: CurrencyDto;
 
   public logo?: StorageFile;
 
@@ -40,7 +40,7 @@ export class SettingDto extends Dto
   public branch?: BranchOld;
 
   public mainTaxId!: number;
-  public mainTax?: TaxOld;
+  public mainTax?: TaxDto;
 
   public sellAccountId?: number;
   public sellAccountName?: string;
@@ -68,25 +68,36 @@ export class Setting extends ValidatableEntity<SettingDto>
   public companyBusinessCategory?: Signal<string>;
   public crn?: Signal<string>;
   public vatNumber?: Signal<string>;
+
   public currencyId: Signal<number>;
   public currency?: Signal<Currency>;
+
   public logo?: Signal<StorageFile>;
+
   public startDate: Signal<Date>;
   public endDate: Signal<Date>;
+
   public branchId: Signal<number>;
-  public branch?: Signal<BranchOld>;
+  public branch?: Signal<Branch>;
+
   public mainTaxId: Signal<number>;
-  public mainTax?: Signal<TaxOld>;
+  public mainTax?: Signal<Tax>;
+
   public sellAccountId?: Signal<number>;
   public sellAccountName?: Signal<string>;
+
   public purchaseAccountId?: Signal<number>;
   public purchaseAccountName?: Signal<string>;
+
   public mainPaymentMethodId?: Signal<number>;
   public mainPaymentMethodName?: Signal<string>;
+
   public mainStoreId?: Signal<number>;
   public mainStoreName?: Signal<string>;
+
   public invoicePolicy?: Signal<string>;
   public invoicePrintSize: Signal<InvoicePrintSize>;
+
   public eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType>;
 
   constructor(dto: Partial<SettingDto>)
@@ -121,14 +132,14 @@ export class Setting extends ValidatableEntity<SettingDto>
     this.crn = this.assign("crn", dto?.crn ?? undefined);
     this.vatNumber = this.assign("vatNumber", dto?.vatNumber ?? undefined);
     this.currencyId = this.assign("currencyId", dto?.currencyId ?? 0);
-    this.currency = this.assign("currency", dto?.currency ?? undefined);
+    this.currency = this.assign("currency", new Currency(dto?.currency));
     this.logo = this.assign("logo", dto?.logo ?? undefined);
     this.startDate = this.assign("startDate", dto?.startDate ?? new Date());
     this.endDate = this.assign("endDate", dto?.endDate ?? new Date());
     this.branchId = this.assign("branchId", dto?.branchId ?? 0);
-    this.branch = this.assign("branch", dto?.branch ?? undefined);
+    this.branch = this.assign("branch", new Branch(dto?.branch));
     this.mainTaxId = this.assign("mainTaxId", dto?.mainTaxId ?? 0);
-    this.mainTax = this.assign("mainTax", dto?.mainTax ?? undefined);
+    this.mainTax = this.assign("mainTax", new Tax(dto?.mainTax));
     this.sellAccountId = this.assign("sellAccountId", dto?.sellAccountId ?? undefined);
     this.sellAccountName = this.assign("sellAccountName", dto?.sellAccountName ?? undefined);
     this.purchaseAccountId = this.assign("purchaseAccountId", dto?.purchaseAccountId ?? undefined);

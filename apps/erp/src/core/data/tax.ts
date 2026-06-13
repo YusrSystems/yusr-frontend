@@ -57,15 +57,15 @@ export class TaxDto extends Dto
 
 export class Tax extends ChangeableEntity<TaxDto>
 {
-  protected initialValue(dto?: Partial<TaxDto> | undefined): TaxDto
-  {
-    return { id: 0, name: "", percentage: 1, isPrimary: false, ...dto };
-  }
-  declare name: Signal<string>;
-  declare percentage: Signal<number>;
-  declare isPrimary: Signal<boolean>;
+  // protected initialValue(dto?: Partial<TaxDto> | undefined): TaxDto
+  // {
+  //   return { id: 0, name: "", percentage: 1, isPrimary: false, ...dto };
+  // }
+  public name: Signal<string>;
+  public percentage: Signal<number>;
+  public isPrimary: Signal<boolean>;
 
-  constructor(dto: TaxDto, mode: ChangeableEntityMode = "create")
+  constructor(dto?: TaxDto, mode: ChangeableEntityMode = "create")
   {
     const rules: ValidationRule<Partial<TaxDto>>[] = [{
       field: "name",
@@ -82,5 +82,9 @@ export class Tax extends ChangeableEntity<TaxDto>
     }];
 
     super(dto, rules, mode);
+
+    this.name = this.assign("name", dto?.name ?? "");
+    this.percentage = this.assign("percentage", dto?.percentage ?? 0);
+    this.isPrimary = this.assign("isPrimary", dto?.isPrimary ?? true);
   }
 }

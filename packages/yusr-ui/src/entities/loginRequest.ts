@@ -23,9 +23,9 @@ export class LoginRequestDto extends Dto
 
 export class LoginRequest extends ValidatableEntity<LoginRequestDto>
 {
-  declare companyEmail: Signal<string>;
-  declare username: Signal<string>;
-  declare password: Signal<string>;
+  public companyEmail: Signal<string>;
+  public username: Signal<string>;
+  public password: Signal<string>;
 
   constructor(dto: Partial<LoginRequestDto>)
   {
@@ -46,6 +46,5 @@ export class LoginRequest extends ValidatableEntity<LoginRequestDto>
     this.companyEmail = this.assign("companyEmail", dto.companyEmail);
     this.username = this.assign("username", dto.username);
     this.password = this.assign("password", dto.password);
-
   }
 }

@@ -37,8 +37,8 @@ export class RoleDto extends Dto
 
 export abstract class Role<TRoleDto extends RoleDto> extends ChangeableEntity<TRoleDto>
 {
-  declare name: Signal<string>;
-  declare permissions: Signal<string[]>;
+  public name: Signal<string>;
+  public permissions: Signal<string[]>;
 
   constructor(
     dto: TRoleDto,
@@ -50,5 +50,8 @@ export abstract class Role<TRoleDto extends RoleDto> extends ChangeableEntity<TR
       selector: (d) => d.name,
       validators: [Validators.required(i18n.t("commonEntities:roles.nameRequired"))]
     }], mode);
+
+    this.name = this.assign("name", dto?.name ?? "");
+    this.permissions = this.assign("permissions", dto?.permissions ?? []);
   }
 }
