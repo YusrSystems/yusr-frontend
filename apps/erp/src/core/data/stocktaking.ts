@@ -1,16 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
-import type { IStocktakingItem, StocktakingItem, StocktakingItemDto } from "./stocktakingItem";
-
-export interface IStocktaking<TDto extends Dto> extends ChangeableEntity<TDto>
-{
-  mode: Signal<ChangeableEntityMode>;
-  description: Signal<string | undefined>;
-  date: Signal<string>;
-  storeId: Signal<number | undefined>;
-  storeName: Signal<string | undefined>;
-  stocktakingItems: Signal<IStocktakingItem[]>;
-}
+import { StocktakingItem, type StocktakingItemDto } from "./stocktakingItem";
 
 export class StocktakingDto extends Dto
 {
@@ -21,7 +11,7 @@ export class StocktakingDto extends Dto
   public stocktakingItems: StocktakingItemDto[] = [];
 }
 
-export default class Stocktaking extends ChangeableEntity<StocktakingDto> implements IStocktaking<StocktakingDto>
+export default class Stocktaking extends ChangeableEntity<StocktakingDto>
 {
   declare description: Signal<string | undefined>;
   declare date: Signal<string>;
@@ -32,19 +22,23 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto> implem
   initialValue(dto?: Partial<StocktakingDto> | undefined): StocktakingDto
   {
     return {
-      id: 0,
-      description: undefined,
-      date: new Date().toLocaleDateString("en-CA"),
-      storeId: undefined,
-      storeName: undefined,
-      stocktakingItems: [],
-      ...dto
+      id: dto?.id ?? 0,
+      description: dto?.description ?? undefined,
+      date: dto?.date ? new Date(dto?.date).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
+      storeId: dto?.storeId ?? undefined,
+      storeName: dto?.storeName ?? undefined,
+      stocktakingItems: dto?.stocktakingItems ?? []
     };
   }
 
-  constructor(dto: StocktakingDto)
+  constructor(dto: StocktakingDto, mode: ChangeableEntityMode = "create")
   {
-    super(dto, [{
+    super({
+      ...dto,
+      stocktakingItems: (dto.stocktakingItems ?? []).map((s) =>
+        s instanceof StocktakingItem ? s : new StocktakingItem(s)
+      ) as unknown[] as StocktakingItemDto[]
+    }, [{
       field: "storeId",
       selector: (d) => d.storeId,
       validators: [Validators.required(i18n.t("stocking:stocktakings.storeRequired"))]
@@ -56,6 +50,6 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto> implem
       field: "stocktakingItems",
       selector: (d) => d.stocktakingItems,
       validators: [Validators.arrayMinLength(1, i18n.t("stocking:stocktakings.itemsRequired"))]
-    }]);
+    }], mode);
   }
 }

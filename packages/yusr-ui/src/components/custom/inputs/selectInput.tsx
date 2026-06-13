@@ -31,7 +31,7 @@ export function SelectInputOld({ value, onValueChange, options, placeholder, isI
 
 export interface SelectInputProps<T>
 {
-  value: Signal<T | undefined>;
+  value?: Signal<T | undefined>;
   onValueChange?: (value: T) => void;
   options: { label: string; value: T | undefined; }[];
   placeholder?: string;
@@ -46,11 +46,14 @@ export function SelectInput<T extends string | number | boolean | undefined>(
   const { t, i18n } = useTranslation("common");
   return (
     <Select
-      value={ String(value.value ?? t("searchableSelect.nullOption")) }
+      value={ String(value?.value ?? t("searchableSelect.nullOption")) }
       onValueChange={ (val) =>
       {
         const match = options.find((o) => String(o.value) === val);
-        value.value = match ? match.value : undefined;
+        if (value)
+        {
+          value.value = match ? match.value : undefined;
+        }
         onValueChange?.(match?.value as T);
       } }
       dir={ i18n.dir() }

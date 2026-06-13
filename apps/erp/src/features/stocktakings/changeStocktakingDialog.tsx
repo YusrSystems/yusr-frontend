@@ -1,6 +1,6 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
-import type Stocktaking from "@/core/data/stocktaking";
 import type { StocktakingDto } from "@/core/data/stocktaking";
+import Stocktaking from "@/core/data/stocktaking";
 import { StocktakingItem } from "@/core/data/stocktakingItem";
 import { Cubits } from "@/core/services/cubits";
 import { signal } from "@preact/signals-react";
@@ -19,20 +19,22 @@ export default function ChangeStocktakingDialog(
   useSignals();
   const { t } = useTranslation(["stocking", "common"]);
   const isLoading = useMemo(() => signal<boolean>(false), []);
+  const currentEntity = useMemo(() => signal<Stocktaking>(entity), []);
 
   useEffect(() =>
   {
     Cubits.stores.init();
 
-    if (entity.mode.value === "update" && entity?.id.value)
+    if (currentEntity.value.mode.value === "update" && currentEntity.value?.id.value)
     {
       isLoading.value = true;
       const fetch = async () =>
       {
-        const res = await service.Get(entity.id.value);
+        const res = await service.Get(currentEntity.value.id.value);
         if (res.data != undefined)
         {
-          entity = res.data;
+          currentEntity.value = Stocktaking.load(res.data.toJson());
+          currentEntity.value.date.value = new Date(currentEntity.value.date.value).toLocaleDateString("en-CA");
         }
         isLoading.value = false;
       };
@@ -42,13 +44,13 @@ export default function ChangeStocktakingDialog(
 
   useEffect(() =>
   {
-    if (entity?.storeId.value)
+    if (currentEntity.value?.storeId.value)
     {
-      Cubits.items.init([ItemType.Product], { storeId: entity.storeId.value });
+      Cubits.items.init([ItemType.Product], { storeId: currentEntity.value.storeId.value });
     }
-  }, [entity.storeId.value]);
+  }, [currentEntity.value.storeId.value]);
 
-  const title = entity.mode.value === "create"
+  const title = currentEntity.value.mode.value === "create"
     ? t("stocktakings.addNewTitle")
     : `${t("common:crudRow.edit")} ${t("stocktakings.entityName")}`;
 
@@ -71,7 +73,7 @@ export default function ChangeStocktakingDialog(
           <FieldsSection columns={ 2 }>
             <TextField
               label={ t("stocktakings.stocktakingDate") }
-              value={ entity.date }
+              value={ currentEntity.value.date }
               required
               disabled
             />
@@ -79,17 +81,17 @@ export default function ChangeStocktakingDialog(
             <FormField
               label={ t("stocktakings.store") }
               required
-              error={ entity.getError("storeId") }
+              error={ currentEntity.value.getError("storeId") }
             >
               <StoresSearchableSelect
-                id={ entity.storeId }
-                label={ entity.storeName }
-                disabled={ entity.mode.value === "update" }
+                id={ currentEntity.value.storeId }
+                label={ currentEntity.value.storeName }
+                disabled={ currentEntity.value.mode.value === "update" }
                 onSelect={ (store) =>
                 {
-                  entity.storeId.value = store?.id.value;
-                  entity.storeName.value = store?.name.value;
-                  entity.stocktakingItems.value = [];
+                  currentEntity.value.storeId.value = store?.id.value;
+                  currentEntity.value.storeName.value = store?.name.value;
+                  currentEntity.value.stocktakingItems.value = [];
                 } }
               />
             </FormField>
@@ -97,11 +99,11 @@ export default function ChangeStocktakingDialog(
 
           <TextField
             label={ t("stocktakings.description") }
-            value={ entity.description }
+            value={ currentEntity.value.description }
           />
 
           <StocktakingItemsTable
-            entity={ entity }
+            entity={ currentEntity.value }
             createInstance={ () => StocktakingItem.create() }
           />
         </FieldGroup>
@@ -110,7 +112,7 @@ export default function ChangeStocktakingDialog(
       <ChangeDialog.Footer>
         <ChangeDialog.Close />
         <ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
-          entity={ entity }
+          entity={ currentEntity.value }
           service={ service }
           onSuccess={ (data) => onSuccess?.(data) }
         />

@@ -1,22 +1,22 @@
 import type Item from "@/core/data/item";
 import type { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
-import type { IStocktaking } from "@/core/data/stocktaking";
-import type { IStocktakingItem } from "@/core/data/stocktakingItem";
+import type Stocktaking from "@/core/data/stocktaking";
+import type { StocktakingItem } from "@/core/data/stocktakingItem";
 import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
 import { AlertCircle, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, Dto, NumberField, SelectField } from "yusr-ui";
+import { Button, NumberField, SelectField } from "yusr-ui";
 import StoreItemSelector from "../items/storeItemSelector";
 
-export interface StocktakingItemsTableProps<TDto extends Dto>
+export interface StocktakingItemsTableProps
 {
-  entity: IStocktaking<TDto>;
-  createInstance: () => IStocktakingItem;
+  entity: Stocktaking;
+  createInstance: () => StocktakingItem;
 }
 
-export default function StocktakingItemsTable<TDto extends Dto>(
-  { entity, createInstance }: StocktakingItemsTableProps<TDto>
+export default function StocktakingItemsTable(
+  { entity, createInstance }: StocktakingItemsTableProps
 )
 {
   useSignals();
@@ -24,7 +24,7 @@ export default function StocktakingItemsTable<TDto extends Dto>(
 
   const groupedItems = (() =>
   {
-    const groups = new Map<number, IStocktakingItem[]>();
+    const groups = new Map<number, StocktakingItem[]>();
     entity.stocktakingItems?.value.forEach((item) =>
     {
       if (!item.itemId.value)
@@ -61,7 +61,7 @@ export default function StocktakingItemsTable<TDto extends Dto>(
     return storeItem?.itemUnitPricingMethods?.value.filter((u) => !usedUnitIds.includes(u.id.value)) || [];
   };
 
-  const getCalculatedActual = (group: IStocktakingItem[]) =>
+  const getCalculatedActual = (group: StocktakingItem[]) =>
   {
     return group.reduce(
       (sum, item) => sum + ((item.actualQuantity.value || 0) * (item.quantityMultiplier.value || 1)),
@@ -69,13 +69,13 @@ export default function StocktakingItemsTable<TDto extends Dto>(
     );
   };
 
-  const getVariance = (group: IStocktakingItem[]) =>
+  const getVariance = (group: StocktakingItem[]) =>
   {
     const systemQty = getSystemQuantity(group[0]?.itemId.value);
     return getCalculatedActual(group) - systemQty;
   };
 
-  const updateActualQuantity = (item: IStocktakingItem, newQty: number | undefined) =>
+  const updateActualQuantity = (item: StocktakingItem, newQty: number | undefined) =>
   {
     if (newQty === undefined || newQty === null)
     {
@@ -95,7 +95,7 @@ export default function StocktakingItemsTable<TDto extends Dto>(
     }
   };
 
-  const removeUnit = (item: IStocktakingItem) =>
+  const removeUnit = (item: StocktakingItem) =>
   {
     const list = entity.stocktakingItems?.value.filter((i) =>
       !(i.itemId.value === item.itemId.value
@@ -269,9 +269,8 @@ export default function StocktakingItemsTable<TDto extends Dto>(
                           { entity.mode.value === "create" && availableUnits.length > 0 && (
                             <div className="mt-1">
                               <SelectField<number>
-                                value={ group[0].itemUnitPricingMethodId }
                                 options={ availableUnits.map((iupm) => ({
-                                  label: iupm.id.value.toString(),
+                                  label: iupm.itemUnitPricingMethodName.value,
                                   value: iupm.id.value
                                 })) }
                                 onValueChange={ (unitId) => addUnitToItem(itemId, unitId) }
@@ -305,10 +304,10 @@ export default function StocktakingItemsTable<TDto extends Dto>(
           <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground border border-dashed border-border rounded-lg bg-background/50">
             <p>{ t("stocktakings.noItems") }</p>
             <p className="text-xs mt-1">{ t("stocktakings.noItemsHint") }</p>
-            { entity.getError("stocktakingItems" as keyof TDto).value && (
+            { entity.getError("stocktakingItems").value && (
               <div className="flex items-center gap-1 text-red-500 mt-3 text-sm font-medium bg-red-500/10 px-3 py-1.5 rounded-md">
                 <AlertCircle className="h-4 w-4" />
-                { entity.getError("stocktakingItems" as keyof TDto) }
+                { entity.getError("stocktakingItems") }
               </div>
             ) }
           </div>

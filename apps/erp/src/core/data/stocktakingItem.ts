@@ -1,18 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import { ChangeableEntity, Dto, i18n, Validators } from "yusr-ui";
 
-export interface IStocktakingItem
-{
-  itemId: Signal<number>;
-  itemName: Signal<string | undefined>;
-  itemUnitPricingMethodId: Signal<number | undefined>;
-  itemUnitPricingMethodName: Signal<string | undefined>;
-  quantityMultiplier: Signal<number>;
-  systemQuantity: Signal<number>;
-  variance: Signal<number>;
-  actualQuantity: Signal<number>;
-}
-
 export class StocktakingItemDto extends Dto
 {
   public stocktakingId?: number;
@@ -26,7 +14,7 @@ export class StocktakingItemDto extends Dto
   public actualQuantity!: number;
 }
 
-export class StocktakingItem extends ChangeableEntity<StocktakingItemDto> implements IStocktakingItem
+export class StocktakingItem extends ChangeableEntity<StocktakingItemDto>
 {
   declare stocktakingId: Signal<number | undefined>;
   declare itemId: Signal<number>;
