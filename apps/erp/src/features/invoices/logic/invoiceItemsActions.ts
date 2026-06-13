@@ -182,6 +182,14 @@ export default class InvoiceItemsActions
     );
 
     InvoiceItemsActions.updateItem(state, { payload: { index, item: row }, type: "updateItem" });
+
+    if (state.formData.settlementAmount != undefined && state.formData.settlementAmount !== 0)
+    {
+      InvoiceItemsActions.onInvoiceSettlementAmountChange(state, {
+        payload: state.formData.settlementAmount,
+        type: "onInvoiceSettlementAmountChange"
+      });
+    }
   }
 
   public static onInvoiceItemSettlementChange(
