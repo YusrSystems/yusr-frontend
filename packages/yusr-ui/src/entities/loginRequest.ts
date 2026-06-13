@@ -42,5 +42,10 @@ export class LoginRequest extends ValidatableEntity<LoginRequestDto>
       selector: (d) => d.password,
       validators: [Validators.required(i18n.t("login:password.required"))]
     }]);
+
+    this.companyEmail = this.assign("companyEmail", dto.companyEmail);
+    this.username = this.assign("username", dto.username);
+    this.password = this.assign("password", dto.password);
+
   }
 }
