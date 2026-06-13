@@ -26,7 +26,7 @@ export default function StocktakingItemsTable(
   const groupedItems = useMemo(() =>
   {
     const groups = new Map<number, IStocktakingItem[]>();
-    formData.stocktakingItems?.forEach((item) =>
+    formData.items?.forEach((item) =>
     {
       if (!groups.has(item.itemId))
       {
@@ -35,11 +35,11 @@ export default function StocktakingItemsTable(
       groups.get(item.itemId)!.push(item);
     });
     return Array.from(groups.values());
-  }, [formData.stocktakingItems]);
+  }, [formData.items]);
 
   const getSystemQuantity = (itemId: number) =>
   {
-    const existingRow = formData.stocktakingItems?.find((i) => i.itemId === itemId);
+    const existingRow = formData.items?.find((i) => i.itemId === itemId);
     if (existingRow)
     {
       return existingRow.systemQuantity * (mode === "create" ? 1 : existingRow.quantityMultiplier);
@@ -50,8 +50,7 @@ export default function StocktakingItemsTable(
   const getAvailableUnits = (itemId: number) =>
   {
     const storeItem = storeItemsState.storeItems.find((si) => si.id === itemId);
-    const usedUnitIds =
-      formData.stocktakingItems?.filter((i) => i.itemId === itemId).map((i) => i.itemUnitPricingMethodId) || [];
+    const usedUnitIds = formData.items?.filter((i) => i.itemId === itemId).map((i) => i.itemUnitPricingMethodId) || [];
     return storeItem?.itemUnitPricingMethods?.filter((u) => !usedUnitIds.includes(u.id)) || [];
   };
 
@@ -73,7 +72,7 @@ export default function StocktakingItemsTable(
       return;
     }
 
-    const list = [...(formData.stocktakingItems || [])];
+    const list = [...(formData.items || [])];
     const index = list.findIndex((i) =>
       i.itemId === item.itemId && i.itemUnitPricingMethodId === item.itemUnitPricingMethodId
     );
@@ -82,23 +81,23 @@ export default function StocktakingItemsTable(
       list[index] = { ...list[index], actualQuantity: newQty };
       const group = list.filter((i) => i.itemId === item.itemId);
       list[index].variance = getCalculatedActual(group) - getSystemQuantity(item.itemId);
-      handleChange({ stocktakingItems: list });
+      handleChange({ items: list });
     }
   };
 
   const removeUnit = (item: IStocktakingItem) =>
   {
     const list =
-      formData.stocktakingItems?.filter((i) =>
+      formData.items?.filter((i) =>
         !(i.itemId === item.itemId && i.itemUnitPricingMethodId === item.itemUnitPricingMethodId)
       ) || [];
-    handleChange({ stocktakingItems: list });
+    handleChange({ items: list });
   };
 
   const removeEntireItem = (itemId: number) =>
   {
-    const list = formData.stocktakingItems?.filter((i) => i.itemId !== itemId) || [];
-    handleChange({ stocktakingItems: list });
+    const list = formData.items?.filter((i) => i.itemId !== itemId) || [];
+    handleChange({ items: list });
   };
 
   const addUnitToItem = (itemId: number, unitId: number | undefined) =>
@@ -123,14 +122,14 @@ export default function StocktakingItemsTable(
     newItem.actualQuantity = 0;
     newItem.variance = -systemQty;
 
-    handleChange({ stocktakingItems: [...(formData.stocktakingItems || []), newItem] });
+    handleChange({ items: [...(formData.items || []), newItem] });
   };
 
   const handleStoreItemSelect = (item: ItemOld, selectedIupm?: ItemUnitPricingMethodOld) =>
   {
     const unit = selectedIupm || item.itemUnitPricingMethods?.[0];
 
-    const list = [...(formData.stocktakingItems || [])];
+    const list = [...(formData.items || [])];
     const existingIndex = list.findIndex(
       (i) => i.itemId === item.id && i.itemUnitPricingMethodId === unit.id
     );
@@ -141,7 +140,7 @@ export default function StocktakingItemsTable(
       list[existingIndex] = { ...list[existingIndex], actualQuantity: currentQty + 1 };
       const group = list.filter((i) => i.itemId === item.id);
       list[existingIndex].variance = getCalculatedActual(group) - getSystemQuantity(item.id);
-      handleChange({ stocktakingItems: list });
+      handleChange({ items: list });
     }
     else
     {
@@ -159,7 +158,7 @@ export default function StocktakingItemsTable(
       newItem.actualQuantity = initialActualQty;
       newItem.variance = (initialActualQty * unit.quantityMultiplier) - systemQty;
 
-      handleChange({ stocktakingItems: [...list, newItem] });
+      handleChange({ items: [...list, newItem] });
     }
   };
 
@@ -175,7 +174,7 @@ export default function StocktakingItemsTable(
         ) }
       </div>
 
-      { formData.stocktakingItems && formData.stocktakingItems.length > 0
+      { formData.items && formData.items.length > 0
         ? (
           <div className="bg-background rounded-lg border overflow-hidden">
             <table className="w-full text-sm text-right">

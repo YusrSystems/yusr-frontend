@@ -23,7 +23,7 @@ export default function ChangeStocktakingDialog(
   const initialValues = useMemo(() => ({
     ...entity,
     date: entity?.date ? new Date(entity.date).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
-    stocktakingItems: entity?.stocktakingItems || []
+    items: entity?.items || []
   }), [entity]);
 
   const { formData, errors } = useAppSelector((state) => state.stocktakingForm);
@@ -76,7 +76,7 @@ export default function ChangeStocktakingDialog(
     dispatch(StocktakingSlice.formActions.updateFormData({
       storeId: store?.id,
       storeName: store?.name,
-      stocktakingItems: []
+      items: []
     }));
     StocktakingSlice.formActions.clearError("storeId");
   };

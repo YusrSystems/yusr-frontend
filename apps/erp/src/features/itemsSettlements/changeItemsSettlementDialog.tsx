@@ -24,7 +24,7 @@ export default function ChangeItemsSettlementDialog(
   const initialValues = useMemo(() => ({
     ...entity,
     date: entity?.date ? new Date(entity.date).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
-    itemsSettlementItems: entity?.itemsSettlementItems || []
+    items: entity?.items || []
   }), [entity]);
 
   const { formData, errors } = useAppSelector((state) => state.itemsSettlementForm);
@@ -74,14 +74,14 @@ export default function ChangeItemsSettlementDialog(
     dispatch(ItemsSettlementSlice.formActions.updateFormData({
       storeId: store?.id,
       storeName: store?.name,
-      itemsSettlementItems: []
+      items: []
     }));
     ItemsSettlementSlice.formActions.clearError("storeId");
   };
 
   const tableFormData = useMemo(() => ({
     ...formData,
-    stocktakingItems: formData.itemsSettlementItems
+    items: formData.items
   }), [formData]);
 
   const handleTableChange = (update: any) =>
@@ -90,22 +90,22 @@ export default function ChangeItemsSettlementDialog(
     {
       dispatch(ItemsSettlementSlice.formActions.updateFormData((prev) =>
       {
-        const mappedPrev = { ...prev, stocktakingItems: prev.itemsSettlementItems };
+        const mappedPrev = { ...prev, items: prev.items };
         const result = update(mappedPrev);
-        if (result.stocktakingItems !== undefined)
+        if (result.items !== undefined)
         {
-          return { ...prev, itemsSettlementItems: result.stocktakingItems as ItemsSettlementItem[] };
+          return { ...prev, itemsSettlementItems: result.items as ItemsSettlementItem[] };
         }
         return { ...prev, ...result };
       }));
     }
     else
     {
-      if (update.stocktakingItems !== undefined)
+      if (update.items !== undefined)
       {
         dispatch(
           ItemsSettlementSlice.formActions.updateFormData({
-            itemsSettlementItems: update.stocktakingItems as ItemsSettlementItem[]
+            items: update.items as ItemsSettlementItem[]
           })
         );
       }

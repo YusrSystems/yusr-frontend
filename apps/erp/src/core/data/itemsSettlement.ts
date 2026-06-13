@@ -28,17 +28,16 @@ export default class ItemsSettlement extends BaseEntity implements IStocktaking
   public date!: string | Date;
   public storeId!: number;
   public storeName!: string;
-  public itemsSettlementItems: ItemsSettlementItem[] = [];
-  public stocktakingItems: IStocktakingItem[] = this.itemsSettlementItems;
+  public items: ItemsSettlementItem[] = [];
 
   constructor(init?: Partial<ItemsSettlement>)
   {
     super();
     Object.assign(this, init);
-    if (init?.itemsSettlementItems)
+    if (init?.items)
     {
-      this.itemsSettlementItems = init.itemsSettlementItems.map((x) => new ItemsSettlementItem(x));
-      this.stocktakingItems = this.itemsSettlementItems;
+      this.items = init.items.map((x) => new ItemsSettlementItem(x));
+      this.items = this.items;
     }
   }
 }
@@ -55,7 +54,7 @@ export class ItemsSettlementValidationRules
     validators: [Validators.required(t("itemsSettlements.dateRequired"))]
   }, {
     field: "items",
-    selector: (d) => d.itemsSettlementItems,
+    selector: (d) => d.items,
     validators: [Validators.arrayMinLength(1, t("itemsSettlements.itemsRequired"))]
   }];
 }

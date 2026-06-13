@@ -20,7 +20,7 @@ export interface IStocktaking extends BaseEntity
   date: string | Date;
   storeId: number;
   storeName: string;
-  stocktakingItems: IStocktakingItem[];
+  items: IStocktakingItem[];
 }
 
 export class StocktakingItem extends BaseEntity implements IStocktakingItem
@@ -48,15 +48,15 @@ export default class Stocktaking extends BaseEntity implements IStocktaking
   public date!: string | Date;
   public storeId!: number;
   public storeName!: string;
-  public stocktakingItems: StocktakingItem[] = [];
+  public items: StocktakingItem[] = [];
 
   constructor(init?: Partial<Stocktaking>)
   {
     super();
     Object.assign(this, init);
-    if (init?.stocktakingItems)
+    if (init?.items)
     {
-      this.stocktakingItems = init.stocktakingItems.map((x) => new StocktakingItem(x));
+      this.items = init.items.map((x) => new StocktakingItem(x));
     }
   }
 }
@@ -73,7 +73,7 @@ export class StocktakingValidationRules
     validators: [Validators.required(t("stocktakings.dateRequired"))]
   }, {
     field: "items",
-    selector: (d) => d.stocktakingItems,
+    selector: (d) => d.items,
     validators: [Validators.arrayMinLength(1, t("stocktakings.itemsRequired"))]
   }];
 }
