@@ -8,7 +8,7 @@ export class StocktakingDto extends Dto
   public date!: string;
   public storeId?: number;
   public storeName?: string;
-  public stocktakingItems: StocktakingItemDto[] = [];
+  public items: StocktakingItemDto[] = [];
 }
 
 export default class Stocktaking extends ChangeableEntity<StocktakingDto>
@@ -17,7 +17,7 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto>
   declare date: Signal<string>;
   declare storeId: Signal<number | undefined>;
   declare storeName: Signal<string | undefined>;
-  declare stocktakingItems: Signal<StocktakingItem[]>;
+  declare items: Signal<StocktakingItem[]>;
 
   initialValue(dto?: Partial<StocktakingDto> | undefined): StocktakingDto
   {
@@ -27,7 +27,7 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto>
       date: dto?.date ? new Date(dto?.date).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
       storeId: dto?.storeId ?? undefined,
       storeName: dto?.storeName ?? undefined,
-      stocktakingItems: dto?.stocktakingItems ?? []
+      items: dto?.items ?? []
     };
   }
 
@@ -35,7 +35,7 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto>
   {
     super({
       ...dto,
-      stocktakingItems: (dto.stocktakingItems ?? []).map((s) =>
+      items: (dto.items ?? []).map((s) =>
         s instanceof StocktakingItem ? s : new StocktakingItem(s)
       ) as unknown[] as StocktakingItemDto[]
     }, [{
@@ -47,8 +47,8 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto>
       selector: (d) => d.date,
       validators: [Validators.required(i18n.t("stocking:stocktakings.dateRequired"))]
     }, {
-      field: "stocktakingItems",
-      selector: (d) => d.stocktakingItems,
+      field: "items",
+      selector: (d) => d.items,
       validators: [Validators.arrayMinLength(1, i18n.t("stocking:stocktakings.itemsRequired"))]
     }], mode);
   }

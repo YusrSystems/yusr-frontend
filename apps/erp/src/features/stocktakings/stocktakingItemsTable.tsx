@@ -25,7 +25,7 @@ export default function StocktakingItemsTable(
   const groupedItems = (() =>
   {
     const groups = new Map<number, StocktakingItem[]>();
-    entity.stocktakingItems?.value.forEach((item) =>
+    entity.items?.value.forEach((item) =>
     {
       if (!item.itemId.value)
       {
@@ -42,7 +42,7 @@ export default function StocktakingItemsTable(
 
   const getSystemQuantity = (itemId: number) =>
   {
-    const existingRow = entity.stocktakingItems?.value.find((i) => i.itemId.value === itemId);
+    const existingRow = entity.items?.value.find((i) => i.itemId.value === itemId);
     if (existingRow)
     {
       return existingRow.systemQuantity.value
@@ -55,9 +55,7 @@ export default function StocktakingItemsTable(
   {
     const storeItem = Cubits.items.entities.value.find((si) => si.id.value === itemId);
     const usedUnitIds =
-      entity.stocktakingItems?.value.filter((i) => i.itemId.value === itemId).map((i) =>
-        i.itemUnitPricingMethodId.value
-      ) || [];
+      entity.items?.value.filter((i) => i.itemId.value === itemId).map((i) => i.itemUnitPricingMethodId.value) || [];
     return storeItem?.itemUnitPricingMethods?.value.filter((u) => !usedUnitIds.includes(u.id.value)) || [];
   };
 
@@ -82,7 +80,7 @@ export default function StocktakingItemsTable(
       return;
     }
 
-    const list = [...(entity.stocktakingItems.value || [])];
+    const list = [...(entity.items.value || [])];
     const index = list.findIndex((i) =>
       i.itemId.value === item.itemId.value && i.itemUnitPricingMethodId.value === item.itemUnitPricingMethodId.value
     );
@@ -91,23 +89,23 @@ export default function StocktakingItemsTable(
       list[index].actualQuantity.value = newQty;
       const group = list.filter((i) => i.itemId.value === item.itemId.value);
       list[index].variance.value = getCalculatedActual(group) - getSystemQuantity(item.itemId.value);
-      entity.stocktakingItems.value = list;
+      entity.items.value = list;
     }
   };
 
   const removeUnit = (item: StocktakingItem) =>
   {
-    const list = entity.stocktakingItems?.value.filter((i) =>
+    const list = entity.items?.value.filter((i) =>
       !(i.itemId.value === item.itemId.value
         && i.itemUnitPricingMethodId.value === item.itemUnitPricingMethodId.value)
     ) || [];
-    entity.stocktakingItems.value = list;
+    entity.items.value = list;
   };
 
   const removeEntireItem = (itemId: number) =>
   {
-    const list = entity.stocktakingItems?.value.filter((i) => i.itemId.value !== itemId) || [];
-    entity.stocktakingItems.value = list;
+    const list = entity.items?.value.filter((i) => i.itemId.value !== itemId) || [];
+    entity.items.value = list;
   };
 
   const addUnitToItem = (itemId: number, unitId: number | undefined) =>
@@ -133,14 +131,14 @@ export default function StocktakingItemsTable(
     newItem.actualQuantity.value = 0;
     newItem.variance.value = -systemQty;
 
-    entity.stocktakingItems.value = [...entity.stocktakingItems.value, newItem];
+    entity.items.value = [...entity.items.value, newItem];
   };
 
   const handleStoreItemSelect = (item: Item, selectedIupm?: ItemUnitPricingMethod) =>
   {
     const unit = selectedIupm || item.itemUnitPricingMethods?.value[0];
 
-    const list = [...(entity.stocktakingItems.value || [])];
+    const list = [...(entity.items.value || [])];
     const existingIndex = list.findIndex(
       (i) => i.itemId.value === item.id.value && i.itemUnitPricingMethodId.value === unit.id.value
     );
@@ -151,7 +149,7 @@ export default function StocktakingItemsTable(
       list[existingIndex].actualQuantity.value = currentQty + 1;
       const group = list.filter((i) => i.itemId.value === item.id.value);
       list[existingIndex].variance.value = getCalculatedActual(group) - getSystemQuantity(item.id.value);
-      entity.stocktakingItems.value = list;
+      entity.items.value = list;
     }
     else
     {
@@ -169,7 +167,7 @@ export default function StocktakingItemsTable(
       newItem.actualQuantity.value = initialActualQty;
       newItem.variance.value = (initialActualQty * unit.quantityMultiplier.value) - systemQty;
 
-      entity.stocktakingItems.value = [...list, newItem];
+      entity.items.value = [...list, newItem];
     }
   };
 
@@ -189,7 +187,7 @@ export default function StocktakingItemsTable(
         ) }
       </div>
 
-      { entity.stocktakingItems.value && entity.stocktakingItems.value.length > 0
+      { entity.items.value && entity.items.value.length > 0
         ? (
           <div className="bg-background rounded-lg border overflow-hidden">
             <table className="w-full text-sm text-right">
@@ -304,10 +302,10 @@ export default function StocktakingItemsTable(
           <div className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground border border-dashed border-border rounded-lg bg-background/50">
             <p>{ t("stocktakings.noItems") }</p>
             <p className="text-xs mt-1">{ t("stocktakings.noItemsHint") }</p>
-            { entity.getError("stocktakingItems").value && (
+            { entity.getError("items").value && (
               <div className="flex items-center gap-1 text-red-500 mt-3 text-sm font-medium bg-red-500/10 px-3 py-1.5 rounded-md">
                 <AlertCircle className="h-4 w-4" />
-                { entity.getError("stocktakingItems") }
+                { entity.getError("items") }
               </div>
             ) }
           </div>

@@ -1,106 +1,172 @@
+import type { StocktakingDto } from "@/core/data/stocktaking";
+import Stocktaking from "@/core/data/stocktaking";
+import { Cubits } from "@/core/services/cubits";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Scale } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPageOld, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
+import { CrudPage, PageError, PageLoaded, PageLoading, SystemPermissionsActions, TablePreview, UnauthorizedPage } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import ItemsSettlement, { ItemsSettlementSlice } from "../../core/data/itemsSettlement";
 import ReportConstants from "../../core/data/report/reportConstants";
-import ItemsSettlementsApiService from "../../core/networking/itemsSettlementsApiService";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "../reports/reportButton";
-import ChangeItemsSettlementDialog from "./changeItemsSettlementDialog";
+import ChangeStocktakingDialog from "../stocktakings/changeStocktakingDialog";
 
-export default function ItemsSettlementsPage() {
-  const { t } = useTranslation("stocking");
-  const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const itemsSettlementState = useAppSelector((state) => state.itemsSettlement);
-  const itemsSettlementDialogState = useAppSelector((state) => state.itemsSettlementDialog);
-
-  const permissions = useAppSelector((state) =>
-    selectPermissionsByResource(state, SystemPermissionsResources.ItemsSettlements)
-  );
-
-  const service = useMemo(() => new ItemsSettlementsApiService(), []);
+export default function ItemsSettlementsPage()
+{
+  if (!Services.auth.hasAuth(SystemPermissionsResources.ItemsSettlements, SystemPermissionsActions.Get))
+  {
+    return <UnauthorizedPage />;
+  }
+  const { t } = useTranslation(["stocking", "common"]);
+  useEffect(() => Cubits.itemsSettlements.init(), []);
 
   return (
-    <CrudPageOld<ItemsSettlement>
-      title={t("itemsSettlements.title")}
-      entityName={t("itemsSettlements.entityName")}
-      addNewItemTitle={t("itemsSettlements.addNewTitle")}
-      permissions={permissions}
-      hasPagePermission={SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.ItemsSettlements,
-        SystemPermissionsActions.Get
-      )}
-      entityState={itemsSettlementState}
-      useSlice={() => itemsSettlementDialogState}
-      service={service}
-      cards={[{
+    <CrudPage>
+      <CrudPage.Header
+        title={ t("itemsSettlements.title") }
+        addButtonTitle={ t("itemsSettlements.addNewTitle") }
+        isAddButtonVisible={ Services.auth.hasAuth(
+          SystemPermissionsResources.ItemsSettlements,
+          SystemPermissionsActions.Add
+        ) }
+      />
+
+      <Cards />
+
+      <CrudPage.SearchInput onSearch={ (searchText) => Cubits.itemsSettlements.search(searchText) } />
+
+      <PageTable />
+
+      <CrudPage.ChangeDialog
+        changeDialog={ (dto: StocktakingDto | undefined, closeDialog) =>
+        {
+          return (
+            <ChangeStocktakingDialog
+              addDialogTitle={ t("itemsSettlements.addNewTitle") }
+              updateDialogTitle={ `${t("common:crudRow.edit")} ${t("itemsSettlements.entityName")}` }
+              entity={ dto
+                ? Stocktaking.load(dto)
+                : Stocktaking.create() }
+              service={ Services.itemsSettlementsApi }
+              onSuccess={ (data) =>
+              {
+                if (data.mode.value === "create")
+                {
+                  Cubits.itemsSettlements.add(data);
+                  closeDialog();
+                }
+                else if (data.mode.value === "update")
+                {
+                  Cubits.itemsSettlements.update(data);
+                }
+              } }
+            />
+          );
+        } }
+      />
+
+      <CrudPage.DeleteDialog
+        entityNameSelector={ (itemsSettlement) => itemsSettlement.id }
+        service={ Services.itemsSettlementsApi }
+        onSuccess={ (entity) => Cubits.itemsSettlements.delete(entity) }
+      />
+    </CrudPage>
+  );
+}
+
+function Cards()
+{
+  useSignals();
+  const { t } = useTranslation("stocking");
+  return (
+    <CrudPage.Cards
+      cards={ [{
         title: t("itemsSettlements.totalSettlements"),
-        data: (itemsSettlementState.entities?.count ?? 0).toString(),
+        data: Cubits.itemsSettlements.count.value.toString(),
         icon: <Scale className="h-4 w-4 text-muted-foreground" />
-      }]}
-      tableHeadRows={[
-        { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: t("itemsSettlements.settlementId"), rowStyles: "w-32" },
-        { rowName: t("itemsSettlements.date"), rowStyles: "w-32" },
-        { rowName: t("itemsSettlements.store"), rowStyles: "w-48" },
-        { rowName: t("itemsSettlements.description"), rowStyles: "" },
-        ...(SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
-          SystemPermissionsResources.ReportItemSettlement,
-          SystemPermissionsActions.Get
-        )
-          ? [{ rowName: "", rowStyles: "w-32" }]
-          : [])
-      ]}
-      tableRowMapper={(
-        settlement: ItemsSettlement
-      ) => [
-          { rowName: `#${settlement.id}`, rowStyles: "" },
-          { rowName: new Date(settlement.date).toLocaleDateString("en-CA"), rowStyles: "font-mono" },
-          { rowName: settlement.storeName, rowStyles: "font-semibold" },
-          { rowName: settlement.description ?? "-", rowStyles: "text-sm text-gray-500" },
-          ...(SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.ReportItemSettlement,
-            SystemPermissionsActions.Get
-          )
-            ? [{
-              rowName: (
-                <ReportButton
-                  reportName={ReportConstants.ItemSettlement}
-                  request={{ itemSettlementId: settlement.id }}
-                />
-              ),
-              rowStyles: "w-32"
-            }]
-            : [])
-        ]}
-      actions={{
-        filter: ItemsSettlementSlice.entityActions.filter,
-        openChangeDialog: (entity) => ItemsSettlementSlice.dialogActions.openChangeDialog(entity),
-        openDeleteDialog: (entity) => ItemsSettlementSlice.dialogActions.openDeleteDialog(entity),
-        setIsChangeDialogOpen: (open) => ItemsSettlementSlice.dialogActions.setIsChangeDialogOpen(open),
-        setIsDeleteDialogOpen: (open) => ItemsSettlementSlice.dialogActions.setIsDeleteDialogOpen(open),
-        refresh: ItemsSettlementSlice.entityActions.refresh,
-        setCurrentPage: (page) => ItemsSettlementSlice.entityActions.setCurrentPage(page)
-      }}
-      ChangeDialog={
-        <ChangeItemsSettlementDialog
-          entity={itemsSettlementDialogState.selectedRow || undefined}
-          mode={itemsSettlementDialogState.selectedRow ? "update" : "create"}
-          service={service}
-          onSuccess={(data, mode) => {
-            dispatch(ItemsSettlementSlice.entityActions.refresh({ data: data }));
-            if (mode === "create") {
-              dispatch(ItemsSettlementSlice.dialogActions.setIsChangeDialogOpen(false));
-            }
-          }}
-        />
-      }
+      }] }
     />
   );
+}
+
+function PageTable()
+{
+  useSignals();
+  const { t } = useTranslation(["stocking", "common"]);
+
+  if (Cubits.itemsSettlements.state.value instanceof PageLoading)
+  {
+    return <TablePreview.Loading />;
+  }
+
+  if (Cubits.itemsSettlements.state.value instanceof PageLoaded)
+  {
+    return (
+      <CrudPage.Table>
+        <CrudPage.TableBody<Stocktaking, StocktakingDto>
+          data={ Cubits.itemsSettlements.entities.value }
+          headerRows={ [
+            { rowBody: "", rowStyles: "text-left w-12.5" },
+            { rowBody: t("itemsSettlements.settlementId"), rowStyles: "w-32" },
+            { rowBody: t("itemsSettlements.date"), rowStyles: "w-32" },
+            { rowBody: t("itemsSettlements.store"), rowStyles: "w-48" },
+            { rowBody: t("itemsSettlements.description"), rowStyles: "" },
+            ...(Services.auth.hasAuth(
+                SystemPermissionsResources.ReportItemSettlement,
+                SystemPermissionsActions.Get
+              )
+              ? [{ rowBody: "", rowStyles: "w-32" }]
+              : [])
+          ] }
+          tableRowMapper={ (
+            settlement
+          ) => [
+            { rowBody: `#${settlement.id.value}`, rowStyles: "" },
+            { rowBody: new Date(settlement.date.value).toLocaleDateString("en-CA"), rowStyles: "font-mono" },
+            { rowBody: settlement.storeName.value, rowStyles: "font-semibold" },
+            { rowBody: settlement.description.value ?? "-", rowStyles: "text-sm text-gray-500" },
+            ...(Services.auth.hasAuth(
+                SystemPermissionsResources.ReportItemSettlement,
+                SystemPermissionsActions.Get
+              )
+              ? [{
+                rowBody: (
+                  <ReportButton
+                    reportName={ ReportConstants.ItemSettlement }
+                    request={ { itemSettlementId: settlement.id.value } }
+                  />
+                ),
+                rowStyles: "w-32"
+              }]
+              : [])
+          ] }
+          hasUpdatePermission={ Services.auth.hasAuth(
+            SystemPermissionsResources.ItemsSettlements,
+            SystemPermissionsActions.Update
+          ) }
+          hasDeletePermission={ Services.auth.hasAuth(
+            SystemPermissionsResources.ItemsSettlements,
+            SystemPermissionsActions.Delete
+          ) }
+        />
+        <CrudPage.TablePagination
+          pageSize={ Cubits.itemsSettlements.pageSize.value }
+          totalNumber={ Cubits.itemsSettlements.count.value }
+          currentPage={ Cubits.itemsSettlements.currentPage.value }
+          onPageChanged={ (newPage) =>
+          {
+            Cubits.itemsSettlements.changePage(newPage);
+          } }
+        />
+      </CrudPage.Table>
+    );
+  }
+
+  if (Cubits.itemsSettlements.state.value instanceof PageError)
+  {
+    return <TablePreview.Error />;
+  }
+
+  return <TablePreview.Empty />;
 }

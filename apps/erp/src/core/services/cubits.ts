@@ -27,6 +27,7 @@ export class Cubits extends BaseCubits
   );
   public static readonly items = new ItemsCubit();
   public static readonly stocktaking = new PageCubit<Stocktaking, StocktakingDto>(Services.stocktakingApi);
+  public static readonly itemsSettlements = new PageCubit<Stocktaking, StocktakingDto>(Services.itemsSettlementsApi);
   public static override roles = new PageCubit<ErpRole, ErpRoleDto>(Services.rolesApi);
 
   static

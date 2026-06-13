@@ -18,7 +18,7 @@ export default function StocktakingsPage()
   {
     return <UnauthorizedPage />;
   }
-  const { t } = useTranslation("stocking");
+  const { t } = useTranslation(["stocking", "common"]);
   useEffect(() => Cubits.stocktaking.init(), []);
 
   return (
@@ -43,6 +43,8 @@ export default function StocktakingsPage()
         {
           return (
             <ChangeStocktakingDialog
+              addDialogTitle={t("stocktakings.addNewTitle")}
+              updateDialogTitle={`${t("common:crudRow.edit")} ${t("stocktakings.entityName")}`}
               entity={ dto
                 ? Stocktaking.load(dto)
                 : Stocktaking.create() }

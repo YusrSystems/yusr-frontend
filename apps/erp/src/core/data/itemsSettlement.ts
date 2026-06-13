@@ -62,7 +62,10 @@ export class ItemsSettlementValidationRules
 
 export class ItemsSettlementSlice
 {
-  private static entitySliceInstance = createGenericEntitySlice("itemsSettlement", new ItemsSettlementsApiService());
+  private static entitySliceInstance = createGenericEntitySlice(
+    "itemsSettlement",
+    new ItemsSettlementsApiService() as any
+  );
   public static entityActions = ItemsSettlementSlice.entitySliceInstance.actions;
   public static entityReducer = ItemsSettlementSlice.entitySliceInstance.reducer;
 

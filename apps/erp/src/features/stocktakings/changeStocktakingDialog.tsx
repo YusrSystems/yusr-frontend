@@ -13,7 +13,12 @@ import { ItemType } from "../../core/data/itemOld";
 import StocktakingItemsTable from "./stocktakingItemsTable";
 
 export default function ChangeStocktakingDialog(
-  { entity, service, onSuccess }: CommonChangeDialogProps<Stocktaking, StocktakingDto>
+  { entity, service, onSuccess, addDialogTitle, updateDialogTitle }:
+    & CommonChangeDialogProps<Stocktaking, StocktakingDto>
+    & {
+      addDialogTitle: string;
+      updateDialogTitle: string;
+    }
 )
 {
   useSignals();
@@ -33,8 +38,8 @@ export default function ChangeStocktakingDialog(
         const res = await service.Get(currentEntity.value.id.value);
         if (res.data != undefined)
         {
+          res.data.date.value = new Date(res.data.date.value).toLocaleDateString("en-CA");
           currentEntity.value = Stocktaking.load(res.data.toJson());
-          currentEntity.value.date.value = new Date(currentEntity.value.date.value).toLocaleDateString("en-CA");
         }
         isLoading.value = false;
       };
@@ -51,8 +56,8 @@ export default function ChangeStocktakingDialog(
   }, [currentEntity.value.storeId.value]);
 
   const title = currentEntity.value.mode.value === "create"
-    ? t("stocktakings.addNewTitle")
-    : `${t("common:crudRow.edit")} ${t("stocktakings.entityName")}`;
+    ? addDialogTitle
+    : updateDialogTitle;
 
   if (isLoading.value)
   {
@@ -91,7 +96,7 @@ export default function ChangeStocktakingDialog(
                 {
                   currentEntity.value.storeId.value = store?.id.value;
                   currentEntity.value.storeName.value = store?.name.value;
-                  currentEntity.value.stocktakingItems.value = [];
+                  currentEntity.value.items.value = [];
                 } }
               />
             </FormField>
