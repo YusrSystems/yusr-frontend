@@ -12,14 +12,14 @@ class RegistrationDto extends Dto
 
 class Registration extends ValidatableEntity<RegistrationDto>
 {
-  declare companyName: Signal<string>;
-  declare email: Signal<string>;
-  declare branchName: Signal<string>;
-  declare username: Signal<string>;
-  declare userPassword: Signal<string>;
-  declare currencyId: Signal<number>;
+  public companyName: Signal<string>;
+  public email: Signal<string>;
+  public branchName: Signal<string>;
+  public username: Signal<string>;
+  public userPassword: Signal<string>;
+  public currencyId: Signal<number>;
 
-  constructor(dto: Partial<RegistrationDto>)
+  constructor(dto?: Partial<RegistrationDto>)
   {
     const rules: ValidationRule<Partial<RegistrationDto>>[] = [{
       field: "companyName",
@@ -48,6 +48,13 @@ class Registration extends ValidatableEntity<RegistrationDto>
     }];
 
     super(dto, rules);
+
+    this.companyName = this.assign("companyName", dto?.companyName ?? "");
+    this.email = this.assign("email", dto?.email ?? "");
+    this.branchName = this.assign("branchName", dto?.branchName ?? "");
+    this.username = this.assign("username", dto?.username ?? "");
+    this.userPassword = this.assign("userPassword", dto?.userPassword ?? "");
+    this.currencyId = this.assign("currencyId", dto?.currencyId ?? 0);
   }
 }
 

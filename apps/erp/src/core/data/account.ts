@@ -124,8 +124,6 @@ export class Account extends ChangeableEntity<AccountDto>
       mode
     );
 
-    console.log("matching accout dto with account entity");
-
     this.type = this.assign("type", dto?.type ?? 0);
     this.name = this.assign("name", dto?.name ?? "");
     this.initialBalance = this.assign("initialBalance", dto?.initialBalance ?? 0);
@@ -144,7 +142,6 @@ export class Account extends ChangeableEntity<AccountDto>
     this.postalCode = this.assign("postalCode", dto?.postalCode);
     this.notes = this.assign("notes", dto?.notes);
     const accountContactsList = (dto?.accountContacts ?? []).map((t) => new AccountContact(t));
-    console.log("accountContactsList ", accountContactsList);
 
     this.accountContacts = this.assign("accountContacts", accountContactsList);
 

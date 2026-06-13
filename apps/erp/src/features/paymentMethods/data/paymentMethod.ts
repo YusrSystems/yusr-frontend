@@ -18,11 +18,11 @@ export class PaymentMethodDto extends Dto
 
 export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
 {
-  declare name: Signal<string>;
-  declare accountId: Signal<number>;
-  declare accountName: Signal<string>;
-  declare commissionType: Signal<CommissionType>;
-  declare commissionAmount: Signal<number>;
+  public name: Signal<string>;
+  public accountId: Signal<number>;
+  public accountName: Signal<string>;
+  public commissionType: Signal<CommissionType>;
+  public commissionAmount: Signal<number>;
 
   constructor(dto: PaymentMethodDto, mode: ChangeableEntityMode = "create")
   {
@@ -43,17 +43,11 @@ export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
       selector: (d) => d.commissionAmount,
       validators: [Validators.required(i18n.t("accounting:paymentMethods.commissionValueRequired"))]
     }], mode);
-  }
 
-  protected initialValue(dto?: Partial<PaymentMethodDto> | undefined): PaymentMethodDto
-  {
-    return {
-      id: dto?.id ?? 0,
-      name: dto?.name ?? "",
-      accountId: dto?.accountId ?? 0,
-      accountName: dto?.accountName ?? "",
-      commissionType: dto?.commissionType ?? CommissionType.Percent,
-      commissionAmount: dto?.commissionAmount ?? 0
-    };
+    this.name = this.assign("name", dto?.name ?? "");
+    this.accountId = this.assign("accountId", dto?.accountId ?? 0);
+    this.accountName = this.assign("accountName", dto?.accountName ?? "");
+    this.commissionType = this.assign("commissionType", dto?.commissionType ?? CommissionType.Percent);
+    this.commissionAmount = this.assign("commissionAmount", dto?.commissionAmount ?? 0);
   }
 }

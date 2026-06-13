@@ -110,7 +110,6 @@ export default function StocktakingItemsTable(
 
   const addUnitToItem = (itemId: number, unitId: number | undefined) =>
   {
-    console.log("addUnitToItem", itemId, unitId);
     const storeItem = Cubits.items.entities.value.find((si) => si.id.value === itemId);
     const unitDetails = storeItem?.itemUnitPricingMethods?.value.find((u) => u.id.value === unitId);
 

@@ -67,7 +67,6 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
     const originalValue = this.originalDto[field];
     const normOriginal = this.normalizeForComparison(originalValue);
     const normNew = this.normalizeForComparison(newValue);
-    console.log(JSON.stringify(normOriginal), JSON.stringify(normNew));
     const isDifferent = JSON.stringify(normOriginal) !== JSON.stringify(normNew);
 
     if (isDifferent)

@@ -14,15 +14,15 @@ export class BalanceTransferDto extends Dto
 
 export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 {
-  declare description: Signal<string>;
-  declare date: Signal<string | Date>;
-  declare amount: Signal<number>;
-  declare fromAccountId: Signal<number>;
-  declare toAccountId: Signal<number>;
-  declare fromAccountName: Signal<string>;
-  declare toAccountName: Signal<string>;
+  public description: Signal<string>;
+  public date: Signal<string | Date>;
+  public amount: Signal<number>;
+  public fromAccountId: Signal<number>;
+  public toAccountId: Signal<number>;
+  public fromAccountName: Signal<string>;
+  public toAccountName: Signal<string>;
 
-  constructor(dto: BalanceTransferDto, mode: ChangeableEntityMode = "create")
+  constructor(dto?: Partial<BalanceTransferDto>, mode: ChangeableEntityMode = "create")
   {
     super(dto, [{
       field: "amount",
@@ -41,17 +41,13 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
       selector: (d) => d.toAccountId,
       validators: [Validators.required(i18n.t("accounting:balanceTransfers.toAccountRequired"))]
     }], mode);
-  }
 
-  protected initialValue(dto?: Partial<BalanceTransferDto> | undefined): BalanceTransferDto
-  {
-    return {
-      id: dto?.id ?? 0,
-      description: dto?.description ?? "",
-      date: dto?.date ?? new Date(),
-      amount: dto?.amount ?? 0,
-      fromAccountId: dto?.fromAccountId ?? 0,
-      toAccountId: dto?.toAccountId ?? 0
-    };
+    this.description = this.assign("description", dto?.description ?? "");
+    this.date = this.assign("date", dto?.date ?? "");
+    this.amount = this.assign("amount", dto?.amount ?? 0.0);
+    this.fromAccountId = this.assign("fromAccountId", dto?.fromAccountId ?? 0);
+    this.toAccountId = this.assign("toAccountId", dto?.toAccountId ?? 0);
+    this.fromAccountName = this.assign("fromAccountName", dto?.fromAccountName ?? "");
+    this.toAccountName = this.assign("toAccountName", dto?.toAccountName ?? "");
   }
 }

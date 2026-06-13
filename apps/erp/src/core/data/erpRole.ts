@@ -18,10 +18,12 @@ export class ErpRole extends Role<ErpRoleDto>
       ...dto
     };
   }
-  declare authorizedStores: Signal<number[]>;
+  public authorizedStores: Signal<number[]>;
 
   constructor(dto: ErpRoleDto, mode: ChangeableEntityMode = "create")
   {
     super(dto, mode);
+
+    this.authorizedStores = this.assign("authorizedStores", dto.authorizedStores ?? []);
   }
 }

@@ -25,20 +25,10 @@ export class StoreDto extends Dto
 
 export class Store extends ChangeableEntity<StoreDto>
 {
-  declare name: Signal<string>;
-  declare authorized: Signal<boolean>;
+  public name: Signal<string>;
+  public authorized: Signal<boolean>;
 
-  protected initialValue(dto?: Partial<StoreDto> | undefined): StoreDto
-  {
-    return {
-      id: 0,
-      name: "",
-      authorized: true,
-      ...dto
-    };
-  }
-
-  constructor(dto: StoreDto, mode: ChangeableEntityMode = "create")
+  constructor(dto?: Partial<StoreDto>, mode: ChangeableEntityMode = "create")
   {
     const rules: ValidationRule<Partial<StoreDto>>[] = [{
       field: "name",
@@ -47,6 +37,9 @@ export class Store extends ChangeableEntity<StoreDto>
     }];
 
     super(dto, rules, mode);
+
+    this.name = this.assign("name", dto?.name ?? "");
+    this.authorized = this.assign("authorized", dto?.authorized ?? false);
   }
 }
 

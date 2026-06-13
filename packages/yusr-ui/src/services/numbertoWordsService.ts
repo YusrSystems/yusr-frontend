@@ -176,8 +176,6 @@ export class NumbertoWordsService
   }
   static ConvertAmount(amount: number, currency: Currency): string
   {
-    console.log(currency.code.value);
-
     const integerPart = Math.floor(amount);
     const fractionPart = Math.round((amount - integerPart) * 100);
 

@@ -16,32 +16,15 @@ export class StocktakingItemDto extends Dto
 
 export class StocktakingItem extends ChangeableEntity<StocktakingItemDto>
 {
-  declare stocktakingId: Signal<number | undefined>;
-  declare itemId: Signal<number>;
-  declare itemName: Signal<string | undefined>;
-  declare itemUnitPricingMethodId: Signal<number | undefined>;
-  declare itemUnitPricingMethodName: Signal<string | undefined>;
-  declare quantityMultiplier: Signal<number>;
-  declare systemQuantity: Signal<number>;
-  declare variance: Signal<number>;
-  declare actualQuantity: Signal<number>;
-
-  initialValue(dto?: Partial<StocktakingItemDto> | undefined): StocktakingItemDto
-  {
-    return {
-      id: 0,
-      stocktakingId: undefined,
-      itemId: 0,
-      itemName: undefined,
-      itemUnitPricingMethodId: undefined,
-      itemUnitPricingMethodName: undefined,
-      quantityMultiplier: 1,
-      systemQuantity: 0,
-      variance: 0,
-      actualQuantity: 0,
-      ...dto
-    };
-  }
+  public stocktakingId: Signal<number | undefined>;
+  public itemId: Signal<number>;
+  public itemName: Signal<string | undefined>;
+  public itemUnitPricingMethodId: Signal<number | undefined>;
+  public itemUnitPricingMethodName: Signal<string | undefined>;
+  public quantityMultiplier: Signal<number>;
+  public systemQuantity: Signal<number>;
+  public variance: Signal<number>;
+  public actualQuantity: Signal<number>;
 
   constructor(dto: StocktakingItemDto)
   {
@@ -62,5 +45,15 @@ export class StocktakingItem extends ChangeableEntity<StocktakingItemDto>
       selector: (d) => d.actualQuantity,
       validators: [Validators.min(0, i18n.t("stocking:items.unitPriceMin"))]
     }]);
+
+    this.stocktakingId = this.assign("stocktakingId", dto.stocktakingId ?? 0);
+    this.itemId = this.assign("itemId", dto.itemId ?? 0);
+    this.itemName = this.assign("itemName", dto.itemName ?? "");
+    this.itemUnitPricingMethodId = this.assign("itemUnitPricingMethodId", dto.itemUnitPricingMethodId ?? 0);
+    this.itemUnitPricingMethodName = this.assign("itemUnitPricingMethodName", dto.itemUnitPricingMethodName ?? "");
+    this.quantityMultiplier = this.assign("quantityMultiplier", dto.quantityMultiplier ?? 0);
+    this.systemQuantity = this.assign("systemQuantity", dto.systemQuantity ?? 0);
+    this.variance = this.assign("variance", dto.variance ?? 0);
+    this.actualQuantity = this.assign("actualQuantity", dto.actualQuantity ?? 0);
   }
 }
