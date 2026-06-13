@@ -1,9 +1,9 @@
 import { type TFunction } from "i18next";
 import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
 import ItemsSettlementsApiService from "../networking/itemsSettlementsApiService";
-import type { IStocktaking, IStocktakingItem } from "./stocktaking";
+import type { IStocktakingItemOld, IStocktakingOld } from "./stocktakingOld";
 
-export class ItemsSettlementItem extends BaseEntity implements IStocktakingItem
+export class ItemsSettlementItem extends BaseEntity implements IStocktakingItemOld
 {
   public itemsSettlementId!: number;
   public itemId!: number;
@@ -22,14 +22,14 @@ export class ItemsSettlementItem extends BaseEntity implements IStocktakingItem
   }
 }
 
-export default class ItemsSettlement extends BaseEntity implements IStocktaking
+export default class ItemsSettlement extends BaseEntity implements IStocktakingOld
 {
   public description?: string;
   public date!: string | Date;
   public storeId!: number;
   public storeName!: string;
   public itemsSettlementItems: ItemsSettlementItem[] = [];
-  public stocktakingItems: IStocktakingItem[] = this.itemsSettlementItems;
+  public stocktakingItems: IStocktakingItemOld[] = this.itemsSettlementItems;
 
   constructor(init?: Partial<ItemsSettlement>)
   {

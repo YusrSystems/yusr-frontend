@@ -11,7 +11,8 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
   public pageSize: Signal<number>;
   public currentPage: Signal<number>;
   public searchText: Signal<string | undefined>;
-  public types: Signal<number[] | undefined>;
+  protected types: Signal<number[] | undefined>;
+  protected queryParams: Signal<Record<string, string | number> | undefined>;
   entities: Signal<TEntity[]>;
   count: Signal<number>;
 
@@ -23,26 +24,34 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
     this.currentPage = signal(1);
     this.searchText = signal(undefined);
     this.types = signal([]);
+    this.queryParams = signal({});
     this.entities = signal<TEntity[]>([]);
     this.count = signal(0);
   }
 
-  private async _filter()
+  async filter(
+    pageNumber?: number,
+    rowsPerPage?: number,
+    searchText?: string,
+    types?: number[],
+    queryParams?: Record<string, string | number>
+  ): Promise<void>
   {
+    this.currentPage.value = pageNumber ?? this.currentPage.value;
+    this.pageSize.value = rowsPerPage ?? this.pageSize.value;
+    this.searchText.value = searchText;
+    this.types.value = types;
+    this.queryParams.value = queryParams;
+
     this.emit(new PageLoading());
 
-    let result;
-    if (Boolean(this.types.value))
-    {
-      result = await this._service.Filter(this.currentPage.value, this.pageSize.value, this.searchText.value, {
-        types: this.types.value ?? [],
-        searchText: this.searchText.value
-      });
-    }
-    else
-    {
-      result = await this._service.Filter(this.currentPage.value, this.pageSize.value, this.searchText.value);
-    }
+    const result = await this._service.Filter(
+      this.currentPage.value,
+      this.pageSize.value,
+      this.searchText.value,
+      this.types.value,
+      this.queryParams.value
+    );
 
     if (!result.data?.length)
     {
@@ -57,25 +66,19 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
     this.emit(new PageLoaded());
   }
 
-  init(types?: number[])
+  init(types?: number[], queryParams?: Record<string, string | number>): void
   {
-    this.searchText.value = undefined;
-    this.currentPage.value = 1;
-    this.types.value = types;
-    this._filter();
+    this.filter(1, undefined, undefined, types, queryParams);
   }
 
   changePage(pageNumber: number)
   {
-    this.currentPage.value = pageNumber;
-    this._filter();
+    this.filter(pageNumber);
   }
 
   search(searchText: string | undefined)
   {
-    this.searchText.value = searchText;
-    this.currentPage.value = 1;
-    this._filter();
+    this.filter(1, undefined, searchText);
   }
 
   add(entity: TEntity)
@@ -93,7 +96,7 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
     this.entities.value = this.entities.value.filter((e) => e.id.value !== entity.id.value);
     if (this.entities.value.length === 0)
     {
-      this._filter();
+      this.filter(1);
     }
   }
 }

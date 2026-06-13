@@ -6,11 +6,9 @@ import { useTranslation } from "react-i18next";
 import type { CommonChangeDialogPropsOld } from "yusr-ui";
 import { ChangeDialogOld, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormFieldOld, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ItemType } from "../../core/data/itemOld";
-import ItemsSettlement, { ItemsSettlementItem, ItemsSettlementSlice, ItemsSettlementValidationRules } from "../../core/data/itemsSettlement";
-import type { IStocktaking } from "../../core/data/stocktaking";
+import ItemsSettlement, { ItemsSettlementSlice, ItemsSettlementValidationRules } from "../../core/data/itemsSettlement";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
-import StocktakingItemsTable from "../stocktakings/stocktakingItemsTable";
 
 export default function ChangeItemsSettlementDialog(
   { entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<ItemsSettlement>
@@ -79,42 +77,42 @@ export default function ChangeItemsSettlementDialog(
     ItemsSettlementSlice.formActions.clearError("storeId");
   };
 
-  const tableFormData = useMemo(() => ({
-    ...formData,
-    stocktakingItems: formData.itemsSettlementItems
-  }), [formData]);
+  // const tableFormData = useMemo(() => ({
+  //   ...formData,
+  //   stocktakingItems: formData.itemsSettlementItems
+  // }), [formData]);
 
-  const handleTableChange = (update: any) =>
-  {
-    if (typeof update === "function")
-    {
-      dispatch(ItemsSettlementSlice.formActions.updateFormData((prev) =>
-      {
-        const mappedPrev = { ...prev, stocktakingItems: prev.itemsSettlementItems };
-        const result = update(mappedPrev);
-        if (result.stocktakingItems !== undefined)
-        {
-          return { ...prev, itemsSettlementItems: result.stocktakingItems as ItemsSettlementItem[] };
-        }
-        return { ...prev, ...result };
-      }));
-    }
-    else
-    {
-      if (update.stocktakingItems !== undefined)
-      {
-        dispatch(
-          ItemsSettlementSlice.formActions.updateFormData({
-            itemsSettlementItems: update.stocktakingItems as ItemsSettlementItem[]
-          })
-        );
-      }
-      else
-      {
-        dispatch(ItemsSettlementSlice.formActions.updateFormData(update));
-      }
-    }
-  };
+  // const handleTableChange = (update: any) =>
+  // {
+  //   if (typeof update === "function")
+  //   {
+  //     dispatch(ItemsSettlementSlice.formActions.updateFormData((prev) =>
+  //     {
+  //       const mappedPrev = { ...prev, stocktakingItems: prev.itemsSettlementItems };
+  //       const result = update(mappedPrev);
+  //       if (result.stocktakingItems !== undefined)
+  //       {
+  //         return { ...prev, itemsSettlementItems: result.stocktakingItems as ItemsSettlementItem[] };
+  //       }
+  //       return { ...prev, ...result };
+  //     }));
+  //   }
+  //   else
+  //   {
+  //     if (update.stocktakingItems !== undefined)
+  //     {
+  //       dispatch(
+  //         ItemsSettlementSlice.formActions.updateFormData({
+  //           itemsSettlementItems: update.stocktakingItems as ItemsSettlementItem[]
+  //         })
+  //       );
+  //     }
+  //     else
+  //     {
+  //       dispatch(ItemsSettlementSlice.formActions.updateFormData(update));
+  //     }
+  //   }
+  // };
 
   if (initLoading)
   {
@@ -183,15 +181,17 @@ export default function ChangeItemsSettlementDialog(
               dispatch(ItemsSettlementSlice.formActions.updateFormData({ description: e.target.value })) }
           />
 
-          { formData.storeId && (
+          {
+            /* { formData.storeId && (
             <StocktakingItemsTable
-              formData={ tableFormData as Partial<IStocktaking> }
+              formData={ tableFormData as Partial<IStocktakingOld> }
               errors={ errors }
               handleChange={ handleTableChange }
               createInstance={ () => new ItemsSettlementItem() }
               mode={ mode }
             />
-          ) }
+          ) } */
+          }
         </FieldGroup>
       </div>
     </ChangeDialogOld>

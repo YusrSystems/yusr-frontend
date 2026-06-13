@@ -18,10 +18,7 @@ export default function TaxesPage()
 
   const { t } = useTranslation("accounting");
 
-  useEffect(() =>
-  {
-    Cubits.taxes.init();
-  }, []);
+  useEffect(() => Cubits.taxes.init(), []);
 
   return (
     <CrudPage>

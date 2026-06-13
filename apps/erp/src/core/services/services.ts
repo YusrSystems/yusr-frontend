@@ -5,6 +5,7 @@ import { ErpRoleApiService } from "../networking/erpRoleApiService";
 import ItemsApiService from "../networking/itemApiService";
 import PaymentMethodsApiService from "../networking/paymentMethodApiService";
 import PricingMethodsApiService from "../networking/pricingMethodsApiService";
+import StocktakingsApiService from "../networking/stocktakingApiService";
 import { StoresApiService } from "../networking/storeApiService";
 import TaxesApiService from "../networking/taxesApiService";
 import UnitsApiService from "../networking/unitApiService";
@@ -20,10 +21,11 @@ export class Services extends BaseServices
   public static readonly unitsApi = new UnitsApiService();
   public static readonly pricingMethodsApi = new PricingMethodsApiService();
   public static readonly itemsApi = new ItemsApiService();
+  public static readonly accountsApi = new AccountApiService();
+  public static readonly paymentMethodsApi = new PaymentMethodsApiService();
+  public static readonly balanceTransfersApi = new BalanceTransfersApiService();
+  public static readonly stocktakingApi = new StocktakingsApiService();
 
-  public static accountsApi = new AccountApiService();
-  public static paymentMethodsApi = new PaymentMethodsApiService();
-  public static balanceTransfersApi = new BalanceTransfersApiService();
   static
   {
     BaseServices.auth = Services.auth;

@@ -1,4 +1,4 @@
-import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
+import ItemsSearchableSelectOld from "@/core/components/searchableSelect/itemsSearchableSelectOld";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld, SelectFieldOld } from "yusr-ui";
@@ -40,7 +40,7 @@ export default function ItemsTaxStatementDialog()
               }] }
             />
             <FormFieldOld label={ t("reports.item") } required={ true }>
-              <ItemsSearchableSelect
+              <ItemsSearchableSelectOld
                 showNullOption
                 selectedId={ item?.id }
                 selectedLabel={ item?.name }

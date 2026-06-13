@@ -1,5 +1,5 @@
-import { ApiConstants, type ApiFilterResult, BaseApiService, FilterByTypeRequest, type RequestResult, YusrApiHelper } from "yusr-ui";
-import type { BarcodeResult, ItemDto } from "../data/item";
+import { ApiConstants, type ApiFilterResult, BaseApiService, FilterByTypeRequest, type FilterResult, type RequestResult, YusrApiHelper } from "yusr-ui";
+import type { BarcodeResultDto, ItemDto } from "../data/item";
 import Item from "../data/item";
 
 export default class ItemsApiService extends BaseApiService<Item, ItemDto>
@@ -10,25 +10,40 @@ export default class ItemsApiService extends BaseApiService<Item, ItemDto>
     return new Item(dto);
   }
 
-  async FilterStoreItems(
+  // TODO: fix
+  override async Filter(
     pageNumber: number,
     rowsPerPage: number,
-    storeId: number | undefined,
-    request: FilterByTypeRequest
-  ): Promise<RequestResult<ApiFilterResult<Item>>>
+    searchText?: string,
+    types?: number[],
+    queryParams?: Record<string, string | number>
+  ): Promise<FilterResult<Item, ItemDto>>
   {
-    return await YusrApiHelper.Post(
-      `${ApiConstants.baseUrl}/${this.routeName}/FilterStoreItems?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}&${
-        storeId == undefined ? "" : `storeId=${storeId}`
-      }`,
-      request
+    const extraQuery = queryParams
+      ? "&" + new URLSearchParams(
+        Object.entries(queryParams).map(([k, v]) => [k, String(v)])
+      ).toString()
+      : "";
+
+    const body = types !== undefined
+      ? new FilterByTypeRequest({ searchText, types })
+      : searchText;
+
+    const rawResult = await YusrApiHelper.Post<ApiFilterResult<ItemDto>>(
+      `${ApiConstants.baseUrl}/${this.routeName}/FilterNew?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}${extraQuery}`,
+      body
     );
+
+    return {
+      data: rawResult?.data?.data?.map((dto: ItemDto) => this.createEntity(dto)) ?? [],
+      count: rawResult?.data?.count ?? 0
+    };
   }
 
   async GetByBarcode(
     barcode: string,
     storeId: number
-  ): Promise<RequestResult<BarcodeResult>>
+  ): Promise<RequestResult<BarcodeResultDto>>
   {
     return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/GetByBarcode/${barcode}/${storeId}`);
   }

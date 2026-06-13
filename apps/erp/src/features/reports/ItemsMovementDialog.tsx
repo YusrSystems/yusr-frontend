@@ -1,5 +1,5 @@
 import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
-import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
+import ItemsSearchableSelectOld from "@/core/components/searchableSelect/itemsSearchableSelectOld";
 import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
 import type AccountOld from "@/core/data/accountOld";
 import type ItemOld from "@/core/data/itemOld";
@@ -54,7 +54,7 @@ export default function ItemsMovementDialog()
             />
 
             <FormFieldOld label={ t("reports.item") }>
-              <ItemsSearchableSelect
+              <ItemsSearchableSelectOld
                 showNullOption
                 selectedId={ item?.id }
                 selectedLabel={ item?.name }

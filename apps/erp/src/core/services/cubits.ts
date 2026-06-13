@@ -1,13 +1,14 @@
 import type { BalanceTransfer, BalanceTransferDto } from "@/features/balanceTransfer/data/balanceTransfer";
+import { ItemsCubit } from "@/features/items/state/itemsCubit";
 import type { PaymentMethod, PaymentMethodDto } from "@/features/paymentMethods/data/paymentMethod";
 import { StoresCubit } from "@/features/stores/state/storeCubit";
 import { BaseCubits, PageCubit } from "yusr-ui";
 import type { Account, AccountDto } from "../data/account";
 import type { ErpRole, ErpRoleDto } from "../data/erpRole";
-import type Item from "../data/item";
-import type { ItemDto } from "../data/item";
 import type PricingMethod from "../data/pricingMethod";
 import type { PricingMethodDto } from "../data/pricingMethod";
+import type Stocktaking from "../data/stocktaking";
+import type { StocktakingDto } from "../data/stocktaking";
 import type { Tax, TaxDto } from "../data/tax";
 import type Unit from "../data/unit";
 import type { UnitDto } from "../data/unit";
@@ -24,7 +25,8 @@ export class Cubits extends BaseCubits
   public static readonly balanceTransfers = new PageCubit<BalanceTransfer, BalanceTransferDto>(
     Services.balanceTransfersApi
   );
-  public static readonly items = new PageCubit<Item, ItemDto>(Services.itemsApi);
+  public static readonly items = new ItemsCubit();
+  public static readonly stocktaking = new PageCubit<Stocktaking, StocktakingDto>(Services.stocktakingApi);
   public static override roles = new PageCubit<ErpRole, ErpRoleDto>(Services.rolesApi);
 
   static

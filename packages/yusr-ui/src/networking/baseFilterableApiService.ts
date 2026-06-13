@@ -11,37 +11,38 @@ export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDt
   abstract createEntity(dto: TDto): TEntity;
 
   /**
-   * Getting filttered data from backend
+   * Gets filtered data from the backend.
    *
    * @param {number} pageNumber
    * @param {number} rowsPerPage
    * @param {string} [searchText]
-   * @param {number} [type] optional prop for data the has different types, like accounts
-   * @return {*}  {Promise<FilterResult<TEntity, TDto>>}
+   * @param {number[]} [types] - When provided, filters by entity types (e.g. account types). Sends a {@link FilterByTypeRequest} body; otherwise sends plain searchText.
+   * @param {Record<string, string | number>} [queryParams] - Additional query string parameters appended to the URL (e.g. `{ store: 1 }`).
+   * @return {Promise<FilterResult<TEntity, TDto>>}
    * @memberof BaseFilterableApiService
    */
   async Filter(
     pageNumber: number,
     rowsPerPage: number,
     searchText?: string,
-    type?: FilterByTypeRequest
+    types?: number[],
+    queryParams?: Record<string, string | number>
   ): Promise<FilterResult<TEntity, TDto>>
   {
-    let rawResult;
-    if (Boolean(type))
-    {
-      rawResult = await YusrApiHelper.Post<ApiFilterResult<TDto>>(
-        `${ApiConstants.baseUrl}/${this.routeName}/FilterByTypes?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
-        type
-      );
-    }
-    else
-    {
-      rawResult = await YusrApiHelper.Post<ApiFilterResult<TDto>>(
-        `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
-        searchText
-      );
-    }
+    const extraQuery = queryParams
+      ? "&" + new URLSearchParams(
+        Object.entries(queryParams).map(([k, v]) => [k, String(v)])
+      ).toString()
+      : "";
+
+    const body = types !== undefined
+      ? new FilterByTypeRequest({ searchText, types })
+      : searchText;
+
+    const rawResult = await YusrApiHelper.Post<ApiFilterResult<TDto>>(
+      `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}${extraQuery}`,
+      body
+    );
 
     return {
       data: rawResult?.data?.data?.map((dto: TDto) => this.createEntity(dto)) ?? [],

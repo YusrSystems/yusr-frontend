@@ -2,7 +2,7 @@ import { type Signal } from "@preact/signals-react";
 import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, type StorageFile, Validators } from "yusr-ui";
 import { ItemStore, type ItemStoreDto } from "./itemStore";
 import { ItemTax } from "./itemTax";
-import { ItemUnitPricingMethod } from "./itemUnitPricingMethod";
+import { ItemUnitPricingMethod, ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
 
 export const ItemType = {
   Product: 1,
@@ -182,13 +182,14 @@ export default class Item extends ChangeableEntity<ItemDto>
   }
 }
 
-export class BarcodeResult
+export class BarcodeResultDto
 {
   public item!: ItemDto;
-  public selectedIupm!: ItemUnitPricingMethod;
+  public selectedIupm!: ItemUnitPricingMethodDto;
+}
 
-  constructor(init?: Partial<BarcodeResult>)
-  {
-    Object.assign(this, init);
-  }
+export class BarcodeResult
+{
+  public item!: Item;
+  public selectedIupm!: ItemUnitPricingMethod;
 }

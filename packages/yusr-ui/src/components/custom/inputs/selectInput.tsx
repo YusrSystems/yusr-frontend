@@ -51,7 +51,7 @@ export function SelectInput<T extends string | number | boolean | undefined>(
       {
         const match = options.find((o) => String(o.value) === val);
         value.value = match ? match.value : undefined;
-        onValueChange?.(val as T);
+        onValueChange?.(match?.value as T);
       } }
       dir={ i18n.dir() }
       disabled={ disabled }

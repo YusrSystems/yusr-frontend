@@ -13,7 +13,6 @@ import { ItemTransferSlice } from "../data/itemTransfer";
 import { PaymentMethodSlice } from "../data/paymentMethod";
 import { PricingMethodSlice } from "../data/pricingMethodOld";
 import { type SettingOld, SettingSlice } from "../data/settingOld";
-import { StocktakingSlice } from "../data/stocktaking";
 import { StoreSlice } from "../data/storeSlice";
 import { TaxSlice } from "../data/tax";
 import { UnitSlice } from "../data/unitOld";
@@ -103,9 +102,6 @@ export const store = configureStore({
     pricingMethod: PricingMethodSlice.entityReducer,
     pricingMethodForm: PricingMethodSlice.formReducer,
     pricingMethodDialog: PricingMethodSlice.dialogReducer,
-    stocktaking: StocktakingSlice.entityReducer,
-    stocktakingForm: StocktakingSlice.formReducer,
-    stocktakingDialog: StocktakingSlice.dialogReducer,
     itemTransfer: ItemTransferSlice.entityReducer,
     itemTransferForm: ItemTransferSlice.formReducer,
     itemTransferDialog: ItemTransferSlice.dialogReducer,

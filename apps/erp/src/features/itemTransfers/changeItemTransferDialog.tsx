@@ -7,7 +7,7 @@ import { ItemType } from "../../core/data/itemOld";
 import ItemTransfer, { ItemTransfersItem, ItemTransferSlice, ItemTransferValidationRules } from "../../core/data/itemTransfer";
 import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
-import StoreItemSelector from "../items/storeItemSelector";
+import StoreItemSelectorOld from "../items/storeItemSelectorOld";
 import { ItemTransferActions } from "./logic/itemTransferActions";
 import { initializeItems } from "./logic/itemTransferSlice";
 import SelectedItemsTable from "./selectedItemsTable";
@@ -234,7 +234,7 @@ export default function ChangeItemTransferDialog({
           { formData.fromStoreId && (
             <>
               { mode === "create" && (
-                <StoreItemSelector
+                <StoreItemSelectorOld
                   itemTypes={ [ItemType.Product] }
                   storeId={ formData.fromStoreId }
                   onSelect={ (storeItem, selectedIupm) =>

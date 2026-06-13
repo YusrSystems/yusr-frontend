@@ -2,7 +2,7 @@ import { InvoiceType } from "@/core/data/invoice";
 import { ItemType } from "@/core/data/itemOld";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
-import StoreItemSelector from "../../../items/storeItemSelector";
+import StoreItemSelectorOld from "../../../items/storeItemSelectorOld";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 import InvoicePayments from "../payments/invoicePayments";
 import InvoiceBasicInfo from "./invoiceBasicInfo";
@@ -28,7 +28,7 @@ export default function InvoiceBasicTab()
         <InvoiceBasicInfo />
 
         { !(disabled || mode === "return") && (
-          <StoreItemSelector
+          <StoreItemSelectorOld
             storeId={ formData.storeId }
             itemTypes={ [ItemType.Product, ItemType.Service] }
             onSelect={ (item) => dispatch(slice.formActions.addItem(item)) }
