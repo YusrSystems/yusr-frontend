@@ -1,6 +1,7 @@
 import AccountsApiServiceOld from "@/core/networking/accountApiServiceOld";
 import { Services } from "@/core/services/services";
 import { type RootState, useAppSelector } from "@/core/state/store";
+import ChangeAccountDialogOld from "@/features/accounts/changeAccountDialogOld";
 import type { Account, AccountDto } from "@/features/accounts/data/account";
 import { useSignals } from "@preact/signals-react/runtime";
 import React, { useEffect, useMemo } from "react";
@@ -81,6 +82,7 @@ export default function AccountsSearchableSelectOld(
         fixedType: fixedType,
         filterDataOutside: true
       } }
+      changeDialog={ ChangeAccountDialogOld }
       authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
       { ...props }
     />
