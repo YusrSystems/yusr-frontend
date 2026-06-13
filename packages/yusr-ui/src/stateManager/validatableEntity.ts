@@ -12,7 +12,7 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
   >;
   private _validationRules: ValidationRule<Partial<TDto>>[] = [];
 
-  constructor(dto: Partial<TDto>, validationRules: ValidationRule<Partial<TDto>>[])
+  constructor(dto: Partial<TDto> | undefined, validationRules: ValidationRule<Partial<TDto>>[])
   {
     super(dto);
     this._validationRules = validationRules;
@@ -48,7 +48,7 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
         }
       }
     });
-    
+
     return Object.values(this.errors).every(
       (s) => (s as Signal<string | undefined>).value === undefined
     );

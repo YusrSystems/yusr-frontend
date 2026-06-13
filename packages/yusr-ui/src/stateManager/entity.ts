@@ -6,16 +6,16 @@ export abstract class Entity<TDto extends Dto>
 {
   id: Signal<number>;
 
-  constructor(dto: Partial<TDto>)
+  constructor(dto?: Partial<TDto>)
   {
-    this.id = signal((dto as Dto).id ?? 0);
+    this.id = signal(dto?.id ?? 0);
+  }
 
-    (Object.keys(dto) as (keyof TDto)[]).forEach((key) =>
+  assign(key: keyof TDto, value: any)
+  {
+    return new EntitySignal(value, (value) =>
     {
-      (this as any)[key] = new EntitySignal(dto[key], (value) =>
-      {
-        this.onFieldChange(key, value);
-      });
+      this.onFieldChange(key, value);
     });
   }
 

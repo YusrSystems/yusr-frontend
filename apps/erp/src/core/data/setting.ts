@@ -61,33 +61,33 @@ export class SettingDto extends Dto
 
 export class Setting extends ValidatableEntity<SettingDto>
 {
-  declare registrationKey: Signal<string>;
-  declare email: Signal<string>;
-  declare companyName: Signal<string>;
-  declare companyPhone: Signal<string>;
-  declare companyBusinessCategory?: Signal<string>;
-  declare crn?: Signal<string>;
-  declare vatNumber?: Signal<string>;
-  declare currencyId: Signal<number>;
-  declare currency?: Signal<Currency>;
-  declare logo?: Signal<StorageFile>;
-  declare startDate: Signal<Date>;
-  declare endDate: Signal<Date>;
-  declare branchId: Signal<number>;
-  declare branch?: Signal<BranchOld>;
-  declare mainTaxId: Signal<number>;
-  declare mainTax?: Signal<TaxOld>;
-  declare sellAccountId?: Signal<number>;
-  declare sellAccountName?: Signal<string>;
-  declare purchaseAccountId?: Signal<number>;
-  declare purchaseAccountName?: Signal<string>;
-  declare mainPaymentMethodId?: Signal<number>;
-  declare mainPaymentMethodName?: Signal<string>;
-  declare mainStoreId?: Signal<number>;
-  declare mainStoreName?: Signal<string>;
-  declare invoicePolicy?: Signal<string>;
-  declare invoicePrintSize: Signal<InvoicePrintSize>;
-  declare eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType>;
+  public registrationKey: Signal<string>;
+  public email: Signal<string>;
+  public companyName: Signal<string>;
+  public companyPhone: Signal<string>;
+  public companyBusinessCategory?: Signal<string>;
+  public crn?: Signal<string>;
+  public vatNumber?: Signal<string>;
+  public currencyId: Signal<number>;
+  public currency?: Signal<Currency>;
+  public logo?: Signal<StorageFile>;
+  public startDate: Signal<Date>;
+  public endDate: Signal<Date>;
+  public branchId: Signal<number>;
+  public branch?: Signal<BranchOld>;
+  public mainTaxId: Signal<number>;
+  public mainTax?: Signal<TaxOld>;
+  public sellAccountId?: Signal<number>;
+  public sellAccountName?: Signal<string>;
+  public purchaseAccountId?: Signal<number>;
+  public purchaseAccountName?: Signal<string>;
+  public mainPaymentMethodId?: Signal<number>;
+  public mainPaymentMethodName?: Signal<string>;
+  public mainStoreId?: Signal<number>;
+  public mainStoreName?: Signal<string>;
+  public invoicePolicy?: Signal<string>;
+  public invoicePrintSize: Signal<InvoicePrintSize>;
+  public eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType>;
 
   constructor(dto: Partial<SettingDto>)
   {
@@ -112,6 +112,37 @@ export class Setting extends ValidatableEntity<SettingDto>
       selector: (d) => d.currencyId,
       validators: [Validators.required(i18n.t("erpCommon:settings.currencyRequired"))]
     }]);
+
+    this.registrationKey = this.assign("registrationKey", dto?.registrationKey ?? "");
+    this.email = this.assign("email", dto?.email ?? "");
+    this.companyName = this.assign("companyName", dto?.companyName ?? "");
+    this.companyPhone = this.assign("companyPhone", dto?.companyPhone ?? "");
+    this.companyBusinessCategory = this.assign("companyBusinessCategory", dto?.companyBusinessCategory ?? undefined);
+    this.crn = this.assign("crn", dto?.crn ?? undefined);
+    this.vatNumber = this.assign("vatNumber", dto?.vatNumber ?? undefined);
+    this.currencyId = this.assign("currencyId", dto?.currencyId ?? 0);
+    this.currency = this.assign("currency", dto?.currency ?? undefined);
+    this.logo = this.assign("logo", dto?.logo ?? undefined);
+    this.startDate = this.assign("startDate", dto?.startDate ?? new Date());
+    this.endDate = this.assign("endDate", dto?.endDate ?? new Date());
+    this.branchId = this.assign("branchId", dto?.branchId ?? 0);
+    this.branch = this.assign("branch", dto?.branch ?? undefined);
+    this.mainTaxId = this.assign("mainTaxId", dto?.mainTaxId ?? 0);
+    this.mainTax = this.assign("mainTax", dto?.mainTax ?? undefined);
+    this.sellAccountId = this.assign("sellAccountId", dto?.sellAccountId ?? undefined);
+    this.sellAccountName = this.assign("sellAccountName", dto?.sellAccountName ?? undefined);
+    this.purchaseAccountId = this.assign("purchaseAccountId", dto?.purchaseAccountId ?? undefined);
+    this.purchaseAccountName = this.assign("purchaseAccountName", dto?.purchaseAccountName ?? undefined);
+    this.mainPaymentMethodId = this.assign("mainPaymentMethodId", dto?.mainPaymentMethodId ?? undefined);
+    this.mainPaymentMethodName = this.assign("mainPaymentMethodName", dto?.mainPaymentMethodName ?? undefined);
+    this.mainStoreId = this.assign("mainStoreId", dto?.mainStoreId ?? undefined);
+    this.mainStoreName = this.assign("mainStoreName", dto?.mainStoreName ?? undefined);
+    this.invoicePolicy = this.assign("invoicePolicy", dto?.invoicePolicy ?? undefined);
+    this.invoicePrintSize = this.assign("invoicePrintSize", dto?.invoicePrintSize ?? InvoicePrintSize.A4);
+    this.eInvoicingEnvironmentType = this.assign(
+      "eInvoicingEnvironmentType",
+      dto?.eInvoicingEnvironmentType ?? EInvoicingEnvironmentType.Simulation
+    );
   }
 }
 

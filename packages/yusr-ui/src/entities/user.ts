@@ -9,38 +9,23 @@ export class UserDto extends Dto
   public username!: string;
   public password!: string;
   public isActive!: boolean;
-  public branchId!: number | undefined;
-  public branchName!: string;
-  public roleId!: number | undefined;
-  public roleName!: string;
-  public role!: RoleDto;
+  public branchId?: number;
+  public branchName?: string;
+  public roleId?: number;
+  public roleName?: string;
+  public role?: RoleDto;
 }
 
 export class User extends ChangeableEntity<UserDto>
 {
-  protected initialValue(dto?: Partial<UserDto> | undefined): UserDto
-  {
-    return {
-      id: 0,
-      username: "",
-      password: "",
-      isActive: true,
-      branchId: undefined,
-      branchName: "",
-      roleId: undefined,
-      roleName: "",
-      role: new RoleDto(),
-      ...dto
-    };
-  }
-  declare username: Signal<string>;
-  declare password: Signal<string>;
-  declare isActive: Signal<boolean>;
-  declare branchId: Signal<number>;
-  declare branchName: Signal<string>;
-  declare roleId: Signal<number>;
-  declare roleName: Signal<string>;
-  declare role: Signal<RoleDto>;
+  public username: Signal<string>;
+  public password: Signal<string>;
+  public isActive: Signal<boolean>;
+  public branchId: Signal<number>;
+  public branchName: Signal<string>;
+  public roleId: Signal<number>;
+  public roleName: Signal<string>;
+  public role: Signal<RoleDto>;
 
   constructor(dto: UserDto, mode: ChangeableEntityMode = "create")
   {
@@ -62,10 +47,15 @@ export class User extends ChangeableEntity<UserDto>
       validators: [Validators.required(i18n.t("commonEntities:users.branchRequired"))]
     }];
 
-    super(
-      dto,
-      rules,
-      mode
-    );
+    super(dto, rules, mode);
+
+    this.username = this.assign("username", dto?.username ?? "");
+    this.password = this.assign("password", dto?.password ?? "");
+    this.isActive = this.assign("isActive", dto?.isActive ?? false);
+    this.branchId = this.assign("branchId", dto?.branchId ?? 0);
+    this.branchName = this.assign("branchName", dto?.branchName ?? "");
+    this.roleId = this.assign("roleId", dto?.roleId ?? 0);
+    this.roleName = this.assign("roleName", dto?.roleName ?? "");
+    this.role = this.assign("role", dto?.role ?? undefined);
   }
 }

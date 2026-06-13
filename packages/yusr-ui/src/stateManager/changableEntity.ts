@@ -10,37 +10,35 @@ export abstract class ChangeableEntity<TDto extends Dto> extends ValidatableEnti
   public readonly mode: Signal<ChangeableEntityMode>;
   public readonly isDirty: Signal<boolean> = signal(false);
 
-  private originalDto: TDto;
+  private originalDto: Partial<TDto>;
   private modifiedFields: Set<string> = new Set();
   readonly hasChanges: Signal<boolean> = signal(false);
 
-  protected abstract initialValue(dto?: Partial<TDto>): TDto;
-
   protected constructor(
-    dto: TDto,
+    dto: Partial<TDto> | undefined,
     validationRules: ValidationRule<Partial<TDto>>[],
     mode: ChangeableEntityMode = "create"
   )
   {
     super(dto, validationRules);
     this.mode = signal(mode);
-    this.originalDto = dto;
+    this.originalDto = dto ?? {} as TDto;
   }
 
   static create<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
-    this: new(dto: TDto, mode: ChangeableEntityMode) => TEntity,
-    dto?: Partial<TDto>
+    this: new(dto: Partial<TDto> | undefined, mode: ChangeableEntityMode) => TEntity,
+    dto: Partial<TDto> | undefined = undefined
   ): TEntity
   {
-    const value = new this(this.prototype.initialValue(dto), "create");
+    const value = new this(dto, "create");
     value.initChanged();
     value.resetDirty();
     return value;
   }
 
   static load<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
-    this: new(dto: TDto, mode: ChangeableEntityMode) => TEntity,
-    dto: TDto
+    this: new(dto: Partial<TDto> | undefined, mode: ChangeableEntityMode) => TEntity,
+    dto: Partial<TDto> | undefined
   ): TEntity
   {
     return new this(dto, "update");

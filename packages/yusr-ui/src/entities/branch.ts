@@ -2,7 +2,7 @@ import type { Signal } from "@preact/signals-react";
 import { type TFunction } from "i18next";
 import { i18n } from "../locales";
 import { ChangeableEntity, type ChangeableEntityMode, Dto } from "../stateManager";
-import { type ValidationRule, type ValidationRuleOld, Validators } from "../validation";
+import { type ValidationRuleOld, Validators } from "../validation";
 import { BaseEntity } from "./baseEntity";
 import type { CityOld } from "./city";
 
@@ -55,8 +55,8 @@ export class BranchValidationRules
 export class BranchDto extends Dto
 {
   public name!: string;
-  public cityId!: number | undefined;
-  public cityName!: number | undefined;
+  public cityId?: number;
+  public cityName?: number;
   public street?: string;
   public district?: string;
   public buildingNumber?: string;
@@ -65,31 +65,17 @@ export class BranchDto extends Dto
 
 export class Branch extends ChangeableEntity<BranchDto>
 {
-  protected initialValue(dto?: Partial<BranchDto> | undefined): BranchDto
-  {
-    return {
-      id: 0,
-      name: "",
-      cityId: undefined,
-      cityName: undefined,
-      street: undefined,
-      district: undefined,
-      buildingNumber: undefined,
-      postalCode: undefined,
-      ...dto
-    };
-  }
-  declare name: Signal<string>;
-  declare cityId: Signal<number | undefined>;
-  declare cityName: Signal<string | undefined>;
-  declare street: Signal<string | undefined>;
-  declare district: Signal<string | undefined>;
-  declare buildingNumber: Signal<string | undefined>;
-  declare postalCode: Signal<string | undefined>;
+  public name: Signal<string>;
+  public cityId: Signal<number | undefined>;
+  public cityName: Signal<string | undefined>;
+  public street: Signal<string | undefined>;
+  public district: Signal<string | undefined>;
+  public buildingNumber: Signal<string | undefined>;
+  public postalCode: Signal<string | undefined>;
 
-  constructor(dto: BranchDto, mode: ChangeableEntityMode = "create")
+  constructor(dto: Partial<BranchDto> | undefined, mode: ChangeableEntityMode = "create")
   {
-    const rules: ValidationRule<Partial<BranchDto>>[] = [{
+    super(dto, [{
       field: "name",
       selector: (d) => d.name,
       validators: [Validators.required(i18n.t("commonEntities:branches.nameRequired"))]
@@ -111,12 +97,14 @@ export class Branch extends ChangeableEntity<BranchDto>
         Validators.exactLength(5, i18n.t("commonEntities:branches.postalCodeLength")),
         Validators.numeric(i18n.t("commonEntities:branches.postalCodeNumeric"))
       )]
-    }];
+    }], mode);
 
-    super(
-      dto,
-      rules,
-      mode
-    );
+    this.name = this.assign("name", dto?.name ?? "");
+    this.cityId = this.assign("cityId", dto?.cityId ?? undefined);
+    this.cityName = this.assign("cityName", dto?.cityName ?? undefined);
+    this.street = this.assign("street", dto?.street ?? undefined);
+    this.district = this.assign("district", dto?.district ?? undefined);
+    this.buildingNumber = this.assign("buildingNumber", dto?.buildingNumber ?? undefined);
+    this.postalCode = this.assign("postalCode", dto?.postalCode ?? undefined);
   }
 }
