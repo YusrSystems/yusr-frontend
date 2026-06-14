@@ -12,6 +12,7 @@ import { StoresApiService } from "../networking/storeApiService";
 import TaxesApiService from "../networking/taxesApiService";
 import UnitsApiService from "../networking/unitApiService";
 import { ErpAuthService } from "./erpAuthService";
+import DashboardApiService from "@/core/networking/dashboardApiService.ts";
 
 export class Services extends BaseServices
 {
@@ -29,6 +30,7 @@ export class Services extends BaseServices
   public static readonly stocktakingApi = new StocktakingsApiService();
   public static readonly itemTransfersApi = new ItemTransferApiService();
   public static readonly itemsSettlementsApi = new ItemsSettlementsApiService();
+  public static readonly  dashboardApi = new DashboardApiService();
 
   static
   {

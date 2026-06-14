@@ -15,6 +15,7 @@ import type { Tax, TaxDto } from "../data/tax";
 import type Unit from "../data/unit";
 import type { UnitDto } from "../data/unit";
 import { Services } from "./services";
+import {type DashboardData, DashboardDataDto} from "@/core/data/dashboardData.ts";
 
 export class Cubits extends BaseCubits
 {
@@ -32,7 +33,7 @@ export class Cubits extends BaseCubits
   public static readonly itemTransfers = new PageCubit<ItemTransfer, ItemTransferDto>(Services.itemTransfersApi);
   public static readonly itemsSettlements = new PageCubit<Stocktaking, StocktakingDto>(Services.itemsSettlementsApi);
   public static override roles = new PageCubit<ErpRole, ErpRoleDto>(Services.rolesApi);
-
+  public static readonly  dashboard = new PageCubit<DashboardData, DashboardDataDto>(Services.dashboardApi);
   static
   {
     BaseCubits.roles = Cubits.roles;

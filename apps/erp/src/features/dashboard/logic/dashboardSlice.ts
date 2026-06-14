@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type DashboardDataOld from "../../../core/data/dashboardDataOld.ts";
-import DashboardApiService from "../../../core/networking/dashboardApiService";
+import DashboardApiServiceOld from "../../../core/networking/dashboardApiServiceOld.ts";
 
 export interface DashboardState
 {
@@ -25,7 +25,7 @@ export const dashboardSlice = createSlice({
 
 export const fetchDashboardData = createAsyncThunk("dashboard/fetchDashboardData", async () =>
 {
-  const res = await new DashboardApiService().get();
+  const res = await new DashboardApiServiceOld().get();
 
   return res.data;
 });
