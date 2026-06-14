@@ -3,6 +3,7 @@ import {
     CheckboxField,
     type CommonChangeDialogProps,
     CurrencyIcon,
+    DateField,
     FieldGroup,
     FieldsSection,
     FormField,
@@ -12,7 +13,6 @@ import {
     SystemPermissionsActions,
     TextAreaField,
     TextField,
-    TextFieldOld,
 } from "yusr-ui";
 import {type Voucher, VoucherDto} from "@/core/data/voucher.ts";
 import {useSignals} from "@preact/signals-react/runtime";
@@ -24,6 +24,7 @@ import {AccountsSearchableSelect} from "@/core/components/searchableSelect/accou
 import {AccountType} from "@/core/data/account.ts";
 import {useEffect, useMemo} from "react";
 import {signal} from "@preact/signals-react";
+import {Cubits} from "@/core/services/cubits.ts";
 
 export default function ChangeVoucherDialog({
                                                 entity,
@@ -32,7 +33,15 @@ export default function ChangeVoucherDialog({
                                             }: CommonChangeDialogProps<Voucher, VoucherDto>) {
     useSignals();
 
+    const {t} = useTranslation(["accounting", "common"]);
+    const title = entity.mode.value === "create"
+        ? t("vouchers.addNewTitle")
+        : `${t("common:crudRow.edit")} ${t("vouchers.entityName")}`;
 
+
+    useEffect(() => {
+        Cubits.accounts.init([AccountType.Client, AccountType.Supplier]);
+    }, []);
     if (
         (entity.mode.value === "create"
             && !Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Add))
@@ -41,12 +50,6 @@ export default function ChangeVoucherDialog({
     ) {
         return <ChangeDialog.Unauthorized/>;
     }
-
-
-    const {t} = useTranslation(["accounting", "common"]);
-    const title = entity.mode.value === "create"
-        ? t("vouchers.addNewTitle")
-        : `${t("common:crudRow.edit")} ${t("vouchers.entityName")}`;
 
 
     const isPayment = entity.type.value === VoucherType.Payment;
@@ -86,13 +89,12 @@ export default function ChangeVoucherDialog({
                             ]}
                     />
 
-                    {/*TODO: implement date field*/}
-                    {/*<DateField*/}
-                    {/*    label={t("vouchers.date")}*/}
-                    {/*    required*/}
-                    {/*    value={entity.date ? new Date(formData.date) : undefined}*/}
-                    {/*    error={entity.getError("date")}*/}
-                    {/*/>*/}
+                    <DateField
+                        label={t("vouchers.date")}
+                        required
+                        value={entity.date ? signal(new Date(entity.date.value)) : undefined}
+                        error={entity.getError("date")}
+                    />
                 </FieldsSection>
 
                 <FieldsSection columns={2}>
@@ -176,11 +178,11 @@ export default function ChangeVoucherDialog({
                     />
                 </FieldsSection>
 
-                {entity.invoiceId && (
+                {entity.invoiceId.value && (
                     <FieldsSection title={t("vouchers.systemLinks")} columns={1}>
-                        <TextFieldOld
+                        <TextField
                             label={t("vouchers.relatedInvoice")}
-                            value={`#${entity.invoiceId}`}
+                            value={signal(`#${entity.invoiceId.value}`)}
                             disabled={true}
                             className="bg-muted w-1/2"
                         />

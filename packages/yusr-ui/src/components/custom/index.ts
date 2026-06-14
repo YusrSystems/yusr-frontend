@@ -26,7 +26,7 @@ export * from "./currency/currencyIcon";
 // Fields
 export * from "./fields/checkboxField";
 export * from "./fields/checkboxFieldOld";
-export * from "./fields/dateField";
+export * from "./fields/dateFieldOld.tsx";
 export * from "./fields/dateTimeField";
 export * from "./fields/fieldsSection";
 export * from "./fields/formField";
@@ -46,7 +46,7 @@ export * from "./images/zoomableImage";
 
 // Inputs
 export * from "./inputs/baseInput";
-export * from "./inputs/dateInput";
+export * from "./inputs/dateInputOld.tsx";
 export * from "./inputs/dateTimeInput";
 export * from "./inputs/numberInputOld";
 export * from "./inputs/otpInput";

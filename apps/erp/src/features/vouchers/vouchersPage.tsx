@@ -23,6 +23,7 @@ import ReportConstants from "@/core/data/report/reportConstants.ts";
 import ChangeVoucherDialog from "@/features/vouchers/changeVoucherDialog.tsx";
 
 export default function VouchersPage() {
+    useSignals();
     const {t} = useTranslation("accounting");
     useEffect(() => Cubits.vouchers.init(), []);
     if (!Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Get)) {

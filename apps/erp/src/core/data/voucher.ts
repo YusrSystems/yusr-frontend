@@ -66,8 +66,8 @@ export class Voucher extends ChangeableEntity<VoucherDto> {
             selector: (d) => d.paymentMethodId,
             validators: [Validators.required(i18n.t("accounting:vouchers.paymentMethodRequired"))]
         }]);
-
-        this.type = this.assign("type", dto?.type);
+        console.log(dto?.type)
+        this.type = this.assign("type", dto?.type ? dto.type : VoucherType.Payment);
         this.date = this.assign("date", dto?.date ?
             new Date(dto?.date).toLocaleDateString("en-CA")
             : new Date().toLocaleDateString("en-CA"));
@@ -83,6 +83,7 @@ export class Voucher extends ChangeableEntity<VoucherDto> {
 
         this.accountName = this.assign("accountName", dto?.accountName);
         this.paymentMethod = this.assign("paymentMethod", new PaymentMethod(dto?.paymentMethod));
+
     }
 
 }
