@@ -1,7 +1,7 @@
 import type { Signal } from "@preact/signals-react";
 import { Dto, Entity } from "../stateManager";
 import { BaseEntity } from "./baseEntity";
-import { Country } from "./country";
+import { Country, CountryDto } from "./country";
 
 export class CityOld extends BaseEntity
 {
@@ -20,7 +20,7 @@ export class CityDto extends Dto
 {
   public name!: string;
   public countryId!: number;
-  public country!: Country;
+  public country!: CountryDto;
 }
 
 export class City extends Entity<CityDto>

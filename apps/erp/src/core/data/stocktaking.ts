@@ -18,14 +18,9 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto>
   public storeId: Signal<number | undefined>;
   public storeName: Signal<string | undefined>;
   public items: Signal<StocktakingItem[]>;
-  constructor(dto: StocktakingDto, mode: ChangeableEntityMode = "create")
+  constructor(dto: Partial<StocktakingDto> | undefined, mode: ChangeableEntityMode = "create")
   {
-    super({
-      ...dto,
-      items: (dto.items ?? []).map((s) =>
-        s instanceof StocktakingItem ? s : new StocktakingItem(s)
-      ) as unknown[] as StocktakingItemDto[]
-    }, [{
+    super(dto, [{
       field: "storeId",
       selector: (d) => d.storeId,
       validators: [Validators.required(i18n.t("stocking:stocktakings.storeRequired"))]
@@ -39,11 +34,11 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto>
       validators: [Validators.arrayMinLength(1, i18n.t("stocking:stocktakings.itemsRequired"))]
     }], mode);
 
-    this.description = this.assign("description", dto.description ?? "");
-    this.date = this.assign("date", dto.date ?? "");
-    this.storeId = this.assign("storeId", dto.storeId ?? 0);
-    this.storeName = this.assign("storeName", dto.storeName ?? "");
-    const itemsList = (dto.items ?? []).map((s) => new StocktakingItem(s));
+    this.description = this.assign("description", dto?.description ?? "");
+    this.date = this.assign("date", dto?.date ?? "");
+    this.storeId = this.assign("storeId", dto?.storeId ?? 0);
+    this.storeName = this.assign("storeName", dto?.storeName ?? "");
+    const itemsList = (dto?.items ?? []).map((s) => new StocktakingItem(s));
     this.items = this.assign("items", itemsList);
   }
 }

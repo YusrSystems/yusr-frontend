@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { BranchSlice, CitySlice, CountrySlice, createAuthSlice, CurrencySlice, RoleSlice, setupAuthListenersForRedux, systemReducer, UserOld, UserSlice, type YusrAppDispatch, type YusrRootState } from "yusr-ui";
+import { BranchSlice, CitySlice, createAuthSlice, CurrencySlice, RoleSlice, setupAuthListenersForRedux, systemReducer, UserOld, UserSlice, type YusrAppDispatch, type YusrRootState } from "yusr-ui";
 import dashboardReducer from "../../features/dashboard/logic/dashboardSlice";
 import { itemTransferReducer } from "../../features/itemTransfers/logic/itemTransferSlice";
 import registerReducer from "../../features/register/logic/registerSlice";
@@ -42,7 +42,6 @@ export const store = configureStore({
     userForm: UserSlice.formReducer,
     userDialog: UserSlice.dialogReducer,
     city: CitySlice.entityReducer,
-    country: CountrySlice.entityReducer,
     currency: CurrencySlice.entityReducer,
     auth: authSlice.reducer,
     system: systemReducer,

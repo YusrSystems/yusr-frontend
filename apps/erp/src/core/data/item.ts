@@ -71,16 +71,9 @@ export default class Item extends ChangeableEntity<ItemDto>
   public itemStores: Signal<ItemStore[]>;
   public itemImages: Signal<StorageFile[]>;
 
-  constructor(dto: Partial<ItemDto>, mode: ChangeableEntityMode = "create")
+  constructor(dto: Partial<ItemDto> | undefined, mode: ChangeableEntityMode = "create")
   {
-    super({
-      ...dto,
-      itemTaxes: (dto.itemTaxes ?? []).map((t) => t instanceof ItemTax ? t : new ItemTax(t)),
-      itemStores: (dto.itemStores ?? []).map((s) => s instanceof ItemStore ? s : new ItemStore(s)),
-      itemUnitPricingMethods: (dto.itemUnitPricingMethods ?? []).map((m) =>
-        m instanceof ItemUnitPricingMethod ? m : new ItemUnitPricingMethod(m)
-      )
-    }, [{
+    super(dto, [{
       field: "name",
       selector: (d) => d.name,
       validators: [Validators.required(i18n.t("stocking:items.nameRequired"))]
@@ -125,38 +118,38 @@ export default class Item extends ChangeableEntity<ItemDto>
       validators: [Validators.required(i18n.t("stocking:items.initialCostRequired"))]
     }], mode);
 
-    this.type = this.assign("type", dto.type ?? 1);
-    this.name = this.assign("name", dto.name ?? "");
-    this.description = this.assign("description", dto.description ?? "");
-    this.class = this.assign("class", dto.class ?? "");
-    this.brand = this.assign("brand", dto.brand ?? "");
-    this.sellUnitId = this.assign("sellUnitId", dto.sellUnitId ?? 0);
-    this.sellUnitName = this.assign("sellUnitName", dto.sellUnitName ?? "");
-    this.minQuantity = this.assign("minQuantity", dto.minQuantity ?? 0);
-    this.maxQuantity = this.assign("maxQuantity", dto.maxQuantity ?? 0);
-    this.initialQuantity = this.assign("initialQuantity", dto.initialQuantity ?? 0);
-    this.quantity = this.assign("quantity", dto.quantity ?? 0);
-    this.storeQuantity = this.assign("storeQuantity", dto.storeQuantity ?? 0);
-    this.lastBuyPrice = this.assign("lastBuyPrice", dto.lastBuyPrice ?? 0);
-    this.initialCost = this.assign("initialCost", dto.initialCost ?? 0);
-    this.cost = this.assign("cost", dto.cost ?? 0);
-    this.taxIncluded = this.assign("taxIncluded", dto.taxIncluded ?? false);
-    this.taxable = this.assign("taxable", dto.taxable ?? false);
-    this.exemptionReasonCode = this.assign("exemptionReasonCode", dto.exemptionReasonCode ?? "");
-    this.exemptionReason = this.assign("exemptionReason", dto.exemptionReason ?? "");
-    this.statusId = this.assign("statusId", dto.statusId ?? 0);
-    this.location = this.assign("location", dto.location ?? "");
-    this.notes = this.assign("notes", dto.notes ?? "");
-    this.totalTaxes = this.assign("totalTaxes", dto.totalTaxes ?? 0);
-    const itemUnitPricingMethodsSignalArray = (dto.itemUnitPricingMethods ?? []).map((m) =>
+    this.type = this.assign("type", dto?.type ?? 1);
+    this.name = this.assign("name", dto?.name ?? "");
+    this.description = this.assign("description", dto?.description ?? "");
+    this.class = this.assign("class", dto?.class ?? "");
+    this.brand = this.assign("brand", dto?.brand ?? "");
+    this.sellUnitId = this.assign("sellUnitId", dto?.sellUnitId ?? 0);
+    this.sellUnitName = this.assign("sellUnitName", dto?.sellUnitName ?? "");
+    this.minQuantity = this.assign("minQuantity", dto?.minQuantity ?? 0);
+    this.maxQuantity = this.assign("maxQuantity", dto?.maxQuantity ?? 0);
+    this.initialQuantity = this.assign("initialQuantity", dto?.initialQuantity ?? 0);
+    this.quantity = this.assign("quantity", dto?.quantity ?? 0);
+    this.storeQuantity = this.assign("storeQuantity", dto?.storeQuantity ?? 0);
+    this.lastBuyPrice = this.assign("lastBuyPrice", dto?.lastBuyPrice ?? 0);
+    this.initialCost = this.assign("initialCost", dto?.initialCost ?? 0);
+    this.cost = this.assign("cost", dto?.cost ?? 0);
+    this.taxIncluded = this.assign("taxIncluded", dto?.taxIncluded ?? false);
+    this.taxable = this.assign("taxable", dto?.taxable ?? false);
+    this.exemptionReasonCode = this.assign("exemptionReasonCode", dto?.exemptionReasonCode ?? "");
+    this.exemptionReason = this.assign("exemptionReason", dto?.exemptionReason ?? "");
+    this.statusId = this.assign("statusId", dto?.statusId ?? 0);
+    this.location = this.assign("location", dto?.location ?? "");
+    this.notes = this.assign("notes", dto?.notes ?? "");
+    this.totalTaxes = this.assign("totalTaxes", dto?.totalTaxes ?? 0);
+    const itemUnitPricingMethodsSignalArray = (dto?.itemUnitPricingMethods ?? []).map((m) =>
       m instanceof ItemUnitPricingMethod ? m : new ItemUnitPricingMethod(m)
     );
     this.itemUnitPricingMethods = this.assign("itemUnitPricingMethods", itemUnitPricingMethodsSignalArray);
-    const itemTaxesSignalArray = (dto.itemTaxes ?? []).map((t) => t instanceof ItemTax ? t : new ItemTax(t));
+    const itemTaxesSignalArray = (dto?.itemTaxes ?? []).map((t) => t instanceof ItemTax ? t : new ItemTax(t));
     this.itemTaxes = this.assign("itemTaxes", itemTaxesSignalArray);
-    const itemStoresSignalArray = (dto.itemStores ?? []).map((s) => s instanceof ItemStore ? s : new ItemStore(s));
+    const itemStoresSignalArray = (dto?.itemStores ?? []).map((s) => s instanceof ItemStore ? s : new ItemStore(s));
     this.itemStores = this.assign("itemStores", itemStoresSignalArray);
-    this.itemImages = this.assign("itemImages", dto.itemImages ?? []);
+    this.itemImages = this.assign("itemImages", dto?.itemImages ?? []);
 
     const checkChildren = () =>
     {

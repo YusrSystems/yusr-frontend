@@ -10,7 +10,7 @@ export default class PricingMethod extends ChangeableEntity<PricingMethodDto>
 {
   public name: Signal<string>;
 
-  constructor(dto: PricingMethodDto, mode: ChangeableEntityMode = "create")
+  constructor(dto: Partial<PricingMethodDto> | undefined, mode: ChangeableEntityMode = "create")
   {
     super(dto, [{
       field: "name",

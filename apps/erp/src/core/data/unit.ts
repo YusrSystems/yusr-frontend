@@ -10,7 +10,7 @@ export default class Unit extends ChangeableEntity<UnitDto>
 {
   public name: Signal<string>;
 
-  constructor(dto?: UnitDto, mode: ChangeableEntityMode = "create")
+  constructor(dto?: Partial<UnitDto> | undefined, mode: ChangeableEntityMode = "create")
   {
     super(dto, [{
       field: "name",

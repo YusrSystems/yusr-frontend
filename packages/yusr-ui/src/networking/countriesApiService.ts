@@ -1,22 +1,12 @@
-import type { Country } from "../entities/country";
-import type { ApiFilterResult, RequestResult } from "../types";
-import { ApiConstants } from "./apiConstants";
-import { BaseFilterableApiServiceOld } from "./baseFilterableApiServiceOld";
-import { YusrApiHelper } from "./yusrApiHelper";
+import { Country, type CountryDto } from "../entities/country";
+import { BaseFilterableApiService } from "./baseFilterableApiService";
 
-export class CountriesApiService extends BaseFilterableApiServiceOld<Country>
+export class CountriesApiService extends BaseFilterableApiService<Country, CountryDto>
 {
   routeName: string = "Countries";
 
-  async Filter(
-    pageNumber: number,
-    rowsPerPage: number,
-    searchText?: string
-  ): Promise<RequestResult<ApiFilterResult<Country>>>
+  createEntity(dto: CountryDto): Country
   {
-    return await YusrApiHelper.Post(
-      `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
-      searchText
-    );
+    return new Country(dto);
   }
 }

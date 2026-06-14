@@ -24,7 +24,7 @@ export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
   public commissionType: Signal<CommissionType>;
   public commissionAmount: Signal<number>;
 
-  constructor(dto: PaymentMethodDto, mode: ChangeableEntityMode = "create")
+  constructor(dto: Partial<PaymentMethodDto> | undefined, mode: ChangeableEntityMode = "create")
   {
     super(dto, [{
       field: "name",

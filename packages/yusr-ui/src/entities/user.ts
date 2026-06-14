@@ -27,7 +27,7 @@ export class User extends ChangeableEntity<UserDto>
   public roleName: Signal<string>;
   public role: Signal<RoleDto>;
 
-  constructor(dto: UserDto, mode: ChangeableEntityMode = "create")
+  constructor(dto: Partial<UserDto> | undefined, mode: ChangeableEntityMode = "create")
   {
     const rules: ValidationRule<Partial<UserDto>>[] = [{
       field: "username",

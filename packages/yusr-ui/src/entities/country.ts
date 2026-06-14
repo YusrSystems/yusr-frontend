@@ -11,7 +11,7 @@ export class Country extends Entity<CountryDto>
   public name!: Signal<string>;
   public code!: Signal<string>;
 
-  constructor(dto?: Partial<Country>)
+  constructor(dto?: Partial<CountryDto> | undefined)
   {
     super();
     this.name = this.assign("name", dto?.name ?? "");

@@ -4,7 +4,6 @@ export * from "./branchSlice";
 export * from "./city";
 export * from "./citySlice";
 export * from "./country";
-export * from "./countrySlice";
 export * from "./currency";
 export * from "./currencySlice";
 export * from "./filterByTypeRequest";

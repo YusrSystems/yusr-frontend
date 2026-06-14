@@ -28,7 +28,7 @@ export class ItemUnitPricingMethod extends ChangeableEntity<ItemUnitPricingMetho
   public price: Signal<number>;
   public barcode: Signal<string | undefined>;
 
-  constructor(dto: ItemUnitPricingMethodDto)
+  constructor(dto: Partial<ItemUnitPricingMethodDto> | undefined)
   {
     super(dto, [{
       field: "unitId",
@@ -51,16 +51,16 @@ export class ItemUnitPricingMethod extends ChangeableEntity<ItemUnitPricingMetho
       selector: (d) => d.itemUnitPricingMethodName,
       validators: [Validators.required(i18n.t("stocking:items.itemUnitPricingMethodNameRequired"))]
     }]);
-    this.itemId = this.assign("itemId", dto.itemId ?? 0);
-    this.unitId = this.assign("unitId", dto.unitId ?? 0);
-    this.itemUnitPricingMethodName = this.assign("itemUnitPricingMethodName", dto.itemUnitPricingMethodName ?? "");
-    this.unitName = this.assign("unitName", dto.unitName ?? "");
-    this.pricingMethodId = this.assign("pricingMethodId", dto.pricingMethodId ?? 0);
-    this.pricingMethodName = this.assign("pricingMethodName", dto.pricingMethodName ?? "");
-    this.quantityMultiplier = this.assign("quantityMultiplier", dto.quantityMultiplier ?? 0);
-    this.unitPrice = this.assign("unitPrice", dto.unitPrice ?? 0);
-    this.price = this.assign("price", dto.price ?? 0);
-    this.barcode = this.assign("barcode", dto.barcode ?? "");
+    this.itemId = this.assign("itemId", dto?.itemId ?? 0);
+    this.unitId = this.assign("unitId", dto?.unitId ?? 0);
+    this.itemUnitPricingMethodName = this.assign("itemUnitPricingMethodName", dto?.itemUnitPricingMethodName ?? "");
+    this.unitName = this.assign("unitName", dto?.unitName ?? "");
+    this.pricingMethodId = this.assign("pricingMethodId", dto?.pricingMethodId ?? 0);
+    this.pricingMethodName = this.assign("pricingMethodName", dto?.pricingMethodName ?? "");
+    this.quantityMultiplier = this.assign("quantityMultiplier", dto?.quantityMultiplier ?? 0);
+    this.unitPrice = this.assign("unitPrice", dto?.unitPrice ?? 0);
+    this.price = this.assign("price", dto?.price ?? 0);
+    this.barcode = this.assign("barcode", dto?.barcode ?? "");
   }
 
   generateBarcode(length = 12): void

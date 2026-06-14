@@ -26,7 +26,7 @@ export class StocktakingItem extends ChangeableEntity<StocktakingItemDto>
   public variance: Signal<number>;
   public actualQuantity: Signal<number>;
 
-  constructor(dto: StocktakingItemDto)
+  constructor(dto: Partial<StocktakingItemDto> | undefined)
   {
     super(dto, [{
       field: "itemId",
@@ -46,14 +46,14 @@ export class StocktakingItem extends ChangeableEntity<StocktakingItemDto>
       validators: [Validators.min(0, i18n.t("stocking:items.unitPriceMin"))]
     }]);
 
-    this.stocktakingId = this.assign("stocktakingId", dto.stocktakingId ?? 0);
-    this.itemId = this.assign("itemId", dto.itemId ?? 0);
-    this.itemName = this.assign("itemName", dto.itemName ?? "");
-    this.itemUnitPricingMethodId = this.assign("itemUnitPricingMethodId", dto.itemUnitPricingMethodId ?? 0);
-    this.itemUnitPricingMethodName = this.assign("itemUnitPricingMethodName", dto.itemUnitPricingMethodName ?? "");
-    this.quantityMultiplier = this.assign("quantityMultiplier", dto.quantityMultiplier ?? 0);
-    this.systemQuantity = this.assign("systemQuantity", dto.systemQuantity ?? 0);
-    this.variance = this.assign("variance", dto.variance ?? 0);
-    this.actualQuantity = this.assign("actualQuantity", dto.actualQuantity ?? 0);
+    this.stocktakingId = this.assign("stocktakingId", dto?.stocktakingId ?? 0);
+    this.itemId = this.assign("itemId", dto?.itemId ?? 0);
+    this.itemName = this.assign("itemName", dto?.itemName ?? "");
+    this.itemUnitPricingMethodId = this.assign("itemUnitPricingMethodId", dto?.itemUnitPricingMethodId ?? 0);
+    this.itemUnitPricingMethodName = this.assign("itemUnitPricingMethodName", dto?.itemUnitPricingMethodName ?? "");
+    this.quantityMultiplier = this.assign("quantityMultiplier", dto?.quantityMultiplier ?? 0);
+    this.systemQuantity = this.assign("systemQuantity", dto?.systemQuantity ?? 0);
+    this.variance = this.assign("variance", dto?.variance ?? 0);
+    this.actualQuantity = this.assign("actualQuantity", dto?.actualQuantity ?? 0);
   }
 }
