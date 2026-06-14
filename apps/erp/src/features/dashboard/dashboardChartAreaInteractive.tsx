@@ -2,9 +2,9 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, type ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent, CurrencyIcon, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, ToggleGroup, ToggleGroupItem } from "yusr-ui";
-import type DashboardData from "../../core/data/dashboardData";
+import type DashboardDataOld from "../../core/data/dashboardDataOld.ts";
 
-type ChartAreaInteractiveProps = { data: DashboardData; };
+type ChartAreaInteractiveProps = { data: DashboardDataOld; };
 
 export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProps)
 {

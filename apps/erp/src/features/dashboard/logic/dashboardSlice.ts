@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type DashboardData from "../../../core/data/dashboardData";
+import type DashboardDataOld from "../../../core/data/dashboardDataOld.ts";
 import DashboardApiService from "../../../core/networking/dashboardApiService";
 
 export interface DashboardState
 {
-  data: DashboardData | undefined;
+  data: DashboardDataOld | undefined;
 }
 const initialDashboardState = {
   data: undefined

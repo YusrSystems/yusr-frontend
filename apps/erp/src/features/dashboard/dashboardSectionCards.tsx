@@ -2,9 +2,9 @@ import { Activity } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CurrencyIcon } from "yusr-ui";
-import type DashboardData from "../../core/data/dashboardData";
+import type DashboardDataOld from "../../core/data/dashboardDataOld.ts";
 
-type DashboardSectionCardsProps = { data: DashboardData; };
+type DashboardSectionCardsProps = { data: DashboardDataOld; };
 
 const sumArray = (arr?: number[]) => arr?.reduce((a, b) => a + b, 0) ?? 0;
 
