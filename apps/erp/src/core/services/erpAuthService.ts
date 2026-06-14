@@ -60,11 +60,11 @@ export class ErpAuthService extends AuthService
   {
     let counter = 0;
 
-    if (!Boolean(this.setting?.companyPhone?.value))
+    if (!this.setting?.companyPhone?.value)
     {
       counter += 1;
     }
-    if (!Boolean(this.setting?.branch?.value.cityId))
+    if (!this.setting?.branch?.value.cityId)
     {
       counter += 1;
     }
@@ -74,11 +74,11 @@ export class ErpAuthService extends AuthService
 
   get nextRoute(): string
   {
-    if (!Boolean(this.setting?.branch?.value.cityId))
+    if (!this.setting?.branch?.value.cityId)
     {
       return "/branches";
     }
-    if (!Boolean(this.setting?.companyPhone?.value))
+    if (!this.setting?.companyPhone?.value)
     {
       return "/settings";
     }
