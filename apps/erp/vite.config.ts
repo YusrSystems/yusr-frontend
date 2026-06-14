@@ -3,29 +3,35 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import { defineConfig } from "vite";
 
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "yusr-ui": path.resolve(__dirname, "../../packages/yusr-ui/src/index.ts")
+export default defineConfig(({ mode }) =>
+{
+  console.log("mode: ", mode);
+  return ({
+    plugins: [react(), tailwindcss()],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+        "yusr-ui": path.resolve(__dirname, "../../packages/yusr-ui/src/index.ts")
+      },
+      dedupe: ["react", "react-dom", "react/jsx-runtime"]
     },
-    dedupe: ["react", "react-dom", "react/jsx-runtime"]
-  },
-  server: {
-    proxy: {
-      "/api": {
-        target: "https://yusrerp.runasp.net",
-        changeOrigin: true,
-        secure: true
+    server: {
+      proxy: {
+        "/api": {
+          target: mode === "development"
+            ? "https://yusrerpdev.runasp.net"
+            : "https://yusrerp.runasp.net",
+          changeOrigin: true,
+          secure: true
+        }
       }
+      // proxy: {
+      //   "/api": {
+      //     target: "https://localhost:7142",
+      //     changeOrigin: true,
+      //     secure: false
+      //   }
+      // }
     }
-    // proxy: {
-    //   "/api": {
-    //     target: "https://localhost:7142",
-    //     changeOrigin: true,
-    //     secure: false
-    //   }
-    // }
-  }
+  });
 });
