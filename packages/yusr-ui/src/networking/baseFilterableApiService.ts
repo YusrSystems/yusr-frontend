@@ -29,19 +29,21 @@ export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDt
     queryParams?: Record<string, string | number>
   ): Promise<FilterResult<TEntity, TDto>>
   {
-    const extraQuery = queryParams
-      ? "&" + new URLSearchParams(
-        Object.entries(queryParams).map(([k, v]) => [k, String(v)])
-      ).toString()
-      : "";
-
-    const body = types !== undefined
-      ? new FilterByTypeRequest({ searchText, types })
-      : searchText;
+    const params = new URLSearchParams();
+    params.set("pageNumber", pageNumber.toString());
+    params.set("rowsPerPage", rowsPerPage.toString());
+    if (searchText)
+    {
+      params.set("searchText", searchText);
+    }
+    if (queryParams)
+    {
+      Object.entries(queryParams).forEach(([k, v]) => params.set(k, String(v)));
+    }
 
     const rawResult = await YusrApiHelper.Post<ApiFilterResult<TDto>>(
-      `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}${extraQuery}`,
-      body
+      `${ApiConstants.baseUrl}/${this.routeName}/Filter?${params.toString()}`,
+      types
     );
 
     return {
