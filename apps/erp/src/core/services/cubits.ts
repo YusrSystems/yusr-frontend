@@ -5,6 +5,8 @@ import { StoresCubit } from "@/features/stores/state/storeCubit";
 import { BaseCubits, PageCubit } from "yusr-ui";
 import type { Account, AccountDto } from "../data/account";
 import type { ErpRole, ErpRoleDto } from "../data/erpRole";
+import type ItemTransfer from "../data/itemTransfer";
+import type { ItemTransferDto } from "../data/itemTransfer";
 import type PricingMethod from "../data/pricingMethod";
 import type { PricingMethodDto } from "../data/pricingMethod";
 import type Stocktaking from "../data/stocktaking";
@@ -27,6 +29,7 @@ export class Cubits extends BaseCubits
   );
   public static readonly items = new ItemsCubit();
   public static readonly stocktaking = new PageCubit<Stocktaking, StocktakingDto>(Services.stocktakingApi);
+  public static readonly itemTransfers = new PageCubit<ItemTransfer, ItemTransferDto>(Services.itemTransfersApi);
   public static readonly itemsSettlements = new PageCubit<Stocktaking, StocktakingDto>(Services.itemsSettlementsApi);
   public static override roles = new PageCubit<ErpRole, ErpRoleDto>(Services.rolesApi);
 

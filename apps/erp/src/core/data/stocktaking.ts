@@ -35,7 +35,7 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto>
     }], mode);
 
     this.description = this.assign("description", dto?.description ?? "");
-    this.date = this.assign("date", dto?.date ?? "");
+    this.date = this.assign("date", dto?.date ?? new Date().toLocaleDateString("en-CA"));
     this.storeId = this.assign("storeId", dto?.storeId ?? 0);
     this.storeName = this.assign("storeName", dto?.storeName ?? "");
     const itemsList = (dto?.items ?? []).map((s) => new StocktakingItem(s));

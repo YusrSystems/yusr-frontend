@@ -4,6 +4,7 @@ import BalanceTransfersApiService from "../networking/balanceTransferApiService"
 import { ErpRoleApiService } from "../networking/erpRoleApiService";
 import ItemsApiService from "../networking/itemApiService";
 import ItemsSettlementsApiService from "../networking/itemsSettlementsApiService";
+import ItemTransferApiService from "../networking/itemTransferApiService";
 import PaymentMethodsApiService from "../networking/paymentMethodApiService";
 import PricingMethodsApiService from "../networking/pricingMethodsApiService";
 import StocktakingsApiService from "../networking/stocktakingApiService";
@@ -26,6 +27,7 @@ export class Services extends BaseServices
   public static readonly paymentMethodsApi = new PaymentMethodsApiService();
   public static readonly balanceTransfersApi = new BalanceTransfersApiService();
   public static readonly stocktakingApi = new StocktakingsApiService();
+  public static readonly itemTransfersApi = new ItemTransferApiService();
   public static readonly itemsSettlementsApi = new ItemsSettlementsApiService();
 
   static

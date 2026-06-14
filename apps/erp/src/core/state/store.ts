@@ -2,14 +2,12 @@ import { configureStore } from "@reduxjs/toolkit";
 import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { BranchSlice, CitySlice, createAuthSlice, CurrencySlice, RoleSlice, setupAuthListenersForRedux, systemReducer, UserOld, UserSlice, type YusrAppDispatch, type YusrRootState } from "yusr-ui";
 import dashboardReducer from "../../features/dashboard/logic/dashboardSlice";
-import { itemTransferReducer } from "../../features/itemTransfers/logic/itemTransferSlice";
 import registerReducer from "../../features/register/logic/registerSlice";
 import { BanksAndBoxesSlice, BanksSlice, BoxesSlice, ClientsAndSuppliersSlice, ClientsSlice, EmployeesSlice, SuppliersSlice } from "../data/accountOld";
 import { BalanceTransferSlice } from "../data/balanceTransfer";
 import { PurchasesSlice, QuotationSlice, SalesSlice } from "../data/invoice";
 import { ItemSlice } from "../data/itemOld";
 import { ItemsSettlementSlice } from "../data/itemsSettlement";
-import { ItemTransferSlice } from "../data/itemTransfer";
 import { PaymentMethodSlice } from "../data/paymentMethod";
 import { PricingMethodSlice } from "../data/pricingMethodOld";
 import { type SettingOld, SettingSlice } from "../data/settingOld";
@@ -101,13 +99,9 @@ export const store = configureStore({
     pricingMethod: PricingMethodSlice.entityReducer,
     pricingMethodForm: PricingMethodSlice.formReducer,
     pricingMethodDialog: PricingMethodSlice.dialogReducer,
-    itemTransfer: ItemTransferSlice.entityReducer,
-    itemTransferForm: ItemTransferSlice.formReducer,
-    itemTransferDialog: ItemTransferSlice.dialogReducer,
     itemsSettlement: ItemsSettlementSlice.entityReducer,
     itemsSettlementForm: ItemsSettlementSlice.formReducer,
     itemsSettlementDialog: ItemsSettlementSlice.dialogReducer,
-    itemTransferUI: itemTransferReducer,
     dashboard: dashboardReducer,
     register: registerReducer
   }
