@@ -1,10 +1,9 @@
 import { AppNavigator } from "@/app/appNavigator";
 import { Setting, SettingDto } from "@/core/data/setting";
-import { RegisterApiService } from "@/core/networking/registerApiService";
 import { Services } from "@/core/services/services";
-import { ApiConstants, Cubit, User, UserDto, YusrApiHelper } from "yusr-ui";
+import { ApiConstants, Cubit, type RequestResult, User, UserDto, YusrApiHelper } from "yusr-ui";
 import { Registration } from "../data/registration";
-import { type RegistrationState, RegistrationStateError, RegistrationStateInitial } from "./registrationState";
+import { type RegistrationState, RegistrationStateError, RegistrationStateInitial, RegistrationStateLoading } from "./registrationState";
 
 export class RegistrationCubit extends Cubit<RegistrationState>
 {
@@ -12,9 +11,7 @@ export class RegistrationCubit extends Cubit<RegistrationState>
     companyName: "",
     email: "",
     userPassword: "",
-    currencyId: 1,
     username: "",
-    branchName: "",
     id: 0
   });
 
@@ -23,16 +20,45 @@ export class RegistrationCubit extends Cubit<RegistrationState>
     super(new RegistrationStateInitial());
   }
 
-  public async register()
+  public async register(
+    additionalFunc?: (
+      result: RequestResult<{
+        user: UserDto;
+        setting: SettingDto;
+      }>
+    ) => void
+  )
   {
-    if (!this.formData.validate())
+    if (!this.formData.validate() || !this.formData.hasAcceptedPolicies.value)
     {
       return;
     }
-    const service = new RegisterApiService();
+    this.emit(new RegistrationStateLoading());
+    try
+    {
+      const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
+        `${ApiConstants.baseUrl}/Register`,
+        this.formData.toJson()
+      );
+      console.log(result.status);
+      console.log(result);
 
-    const result = await service.register(this.formData);
-    console.log(result);
+      if (result.status === 200 && result.data)
+      {
+        Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
+        AppNavigator.navigate("/dashboard", true);
+        additionalFunc?.(result);
+        return;
+      }
+      else
+      {
+        this.emit(new RegistrationStateError());
+      }
+    }
+    catch (error)
+    {
+      this.emit(new RegistrationStateError());
+    }
   }
 
   public async externalAuthRegister(

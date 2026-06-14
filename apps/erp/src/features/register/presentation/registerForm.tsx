@@ -1,6 +1,6 @@
 import placeholderImg from "@/assets/placeholder.svg";
 import { login, updateLoggedInUser } from "@/core/state/store";
-import { signal } from "@preact/signals-react";
+import { Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useMemo } from "react";
@@ -12,6 +12,7 @@ import { RegistrationStateLoading } from "../logic/registrationState";
 
 import { useAppDispatch } from "@/core/state/store";
 import { GoogleLogin } from "@react-oauth/google";
+import { UserOld } from "yusr-ui";
 export interface RegisterFormProps
 {
   className?: string;
@@ -32,10 +33,12 @@ export function RegisterForm({
 {
   useSignals();
   const { t } = useTranslation("loginRegister");
-
+  const dispatch = useAppDispatch();
   const cubit = useMemo(() => new RegistrationCubit(), []);
 
-  const isLoading = cubit.state instanceof RegistrationStateLoading;
+  const isLoading = cubit.state.value instanceof RegistrationStateLoading;
+  console.log(isLoading);
+
   return (
     <div className={ cn("flex flex-col gap-6", className) } { ...props }>
       <Card className="overflow-hidden p-0">
@@ -58,8 +61,16 @@ export function RegisterForm({
               </div>
 
               <RegisterInfo cubit={ cubit } />
-              <AcceptTerms />
-              <SubmitButton isLoading={ isLoading } onSubmit={ async () => await cubit.register() } />
+              <AcceptTerms hasAcceptedPolicies={ cubit.formData.hasAcceptedPolicies } />
+              <SubmitButton
+                isLoading={ isLoading }
+                onSubmit={ async () =>
+                  await cubit.register((result) =>
+                  {
+                    dispatch(login(result.data));
+                    dispatch(updateLoggedInUser((result.data?.user ?? {}) as UserOld));
+                  }) }
+              />
 
               <SignInWithGoogle cubit={ cubit } />
 
@@ -94,6 +105,8 @@ export function RegisterForm({
 function RegisterInfo({ cubit }: { cubit: RegistrationCubit; })
 {
   useSignals();
+  const isLoading = cubit.state instanceof RegistrationStateLoading;
+
   return (
     <>
       <TextField
@@ -102,24 +115,20 @@ function RegisterInfo({ cubit }: { cubit: RegistrationCubit; })
         placeholder={ i18n.t("loginRegister:register.companyInfo.companyName.placeholder") }
         value={ cubit.formData.companyName }
         error={ cubit.formData.getError("companyName") }
-        onChange={ () =>
-        {
-          cubit.formData.clearError("companyName");
-        } }
         required
+        disabled={ isLoading }
       />
 
       <TextField
+        dir="ltr"
+        className="text-right"
         label={ i18n.t("loginRegister:register.companyInfo.email.label") }
         type="text"
         placeholder={ i18n.t("loginRegister:register.companyInfo.email.placeholder") }
         value={ cubit.formData.email }
         error={ cubit.formData.getError("email") }
-        onChange={ () =>
-        {
-          cubit.formData.clearError("email");
-        } }
         required
+        disabled={ isLoading }
       />
       <TextField
         label={ i18n.t("loginRegister:register.companyInfo.branchName.label") }
@@ -127,11 +136,8 @@ function RegisterInfo({ cubit }: { cubit: RegistrationCubit; })
         placeholder={ i18n.t("loginRegister:register.companyInfo.branchName.placeholder") }
         value={ cubit.formData.branchName }
         error={ cubit.formData.getError("branchName") }
-        onChange={ () =>
-        {
-          cubit.formData.clearError("branchName");
-        } }
         required
+        disabled={ isLoading }
       />
 
       <TextField
@@ -140,11 +146,8 @@ function RegisterInfo({ cubit }: { cubit: RegistrationCubit; })
         placeholder={ i18n.t("loginRegister:register.accountInfo.username.placeholder") }
         value={ cubit.formData.username }
         error={ cubit.formData.getError("username") }
-        onChange={ () =>
-        {
-          cubit.formData.clearError("username");
-        } }
         required
+        disabled={ isLoading }
       />
 
       <PasswordField
@@ -153,31 +156,33 @@ function RegisterInfo({ cubit }: { cubit: RegistrationCubit; })
         placeholder={ i18n.t("login:password.placeholder") }
         value={ cubit.formData.userPassword }
         error={ cubit.formData.getError("userPassword") }
-        onChange={ () =>
-        {
-          cubit.formData.clearError("userPassword");
-        } }
-        // disabled={ isLoading }
         required
+        disabled={ isLoading }
       />
     </>
   );
 }
 
-function AcceptTerms()
+function AcceptTerms({ hasAcceptedPolicies }: { hasAcceptedPolicies: Signal<boolean>; })
 {
   useSignals();
-  const acceptPolicies = useMemo(() => signal(false), []);
   return (
     <div className="flex items-start space-x-2 rtl:space-x-reverse">
+      <span className="text-red-500">*</span>
       <input
         type="checkbox"
         id="acceptPolicies"
-        checked={ acceptPolicies.value }
-        onChange={ () => acceptPolicies.value = !acceptPolicies.value }
+        checked={ hasAcceptedPolicies.value }
+        onChange={ () => hasAcceptedPolicies.value = !hasAcceptedPolicies.value }
         className="mt-1 me-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
       />
-      <label htmlFor="acceptPolicies" className="text-sm text-muted-foreground">
+      <label
+        htmlFor="acceptPolicies"
+        className={ cn(
+          "text-sm text-muted-foreground",
+          !hasAcceptedPolicies.value && "border border-b-2 border-t-0 border-l-0 border-r-0 border-red-600  "
+        ) }
+      >
         { i18n.t("loginRegister:register.accountInfo.acceptPolicies") }{" "}
         <a
           rel="noopener noreferrer"
