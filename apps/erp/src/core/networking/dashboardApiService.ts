@@ -5,10 +5,10 @@ export default class DashboardApiService extends BaseApiService<DashboardData, D
 {
     routeName: string = "dashboard";
 
-    async get(): Promise<RequestResult<DashboardData>>
+    async get(): Promise<RequestResult<DashboardDataDto>>
     {
         const url = `${ApiConstants.baseUrl}/${this.routeName}`;
-        return await YusrApiHelper.Get<DashboardData>(url);
+        return await YusrApiHelper.Get<DashboardDataDto>(url);
     }
 
 
