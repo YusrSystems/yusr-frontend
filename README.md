@@ -1,4 +1,4 @@
-# Monorepo Docs 2
+# Monorepo Docs 
 
 - #### [how to add existing project](#how-to-add-existing-project)
 - #### [how to run](#how-to-run)
