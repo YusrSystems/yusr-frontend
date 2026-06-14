@@ -3,12 +3,12 @@ import type { ThunkDispatch } from "redux-thunk";
 import type { AuthState, IEntityState, UserOld } from "yusr-ui";
 import type AccountOld from "../../../core/data/accountOld";
 import type { AccountSliceType } from "../../../core/data/accountOld";
-import type Invoice from "../../../core/data/invoice";
+import type InvoiceOld from "../../../core/data/invoiceOld.ts";
 import type { SettingOld } from "../../../core/data/settingOld";
-import type { InvoiceDialogMode, InvoiceSliceType } from "../changeInvoiceDialog";
+import type { InvoiceDialogMode, InvoiceSliceType } from "../changeInvoiceDialogOld.tsx";
 
 export type InvoiceContextType = {
-  formData: Partial<Invoice>;
+  formData: Partial<InvoiceOld>;
   errors: Record<string, string>;
   getError: (field: string) => string;
   isInvalid: (field: string) => boolean;

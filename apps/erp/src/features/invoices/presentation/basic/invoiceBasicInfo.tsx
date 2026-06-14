@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Checkbox, DateField, FieldsSection, FormFieldOld, SelectFieldOld, TextFieldOld } from "yusr-ui";
 import AccountOld from "../../../../core/data/accountOld";
-import { ImportExportType, InvoiceType } from "../../../../core/data/invoice";
+import { ImportExportType, InvoiceType } from "../../../../core/data/invoiceOld.ts";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function InvoiceBasicInfo()

@@ -3,7 +3,7 @@ import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, CurrencyIcon, FormFieldOld, NumberFieldOld, TextFieldOld } from "yusr-ui";
-import { InvoiceRelationType } from "../../../../core/data/invoice";
+import { InvoiceRelationType } from "../../../../core/data/invoiceOld.ts";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function InvoiceCostsTab()

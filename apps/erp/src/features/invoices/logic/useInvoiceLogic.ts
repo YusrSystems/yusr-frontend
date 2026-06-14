@@ -1,10 +1,10 @@
-import Invoice, { InvoiceRelationType, InvoiceVoucher } from "@/core/data/invoice";
+import InvoiceOld, { InvoiceRelationType, InvoiceVoucherOld } from "@/core/data/invoiceOld.ts";
 import type { SettingOld } from "@/core/data/settingOld";
 import type { AuthState, UserOld } from "yusr-ui";
 
 export function useInvoiceLogic(authState: AuthState<UserOld, SettingOld>)
 {
-  const createInitialPaymentVoucher = (invoice: Invoice, invoiceTaxInclusivePrice?: number): InvoiceVoucher =>
+  const createInitialPaymentVoucher = (invoice: InvoiceOld, invoiceTaxInclusivePrice?: number): InvoiceVoucherOld =>
   {
     return {
       voucherId: 0,
@@ -17,7 +17,7 @@ export function useInvoiceLogic(authState: AuthState<UserOld, SettingOld>)
       amount: invoiceTaxInclusivePrice ?? invoice.fullAmount ?? 0,
       amountReceived: invoiceTaxInclusivePrice ?? invoice.fullAmount ?? 0,
       description: undefined
-    } as InvoiceVoucher;
+    } as InvoiceVoucherOld;
   };
 
   return { createInitialPaymentVoucher };

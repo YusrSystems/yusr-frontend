@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import type { CommonChangeDialogPropsOld, DialogMode, IEntityState } from "yusr-ui";
 import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, StorageType, useFormErrors, useFormInit, useStorageFile, useValidate } from "yusr-ui";
 import AccountOld, { type AccountSliceType } from "../../core/data/accountOld";
-import type Invoice from "../../core/data/invoice";
-import { InvoiceRelationType, InvoiceSlice, InvoiceStatus, InvoiceType, InvoiceValidationRules } from "../../core/data/invoice";
+import type InvoiceOld from "../../core/data/invoiceOld.ts";
+import { InvoiceRelationType, InvoiceSlice, InvoiceStatus, InvoiceType, InvoiceValidationRules } from "../../core/data/invoiceOld.ts";
 import { ItemType } from "../../core/data/itemOld";
 import { PaymentMethodSlice } from "../../core/data/paymentMethod";
 import InvoicesApiService from "../../core/networking/invoiceApiService";
@@ -24,7 +24,7 @@ import InvoicePolicyTab from "./presentation/policy/invoicePolicyTab";
 export type InvoiceSliceType = ReturnType<typeof InvoiceSlice.create>;
 export type InvoiceDialogMode = DialogMode | "return" | "copy" | "quotationToSales";
 
-export default function ChangeInvoiceDialog({
+export default function ChangeInvoiceDialogOld({
   entity,
   mode,
   service,
@@ -34,13 +34,13 @@ export default function ChangeInvoiceDialog({
   selectFormState,
   accountSlice,
   accountState
-}: Omit<CommonChangeDialogPropsOld<Invoice>, "mode" | "onSuccess"> & {
+}: Omit<CommonChangeDialogPropsOld<InvoiceOld>, "mode" | "onSuccess"> & {
   mode: InvoiceDialogMode;
-  onSuccess?: (data: Invoice, mode: InvoiceDialogMode) => void;
+  onSuccess?: (data: InvoiceOld, mode: InvoiceDialogMode) => void;
   slice: InvoiceSliceType;
   stateKey: keyof RootState;
   fixedType?: InvoiceType;
-  selectFormState: (state: any) => { formData: Partial<Invoice>; errors: Record<string, string>; };
+  selectFormState: (state: any) => { formData: Partial<InvoiceOld>; errors: Record<string, string>; };
   accountSlice: AccountSliceType;
   accountState: IEntityState<AccountOld>;
 })
@@ -152,7 +152,7 @@ export default function ChangeInvoiceDialog({
     {
       dispatch(slice.formActions.resetPaymentVouchers({}));
       dispatch(
-        slice.formActions.addVoucher(createInitialPaymentVoucher(formData as Invoice, taxInclusivePrice))
+        slice.formActions.addVoucher(createInitialPaymentVoucher(formData as InvoiceOld, taxInclusivePrice))
       );
     }
     else if (paymentVouchers().length === 1)
@@ -233,7 +233,7 @@ export default function ChangeInvoiceDialog({
     }
   }, [dispatch, entity?.id]);
 
-  const transformDataBeforeSave = async (data: Invoice | Partial<Invoice>): Promise<Invoice | Partial<Invoice>> =>
+  const transformDataBeforeSave = async (data: InvoiceOld | Partial<InvoiceOld>): Promise<InvoiceOld | Partial<InvoiceOld>> =>
   {
     let transformedData = { ...data, fullAmount: invoiceTaxInclusivePrice() };
     // sent items index
@@ -258,10 +258,10 @@ export default function ChangeInvoiceDialog({
     {
       return {
         ...transformedData,
-        type: (transformedData as Invoice).type === InvoiceType.Sell
+        type: (transformedData as InvoiceOld).type === InvoiceType.Sell
           ? InvoiceType.SellReturn
           : InvoiceType.PurchaseReturn,
-        originalInvoiceId: (transformedData as Invoice).id,
+        originalInvoiceId: (transformedData as InvoiceOld).id,
         id: 0
       };
     }
@@ -361,7 +361,7 @@ export default function ChangeInvoiceDialog({
         accountState
       } }
     >
-      <ChangeDialogTabbed<Invoice>
+      <ChangeDialogTabbed<InvoiceOld>
         changeDialogProps={ {
           title: getDialogTitle(),
           className: "sm:max-w-[100vw] sm:w-screen sm:h-screen",

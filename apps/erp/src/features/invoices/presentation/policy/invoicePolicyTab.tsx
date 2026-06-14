@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { TextAreaFieldOld } from "yusr-ui";
-import type { InvoiceDialogMode } from "../../changeInvoiceDialog";
+import type { InvoiceDialogMode } from "../../changeInvoiceDialogOld.tsx";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 
 export default function InvoicePolicyTab({ mode }: { mode: InvoiceDialogMode; })

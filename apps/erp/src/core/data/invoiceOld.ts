@@ -50,7 +50,7 @@ export type InvoiceReturnStatus = (typeof InvoiceReturnStatus)[keyof typeof Invo
 export type ImportExportType = (typeof ImportExportType)[keyof typeof ImportExportType];
 export type InvoiceRelationType = (typeof InvoiceRelationType)[keyof typeof InvoiceRelationType];
 
-export class InvoiceItem extends BaseEntity
+export class InvoiceItemOld extends BaseEntity
 {
   public index!: number;
   public invoiceId!: number;
@@ -74,14 +74,14 @@ export class InvoiceItem extends BaseEntity
   public itemUnitPricingMethodName!: string;
   public itemUnitPricingMethods: ItemUnitPricingMethodOld[] = [];
 
-  constructor(init?: Partial<InvoiceItem>)
+  constructor(init?: Partial<InvoiceItemOld>)
   {
     super();
     Object.assign(this, init);
   }
 }
 
-export class InvoiceVoucher
+export class InvoiceVoucherOld
 {
   public invoiceId!: number;
   public voucherId!: number;
@@ -94,13 +94,13 @@ export class InvoiceVoucher
   public amountReceived?: number;
   public description?: string;
 
-  constructor(init?: Partial<InvoiceVoucher>)
+  constructor(init?: Partial<InvoiceVoucherOld>)
   {
     Object.assign(this, init);
   }
 }
 
-export default class Invoice extends BaseEntity
+export default class InvoiceOld extends BaseEntity
 {
   public type!: InvoiceType;
   public originalInvoiceId?: number;
@@ -129,12 +129,12 @@ export default class Invoice extends BaseEntity
   public actionAccountName!: string;
   public storeName!: string;
 
-  public invoiceItems: InvoiceItem[] = [];
-  public invoiceVouchers: InvoiceVoucher[] = [];
+  public invoiceItems: InvoiceItemOld[] = [];
+  public invoiceVouchers: InvoiceVoucherOld[] = [];
   public invoiceFiles: StorageFile[] = [];
   public ignoreWarnings: boolean = false;
 
-  constructor(init?: Partial<Invoice>)
+  constructor(init?: Partial<InvoiceOld>)
   {
     super();
     Object.assign(this, init);
@@ -143,7 +143,7 @@ export default class Invoice extends BaseEntity
 
 export class InvoiceValidationRules
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<Invoice>>[] => [{
+  public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<InvoiceOld>>[] => [{
     field: "type",
     selector: (d) => d.type,
     validators: [Validators.required(t("invoices.typeRequired"))]
@@ -181,8 +181,8 @@ export class InvoiceSlice
         )
     );
 
-    const dialogSliceInstance = createGenericDialogSlice<Invoice>(sliceName + "Dialog");
-    const formSliceInstance = createGenericFormSlice<Invoice>(sliceName + "Form", undefined, {
+    const dialogSliceInstance = createGenericDialogSlice<InvoiceOld>(sliceName + "Dialog");
+    const formSliceInstance = createGenericFormSlice<InvoiceOld>(sliceName + "Form", undefined, {
       // items
       addItem: InvoiceItemsActions.addItem,
       removeItem: InvoiceItemsActions.removeItem,
@@ -193,7 +193,7 @@ export class InvoiceSlice
       onInvoiceItemSettlementChange: InvoiceItemsActions.onInvoiceItemSettlementChange,
       onInvoiceSettlementAmountChange: InvoiceItemsActions.onInvoiceSettlementAmountChange,
       onInvoiceSettlementPercentChange: InvoiceItemsActions.onInvoiceSettlementPercentChange,
-      reorderItems: (state, action: PayloadAction<InvoiceItem[]>) =>
+      reorderItems: (state, action: PayloadAction<InvoiceItemOld[]>) =>
       {
         state.formData.invoiceItems = action.payload;
       },

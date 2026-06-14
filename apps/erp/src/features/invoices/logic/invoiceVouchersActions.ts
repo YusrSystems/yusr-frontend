@@ -1,10 +1,10 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { IFormState } from "yusr-ui";
-import Invoice, { InvoiceRelationType, InvoiceVoucher } from "../../../core/data/invoice";
+import InvoiceOld, { InvoiceRelationType, InvoiceVoucherOld } from "../../../core/data/invoiceOld.ts";
 
 export default class InvoiceVouchersActions
 {
-  public static removeVoucher(state: IFormState<Invoice>, action: PayloadAction<number>)
+  public static removeVoucher(state: IFormState<InvoiceOld>, action: PayloadAction<number>)
   {
     const id = action.payload;
     state.formData.invoiceVouchers = state.formData.invoiceVouchers?.filter((voucher) => voucher.voucherId !== id);
@@ -13,8 +13,8 @@ export default class InvoiceVouchersActions
   }
 
   public static updateVoucher(
-    state: IFormState<Invoice>,
-    action: PayloadAction<InvoiceVoucher>
+    state: IFormState<InvoiceOld>,
+    action: PayloadAction<InvoiceVoucherOld>
   )
   {
     const index = state.formData.invoiceVouchers?.findIndex((v) => v.voucherId === action.payload.voucherId);
@@ -28,7 +28,7 @@ export default class InvoiceVouchersActions
     }
   }
 
-  public static addVoucher(state: IFormState<Invoice>, action: PayloadAction<InvoiceVoucher>)
+  public static addVoucher(state: IFormState<InvoiceOld>, action: PayloadAction<InvoiceVoucherOld>)
   {
     const baseVoucher = action.payload;
 
@@ -48,7 +48,7 @@ export default class InvoiceVouchersActions
     });
   }
 
-  public static resetPaymentVouchers(state: IFormState<Invoice>, _action: PayloadAction<void>)
+  public static resetPaymentVouchers(state: IFormState<InvoiceOld>, _action: PayloadAction<void>)
   {
     state.formData.invoiceVouchers = state.formData.invoiceVouchers?.filter((v) =>
       v.invoiceRelationType !== InvoiceRelationType.Payment

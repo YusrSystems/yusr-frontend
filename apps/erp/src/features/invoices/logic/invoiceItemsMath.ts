@@ -1,4 +1,4 @@
-import { InvoiceItem, InvoiceRelationType, InvoiceVoucher } from "../../../core/data/invoice";
+import { InvoiceItemOld, InvoiceRelationType, InvoiceVoucherOld } from "../../../core/data/invoiceOld.ts";
 import type { InvoiceItemProfitResult } from "../../../core/data/InvoiceItemProfitResult";
 import type { InvoiceProfitResult } from "../../../core/data/InvoiceProfitResult";
 
@@ -56,7 +56,7 @@ export default class InvoiceItemsMath
     return Number((cost * qtn).toFixed(2));
   }
 
-  public static CalcInvoiceTaxExclusivePrice(invoiceItems: InvoiceItem[])
+  public static CalcInvoiceTaxExclusivePrice(invoiceItems: InvoiceItemOld[])
   {
     return invoiceItems.reduce(
       (sum, i) =>
@@ -71,7 +71,7 @@ export default class InvoiceItemsMath
     ) ?? 0;
   }
 
-  public static CalcInvoiceTaxInclusivePrice(invoiceItems: InvoiceItem[])
+  public static CalcInvoiceTaxInclusivePrice(invoiceItems: InvoiceItemOld[])
   {
     let price = invoiceItems.reduce(
       (sum, i) =>
@@ -87,7 +87,7 @@ export default class InvoiceItemsMath
     return price;
   }
 
-  public static CalcInvoiceItemProfit(invoiceItem: InvoiceItem): InvoiceItemProfitResult
+  public static CalcInvoiceItemProfit(invoiceItem: InvoiceItemOld): InvoiceItemProfitResult
   {
     const taxInclusivePrice = (invoiceItem.taxInclusivePrice ?? 0) + (invoiceItem.settlement ?? 0);
     const taxFactor = (100 + invoiceItem.totalTaxesPerc) / 100;
@@ -104,7 +104,7 @@ export default class InvoiceItemsMath
     };
   }
 
-  public static CalcInvoiceProfit(invoiceItems: InvoiceItem[], invoiceCosts: InvoiceVoucher[]): InvoiceProfitResult
+  public static CalcInvoiceProfit(invoiceItems: InvoiceItemOld[], invoiceCosts: InvoiceVoucherOld[]): InvoiceProfitResult
   {
     const invoiceCostsAmount = invoiceCosts.reduce((sum, i) => sum + (i.amount ?? 0), 0) ?? 0;
 
@@ -131,13 +131,13 @@ export default class InvoiceItemsMath
     };
   }
 
-  public static CalcInvoicePaidPrice(invoiceVouchers: InvoiceVoucher[])
+  public static CalcInvoicePaidPrice(invoiceVouchers: InvoiceVoucherOld[])
   {
     let paymentVouchers = invoiceVouchers?.filter((v) => v.invoiceRelationType == InvoiceRelationType.Payment) ?? [];
     return paymentVouchers?.reduce((sum, i) => sum + (i.amount ?? 0), 0) ?? 0;
   }
 
-  public static CalcInvoiceUnpaidPrice(invoiceItems: InvoiceItem[], invoiceVouchers: InvoiceVoucher[])
+  public static CalcInvoiceUnpaidPrice(invoiceItems: InvoiceItemOld[], invoiceVouchers: InvoiceVoucherOld[])
   {
     return InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(invoiceItems)
       - InvoiceItemsMath.CalcInvoicePaidPrice(invoiceVouchers);

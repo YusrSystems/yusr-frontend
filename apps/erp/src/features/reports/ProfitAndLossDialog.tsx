@@ -1,4 +1,4 @@
-import { InvoiceType } from "@/core/data/invoice";
+import { InvoiceType } from "@/core/data/invoiceOld.ts";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "yusr-ui";

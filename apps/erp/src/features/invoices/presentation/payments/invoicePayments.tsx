@@ -2,7 +2,7 @@ import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import { Plus, Trash2, Wallet } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, CrudEmptyTablePreview, CurrencyIcon, NumberFieldOld } from "yusr-ui";
-import { InvoiceRelationType } from "../../../../core/data/invoice";
+import { InvoiceRelationType } from "../../../../core/data/invoiceOld.ts";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 

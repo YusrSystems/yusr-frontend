@@ -2,7 +2,7 @@ import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSel
 import ItemsSearchableSelectOld from "@/core/components/searchableSelect/itemsSearchableSelectOld";
 import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
 import type AccountOld from "@/core/data/accountOld";
-import { InvoiceType } from "@/core/data/invoice";
+import { InvoiceType } from "@/core/data/invoiceOld.ts";
 import type ItemOld from "@/core/data/itemOld";
 import type StoreOld from "@/core/data/store";
 import { useState } from "react";

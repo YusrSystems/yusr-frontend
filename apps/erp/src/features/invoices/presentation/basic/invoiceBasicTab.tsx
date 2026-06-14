@@ -1,4 +1,4 @@
-import { InvoiceType } from "@/core/data/invoice";
+import { InvoiceType } from "@/core/data/invoiceOld.ts";
 import { ItemType } from "@/core/data/itemOld";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";

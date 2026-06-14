@@ -5,7 +5,7 @@ import dashboardReducer from "../../features/dashboard/logic/dashboardSlice";
 import registerReducer from "../../features/register/logic/registerSlice";
 import { BanksAndBoxesSlice, BanksSlice, BoxesSlice, ClientsAndSuppliersSlice, ClientsSlice, EmployeesSlice, SuppliersSlice } from "../data/accountOld";
 import { BalanceTransferSlice } from "../data/balanceTransfer";
-import { PurchasesSlice, QuotationSlice, SalesSlice } from "../data/invoice";
+import { PurchasesSlice, QuotationSlice, SalesSlice } from "../data/invoiceOld.ts";
 import { ItemSlice } from "../data/itemOld";
 import { ItemsSettlementSlice } from "../data/itemsSettlement";
 import { PaymentMethodSlice } from "../data/paymentMethod";

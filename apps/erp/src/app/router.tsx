@@ -11,9 +11,9 @@ import { ClientsAccountsPage } from "../features/accounts/clientsAccountsPage";
 import { EmployeesAccountsPage } from "../features/accounts/employeesAccountsPage";
 import { SuppliersAccountsPage } from "../features/accounts/suppliersAccountsPage";
 import DashboardPage from "../features/dashboard/dashboardPage";
-import PurchaseInvoicesPage from "../features/invoices/purchaseInvoices";
-import QuotationInvoicesPage from "../features/invoices/quotationInvoicesPage";
-import SellInvoicesPage from "../features/invoices/sellInvoicesPage";
+import PurchaseInvoicesPage from "../features/invoices/purchaseInvoicesOld.tsx";
+import QuotationInvoicesPageOld from "../features/invoices/quotationInvoicesPageOld.tsx";
+import SellInvoicesPageOld from "../features/invoices/sellInvoicesPageOld.tsx";
 import ItemsPage from "../features/items/itemsPage";
 import ItemsSettlementsPage from "../features/itemsSettlements/itemsSettlementsPage";
 import ItemTransfersPage from "../features/itemTransfers/itemTransfersPage";
@@ -70,12 +70,12 @@ export const router = createBrowserRouter([{
           { path: "/boxes", element: <BoxesAccountsPage /> },
           { path: "/paymentMethods", element: <PaymentMethodsPage /> },
           { path: "/balanceTransfer", element: <BalanceTransfersPage /> },
-          { path: "/sales", element: <SellInvoicesPage /> },
-          { path: "/sales/:id", element: <SellInvoicesPage /> },
+          { path: "/sales", element: <SellInvoicesPageOld /> },
+          { path: "/sales/:id", element: <SellInvoicesPageOld /> },
           { path: "/purchases", element: <PurchaseInvoicesPage /> },
           { path: "/purchases/:id", element: <PurchaseInvoicesPage /> },
-          { path: "/quotations", element: <QuotationInvoicesPage /> },
-          { path: "/quotations/:id", element: <QuotationInvoicesPage /> },
+          { path: "/quotations", element: <QuotationInvoicesPageOld /> },
+          { path: "/quotations/:id", element: <QuotationInvoicesPageOld /> },
           { path: "/vouchers", element: <VouchersPageOld /> },
           { path: "/items", element: <ItemsPage /> },
           { path: "/pricingMethods", element: <PricingMethodsPage /> },

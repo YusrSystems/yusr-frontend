@@ -1,4 +1,4 @@
-import type { InvoiceType } from "../invoice";
+import type { InvoiceType } from "../invoiceOld.ts";
 import type { BaseReportRequest } from "./baseReportRequest";
 
 export const InvoicesListReportType = {

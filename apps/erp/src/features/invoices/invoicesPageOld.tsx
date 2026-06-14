@@ -8,16 +8,16 @@ import { Button, ContextMenuItem, CrudPageOld, CurrencyIcon, DropdownMenuItem, t
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
 import type AccountOld from "../../core/data/accountOld";
 import type { AccountSliceType } from "../../core/data/accountOld";
-import Invoice, { EInvoiceStatus, InvoiceSlice, InvoiceStatus, InvoiceType } from "../../core/data/invoice";
+import InvoiceOld, { EInvoiceStatus, InvoiceSlice, InvoiceStatus, InvoiceType } from "../../core/data/invoiceOld.ts";
 import { InvoicesListReportRequest, InvoicesListReportType } from "../../core/data/report/invoicesListReportType";
 import ReportConstants from "../../core/data/report/reportConstants";
 import { EInvoicingEnvironmentType } from "../../core/data/settingOld";
 import InvoicesApiService from "../../core/networking/invoiceApiService";
 import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "../reports/reportButton";
-import ChangeInvoiceDialog, { type InvoiceDialogMode } from "./changeInvoiceDialog";
+import ChangeInvoiceDialogOld, { type InvoiceDialogMode } from "./changeInvoiceDialogOld.tsx";
 
-export default function InvoicesPage({
+export default function InvoicesPageOld({
   entityName,
   addNewItemTitle,
   totalInvoicesTitle,
@@ -40,7 +40,7 @@ export default function InvoicesPage({
   stateKey: keyof RootState;
   dialogStateKey: keyof RootState;
   fixedType?: InvoiceType;
-  selectFormState: (state: any) => { formData: Partial<Invoice>; errors: Record<string, string>; };
+  selectFormState: (state: any) => { formData: Partial<InvoiceOld>; errors: Record<string, string>; };
   accountSlice: AccountSliceType;
   accountState: IEntityState<AccountOld>;
   hasPagePermission: boolean;
@@ -51,16 +51,16 @@ export default function InvoicesPage({
   const dispatch = useAppDispatch();
   const [searchText, setSearchText] = useState<string | undefined>(undefined);
   const [customMode, setCustomMode] = useState<InvoiceDialogMode | undefined>(undefined);
-  const invoiceState = useAppSelector((state) => state[stateKey] as IEntityState<Invoice>);
+  const invoiceState = useAppSelector((state) => state[stateKey] as IEntityState<InvoiceOld>);
   const authState = useAppSelector((state) => state.auth);
-  const invoiceDialogState = useAppSelector((state) => state[dialogStateKey] as IDialogState<Invoice>);
+  const invoiceDialogState = useAppSelector((state) => state[dialogStateKey] as IDialogState<InvoiceOld>);
   const [resendingEInvoice, setResendingEInvoice] = useState(false);
 
   const permissions = useAppSelector((state) =>
     selectPermissionsByResource(state, SystemPermissionsResources.Invoices)
   );
 
-  const getPaymentStatus = (invoice: Invoice): { message: string; styles: string; } =>
+  const getPaymentStatus = (invoice: InvoiceOld): { message: string; styles: string; } =>
   {
     if (invoice.paidAmount === 0)
     {
@@ -83,7 +83,7 @@ export default function InvoicesPage({
     };
   };
 
-  const getEInvoiceStatus = (invoice: Invoice): { message: string; styles: string; } =>
+  const getEInvoiceStatus = (invoice: InvoiceOld): { message: string; styles: string; } =>
   {
     if (
       authState.setting?.eInvoicingEnvironmentType === EInvoicingEnvironmentType.NotRegistered
@@ -115,7 +115,7 @@ export default function InvoicesPage({
   const service = useMemo(() => new InvoicesApiService(), []);
 
   const getActions = (
-    entity: Invoice,
+    entity: InvoiceOld,
     ItemComponent: React.ComponentType<React.ComponentProps<any>>
   ) =>
   {
@@ -173,7 +173,7 @@ export default function InvoicesPage({
     return items;
   };
 
-  const resendEInvoice = async (invoice: Invoice) =>
+  const resendEInvoice = async (invoice: InvoiceOld) =>
   {
     setResendingEInvoice(true);
     const res = await service.ResendEInvoice(invoice.id);
@@ -245,7 +245,7 @@ export default function InvoicesPage({
     return rows;
   };
 
-  const getTableRowMapper = (invoice: Invoice) =>
+  const getTableRowMapper = (invoice: InvoiceOld) =>
   {
     const cells: TableBodyRowInfo[] = [{ rowName: `#${invoice.id}`, rowStyles: "" }];
 
@@ -363,7 +363,7 @@ export default function InvoicesPage({
 
   return (
     <VerfiAccountWrapper>
-      <CrudPageOld<Invoice>
+      <CrudPageOld<InvoiceOld>
         basePath={ basePath }
         routeIdParam="id"
         onRouteOpen={ async (id) =>
@@ -440,7 +440,7 @@ export default function InvoicesPage({
           icon: <FileTextIcon className="h-4 w-4 text-muted-foreground" />
         }] }
         tableHeadRows={ getTableHeadRows() }
-        tableRowMapper={ (invoice: Invoice) => getTableRowMapper(invoice) }
+        tableRowMapper={ (invoice: InvoiceOld) => getTableRowMapper(invoice) }
         actions={ {
           filter: slice.entityActions.filter,
           openChangeDialog: (entity) =>
@@ -462,9 +462,9 @@ export default function InvoicesPage({
           setCurrentPage: (page) => slice.entityActions.setCurrentPage(page)
         } }
         ChangeDialog={ 
-          <ChangeInvoiceDialog
+          <ChangeInvoiceDialogOld
             entity={ customMode === "quotationToSales"
-              ? ({ ...invoiceDialogState.selectedRow, type: InvoiceType.Sell } as Invoice)
+              ? ({ ...invoiceDialogState.selectedRow, type: InvoiceType.Sell } as InvoiceOld)
               : (invoiceDialogState.selectedRow || undefined) }
             mode={ customMode ?? (invoiceDialogState.selectedRow ? "update" : "create") }
             service={ service }

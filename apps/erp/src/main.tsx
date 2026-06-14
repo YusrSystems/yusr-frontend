@@ -6,9 +6,9 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import "./index.css";
 
-function revealApp()
+async function revealApp()
 {
-  i18n.init();
+  await i18n.init();
   const loader = document.getElementById("initial-loader");
 
   if (!loader)

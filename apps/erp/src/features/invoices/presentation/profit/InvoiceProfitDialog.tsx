@@ -2,7 +2,7 @@ import { Banknote } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, cn, CurrencyIcon, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
-import { InvoiceRelationType } from "../../../../core/data/invoice";
+import { InvoiceRelationType } from "../../../../core/data/invoiceOld.ts";
 import type { InvoiceProfitResult } from "../../../../core/data/InvoiceProfitResult";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";

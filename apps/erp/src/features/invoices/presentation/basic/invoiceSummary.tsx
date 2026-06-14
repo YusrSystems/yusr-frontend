@@ -1,5 +1,5 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import { InvoiceType } from "@/core/data/invoice";
+import { InvoiceType } from "@/core/data/invoiceOld.ts";
 import { useTranslation } from "react-i18next";
 import { cn, CurrencyIcon, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { useInvoiceContext } from "../../logic/invoiceContext";

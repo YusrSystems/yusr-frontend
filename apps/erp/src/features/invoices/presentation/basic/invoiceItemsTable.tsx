@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn, type ColumnDef, ColumnVisibilityToggle, i18n, NumberFieldOld, SelectFieldOld, SystemPermissions, SystemPermissionsActions, TextAreaFieldOld, Tooltip, TooltipContent, TooltipTrigger, useColumnVisibility } from "yusr-ui";
 import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
-import { InvoiceType } from "../../../../core/data/invoice";
+import { InvoiceType } from "../../../../core/data/invoiceOld.ts";
 import { useInvoiceContext } from "../../logic/invoiceContext";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 import { ItemProfitDialog } from "../profit/ItemProfitDialog";

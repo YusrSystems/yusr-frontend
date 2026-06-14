@@ -1,31 +1,31 @@
 import { useTranslation } from "react-i18next";
 import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { ClientsSlice } from "../../core/data/accountOld";
-import { InvoiceType, SalesSlice } from "../../core/data/invoice";
+import { SuppliersSlice } from "../../core/data/accountOld";
+import { InvoiceType, PurchasesSlice } from "../../core/data/invoiceOld.ts";
 import { useAppSelector } from "../../core/state/store";
-import InvoicesPage from "./invoicesPage";
+import InvoicesPageOld from "./invoicesPageOld.tsx";
 
-export default function SellInvoicesPage()
+export default function PurchaseInvoicesPage()
 {
   const { t } = useTranslation("accounting");
   const authState = useAppSelector((state) => state.auth);
-  const clientsState = useAppSelector((state) => state.clients);
+  const suppliersState = useAppSelector((state) => state.suppliers);
 
   return (
-    <InvoicesPage
-      basePath="/sales"
-      slice={ SalesSlice }
-      stateKey="sales"
-      dialogStateKey="salesDialog"
-      title={ t("invoices.salesManagement") }
-      fixedType={ InvoiceType.Sell }
-      selectFormState={ (state) => state.salesForm }
-      accountSlice={ ClientsSlice }
-      accountState={ clientsState }
+    <InvoicesPageOld
+      basePath="/purchases"
+      slice={ PurchasesSlice }
+      stateKey="purchases"
+      dialogStateKey="purchasesDialog"
+      title={ t("invoices.purchasesManagement") }
+      fixedType={ InvoiceType.Purchase }
+      selectFormState={ (state) => state.purchasesForm }
+      accountSlice={ SuppliersSlice }
+      accountState={ suppliersState }
       hasPagePermission={ SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.InvoiceSell,
+        SystemPermissionsResources.InvoicePurchase,
         SystemPermissionsActions.Get
       ) && SystemPermissions.hasAuth(
         authState.loggedInUser?.role?.permissions ?? [],
