@@ -1,4 +1,4 @@
-import {ChangeableEntity, Dto, i18n, Validators} from "yusr-ui";
+import {ChangeableEntity, type ChangeableEntityMode, Dto, i18n, Validators} from "yusr-ui";
 import {Signal} from "@preact/signals-react";
 import {PaymentMethod, type PaymentMethodDto} from "@/features/paymentMethods/data/paymentMethod.ts";
 
@@ -44,7 +44,7 @@ export class Voucher extends ChangeableEntity<VoucherDto> {
     public accountName: Signal<string>;
     public paymentMethod: Signal<PaymentMethod>;
 
-    constructor(dto?: Partial<VoucherDto>) {
+    constructor(dto?: Partial<VoucherDto>, mode: ChangeableEntityMode = "create") {
         super(dto, [{
             field: "type",
             selector: (d) => d.type,
@@ -65,7 +65,7 @@ export class Voucher extends ChangeableEntity<VoucherDto> {
             field: "paymentMethodId",
             selector: (d) => d.paymentMethodId,
             validators: [Validators.required(i18n.t("accounting:vouchers.paymentMethodRequired"))]
-        }]);
+        }], mode);
         console.log(dto?.type)
         this.type = this.assign("type", dto?.type ? dto.type : VoucherType.Payment);
         this.date = this.assign("date", dto?.date ?
