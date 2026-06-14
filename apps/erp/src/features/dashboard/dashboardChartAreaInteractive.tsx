@@ -2,9 +2,9 @@ import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle, type ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent, CurrencyIcon, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, ToggleGroup, ToggleGroupItem } from "yusr-ui";
-import type DashboardDataOld from "../../core/data/dashboardDataOld.ts";
+import type {DashboardData} from "@/core/data/dashboardData.ts";
 
-type ChartAreaInteractiveProps = { data: DashboardDataOld; };
+type ChartAreaInteractiveProps = { data: DashboardData; };
 
 export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProps)
 {
@@ -37,8 +37,8 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
       ];
       return days.map((day, index) => ({
         label: day,
-        sales: data.weeklySales?.[index] || 0,
-        purchases: data.weeklyPurchases?.[index] || 0
+        sales: data.weeklySales?.value?.[index] || 0,
+        purchases: data.weeklyPurchases?.value?.[index] || 0
       }));
     }
     else
@@ -59,8 +59,8 @@ export function DashboardChartAreaInteractive({ data }: ChartAreaInteractiveProp
       ];
       return months.map((month, index) => ({
         label: month,
-        sales: data.yearlyData?.sales?.[index] || 0,
-        purchases: data.yearlyData?.purchases?.[index] || 0
+        sales:     data.yearlyData.value?.sales?.[index]     || 0,
+        purchases: data.yearlyData.value?.purchases?.[index] || 0
       }));
     }
   }, [data, timeRange, t]);

@@ -18,7 +18,7 @@ export class DashboardData extends  Entity<DashboardDataDto>{
     public weeklyReceipts: Signal<number[]>;
     public weeklyPayments: Signal<number[]>;
     public monthlyData: Signal<number[]>;
-    public yearlyData: Signal<YearlyData[]>;
+    public yearlyData: Signal<YearlyData>;
 
     constructor(dto? :Partial<DashboardDataDto>)  {
         super(dto);

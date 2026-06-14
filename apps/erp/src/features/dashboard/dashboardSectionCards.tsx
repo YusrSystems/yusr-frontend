@@ -2,9 +2,9 @@ import { Activity } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CurrencyIcon } from "yusr-ui";
-import type DashboardDataOld from "../../core/data/dashboardDataOld.ts";
+import type {DashboardData} from "@/core/data/dashboardData.ts";
 
-type DashboardSectionCardsProps = { data: DashboardDataOld; };
+type DashboardSectionCardsProps = { data: DashboardData; };
 
 const sumArray = (arr?: number[]) => arr?.reduce((a, b) => a + b, 0) ?? 0;
 
@@ -49,29 +49,29 @@ export function DashboardSectionCards({ data }: DashboardSectionCardsProps)
   const cards = useMemo(() => [{
     id: "sales",
     title: t("dashborad.weekSales"),
-    dataArray: data.weeklySales,
-    total: sumArray(data.weeklySales),
+    dataArray: data.weeklySales.value,
+    total: sumArray(data.weeklySales.value),
     color: "bg-emerald-500",
     textColor: "text-emerald-600 dark:text-emerald-400"
   }, {
     id: "purchases",
     title: t("dashborad.weekPurchases"),
-    dataArray: data.weeklyPurchases,
-    total: sumArray(data.weeklyPurchases),
+    dataArray: data.weeklyPurchases.value,
+    total: sumArray(data.weeklyPurchases.value),
     color: "bg-rose-500",
     textColor: "text-rose-600 dark:text-rose-400"
   }, {
     id: "receipts",
     title: t("dashborad.weekReceipts"),
-    dataArray: data.weeklyReceipts,
-    total: sumArray(data.weeklyReceipts),
+    dataArray: data.weeklyReceipts.value,
+    total: sumArray(data.weeklyReceipts.value),
     color: "bg-blue-500",
     textColor: "text-blue-600 dark:text-blue-400"
   }, {
     id: "payments",
     title: t("dashborad.weekPayments"),
-    dataArray: data.weeklyPayments,
-    total: sumArray(data.weeklyPayments),
+    dataArray: data.weeklyPayments.value,
+    total: sumArray(data.weeklyPayments.value),
     color: "bg-amber-500",
     textColor: "text-amber-600 dark:text-amber-400"
   }], [data, t]);
