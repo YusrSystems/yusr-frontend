@@ -4,7 +4,7 @@ import LegalDocViewer from "@/features/legal/legaldocviewer";
 import { PaymentMethodsPage } from "@/features/paymentMethods/paymentMethodsPage";
 import { ErpRolesPage } from "@/features/roles/erpRolesPage";
 import { createBrowserRouter } from "react-router-dom";
-import { Branch, BranchesPage, ErrorFallback, MaintenanceFallback, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
+import { BranchesPage, ErrorFallback, MaintenanceFallback, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
 import { BanksAccountsPage } from "../features/accounts/banksAccountsPage";
 import { BoxesAccountsPage } from "../features/accounts/boxesAccountsPage";
 import { ClientsAccountsPage } from "../features/accounts/clientsAccountsPage";
@@ -63,22 +63,7 @@ export const router = createBrowserRouter([{
           { path: "/users", element: <UsersPage /> },
           { path: "/settings", element: <SettingPage /> },
           { path: "/taxes", element: <TaxesPage /> },
-          {
-            path: "/branches",
-            element: (
-              <BranchesPage
-                onUpdate={ (data) =>
-                {
-                  if (Services.auth.setting?.branch?.value)
-                  {
-                    Services.auth.setting!.branch!.value = new Branch({
-                      cityId: data.cityId.value
-                    });
-                  }
-                } }
-              />
-            )
-          },
+          { path: "/branches", element: <BranchesPage onUpdate={ Services.auth.updateBranch } /> },
           { path: "/roles", element: <ErpRolesPage /> },
           { path: "/stores", element: <StoresPage /> },
           { path: "/units", element: <UnitsPage /> },

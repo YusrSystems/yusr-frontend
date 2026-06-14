@@ -1,4 +1,4 @@
-import { AuthService, User } from "yusr-ui";
+import { AuthService, Branch, User } from "yusr-ui";
 import { Setting, type SettingDto } from "../data/setting";
 
 export class ErpAuthService extends AuthService
@@ -20,6 +20,15 @@ export class ErpAuthService extends AuthService
       return this._setting;
     }
     return this._setting;
+  }
+
+  updateBranch(branch: Branch)
+  {
+    if (branch.id.value !== this.setting?.branch?.value.id.value && this._setting?.branch)
+    {
+      this._setting.branch.value = branch;
+      localStorage.setItem(this._settingStorageItemName, JSON.stringify(this._setting));
+    }
   }
 
   readonly login = (user: User, setting: Setting) =>
@@ -46,6 +55,7 @@ export class ErpAuthService extends AuthService
   {
     return Boolean(this.setting?.companyPhone?.value && this.setting?.branch?.value.cityId);
   }
+
   get stepsToComplete(): number
   {
     let counter = 0;
