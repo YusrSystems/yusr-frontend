@@ -29,7 +29,7 @@ import TaxesPage from "../features/taxes/taxesPage";
 import TenantInfoSharingPage from "../features/tenantInfoSharing/tenantInfoSharingPage";
 import TestPage from "../features/test/testPage";
 import UnitsPage from "../features/units/unitsPage";
-import VouchersPage from "../features/vouchers/vouchersPage";
+import VouchersPageOld from "../features/vouchers/vouchersPageOld.tsx";
 import AppLayout from "./appLayout";
 
 const refreshPage = () =>
@@ -76,7 +76,7 @@ export const router = createBrowserRouter([{
           { path: "/purchases/:id", element: <PurchaseInvoicesPage /> },
           { path: "/quotations", element: <QuotationInvoicesPage /> },
           { path: "/quotations/:id", element: <QuotationInvoicesPage /> },
-          { path: "/vouchers", element: <VouchersPage /> },
+          { path: "/vouchers", element: <VouchersPageOld /> },
           { path: "/items", element: <ItemsPage /> },
           { path: "/pricingMethods", element: <PricingMethodsPage /> },
           { path: "/itemTransfers", element: <ItemTransfersPage /> },

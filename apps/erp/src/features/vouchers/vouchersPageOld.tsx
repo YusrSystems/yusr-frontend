@@ -9,9 +9,9 @@ import Voucher, { VoucherSlice, VoucherType } from "../../core/data/voucher";
 import VouchersApiService from "../../core/networking/voucherApiService";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 import ReportButton from "../reports/reportButton";
-import ChangeVoucherDialog from "./changeVoucherDialog";
+import ChangeVoucherDialogOld from "./changeVoucherDialogOld.tsx";
 
-export default function VouchersPage()
+export default function VouchersPageOld()
 {
   const { t } = useTranslation("accounting");
   const dispatch = useAppDispatch();
@@ -131,7 +131,7 @@ export default function VouchersPage()
         setCurrentPage: (page) => VoucherSlice.entityActions.setCurrentPage(page)
       } }
       ChangeDialog={ 
-        <ChangeVoucherDialog
+        <ChangeVoucherDialogOld
           entity={ voucherDialogState.selectedRow || undefined }
           mode={ voucherDialogState.selectedRow ? "update" : "create" }
           service={ service }

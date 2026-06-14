@@ -9,7 +9,7 @@ import PaymentMethodOld, { CommissionTypeOld, PaymentMethodSlice } from "../../c
 import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
-export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<Voucher>)
+export default function ChangeVoucherDialogOld({ entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<Voucher>)
 {
   const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
