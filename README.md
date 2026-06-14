@@ -1,4 +1,4 @@
-# Monorepo Docs
+# Monorepo Docs 2
 
 - #### [how to add existing project](#how-to-add-existing-project)
 - #### [how to run](#how-to-run)
@@ -56,8 +56,14 @@ export default defineConfig({
 put these on path section
 
 ```json
-"@/*": ["./src/*"],
-"yusr-ui": ["../../packages/yusr-ui/src/index.ts"],
+{
+  "@/*": [
+    "./src/*"
+  ],
+  "yusr-ui": [
+    "../../packages/yusr-ui/src/index.ts"
+  ]
+}
 ```
 
 ### 7. run
