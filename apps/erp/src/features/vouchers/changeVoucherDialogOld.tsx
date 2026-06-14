@@ -6,10 +6,10 @@ import type { CommonChangeDialogPropsOld } from "yusr-ui";
 import { ChangeDialogOld, CheckboxFieldOld, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberFieldOld, NumbertoWordsService, SelectFieldOld, TextAreaFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
 import { ClientsAndSuppliersSlice } from "../../core/data/accountOld";
 import PaymentMethodOld, { CommissionTypeOld, PaymentMethodSlice } from "../../core/data/paymentMethod";
-import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
+import VoucherOld, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucherOld.ts";
 import { useAppDispatch, useAppSelector } from "../../core/state/store";
 
-export default function ChangeVoucherDialogOld({ entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<Voucher>)
+export default function ChangeVoucherDialogOld({ entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<VoucherOld>)
 {
   const { t } = useTranslation(["accounting", "common"]);
   const dispatch = useAppDispatch();
@@ -105,7 +105,7 @@ export default function ChangeVoucherDialogOld({ entity, mode, service, onSucces
   const isReceipt = formData.type === VoucherType.Receipt;
 
   return (
-    <ChangeDialogOld<Voucher>
+    <ChangeDialogOld<VoucherOld>
       title={ mode === "create"
         ? t("vouchers.addNewTitle")
         : `${t("common:crudRow.edit")} ${t("vouchers.entityName")}` }

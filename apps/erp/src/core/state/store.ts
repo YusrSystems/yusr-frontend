@@ -14,7 +14,7 @@ import { type SettingOld, SettingSlice } from "../data/settingOld";
 import { StoreSlice } from "../data/storeSlice";
 import { TaxSlice } from "../data/tax";
 import { UnitSlice } from "../data/unitOld";
-import { VoucherSlice } from "../data/voucher";
+import { VoucherSlice } from "../data/voucherOld.ts";
 import itemBarcodeReducer from "./shared/itemBarcodeSlice";
 import serviceIdsReducer from "./shared/serviceIdsSlice";
 import storeItemsReducer from "./shared/storeItemsSlice";
