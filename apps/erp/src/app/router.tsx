@@ -32,10 +32,6 @@ import UnitsPage from "../features/units/unitsPage";
 import VouchersPage from "../features/vouchers/vouchersPage";
 import AppLayout from "./appLayout";
 
-function ProtectedRouteWrapper()
-{
-  return <ProtectedRoute isAuthenticated={ Services.auth.isAuthenticated } />;
-}
 const refreshPage = () =>
 {
   window.location.reload();
@@ -54,7 +50,7 @@ export const router = createBrowserRouter([{
     { path: "/legal", element: <LegalDocViewer /> },
     { path: "/sharing/:registrationKey", element: <TenantInfoSharingPage /> },
     {
-      element: <ProtectedRouteWrapper />,
+      element: <ProtectedRoute isAuthenticated={ Services.auth.isAuthenticated } />,
       children: [{
         element: <AppLayout />,
         children: [
