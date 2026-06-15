@@ -9,8 +9,12 @@ export default class InvoicesApiService extends BaseApiService<Invoice, InvoiceD
         return new Invoice(dto);
     }
 
-    async GetReturnInvoiceInitialDetails(id: number): Promise<RequestResult<InvoiceDto>> {
-        return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/GetReturnInvoiceInitialDetails/${id}`);
+    async GetReturnInvoiceInitialDetails(id: number): Promise<RequestResult<Invoice>> {
+        const rawResult = await YusrApiHelper.Get<InvoiceDto>(`${ApiConstants.baseUrl}/${this.routeName}/GetReturnInvoiceInitialDetails/${id}`);
+        return {
+            ...rawResult,
+            data: rawResult.data ? this.createEntity(rawResult.data) : undefined
+        };
     }
 
     async ResendEInvoice(invoiceId: number): Promise<RequestResult<EInvoiceStatus>> {

@@ -27,8 +27,8 @@ export class InvoiceVoucher extends ChangeableEntity<InvoiceVoucherDto> {
     public amountReceived: Signal<number | undefined>;
     public description: Signal<string | undefined>;
 
-    constructor(dto?: Partial<InvoiceVoucherDto>) {
-        super(dto, []);
+    constructor(dto: Partial<InvoiceVoucherDto> | undefined) {
+        super(dto, [], "create");
 
         this.invoiceId = this.assign("invoiceId", dto?.invoiceId ?? 0);
         this.voucherId = this.assign("voucherId", dto?.voucherId ?? 0);

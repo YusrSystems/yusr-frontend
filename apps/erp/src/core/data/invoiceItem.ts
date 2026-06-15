@@ -50,7 +50,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto> {
     public itemUnitPricingMethods: Signal<ItemUnitPricingMethodDto[]>;
 
     constructor(dto?: Partial<InvoiceItemDto>) {
-        super(dto, []);
+        super(dto, [], "create");
 
         this.index = this.assign("index", dto?.index ?? 0);
         this.invoiceId = this.assign("invoiceId", dto?.invoiceId ?? 0);

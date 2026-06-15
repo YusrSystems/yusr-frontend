@@ -1,14 +1,17 @@
-import {ChangeableEntity, Dto, i18n, StorageFile, Validators} from "yusr-ui";
+import {ChangeableEntity, ChangeableEntityMode, Dto, i18n, StorageFile, Validators} from "yusr-ui";
 import {
-  EInvoiceStatus,
-  type ImportExportType,
-  InvoiceReturnStatus,
-  InvoiceStatus,
-  InvoiceType
+    EInvoiceStatus,
+    type ImportExportType,
+    InvoiceRelationType,
+    InvoiceReturnStatus,
+    InvoiceStatus,
+    InvoiceType
 } from "@/core/data/invoiceOld.ts";
-import type {InvoiceVoucherDto} from "@/core/data/invoiceVoucher.ts";
-import type {InvoiceItemDto} from "@/core/data/invoiceItem.ts";
+import {InvoiceVoucher, type InvoiceVoucherDto} from "@/core/data/invoiceVoucher.ts";
+import {InvoiceItem, type InvoiceItemDto} from "@/core/data/invoiceItem.ts";
 import type {Signal} from "@preact/signals-react";
+import {Services} from "@/core/services/services.ts";
+import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 
 export class InvoiceDto extends Dto {
     public type!: InvoiceType;
@@ -44,7 +47,15 @@ export class InvoiceDto extends Dto {
     public ignoreWarnings: boolean = false;
 }
 
-export default class Invoice extends ChangeableEntity<InvoiceDto> {
+export const InvoiceMode = {
+    ...ChangeableEntityMode,
+    Return: "return",
+    Copy: "copy",
+    QuotationToSales: "quotationToSales"
+} as const;
+export type InvoiceMode = typeof InvoiceMode[keyof typeof InvoiceMode];
+
+export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode> {
     public type: Signal<InvoiceType>;
     public originalInvoiceId: Signal<number | undefined>;
     public date: Signal<string | Date>;
@@ -72,12 +83,12 @@ export default class Invoice extends ChangeableEntity<InvoiceDto> {
     public actionAccountName: Signal<string | undefined>;
     public storeName: Signal<string | undefined>;
 
-    public invoiceItems: Signal<InvoiceItemDto[]>;
-    public invoiceVouchers: Signal<InvoiceVoucherDto[]>;
+    public invoiceItems: Signal<InvoiceItem[]>;
+    public invoiceVouchers: Signal<InvoiceVoucher[]>;
     public invoiceFiles: Signal<StorageFile[]>;
     public ignoreWarnings: Signal<boolean>;
 
-    constructor(dto?: Partial<InvoiceDto>) {
+    constructor(dto: Partial<InvoiceDto> | undefined, mode: InvoiceMode) {
         super(dto, [{
             field: "type",
             selector: (d) => d.type,
@@ -98,7 +109,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto> {
             field: "invoiceItems",
             selector: (d) => d.invoiceItems,
             validators: [Validators.arrayMinLength(1, i18n.t("accounting:invoices.itemsRequired"))]
-        }]);
+        }], mode);
 
         this.type = this.assign("type", dto?.type ?? InvoiceType.Sell);
         this.originalInvoiceId = this.assign("originalInvoiceId", dto?.originalInvoiceId);
@@ -129,9 +140,64 @@ export default class Invoice extends ChangeableEntity<InvoiceDto> {
         this.actionAccountName = this.assign("actionAccountName", dto?.actionAccountName);
         this.storeName = this.assign("storeName", dto?.storeName);
 
-        this.invoiceItems = this.assign("invoiceItems", dto?.invoiceItems ?? []);
-        this.invoiceVouchers = this.assign("invoiceVouchers", dto?.invoiceVouchers ?? []);
+        this.invoiceItems = this.assign("invoiceItems", (dto?.invoiceItems ?? []).map(x => InvoiceItem.create(x)));
+        this.invoiceVouchers = this.assign("invoiceVouchers", (dto?.invoiceVouchers ?? []).map(x => InvoiceVoucher.create(x)));
         this.invoiceFiles = this.assign("invoiceFiles", dto?.invoiceFiles ?? []);
         this.ignoreWarnings = this.assign("ignoreWarnings", dto?.ignoreWarnings ?? false);
+    }
+
+    public paymentVouchers() {
+        return this.invoiceVouchers.value?.filter((v) => v.invoiceRelationType.value == InvoiceRelationType.Payment) ?? [];
+    }
+
+
+    public resetPaymentVouchers() {
+        this.invoiceVouchers.value = this.invoiceVouchers.value?.filter((v) =>
+            v.invoiceRelationType.value !== InvoiceRelationType.Payment
+        )
+    }
+
+    public createInitialPaymentVoucher(taxInclusivePrice: number) {
+        return InvoiceVoucher.create({
+            invoiceId: this.id.value,
+            paymentMethodId: Services.auth.setting?.mainPaymentMethodId?.value,
+            paymentMethodName: Services.auth.setting?.mainPaymentMethodName?.value,
+            accountId: this.actionAccountId.value,
+            accountName: this.actionAccountName.value,
+            invoiceRelationType: InvoiceRelationType.Payment,
+            amount: taxInclusivePrice,
+            amountReceived: taxInclusivePrice
+        });
+    }
+
+    public syncPaymentVouchers() {
+        if (this.mode.value === "update") {
+            return;
+        }
+
+        const taxInclusivePrice = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(this.invoiceItems.value ?? []);
+        const vouchers = this.paymentVouchers();
+
+        if (this.type.value === InvoiceType.Quotation) {
+            this.resetPaymentVouchers();
+            this.fullAmount.value = taxInclusivePrice;
+            return;
+        }
+
+        if (vouchers.length === 0) {
+            this.resetPaymentVouchers();
+            this.createInitialPaymentVoucher(taxInclusivePrice);
+        } else if (vouchers.length === 1) {
+            const voucher = vouchers[0];
+            voucher.amount.value = taxInclusivePrice;
+            voucher.amountReceived.value = taxInclusivePrice;
+            if (!voucher.accountId.value) {
+                voucher.accountId.value = this.actionAccountId.value;
+                voucher.accountName.value = this.actionAccountName.value;
+            }
+        }
+
+        this.fullAmount.value = taxInclusivePrice;
+        this.paidAmount.value = taxInclusivePrice;
     }
 }
