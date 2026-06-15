@@ -1,32 +1,21 @@
-import { ApiConstants, type ApiFilterResult, BaseApiServiceOld, FilterByTypeRequest, type RequestResult, YusrApiHelper } from "yusr-ui";
-import type InvoiceOld from "../data/invoiceOld.ts";
-import type { EInvoiceStatus } from "../data/invoiceOld.ts";
+import {ApiConstants, BaseApiService, type RequestResult, YusrApiHelper} from "yusr-ui";
+import type {EInvoiceStatus} from "../data/invoiceOld.ts";
+import Invoice, {InvoiceDto} from "@/core/data/invoice.ts";
 
-export default class InvoicesApiService extends BaseApiServiceOld<InvoiceOld>
-{
-  routeName: string = "Invoices";
+export default class InvoicesApiService extends BaseApiService<Invoice, InvoiceDto> {
+    routeName: string = "Invoices";
 
-  async FilterByTypes(
-    pageNumber: number,
-    rowsPerPage: number,
-    request: FilterByTypeRequest
-  ): Promise<RequestResult<ApiFilterResult<InvoiceOld>>>
-  {
-    return await YusrApiHelper.Post(
-      `${ApiConstants.baseUrl}/${this.routeName}/FilterByTypes?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
-      request
-    );
-  }
+    override createEntity(dto: InvoiceDto): Invoice {
+        return new Invoice(dto);
+    }
 
-  async GetReturnInvoiceInitialDetails(id: number): Promise<RequestResult<InvoiceOld>>
-  {
-    return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/GetReturnInvoiceInitialDetails/${id}`);
-  }
+    async GetReturnInvoiceInitialDetails(id: number): Promise<RequestResult<InvoiceDto>> {
+        return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/GetReturnInvoiceInitialDetails/${id}`);
+    }
 
-  async ResendEInvoice(invoiceId: number): Promise<RequestResult<EInvoiceStatus>>
-  {
-    return await YusrApiHelper.Put(
-      `${ApiConstants.baseUrl}/${this.routeName}/ResendEInvoice/${invoiceId}`
-    );
-  }
+    async ResendEInvoice(invoiceId: number): Promise<RequestResult<EInvoiceStatus>> {
+        return await YusrApiHelper.Put(
+            `${ApiConstants.baseUrl}/${this.routeName}/ResendEInvoice/${invoiceId}`
+        );
+    }
 }

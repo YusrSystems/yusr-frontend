@@ -12,6 +12,7 @@ import {Tax, TaxDto} from "../data/tax";
 import Unit, {UnitDto} from "../data/unit";
 import {Services} from "./services";
 import {type Voucher, VoucherDto} from "@/core/data/voucher.ts";
+import Invoice, {type InvoiceDto} from "@/core/data/invoice.ts";
 
 export class Cubits extends BaseCubits {
     public static readonly taxes = new PageCubit<Tax, TaxDto>(Services.taxesApi);
@@ -29,6 +30,7 @@ export class Cubits extends BaseCubits {
     public static readonly itemsSettlements = new PageCubit<Stocktaking, StocktakingDto>(Services.itemsSettlementsApi);
     public static override roles = new PageCubit<ErpRole, ErpRoleDto>(Services.rolesApi);
     public static readonly vouchers = new PageCubit<Voucher, VoucherDto>(Services.voucherApi);
+    public static readonly invoices = new PageCubit<Invoice, InvoiceDto>(Services.invoicesApi);
     static {
         BaseCubits.roles = Cubits.roles;
     }

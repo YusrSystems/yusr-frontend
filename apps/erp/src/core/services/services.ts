@@ -14,6 +14,7 @@ import UnitsApiService from "../networking/unitApiService";
 import {ErpAuthService} from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
 import VouchersApiService from "@/core/networking/voucherApiService.ts";
+import InvoicesApiService from "@/core/networking/invoiceApiService.ts";
 
 export class Services extends BaseServices {
     public static override auth: ErpAuthService = new ErpAuthService();
@@ -32,6 +33,7 @@ export class Services extends BaseServices {
     public static readonly itemsSettlementsApi = new ItemsSettlementsApiService();
     public static readonly dashboardApi = new DashboardApiService();
     public static readonly voucherApi = new VouchersApiService();
+    public static readonly invoicesApi = new InvoicesApiService();
     static {
         BaseServices.auth = Services.auth;
         BaseServices.rolesApi = Services.rolesApi;
