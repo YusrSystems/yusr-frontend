@@ -9,6 +9,7 @@
       "@/*": ["./src/*"]
     },
     "forceConsistentCasingInFileNames": true,
+    "noUncheckedIndexedAccess": true,
     "strict": true,
     "resolveJsonModule": true,
     "esModuleInterop": true

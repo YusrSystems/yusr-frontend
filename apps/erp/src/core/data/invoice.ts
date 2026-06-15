@@ -140,16 +140,25 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode> {
         this.actionAccountName = this.assign("actionAccountName", dto?.actionAccountName);
         this.storeName = this.assign("storeName", dto?.storeName);
 
-        this.invoiceItems = this.assign("invoiceItems", (dto?.invoiceItems ?? []).map(x => InvoiceItem.create(x)));
+        this.invoiceItems = this.assign("invoiceItems",
+            (dto?.invoiceItems ?? []).map(x => {
+                const item = InvoiceItem.create(x);
+                item.getInvoice = () => this;
+                return item;
+            })
+        );
         this.invoiceVouchers = this.assign("invoiceVouchers", (dto?.invoiceVouchers ?? []).map(x => InvoiceVoucher.create(x)));
         this.invoiceFiles = this.assign("invoiceFiles", dto?.invoiceFiles ?? []);
         this.ignoreWarnings = this.assign("ignoreWarnings", dto?.ignoreWarnings ?? false);
     }
 
+    public get isDisabled() {
+        return this.mode.value === InvoiceMode.Update && this.type.value !== InvoiceType.Quotation;
+    }
+
     public paymentVouchers() {
         return this.invoiceVouchers.value?.filter((v) => v.invoiceRelationType.value == InvoiceRelationType.Payment) ?? [];
     }
-
 
     public resetPaymentVouchers() {
         this.invoiceVouchers.value = this.invoiceVouchers.value?.filter((v) =>
@@ -187,7 +196,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode> {
         if (vouchers.length === 0) {
             this.resetPaymentVouchers();
             this.createInitialPaymentVoucher(taxInclusivePrice);
-        } else if (vouchers.length === 1) {
+        } else if (vouchers.length === 1 && vouchers[0]) {
             const voucher = vouchers[0];
             voucher.amount.value = taxInclusivePrice;
             voucher.amountReceived.value = taxInclusivePrice;
@@ -199,5 +208,36 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode> {
 
         this.fullAmount.value = taxInclusivePrice;
         this.paidAmount.value = taxInclusivePrice;
+    }
+
+    public changeSettlementPercent(settlementPercent: number) {
+        this.settlementPercent.value = settlementPercent;
+        this.settlementAmount.value = 0;
+        this.invoiceItems.value?.forEach((item) => {
+            const newSettlement = Number(
+                (item.taxInclusivePrice.value * ((this.settlementPercent.value ?? 0) / 100)).toFixed(2)
+            );
+
+            item.changeSettlement(newSettlement);
+        });
+    }
+
+    public changeSettlementAmount(settlementAmount: number) {
+        this.settlementAmount.value = settlementAmount;
+        this.settlementPercent.value = 0;
+        this.invoiceItems.value?.forEach((item) => {
+            item.changeSettlement(settlementAmount);
+        });
+    }
+
+    public removeItem(index: number) {
+
+        this.invoiceItems.value = this.invoiceItems.value.filter((_, i) =>
+            i !== index
+        )
+        if (this.invoiceItems.value?.length === 0) {
+            this.settlementAmount.value = 0;
+            this.settlementPercent.value = 0;
+        }
     }
 }
