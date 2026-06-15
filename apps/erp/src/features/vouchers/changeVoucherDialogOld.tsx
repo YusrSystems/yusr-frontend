@@ -1,25 +1,26 @@
 import ClientsAndSuppliersSearchableSelect
-  from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
-import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
+    from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
+import PaymentMethodsSearchableSelectOld
+    from "@/core/components/searchableSelect/paymentMethodsSearchableSelectOld.tsx";
 import {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {
-  ChangeDialogOld,
-  CheckboxFieldOld,
-  type CommonChangeDialogPropsOld,
-  CurrencyIcon,
-  DateFieldOld,
-  FieldGroup,
-  FieldsSection,
-  FormFieldOld,
-  NumberFieldOld,
-  NumbertoWordsService,
-  SelectFieldOld,
-  TextAreaFieldOld,
-  TextFieldOld,
-  useFormErrors,
-  useFormInit,
-  useValidate
+    ChangeDialogOld,
+    CheckboxFieldOld,
+    type CommonChangeDialogPropsOld,
+    CurrencyIcon,
+    DateFieldOld,
+    FieldGroup,
+    FieldsSection,
+    FormFieldOld,
+    NumberFieldOld,
+    NumbertoWordsService,
+    SelectFieldOld,
+    TextAreaFieldOld,
+    TextFieldOld,
+    useFormErrors,
+    useFormInit,
+    useValidate
 } from "yusr-ui";
 import {ClientsAndSuppliersSlice} from "../../core/data/accountOld";
 import PaymentMethodOld, {CommissionTypeOld, PaymentMethodSlice} from "../../core/data/paymentMethod";
@@ -180,7 +181,7 @@ export default function ChangeVoucherDialogOld({
                             isInvalid={isInvalid("paymentMethodId")}
                             error={getError("paymentMethodId")}
                         >
-                            <PaymentMethodsSearchableSelect
+                            <PaymentMethodsSearchableSelectOld
                                 selectedId={formData.paymentMethodId}
                                 selectedLabel={formData.paymentMethod?.name}
                                 isInvalid={isInvalid("paymentMethodId")}
