@@ -9,44 +9,23 @@ import InvoiceSummary from "./invoiceSummary";
 import {Services} from "@/core/services/services.ts";
 import type Invoice from "@/core/data/invoice.ts";
 import StoreItemSelector from "@/features/items/storeItemSelector.tsx";
-import type Item from "@/core/data/item.ts";
-import {InvoiceItem} from "@/core/data/invoiceItem.ts";
 
-export default function InvoiceBasicTab({entity}: { entity: Invoice }) {
-
-    const addItem = (invoice: Invoice, storeItem: Item) => {
-        const existingItem = invoice.invoiceItems.value?.find((item) => item.itemId.value === storeItem.id.value);
-
-        if (existingItem) {
-            return existingItem.incrementQuantity();
-        }
-
-        const newInvoiceItem = InvoiceItem.createFromItem(invoice, storeItem);
-        invoice.invoiceItems.value = [...invoice.invoiceItems.value, newInvoiceItem];
-
-        if (invoice.settlementPercent.value) {
-            invoice.changeSettlementPercent(invoice.settlementPercent.value);
-        }
-
-        if (invoice.settlementAmount.value) {
-            invoice.changeSettlementPercent(invoice.settlementAmount.value);
-        }
-    }
+export default function InvoiceBasicTab({invoice}: { invoice: Invoice }) {
 
     return (
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
             { /* LEFT WORKSPACE */}
             <div className="xl:col-span-8 2xl:col-span-9 space-y-4 min-w-0">
-                <InvoiceBasicInfo/>
+                <InvoiceBasicInfo invoice={invoice}/>
 
-                {!(entity.isDisabled || entity.mode.value === "return") && (
+                {!(invoice.isDisabled || invoice.mode.value === "return") && (
                     <StoreItemSelector
-                        storeId={entity.storeId}
-                        onSelect={(item) => addItem(entity, item)}
+                        storeId={invoice.storeId}
+                        onSelect={(item) => invoice.addItem(item)}
                     />
                 )}
 
-                <InvoiceItemsTable/>
+                <InvoiceItemsTable invoice={invoice}/>
             </div>
 
             { /* RIGHT SIDEBAR */}
@@ -58,7 +37,7 @@ export default function InvoiceBasicTab({entity}: { entity: Invoice }) {
                     ) && <InvoiceGlobalSettlements/>}
 
                     <InvoiceSummary/>
-                    {formData.type !== InvoiceType.Quotation && <InvoicePayments/>}
+                    {invoice.type.value !== InvoiceType.Quotation && <InvoicePayments/>}
                 </div>
             </div>
         </div>

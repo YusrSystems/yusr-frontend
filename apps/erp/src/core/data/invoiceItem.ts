@@ -113,7 +113,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto> {
             item.totalTaxes.value ?? 0
         );
 
-        return InvoiceItem.create({
+        const ii = InvoiceItem.create({
             id: 0,
             index: (invoice.invoiceItems.value?.length ?? -1) + 1,
             invoiceId: 0,
@@ -145,6 +145,10 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto> {
             // Misc
             notes: item.description.value
         });
+
+        ii.getInvoice = () => invoice;
+
+        return ii;
     }
 
     public changeSettlement(newSettlement: number | undefined, resetInvoiceSettlements: boolean = false) {

@@ -12,6 +12,7 @@ import {Services} from "@/core/services/services.ts";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 import type {Signal} from "@preact/signals-react";
 import {ChangeableEntity, ChangeableEntityMode, Dto, i18n, StorageFile, Validators} from "yusr-ui";
+import type Item from "@/core/data/item.ts";
 
 export class InvoiceDto extends Dto {
     public type!: InvoiceType;
@@ -58,7 +59,7 @@ export type InvoiceMode = typeof InvoiceMode[keyof typeof InvoiceMode];
 export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode> {
     public type: Signal<InvoiceType>;
     public originalInvoiceId: Signal<number | undefined>;
-    public date: Signal<string | Date>;
+    public date: Signal<Date>;
     public delegateEmp: Signal<string | undefined>;
     public statusId: Signal<InvoiceStatus>;
     public eInvoiceStatus: Signal<EInvoiceStatus>;
@@ -113,9 +114,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode> {
 
         this.type = this.assign("type", dto?.type ?? InvoiceType.Sell);
         this.originalInvoiceId = this.assign("originalInvoiceId", dto?.originalInvoiceId);
-        this.date = this.assign("date", dto?.date ?
-            new Date(dto?.date).toLocaleDateString("en-CA")
-            : new Date().toLocaleDateString("en-CA"));
+        this.date = this.assign("date", dto?.date ? new Date(dto?.date) : new Date());
         this.delegateEmp = this.assign("delegateEmp", dto?.delegateEmp);
         this.statusId = this.assign("statusId", dto?.statusId ?? InvoiceStatus.Valid);
         this.eInvoiceStatus = this.assign("eInvoiceStatus", dto?.eInvoiceStatus ?? EInvoiceStatus.NotSent);
@@ -228,6 +227,25 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode> {
         this.invoiceItems.value?.forEach((item) => {
             item.changeSettlement(settlementAmount);
         });
+    }
+
+    public addItem(storeItem: Item) {
+        const existingItem = this.invoiceItems.value?.find((item) => item.itemId.value === storeItem.id.value);
+
+        if (existingItem) {
+            return existingItem.incrementQuantity();
+        }
+
+        const newInvoiceItem = InvoiceItem.createFromItem(this, storeItem);
+        this.invoiceItems.value = [...this.invoiceItems.value, newInvoiceItem];
+
+        if (this.settlementPercent.value) {
+            this.changeSettlementPercent(this.settlementPercent.value);
+        }
+
+        if (this.settlementAmount.value) {
+            this.changeSettlementPercent(this.settlementAmount.value);
+        }
     }
 
     public removeItem(index: number) {

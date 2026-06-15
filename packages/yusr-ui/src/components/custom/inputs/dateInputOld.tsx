@@ -111,6 +111,7 @@ export interface DateInputProps {
     endYear?: number;
     minDate?: Date;
     maxDate?: Date;
+    disabled: boolean;
 }
 
 
@@ -122,7 +123,8 @@ export function DateInput({
                               startYear = new Date().getFullYear() - 100,
                               endYear = new Date().getFullYear() + 10,
                               minDate,
-                              maxDate
+                              maxDate,
+                              disabled
                           }: DateInputProps) {
     useSignals();
     const isOpen: Signal<boolean> = useMemo(() => {
@@ -169,6 +171,7 @@ export function DateInput({
                         !value && "text-muted-foreground",
                         // isInvalid && "border-red-600 ring-red-600 text-red-900"
                     )}
+                    disabled={disabled}
                 >
                     {value?.value
                         ? (

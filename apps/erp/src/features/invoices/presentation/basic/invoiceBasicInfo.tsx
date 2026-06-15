@@ -1,214 +1,135 @@
-import ClientsSearchableSelect from "@/core/components/searchableSelect/clientsSearchableSelect";
-import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
-import SuppliersSearchableSelectOld from "@/core/components/searchableSelect/suppliersSearchableSelect";
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { Checkbox, DateField, FieldsSection, FormFieldOld, SelectFieldOld, TextFieldOld } from "yusr-ui";
-import AccountOld from "../../../../core/data/accountOld";
-import { ImportExportType, InvoiceType } from "../../../../core/data/invoiceOld.ts";
-import { useInvoiceContext } from "../../logic/invoiceContext";
+import {useEffect, useMemo} from "react";
+import {useTranslation} from "react-i18next";
+import {CheckboxField, DateField, FieldsSection, FormField, SelectField, TextField} from "yusr-ui";
+import {ImportExportType, InvoiceType} from "@/core/data/invoiceOld.ts";
+import Invoice, {InvoiceMode} from "@/core/data/invoice.ts";
+import {signal, useComputed} from "@preact/signals-react";
+import {type Account, AccountType} from "@/core/data/account.ts";
+import {Services} from "@/core/services/services.ts";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
+import {AccountsSearchableSelect} from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 
-export default function InvoiceBasicInfo()
-{
-  const { t } = useTranslation("accounting");
-  const {
-    mode,
-    formData,
-    isInvalid,
-    getError,
-    slice,
-    authState,
-    dispatch,
-    accountState
-  } = useInvoiceContext();
-  let selectedAccount: AccountOld | undefined = accountState.entities?.data?.find((account) =>
-    account.id === formData.actionAccountId
-  );
+export default function InvoiceBasicInfo({invoice}: { invoice: Invoice }) {
+    const {t} = useTranslation("accounting");
+    const selectedAccount = useMemo(() => signal<Account | undefined>(), []);
 
-  const canBeExportInvoice = () =>
-  {
-    const accountCountryId: number | undefined = selectedAccount?.city?.countryId;
-    const settingsCountryId: number | undefined = authState.setting?.branch?.city?.countryId;
+    const invoiceOrigin = useComputed(() => {
+        const accountCountryId = selectedAccount.value?.city.value?.countryId.value;
+        const settingsCountryId = Services.auth.setting?.branch?.value?.city.value?.countryId.value;
 
-    if (accountCountryId == undefined || settingsCountryId == undefined)
-    {
-      return false;
-    }
-    else
-    {
-      return ((formData.type === InvoiceType.Purchase || formData.type === InvoiceType.PurchaseReturn)
-        && accountCountryId !== settingsCountryId);
-    }
-  };
+        if (accountCountryId == undefined || settingsCountryId == undefined) {
+            return {canBeExportInvoice: false, canBeImportInvoice: false};
+        }
 
-  const canBeImportInvoice = () =>
-  {
-    const accountCountryId: number | undefined = selectedAccount?.city?.countryId;
-    const settingsCountryId: number | undefined = authState.setting?.branch?.city?.countryId;
+        const isCrossBorder = accountCountryId !== settingsCountryId;
 
-    if (accountCountryId == undefined || settingsCountryId == undefined)
-    {
-      return false;
-    }
-    else
-    {
-      return ((formData.type === InvoiceType.Sell || formData.type === InvoiceType.SellReturn
-        || formData.type === InvoiceType.Quotation)
-        && accountCountryId !== settingsCountryId);
-    }
-  };
+        return {
+            canBeExportInvoice: isCrossBorder
+                && (invoice.type.value === InvoiceType.Sell || invoice.type.value === InvoiceType.PurchaseReturn || invoice.type.value === InvoiceType.Quotation),
 
-  useEffect(() =>
-  {
-    if (canBeExportInvoice())
-    {
-      dispatch(
-        slice.formActions.updateFormData({
-          importExportType: ImportExportType.ImportAccordingToTheReverseChargeMechanism
-        })
-      );
-    }
-    else
-    {
-      dispatch(slice.formActions.updateFormData({ importExportType: undefined }));
-    }
-  }, [canBeExportInvoice()]);
+            canBeImportInvoice: isCrossBorder
+                && (invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.SellReturn),
+        };
+    });
 
-  const isPurchaseInvoice = () =>
-    formData.type === InvoiceType.Purchase || formData.type === InvoiceType.PurchaseReturn;
+    useEffect(() => {
+        if (invoiceOrigin.value.canBeExportInvoice) {
+            invoice.importExportType.value = ImportExportType.Export;
+        } else if (invoiceOrigin.value.canBeImportInvoice) {
+            invoice.importExportType.value = ImportExportType.ImportAccordingToTheReverseChargeMechanism;
+        } else {
+            invoice.importExportType.value = undefined;
+        }
+    }, [invoice.importExportType, invoiceOrigin.value]);
 
-  return (
-    <FieldsSection columns={ { base: 1, md: 2, lg: 4 } }>
-      { (mode === "update" || mode === "return") && (
-        <TextFieldOld
-          label={ t("invoices.invoiceDate") }
-          required
-          value={ formData.date ? new Date(formData.date).toISOString().split("T")[0] : "" }
-          isInvalid={ isInvalid("date") }
-          error={ getError("date") }
-          disabled
-        />
-      ) }
+    const isPurchaseInvoice = () =>
+        invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.PurchaseReturn;
 
-      { mode === "create" && (
-        <DateField
-          label={ t("invoices.invoiceDate") }
-          required
-          value={ formData.date ? new Date(formData.date) : undefined }
-          onChange={ (e) => dispatch(slice.formActions.updateFormData({ date: e })) }
-          isInvalid={ isInvalid("date") }
-          error={ getError("date") }
-        />
-      ) }
+    return (
+        <FieldsSection columns={{base: 1, md: 2, lg: 4}}>
 
-      <FormFieldOld
-        label={ t("invoices.store") }
-        required
-        isInvalid={ isInvalid("storeId") }
-        error={ getError("storeId") }
-      >
-        <StoresSearchableSelectOld
-          selectedId={ formData.storeId }
-          selectedLabel={ formData.storeName }
-          isInvalid={ isInvalid("storeId") }
-          disabled={ mode !== "create" && formData.type !== InvoiceType.Quotation }
-          onValueChange={ (store) =>
-          {
-            dispatch(
-              slice.formActions.updateFormData({ storeId: store?.id, storeName: store?.name, invoiceItems: [] })
-            );
-          } }
-        />
-      </FormFieldOld>
+            <DateField
+                label={t("invoices.invoiceDate")}
+                required
+                value={invoice.date}
+                error={invoice.getError("date")}
+                disabled={invoice.mode.value === InvoiceMode.Update || invoice.mode.value === InvoiceMode.Return}
+            />
 
-      <FormFieldOld
-        label={ t("invoices.account") }
-        required
-        isInvalid={ isInvalid("actionAccountId") }
-        error={ getError("actionAccountId") }
-      >
-        { isPurchaseInvoice() && (
-          <SuppliersSearchableSelectOld
-            selectedId={ formData.actionAccountId }
-            selectedLabel={ formData.actionAccountName }
-            isInvalid={ isInvalid("actionAccountId") }
-            disabled={ mode !== "create" && formData.type !== InvoiceType.Quotation }
-            onValueChange={ (account) =>
+            <FormField
+                label={t("invoices.store")}
+                required
+                error={invoice.getError("storeId")}
+            >
+                <StoresSearchableSelect
+                    id={invoice.storeId}
+                    label={invoice.storeName}
+                    disabled={invoice.mode.value !== InvoiceMode.Create && invoice.type.value !== InvoiceType.Quotation}
+                    onSelect={() => {
+                        invoice.invoiceItems.value = [];
+                    }}
+                />
+            </FormField>
+
+            <FormField
+                label={t("invoices.account")}
+                required
+                error={invoice.getError("actionAccountId")}
+            >
+                {isPurchaseInvoice() && (
+                    <AccountsSearchableSelect
+                        id={invoice.actionAccountId}
+                        label={invoice.actionAccountName}
+                        disabled={invoice.mode.value !== InvoiceMode.Create && invoice.type.value !== InvoiceType.Quotation}
+                        types={isPurchaseInvoice() ? [AccountType.Supplier] : [AccountType.Client]}
+                        onSelect={(account) => {
+                            selectedAccount.value = account;
+                        }}
+                    />
+                )}
+            </FormField>
+
+            <TextField
+                label={t("invoices.relatedInvoiceNumber")}
+                disabled
+                value={invoice.originalInvoiceId}
+            />
+
             {
-              selectedAccount = account;
-              dispatch(
-                slice.formActions.updateFormData({ actionAccountId: account?.id, actionAccountName: account?.name })
-              );
-            } }
-          />
-        ) }
+                /* <TextField
+                label={ t("invoices.delegateEmployee") }
+                value={ formData.delegateEmp || "" }
+                onChange={ (e) => dispatch(slice.formActions.updateFormData({ delegateEmp: e.target.value })) }
+              /> */
+            }
 
-        { !isPurchaseInvoice() && (
-          <ClientsSearchableSelect
-            selectedId={ formData.actionAccountId }
-            selectedLabel={ formData.actionAccountName }
-            isInvalid={ isInvalid("actionAccountId") }
-            disabled={ mode !== "create" && formData.type !== InvoiceType.Quotation }
-            onValueChange={ (account) =>
-            {
-              selectedAccount = account;
-              dispatch(
-                slice.formActions.updateFormData({ actionAccountId: account?.id, actionAccountName: account?.name })
-              );
-            } }
-          />
-        ) }
-      </FormFieldOld>
+            {invoiceOrigin.value.canBeExportInvoice && (
+                <SelectField<ImportExportType>
+                    label={t("invoices.importInvoice")}
+                    required
+                    disabled={invoice.mode.value === InvoiceMode.Return}
+                    value={invoice.importExportType}
+                    error={invoice.getError("importExportType")}
+                    options={[{
+                        label: t("invoices.importReverseCharge"),
+                        value: ImportExportType.ImportAccordingToTheReverseChargeMechanism
+                    }, {
+                        label: t("invoices.importCustomsPaid"),
+                        value: ImportExportType.ImportPaidForCustoms
+                    }]}
+                />
+            )}
 
-      <TextFieldOld
-        label={ t("invoices.relatedInvoiceNumber") }
-        disabled
-        value={ formData.originalInvoiceId || "" }
-        onChange={ () =>
-        {} }
-      />
+            {invoiceOrigin.value.canBeImportInvoice && (
+                <CheckboxField checked label={t("invoices.exportInvoice")}/>
+            )}
 
-      {
-        /* <TextField
-        label={ t("invoices.delegateEmployee") }
-        value={ formData.delegateEmp || "" }
-        onChange={ (e) => dispatch(slice.formActions.updateFormData({ delegateEmp: e.target.value })) }
-      /> */
-      }
-
-      { canBeExportInvoice() && (
-        <SelectFieldOld
-          label={ t("invoices.importInvoice") }
-          required
-          disabled={ mode === "return" }
-          value={ formData.importExportType?.toString() || "" }
-          onValueChange={ (val) =>
-            dispatch(slice.formActions.updateFormData({ importExportType: Number(val) as ImportExportType })) }
-          isInvalid={ isInvalid("importExportType") }
-          error={ getError("importExportType") }
-          options={ [{ label: t("invoices.importReverseCharge"), value: "2" }, {
-            label: t("invoices.importCustomsPaid"),
-            value: "3"
-          }] }
-        />
-      ) }
-
-      { canBeImportInvoice() && (
-        <div className="flex items-center gap-2 mt-6 border bg-primary/5 rounded-lg px-2">
-          <Checkbox id="importInvoice" checked disabled />
-          <label htmlFor="importInvoice" className="text-sm font-bold">
-            { t("invoices.exportInvoice") }
-          </label>
-        </div>
-      ) }
-
-      <div className="col-span-1 md:col-span-2 lg:col-span-4">
-        <TextFieldOld
-          label={ t("invoices.notes") }
-          value={ formData.notes || "" }
-          onChange={ (e) => dispatch(slice.formActions.updateFormData({ notes: e.target.value })) }
-        />
-      </div>
-    </FieldsSection>
-  );
+            <div className="col-span-1 md:col-span-2 lg:col-span-4">
+                <TextField
+                    label={t("invoices.notes")}
+                    value={invoice.notes}
+                />
+            </div>
+        </FieldsSection>
+    );
 }
