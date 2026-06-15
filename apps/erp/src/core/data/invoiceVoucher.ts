@@ -1,6 +1,8 @@
-import {ChangeableEntity, Dto} from "yusr-ui";
+import type Invoice from "@/core/data/invoice.ts";
 import {InvoiceRelationType} from "@/core/data/invoiceOld.ts";
+import {Services} from "@/core/services/services.ts";
 import type {Signal} from "@preact/signals-react";
+import {ChangeableEntity, Dto} from "yusr-ui";
 
 export class InvoiceVoucherDto extends Dto {
     public invoiceId!: number;
@@ -41,4 +43,22 @@ export class InvoiceVoucher extends ChangeableEntity<InvoiceVoucherDto> {
         this.amountReceived = this.assign("amountReceived", dto?.amountReceived);
         this.description = this.assign("description", dto?.description);
     }
+
+
+    public static createCostVoucherFromInvoice(invoice: Invoice): InvoiceVoucher {
+        return InvoiceVoucher.create({
+            voucherId: 0,
+            invoiceId: invoice.id.value ?? 0,
+            paymentMethodId: Services?.auth?.setting?.mainPaymentMethodId?.value ?? 0,
+            paymentMethodName: Services?.auth?.setting?.mainPaymentMethodName?.value ?? "",
+            accountId: invoice.actionAccountId.value ?? 0,
+            accountName: invoice.actionAccountName.value ?? "",
+            invoiceRelationType: InvoiceRelationType.Cost,
+            amount: 0,
+            amountReceived: 0,
+            description: undefined
+        })
+    }
+
+
 }

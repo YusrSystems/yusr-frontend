@@ -1,4 +1,4 @@
-import {ChangeableEntity, ChangeableEntityMode, Dto, i18n, StorageFile, Validators} from "yusr-ui";
+import {InvoiceItem, type InvoiceItemDto} from "@/core/data/invoiceItem.ts";
 import {
     EInvoiceStatus,
     type ImportExportType,
@@ -8,10 +8,10 @@ import {
     InvoiceType
 } from "@/core/data/invoiceOld.ts";
 import {InvoiceVoucher, type InvoiceVoucherDto} from "@/core/data/invoiceVoucher.ts";
-import {InvoiceItem, type InvoiceItemDto} from "@/core/data/invoiceItem.ts";
-import type {Signal} from "@preact/signals-react";
 import {Services} from "@/core/services/services.ts";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
+import type {Signal} from "@preact/signals-react";
+import {ChangeableEntity, ChangeableEntityMode, Dto, i18n, StorageFile, Validators} from "yusr-ui";
 
 export class InvoiceDto extends Dto {
     public type!: InvoiceType;
@@ -239,5 +239,10 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode> {
             this.settlementAmount.value = 0;
             this.settlementPercent.value = 0;
         }
+    }
+
+
+    public removeVoucher(voucherId: Signal<number>): void {
+        this.invoiceVouchers.value = this.invoiceVouchers.value?.filter((v) => v.voucherId.value !== voucherId.value)
     }
 }
