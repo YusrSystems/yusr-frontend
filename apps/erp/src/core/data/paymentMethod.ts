@@ -2,7 +2,7 @@ import type { Signal } from "@preact/signals-react";
 import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 
 
-const CommissionType = {
+export const CommissionType = {
 	Percent: 1,
 	Amount: 2
 } as const;

@@ -1,23 +1,22 @@
 import { Services } from "@/core/services/services.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import {
-    CrudPage,
-    CurrencyIcon,
-    NumbertoWordsService,
-    PageError,
-    PageLoaded,
-    PageLoading,
-    SystemPermissionsActions,
-    TablePreview,
-    UnauthorizedPage
+	CrudPage,
+	CurrencyIcon,
+	NumbertoWordsService,
+	PageError,
+	PageLoaded,
+	PageLoading,
+	SystemPermissionsActions,
+	TablePreview,
+	UnauthorizedPage
 } from "yusr-ui";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { BoxIcon } from "lucide-react";
-import { Voucher, type VoucherDto } from "@/core/data/voucher.ts";
-import { VoucherType } from "@/core/data/voucherOld.ts";
+import { Voucher, type VoucherDto, VoucherType } from "@/core/data/voucher.ts";
 import ReportButton from "@/features/reports/reportButton.tsx";
 import ReportConstants from "@/core/data/report/reportConstants.ts";
 import ChangeVoucherDialog from "@/features/vouchers/changeVoucherDialog.tsx";

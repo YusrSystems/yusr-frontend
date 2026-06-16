@@ -1,12 +1,12 @@
 import logoDark from "@/assets/yusrLogoOnly_Dark.png";
 import logoLight from "@/assets/yusrLogoOnly_Light.png";
-import type { SharingSetting } from "@/core/data/settingOld";
 import SettingsApiServiceOld from "@/core/networking/settingsApiServiceOld.ts";
 import { Building2, FileText, Globe, Hash, Home, MailOpen, MapPin, Navigation, Phone, Receipt } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Badge, CopyButton, LanguageToggle, Separator, ThemeToggle } from "yusr-ui";
+import type { SharingSetting } from "@/core/data/setting.ts";
 
 
 interface FieldRowProps
@@ -101,7 +101,7 @@ export default function TenantInfoSharingPage()
 			}
 			setInitLoading(false);
 		};
-		fetch();
+		void fetch();
 	}, [registrationKey]);
 
 	if (initLoading)

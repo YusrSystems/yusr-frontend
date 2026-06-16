@@ -1,30 +1,31 @@
 import {
-    ChangeDialog,
-    CheckboxField,
-    type CommonChangeDialogProps,
-    CurrencyIcon,
-    DateField,
-    FieldGroup,
-    FieldsSection,
-    FormField,
-    NumberField,
-    NumbertoWordsService,
-    SelectField,
-    SystemPermissionsActions,
-    TextAreaField,
-    TextField
+	ChangeDialog,
+	CheckboxField,
+	type CommonChangeDialogProps,
+	CurrencyIcon,
+	DateField,
+	FieldGroup,
+	FieldsSection,
+	FormField,
+	NumberField,
+	NumbertoWordsService,
+	SelectField,
+	SystemPermissionsActions,
+	TextAreaField,
+	TextField
 } from "yusr-ui";
-import { type Voucher, VoucherDto } from "@/core/data/voucher.ts";
+import { type Voucher, VoucherDto, VoucherType } from "@/core/data/voucher.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Services } from "@/core/services/services.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { useTranslation } from "react-i18next";
-import { VoucherType } from "@/core/data/voucherOld.ts";
-import { AccountsSearchableSelect } from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import { AccountType } from "@/core/data/account.ts";
 import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";
+import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
+import { CommissionType, type PaymentMethod } from "@/core/data/paymentMethod.ts";
 
 
 export default function ChangeVoucherDialog({
@@ -36,14 +37,44 @@ export default function ChangeVoucherDialog({
 	useSignals();
 
 	const {t} = useTranslation(["accounting", "common"]);
-	const title = entity.mode.value === "create"
-		? t("vouchers.addNewTitle")
-		: `${ t("common:crudRow.edit") } ${ t("vouchers.entityName") }`;
+	const amountToWords = useMemo(() => signal<string>(""), []);
+	const selectedPaymentMethod = useMemo(() => signal<PaymentMethod | undefined>(undefined), []);
 
 	useEffect(() =>
 	{
 		Cubits.accounts.init([AccountType.Client, AccountType.Supplier]);
 	}, []);
+
+	useEffect(() =>
+	{
+		if (entity.amount.value !== undefined && Services.auth.setting?.currency?.value)
+		{
+			amountToWords.value = NumbertoWordsService.ConvertAmount(
+				entity.amount.value,
+				Services.auth.setting.currency.value
+			);
+		}
+	}, [entity.amount.value, amountToWords]);
+
+	const reCalculateCommission = (): number =>
+	{
+		if (entity.type.value == undefined || entity.amount.value == undefined || selectedPaymentMethod.value == undefined || entity.type.value === VoucherType.Payment)
+		{
+			return 0;
+		}
+
+		if (selectedPaymentMethod.value.commissionType.value === CommissionType.Percent)
+		{
+			return (entity.amount.value * (selectedPaymentMethod.value.commissionAmount.value ?? 0)) / 100;
+		}
+		else if (selectedPaymentMethod.value.commissionType.value === CommissionType.Amount)
+		{
+			return selectedPaymentMethod.value.commissionAmount.value ?? 0;
+		}
+
+		return 0;
+	};
+
 	if (
 		(entity.mode.value === "create"
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Add))
@@ -56,19 +87,10 @@ export default function ChangeVoucherDialog({
 
 	const isPayment = entity.type.value === VoucherType.Payment;
 	const isReceipt = entity.type.value === VoucherType.Receipt;
+	const title = entity.mode.value === "create"
+		? t("vouchers.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("vouchers.entityName") }`;
 
-	const amountToWords = useMemo(() => signal<string>(""), []);
-
-	useEffect(() =>
-	{
-		if (entity.amount.value !== undefined && Services.auth.setting?.currency?.value)
-		{
-			amountToWords.value = NumbertoWordsService.ConvertAmount(
-				entity.amount.value,
-				Services.auth.setting.currency.value
-			);
-		}
-	}, [entity.amount.value, Services.auth.setting?.currency?.value]);
 	return <ChangeDialog className="sm:max-w-lg">
 		<ChangeDialog.Header title={ title }/>
 		<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
@@ -90,6 +112,14 @@ export default function ChangeVoucherDialog({
 									value: VoucherType.Payment
 								}
 							] }
+						onValueChange={ (newType) =>
+						{
+							if (newType === VoucherType.Receipt)
+							{
+								entity.isAmountDue.value = false;
+							}
+							reCalculateCommission();
+						} }
 					/>
 
 					<DateField
@@ -124,13 +154,15 @@ export default function ChangeVoucherDialog({
 						required
 						error={ entity.getError("paymentMethodId") }
 					>
-						{/*TODO: Add & create payment method searchable select*/ }
-						{/*<PaymentMethodsSearchableSelect*/ }
-						{/*    selectedId={formData.paymentMethodId}*/ }
-						{/*    selectedLabel={formData.paymentMethod?.name}*/ }
-						{/*    isInvalid={isInvalid("paymentMethodId")}*/ }
-						{/*    onValueChange={handlePaymentMethodChange}*/ }
-						{/*/>*/ }
+						<PaymentMethodsSearchableSelect
+							id={ entity.paymentMethodId }
+							label={ entity.paymentMethod.value?.name }
+							onSelect={ (pm) =>
+							{
+								selectedPaymentMethod.value = pm;
+								reCalculateCommission();
+							} }
+						/>
 					</FormField>
 				</FieldsSection>
 
@@ -141,6 +173,7 @@ export default function ChangeVoucherDialog({
 						value={ entity.amount }
 						error={ entity.getError("amount") }
 						currency={ <CurrencyIcon/> }
+						onChange={ () => reCalculateCommission() }
 					/>
 
 					{ isReceipt && (
