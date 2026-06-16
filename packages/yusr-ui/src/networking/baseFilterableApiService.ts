@@ -2,7 +2,6 @@ import { FilterByTypeRequest } from "../entities";
 import { Dto, Entity } from "../stateManager";
 import type { ApiFilterResult } from "../types";
 import type { FilterResult } from "../types/filterResult";
-import { ApiConstants } from "./apiConstants";
 import { YusrApiHelper } from "./yusrApiHelper";
 
 
@@ -44,7 +43,7 @@ export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDt
 		}
 
 		const rawResult = await YusrApiHelper.Post<ApiFilterResult<TDto>>(
-			`${ ApiConstants.baseUrl }/${ this.routeName }/Filter?${ params.toString() }`,
+			`$/api/${ this.routeName }/Filter?${ params.toString() }`,
 			types
 		);
 
