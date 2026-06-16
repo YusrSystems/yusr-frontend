@@ -2,9 +2,9 @@ import { Banknote } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, cn, CurrencyIcon, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
-import type { InvoiceProfitResult } from "@/core/data/InvoiceProfitResult.ts";
+import type { InvoiceProfitResult } from "@/core/data/invoices/InvoiceProfitResult.ts";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
-import type Invoice from "@/core/data/invoice.ts";
+import type Invoice from "@/core/data/invoices/invoice.ts";
 
 
 interface ProfitRowProps

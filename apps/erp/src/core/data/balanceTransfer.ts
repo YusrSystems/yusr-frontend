@@ -1,8 +1,7 @@
-import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
-import BalanceTransfersApiServiceOld from "../networking/balanceTransferApiServiceOld";
+import type { Signal } from "@preact/signals-react";
+import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 
-export default class BalanceTransfer extends BaseEntity
+export class BalanceTransferDto extends Dto
 {
   public description?: string;
   public date!: string | Date;
@@ -11,46 +10,44 @@ export default class BalanceTransfer extends BaseEntity
   public toAccountId!: number;
   public fromAccountName?: string;
   public toAccountName?: string;
+}
 
-  constructor(init?: Partial<BalanceTransfer>)
+export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
+{
+  public description: Signal<string>;
+  public date: Signal<string | Date>;
+  public amount: Signal<number>;
+  public fromAccountId: Signal<number>;
+  public toAccountId: Signal<number>;
+  public fromAccountName: Signal<string>;
+  public toAccountName: Signal<string>;
+
+  constructor(dto?: Partial<BalanceTransferDto>, mode: ChangeableEntityMode = "create")
   {
-    super();
-    Object.assign(this, init);
+    super(dto, [{
+      field: "amount",
+      selector: (d) => d.amount,
+      validators: [Validators.required(i18n.t("accounting:balanceTransfers.amountRequired"))]
+    }, {
+      field: "date",
+      selector: (d) => d.date,
+      validators: [Validators.required(i18n.t("accounting:balanceTransfers.dateRequired"))]
+    }, {
+      field: "fromAccountId",
+      selector: (d) => d.fromAccountId,
+      validators: [Validators.required(i18n.t("accounting:balanceTransfers.fromAccountRequired"))]
+    }, {
+      field: "toAccountId",
+      selector: (d) => d.toAccountId,
+      validators: [Validators.required(i18n.t("accounting:balanceTransfers.toAccountRequired"))]
+    }], mode);
+
+    this.description = this.assign("description", dto?.description ?? "");
+    this.date = this.assign("date", dto?.date ?? "");
+    this.amount = this.assign("amount", dto?.amount ?? 0.0);
+    this.fromAccountId = this.assign("fromAccountId", dto?.fromAccountId ?? 0);
+    this.toAccountId = this.assign("toAccountId", dto?.toAccountId ?? 0);
+    this.fromAccountName = this.assign("fromAccountName", dto?.fromAccountName ?? "");
+    this.toAccountName = this.assign("toAccountName", dto?.toAccountName ?? "");
   }
-}
-
-export class BalanceTransferValidationRules
-{
-  public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<BalanceTransfer>>[] => [{
-    field: "amount",
-    selector: (d) => d.amount,
-    validators: [Validators.required(t("balanceTransfers.amountRequired"))]
-  }, {
-    field: "date",
-    selector: (d) => d.date,
-    validators: [Validators.required(t("balanceTransfers.dateRequired"))]
-  }, {
-    field: "fromAccountId",
-    selector: (d) => d.fromAccountId,
-    validators: [Validators.required(t("balanceTransfers.fromAccountRequired"))]
-  }, {
-    field: "toAccountId",
-    selector: (d) => d.toAccountId,
-    validators: [Validators.required(t("balanceTransfers.toAccountRequired"))]
-  }];
-}
-
-export class BalanceTransferSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("balanceTransfer", new BalanceTransfersApiServiceOld());
-  public static entityActions = BalanceTransferSlice.entitySliceInstance.actions;
-  public static entityReducer = BalanceTransferSlice.entitySliceInstance.reducer;
-
-  private static dialogSliceInstance = createGenericDialogSlice<BalanceTransfer>("balanceTransferDialog");
-  public static dialogActions = BalanceTransferSlice.dialogSliceInstance.actions;
-  public static dialogReducer = BalanceTransferSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<BalanceTransfer>("balanceTransferForm");
-  public static formActions = BalanceTransferSlice.formSliceInstance.actions;
-  public static formReducer = BalanceTransferSlice.formSliceInstance.reducer;
 }

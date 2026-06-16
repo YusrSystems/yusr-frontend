@@ -1,18 +1,17 @@
-import { InvoiceItem, type InvoiceItemDto } from "@/core/data/invoiceItem.ts";
-import {
-	EInvoiceStatus,
-	type ImportExportType,
-	InvoiceRelationType,
-	InvoiceReturnStatus,
-	InvoiceStatus,
-	InvoiceType
-} from "@/core/data/invoiceOld.ts";
-import { InvoiceVoucher, type InvoiceVoucherDto } from "@/core/data/invoiceVoucher.ts";
+import { InvoiceItem, type InvoiceItemDto } from "@/core/data/invoices/invoiceItem.ts";
+
+import { InvoiceVoucher, type InvoiceVoucherDto } from "@/core/data/invoices/invoiceVoucher.ts";
 import { Services } from "@/core/services/services.ts";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 import type { Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, StorageFile, Validators } from "yusr-ui";
 import type Item from "@/core/data/item.ts";
+import { InvoiceType } from "@/core/types/invoiceType.ts";
+import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
+import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
+import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus";
+import type { ImportExportType } from "@/core/types/importExportType.ts";
+import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
 
 
 export class InvoiceDto extends Dto

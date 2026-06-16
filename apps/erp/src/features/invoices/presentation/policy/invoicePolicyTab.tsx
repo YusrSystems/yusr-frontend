@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { TextAreaField } from "yusr-ui";
-import Invoice, { InvoiceMode } from "@/core/data/invoice.ts";
+import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import { Services } from "@/core/services/services.ts";
 
 

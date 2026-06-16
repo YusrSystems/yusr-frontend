@@ -2,10 +2,10 @@ import { Banknote } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
-import type { InvoiceItemProfitResult } from "@/core/data/InvoiceItemProfitResult.ts";
+import type { InvoiceItemProfitResult } from "@/core/data/invoices/InvoiceItemProfitResult.ts";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 import { ProfitRow } from "./InvoiceProfitDialog";
-import type { InvoiceItem } from "@/core/data/invoiceItem.ts";
+import type { InvoiceItem } from "@/core/data/invoices/invoiceItem.ts";
 
 
 interface ItemProfitDialogProps

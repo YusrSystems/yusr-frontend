@@ -21,10 +21,10 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { InvoiceType } from "@/core/data/invoiceOld.ts";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 import { ItemProfitDialog } from "../profit/ItemProfitDialog";
-import Invoice, { InvoiceMode } from "@/core/data/invoice.ts";
+import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import { signal } from "@preact/signals-react";
 import { Services } from "@/core/services/services.ts";
-import type { InvoiceItem } from "@/core/data/invoiceItem.ts";
+import type { InvoiceItem } from "@/core/data/invoices/invoiceItem.ts";
 
 
 export default function InvoiceItemsTable({invoice}: { invoice: Invoice })

@@ -7,7 +7,7 @@ import InvoiceGlobalSettlements from "./invoiceGlobalSettlements";
 import InvoiceItemsTable from "./invoiceItemsTable";
 import InvoiceSummary from "./invoiceSummary";
 import { Services } from "@/core/services/services.ts";
-import type Invoice from "@/core/data/invoice.ts";
+import type Invoice from "@/core/data/invoices/invoice.ts";
 import StoreItemSelector from "@/features/items/storeItemSelector.tsx";
 
 

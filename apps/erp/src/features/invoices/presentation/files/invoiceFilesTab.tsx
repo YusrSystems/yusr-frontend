@@ -1,5 +1,5 @@
 import { StorageFileField, StorageType, useStorageFile } from "yusr-ui";
-import type Invoice from "@/core/data/invoice.ts";
+import type Invoice from "@/core/data/invoices/invoice.ts";
 
 
 export default function InvoiceFilesTab({invoice}: { invoice: Invoice })

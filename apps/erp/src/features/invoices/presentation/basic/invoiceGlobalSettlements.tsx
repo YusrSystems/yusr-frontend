@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { FieldsSection, NumberField, TextAreaField } from "yusr-ui";
-import Invoice, { InvoiceMode } from "@/core/data/invoice.ts";
+import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
 
 
 export default function InvoiceGlobalSettlements({invoice}: { invoice: Invoice })

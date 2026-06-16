@@ -1,4 +1,4 @@
-import type Invoice from "@/core/data/invoice.ts";
+import type Invoice from "@/core/data/invoices/invoice.ts";
 import { InvoiceRelationType } from "@/core/data/invoiceOld.ts";
 import { Services } from "@/core/services/services.ts";
 import type { Signal } from "@preact/signals-react";

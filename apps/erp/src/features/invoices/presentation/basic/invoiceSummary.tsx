@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { cn, CurrencyIcon, SystemPermissionsActions } from "yusr-ui";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 import InvoiceProfitDialog from "../profit/InvoiceProfitDialog";
-import type Invoice from "@/core/data/invoice.ts";
+import type Invoice from "@/core/data/invoices/invoice.ts";
 import { Services } from "@/core/services/services.ts";
 
 

@@ -3,15 +3,15 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
-    Button,
-    ChangeDialog,
-    type CommonChangeDialogProps,
-    DialogClose,
-    DialogFooter,
-    Loading,
-    type RequestResult,
-    StorageType,
-    useStorageFile
+	Button,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	DialogClose,
+	DialogFooter,
+	Loading,
+	type RequestResult,
+	StorageType,
+	useStorageFile
 } from "yusr-ui";
 import { InvoiceType } from "@/core/data/invoiceOld.ts";
 import InvoicesApiService from "../../core/networking/invoiceApiService";
@@ -20,7 +20,7 @@ import InvoiceBasicTab from "./presentation/basic/invoiceBasicTab";
 import InvoiceCostsTab from "./presentation/costs/invoiceCostsTab";
 import InvoiceFilesTab from "./presentation/files/invoiceFilesTab";
 import InvoicePolicyTab from "./presentation/policy/invoicePolicyTab";
-import Invoice, { type InvoiceDto, InvoiceMode } from "@/core/data/invoice.ts";
+import Invoice, { type InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
