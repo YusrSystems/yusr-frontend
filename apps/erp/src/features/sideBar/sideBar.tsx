@@ -2,46 +2,41 @@ import { AppNavigator } from "@/app/appNavigator";
 import logoOnlyDark from "@/assets/yusrLogoOnly_Dark.png";
 import logoOnlyLight from "@/assets/yusrLogoOnly_Light.png";
 import {
-  Building2,
-  FileChartColumnIncreasing,
-  LayoutDashboardIcon,
-  Package,
-  ReceiptText,
-  ScrollText,
-  SettingsIcon,
-  UsersIcon,
-  WalletCards
+	Building2,
+	FileChartColumnIncreasing,
+	LayoutDashboardIcon,
+	Package,
+	ReceiptText,
+	ScrollText,
+	SettingsIcon,
+	UsersIcon,
+	WalletCards
 } from "lucide-react";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ApiConstants,
-  Sidebar,
-  SideBarCompanyData,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarLogo,
-  SideBarMainMenu,
-  SidebarMenu,
-  SidebarMenuItem,
-  SideBarSecondaryMenu,
-  SideBarUserData,
-  SystemPermissionsActions,
-  useSidebar,
-  YusrApiHelper
+	Sidebar,
+	SideBarCompanyData,
+	SidebarContent,
+	SidebarFooter,
+	SidebarHeader,
+	SidebarLogo,
+	SideBarMainMenu,
+	SidebarMenu,
+	SidebarMenuItem,
+	SideBarSecondaryMenu,
+	SideBarUserData,
+	SystemPermissionsActions,
+	useSidebar,
+	YusrApiHelper
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
-import { logout, useAppDispatch, useAppSelector } from "@/core/state/store.ts";
 import { Services } from "@/core/services/services";
 
 
 export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 {
 	const {t} = useTranslation("erpCommon");
-	const authState = useAppSelector((state) => state.auth);
-
-	const dispatch = useAppDispatch();
 
 	const logoConfig = {
 		full: {light: logoOnlyLight, dark: logoOnlyDark, sizeStyle: "w-12 px-2"},
@@ -281,19 +276,18 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 	};
 
 	const displayCompany = {
-		name: authState.setting?.companyName || "Default Name",
-		logo: authState.setting?.logo?.url || "/default-avatar.jpg"
+		name: Services.auth.setting?.companyName.value || "Default Name",
+		logo: Services.auth.setting?.logo?.value.url || "/default-avatar.jpg"
 	};
 
 	const LogoutHandler = async () =>
 	{
-		const result = await YusrApiHelper.Post(`${ ApiConstants.baseUrl }/Logout`);
+		const result = await YusrApiHelper.Post(`$/api/Logout`);
 
 		if (result.status === 200 || result.status === 204)
 		{
 			AppNavigator.navigate("/login", true);
 			Services.auth.logout();
-			dispatch(logout());
 		}
 	};
 
@@ -329,7 +323,7 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 			</SidebarContent>
 
 			<SidebarFooter>
-				<SideBarUserData user={ authState.loggedInUser }/>
+				<SideBarUserData user={ Services.auth.loggedInUser }/>
 			</SidebarFooter>
 		</Sidebar>
 	);

@@ -2,21 +2,21 @@ import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
 import {
-  Button,
-  ChangeDialog,
-  CitiesSearchableSelect,
-  type CommonChangeDialogProps,
-  CurrencyIcon,
-  FieldGroup,
-  FieldsSection,
-  FormField,
-  NumberField,
-  PhoneField,
-  SelectField,
-  SystemPermissionsActions,
-  TablePreviewCompact,
-  TextAreaField,
-  TextField
+	Button,
+	ChangeDialog,
+	CitiesSearchableSelect,
+	type CommonChangeDialogProps,
+	CurrencyIcon,
+	FieldGroup,
+	FieldsSection,
+	FormField,
+	NumberField,
+	PhoneField,
+	SelectField,
+	SystemPermissionsActions,
+	TablePreviewCompact,
+	TextAreaField,
+	TextField
 } from "yusr-ui";
 
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";

@@ -7,7 +7,7 @@ export default function InvoiceFilesTab({invoice}: { invoice: Invoice })
 	const {fileInputRef, handleFileChange, handleRemoveFile, handleDownload, showFilePreview, getFileSrc} =
 		useStorageFile(
 			() => invoice.invoiceFiles.value,
-			(value) => (invoice.invoiceFiles.value = Array.isArray(value) ? value : [value]),
+			(value) => (invoice.invoiceFiles.value = value),
 			StorageType.Private
 		);
 

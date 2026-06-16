@@ -1,29 +1,30 @@
-import { createContext, type JSX, useContext } from "react";
+import React, { createContext, type JSX, useContext } from "react";
+
 
 export type YusrSidBarProps = {
-  LinkComponent?: React.ElementType;
+	LinkComponent?: React.ElementType;
 
-  logos: {
-    logoFullDark: string;
-    logoFullLight: string;
-    logoOnlyDark: string;
-    logoOnlyLight: string;
-  };
-  displayCompany?: {
-    name: string;
-    logo: string;
-  };
-  navMain?: {
-    title: string;
-    url: string;
-    icon: JSX.Element;
-    hasAuth: boolean;
-  }[];
-  navSecondary?: {
-    title: string;
-    url: string;
-    icon: JSX.Element;
-  }[];
+	logos: {
+		logoFullDark: string;
+		logoFullLight: string;
+		logoOnlyDark: string;
+		logoOnlyLight: string;
+	};
+	displayCompany?: {
+		name: string;
+		logo: string;
+	};
+	navMain?: {
+		title: string;
+		url: string;
+		icon: JSX.Element;
+		hasAuth: boolean;
+	}[];
+	navSecondary?: {
+		title: string;
+		url: string;
+		icon: JSX.Element;
+	}[];
 };
 
 export const SidebarContext = createContext<YusrSidBarProps | null>(null);
@@ -35,10 +36,10 @@ export const SidebarContext = createContext<YusrSidBarProps | null>(null);
  */
 export const useSidebarContext = (): YusrSidBarProps =>
 {
-  const sidebarContext = useContext(SidebarContext);
-  if (!sidebarContext)
-  {
-    throw new Error("useSidebarContext must be used within a SidebarProvider");
-  }
-  return sidebarContext;
+	const sidebarContext = useContext(SidebarContext);
+	if (!sidebarContext)
+	{
+		throw new Error("useSidebarContext must be used within a SidebarProvider");
+	}
+	return sidebarContext;
 };

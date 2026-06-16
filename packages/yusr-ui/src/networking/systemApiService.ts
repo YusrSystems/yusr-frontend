@@ -1,11 +1,13 @@
-import { ApiConstants, type RequestResult, YusrApiHelper } from "yusr-ui";
+import type { RequestResult } from "../types";
+import { YusrApiHelper } from "../networking/yusrApiHelper.ts";
+
 
 export class SystemApiService
 {
-  routeName: string = "System";
+	routeName: string = "System";
 
-  async GetSystemPermissions(): Promise<RequestResult<string[]>>
-  {
-    return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/Permissions`);
-  }
+	async GetSystemPermissions(): Promise<RequestResult<string[]>>
+	{
+		return await YusrApiHelper.Get(`$/api/${ this.routeName }/Permissions`);
+	}
 }

@@ -2,43 +2,45 @@ import { Signal, signal } from "@preact/signals-react";
 import type { Dto } from "./dto";
 import { EntitySignal } from "./entitySignal";
 
+
 export abstract class Entity<TDto extends Dto>
 {
-  id: Signal<number>;
+	id: Signal<number>;
 
-  constructor(dto?: Partial<TDto>)
-  {
-    this.id = signal(dto?.id ?? 0);
-  }
+	protected constructor(dto?: Partial<TDto>)
+	{
+		this.id = signal(dto?.id ?? 0);
+	}
 
-  assign(key: keyof TDto, value: any)
-  {
-    return new EntitySignal(value, (value) =>
-    {
-      this.onFieldChange(key, value);
-    });
-  }
+	assign(key: keyof TDto, value: any)
+	{
+		return new EntitySignal(value, (value) =>
+		{
+			this.onFieldChange(key, value);
+		});
+	}
 
-  protected onFieldChange(_: keyof TDto, __: any): void
-  {}
+	protected onFieldChange(_: keyof TDto, __: any): void
+	{
+	}
 
-  toJson(): TDto
-  {
-    return (Object.keys(this) as (keyof TDto)[]).reduce((acc, key) =>
-    {
-      const field = this[key as keyof this];
-      const value = field instanceof Signal ? field.value : field;
+	toJson(): TDto
+	{
+		return (Object.keys(this) as (keyof TDto)[]).reduce((acc, key) =>
+		{
+			const field = this[key as keyof this];
+			const value = field instanceof Signal ? field.value : field;
 
-      if (Array.isArray(value))
-      {
-        acc[key] = value.map((item) => item instanceof Entity ? item.toJson() : item) as TDto[keyof TDto];
-      }
-      else
-      {
-        acc[key] = value as TDto[keyof TDto];
-      }
+			if (Array.isArray(value))
+			{
+				acc[key] = value.map((item) => item instanceof Entity ? item.toJson() : item) as TDto[keyof TDto];
+			}
+			else
+			{
+				acc[key] = value as TDto[keyof TDto];
+			}
 
-      return acc;
-    }, {} as TDto);
-  }
+			return acc;
+		}, {} as TDto);
+	}
 }

@@ -1,7 +1,7 @@
 import { AppNavigator } from "@/app/appNavigator";
 import { Setting, SettingDto } from "@/core/data/setting";
 import { Services } from "@/core/services/services";
-import { ApiConstants, Cubit, User, UserDto, YusrApiHelper } from "yusr-ui";
+import { Cubit, User, UserDto, YusrApiHelper } from "yusr-ui";
 import { Registration } from "@/core/data/registration.ts";
 import {
 	type RegistrationState,
@@ -36,7 +36,7 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 		try
 		{
 			const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
-				`${ ApiConstants.baseUrl }/Register`,
+				`$/api/Register`,
 				this.formData.toJson()
 			);
 			console.log(result.status);
@@ -63,7 +63,7 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 		token: string)
 	{
 		const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
-			`${ ApiConstants.baseUrl }/Login/external-login`,
+			`$/api/Login/external-login`,
 			{
 				provider: "google",
 				token

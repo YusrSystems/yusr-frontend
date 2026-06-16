@@ -1,29 +1,26 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../../pure/avatar";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../../pure/sidebar";
+import { User } from "@/entities";
 
-interface UsernameObject
-{
-  username?: string;
-}
 
-export function SideBarUserData<T extends UsernameObject>({ user }: { user: T | undefined; })
+export function SideBarUserData({user}: { user: User | undefined; })
 {
-  return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <SidebarMenuButton
-          size="lg"
-          className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-        >
-          <Avatar className="h-8 w-8 rounded-lg grayscale">
-            <AvatarImage src="/avatars/shadcn.jpg" alt={ user?.username } />
-            <AvatarFallback className="rounded-lg">YSR</AvatarFallback>
-          </Avatar>
-          <div className="grid flex-1 text-start text-sm leading-tight">
-            <span className="truncate font-medium">{ user?.username }</span>
-          </div>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    </SidebarMenu>
-  );
+	return (
+		<SidebarMenu>
+			<SidebarMenuItem>
+				<SidebarMenuButton
+					size="lg"
+					className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+				>
+					<Avatar className="h-8 w-8 rounded-lg grayscale">
+						<AvatarImage src="/avatars/shadcn.jpg" alt={ user?.username.value }/>
+						<AvatarFallback className="rounded-lg">YSR</AvatarFallback>
+					</Avatar>
+					<div className="grid flex-1 text-start text-sm leading-tight">
+						<span className="truncate font-medium">{ user?.username.value }</span>
+					</div>
+				</SidebarMenuButton>
+			</SidebarMenuItem>
+		</SidebarMenu>
+	);
 }

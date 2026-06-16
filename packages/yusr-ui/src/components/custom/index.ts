@@ -6,19 +6,15 @@ export * from "./background/yusrBackground";
 
 // Buttons
 export * from "./buttons/copyButton";
-export * from "./buttons/saveButtonOld";
 export * from "./buttons/tabButton";
 
 // Containers
 export * from "./containers/dynamicListContainer";
 export * from "./containers/yusrApp";
+
 // Dialogs
 export * from "./dialogs/changeDialog";
-export * from "./dialogs/changeDialogOld";
-export * from "./dialogs/changeDialogTabbed";
-export * from "./dialogs/commonChangeDialogProps";
-export * from "./dialogs/deleteDialogOld";
-export * from "./dialogs/dialogType";
+export * from "./dialogs/commonChangeDialogProps.ts";
 
 // Currency
 export * from "./currency/currencyIcon";
@@ -59,23 +55,16 @@ export * from "./locale/languageToggle";
 
 // Pages
 export * from "./pages/crudPage";
-export * from "./pages/crudPageOld";
 
 // permissions
 export * from "./permissions/permissionCard";
 export * from "./permissions/permissionSkeleton";
 
 // Select
-export * from "./select/branchesSearchableSelectOld";
-export * from "./select/changableSearchableSelect";
 export * from "./select/citiesSearchableSelect";
-export * from "./select/citiesSearchableSelectOld";
 export * from "./select/currenciesSearchableSelect";
-export * from "./select/currenciesSearchableSelectOld";
 export * from "./select/rolesSearchableSelect";
-export * from "./select/rolesSearchableSelectOld";
 export * from "./select/searchableSelect";
-export * from "./select/searchableSelectOld";
 
 // Separators
 export * from "./separators/titleSeparator";

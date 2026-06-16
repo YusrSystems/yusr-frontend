@@ -10,12 +10,12 @@ import { Box, Database, DollarSign } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ChangeDialog,
-  type CommonChangeDialogProps,
-  Loading,
-  StorageType,
-  SystemPermissionsActions,
-  useStorageFile
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	Loading,
+	StorageType,
+	SystemPermissionsActions,
+	useStorageFile
 } from "yusr-ui";
 import { ItemType } from "@/core/data/item.ts";
 import BasicTab from "./basic/basicTab";
@@ -69,7 +69,7 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 	}, []);
 	const {commitFiles} = useStorageFile(
 		() => currentEntity.value.itemImages.value,
-		(v) => (currentEntity.value.itemImages.value = Array.isArray(v) ? v : [v]),
+		(v) => (currentEntity.value.itemImages.value = v),
 		StorageType.Public
 	);
 

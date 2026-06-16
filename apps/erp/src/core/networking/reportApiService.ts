@@ -1,4 +1,4 @@
-import { ApiConstants, YusrApiHelper } from "yusr-ui";
+import { YusrApiHelper } from "yusr-ui";
 import type { BaseReportRequest } from "../data/report/baseReportRequest";
 
 
@@ -11,7 +11,7 @@ export default class ReportApiService
 		filename: string = ""
 	): Promise<boolean>
 	{
-		const url = `${ ApiConstants.baseUrl }/Reports/${ reportName }`;
+		const url = `/api/Reports/${ reportName }`;
 
 		const blob = await YusrApiHelper.PostBlob(url, request);
 
@@ -37,7 +37,7 @@ export default class ReportApiService
 		request: BaseReportRequest
 	): Promise<Blob | undefined>
 	{
-		const url = `${ ApiConstants.baseUrl }/Reports/${ reportName }`;
+		const url = `/api/Reports/${ reportName }`;
 		return await YusrApiHelper.PostBlob(url, request);
 	}
 

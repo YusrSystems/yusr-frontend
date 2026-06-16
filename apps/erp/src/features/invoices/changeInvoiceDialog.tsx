@@ -47,7 +47,7 @@ export default function ChangeInvoiceDialog({
 
 	const {commitFiles} = useStorageFile(
 		() => currentEntity.value.invoiceFiles.value ?? [],
-		(files) => currentEntity.value.invoiceFiles.value = Array.isArray(files) ? files : [files],
+		(files) => currentEntity.value.invoiceFiles.value = files,
 		StorageType.Private
 	);
 

@@ -1,4 +1,4 @@
-import { ApiConstants, type RequestResult, YusrApiHelper } from "yusr-ui";
+import { type RequestResult, YusrApiHelper } from "yusr-ui";
 import type { EInvoicingEnvironmentType } from "../data/setting";
 
 
@@ -8,7 +8,7 @@ export default class EInvoicingApiService
 
 	async Link(otp: string, eInvoicingEnvironmentType: EInvoicingEnvironmentType): Promise<RequestResult<boolean>>
 	{
-		const url = `${ ApiConstants.baseUrl }/${ this.routeName }/LinkEInvoicing/${ otp }/${ eInvoicingEnvironmentType }`;
+		const url = `/api/${ this.routeName }/LinkEInvoicing/${ otp }/${ eInvoicingEnvironmentType }`;
 		return await YusrApiHelper.Get<boolean>(url);
 	}
 }

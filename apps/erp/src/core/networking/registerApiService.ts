@@ -1,5 +1,5 @@
 import { Registration, type RegistrationDto } from "@/core/data/registration.ts";
-import { ApiConstants, BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
+import { BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
 
 
 export class RegisterApiService extends BaseApiService<Registration, RegistrationDto>
@@ -14,7 +14,7 @@ export class RegisterApiService extends BaseApiService<Registration, Registratio
 	async register(data: Registration): Promise<RequestResult<boolean>>
 	{
 		return await YusrApiHelper.Post(
-			`${ ApiConstants.baseUrl }/${ this.routeName }`,
+			`/api/${ this.routeName }`,
 			data.toJson()
 		);
 	}
