@@ -1,65 +1,29 @@
 import type { Signal } from "@preact/signals-react";
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { type TFunction } from "i18next";
-import { BaseEntity, ChangeableEntity, type ChangeableEntityMode, Dto, i18n, type IEntityState, type ValidationRule, type ValidationRuleOld, Validators } from "yusr-ui";
-import StoresApiServiceOld from "../networking/storesApiServiceOld";
+import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, type ValidationRule, Validators } from "yusr-ui";
 
-export default class StoreOld extends BaseEntity
-{
-  public name!: string;
-  public createdBy!: number;
-  public authorized!: boolean;
-
-  constructor(init?: Partial<StoreOld>)
-  {
-    super();
-    Object.assign(this, init);
-  }
-}
 
 export class StoreDto extends Dto
 {
-  public name!: string;
-  public authorized!: boolean;
+	public name!: string;
+	public authorized!: boolean;
 }
 
 export class Store extends ChangeableEntity<StoreDto>
 {
-  public name: Signal<string>;
-  public authorized: Signal<boolean>;
+	public name: Signal<string>;
+	public authorized: Signal<boolean>;
 
-  constructor(dto?: Partial<StoreDto>, mode: ChangeableEntityMode = "create")
-  {
-    const rules: ValidationRule<Partial<StoreDto>>[] = [{
-      field: "name",
-      selector: (d) => d.name,
-      validators: [Validators.required(i18n.t("stocking:stores.nameRequired"))]
-    }];
+	constructor(dto?: Partial<StoreDto>, mode: ChangeableEntityMode = "create")
+	{
+		const rules: ValidationRule<Partial<StoreDto>>[] = [{
+			field: "name",
+			selector: (d) => d.name,
+			validators: [Validators.required(i18n.t("stocking:stores.nameRequired"))]
+		}];
 
-    super(dto, rules, mode);
+		super(dto, rules, mode);
 
-    this.name = this.assign("name", dto?.name ?? "");
-    this.authorized = this.assign("authorized", dto?.authorized ?? false);
-  }
+		this.name = this.assign("name", dto?.name ?? "");
+		this.authorized = this.assign("authorized", dto?.authorized ?? false);
+	}
 }
-
-export class StoreValidationRules
-{
-  public static validationRules = (t: TFunction<"stocking">): ValidationRuleOld<Partial<StoreOld>>[] => [{
-    field: "name",
-    selector: (d) => d.name,
-    validators: [Validators.required(t("stores.nameRequired"))]
-  }];
-}
-
-export const storeService = new StoresApiServiceOld();
-
-export const filterAll = createAsyncThunk(
-  "store/filterAll",
-  async (searchText: string | undefined, { getState }) =>
-  {
-    const state = (getState() as never)["store"] as IEntityState<StoreOld>;
-    const result = await storeService.FilterAll(state.currentPage, state.rowsPerPage, searchText);
-    return result?.data;
-  }
-);

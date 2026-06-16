@@ -1,60 +1,53 @@
-import { type TFunction } from "i18next";
-import { BaseEntity, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRuleOld, Validators } from "yusr-ui";
-import PaymentMethodsApiServiceOld from "../networking/paymentMethodApiServiceOld";
-
-export const CommissionTypeOld = {
+import type { Signal } from "@preact/signals-react";
+import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+const CommissionType = {
   Percent: 1,
   Amount: 2
 } as const;
-export type CommissionTypeOld = (typeof CommissionTypeOld)[keyof typeof CommissionTypeOld];
 
-export default class PaymentMethodOld extends BaseEntity
+export type CommissionType = typeof CommissionType[keyof typeof CommissionType];
+
+export class PaymentMethodDto extends Dto
 {
-  public name!: string;
-  public accountId!: number;
-  public accountName!: string;
-  public commissionType!: CommissionTypeOld;
-  public commissionAmount!: number;
+  name!: string;
+  accountId!: number;
+  accountName!: string;
+  commissionType!: CommissionType;
+  commissionAmount!: number;
+}
 
-  constructor(init?: Partial<PaymentMethodOld>)
+export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
+{
+  public name: Signal<string>;
+  public accountId: Signal<number>;
+  public accountName: Signal<string>;
+  public commissionType: Signal<CommissionType>;
+  public commissionAmount: Signal<number>;
+
+  constructor(dto: Partial<PaymentMethodDto> | undefined, mode: ChangeableEntityMode = "create")
   {
-    super();
-    Object.assign(this, init);
+    super(dto, [{
+      field: "name",
+      selector: (d) => d.name,
+      validators: [Validators.required(i18n.t("accounting:paymentMethods.nameRequired"))]
+    }, {
+      field: "accountId",
+      selector: (d) => d.accountId,
+      validators: [Validators.required(i18n.t("accounting:paymentMethods.accountRequired"))]
+    }, {
+      field: "commissionType",
+      selector: (d) => d.commissionType,
+      validators: [Validators.required(i18n.t("accounting:paymentMethods.commissionTypeRequired"))]
+    }, {
+      field: "commissionAmount",
+      selector: (d) => d.commissionAmount,
+      validators: [Validators.required(i18n.t("accounting:paymentMethods.commissionValueRequired"))]
+    }], mode);
+
+    this.name = this.assign("name", dto?.name ?? "");
+    this.accountId = this.assign("accountId", dto?.accountId ?? 0);
+    this.accountName = this.assign("accountName", dto?.accountName ?? "");
+    this.commissionType = this.assign("commissionType", dto?.commissionType ?? CommissionType.Percent);
+    this.commissionAmount = this.assign("commissionAmount", dto?.commissionAmount ?? 0);
   }
-}
-
-export class PaymentMethodValidationRules
-{
-  public static validationRules = (t: TFunction<"accounting">): ValidationRuleOld<Partial<PaymentMethodOld>>[] => [{
-    field: "name",
-    selector: (d) => d.name,
-    validators: [Validators.required(t("paymentMethods.nameRequired"))]
-  }, {
-    field: "accountId",
-    selector: (d) => d.accountId,
-    validators: [Validators.required(t("paymentMethods.accountRequired"))]
-  }, {
-    field: "commissionType",
-    selector: (d) => d.commissionType,
-    validators: [Validators.required(t("paymentMethods.commissionTypeRequired"))]
-  }, {
-    field: "commissionAmount",
-    selector: (d) => d.commissionAmount,
-    validators: [Validators.required(t("paymentMethods.commissionValueRequired"))]
-  }];
-}
-
-export class PaymentMethodSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("paymentMethod", new PaymentMethodsApiServiceOld());
-  public static entityActions = PaymentMethodSlice.entitySliceInstance.actions;
-  public static entityReducer = PaymentMethodSlice.entitySliceInstance.reducer;
-
-  private static dialogSliceInstance = createGenericDialogSlice<PaymentMethodOld>("paymentMethodDialog");
-  public static dialogActions = PaymentMethodSlice.dialogSliceInstance.actions;
-  public static dialogReducer = PaymentMethodSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<PaymentMethodOld>("paymentMethodForm");
-  public static formActions = PaymentMethodSlice.formSliceInstance.actions;
-  public static formReducer = PaymentMethodSlice.formSliceInstance.reducer;
 }

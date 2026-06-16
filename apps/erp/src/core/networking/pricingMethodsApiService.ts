@@ -1,13 +1,13 @@
 import { BaseApiService } from "yusr-ui";
-import PricingMethod from "../data/pricingMethod";
-import type PricingMethodOld from "../data/pricingMethodOld";
+import PricingMethod, { PricingMethodDto } from "../data/pricingMethod";
 
-export default class PricingMethodsApiService extends BaseApiService<PricingMethod, PricingMethodOld>
+
+export default class PricingMethodsApiService extends BaseApiService<PricingMethod, PricingMethodDto>
 {
-  routeName: string = "PricingMethods";
+	routeName: string = "PricingMethods";
 
-  override createEntity(dto: PricingMethodOld): PricingMethod
-  {
-    return new PricingMethod(dto);
-  }
+	override createEntity(dto: PricingMethodDto): PricingMethod
+	{
+		return new PricingMethod(dto);
+	}
 }

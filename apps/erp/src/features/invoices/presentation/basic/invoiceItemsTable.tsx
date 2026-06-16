@@ -352,9 +352,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 										{ !invoice.isDisabled && (
 											<button
 												type="button"
-												onClick={ () => invoice.invoiceItems.value = invoice.invoiceItems.value.filter((_, i) =>
-													i !== index
-												) }
+												onClick={ () => invoice.removeItem(index) }
 												className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
 												aria-label={ t("invoices.deleteItem") }
 											>
