@@ -3,6 +3,7 @@ import BalanceTransfersPage from "@/features/balanceTransfer/balanceTransfersPag
 import LegalDocViewer from "@/features/legal/legaldocviewer";
 import {PaymentMethodsPage} from "@/features/paymentMethods/paymentMethodsPage";
 import {ErpRolesPage} from "@/features/roles/erpRolesPage";
+import VouchersPage from "@/features/vouchers/vouchersPage.tsx";
 import {createBrowserRouter} from "react-router-dom";
 import {BranchesPage, ErrorFallback, MaintenanceFallback, NotFoundPage, ProtectedRoute, UsersPage} from "yusr-ui";
 import {BanksAccountsPage} from "../features/accounts/banksAccountsPage";
@@ -11,7 +12,7 @@ import {ClientsAccountsPage} from "../features/accounts/clientsAccountsPage";
 import {EmployeesAccountsPage} from "../features/accounts/employeesAccountsPage";
 import {SuppliersAccountsPage} from "../features/accounts/suppliersAccountsPage";
 import DashboardPage from "../features/dashboard/dashboardPage";
-import PurchaseInvoicesPage from "../features/invoices/purchaseInvoicesOld.tsx";
+import PurchaseInvoicesPageOld from "../features/invoices/purchaseInvoicesOld.tsx";
 import QuotationInvoicesPageOld from "../features/invoices/quotationInvoicesPageOld.tsx";
 import SellInvoicesPageOld from "../features/invoices/sellInvoicesPageOld.tsx";
 import ItemsPage from "../features/items/itemsPage";
@@ -30,7 +31,6 @@ import TenantInfoSharingPage from "../features/tenantInfoSharing/tenantInfoShari
 import TestPage from "../features/test/testPage";
 import UnitsPage from "../features/units/unitsPage";
 import AppLayout from "./appLayout";
-import VouchersPage from "@/features/vouchers/vouchersPage.tsx";
 
 const refreshPage = () => {
     window.location.reload();
@@ -71,8 +71,8 @@ export const router = createBrowserRouter([{
                     {path: "/balanceTransfer", element: <BalanceTransfersPage/>},
                     {path: "/sales", element: <SellInvoicesPageOld/>},
                     {path: "/sales/:id", element: <SellInvoicesPageOld/>},
-                    {path: "/purchases", element: <PurchaseInvoicesPage/>},
-                    {path: "/purchases/:id", element: <PurchaseInvoicesPage/>},
+                    {path: "/purchases", element: <PurchaseInvoicesPageOld/>},
+                    {path: "/purchases/:id", element: <PurchaseInvoicesPageOld/>},
                     {path: "/quotations", element: <QuotationInvoicesPageOld/>},
                     {path: "/quotations/:id", element: <QuotationInvoicesPageOld/>},
                     {path: "/vouchers", element: <VouchersPage/>},

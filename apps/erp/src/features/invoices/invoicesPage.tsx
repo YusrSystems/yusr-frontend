@@ -1,3 +1,4 @@
+//TODO: must be tested
 import VerfiAccountWrapper from "@/core/components/VerfiAccountWrapper.tsx";
 import {InvoiceDto} from "@/core/data/invoice.ts";
 import Invoice from "@/core/data/invoice.ts";
@@ -45,7 +46,7 @@ export default function InvoicesPage({
                                          fixedType,
                                          hasPagePermission,
                                          basePath,
-                                         permissionResource
+                                         permissionResource,
                                      }: {
     entityName?: string;
     addNewItemTitle?: string;
