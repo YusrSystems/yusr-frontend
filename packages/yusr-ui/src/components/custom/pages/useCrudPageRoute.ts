@@ -1,48 +1,45 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import type { BaseEntity } from "../../../entities";
-import type { CrudActionsOld } from "./crudPageOld";
+import {useEffect} from "react";
+import {useDispatch} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import type {BaseEntity} from "../../../entities";
+import type {CrudActionsOld} from "./crudPageOld";
 
+// TODO: refactor this hook to new framework
+
+
+// to allow users share invoices and dialog links
 export default function useCrudPageRoute<T extends BaseEntity>(
-  { actions, routeIdParam, basePath, onRouteOpen }: {
-    actions: CrudActionsOld<T>;
-    routeIdParam?: string;
-    basePath?: string;
-    onRouteOpen?: (id: number) => void;
-  }
-)
-{
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const params = useParams();
-  const routeId = routeIdParam ? params[routeIdParam] : undefined;
-
-  useEffect(() =>
-  {
-    if (basePath && routeId)
-    {
-      onRouteOpen?.(Number(routeId));
+    {actions, routeIdParam, basePath, onRouteOpen}: {
+        actions: CrudActionsOld<T>;
+        routeIdParam?: string;
+        basePath?: string;
+        onRouteOpen?: (id: number) => void;
     }
-  }, [routeId]);
+) {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const params = useParams();
+    const routeId = routeIdParam ? params[routeIdParam] : undefined;
 
-  const handleOpenChangeDialog = (entity: T) =>
-  {
-    if (basePath)
-    {
-      navigate(`${basePath}/${entity.id}`);
-    }
-    dispatch(actions.openChangeDialog(entity));
-  };
+    useEffect(() => {
+        if (basePath && routeId) {
+            onRouteOpen?.(Number(routeId));
+        }
+    }, [routeId]);
 
-  const handleSetIsChangeDialogOpen = (open: boolean) =>
-  {
-    if (!open && basePath)
-    {
-      navigate(basePath);
-    }
-    dispatch(actions.setIsChangeDialogOpen(open));
-  };
+    const handleOpenChangeDialog = (entity: T) => {
+        if (basePath) {
+            navigate(`${basePath}/${entity.id}`);
+        }
+        dispatch(actions.openChangeDialog(entity));
+    };
 
-  return { handleOpenChangeDialog, handleSetIsChangeDialogOpen };
+    const handleSetIsChangeDialogOpen = (open: boolean) => {
+        if (!open && basePath) {
+            navigate(basePath);
+        }
+        dispatch(actions.setIsChangeDialogOpen(open));
+    };
+
+    return {handleOpenChangeDialog, handleSetIsChangeDialogOpen};
 }
