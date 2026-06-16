@@ -12,9 +12,6 @@ import ClientsAccountsPage from "../features/accounts/clientsAccountsPage";
 import { EmployeesAccountsPage } from "../features/accounts/employeesAccountsPage";
 import { SuppliersAccountsPage } from "../features/accounts/suppliersAccountsPage";
 import DashboardPage from "../features/dashboard/dashboardPage";
-import PurchaseInvoicesPageOld from "../features/invoices/purchaseInvoices.tsx";
-import QuotationInvoicesPageOld from "../features/invoices/quotationInvoicesPage.tsx";
-import SellInvoicesPageOld from "../features/invoices/sellInvoicesPage.tsx";
 import ItemsPage from "../features/items/itemsPage";
 import ItemsSettlementsPage from "../features/itemsSettlements/itemsSettlementsPage";
 import ItemTransfersPage from "../features/itemTransfers/itemTransfersPage";
@@ -28,9 +25,11 @@ import StocktakingsPage from "../features/stocktakings/stocktakingsPage";
 import StoresPage from "../features/stores/storePage";
 import TaxesPage from "../features/taxes/taxesPage";
 import TenantInfoSharingPage from "../features/tenantInfoSharing/tenantInfoSharingPage";
-// import TestPage from "../features/test/testPage";
 import UnitsPage from "../features/units/unitsPage";
 import AppLayout from "./appLayout";
+import SellInvoicesPage from "@/features/invoices/sellInvoicesPage";
+import PurchaseInvoicesPage from "@/features/invoices/purchaseInvoices.tsx";
+import QuotationInvoicesPage from "@/features/invoices/quotationInvoicesPage.tsx";
 
 
 const refreshPage = () =>
@@ -55,7 +54,6 @@ export const router = createBrowserRouter([{
 			children: [{
 				element: <AppLayout/>,
 				children: [
-					// {path: "/test", element: <TestPage/>},
 					{path: "/dashboard", element: <DashboardPage/>},
 					{path: "/users", element: <UsersPage/>},
 					{path: "/settings", element: <SettingPage/>},
@@ -71,12 +69,12 @@ export const router = createBrowserRouter([{
 					{path: "/boxes", element: <BoxesAccountsPage/>},
 					{path: "/paymentMethods", element: <PaymentMethodsPage/>},
 					{path: "/balanceTransfer", element: <BalanceTransfersPage/>},
-					{path: "/sales", element: <SellInvoicesPageOld/>},
-					{path: "/sales/:id", element: <SellInvoicesPageOld/>},
-					{path: "/purchases", element: <PurchaseInvoicesPageOld/>},
-					{path: "/purchases/:id", element: <PurchaseInvoicesPageOld/>},
-					{path: "/quotations", element: <QuotationInvoicesPageOld/>},
-					{path: "/quotations/:id", element: <QuotationInvoicesPageOld/>},
+					{path: "/sales", element: <SellInvoicesPage/>},
+					{path: "/sales/:id", element: <SellInvoicesPage/>},
+					{path: "/purchases", element: <PurchaseInvoicesPage/>},
+					{path: "/purchases/:id", element: <PurchaseInvoicesPage/>},
+					{path: "/quotations", element: <QuotationInvoicesPage/>},
+					{path: "/quotations/:id", element: <QuotationInvoicesPage/>},
 					{path: "/vouchers", element: <VouchersPage/>},
 					{path: "/items", element: <ItemsPage/>},
 					{path: "/pricingMethods", element: <PricingMethodsPage/>},

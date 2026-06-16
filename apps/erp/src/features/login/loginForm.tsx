@@ -1,7 +1,7 @@
 import placeholderImg from "@/assets/placeholder.svg";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Button,
@@ -108,8 +108,7 @@ export function LoginForm({className, ...props}: React.ComponentProps<"div">)
 							<Field>
 								<Button
 									type="button"
-									onClick={ async () =>
-										await cubit.login() }
+									onClick={ async () => await cubit.login() }
 									disabled={ isLoading }
 								>
 									{ isLoading

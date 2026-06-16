@@ -1,6 +1,6 @@
 import type Item from "@/core/data/item";
 import { ScanBarcode } from "lucide-react";
-import { useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -11,32 +11,37 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  NumberFieldOld
+  NumberField
 } from "yusr-ui";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
 import type { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
+import { signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Services } from "@/core/services/services.ts";
+import { ItemBarcodeRequest } from "@/core/data/report/itemBarcodeRequest.ts";
 
 
 export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: ItemUnitPricingMethod; })
 {
+	useSignals();
 	const {t, i18n} = useTranslation("erpCommon");
 	const {t: tStocking} = useTranslation("stocking");
-	const [isOpen, setIsOpen] = useState(false);
-	const [isErrorOpen, setIsErrorOpen] = useState(false);
-	const [pages, setPages] = useState<number>(1);
-	const [barcodesQtn, setBarcodesQtn] = useState<number>(40);
+
+	const isOpen = useMemo(() => signal(false), []);
+	const isErrorOpen = useMemo(() => signal(false), []);
+	const pages = useMemo(() => signal(1), []);
+	const barcodesQtn = useMemo(() => signal(40), []);
 
 	const onOpen = () =>
 	{
 		if (iupm.barcode.value)
 		{
-			setIsOpen(true);
+			isOpen.value = true;
 		}
 		else
 		{
-			setIsErrorOpen(true);
+			isErrorOpen.value = true;
 		}
 	};
 
@@ -46,7 +51,7 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 				<ScanBarcode/>
 			</Button>
 
-			<Dialog open={ isErrorOpen } onOpenChange={ setIsErrorOpen }>
+			<Dialog open={ isErrorOpen.value } onOpenChange={ (open) => isErrorOpen.value = open }>
 				<DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>{ t("reports.itemBarcode") }</DialogTitle>
@@ -64,7 +69,7 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 				</DialogContent>
 			</Dialog>
 
-			<Dialog open={ isOpen } onOpenChange={ setIsOpen }>
+			<Dialog open={ isOpen.value } onOpenChange={ (open) => isOpen.value = open }>
 				<DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>{ t("reports.itemBarcode") }</DialogTitle>
@@ -72,41 +77,31 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 					</DialogHeader>
 
 					<div className="flex flex-col gap-4 py-2">
-						<NumberFieldOld
+						<NumberField
 							label={ t("reports.barcodeCount") }
 							min={ 1 }
 							step={ 1 }
 							value={ barcodesQtn }
-							onChange={ (num) => num && setBarcodesQtn(num) }
 						/>
 
-						<NumberFieldOld
+						<NumberField
 							label={ t("reports.pagesCount") }
 							value={ pages }
-							onChange={ (num) =>
-							{
-								if (num == undefined)
-								{
-									return;
-								}
-
-								setPages(num);
-								setBarcodesQtn(num * 40);
-							} }
+							onChange={ () => barcodesQtn.value = pages.value * 40 }
 						/>
 					</div>
 					<DialogFooter>
 						<ReportButton
 							reportName={ ReportConstants.ItemBarcode }
-							request={ {
+							request={ new ItemBarcodeRequest({
 								barcode: iupm.barcode.value ?? "",
 								companyName: Services.auth.setting?.companyName.value,
 								itemName: item.name.value,
 								iupmName: iupm.itemUnitPricingMethodName.value,
 								price: iupm.price.value,
-								barcodesQtn: barcodesQtn,
-								currency: Services.auth.setting?.currency?.name
-							} }
+								barcodesQtn: barcodesQtn.value,
+								currency: Services.auth.setting?.currency?.value?.name.value
+							}) }
 						/>
 					</DialogFooter>
 				</DialogContent>

@@ -1,90 +1,43 @@
-import { useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Button,
-  DateField,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
+	Button,
+	DateField,
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle
 } from "yusr-ui";
 import type { Account } from "../../core/data/account";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
+import { signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
+import { AccountStatementReportRequest } from "@/core/data/report/accountStatementReportRequest.ts";
 
-
-export default function AccountStatementButtonOld({account}: { account: Account; })
-{
-	const {t, i18n} = useTranslation("erpCommon");
-	const [isOpen, setIsOpen] = useState(false);
-	const [fromDate, setFromDate] = useState<Date>(() =>
-	{
-		const date = new Date();
-		date.setMonth(date.getMonth() - 1);
-		return date;
-	});
-	const [toDate, setToDate] = useState<Date>(new Date());
-
-	return (
-		<>
-			<Button variant="outline" size="sm" onClick={ () => setIsOpen(true) }>
-				{ t("accountStatement.button") }
-			</Button>
-
-			<Dialog open={ isOpen } onOpenChange={ setIsOpen }>
-				<DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
-					<DialogHeader>
-						<DialogTitle>{ t("accountStatement.title") }</DialogTitle>
-						<DialogDescription>{ account.name }</DialogDescription>
-					</DialogHeader>
-
-					<div className="flex flex-col gap-4 py-2">
-						<DateField
-							label={ t("reports.fromDate") }
-							value={ fromDate }
-							onChange={ (date) => date && setFromDate(date) }
-						/>
-
-						<DateField
-							label={ t("reports.toDate") }
-							value={ toDate }
-							onChange={ (date) => date && setToDate(date) }
-						/>
-					</div>
-					<DialogFooter>
-						<ReportButton
-							reportName={ ReportConstants.AccountStatement }
-							request={ {accountId: account.id, fromDate, toDate} }
-						>
-						</ReportButton>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
-		</>
-	);
-}
 
 export function AccountStatementButton({account}: { account: Account; })
 {
+	useSignals();
 	const {t, i18n} = useTranslation("erpCommon");
-	const [isOpen, setIsOpen] = useState(false);
-	const [fromDate, setFromDate] = useState<Date>(() =>
+	const isOpen = useMemo(() => signal(false), []);
+	const fromDate = useMemo(() => signal<Date>(new Date()), []);
+	const toDate = useMemo(() => signal<Date>(), []);
+
+	useEffect(() =>
 	{
-		const date = new Date();
-		date.setMonth(date.getMonth() - 1);
-		return date;
-	});
-	const [toDate, setToDate] = useState<Date>(new Date());
+		fromDate.value.setMonth(fromDate.value.getMonth() - 1);
+	}, [fromDate.value]);
 
 	return (
 		<>
-			<Button variant="outline" size="sm" className="cursor-pointer" onClick={ () => setIsOpen(true) }>
+			<Button variant="outline" size="sm" className="cursor-pointer" onClick={ () => isOpen.value = true }>
 				{ t("accountStatement.button") }
 			</Button>
 
-			<Dialog open={ isOpen } onOpenChange={ setIsOpen }>
+			<Dialog open={ isOpen.value } onOpenChange={ (open) => isOpen.value = open }>
 				<DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>{ t("accountStatement.title") }</DialogTitle>
@@ -95,19 +48,21 @@ export function AccountStatementButton({account}: { account: Account; })
 						<DateField
 							label={ t("reports.fromDate") }
 							value={ fromDate }
-							onChange={ (date) => date && setFromDate(date) }
 						/>
 
 						<DateField
 							label={ t("reports.toDate") }
 							value={ toDate }
-							onChange={ (date) => date && setToDate(date) }
 						/>
 					</div>
 					<DialogFooter>
 						<ReportButton
 							reportName={ ReportConstants.AccountStatement }
-							request={ {accountId: account.id.value, fromDate, toDate} }
+							request={ new AccountStatementReportRequest({
+								accountId: account.id.value,
+								fromDate: fromDate.value,
+								toDate: toDate.value
+							}) }
 						>
 						</ReportButton>
 					</DialogFooter>

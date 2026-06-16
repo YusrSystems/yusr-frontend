@@ -11,6 +11,7 @@ const usernameStorageItemName = "loginUsername";
 
 export default class LoginCubit extends Cubit<LoginInitialState>
 {
+	private readonly _origin: string;
 	public formData = new LoginRequest({
 		companyEmail: localStorage.getItem(emailStorageItemName) ?? "",
 		username: localStorage.getItem(usernameStorageItemName) ?? "",
@@ -19,7 +20,6 @@ export default class LoginCubit extends Cubit<LoginInitialState>
 	public rememberMe = signal(
 		!!(localStorage.getItem(emailStorageItemName) || localStorage.getItem(usernameStorageItemName))
 	);
-	private _origin: string;
 
 	constructor(origin: string)
 	{

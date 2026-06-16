@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../../pure/avatar";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../../pure/sidebar";
-import { User } from "@/entities";
+import { User } from "../../../entities";
 
 
 export function SideBarUserData({user}: { user: User | undefined; })

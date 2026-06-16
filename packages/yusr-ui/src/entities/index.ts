@@ -6,3 +6,4 @@ export * from "./filterByTypeRequest";
 export * from "./role";
 export * from "./storageFile";
 export * from "./user";
+export * from "./loginRequest.ts";

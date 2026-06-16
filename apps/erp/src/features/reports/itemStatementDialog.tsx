@@ -1,52 +1,65 @@
-import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
 import type Item from "@/core/data/item";
 import { useSignals } from "@preact/signals-react/runtime";
-import { useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld } from "yusr-ui";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  FormField
+} from "yusr-ui";
 import ReportConstants from "../../core/data/report/reportConstants";
-import StoreOld from "../../core/data/store";
 import ReportButton from "./reportButton";
+import { signal } from "@preact/signals-react";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
+import { ItemStatementReportRequest } from "@/core/data/report/itemStatementReportRequest.ts";
 
-export default function ItemStatementButton({ item }: { item: Item; })
+
+export default function ItemStatementButton({item}: { item: Item; })
 {
-  useSignals();
-  const { t, i18n } = useTranslation("erpCommon");
+	useSignals();
+	const {t, i18n} = useTranslation("erpCommon");
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [store, setStore] = useState<StoreOld | undefined>(undefined);
+	const isOpen = useMemo(() => signal(false), []);
+	const storeId = useMemo(() => signal<number>(), []);
+	const storeName = useMemo(() => signal<string>(), []);
 
-  return (
-    <>
-      <Button variant="outline" size="sm" onClick={ () => setIsOpen(true) }>
-        { t("itemStatement.button") }
-      </Button>
+	return (
+		<>
+			<Button variant="outline" size="sm" onClick={ () => isOpen.value = true }>
+				{ t("itemStatement.button") }
+			</Button>
 
-      <Dialog open={ isOpen } onOpenChange={ setIsOpen }>
-        <DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>{ t("itemStatement.title") }</DialogTitle>
-            <DialogDescription>{ item.name.value }</DialogDescription>
-          </DialogHeader>
+			<Dialog open={ isOpen.value } onOpenChange={ (open) => isOpen.value = open }>
+				<DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
+					<DialogHeader>
+						<DialogTitle>{ t("itemStatement.title") }</DialogTitle>
+						<DialogDescription>{ item.name.value }</DialogDescription>
+					</DialogHeader>
 
-          <div className="flex flex-col gap-4 py-2">
-            <FormFieldOld label={ t("itemStatement.store") }>
-              <StoresSearchableSelectOld
-                showNullOption
-                selectedId={ store?.id }
-                selectedLabel={ store?.name }
-                onValueChange={ (store) => setStore(store) }
-              />
-            </FormFieldOld>
-          </div>
-          <DialogFooter>
-            <ReportButton
-              reportName={ ReportConstants.ItemStatement }
-              request={ { itemId: item.id.value, storeId: store?.id } }
-            />
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
-  );
+					<div className="flex flex-col gap-4 py-2">
+						<FormField label={ t("itemStatement.store") }>
+							<StoresSearchableSelect
+								id={ storeId }
+								label={ storeName }
+							/>
+						</FormField>
+					</div>
+					<DialogFooter>
+						<ReportButton
+							reportName={ ReportConstants.ItemStatement }
+							request={ new ItemStatementReportRequest({
+								itemId: item.id.value,
+								storeId: storeId.value
+							}) }
+						/>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</>
+	);
 }
