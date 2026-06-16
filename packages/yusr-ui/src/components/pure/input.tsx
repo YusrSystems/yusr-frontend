@@ -1,52 +1,53 @@
 import * as React from "react";
 
-import type { Signal } from "@preact/signals-react";
+import { Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { cn } from "../../utils/cn";
 
-function InputOld({ className, type, ...props }: React.ComponentProps<"input">)
+
+function InputOld({className, type, ...props}: React.ComponentProps<"input">)
 {
-  return (
-    <input
-      type={ type }
-      data-slot="input"
-      className={ cn(
-        "dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 h-8 rounded-lg border bg-transparent px-2.5 py-1 text-base transition-colors file:h-6 file:text-sm file:font-medium focus-visible:ring-3 aria-invalid:ring-3 md:text-sm file:text-foreground placeholder:text-muted-foreground w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-        className
-      ) }
-      { ...props }
-    />
-  );
+	return (
+		<input
+			type={ type }
+			data-slot="input"
+			className={ cn(
+				"dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 h-8 rounded-lg border bg-transparent px-2.5 py-1 text-base transition-colors file:h-6 file:text-sm file:font-medium focus-visible:ring-3 aria-invalid:ring-3 md:text-sm file:text-foreground placeholder:text-muted-foreground w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+				className
+			) }
+			{ ...props }
+		/>
+	);
 }
 
 function Input(
-  { className, type, value, onChange, ...props }: Omit<React.ComponentProps<"input">, "value" | "onChange"> & {
-    value?: Signal<string | number | undefined>;
-    onChange?: (value: string) => void;
-  }
+	{className, type, value, onChange, ...props}: Omit<React.ComponentProps<"input">, "value" | "onChange"> & {
+		value?: Signal<string | number | undefined> | string;
+		onChange?: (value: string) => void;
+	}
 )
 {
-  useSignals();
-  return (
-    <input
-      type={ type }
-      data-slot="input"
-      className={ cn(
-        "dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 h-8 rounded-lg border bg-transparent px-2.5 py-1 text-base transition-colors file:h-6 file:text-sm file:font-medium focus-visible:ring-3 aria-invalid:ring-3 md:text-sm file:text-foreground placeholder:text-muted-foreground w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-        className
-      ) }
-      value={ value?.value ?? "" }
-      onChange={ (event) =>
-      {
-        if (value)
-        {
-          value.value = event.target.value;
-        }
-        onChange?.(event.target.value);
-      } }
-      { ...props }
-    />
-  );
+	useSignals();
+	return (
+		<input
+			type={ type }
+			data-slot="input"
+			className={ cn(
+				"dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 disabled:bg-input/50 dark:disabled:bg-input/80 h-8 rounded-lg border bg-transparent px-2.5 py-1 text-base transition-colors file:h-6 file:text-sm file:font-medium focus-visible:ring-3 aria-invalid:ring-3 md:text-sm file:text-foreground placeholder:text-muted-foreground w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+				className
+			) }
+			value={ value instanceof Signal ? value?.value : value ?? "" }
+			onChange={ (event) =>
+			{
+				if (value instanceof Signal)
+				{
+					value.value = event.target.value;
+				}
+				onChange?.(event.target.value);
+			} }
+			{ ...props }
+		/>
+	);
 }
 
 export { Input, InputOld };

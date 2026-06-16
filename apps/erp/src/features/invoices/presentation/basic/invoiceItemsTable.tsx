@@ -1,418 +1,392 @@
-import {GripVertical, Trash2} from "lucide-react";
-import React, {useCallback, useState} from "react";
-import {useTranslation} from "react-i18next";
+import { GripVertical, Trash2 } from "lucide-react";
+import React, { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
-    cn,
-    type ColumnDef,
-    ColumnVisibilityToggle,
-    i18n,
-    NumberFieldOld,
-    SelectFieldOld,
-    SystemPermissions,
-    SystemPermissionsActions,
-    TextAreaFieldOld,
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-    useColumnVisibility
+	cn,
+	type ColumnDef,
+	ColumnVisibilityToggle,
+	i18n,
+	NumberField,
+	SelectField,
+	SystemPermissionsActions,
+	TablePreview,
+	TextAreaField,
+	TextField,
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+	useColumnVisibility
 } from "yusr-ui";
-import {SystemPermissionsResources} from "../../../../core/auth/systemPermissionsResources";
-import {InvoiceType} from "../../../../core/data/invoiceOld.ts";
-import {useInvoiceContext} from "../../logic/invoiceContext";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { InvoiceType } from "@/core/data/invoiceOld.ts";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
-import {ItemProfitDialog} from "../profit/ItemProfitDialog";
-import EmptyTable from "./emptyTable";
-import type {DragState} from "./invoiceTableTypes";
-import type Invoice from "@/core/data/invoice.ts";
-
-export default function InvoiceItemsTable({invoice}: { invoice: Invoice }) {
-    const {t} = useTranslation("accounting");
-    const {
-        mode,
-        formData,
-        errors,
-        slice,
-        authState,
-        dispatch,
-        disabled
-    } = useInvoiceContext();
-    const [focusedQuantityIndex, setFocusedQuantityIndex] = useState<number | undefined>(undefined);
+import { ItemProfitDialog } from "../profit/ItemProfitDialog";
+import Invoice, { InvoiceMode } from "@/core/data/invoice.ts";
+import { signal } from "@preact/signals-react";
+import { Services } from "@/core/services/services.ts";
+import type { InvoiceItem } from "@/core/data/invoiceItem.ts";
 
 
-    const hasSettlementPerm = SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.InvoiceAddSettlement,
-        SystemPermissionsActions.Get
-    );
+export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
+{
+	const {t} = useTranslation("accounting");
+	const focusedQuantityIndex = useMemo(() => signal<number | undefined>(undefined), []);
 
-    const hasBarcodePerm = SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.InvoiceShowItemProfit,
-        SystemPermissionsActions.Get
-    );
+	const hasSettlementPerm = Services.auth.hasAuth(
+		SystemPermissionsResources.InvoiceAddSettlement,
+		SystemPermissionsActions.Get
+	);
 
-    const showProfit = hasBarcodePerm
-        && (formData.type === InvoiceType.Sell || formData.type === InvoiceType.Quotation);
+	const showItemProfitPerm = Services.auth.hasAuth(
+		SystemPermissionsResources.InvoiceShowItemProfit,
+		SystemPermissionsActions.Get
+	);
 
-    const COLUMNS: ColumnDef[] = [
-        {key: "cost", label: t("invoices.cost")},
-        {key: "priceWithoutTax", label: t("invoices.priceWithoutTax")},
-        {key: "taxPercentage", label: t("invoices.taxPercentage")},
-        ...(hasSettlementPerm ? [{key: "settlement", label: t("invoices.settlement")}] : []),
-        {key: "finalCost", label: t("invoices.finalCost")},
-        {key: "finalPriceWithoutTax", label: t("invoices.finalPriceWithoutTax")}
-    ];
+	const showProfit = showItemProfitPerm
+		&& (invoice.type.value === InvoiceType.Sell || invoice.type.value === InvoiceType.Quotation);
 
-    const {visible, toggle, isVisible} = useColumnVisibility(
-        "invoice_columns",
-        COLUMNS.map((c) => c.key)
-    );
+	const COLUMNS: ColumnDef[] = [
+		{key: "cost", label: t("invoices.cost")},
+		{key: "priceWithoutTax", label: t("invoices.priceWithoutTax")},
+		{key: "taxPercentage", label: t("invoices.taxPercentage")},
+		...(hasSettlementPerm ? [{key: "settlement", label: t("invoices.settlement")}] : []),
+		{key: "finalCost", label: t("invoices.finalCost")},
+		{key: "finalPriceWithoutTax", label: t("invoices.finalPriceWithoutTax")}
+	];
 
-    const getMaxAllowedQuantity = (qtn: number) => {
-        if (mode === "return") {
-            return qtn;
-        }
-        if (formData.type !== InvoiceType.Sell && formData.type !== InvoiceType.Quotation) {
-            return Number.MAX_SAFE_INTEGER;
-        }
+	const {visible, toggle, isVisible} = useColumnVisibility(
+		"invoice_columns",
+		COLUMNS.map((c) => c.key)
+	);
 
-        return SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.InvoiceSellBeyondAvailableQuantity,
-            SystemPermissionsActions.Get
-        )
-            ? Number.MAX_SAFE_INTEGER
-            : qtn;
-    };
+	const getMaxAllowedQuantity = (qtn: number) =>
+	{
+		if (invoice.mode.value === InvoiceMode.Return)
+		{
+			return qtn;
+		}
+		if (invoice.type.value !== InvoiceType.Sell && invoice.type.value !== InvoiceType.Quotation)
+		{
+			return Number.MAX_SAFE_INTEGER;
+		}
 
-    const getMinAllowedTaxInclusivePrice = (originaltaxInclusivePrice: number) => {
-        if (formData.type !== InvoiceType.Sell && formData.type !== InvoiceType.Quotation) {
-            return 0;
-        }
+		return Services.auth.hasAuth(
+			SystemPermissionsResources.InvoiceSellBeyondAvailableQuantity,
+			SystemPermissionsActions.Get
+		)
+			? Number.MAX_SAFE_INTEGER
+			: qtn;
+	};
 
-        return SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.InvoiceSellBelowSellingPrice,
-            SystemPermissionsActions.Get
-        )
-            ? 0
-            : originaltaxInclusivePrice;
-    };
+	const getMinAllowedTaxInclusivePrice = (originalTaxInclusivePrice: number) =>
+	{
+		if (invoice.type.value !== InvoiceType.Sell && invoice.type.value !== InvoiceType.Quotation)
+		{
+			return 0;
+		}
 
-    // Move Hooks BEFORE the early return to comply with the Rules of Hooks
-    const [dragState, setDragState] = useState<DragState>({draggedIndex: null, dragOverIndex: null});
+		return Services.auth.hasAuth(
+			SystemPermissionsResources.InvoiceSellBelowSellingPrice,
+			SystemPermissionsActions.Get
+		)
+			? 0
+			: originalTaxInclusivePrice;
+	};
 
-    const handleDragStart = useCallback((index: number) => {
-        setDragState({draggedIndex: index, dragOverIndex: null});
-    }, []);
+	// Move Hooks BEFORE the early return to comply with the Rules of Hooks
+	const dragState = useMemo(() => signal<{
+		draggedIndex: number | undefined,
+		dragOverIndex: number | undefined
+	}>({draggedIndex: undefined, dragOverIndex: undefined}), []);
 
-    const handleDragOver = useCallback((e: React.DragEvent, index: number) => {
-        e.preventDefault(); // required to allow the drop
-        setDragState((prev) => prev.dragOverIndex === index ? prev : {...prev, dragOverIndex: index});
-    }, []);
+	const handleDragStart = useCallback((index: number) =>
+	{
+		dragState.value.draggedIndex = index;
+		dragState.value.dragOverIndex = undefined;
+	}, [dragState.value]);
 
-    const handleDrop = useCallback(
-        (reorderedItems: any[]) => {
-            dispatch(slice.formActions.reorderItems(reorderedItems));
-            setDragState({draggedIndex: null, dragOverIndex: null});
-        },
-        [dispatch, slice]
-    );
+	const handleDragOver = useCallback((e: React.DragEvent, index: number) =>
+	{
+		e.preventDefault(); // required to allow the drop
+		if (dragState.value.dragOverIndex !== index)
+		{
+			dragState.value.dragOverIndex = index;
+		}
+	}, [dragState.value]);
 
-    const handleDragEnd = useCallback(() => {
-        // Runs when drag is cancelled (e.g. Escape key) without a valid drop
-        setDragState({draggedIndex: null, dragOverIndex: null});
-    }, []);
+	const handleDrop = useCallback(
+		(reorderedItems: InvoiceItem[]) =>
+		{
+			invoice.invoiceItems.value = reorderedItems;
+			dragState.value.draggedIndex = undefined;
+			dragState.value.dragOverIndex = undefined;
+		},
+		[dragState.value, invoice]
+	);
 
-    if (formData.invoiceItems?.length === 0) {
-        return <EmptyTable/>;
-    }
+	const handleDragEnd = useCallback(() =>
+	{
+		// Runs when drag is cancelled (e.g. Escape key) without a valid drop
+		dragState.value.draggedIndex = undefined;
+		dragState.value.dragOverIndex = undefined;
+	}, [dragState.value]);
 
-    const fixedColCount = 7; // drag handler + number + item + pricingMethod + quantity + price + totalPrice
-    const actionColCount = (showProfit ? 1 : 0) + 1; // profit + delete
-    const visibleCount = COLUMNS.filter((c) => isVisible(c.key)).length;
-    const totalColSpan = fixedColCount + visibleCount + actionColCount;
+	if (invoice.invoiceItems.value?.length === 0)
+	{
+		return <TablePreview.Empty/>;
+	}
 
-    const handleRowDrop = () => {
-        const {draggedIndex, dragOverIndex} = dragState;
+	const fixedColCount = 7; // drag handler + number + item + pricingMethod + quantity + price + totalPrice
+	const actionColCount = (showProfit ? 1 : 0) + 1; // profit + delete
+	const visibleCount = COLUMNS.filter((c) => isVisible(c.key)).length;
+	const totalColSpan = fixedColCount + visibleCount + actionColCount;
 
-        if (draggedIndex === null || dragOverIndex === null || draggedIndex === dragOverIndex) {
-            return;
-        }
+	const handleRowDrop = () =>
+	{
+		const {draggedIndex, dragOverIndex} = dragState.value;
 
-        const items = [...(formData.invoiceItems ?? [])];
-        const [removed] = items.splice(draggedIndex, 1);
-        items.splice(dragOverIndex, 0, removed);
+		if (draggedIndex == undefined || dragOverIndex == undefined || draggedIndex === dragOverIndex)
+		{
+			return;
+		}
 
-        handleDrop(items);
-    };
+		const items = [...(invoice.invoiceItems.value ?? [])];
+		const [removed] = items.splice(draggedIndex, 1);
 
-    return (
-        <div className="w-full border border-border rounded-lg shadow-sm bg-background">
-            <div className="flex justify-end p-2 border-b border-border">
-                <ColumnVisibilityToggle columns={COLUMNS} visible={visible} toggle={toggle}/>
-            </div>
+		if (removed != undefined)
+		{
+			items.splice(dragOverIndex, 0, removed);
+		}
 
-            <div className="max-h-100 overflow-y-auto overflow-x-auto">
-                <table className="relative w-full text-sm text-right">
-                    <thead className="sticky top-0 bg-muted z-50 border-b border-border">
-                    <tr>
-                        <th className="p-3 w-5"/>
-                        <th className="p-3 font-semibold w-16 text-muted-foreground">{t("invoices.number")}</th>
-                        <th className="p-3 font-semibold text-start w-40">{t("invoices.item")}</th>
-                        <th className="p-3 font-semibold text-start w-20 min-w-20">{t("invoices.pricingMethod")}</th>
-                        {isVisible("cost") && (
-                            <th className="p-3 font-semibold text-start w-25 min-w-25">{t("invoices.cost")}</th>
-                        )}
-                        <th className="p-3 font-semibold text-start w-25 min-w-25">{t("invoices.quantity")}</th>
-                        {isVisible("priceWithoutTax") && (
-                            <th className="p-3 font-semibold text-start w-30 min-w-30">{t("invoices.priceWithoutTax")}</th>
-                        )}
-                        {isVisible("taxPercentage") && (
-                            <th className="p-3 font-semibold text-start w-18 min-w-18">{t("invoices.taxPercentage")}</th>
-                        )}
-                        <th className="p-3 font-semibold text-start w-30 min-w-30">{t("invoices.priceAfterTax")}</th>
-                        {hasSettlementPerm && isVisible("settlement") && (
-                            <th className="p-3 font-semibold text-start w-25 min-w-25">{t("invoices.settlement")}</th>
-                        )}
-                        {isVisible("finalCost") && (
-                            <th className="p-3 font-semibold text-start w-35 min-w-35">{t("invoices.finalCost")}</th>
-                        )}
-                        {isVisible("finalPriceWithoutTax") && (
-                            <th className="p-3 font-semibold text-start w-35 min-w-35">{t("invoices.finalPriceWithoutTax")}</th>
-                        )}
-                        <th className="p-3 font-semibold text-start w-35 min-w-35">{t("invoices.finalPriceWithTax")}</th>
-                        {showProfit && <th className="p-4 font-semibold w-3 text-center"></th>}
-                        <th className="p-4 font-semibold w-3 text-center"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {formData.invoiceItems?.map((row, index) => {
-                        const isDragging = dragState.draggedIndex === index;
-                        const isDraggingOver = dragState.dragOverIndex === index;
-                        const showToolTip = (formData.type === InvoiceType.Purchase || formData.type === InvoiceType.Sell)
-                            && mode != "return";
-                        const multiplier = formData.type === InvoiceType.Sell ? -1 : 1;
-                        const selectedMethod = row.itemUnitPricingMethods?.find((p) => p.id === row.itemUnitPricingMethodId);
-                        const remaining = row.originalQuantity
-                            + row.quantity * (selectedMethod?.quantityMultiplier ?? 1) * multiplier;
-                        const isLowStock = remaining < 0;
+		handleDrop(items);
+	};
 
-                        return (
-                            <React.Fragment key={`${row.id}-${index}`}>
-                                <tr
-                                    draggable={!disabled}
-                                    onDragStart={() => handleDragStart(index)}
-                                    onDragOver={(e) => handleDragOver(e, index)}
-                                    onDrop={handleRowDrop}
-                                    onDragEnd={handleDragEnd}
-                                    className={[
-                                        "border-border last:border-0 transition-colors",
-                                        isDragging ? "opacity-40" : "hover:bg-muted/20",
-                                        isDraggingOver ? "border-t-2 border-t-primary" : ""
-                                    ].join(" ")}
-                                >
-                                    <td className={`px-2 pt-2 ${disabled ? "invisible" : "cursor-grab active:cursor-grabbing"}`}>
-                                        <GripVertical className="h-4 w-4 text-muted-foreground"/>
-                                    </td>
+	return (
+		<div className="w-full border border-border rounded-lg shadow-sm bg-background">
+			<div className="flex justify-end p-2 border-b border-border">
+				<ColumnVisibilityToggle columns={ COLUMNS } visible={ visible } toggle={ toggle }/>
+			</div>
 
-                                    <td className="px-2 pt-2 font-bold text-muted-foreground">
-                                        {index + 1}
-                                    </td>
+			<div className="max-h-100 overflow-y-auto overflow-x-auto">
+				<table className="relative w-full text-sm text-right">
+					<thead className="sticky top-0 bg-muted z-50 border-b border-border">
+					<tr>
+						<th className="p-3 w-5"/>
+						<th className="p-3 font-semibold w-16 text-muted-foreground">{ t("invoices.number") }</th>
+						<th className="p-3 font-semibold text-start w-40">{ t("invoices.item") }</th>
+						<th className="p-3 font-semibold text-start w-20 min-w-20">{ t("invoices.pricingMethod") }</th>
+						{ isVisible("cost") && (
+							<th className="p-3 font-semibold text-start w-25 min-w-25">{ t("invoices.cost") }</th>
+						) }
+						<th className="p-3 font-semibold text-start w-25 min-w-25">{ t("invoices.quantity") }</th>
+						{ isVisible("priceWithoutTax") && (
+							<th className="p-3 font-semibold text-start w-30 min-w-30">{ t("invoices.priceWithoutTax") }</th>
+						) }
+						{ isVisible("taxPercentage") && (
+							<th className="p-3 font-semibold text-start w-18 min-w-18">{ t("invoices.taxPercentage") }</th>
+						) }
+						<th className="p-3 font-semibold text-start w-30 min-w-30">{ t("invoices.priceAfterTax") }</th>
+						{ hasSettlementPerm && isVisible("settlement") && (
+							<th className="p-3 font-semibold text-start w-25 min-w-25">{ t("invoices.settlement") }</th>
+						) }
+						{ isVisible("finalCost") && (
+							<th className="p-3 font-semibold text-start w-35 min-w-35">{ t("invoices.finalCost") }</th>
+						) }
+						{ isVisible("finalPriceWithoutTax") && (
+							<th className="p-3 font-semibold text-start w-35 min-w-35">{ t("invoices.finalPriceWithoutTax") }</th>
+						) }
+						<th className="p-3 font-semibold text-start w-35 min-w-35">{ t("invoices.finalPriceWithTax") }</th>
+						{ showProfit && <th className="p-4 font-semibold w-3 text-center"></th> }
+						<th className="p-4 font-semibold w-3 text-center"></th>
+					</tr>
+					</thead>
+					<tbody>
+					{ invoice.invoiceItems.value?.map((invoiceItem, index) =>
+					{
+						const isDragging = dragState.value.draggedIndex === index;
+						const isDraggingOver = dragState.value.dragOverIndex === index;
+						const showToolTip = (invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.Sell)
+							&& invoice.mode.value != InvoiceMode.Return;
+						const multiplier = invoice.type.value === InvoiceType.Sell ? -1 : 1;
+						const selectedMethod = invoiceItem.itemUnitPricingMethods.value?.find(
+							(p) => p.id.value === invoiceItem.itemUnitPricingMethodId.value);
+						const remaining = invoiceItem.originalQuantity.value
+							+ invoiceItem.quantity.value * (selectedMethod?.quantityMultiplier.value ?? 1) * multiplier;
+						const isLowStock = remaining < 0;
 
-                                    <td className="px-2 pt-2">
-                                        <div className="font-semibold text-start text-foreground">{row.itemName}</div>
-                                    </td>
+						return (
+							<React.Fragment key={ `${ invoiceItem.id.value }-${ index }` }>
+								<tr
+									draggable={ !invoice.isDisabled }
+									onDragStart={ () => handleDragStart(index) }
+									onDragOver={ (e) => handleDragOver(e, index) }
+									onDrop={ handleRowDrop }
+									onDragEnd={ handleDragEnd }
+									className={ [
+										"border-border last:border-0 transition-colors",
+										isDragging ? "opacity-40" : "hover:bg-muted/20",
+										isDraggingOver ? "border-t-2 border-t-primary" : ""
+									].join(" ") }
+								>
+									<td className={ `px-2 pt-2 ${ invoice.isDisabled ? "invisible" : "cursor-grab active:cursor-grabbing" }` }>
+										<GripVertical className="h-4 w-4 text-muted-foreground"/>
+									</td>
 
-                                    <td className="px-2 pt-2">
-                                        {(disabled || mode === "return")
-                                            ? <div
-                                                className="font-semibold text-foreground">{row.itemUnitPricingMethodName}</div>
-                                            : (
-                                                <SelectFieldOld
-                                                    label=""
-                                                    value={row.itemUnitPricingMethodId?.toString() || ""}
-                                                    onValueChange={(val: string) =>
-                                                        dispatch(slice.formActions.onInvoiceItemIupmChange({
-                                                            index,
-                                                            iupmId: Number(val)
-                                                        }))}
-                                                    options={row.itemUnitPricingMethods?.map((m) => ({
-                                                        label: `${m.pricingMethodName || t("invoices.without")} ${
-                                                            m.unitName || t("invoices.without")
-                                                        }`,
-                                                        value: m.id.toString()
-                                                    })) || []}
-                                                    placeholder={t("invoices.selectPricingMethod")}
-                                                    isInvalid={!!errors[`${row.id}_method`]}
-                                                    disabled={disabled}
-                                                />
-                                            )}
-                                    </td>
+									<td className="px-2 pt-2 font-bold text-muted-foreground">
+										{ index + 1 }
+									</td>
 
-                                    {isVisible("cost") && (
-                                        <td className="px-2 pt-2">
-                                            <NumberFieldOld disabled label="" value={row.cost || "0"}/>
-                                        </td>
-                                    )}
+									<td className="px-2 pt-2">
+										<div
+											className="font-semibold text-start text-foreground">{ invoiceItem.itemName }</div>
+									</td>
 
-                                    <td className="px-2 pt-2">
-                                        <Tooltip open={focusedQuantityIndex === index && showToolTip}>
-                                            <TooltipTrigger asChild>
-                                                <NumberFieldOld
-                                                    label=""
-                                                    min={0}
-                                                    step={0.1}
-                                                    max={getMaxAllowedQuantity(row.originalQuantity)}
-                                                    value={row.quantity ?? 1}
-                                                    onChange={(newValue) =>
-                                                        dispatch(slice.formActions.onInvoiceItemQuantityChange({
-                                                            index,
-                                                            newQtn: newValue
-                                                        }))}
-                                                    disabled={mode === "return" ? false : disabled}
-                                                    onFocus={() => setFocusedQuantityIndex(index)}
-                                                    onBlur={() => setFocusedQuantityIndex(undefined)}
-                                                />
-                                            </TooltipTrigger>
-                                            <TooltipContent className="flex flex-col gap-1 min-w-40" dir={i18n.dir()}>
-                          <span className="text-xs">
-                            {t("invoices.quantityInStore")}
-                          </span>
-                                                <span
-                                                    className={cn("text-lg font-medium", isLowStock && "text-red-600 dark:text-red-400")}>
-                            {remaining}
-                          </span>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </td>
+									<td className="px-2 pt-2">
+										{ (invoice.isDisabled || invoice.mode.value === InvoiceMode.Return)
+											? <div
+												className="font-semibold text-foreground">{ invoiceItem.itemUnitPricingMethodName }</div>
+											: (
+												<SelectField<number>
+													value={ invoiceItem.itemUnitPricingMethodId }
+													placeholder={ t("invoices.selectPricingMethod") }
+													error={ invoiceItem.getError("itemUnitPricingMethodId") }
+													disabled={ invoice.isDisabled }
+													options={ invoiceItem.itemUnitPricingMethods.value?.map((m) => ({
+														label: m.itemUnitPricingMethodName.value,
+														value: m.id.value
+													})) || [] }
+													onValueChange={ (iupmId) => invoiceItem.changeIupm(iupmId) }
+												/>
+											) }
+									</td>
 
-                                    {isVisible("priceWithoutTax") && (
-                                        <td className="px-2 pt-2">
-                                            <NumberFieldOld
-                                                label=""
-                                                disabled
-                                                value={row.taxExclusivePrice || "0"}
-                                                onChange={() => {
-                                                }}
-                                            />
-                                        </td>
-                                    )}
+									{ isVisible("cost") && (
+										<td className="px-2 pt-2">
+											<NumberField disabled value={ invoiceItem.cost }/>
+										</td>
+									) }
 
-                                    {isVisible("taxPercentage") && (
-                                        <td className="px-2 pt-2">
-                                            <NumberFieldOld label="" value={row.totalTaxesPerc || "0"} disabled/>
-                                        </td>
-                                    )}
+									<td className="px-2 pt-2">
+										<Tooltip open={ focusedQuantityIndex.value === index && showToolTip }>
+											<TooltipTrigger asChild>
+												<NumberField
+													min={ 0 }
+													step={ 0.1 }
+													max={ getMaxAllowedQuantity(invoiceItem.originalQuantity.value) }
+													value={ invoiceItem.quantity }
+													onChange={ (newValue) => newValue && invoiceItem.changeQuantity(newValue) }
+													disabled={ invoice.mode.value === InvoiceMode.Return ? false : invoice.isDisabled }
+													onFocus={ () => focusedQuantityIndex.value = index }
+													onBlur={ () => focusedQuantityIndex.value = undefined }
+												/>
+											</TooltipTrigger>
+											<TooltipContent className="flex flex-col gap-1 min-w-40" dir={ i18n.dir() }>
+                                                <span className="text-xs">
+                                                    { t("invoices.quantityInStore") }
+                                                </span>
+												<span
+													className={ cn("text-lg font-medium", isLowStock && "text-red-600 dark:text-red-400") }>
+                                                    { remaining }
+                                                </span>
+											</TooltipContent>
+										</Tooltip>
+									</td>
 
-                                    <td className="px-2 pt-2">
-                                        <NumberFieldOld
-                                            label=""
-                                            min={getMinAllowedTaxInclusivePrice(row.originaltaxInclusivePrice)}
-                                            value={row.taxInclusivePrice || "0"}
-                                            disabled={disabled || mode === "return"}
-                                            onChange={(newVal) =>
-                                                dispatch(
-                                                    slice.formActions.onInvoiceItemTaxInclusivePriceChange({
-                                                        index,
-                                                        newPrice: Number(newVal)
-                                                    })
-                                                )}
-                                        />
-                                    </td>
+									{ isVisible("priceWithoutTax") && (
+										<td className="px-2 pt-2">
+											<NumberField disabled value={ invoiceItem.taxExclusivePrice }/>
+										</td>
+									) }
 
-                                    {hasSettlementPerm && isVisible("settlement") && (
-                                        <td className="px-2 pt-2">
-                                            <NumberFieldOld
-                                                label=""
-                                                value={row.settlement || "0"}
-                                                disabled={disabled || mode === "return"}
-                                                onChange={(newValue) =>
-                                                    dispatch(
-                                                        slice.formActions.onInvoiceItemSettlementChange({
-                                                            index,
-                                                            newSettlement: Number(newValue),
-                                                            resetInvoiceSettlements: true
-                                                        })
-                                                    )}
-                                            />
-                                        </td>
-                                    )}
+									{ isVisible("taxPercentage") && (
+										<td className="px-2 pt-2">
+											<NumberField value={ invoiceItem.totalTaxesPerc } disabled/>
+										</td>
+									) }
 
-                                    {isVisible("finalCost") && (
-                                        <td className="px-2 pt-2">
-                                            <NumberFieldOld
-                                                label=""
-                                                value={InvoiceItemsMath.CalcTotalCost(row.cost, row.quantity) || "0"}
-                                                disabled
-                                            />
-                                        </td>
-                                    )}
+									<td className="px-2 pt-2">
+										<NumberField
+											min={ getMinAllowedTaxInclusivePrice(invoiceItem.originalTaxInclusivePrice.value) }
+											value={ invoiceItem.taxInclusivePrice }
+											disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return }
+											onChange={ (newVal) => newVal && invoiceItem.changeTaxInclusivePrice(newVal) }
+										/>
+									</td>
 
-                                    {isVisible("finalPriceWithoutTax") && (
-                                        <td className="px-2 pt-2">
-                                            <NumberFieldOld label="" value={row.taxExclusiveTotalPrice || "0"}
-                                                            disabled/>
-                                        </td>
-                                    )}
+									{ hasSettlementPerm && isVisible("settlement") && (
+										<td className="px-2 pt-2">
+											<NumberField
+												value={ invoiceItem.settlement }
+												disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return }
+												onChange={ (newValue) => newValue && invoiceItem.changeSettlement(newValue) }
+											/>
+										</td>
+									) }
 
-                                    <td className="px-2 pt-2">
-                                        <NumberFieldOld label="" value={row.taxInclusiveTotalPrice || "0"} disabled/>
-                                    </td>
+									{ isVisible("finalCost") && (
+										<td className="px-2 pt-2">
+											<TextField
+												value={ InvoiceItemsMath.CalcTotalCost(invoiceItem.cost.value, invoiceItem.quantity.value).toString() }
+												disabled
+											/>
+										</td>
+									) }
 
-                                    {showProfit && (
-                                        <td className="px-2 pt-2 text-center">
-                                            <ItemProfitDialog item={row}/>
-                                        </td>
-                                    )}
+									{ isVisible("finalPriceWithoutTax") && (
+										<td className="px-2 pt-2">
+											<TextField value={ invoiceItem.taxExclusiveTotalPrice } disabled/>
+										</td>
+									) }
 
-                                    <td className="px-2 pt-2 text-center">
-                                        {!disabled && (
-                                            <button
-                                                type="button"
-                                                onClick={() => invoice.invoiceItems.value = invoice.invoiceItems.value.filter((_, i) =>
-                                                    i !== index
-                                                )}
-                                                className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
-                                                aria-label={t("invoices.deleteItem")}
-                                            >
-                                                <Trash2 className="h-5 w-5"/>
-                                            </button>
-                                        )}
-                                    </td>
-                                </tr>
+									<td className="px-2 pt-2">
+										<TextField value={ invoiceItem.taxInclusiveTotalPrice } disabled/>
+									</td>
 
-                                <tr
-                                    className="bg-muted/10 border-b"
-                                    onDragOver={(e) => handleDragOver(e, index)}
-                                    onDrop={handleRowDrop}
-                                >
-                                    <td colSpan={totalColSpan} className="px-5 pt-1 pb-3">
-                                        <TextAreaFieldOld
-                                            collapsible
-                                            collapsedHeight={36}
-                                            expandedHeight={150}
-                                            label=""
-                                            placeholder={t("invoices.addDiscription")}
-                                            value={row.notes || ""}
-                                            disabled={disabled || mode === "return"}
-                                            onChange={(val) =>
-                                                dispatch(slice.formActions.updateItem({
-                                                    index,
-                                                    item: {
-                                                        ...row,
-                                                        notes: typeof val === "string" ? val : val.target.value
-                                                    }
-                                                }))}
-                                        />
-                                    </td>
-                                </tr>
-                            </React.Fragment>
-                        );
-                    })}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
+									{ showProfit && (
+										<td className="px-2 pt-2 text-center">
+											<ItemProfitDialog invoiceItem={ invoiceItem }/>
+										</td>
+									) }
+
+									<td className="px-2 pt-2 text-center">
+										{ !invoice.isDisabled && (
+											<button
+												type="button"
+												onClick={ () => invoice.invoiceItems.value = invoice.invoiceItems.value.filter((_, i) =>
+													i !== index
+												) }
+												className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
+												aria-label={ t("invoices.deleteItem") }
+											>
+												<Trash2 className="h-5 w-5"/>
+											</button>
+										) }
+									</td>
+								</tr>
+
+								<tr
+									className="bg-muted/10 border-b"
+									onDragOver={ (e) => handleDragOver(e, index) }
+									onDrop={ handleRowDrop }
+								>
+									<td colSpan={ totalColSpan } className="px-5 pt-1 pb-3">
+										<TextAreaField
+											collapsible
+											collapsedHeight={ 36 }
+											expandedHeight={ 150 }
+											label=""
+											placeholder={ t("invoices.addDiscription") }
+											value={ invoiceItem.notes }
+											disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return }
+										/>
+									</td>
+								</tr>
+							</React.Fragment>
+						);
+					}) }
+					</tbody>
+				</table>
+			</div>
+		</div>
+	);
 }

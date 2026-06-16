@@ -1,32 +1,28 @@
-import {useEffect} from "react";
-import {useTranslation} from "react-i18next";
-import {TextAreaFieldOld} from "yusr-ui";
-import type {InvoiceDialogMode} from "../../changeInvoiceDialog.tsx";
-import {useInvoiceContext} from "../../logic/invoiceContext";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { TextAreaField } from "yusr-ui";
+import Invoice, { InvoiceMode } from "@/core/data/invoice.ts";
+import { Services } from "@/core/services/services.ts";
 
-export default function InvoicePolicyTab({mode}: { mode: InvoiceDialogMode; }) {
-    const {t} = useTranslation("accounting");
-    const {
-        formData,
-        slice,
-        dispatch,
-        authState,
-        disabled
-    } = useInvoiceContext();
 
-    useEffect(() => {
-        if (authState.setting?.invoicePolicy && !formData.policy && mode !== "update") {
-            dispatch(slice.formActions.updateFormData({policy: authState.setting.invoicePolicy}));
-        }
-    }, [authState.setting?.invoicePolicy]);
+export default function InvoicePolicyTab({invoice}: { invoice: Invoice })
+{
+	const {t} = useTranslation("accounting");
 
-    return (
-        <TextAreaFieldOld
-            label={t("invoices.policyTerms")}
-            value={formData.policy ?? ""}
-            onChange={(e) => dispatch(slice.formActions.updateFormData({policy: e.target.value}))}
-            disabled={disabled}
-            className="h-100"
-        />
-    );
+	useEffect(() =>
+	{
+		if (Services.auth.setting?.invoicePolicy?.value && !invoice.policy.value && invoice.mode.value !== InvoiceMode.Update)
+		{
+			invoice.policy.value = Services.auth.setting?.invoicePolicy?.value;
+		}
+	}, [invoice.mode.value, invoice.policy]);
+
+	return (
+		<TextAreaField
+			label={ t("invoices.policyTerms") }
+			value={ invoice.policy }
+			disabled={ invoice.isDisabled }
+			className="h-100"
+		/>
+	);
 }

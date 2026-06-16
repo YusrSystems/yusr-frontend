@@ -1,28 +1,27 @@
 import { StorageFileField, StorageType, useStorageFile } from "yusr-ui";
-import { useInvoiceContext } from "../../logic/invoiceContext";
+import type Invoice from "@/core/data/invoice.ts";
 
-export default function InvoiceFilesTab()
+
+export default function InvoiceFilesTab({invoice}: { invoice: Invoice })
 {
-  const { formData, slice, dispatch } = useInvoiceContext();
-  const { fileInputRef, handleFileChange, handleRemoveFile, handleDownload, showFilePreview, getFileSrc } =
-    useStorageFile(
-      () => formData.invoiceFiles ?? [],
-      (files) => dispatch(slice.formActions.updateFormData({ invoiceFiles: Array.isArray(files) ? files : [files] })),
-      StorageType.Private
-    );
+	const {fileInputRef, handleFileChange, handleRemoveFile, handleDownload, showFilePreview, getFileSrc} =
+		useStorageFile(
+			() => invoice.invoiceFiles.value,
+			(value) => (invoice.invoiceFiles.value = Array.isArray(value) ? value : [value]),
+			StorageType.Private
+		);
 
-  return (
-    <div className="w-full flex items-center justify-center shrink-0 bg-muted/10 p-4 rounded-lg border">
-      <StorageFileField
-        label=""
-        file={ formData.invoiceFiles ?? [] }
-        onFileChange={ handleFileChange }
-        onRemove={ handleRemoveFile }
-        onDownload={ handleDownload }
-        getFileSrc={ getFileSrc }
-        showPreview={ showFilePreview }
-        fileInputRef={ fileInputRef }
-      />
-    </div>
-  );
+	return (
+		<div className="w-full flex items-center justify-center shrink-0 bg-muted/10 p-4 rounded-lg border">
+			<StorageFileField
+				file={ invoice.invoiceFiles.value ?? [] }
+				onFileChange={ handleFileChange }
+				onRemove={ handleRemoveFile }
+				onDownload={ handleDownload }
+				getFileSrc={ getFileSrc }
+				showPreview={ showFilePreview }
+				fileInputRef={ fileInputRef }
+			/>
+		</div>
+	);
 }
