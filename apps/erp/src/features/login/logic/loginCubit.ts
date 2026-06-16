@@ -2,7 +2,7 @@ import { AppNavigator } from "@/app/appNavigator";
 import { Setting, SettingDto } from "@/core/data/setting";
 import { Services } from "@/core/services/services";
 import { signal } from "@preact/signals-react";
-import { Cubit, LoginRequest, type RequestResult, User, UserDto, YusrApiHelper } from "yusr-ui";
+import { Cubit, LoginRequest, User, UserDto, YusrApiHelper } from "yusr-ui";
 import { LoginInitialState, LoginLoadingState } from "./loginState";
 
 
@@ -11,7 +11,6 @@ const usernameStorageItemName = "loginUsername";
 
 export default class LoginCubit extends Cubit<LoginInitialState>
 {
-	private _origin: string;
 	public formData = new LoginRequest({
 		companyEmail: localStorage.getItem(emailStorageItemName) ?? "",
 		username: localStorage.getItem(usernameStorageItemName) ?? "",
@@ -20,6 +19,7 @@ export default class LoginCubit extends Cubit<LoginInitialState>
 	public rememberMe = signal(
 		!!(localStorage.getItem(emailStorageItemName) || localStorage.getItem(usernameStorageItemName))
 	);
+	private _origin: string;
 
 	constructor(origin: string)
 	{
@@ -27,14 +27,7 @@ export default class LoginCubit extends Cubit<LoginInitialState>
 		this._origin = origin;
 	}
 
-	public async login(
-		additionalFunc?: (
-			result: RequestResult<{
-				user: UserDto;
-				setting: SettingDto;
-			}>
-		) => void
-	)
+	public async login()
 	{
 		if (!this.formData.validate())
 		{
@@ -52,7 +45,6 @@ export default class LoginCubit extends Cubit<LoginInitialState>
 		if (result.status === 200 && result.data)
 		{
 			Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
-			additionalFunc?.(result);
 			AppNavigator.navigate(this._origin, true);
 			return;
 		}

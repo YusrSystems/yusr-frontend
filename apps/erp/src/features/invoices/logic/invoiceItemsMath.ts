@@ -2,7 +2,7 @@ import type { InvoiceItem } from "@/core/data/invoices/invoiceItem.ts";
 import type { InvoiceItemProfitResult } from "@/core/data/invoices/InvoiceItemProfitResult.ts";
 import type { InvoiceProfitResult } from "@/core/data/invoices/InvoiceProfitResult.ts";
 import type { InvoiceVoucher } from "@/core/data/invoices/invoiceVoucher.ts";
-import { InvoiceRelationType } from "@/core/data/invoiceOld.ts";
+import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
 
 
 export default class InvoiceItemsMath
