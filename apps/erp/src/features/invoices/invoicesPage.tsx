@@ -1,11 +1,8 @@
 //TODO: must be tested
-import VerfiAccountWrapper from "@/core/components/VerfiAccountWrapper.tsx";
 import Invoice, { InvoiceDto } from "@/core/data/invoices/invoice.ts";
-import { EInvoiceStatus, InvoiceStatus, InvoiceType } from "@/core/data/invoiceOld.ts";
 import type { InvoicesListReportRequest } from "@/core/data/report/invoicesListReportType.ts";
 import { InvoicesListReportType } from "@/core/data/report/invoicesListReportType.ts";
 import ReportConstants from "@/core/data/report/reportConstants.ts";
-import { EInvoicingEnvironmentType } from "@/core/data/settingOld.ts";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import ChangeInvoiceDialog from "@/features/invoices/changeInvoiceDialog.tsx";
@@ -18,20 +15,25 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { TableBodyRowInfo } from "yusr-ui";
 import {
-    Button,
-    CrudPage,
-    CurrencyIcon,
-    PageError,
-    PageLoaded,
-    PageLoading,
-    SystemPermissionsActions,
-    TablePreview,
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-    UnauthorizedPage
+	Button,
+	CrudPage,
+	CurrencyIcon,
+	PageError,
+	PageLoaded,
+	PageLoading,
+	SystemPermissionsActions,
+	TablePreview,
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+	UnauthorizedPage
 } from "yusr-ui";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { InvoiceType } from "@/core/types/invoiceType";
+import VerfiAccountWrapper from "@/core/components/verfiAccountWrapper";
+import { EInvoicingEnvironmentType } from "@/core/data/setting.ts";
+import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
+import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 
 
 export default function InvoicesPage({

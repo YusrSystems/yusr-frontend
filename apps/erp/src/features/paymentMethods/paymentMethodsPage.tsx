@@ -5,31 +5,29 @@ import { CreditCardIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    CrudPage,
-    PageError,
-    PageLoaded,
-    PageLoading,
-    SystemPermissionsActions,
-    TablePreview,
-    UnauthorizedPage
+	CrudPage,
+	PageError,
+	PageLoaded,
+	PageLoading,
+	SystemPermissionsActions,
+	TablePreview,
+	UnauthorizedPage
 } from "yusr-ui";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { CommissionTypeOld } from "../../core/data/paymentMethod";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { CommissionType, PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import ChangePaymentMethodDialog from "./changePaymentMethodDialog";
-import { PaymentMethod, type PaymentMethodDto } from "../../core/data/paymentMethod.ts";
 
 
 export function PaymentMethodsPage()
 {
 	useSignals();
+	const {t} = useTranslation("accounting");
+	useEffect(() => Cubits.paymentMethods.init(), []);
+
 	if (!Services.auth.hasAuth(SystemPermissionsResources.PaymentMethods, SystemPermissionsActions.Get))
 	{
 		return <UnauthorizedPage/>;
 	}
-
-	const {t} = useTranslation("accounting");
-
-	useEffect(() => Cubits.paymentMethods.init(), []);
 
 	return (
 		<CrudPage>
@@ -130,7 +128,7 @@ function PageTable()
 						rowBody: paymentMethod.accountName.value || paymentMethod.accountId.value.toString(),
 						rowStyles: ""
 					}, {
-						rowBody: paymentMethod.commissionType.value === CommissionTypeOld.Percent
+						rowBody: paymentMethod.commissionType.value === CommissionType.Percent
 							? t("paymentMethods.percentage")
 							: t("paymentMethods.fixedAmount"),
 						rowStyles: "text-sm text-muted-foreground"

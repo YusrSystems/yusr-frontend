@@ -1,22 +1,22 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import { AccountsSearchableSelect } from "@/core/components/searchableSelect/accountsSearchableSelect";
-import { AccountType } from "@/core/data/accountOld";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect";
+import { AccountType } from "@/core/data/account";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
-  ChangeDialog,
-  type CommonChangeDialogProps,
-  FieldGroup,
-  FormField,
-  NumberField,
-  SelectField,
-  SystemPermissionsActions,
-  TextField
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	FormField,
+	NumberField,
+	SelectField,
+	SystemPermissionsActions,
+	TextField
 } from "yusr-ui";
-import { CommissionTypeOld } from "../../core/data/paymentMethod";
-import type { PaymentMethod, PaymentMethodDto } from "../../core/data/paymentMethod.ts";
+import type { PaymentMethod, PaymentMethodDto } from "@/core/data/paymentMethod.ts";
+import { CommissionType } from "@/core/data/paymentMethod.ts";
 import { useEffect } from "react";
 import { Cubits } from "@/core/services/cubits";
 
@@ -26,6 +26,12 @@ export default function ChangePaymentMethodDialog(
 )
 {
 	useSignals();
+	useEffect(() =>
+	{
+		Cubits.accounts.init([AccountType.Bank, AccountType.Box]);
+	}, []);
+
+	const {t} = useTranslation(["accounting", "common"]);
 
 	if (
 		(entity.mode.value === "create"
@@ -36,20 +42,13 @@ export default function ChangePaymentMethodDialog(
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
-
-	useEffect(() =>
-	{
-		Cubits.accounts.init([AccountType.Bank, AccountType.Box]);
-	}, []);
-
-	const {t} = useTranslation(["accounting", "common"]);
 	const title = entity.mode.value === "create"
 		? t("paymentMethods.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("paymentMethods.entityName") }`;
 
-	function formatCommission(type: CommissionTypeOld, amount: number): string | null
+	function formatCommission(type: CommissionType, amount: number): string | null
 	{
-		if (type === CommissionTypeOld.Amount)
+		if (type === CommissionType.Amount)
 		{
 			return t("paymentMethods.commissionHintAmount", {amount});
 		}
@@ -77,7 +76,7 @@ export default function ChangePaymentMethodDialog(
 		SystemPermissionsResources.AccountBox,
 		SystemPermissionsActions.Get
 	);
-	let types: AccountType[] = [];
+	const types: AccountType[] = [];
 	if (hasBankPerm)
 	{
 		types.push(AccountType.Bank);
@@ -125,14 +124,14 @@ export default function ChangePaymentMethodDialog(
 					<SelectField
 						label={ t("paymentMethods.commissionType") }
 						required
-						value={ entity.commissionType || CommissionTypeOld.Percent.toString() }
+						value={ entity.commissionType || CommissionType.Percent.toString() }
 						error={ entity.getError("commissionType") }
 						options={ [{
 							label: t("paymentMethods.percentage"),
-							value: CommissionTypeOld.Percent
+							value: CommissionType.Percent
 						}, {
 							label: t("paymentMethods.fixedAmount"),
-							value: CommissionTypeOld.Amount
+							value: CommissionType.Amount
 						}] }
 					/>
 					<div className="flex flex-col gap-1">
@@ -146,7 +145,7 @@ export default function ChangePaymentMethodDialog(
 						/>
 						<p className="text-sm text-red-600 font-bold">
 							{ formatCommission(
-								entity.commissionType.value ?? CommissionTypeOld.Percent,
+								entity.commissionType.value ?? CommissionType.Percent,
 								entity.commissionAmount.value ?? 0
 							) }
 						</p>

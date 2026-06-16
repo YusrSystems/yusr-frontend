@@ -7,32 +7,31 @@ import { ArrowRightLeft } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    CrudPage,
-    CurrencyIcon,
-    NumbertoWordsService,
-    PageError,
-    PageLoaded,
-    PageLoading,
-    SystemPermissionsActions,
-    TablePreview,
-    UnauthorizedPage
+	CrudPage,
+	CurrencyIcon,
+	NumbertoWordsService,
+	PageError,
+	PageLoaded,
+	PageLoading,
+	SystemPermissionsActions,
+	TablePreview,
+	UnauthorizedPage
 } from "yusr-ui";
 import ReportButton from "../reports/reportButton";
 import ChangeBalanceTransferDialog from "./changeBalanceTransferDialog";
-import { BalanceTransfer, BalanceTransferDto } from "../../core/data/balanceTransfer.ts";
+import { BalanceTransfer, BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 
 
 export default function BalanceTransfersPage()
 {
 	useSignals();
+	const {t} = useTranslation("accounting");
+	useEffect(() => Cubits.balanceTransfers.init(), []);
+
 	if (!Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Get))
 	{
 		return <UnauthorizedPage/>;
 	}
-
-	const {t} = useTranslation("accounting");
-
-	useEffect(() => Cubits.balanceTransfers.init(), []);
 
 	return (
 		<CrudPage>

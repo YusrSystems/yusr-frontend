@@ -9,142 +9,151 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { Box, Database, DollarSign } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ChangeDialog, type CommonChangeDialogProps, Loading, StorageType, SystemPermissionsActions, useStorageFile } from "yusr-ui";
-import { ItemType } from "../../core/data/itemOld";
+import {
+  ChangeDialog,
+  type CommonChangeDialogProps,
+  Loading,
+  StorageType,
+  SystemPermissionsActions,
+  useStorageFile
+} from "yusr-ui";
+import { ItemType } from "@/core/data/item.ts";
 import BasicTab from "./basic/basicTab";
 import PricingTab from "./pricing/pricingTab";
 import StorageTab from "./storage/storageTab";
+
 
 const BASIC_FIELDS = ["name", "type"] as const;
 const STORAGE_FIELDS = ["itemStores"] as const;
 const PRICING_FIELDS = ["sellUnitId", "initialCost", "itemUnitPricingMethods"] as const;
 
-export default function ChangeItemDialog({ entity, service, onSuccess }: CommonChangeDialogProps<Item, ItemDto>)
+export default function ChangeItemDialog({entity, service, onSuccess}: CommonChangeDialogProps<Item, ItemDto>)
 {
-  useSignals();
+	useSignals();
 
-  const servicesIds = useMemo(() => signal<ServiceIds>(), []);
-  const currentEntity = useMemo(() => signal<Item>(entity), []);
+	const servicesIds = useMemo(() => signal<ServiceIds>(), []);
+	const currentEntity = useMemo(() => signal<Item>(entity), []);
+	useEffect(() =>
+	{
+		Cubits.taxes.init();
+		Cubits.pricingMethods.init();
+		Cubits.stores.init();
+		Cubits.units.init();
 
-  if (
-    (currentEntity.value.mode.value === "create"
-      && !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Add))
-    || (currentEntity.value.mode.value === "update"
-      && !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Update))
-  )
-  {
-    return <ChangeDialog.Unauthorized />;
-  }
-  const { t } = useTranslation(["stocking", "common"]);
-  const isLoading = useMemo(() => signal(false), []);
+		const fetch = async () =>
+		{
+			isLoading.value = true;
+			const result = await Services.unitsApi.GetServiceIds();
+			if (result.data)
+			{
+				servicesIds.value = result.data;
+			}
 
-  const { commitFiles } = useStorageFile(
-    () => currentEntity.value.itemImages.value,
-    (v) => (currentEntity.value.itemImages.value = Array.isArray(v) ? v : [v]),
-    StorageType.Public
-  );
+			if (currentEntity.value.mode.value === "update" && currentEntity.value?.id)
+			{
+				const res = await service.Get(currentEntity.value.id.value);
+				if (res.data != undefined)
+				{
+					currentEntity.value = Item.load(res.data.toJson());
+				}
+			}
+			isLoading.value = false;
+		};
 
-  const basicHasError = BASIC_FIELDS.some((f) => currentEntity.value.getError(f).value);
-  const storageHasError = STORAGE_FIELDS.some((f) => currentEntity.value.getError(f).value);
-  const pricingHasError = PRICING_FIELDS.some((f) => currentEntity.value.getError(f).value);
+		fetch();
+	}, [currentEntity.value?.id.value]);
+	const {t} = useTranslation(["stocking", "common"]);
+	const isLoading = useMemo(() =>
+	{
+		return signal<boolean>(false);
+	}, []);
+	const {commitFiles} = useStorageFile(
+		() => currentEntity.value.itemImages.value,
+		(v) => (currentEntity.value.itemImages.value = Array.isArray(v) ? v : [v]),
+		StorageType.Public
+	);
 
-  useEffect(() =>
-  {
-    Cubits.taxes.init();
-    Cubits.pricingMethods.init();
-    Cubits.stores.init();
-    Cubits.units.init();
+	if (
+		(currentEntity.value.mode.value === "create"
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Add))
+		|| (currentEntity.value.mode.value === "update"
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-    const fetch = async () =>
-    {
-      isLoading.value = true;
-      const result = await Services.unitsApi.GetServiceIds();
-      if (result.data)
-      {
-        servicesIds.value = result.data;
-      }
+	const basicHasError = BASIC_FIELDS.some((f) => currentEntity.value.getError(f).value);
+	const storageHasError = STORAGE_FIELDS.some((f) => currentEntity.value.getError(f).value);
+	const pricingHasError = PRICING_FIELDS.some((f) => currentEntity.value.getError(f).value);
 
-      if (currentEntity.value.mode.value === "update" && currentEntity.value?.id)
-      {
-        const res = await service.Get(currentEntity.value.id.value);
-        if (res.data != undefined)
-        {
-          currentEntity.value = Item.load(res.data.toJson());
-        }
-      }
-      isLoading.value = false;
-    };
+	const transformDataBeforeSave = async (): Promise<Item> =>
+	{
+		const resolvedFiles = await commitFiles(
+			currentEntity.value.itemImages.value,
+			`Items`
+		);
 
-    fetch();
-  }, [currentEntity.value?.id.value]);
+		currentEntity.value.itemImages.value = resolvedFiles;
 
-  const transformDataBeforeSave = async (): Promise<Item> =>
-  {
-    const resolvedFiles = await commitFiles(
-      currentEntity.value.itemImages.value,
-      `Items`
-    );
+		return currentEntity.value;
+	};
 
-    currentEntity.value.itemImages.value = resolvedFiles;
+	const title = currentEntity.value.mode.value === "create"
+		? t("items.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("items.entityName") }`;
 
-    return currentEntity.value;
-  };
+	if (isLoading.value)
+	{
+		return (
+			<ChangeDialog>
+				<ChangeDialog.Header title={ title }/>
+				<Loading entityName={ t("items.entityName") }/>
+			</ChangeDialog>
+		);
+	}
 
-  const title = currentEntity.value.mode.value === "create"
-    ? t("items.addNewTitle")
-    : `${t("common:crudRow.edit")} ${t("items.entityName")}`;
+	return (
+		<ChangeDialog className="sm:max-w-[80%]">
+			<ChangeDialog.Header title={ title }/>
+			<ChangeDialog.Tabbed
+				tabs={ [
+					{
+						label: t("items.basicInfo"),
+						icon: Box,
+						active: true,
+						hasError: basicHasError,
+						content: <BasicTab entity={ currentEntity.value } serviceIds={ servicesIds }/>
+					},
+					...(currentEntity.value.type.value !== ItemType.Service
+						? [{
+							label: t("items.storage"),
+							icon: Database,
+							active: false,
+							hasError: storageHasError,
+							content: <StorageTab entity={ currentEntity.value }/>
+						}]
+						: []),
+					{
+						label: t("items.pricing"),
+						icon: DollarSign,
+						active: false,
+						hasError: pricingHasError,
+						content: <PricingTab entity={ currentEntity.value }/>
+					}
+				] }
+			/>
 
-  if (isLoading.value)
-  {
-    return (
-      <ChangeDialog>
-        <ChangeDialog.Header title={ title } />
-        <Loading entityName={ t("items.entityName") } />
-      </ChangeDialog>
-    );
-  }
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
 
-  return (
-    <ChangeDialog className="sm:max-w-[80%]">
-      <ChangeDialog.Header title={ title } />
-      <ChangeDialog.Tabbed
-        tabs={ [
-          {
-            label: t("items.basicInfo"),
-            icon: Box,
-            active: true,
-            hasError: basicHasError,
-            content: <BasicTab entity={ currentEntity.value } serviceIds={ servicesIds } />
-          },
-          ...(currentEntity.value.type.value !== ItemType.Service
-            ? [{
-              label: t("items.storage"),
-              icon: Database,
-              active: false,
-              hasError: storageHasError,
-              content: <StorageTab entity={ currentEntity.value } />
-            }]
-            : []),
-          {
-            label: t("items.pricing"),
-            icon: DollarSign,
-            active: false,
-            hasError: pricingHasError,
-            content: <PricingTab entity={ currentEntity.value } />
-          }
-        ] }
-      />
-
-      <ChangeDialog.Footer>
-        <ChangeDialog.Close />
-
-        <ChangeDialog.SaveButton<Item, ItemDto>
-          entity={ currentEntity.value }
-          service={ service }
-          onSuccess={ (data) => onSuccess?.(data) }
-          transformData={ transformDataBeforeSave }
-        />
-      </ChangeDialog.Footer>
-    </ChangeDialog>
-  );
+				<ChangeDialog.SaveButton<Item, ItemDto>
+					entity={ currentEntity.value }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data) }
+					transformData={ transformDataBeforeSave }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

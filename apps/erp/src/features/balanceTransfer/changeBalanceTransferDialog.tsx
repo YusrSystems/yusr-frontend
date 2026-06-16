@@ -1,6 +1,6 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import { AccountsSearchableSelect } from "@/core/components/searchableSelect/accountsSearchableSelect";
-import { AccountType } from "@/core/data/accountOld";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect";
+import { AccountType } from "@/core/data/account";
 import { Services } from "@/core/services/services";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -8,19 +8,19 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
-  ChangeDialog,
-  type CommonChangeDialogProps,
-  CurrencyIcon,
-  FieldGroup,
-  FieldsSection,
-  FormField,
-  NumberField,
-  NumbertoWordsService,
-  SystemPermissionsActions,
-  TextAreaField,
-  TextField
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	CurrencyIcon,
+	FieldGroup,
+	FieldsSection,
+	FormField,
+	NumberField,
+	NumbertoWordsService,
+	SystemPermissionsActions,
+	TextAreaField,
+	TextField
 } from "yusr-ui";
-import type { BalanceTransfer, BalanceTransferDto } from "../../core/data/balanceTransfer.ts";
+import type { BalanceTransfer, BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 
 
 export default function ChangeBalanceTransferDialog(
@@ -29,21 +29,7 @@ export default function ChangeBalanceTransferDialog(
 {
 	useSignals();
 
-	if (
-		(entity.mode.value === "create"
-			&& !Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Add))
-		|| (entity.mode.value === "update"
-			&& !Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Update))
-	)
-	{
-		return <ChangeDialog.Unauthorized/>;
-	}
-
 	const {t} = useTranslation(["accounting", "common"]);
-	const title = entity.mode.value === "create"
-		? t("balanceTransfers.addNewTitle")
-		: `${ t("common:crudRow.edit") } ${ t("balanceTransfers.entityName") }`;
-
 	const amountToWords = useMemo(() => signal<string>(""), []);
 
 	useEffect(() =>
@@ -55,7 +41,21 @@ export default function ChangeBalanceTransferDialog(
 				Services.auth.setting.currency.value
 			);
 		}
-	}, [entity.amount.value, Services.auth.setting?.currency?.value]);
+	}, [entity.amount.value, amountToWords]);
+
+	if (
+		(entity.mode.value === "create"
+			&& !Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Add))
+		|| (entity.mode.value === "update"
+			&& !Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
+
+	const title = entity.mode.value === "create"
+		? t("balanceTransfers.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("balanceTransfers.entityName") }`;
 
 	const hasBankPerm = Services.auth.hasAuth(
 		SystemPermissionsResources.AccountBank,
@@ -66,7 +66,7 @@ export default function ChangeBalanceTransferDialog(
 		SystemPermissionsResources.AccountBox,
 		SystemPermissionsActions.Get
 	);
-	let types: AccountType[] = [];
+	const types: AccountType[] = [];
 	if (hasBankPerm)
 	{
 		types.push(AccountType.Bank);

@@ -13,7 +13,6 @@ import {
 	StorageType,
 	useStorageFile
 } from "yusr-ui";
-import { InvoiceType } from "@/core/data/invoiceOld.ts";
 import InvoicesApiService from "../../core/networking/invoiceApiService";
 import InvoiceItemsMath from "./logic/invoiceItemsMath";
 import InvoiceBasicTab from "./presentation/basic/invoiceBasicTab";
@@ -25,6 +24,7 @@ import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { AccountType } from "@/core/data/account.ts";
+import { InvoiceType } from "@/core/types/invoiceType";
 
 
 export default function ChangeInvoiceDialog({
