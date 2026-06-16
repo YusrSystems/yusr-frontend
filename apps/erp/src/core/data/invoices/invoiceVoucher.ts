@@ -1,8 +1,8 @@
 import type Invoice from "@/core/data/invoices/invoice.ts";
-import { InvoiceRelationType } from "@/core/data/invoiceOld.ts";
 import { Services } from "@/core/services/services.ts";
 import type { Signal } from "@preact/signals-react";
 import { ChangeableEntity, Dto } from "yusr-ui";
+import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
 
 
 export class InvoiceVoucherDto extends Dto

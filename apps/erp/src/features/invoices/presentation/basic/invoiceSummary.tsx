@@ -1,11 +1,11 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import { InvoiceType } from "@/core/data/invoiceOld.ts";
 import { useTranslation } from "react-i18next";
 import { cn, CurrencyIcon, SystemPermissionsActions } from "yusr-ui";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 import InvoiceProfitDialog from "../profit/InvoiceProfitDialog";
 import type Invoice from "@/core/data/invoices/invoice.ts";
 import { Services } from "@/core/services/services.ts";
+import { InvoiceType } from "@/core/types/invoiceType.ts";
 
 
 function SummaryRow({
