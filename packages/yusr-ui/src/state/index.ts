@@ -1,4 +1,4 @@
-export * from "./authListener";
+export * from "../auth/authListener.ts";
 export * from "./generics/genericDialogSlice";
 export * from "./generics/genericEntitySlice";
 export * from "./generics/genericFormSlice";

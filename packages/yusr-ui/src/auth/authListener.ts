@@ -1,4 +1,4 @@
-import { AuthConstants } from "../auth";
+import { AuthConstants } from "./index.ts";
 
 
 interface AuthActions
