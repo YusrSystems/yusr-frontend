@@ -1,5 +1,5 @@
 import { ApiConstants, type RequestResult, YusrApiHelper } from "yusr-ui";
-import type { EInvoicingEnvironmentType } from "../data/settingOld";
+import type { EInvoicingEnvironmentType } from "../data/setting";
 
 
 export default class EInvoicingApiService

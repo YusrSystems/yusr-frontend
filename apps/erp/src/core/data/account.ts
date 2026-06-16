@@ -54,12 +54,7 @@ export class AccountContact extends ChangeableEntity<AccountContactDto>
 			validators: [Validators.custom(
 				(number: string) =>
 				{
-					if (number.length > 0 && number.length !== 10)
-					{
-						return false;
-					}
-
-					return true;
+					return !(number.length > 0 && number.length !== 10);
 				},
 				i18n.t("accounting:accounts.contactNumberLength")
 			)]

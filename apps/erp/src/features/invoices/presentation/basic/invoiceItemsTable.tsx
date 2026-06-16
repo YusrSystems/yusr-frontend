@@ -18,13 +18,13 @@ import {
 	useColumnVisibility
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
-import { InvoiceType } from "@/core/data/invoiceOld.ts";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 import { ItemProfitDialog } from "../profit/ItemProfitDialog";
 import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import { signal } from "@preact/signals-react";
 import { Services } from "@/core/services/services.ts";
 import type { InvoiceItem } from "@/core/data/invoices/invoiceItem.ts";
+import { InvoiceType } from "@/core/types/invoiceType.ts";
 
 
 export default function InvoiceItemsTable({invoice}: { invoice: Invoice })

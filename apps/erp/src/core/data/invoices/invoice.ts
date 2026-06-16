@@ -49,13 +49,12 @@ export class InvoiceDto extends Dto
 	public ignoreWarnings: boolean = false;
 }
 
-export const InvoiceMode = {
-	...ChangeableEntityMode,
-	Return: "return",
-	Copy: "copy",
-	QuotationToSales: "quotationToSales"
-} as const;
-export type InvoiceMode = typeof InvoiceMode[keyof typeof InvoiceMode];
+export class InvoiceMode extends ChangeableEntityMode
+{
+	static readonly Return = new InvoiceMode();
+	static readonly Copy = new InvoiceMode();
+	static readonly QuotationToSales = new InvoiceMode();
+}
 
 export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 {

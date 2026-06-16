@@ -1,13 +1,14 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckboxField, DateField, FieldsSection, FormField, SelectField, TextField } from "yusr-ui";
-import { ImportExportType, InvoiceType } from "@/core/data/invoiceOld.ts";
 import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import { signal, useComputed } from "@preact/signals-react";
 import { type Account, AccountType } from "@/core/data/account.ts";
 import { Services } from "@/core/services/services.ts";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
-import { AccountsSearchableSelect } from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
+import { InvoiceType } from "@/core/types/invoiceType.ts";
+import { ImportExportType } from "@/core/types/importExportType.ts";
 
 
 export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })

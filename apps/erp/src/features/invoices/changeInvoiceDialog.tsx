@@ -94,14 +94,14 @@ export default function ChangeInvoiceDialog({
 					if (currentEntity.value.mode.value === InvoiceMode.Copy)
 					{
 						res.data.id.value = 0;
-						res.data.date.value = new Date().toLocaleDateString("en-CA");
+						res.data.date.value = new Date();
 						currentEntity.value = Invoice.create(res.data.toJson());
 					}
 					if (currentEntity.value.mode.value === InvoiceMode.QuotationToSales)
 					{
 						res.data.id.value = 0;
 						res.data.type.value = InvoiceType.Sell;
-						res.data.date.value = new Date().toLocaleDateString("en-CA");
+						res.data.date.value = new Date();
 						res.data.notes.value = undefined;
 						currentEntity.value = Invoice.create(res.data.toJson());
 					}
@@ -236,7 +236,7 @@ export default function ChangeInvoiceDialog({
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
 
-				<ChangeDialog.SaveButton<Invoice, InvoiceDto, InvoiceMode>
+				<ChangeDialog.SaveButton<Invoice, InvoiceDto>
 					entity={ currentEntity.value }
 					service={ service }
 					onSuccess={ (data) =>

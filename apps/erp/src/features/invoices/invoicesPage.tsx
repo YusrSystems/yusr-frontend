@@ -11,9 +11,8 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import type { TFunction } from "i18next";
 import { FileTextIcon, RotateCw } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { type ReactNode, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { TableBodyRowInfo } from "yusr-ui";
 import {
 	Button,
 	CrudPage,
@@ -30,10 +29,11 @@ import {
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { InvoiceType } from "@/core/types/invoiceType";
-import VerfiAccountWrapper from "@/core/components/verfiAccountWrapper";
+import VerifyAccountWrapper from "@/core/components/verifyAccountWrapper.tsx";
 import { EInvoicingEnvironmentType } from "@/core/data/setting.ts";
 import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
 import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
+import { toast } from "sonner";
 
 
 export default function InvoicesPage({
@@ -66,7 +66,7 @@ export default function InvoicesPage({
 	}
 
 	return (
-		<VerfiAccountWrapper>
+		<VerifyAccountWrapper>
 			<CrudPage>
 				<CrudPage.Header
 					title={ title }
@@ -116,13 +116,13 @@ export default function InvoicesPage({
 					} }
 				/>
 
-				{/*<CrudPage.DeleteDialog*/ }
-				{/*    entityNameSelector={(invoice: Invoice) => invoice.name}*/ }
-				{/*    service={Services.invoicesApi}*/ }
-				{/*    onSuccess={(entity) => Cubits.invoices.delete(entity)}*/ }
-				{/*/>*/ }
+				<CrudPage.DeleteDialog
+					entityNameSelector={ (invoice) => invoice.id }
+					service={ Services.invoicesApi }
+					onSuccess={ (entity) => Cubits.invoices.delete(entity) }
+				/>
 			</CrudPage>
-		</VerfiAccountWrapper>
+		</VerifyAccountWrapper>
 	);
 }
 
@@ -146,6 +146,25 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 	useSignals();
 	const resendingEInvoice = useMemo(() => signal(false), []);
 	const {t} = useTranslation(["accounting", "common"]);
+
+	const resendEInvoice = async (invoice: Invoice) =>
+	{
+		resendingEInvoice.value = true;
+		const res = await Services.invoicesApi.ResendEInvoice(invoice.id.value);
+		if (res.status === 200 && res.data != undefined)
+		{
+			if (res.data === EInvoiceStatus.NotSent)
+			{
+				toast.error(t("invoices.resendFailed"));
+			}
+			else
+			{
+				toast.success(t("invoices.resendSuccess"));
+			}
+			invoice.eInvoiceStatus.value = res.data;
+		}
+		resendingEInvoice.value = false;
+	};
 
 	if (Cubits.pricingMethods.state.value instanceof PageLoading)
 	{
@@ -257,27 +276,28 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 
 		return {message: "", styles: ""};
 	};
+
 	const getTableRowMapper = (invoice: Invoice) =>
 	{
-		const cells: TableBodyRowInfo[] = [{rowName: `#${ invoice.id }`, rowStyles: ""}];
+		const cells: { rowBody: ReactNode, rowStyles: string }[] = [{rowBody: `#${ invoice.id }`, rowStyles: ""}];
 
 		if (fixedType === InvoiceType.Quotation)
 		{
-			cells.push({rowName: invoice.notes, rowStyles: "font-semibold"});
+			cells.push({rowBody: invoice.notes, rowStyles: "font-semibold"});
 		}
 		else
 		{
-			cells.push({rowName: getInvoiceTypeName(invoice.type.value, t), rowStyles: "font-semibold"});
+			cells.push({rowBody: getInvoiceTypeName(invoice.type.value, t), rowStyles: "font-semibold"});
 		}
 
 		cells.push(
-			{rowName: new Date(invoice.date.value).toLocaleDateString("en-CA"), rowStyles: ""},
-			{rowName: invoice.actionAccountName || "-", rowStyles: ""},
-			{rowName: invoice.storeName || "-", rowStyles: ""},
+			{rowBody: new Date(invoice.date.value).toLocaleDateString("en-CA"), rowStyles: ""},
+			{rowBody: invoice.actionAccountName || "-", rowStyles: ""},
+			{rowBody: invoice.storeName || "-", rowStyles: ""},
 			{
-				rowName: (
+				rowBody: (
 					<div className="flex items-center gap-1">
-						{ (invoice.fullAmount ?? 0).toLocaleString("en-US") }
+						{ Number(invoice.fullAmount ?? 0).toLocaleString("en-US") }
 						<CurrencyIcon/>
 					</div>
 				),
@@ -289,7 +309,7 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 		{
 			cells.push(
 				{
-					rowName: invoice.statusId.value === InvoiceStatus.Valid
+					rowBody: invoice.statusId.value === InvoiceStatus.Valid
 						? t("invoices.valid")
 						: t("invoices.deleted"),
 					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -299,7 +319,7 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 					}`
 				},
 				{
-					rowName: getPaymentStatus(invoice).message,
+					rowBody: getPaymentStatus(invoice).message,
 					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
 						getPaymentStatus(invoice).styles
 					}`
@@ -313,7 +333,7 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 		)
 		{
 			cells.push({
-				rowName: (
+				rowBody: (
 					<div className="flex items-center gap-2">
 						{ getEInvoiceStatus(invoice).message && (
 							<span
@@ -333,7 +353,7 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 											variant="ghost"
 											size="icon"
 											className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-50"
-											onClick={ () => resendingEInvoice.value = true }
+											onClick={ () => resendEInvoice(invoice) }
 											disabled={ resendingEInvoice.value }
 										>
 											<RotateCw className="h-3.5 w-3.5"/>
@@ -358,7 +378,7 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 		)
 		{
 			cells.push({
-				rowName: (
+				rowBody: (
 					<ReportButton
 						reportName={ ReportConstants.Invoice }
 						request={ {invoiceId: invoice.id} }

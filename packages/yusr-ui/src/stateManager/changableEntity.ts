@@ -4,13 +4,13 @@ import type { Dto } from "./dto";
 import { ValidatableEntity } from "./validatableEntity";
 
 
-export const ChangeableEntityMode = {
-	Create: "create",
-	Update: "update"
-} as const;
-export type ChangeableEntityMode = typeof ChangeableEntityMode[keyof typeof ChangeableEntityMode];
+export class ChangeableEntityMode
+{
+	static readonly Create = new ChangeableEntityMode();
+	static readonly Update = new ChangeableEntityMode();
+}
 
-export abstract class ChangeableEntity<TDto extends Dto, TMode extends string = ChangeableEntityMode> extends ValidatableEntity<TDto>
+export abstract class ChangeableEntity<TDto extends Dto, TMode extends ChangeableEntityMode = ChangeableEntityMode> extends ValidatableEntity<TDto>
 {
 	public readonly mode: Signal<TMode>;
 	public readonly isDirty: Signal<boolean> = signal(false);
@@ -29,20 +29,24 @@ export abstract class ChangeableEntity<TDto extends Dto, TMode extends string = 
 		this.originalDto = dto ?? {} as TDto;
 	}
 
-	static create<TEntity extends ChangeableEntity<TDto, TMode>, TDto extends Dto, TMode extends string = ChangeableEntityMode>(
-		this: new(dto: Partial<TDto> | undefined, mode?: TMode) => TEntity,
+	static create<TEntity extends ChangeableEntity<TDto, TMode>, TDto extends Dto, TMode extends ChangeableEntityMode = ChangeableEntityMode>(
+		this: new(dto: Partial<TDto> | undefined, mode: TMode) => TEntity,
 		dto: Partial<TDto> | undefined = undefined
 	): TEntity
 	{
-		const value = new this(dto, ChangeableEntityMode.Create as TMode);
-		value.initChanged();
-		value.resetDirty();
-		return value;
+		let res = new this(dto, ChangeableEntityMode.Create as TMode);
+		res.initChanged();
+		res.resetDirty();
+		return res;
 	}
 
-	static load<TEntity extends ChangeableEntity<TDto, TMode>, TDto extends Dto, TMode extends string = ChangeableEntityMode>(
-		this: new(dto: Partial<TDto> | undefined, mode?: TMode) => TEntity,
-		dto: Partial<TDto> | undefined
+	static load<
+		TEntity extends ChangeableEntity<TDto, TMode>,
+		TDto extends Dto,
+		TMode extends ChangeableEntityMode = ChangeableEntityMode
+	>(
+		this: new(dto: Partial<TDto> | undefined, mode: TMode) => TEntity,
+		dto: Partial<TDto> | undefined = undefined
 	): TEntity
 	{
 		return new this(dto, ChangeableEntityMode.Update as TMode);
