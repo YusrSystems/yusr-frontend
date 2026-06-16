@@ -1,5 +1,4 @@
 export * from "./baseApiService";
-export * from "./baseApiServiceOld";
 export * from "./baseFilterableApiService";
 export * from "./branchesApiService";
 export * from "./citiesApiService";

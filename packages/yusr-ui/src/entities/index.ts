@@ -1,4 +1,3 @@
-export * from "./baseEntity";
 export * from "./branch";
 export * from "./city";
 export * from "./country";
