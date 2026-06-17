@@ -95,7 +95,7 @@ export default function SettingPage()
 
 				<CardContent className="py-3 min-h-[50vh]">
 					{ cubit.activeTab.value === "basic" && <BasicSection/> }
-					{ cubit.activeTab.value === "invoicing" && <InvoiceSection/> }
+					{ cubit.activeTab.value === "invoicing" && <InvoiceSection formData={ cubit.formData }/> }
 					{ cubit.activeTab.value === "accounts" && <DefaultsSection formData={ cubit.formData }/> }
 				</CardContent>
 
