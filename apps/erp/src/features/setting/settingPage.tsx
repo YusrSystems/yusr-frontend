@@ -1,7 +1,7 @@
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardContent, CardFooter, StorageType, TabButton, useStorageFile } from "yusr-ui";
 import BasicSection from "./basicSection";
@@ -33,8 +33,6 @@ export default function SettingPage()
 		false
 	);
 	const cubit = useMemo(() => new SettingsCubit(), []);
-
-	const [activeTab, setActiveTab] = useState<"basic" | "invoicing" | "accounts" | "subscription">("basic");
 
 	async function Save()
 	{
@@ -73,32 +71,32 @@ export default function SettingPage()
 			<Card className="relative shadow-lg border-muted/40 py-0">
 				<div className="flex border-b bg-muted/10 rounded-t-xl overflow-x-auto">
 					<TabButton
-						active={ activeTab === "basic" }
+						active={ cubit.activeTab.value === "basic" }
 						icon={ Building2 }
 						label={ t("settings.basicData") }
-						onClick={ () => setActiveTab("basic") }
+						onClick={ () => cubit.activeTab.value = "basic" }
 						content={ <></> }
 					/>
 					<TabButton
-						active={ activeTab === "invoicing" }
+						active={ cubit.activeTab.value === "invoicing" }
 						icon={ Receipt }
 						label={ t("settings.invoicesAndTaxes") }
-						onClick={ () => setActiveTab("invoicing") }
+						onClick={ () => cubit.activeTab.value = "invoicing" }
 						content={ <></> }
 					/>
 					<TabButton
-						active={ activeTab === "accounts" }
+						active={ cubit.activeTab.value === "accounts" }
 						icon={ Wallet }
 						label={ t("settings.defaultAccounts") }
-						onClick={ () => setActiveTab("accounts") }
+						onClick={ () => cubit.activeTab.value = "accounts" }
 						content={ <></> }
 					/>
 				</div>
 
 				<CardContent className="py-3 min-h-[50vh]">
-					{ activeTab === "basic" && <BasicSection/> }
-					{ activeTab === "invoicing" && <InvoiceSection/> }
-					{ activeTab === "accounts" && <DefaultsSection/> }
+					{ cubit.activeTab.value === "basic" && <BasicSection/> }
+					{ cubit.activeTab.value === "invoicing" && <InvoiceSection/> }
+					{ cubit.activeTab.value === "accounts" && <DefaultsSection/> }
 				</CardContent>
 
 				<CardFooter className="flex justify-end border-t pt-4">
