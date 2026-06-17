@@ -1,5 +1,4 @@
-import type { TFunction } from "i18next";
-import { type RequestResult, YusrApiHelper } from "yusr-ui";
+import { i18n, type RequestResult, YusrApiHelper } from "yusr-ui";
 import type { SettingDto, SharingSetting } from "../data/setting";
 
 
@@ -17,13 +16,13 @@ export default class SettingsApiServiceOld
 		return await YusrApiHelper.Get(`$/api/${ this.routeName }/Get/${ registrationKey }`);
 	}
 
-	async Update(entity: SettingDto, t: TFunction<"common">)
+	async Update(entity: SettingDto)
 	{
 		return await YusrApiHelper.Put(
 			`$/api/${ this.routeName }/Update`,
 			entity,
 			undefined,
-			t("api.updateSuccess")
+			i18n.t("api.updateSuccess")
 		);
 	}
 }

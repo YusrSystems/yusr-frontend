@@ -1,106 +1,57 @@
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardContent, CardFooter, StorageType, TabButton, useStorageFile } from "yusr-ui";
-import SettingsApiServiceOld from "../../core/networking/settingsApiServiceOld.ts";
 import BasicSection from "./basicSection";
 import DefaultsSection from "./defaultsSection";
 import InvoiceSection from "./invoiceSection";
+import SettingsCubit from "@/features/setting/logic/settingsCubit.ts";
+import { SettingsLoading, SettingsSaving } from "@/features/setting/logic/settingsState.ts";
 
 
 export default function SettingPage()
 {
 	useSignals();
 	const {t} = useTranslation("erpCommon");
-	const {t: tCommon} = useTranslation("common");
 
 	const {commitFiles} = useStorageFile(
 		() => Services.auth?.setting?.logo?.value ? [Services.auth?.setting?.logo.value] : [],
 		(files) =>
 		{
-			if (Services.auth?.setting?.logo?.value)
+			const file = Array.isArray(files)
+				? files[0]
+				: files;
+
+			if (Services.auth?.setting?.logo && file)
 			{
-				Services.auth?.setting?.logo?.value = Array.isArray(files) ? files[0] : files;
+				Services.auth.setting.logo.value = file;
 			}
 		},
 		StorageType.Public,
 		false
 	);
+	const cubit = useMemo(() => new SettingsCubit(), []);
 
-	const [loading, setLoading] = useState(false);
-	const [initLoading, setInitLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState<"basic" | "invoicing" | "accounts" | "subscription">("basic");
-
-	useEffect(() =>
-	{
-		const fetchSettings = async () =>
-		{
-			setInitLoading(true);
-			const response = await new SettingsApiServiceOld().Get();
-
-			if (response.data)
-			{
-				dispatch(SettingSlice.formActions.setInitialData(response.data));
-				dispatch(updateSetting(response.data));
-			}
-			setInitLoading(false);
-		};
-
-		fetchSettings();
-	}, []);
-
-	useEffect(() =>
-	{
-		dispatch(CurrencySlice.entityActions.filter());
-		dispatch(TaxSlice.entityActions.filter());
-		dispatch(StoreSlice.entityActions.filter());
-		dispatch(PaymentMethodSlice.entityActions.filter());
-		dispatch(BranchSlice.entityActions.filter());
-		dispatch(ClientsAndSuppliersSlice.entityActions.filter());
-	}, [dispatch]);
 
 	async function Save()
 	{
-		if (!validate())
-		{
-			setActiveTab("basic");
-			return;
-		}
-
-		setLoading(true);
 
 		const resolvedLogo = await commitFiles(
-			formData.logo,
+			cubit.formData.logo?.value,
 			`Logos`
 		);
 		const updatedLogo = resolvedLogo[0];
 
-		dispatch(
-			SettingSlice.formActions.updateFormData({
-				logo: updatedLogo
-			})
-		);
-
-		const result = await new SettingsApiServiceOld().Update(
-			{...formData, logo: updatedLogo} as SettingOld,
-			tCommon
-		);
-		setLoading(false);
-
-		if (result.status === 200)
+		if (cubit.formData.logo && updatedLogo)
 		{
-			if (Services.auth?.setting)
-			{
-				Services.auth.setting.companyPhone.value = formData.companyPhone as string;
-			}
-			dispatch(SettingSlice.formActions.updateFormData(result.data as SettingOld));
-			dispatch(updateSetting(result.data as SettingOld));
+			cubit.formData.logo.value = updatedLogo;
 		}
 	}
 
-	if (initLoading)
+	if (cubit.state.value instanceof SettingsLoading)
 	{
 		return (
 			<div className="p-8 text-center text-muted-foreground flex flex-col items-center justify-center h-[50vh]">
@@ -109,6 +60,8 @@ export default function SettingPage()
 			</div>
 		);
 	}
+
+	const isLoading = cubit.state.value instanceof SettingsSaving;
 
 	return (
 		<div className="container mx-auto px-5 pb-8 max-w-5xl">
@@ -149,9 +102,13 @@ export default function SettingPage()
 				</CardContent>
 
 				<CardFooter className="flex justify-end border-t pt-4">
-					<Button disabled={ loading } size="lg" className="px-12 font-bold text-md shadow-lg"
-					        onClick={ Save }>
-						{ loading && <Loader2 className="ml-2 h-5 w-5 animate-spin"/> }
+					<Button disabled={ isLoading } size="lg" className="px-12 font-bold text-md shadow-lg"
+					        onClick={ async () =>
+							{
+								await Save();
+								await cubit.save();
+							} }>
+						{ isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin"/> }
 						{ t("settings.save") }
 					</Button>
 				</CardFooter>
