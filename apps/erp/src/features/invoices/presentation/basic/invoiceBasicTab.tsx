@@ -1,4 +1,4 @@
-import { InvoiceType } from "@/core/data/invoiceOld.ts";
+import { InvoiceType } from "@/core/types/invoiceType.ts";
 import { SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import InvoicePayments from "../payments/invoicePayments";
