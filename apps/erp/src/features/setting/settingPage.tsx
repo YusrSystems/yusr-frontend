@@ -1,27 +1,10 @@
-import { StoreSlice } from "@/core/data/storeSlice";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  BranchSlice,
-  Button,
-  Card,
-  CardContent,
-  CardFooter,
-  CurrencySlice,
-  StorageType,
-  TabButton,
-  useStorageFile,
-  useValidate
-} from "yusr-ui";
-import { ClientsAndSuppliersSlice } from "../../core/data/accountOld";
-import { PaymentMethodSlice } from "../../core/data/paymentMethod";
-import { SettingOld, SettingSlice, SettingValidationRules } from "../../core/data/settingOld";
-import { TaxSlice } from "../../core/data/tax";
+import { Button, Card, CardContent, CardFooter, StorageType, TabButton, useStorageFile } from "yusr-ui";
 import SettingsApiServiceOld from "../../core/networking/settingsApiServiceOld.ts";
-import { updateSetting, useAppDispatch, useAppSelector } from "../../core/state/store";
 import BasicSection from "./basicSection";
 import DefaultsSection from "./defaultsSection";
 import InvoiceSection from "./invoiceSection";
@@ -33,15 +16,15 @@ export default function SettingPage()
 	const {t} = useTranslation("erpCommon");
 	const {t: tCommon} = useTranslation("common");
 
-	const {formData} = useAppSelector((state) => state.settingForm);
-	const {validate} = useValidate(
-		formData,
-		SettingValidationRules.validationRules(t),
-		(errors) => dispatch(SettingSlice.formActions.setErrors(errors))
-	);
 	const {commitFiles} = useStorageFile(
-		() => formData.logo ? [formData.logo] : [],
-		(files) => dispatch(SettingSlice.formActions.updateFormData({logo: Array.isArray(files) ? files[0] : files})),
+		() => Services.auth?.setting?.logo?.value ? [Services.auth?.setting?.logo.value] : [],
+		(files) =>
+		{
+			if (Services.auth?.setting?.logo?.value)
+			{
+				Services.auth?.setting?.logo?.value = Array.isArray(files) ? files[0] : files;
+			}
+		},
 		StorageType.Public,
 		false
 	);
@@ -49,8 +32,6 @@ export default function SettingPage()
 	const [loading, setLoading] = useState(false);
 	const [initLoading, setInitLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState<"basic" | "invoicing" | "accounts" | "subscription">("basic");
-
-	const dispatch = useAppDispatch();
 
 	useEffect(() =>
 	{

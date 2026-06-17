@@ -1,15 +1,15 @@
 import type { Signal } from "@preact/signals-react";
 import {
-  Branch,
-  BranchDto,
-  CityOld,
-  Currency,
-  CurrencyDto,
-  Dto,
-  i18n,
-  type StorageFile,
-  ValidatableEntity,
-  Validators
+	Branch,
+	BranchDto,
+	City,
+	Currency,
+	CurrencyDto,
+	Dto,
+	i18n,
+	type StorageFile,
+	ValidatableEntity,
+	Validators
 } from "yusr-ui";
 import { Tax, type TaxDto } from "./tax";
 
@@ -180,7 +180,7 @@ export class SharingSetting
 	public district!: string;
 	public buildingNumber!: string;
 	public postalCode!: string;
-	public city!: CityOld;
+	public city!: City;
 	public logo?: StorageFile;
 
 	constructor(init?: Partial<SharingSetting>)
