@@ -1,9 +1,8 @@
 import { type TFunction } from "i18next";
 import * as numberToWords from "number-to-words";
-import { Currency, CurrencyOld } from "../entities";
-// mark methods that uses old currencies methods as old
-// allowing the normal methods to accept Currency entity
-// so now it can work will in old version of balance transfer and new version
+import { Currency } from "../entities";
+
+
 export class NumbertoWordsService
 {
 	private static t: TFunction | null = null;
@@ -113,66 +112,6 @@ export class NumbertoWordsService
 			throw new Error("NumbertoWordsService not initialized. Call NumbertoWordsService.init(t, language) first.");
 		}
 		return this.t;
-	}
-
-	static ConvertAmountOld(amount: number, currency: CurrencyOld): string
-	{
-		const integerPart = Math.floor(amount);
-		const fractionPart = Math.round((amount - integerPart) * 100);
-
-		if (this.currentLanguage === "en")
-		{
-			// Use library for English
-			let result = "";
-
-			if (integerPart > 0)
-			{
-				result += numberToWords.toWords(integerPart) + " " + this.getCurrencyWordOld(integerPart, currency, false);
-			}
-
-			if (fractionPart > 0)
-			{
-				if (result)
-				{
-					result += " and ";
-				}
-				result += numberToWords.toWords(fractionPart) + " " + this.getCurrencyWordOld(fractionPart, currency, true);
-			}
-
-			if (integerPart === 0 && fractionPart === 0)
-			{
-				result = `zero ${ currency.name }`;
-			}
-
-			return result;
-		}
-
-		// Arabic custom code
-		const t = this.getT();
-		let result = "";
-
-		if (integerPart > 0)
-		{
-			result += this.ConvertArabic(integerPart, currency.isFeminine) + " "
-				+ this.getCurrencyWordOld(integerPart, currency, false);
-		}
-
-		if (fractionPart > 0)
-		{
-			if (result)
-			{
-				result += " " + t("numberToWords.and") + " ";
-			}
-			result += this.ConvertArabic(fractionPart, currency.isFeminine) + " "
-				+ this.getCurrencyWordOld(fractionPart, currency, true);
-		}
-
-		if (integerPart === 0 && fractionPart === 0)
-		{
-			result = `${ t("numberToWords.zero") } ${ currency.name }`;
-		}
-
-		return result;
 	}
 
 	static ConvertAmount(amount: number, currency: Currency): string
@@ -304,7 +243,7 @@ export class NumbertoWordsService
 		}
 		else if (parts.length === 1)
 		{
-			return parts[0];
+			return parts[0] ?? "";
 		}
 		else
 		{
@@ -390,25 +329,5 @@ export class NumbertoWordsService
 		}
 
 		return sub ? currency.subName.value : currency.name.value;
-	}
-
-	private static getCurrencyWordOld(value: number, currency: CurrencyOld, sub: boolean): string
-	{
-		if (value === 0)
-		{
-			return sub ? currency.subPlural : currency.plural;
-		}
-
-		if (value === 1 || value === 2)
-		{
-			return sub ? currency.subName : currency.name;
-		}
-
-		if (value >= 3 && value <= 10)
-		{
-			return sub ? currency.subPlural : currency.plural;
-		}
-
-		return sub ? currency.subName : currency.name;
 	}
 }

@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import {
 	ChangeDialog,
 	type CommonChangeDialogProps,
-	CurrencyIcon,
 	FieldGroup,
 	FieldsSection,
 	FormField,
@@ -21,6 +20,7 @@ import {
 	TextField
 } from "yusr-ui";
 import type { BalanceTransfer, BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function ChangeBalanceTransferDialog(
@@ -99,9 +99,9 @@ export default function ChangeBalanceTransferDialog(
 							required
 							value={ entity.amount }
 							error={ entity.getError("amount") }
-							currency={ <CurrencyIcon/> }
+							currency={ <ErpCurrencyIcon/> }
 						/>
-
+						4
 						<div className="col-span-full">
 							<TextField
 								label={ t("balanceTransfers.amountInWords") }

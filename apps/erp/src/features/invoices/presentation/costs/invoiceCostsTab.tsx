@@ -1,11 +1,12 @@
-import { AccountsSearchableSelect } from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import { AccountType } from "@/core/data/account.ts";
 import type Invoice from "@/core/data/invoices/invoice.ts";
 import { InvoiceVoucher } from "@/core/data/invoices/invoiceVoucher.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, CurrencyIcon, FormField, NumberField, TextField } from "yusr-ui";
+import { Button, FormField, NumberField, TextField } from "yusr-ui";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
@@ -78,7 +79,7 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 								<NumberField
 									label=""
 									value={ invoiceVoucher.amount }
-									currency={ <CurrencyIcon/> }
+									currency={ <ErpCurrencyIcon/> }
 								/>
 							</td>
 

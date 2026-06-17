@@ -6,7 +6,6 @@ import {
 	ChangeDialog,
 	CitiesSearchableSelect,
 	type CommonChangeDialogProps,
-	CurrencyIcon,
 	FieldGroup,
 	FieldsSection,
 	FormField,
@@ -23,6 +22,7 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
 import { type Account, AccountContact, type AccountDto, AccountType } from "@/core/data/account.ts";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function ChangeAccountDialog(
@@ -112,7 +112,7 @@ export default function ChangeAccountDialog(
 						<NumberField
 							label={ t("accounts.openingBalance") }
 							value={ entity.initialBalance }
-							currency={ <CurrencyIcon/> }
+							currency={ <ErpCurrencyIcon/> }
 						/>
 					) }
 
@@ -121,7 +121,7 @@ export default function ChangeAccountDialog(
 							label={ t("accounts.balance") }
 							disabled
 							value={ entity.balance }
-							currency={ <CurrencyIcon/> }
+							currency={ <ErpCurrencyIcon/> }
 						/>
 					) }
 				</FieldsSection>

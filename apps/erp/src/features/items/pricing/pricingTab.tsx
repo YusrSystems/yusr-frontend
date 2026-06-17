@@ -2,9 +2,10 @@ import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearc
 import type Item from "@/core/data/item";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { CheckboxField, CurrencyIcon, FieldsSection, FormField, NumberField } from "yusr-ui";
+import { CheckboxField, FieldsSection, FormField, NumberField } from "yusr-ui";
 import { ItemType } from "@/core/data/item.ts";
 import PricingMethodsTable from "./pricingMethodsTable";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function PricingTab({entity}: { entity: Item; })
@@ -26,11 +27,11 @@ export default function PricingTab({entity}: { entity: Item; })
 						disabled={ entity.type.value === ItemType.Service || entity.mode.value === "update" }
 						onSelect={ (unit) =>
 						{
-							entity.itemUnitPricingMethods.value.forEach((iupm, i) =>
+							entity.itemUnitPricingMethods.value.forEach((iupm) =>
 							{
 								if (iupm.unitId.value === unit?.id.value)
 								{
-									entity.itemUnitPricingMethods.value[i].quantityMultiplier.value = 1;
+									iupm.quantityMultiplier.value = 1;
 								}
 							});
 						} }
@@ -43,21 +44,21 @@ export default function PricingTab({entity}: { entity: Item; })
 					disabled={ entity.mode.value === "update" }
 					value={ entity.initialCost }
 					error={ entity.getError("initialCost") }
-					currency={ <CurrencyIcon/> }
+					currency={ <ErpCurrencyIcon/> }
 				/>
 
 				<NumberField
 					label={ t("items.cost") }
 					disabled
 					value={ entity.cost }
-					currency={ <CurrencyIcon/> }
+					currency={ <ErpCurrencyIcon/> }
 				/>
 
 				<NumberField
 					label={ t("items.lastBuyPrice") }
 					disabled
 					value={ entity.lastBuyPrice }
-					currency={ <CurrencyIcon/> }
+					currency={ <ErpCurrencyIcon/> }
 				/>
 
 				<CheckboxField

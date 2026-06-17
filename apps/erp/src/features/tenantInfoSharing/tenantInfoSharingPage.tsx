@@ -241,12 +241,12 @@ export default function TenantInfoSharingPage()
 					<FieldRow
 						icon={ <Globe className="w-4 h-4"/> }
 						label={ t("sharing.country") }
-						value={ setting.city?.country?.name.value }
+						value={ setting.city?.country.value?.name.value }
 					/>
 					<FieldRow
 						icon={ <MapPin className="w-4 h-4"/> }
 						label={ t("sharing.city") }
-						value={ setting.city?.name }
+						value={ setting.city?.name.value }
 					/>
 					<FieldRow
 						icon={ <Navigation className="w-4 h-4"/> }

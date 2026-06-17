@@ -6,15 +6,15 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
-  FieldsSection,
-  SelectField,
-  StorageFileField,
-  StorageType,
-  TextAreaField,
-  TextField,
-  useStorageFile
+	FieldsSection,
+	SelectField,
+	StorageFileField,
+	StorageType,
+	TextAreaField,
+	TextField,
+	useStorageFile
 } from "yusr-ui";
-import { ItemType } from "../../../core/data/item";
+import { ItemType } from "@/core/data/item.ts";
 import TaxesSection from "./taxesSection";
 
 

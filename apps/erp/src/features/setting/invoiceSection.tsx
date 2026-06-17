@@ -21,7 +21,10 @@ export default function InvoiceSection({formData}: { formData: Setting })
 						required
 						error={ formData.getError("currencyId") }
 					>
-						<CurrenciesSearchableSelect id={ formData.currencyId } label={ formData.currency?.value.name }/>
+						<CurrenciesSearchableSelect
+							id={ formData.currencyId }
+							label={ formData.currency?.value?.name }
+						/>
 
 					</FormField>
 
@@ -30,7 +33,7 @@ export default function InvoiceSection({formData}: { formData: Setting })
 
 						<TaxesSearchableSelect
 							id={ formData.mainTaxId }
-							label={ formData.mainTax?.value.name }
+							label={ formData.mainTax?.value?.name }
 						/>
 					</div>
 
@@ -66,27 +69,24 @@ export default function InvoiceSection({formData}: { formData: Setting })
 			</FieldGroup>
 
 			<EInvoicingRegisterButton
+				formData={ formData }
 				title="Testing"
 				subtitle="sandbox"
 				linkType={ EInvoicingEnvironmentType.Test }
-				linked={ formData.eInvoicingEnvironmentType.value === EInvoicingEnvironmentType.Test }
-				onFinish={ () => formData.eInvoicingEnvironmentType.value = EInvoicingEnvironmentType.Test }
 			/>
 
 			<EInvoicingRegisterButton
+				formData={ formData }
 				title="Fatoora Simulation"
 				subtitle={ t("settings.simulationSubtitle") }
 				linkType={ EInvoicingEnvironmentType.Simulation }
-				linked={ formData.eInvoicingEnvironmentType.value === EInvoicingEnvironmentType.Simulation }
-				onFinish={ () => formData.eInvoicingEnvironmentType.value = EInvoicingEnvironmentType.Simulation }
 			/>
 
 			<EInvoicingRegisterButton
+				formData={ formData }
 				title="Fatoora Portal"
 				subtitle={ t("settings.productionSubtitle") }
 				linkType={ EInvoicingEnvironmentType.Production }
-				linked={ formData.eInvoicingEnvironmentType.value === EInvoicingEnvironmentType.Production }
-				onFinish={ () => formData.eInvoicingEnvironmentType.value = EInvoicingEnvironmentType.Production }
 			/>
 		</div>
 	);

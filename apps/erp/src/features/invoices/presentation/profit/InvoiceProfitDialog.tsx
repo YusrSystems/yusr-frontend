@@ -1,10 +1,11 @@
 import { Banknote } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, cn, CurrencyIcon, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
+import { Button, cn, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
 import type { InvoiceProfitResult } from "@/core/data/invoices/InvoiceProfitResult.ts";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 import type Invoice from "@/core/data/invoices/invoice.ts";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 interface ProfitRowProps
@@ -29,7 +30,7 @@ export function ProfitRow({label, value, showCurrency = true, variant = "default
 				) }
 			>
         <span>{ value.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2}) }</span>
-				{ showCurrency && <CurrencyIcon/> }
+				{ showCurrency && <ErpCurrencyIcon/> }
       </span>
 		</div>
 	);

@@ -277,7 +277,7 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 
 	const displayCompany = {
 		name: Services.auth.setting?.companyName.value || "Default Name",
-		logo: Services.auth.setting?.logo?.value.url || "/default-avatar.jpg"
+		logo: Services.auth.setting?.logo?.value?.url || "/default-avatar.jpg"
 	};
 
 	const LogoutHandler = async () =>

@@ -6,10 +6,11 @@ import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Barcode, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, CurrencyIcon, FormField, NumberField, SystemPermissionsActions, TextField } from "yusr-ui";
+import { Button, FormField, NumberField, SystemPermissionsActions, TextField } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { ItemType } from "@/core/data/item.ts";
 import ItemBarcodeButton from "../../reports/itemBarcodeDialog";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function PricingMethodsTable({entity}: { entity: Item; })
@@ -25,11 +26,9 @@ export default function PricingMethodsTable({entity}: { entity: Item; })
 		entity.itemUnitPricingMethods.value = [...entity.itemUnitPricingMethods.value, newItem];
 	};
 
-	const suggestIUPMName = (index: number) =>
+	const suggestIUPMName = (method: ItemUnitPricingMethod) =>
 	{
-		entity.itemUnitPricingMethods.value[index].itemUnitPricingMethodName.value = `${ entity.itemUnitPricingMethods.value[index]?.unitName.value || "" } ${
-			entity.itemUnitPricingMethods.value[index]?.pricingMethodName.value || ""
-		}`;
+		method.itemUnitPricingMethodName.value = `${ method?.unitName.value ?? "" } ${ method?.pricingMethodName.value ?? "" }`;
 	};
 
 	return (
@@ -86,7 +85,7 @@ export default function PricingMethodsTable({entity}: { entity: Item; })
 												{
 													method.quantityMultiplier.value = 1;
 												}
-												suggestIUPMName(index);
+												suggestIUPMName(method);
 												entity.clearError("itemUnitPricingMethods");
 											} }
 										/>
@@ -98,13 +97,13 @@ export default function PricingMethodsTable({entity}: { entity: Item; })
 										error={ method.getError("pricingMethodId") }
 									>
 										<PricingMethodsSearchableSelect
-											id={ entity.itemUnitPricingMethods?.value[index].pricingMethodId }
-											label={ entity.itemUnitPricingMethods?.value[index].pricingMethodName }
+											id={ method.pricingMethodId }
+											label={ method.pricingMethodName }
 											disabled={ isService }
 											onSelect={ () =>
 											{
 												entity.clearError("itemUnitPricingMethods");
-												suggestIUPMName(index);
+												suggestIUPMName(method);
 											} }
 										/>
 									</FormField>
@@ -133,7 +132,7 @@ export default function PricingMethodsTable({entity}: { entity: Item; })
 											method.price.value = val ? val * multiplier : 0;
 										} }
 										error={ method.getError("unitPrice") }
-										currency={ <CurrencyIcon/> }
+										currency={ <ErpCurrencyIcon/> }
 									/>
 								</td>
 								<td className="p-3 flex">

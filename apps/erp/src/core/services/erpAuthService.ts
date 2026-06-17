@@ -26,7 +26,7 @@ export class ErpAuthService extends AuthService
 
 	get isVerifiedAccount(): boolean
 	{
-		return Boolean(this.setting?.companyPhone?.value && this.setting?.branch?.value.cityId);
+		return Boolean(this.setting?.companyPhone?.value && this.setting?.branch?.value?.cityId.value);
 	}
 
 	get stepsToComplete(): number
@@ -37,7 +37,7 @@ export class ErpAuthService extends AuthService
 		{
 			counter += 1;
 		}
-		if (!this.setting?.branch?.value.cityId)
+		if (!this.setting?.branch?.value?.cityId.value)
 		{
 			counter += 1;
 		}
@@ -47,7 +47,7 @@ export class ErpAuthService extends AuthService
 
 	get nextRoute(): string
 	{
-		if (!this.setting?.branch?.value.cityId)
+		if (!this.setting?.branch?.value?.cityId.value)
 		{
 			return "/branches";
 		}
@@ -65,7 +65,7 @@ export class ErpAuthService extends AuthService
 
 	updateBranch(branch: Branch)
 	{
-		if (branch.id.value !== this.setting?.branch?.value.id.value && this._setting?.branch)
+		if (branch.id.value !== this.setting?.branch?.value?.id.value && this._setting?.branch.value)
 		{
 			this._setting.branch.value = branch;
 			localStorage.setItem(this._settingStorageItemName, JSON.stringify(this._setting));

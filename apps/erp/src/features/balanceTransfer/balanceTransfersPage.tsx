@@ -8,7 +8,6 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	CrudPage,
-	CurrencyIcon,
 	NumbertoWordsService,
 	PageError,
 	PageLoaded,
@@ -20,6 +19,7 @@ import {
 import ReportButton from "../reports/reportButton";
 import ChangeBalanceTransferDialog from "./changeBalanceTransferDialog";
 import { BalanceTransfer, BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function BalanceTransfersPage()
@@ -140,7 +140,7 @@ function Table()
 							rowBody: (
 								<div className="flex items-center gap-1">
 									{ (transfer.amount.value ?? 0).toLocaleString("en-US") }
-									<CurrencyIcon/>
+									<ErpCurrencyIcon/>
 								</div>
 							),
 							rowStyles: "font-mono font-bold"

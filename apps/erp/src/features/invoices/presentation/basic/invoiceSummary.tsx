@@ -1,11 +1,12 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import { useTranslation } from "react-i18next";
-import { cn, CurrencyIcon, SystemPermissionsActions } from "yusr-ui";
+import { cn, SystemPermissionsActions } from "yusr-ui";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 import InvoiceProfitDialog from "../profit/InvoiceProfitDialog";
 import type Invoice from "@/core/data/invoices/invoice.ts";
 import { Services } from "@/core/services/services.ts";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 function SummaryRow({
@@ -40,7 +41,7 @@ function SummaryRow({
 		  }) }
         </span>
 
-				<CurrencyIcon/>
+				<ErpCurrencyIcon/>
 			</div>
 		</div>
 	);

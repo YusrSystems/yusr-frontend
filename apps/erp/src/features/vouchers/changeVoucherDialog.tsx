@@ -2,7 +2,6 @@ import {
 	ChangeDialog,
 	CheckboxField,
 	type CommonChangeDialogProps,
-	CurrencyIcon,
 	DateField,
 	FieldGroup,
 	FieldsSection,
@@ -26,6 +25,7 @@ import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
 import { CommissionType, type PaymentMethod } from "@/core/data/paymentMethod.ts";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function ChangeVoucherDialog({
@@ -172,7 +172,7 @@ export default function ChangeVoucherDialog({
 						required
 						value={ entity.amount }
 						error={ entity.getError("amount") }
-						currency={ <CurrencyIcon/> }
+						currency={ <ErpCurrencyIcon/> }
 						onChange={ () => reCalculateCommission() }
 					/>
 

@@ -41,7 +41,7 @@ export class SettingDto extends Dto
 	public vatNumber?: string;
 
 	public currencyId!: number;
-	public currency?: CurrencyDto;
+	public currency!: CurrencyDto;
 
 	public logo?: StorageFile;
 
@@ -78,36 +78,36 @@ export class Setting extends ValidatableEntity<SettingDto>
 	public companyName: Signal<string>;
 	public companyPhone: Signal<string>;
 	public companyBusinessCategory?: Signal<string>;
-	public crn?: Signal<string>;
-	public vatNumber?: Signal<string>;
+	public crn: Signal<string | undefined>;
+	public vatNumber: Signal<string | undefined>;
 
 	public currencyId: Signal<number>;
-	public currency?: Signal<Currency>;
+	public currency: Signal<Currency>;
 
-	public logo?: Signal<StorageFile>;
+	public logo: Signal<StorageFile | undefined>;
 
 	public startDate: Signal<Date>;
 	public endDate: Signal<Date>;
 
 	public branchId: Signal<number>;
-	public branch?: Signal<Branch>;
+	public branch: Signal<Branch | undefined>;
 
 	public mainTaxId: Signal<number>;
-	public mainTax?: Signal<Tax>;
+	public mainTax: Signal<Tax | undefined>;
 
-	public sellAccountId?: Signal<number>;
-	public sellAccountName?: Signal<string>;
+	public sellAccountId: Signal<number | undefined>;
+	public sellAccountName: Signal<string> | undefined;
 
-	public purchaseAccountId?: Signal<number>;
-	public purchaseAccountName?: Signal<string>;
+	public purchaseAccountId: Signal<number | undefined>;
+	public purchaseAccountName: Signal<string | undefined>;
 
-	public mainPaymentMethodId?: Signal<number>;
-	public mainPaymentMethodName?: Signal<string>;
+	public mainPaymentMethodId: Signal<number | undefined>;
+	public mainPaymentMethodName: Signal<string | undefined>;
 
-	public mainStoreId?: Signal<number>;
-	public mainStoreName?: Signal<string>;
+	public mainStoreId: Signal<number | undefined>;
+	public mainStoreName: Signal<string | undefined>;
 
-	public invoicePolicy?: Signal<string>;
+	public invoicePolicy: Signal<string | undefined>;
 	public invoicePrintSize: Signal<InvoicePrintSize>;
 
 	public eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType>;

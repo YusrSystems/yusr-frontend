@@ -1,10 +1,11 @@
 import { Plus, Trash2, Wallet } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, CrudEmptyTablePreview, CurrencyIcon, NumberField } from "yusr-ui";
+import { Button, CrudEmptyTablePreview, NumberField } from "yusr-ui";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 import type Invoice from "@/core/data/invoices/invoice.ts";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
 import { InvoiceVoucher } from "@/core/data/invoices/invoiceVoucher.ts";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function InvoicePayments({invoice}: { invoice: Invoice })
@@ -78,7 +79,7 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 										min={ 0 }
 										max={ unpaidPrice + (invoiceVoucher.amount.value ?? 0) }
 										value={ invoiceVoucher.amount }
-										currency={ <CurrencyIcon/> }
+										currency={ <ErpCurrencyIcon/> }
 									/>
 								</div>
 

@@ -2,7 +2,6 @@ import { Services } from "@/core/services/services.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import {
 	CrudPage,
-	CurrencyIcon,
 	NumbertoWordsService,
 	PageError,
 	PageLoaded,
@@ -20,6 +19,7 @@ import { Voucher, type VoucherDto, VoucherType } from "@/core/data/voucher.ts";
 import ReportButton from "@/features/reports/reportButton.tsx";
 import ReportConstants from "@/core/data/report/reportConstants.ts";
 import ChangeVoucherDialog from "@/features/vouchers/changeVoucherDialog.tsx";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function VouchersPage()
@@ -149,7 +149,7 @@ function PageTable()
 							rowBody: (
 								<div className="flex items-center gap-1">
 									{ (voucher.amount.value ?? 0).toLocaleString("en-US") }
-									<CurrencyIcon/>
+									<ErpCurrencyIcon/>
 								</div>
 							),
 							rowStyles: "font-mono font-bold"

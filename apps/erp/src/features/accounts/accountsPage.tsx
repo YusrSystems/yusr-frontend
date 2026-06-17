@@ -8,20 +8,20 @@ import { BoxIcon } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    CrudPage,
-    CurrencyIcon,
-    PageError,
-    PageLoaded,
-    PageLoading,
-    SystemPermissionsActions,
-    TablePreview,
-    UnauthorizedPage
+	CrudPage,
+	PageError,
+	PageLoaded,
+	PageLoading,
+	SystemPermissionsActions,
+	TablePreview,
+	UnauthorizedPage
 } from "yusr-ui";
 import { Account, type AccountDto, type AccountType } from "@/core/data/account.ts";
 import ReportConstants from "../../core/data/report/reportConstants";
 import { AccountStatementButton } from "../reports/accountStatementDialog";
 import ReportButton from "../reports/reportButton";
 import ChangeAccountDialog from "./changeAccountDialog";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function AccountsPage(
@@ -176,7 +176,7 @@ function PageTable()
 									rowBody: (
 										<div className="flex items-center gap-1">
 											{ Math.abs(account.balance.value ?? 0).toLocaleString("en-US") }
-											<CurrencyIcon/>
+											<ErpCurrencyIcon/>
 										</div>
 									),
 									rowStyles: `font-mono ${ colorStyle }`

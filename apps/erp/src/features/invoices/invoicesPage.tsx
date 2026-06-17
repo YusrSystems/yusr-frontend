@@ -16,7 +16,6 @@ import { useTranslation } from "react-i18next";
 import {
 	Button,
 	CrudPage,
-	CurrencyIcon,
 	PageError,
 	PageLoaded,
 	PageLoading,
@@ -34,16 +33,14 @@ import { EInvoicingEnvironmentType } from "@/core/data/setting.ts";
 import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
 import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { toast } from "sonner";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function InvoicesPage({
-	entityName,
-	addNewItemTitle,
 	totalInvoicesTitle,
 	title,
 	fixedType,
 	hasPagePermission,
-	basePath,
 	permissionResource
 }: {
 	entityName?: string;
@@ -298,7 +295,7 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 				rowBody: (
 					<div className="flex items-center gap-1">
 						{ Number(invoice.fullAmount ?? 0).toLocaleString("en-US") }
-						<CurrencyIcon/>
+						<ErpCurrencyIcon/>
 					</div>
 				),
 				rowStyles: "font-bold text-blue-600"
