@@ -43,7 +43,7 @@ export function BranchesPage({onUpdate}: { onUpdate?: (entity: Branch) => void; 
 			<PageTable/>
 
 			<CrudPage.ChangeDialog
-				changeDialog={ (dto: BranchDto | undefined) =>
+				changeDialog={ (dto: BranchDto | undefined, closeDialog) =>
 				{
 					return (
 						<ChangeBranchDialog
@@ -56,6 +56,7 @@ export function BranchesPage({onUpdate}: { onUpdate?: (entity: Branch) => void; 
 								if (data.mode.value === ChangeableEntityMode.Create)
 								{
 									BaseCubits.branches.add(data);
+									closeDialog();
 								}
 								else if (data.mode.value === ChangeableEntityMode.Update)
 								{

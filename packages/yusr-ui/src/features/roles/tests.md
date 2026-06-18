@@ -9,3 +9,4 @@
 - [ ] Sidebar should update 
 - [x] Create
 - [x] Delete
+- [x] Validations
