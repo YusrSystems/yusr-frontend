@@ -1,6 +1,6 @@
 import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import React, { type PropsWithChildren, type ReactNode } from "react";
+import React, { type PropsWithChildren, type ReactNode, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "../../..//stateManager";
 import { ContextMenu, ContextMenuTrigger } from "../../../components/pure";
@@ -41,8 +41,6 @@ export function CrudPage({children}: PropsWithChildren)
 	const basePath = params.id
 		? pathname.slice(0, pathname.lastIndexOf(`/${ params.id }`))
 		: pathname;
-	console.log(basePath);
-	console.log(params);
 	return (
 		<CrudPageContext.Provider value={ {navigate, basePath} }>
 			<div className="px-5 py-3 h-[calc(100vh-70px)] flex flex-col">
@@ -173,12 +171,39 @@ CrudPage.TablePagination = function (props: CrudTablePaginationProps)
 	return <CrudTablePagination { ...props } />;
 };
 
-CrudPage.ChangeDialog = function <TDto extends Dto>(
-	{changeDialog}: CrudPageChangeDialogProps<TDto>
+CrudPage.ChangeDialog = function <TDto extends Dto, TEntity extends ChangeableEntity<TDto>>(
+	{changeDialog, fetchEntity}: CrudPageChangeDialogProps<TDto> & {
+		fetchEntity?: (id: number) => Promise<TEntity | undefined>
+	}
 )
 {
 	useSignals();
 	const {navigate, basePath} = useCrudPageContext();
+	const params = useParams();
+	
+	useEffect(() =>
+	{
+		if (!params.id)
+		{
+			return;
+		}
+
+		async function loadEntity()
+		{
+			console.log("loading entity. .  .");
+			const entity = await fetchEntity?.(Number(params.id));
+			if (!entity)
+			{
+				return;
+			}
+			console.log(entity);
+			selectedEntity.value = entity;
+			isChangeDialogOpen.value = true;
+		}
+
+		loadEntity();
+	}, []);
+
 	return (
 		<>
 			{ isChangeDialogOpen.value && (
