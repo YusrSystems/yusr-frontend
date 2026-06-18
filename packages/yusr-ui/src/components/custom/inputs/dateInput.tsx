@@ -58,7 +58,6 @@ export function DateInput({
 
 	useEffect(() =>
 	{
-		console.log(value);
 		if (value?.value)
 		{
 			const local = new Date(value?.value.getFullYear(), value?.value.getMonth(), value?.value.getDate());

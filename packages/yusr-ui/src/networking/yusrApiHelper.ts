@@ -136,7 +136,6 @@ export class YusrApiHelper
 	{
 		const t = this.getT();
 
-		console.log(response.status);
 		if (response.status === ResultStatus.Unauthorized)
 		{
 			window.dispatchEvent(new Event(AuthConstants.UnauthorizedEventName));
@@ -150,10 +149,8 @@ export class YusrApiHelper
 			};
 		}
 
-		console.log(response.status === ResultStatus.NotFound);
 		if (response.status === ResultStatus.NotFound)
 		{
-			console.log(response);
 			try
 			{
 				const errorData = await response.json() as RequestResult<any>;

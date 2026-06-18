@@ -30,7 +30,6 @@ export default class SettingsCubit extends Cubit<SettingsState>
 			const response = await new SettingsApiService().Get();
 			if (response.data)
 			{
-				console.log("Settings Data ", response.data);
 				this.formData = new Setting(response.data);
 			}
 			else

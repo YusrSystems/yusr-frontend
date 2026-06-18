@@ -6,16 +6,16 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {
-    Button,
-    Card,
-    CardContent,
-    cn,
-    Field,
-    FieldDescription,
-    FieldGroup,
-    i18n,
-    PasswordField,
-    TextField
+	Button,
+	Card,
+	CardContent,
+	cn,
+	Field,
+	FieldDescription,
+	FieldGroup,
+	i18n,
+	PasswordField,
+	TextField
 } from "yusr-ui";
 import { RegistrationCubit } from "../logic/registrationCubit";
 import { RegistrationStateLoading } from "../logic/registrationState";
@@ -40,7 +40,6 @@ export function RegisterForm({
 	const cubit = useMemo(() => new RegistrationCubit(), []);
 
 	const isLoading = cubit.state.value instanceof RegistrationStateLoading;
-	console.log(isLoading);
 
 	return (
 		<div className={ cn("flex flex-col gap-6", className) } { ...props }>
@@ -231,7 +230,6 @@ function SignInWithGoogle({cubit}: { cubit: RegistrationCubit; })
 					}
 					await cubit.externalAuthRegister(response.credential);
 				} }
-				onError={ () => console.log("Login Failed") }
 			/>
 		</div>
 	);

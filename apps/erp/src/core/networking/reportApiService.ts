@@ -4,43 +4,6 @@ import type { BaseReportRequest } from "../data/report/baseReportRequest";
 
 export default class ReportApiService
 {
-	async Get(
-		reportName: string,
-		viewAction: "display" | "share" = "display",
-		request: BaseReportRequest,
-		filename: string = ""
-	): Promise<boolean>
-	{
-		const url = `/api/Reports/${ reportName }`;
-
-		const blob = await YusrApiHelper.PostBlob(url, request);
-
-		if (blob == undefined)
-		{
-			return false;
-		}
-
-		if (viewAction === "display")
-		{
-			ReportApiService.displayPdf(blob);
-		}
-		if (viewAction === "share")
-		{
-			await ReportApiService.handleShareFile(blob, filename);
-		}
-
-		return true;
-	}
-
-	async GetBlob(
-		reportName: string,
-		request: BaseReportRequest
-	): Promise<Blob | undefined>
-	{
-		const url = `/api/Reports/${ reportName }`;
-		return await YusrApiHelper.PostBlob(url, request);
-	}
-
 	public static displayPdf(blob: Blob)
 	{
 		const url = window.URL.createObjectURL(blob);
@@ -82,7 +45,44 @@ export default class ReportApiService
 		}
 		catch (error)
 		{
-			console.error("Error sharing file:", error);
+			throw Error(`Error sharing file: ${ error }`);
 		}
+	}
+
+	async Get(
+		reportName: string,
+		viewAction: "display" | "share" = "display",
+		request: BaseReportRequest,
+		filename: string = ""
+	): Promise<boolean>
+	{
+		const url = `/api/Reports/${ reportName }`;
+
+		const blob = await YusrApiHelper.PostBlob(url, request);
+
+		if (blob == undefined)
+		{
+			return false;
+		}
+
+		if (viewAction === "display")
+		{
+			ReportApiService.displayPdf(blob);
+		}
+		if (viewAction === "share")
+		{
+			await ReportApiService.handleShareFile(blob, filename);
+		}
+
+		return true;
+	}
+
+	async GetBlob(
+		reportName: string,
+		request: BaseReportRequest
+	): Promise<Blob | undefined>
+	{
+		const url = `/api/Reports/${ reportName }`;
+		return await YusrApiHelper.PostBlob(url, request);
 	}
 }

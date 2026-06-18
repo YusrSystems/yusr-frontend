@@ -39,8 +39,6 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 				`/api/Register`,
 				this.formData.toJson()
 			);
-			console.log(result.status);
-			console.log(result);
 
 			if (result.status === 200 && result.data)
 			{
