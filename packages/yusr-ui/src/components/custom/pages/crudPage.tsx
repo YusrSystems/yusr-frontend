@@ -190,7 +190,7 @@ CrudPage.DeleteDialog = function <TEntity extends ChangeableEntity<TDto>, TDto e
 	{entityNameSelector, onSuccess, ...props}:
 	& Omit<DeleteDialogProps<TEntity, TDto>, "id" | "entityName" | "onSuccess">
 		& {
-		entityNameSelector: (entity: TEntity) => Signal<string | number>;
+		entityNameSelector: (entity: TEntity) => Signal<string | number> | string;
 		onSuccess?: (entity: TEntity) => void;
 	}
 )
@@ -204,6 +204,8 @@ CrudPage.DeleteDialog = function <TEntity extends ChangeableEntity<TDto>, TDto e
 		return undefined;
 	}
 
+	const entityNameSelectorResult = entityNameSelector(entity);
+
 	return (
 		<Dialog
 			open={ isDeleteDialogOpen.value }
@@ -213,7 +215,7 @@ CrudPage.DeleteDialog = function <TEntity extends ChangeableEntity<TDto>, TDto e
 				<DeleteDialog
 					{ ...props }
 					id={ entity.id.value }
-					entityName={ entityNameSelector(entity)?.value.toString() ?? "" }
+					entityName={ (entityNameSelectorResult instanceof Signal ? entityNameSelectorResult?.value.toString() : entityNameSelectorResult) ?? "" }
 					onSuccess={ () =>
 					{
 						onSuccess?.(entity);

@@ -8,14 +8,14 @@ import { PageEmpty, PageInitial, PageLoaded, PageLoading, type PageState } from 
 
 export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends Cubit<PageState>
 {
-	protected _service: BaseFilterableApiService<TEntity, TDto>;
 	public pageSize: Signal<number>;
 	public currentPage: Signal<number>;
 	public searchText: Signal<string | undefined>;
-	protected types: Signal<number[] | undefined>;
-	protected queryParams: Signal<Record<string, string | number | boolean> | undefined>;
 	entities: Signal<TEntity[]>;
 	count: Signal<number>;
+	protected _service: BaseFilterableApiService<TEntity, TDto>;
+	protected types: Signal<number[] | undefined>;
+	protected queryParams: Signal<Record<string, string | number | boolean> | undefined>;
 
 	constructor(service: BaseFilterableApiService<TEntity, TDto>, pageSize: number = 100)
 	{
@@ -42,7 +42,7 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
 		this.pageSize.value = rowsPerPage ?? this.pageSize.value;
 		this.searchText.value = searchText;
 		this.types.value = types;
-		this.queryParams.value = queryParams;
+		this.queryParams.value = queryParams ?? this.queryParams.value;
 
 		this.emit(new PageLoading());
 
@@ -74,12 +74,12 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
 
 	changePage(pageNumber: number)
 	{
-		this.filter(pageNumber);
+		this.filter(pageNumber, undefined, undefined, this.types.value);
 	}
 
 	search(searchText: string | undefined)
 	{
-		this.filter(1, undefined, searchText);
+		this.filter(1, undefined, searchText, this.types.value);
 	}
 
 	add(entity: TEntity)
