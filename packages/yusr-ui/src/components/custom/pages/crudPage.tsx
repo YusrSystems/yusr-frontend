@@ -13,7 +13,7 @@ import { CrudTableHeader, type CrudTableHeaderProps } from "../table/crudTableHe
 import { CrudTablePagination, type CrudTablePaginationProps } from "../table/crudTablePagination";
 import { CrudTableRowActionsMenu, type CrudTableRowActionsMenuProps } from "../table/crudTableRowActionsMenu";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { CrudPageContext } from "./crudPageContext";
+import { CrudPageContext, useCrudPageContext } from "./crudPageContext";
 
 
 const isChangeDialogOpen = signal<boolean>(false);
@@ -98,6 +98,15 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 {
 	useSignals();
 	const {i18n} = useTranslation();
+	const {navigate, basePath} = useCrudPageContext();
+
+	const openEditDialog = (entity: TEntity) =>
+	{
+		selectedEntity.value = entity;
+		selectedEntity.value.mode.value = ChangeableEntityMode.Update;
+		navigate(`${ basePath }/${ entity.id.value }`);
+		isChangeDialogOpen.value = true;
+	};
 	return (
 		<Table>
 			<TableHeader className="bg-muted">
@@ -112,24 +121,14 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 					<ContextMenu dir={ i18n.dir() } key={ i }>
 						<ContextMenuTrigger asChild>
 							<TableRow
-								onDoubleClick={ () =>
-								{
-									selectedEntity.value = entity;
-									selectedEntity.value.mode.value = ChangeableEntityMode.Update;
-									isChangeDialogOpen.value = true;
-								} }
+								onDoubleClick={ () => openEditDialog(entity) }
 								className="hover:bg-secondary/50 transition-colors cursor-pointer"
 							>
 								<TableCell>
 									<CrudTableRowActionsMenu
 										{ ...props }
 										type="dropdown"
-										onEditClicked={ () =>
-										{
-											selectedEntity.value = entity;
-											selectedEntity.value.mode.value = ChangeableEntityMode.Update;
-											isChangeDialogOpen.value = true;
-										} }
+										onEditClicked={ () => openEditDialog(entity) }
 										onDeleteClicked={ () =>
 										{
 											selectedEntity.value = entity;
@@ -179,12 +178,20 @@ CrudPage.ChangeDialog = function <TDto extends Dto>(
 )
 {
 	useSignals();
+	const {navigate, basePath} = useCrudPageContext();
 	return (
 		<>
 			{ isChangeDialogOpen.value && (
 				<Dialog
 					open={ isChangeDialogOpen.value }
-					onOpenChange={ (open) => isChangeDialogOpen.value = open }
+					onOpenChange={ (open) =>
+					{
+						isChangeDialogOpen.value = open;
+						if (!open)
+						{
+							navigate(basePath, {replace: true});
+						}
+					} }
 				>
 					{ changeDialog(
 						selectedEntity.value?.toJson() as TDto,
