@@ -13,7 +13,7 @@ import { EmployeesAccountsPage } from "../features/accounts/employeesAccountsPag
 import { SuppliersAccountsPage } from "../features/accounts/suppliersAccountsPage";
 import DashboardPage from "../features/dashboard/dashboardPage";
 import ItemsPage from "../features/items/itemsPage";
-import ItemsSettlementsPage from "../features/itemsSettlements/itemsSettlementsPage";
+import ItemsSettlementsPage from "../features/stocktakings/itemsSettlementsPage.tsx";
 import ItemTransfersPage from "../features/itemTransfers/itemTransfersPage";
 import LandingPage from "../features/landing/landingPage";
 import LoginPage from "../features/login/loginPage";

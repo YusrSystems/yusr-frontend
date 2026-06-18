@@ -1,7 +1,7 @@
-import type { StocktakingDto } from "@/core/data/stocktaking";
-import Stocktaking from "@/core/data/stocktaking";
-import { Cubits } from "@/core/services/cubits";
-import { Services } from "@/core/services/services";
+import type { StocktakingDto } from "@/core/data/stocktaking.ts";
+import Stocktaking from "@/core/data/stocktaking.ts";
+import { Cubits } from "@/core/services/cubits.ts";
+import { Services } from "@/core/services/services.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Scale } from "lucide-react";
 import { useEffect } from "react";
@@ -17,9 +17,9 @@ import {
 	UnauthorizedPage
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
-import ReportConstants from "../../core/data/report/reportConstants";
-import ReportButton from "../reports/reportButton";
-import ChangeStocktakingDialog from "../stocktakings/changeStocktakingDialog";
+import ReportConstants from "../../core/data/report/reportConstants.ts";
+import ReportButton from "../reports/reportButton.tsx";
+import ChangeStocktakingDialog from "./changeStocktakingDialog.tsx";
 
 
 export default function ItemsSettlementsPage()
