@@ -8,18 +8,18 @@ export default class SettingsApiServiceOld
 
 	async Get(): Promise<RequestResult<SettingDto>>
 	{
-		return await YusrApiHelper.Get<SettingDto>(`$/api/${ this.routeName }/Get`);
+		return await YusrApiHelper.Get<SettingDto>(`/api/${ this.routeName }/Get`);
 	}
 
 	async GetForSharing(registrationKey: string): Promise<RequestResult<SharingSetting>>
 	{
-		return await YusrApiHelper.Get(`$/api/${ this.routeName }/Get/${ registrationKey }`);
+		return await YusrApiHelper.Get(`/api/${ this.routeName }/Get/${ registrationKey }`);
 	}
 
 	async Update(entity: SettingDto)
 	{
 		return await YusrApiHelper.Put(
-			`$/api/${ this.routeName }/Update`,
+			`/api/${ this.routeName }/Update`,
 			entity,
 			undefined,
 			i18n.t("api.updateSuccess")

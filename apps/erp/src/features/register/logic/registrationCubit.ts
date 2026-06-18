@@ -36,7 +36,7 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 		try
 		{
 			const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
-				`$/api/Register`,
+				`/api/Register`,
 				this.formData.toJson()
 			);
 			console.log(result.status);
@@ -63,7 +63,7 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 		token: string)
 	{
 		const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
-			`$/api/Login/external-login`,
+			`/api/Login/external-login`,
 			{
 				provider: "google",
 				token

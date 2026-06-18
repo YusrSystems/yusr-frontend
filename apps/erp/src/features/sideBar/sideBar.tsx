@@ -282,7 +282,7 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 
 	const LogoutHandler = async () =>
 	{
-		const result = await YusrApiHelper.Post(`$/api/Logout`);
+		const result = await YusrApiHelper.Post(`/api/Logout`);
 
 		if (result.status === 200 || result.status === 204)
 		{
