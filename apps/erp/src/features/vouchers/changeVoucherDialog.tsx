@@ -39,11 +39,12 @@ export default function ChangeVoucherDialog({
 
 	const {t} = useTranslation(["accounting", "common"]);
 	const amountToWords = useMemo(() => signal<string>(""), []);
-	const selectedPaymentMethod = useMemo(() => signal<PaymentMethod | undefined>(undefined), []);
+	const selectedPaymentMethod = useMemo(() => signal<PaymentMethod | undefined>(entity.paymentMethod.value), [entity.paymentMethod.value]);
 
 	useEffect(() =>
 	{
 		Cubits.accounts.init([AccountType.Client, AccountType.Supplier]);
+		Cubits.paymentMethods.init();
 	}, []);
 
 	useEffect(() =>
@@ -57,23 +58,26 @@ export default function ChangeVoucherDialog({
 		}
 	}, [entity.amount.value, amountToWords]);
 
-	const reCalculateCommission = (): number =>
+	const reCalculateCommission = () =>
 	{
 		if (entity.type.value == undefined || entity.amount.value == undefined || selectedPaymentMethod.value == undefined || entity.type.value === VoucherType.Payment)
 		{
-			return 0;
+			entity.commissionAmount.value = 0;
+			return;
 		}
 
-		if (selectedPaymentMethod.value.commissionType.value === CommissionType.Percent)
+		if (selectedPaymentMethod.value?.commissionType.value === CommissionType.Percent)
 		{
-			return (entity.amount.value * (selectedPaymentMethod.value.commissionAmount.value ?? 0)) / 100;
+			entity.commissionAmount.value = (entity.amount.value * (selectedPaymentMethod.value.commissionAmount.value ?? 0)) / 100;
+			return;
 		}
-		else if (selectedPaymentMethod.value.commissionType.value === CommissionType.Amount)
+		else if (selectedPaymentMethod.value?.commissionType.value === CommissionType.Amount)
 		{
-			return selectedPaymentMethod.value.commissionAmount.value ?? 0;
+			entity.commissionAmount.value = selectedPaymentMethod.value.commissionAmount.value ?? 0;
+			return;
 		}
 
-		return 0;
+		entity.commissionAmount.value = 0;
 	};
 
 	if (
@@ -92,7 +96,7 @@ export default function ChangeVoucherDialog({
 		? t("vouchers.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("vouchers.entityName") }`;
 
-	return <ChangeDialog className="sm:max-w-lg">
+	return <ChangeDialog className="sm:max-w-4xl">
 		<ChangeDialog.Header title={ title }/>
 		<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
 			<FieldGroup className="gap-10">
@@ -178,10 +182,10 @@ export default function ChangeVoucherDialog({
 					/>
 
 					{ isReceipt && (
-						<NumberField
+						<TextField
 							label={ t("vouchers.commissionAmount") }
 							value={ entity.commissionAmount }
-							disabled={ true }
+							disabled
 							className="bg-muted"
 						/>
 					) }

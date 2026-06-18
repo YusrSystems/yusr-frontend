@@ -20,10 +20,6 @@ export abstract class Entity<TDto extends Dto>
 		});
 	}
 
-	protected onFieldChange(_: keyof TDto, __: any): void
-	{
-	}
-
 	toJson(): TDto
 	{
 		return (Object.keys(this) as (keyof TDto)[]).reduce((acc, key) =>
@@ -31,7 +27,11 @@ export abstract class Entity<TDto extends Dto>
 			const field = this[key as keyof this];
 			const value = field instanceof Signal ? field.value : field;
 
-			if (Array.isArray(value))
+			if (value instanceof Entity)
+			{
+				acc[key] = value.toJson() as TDto[keyof TDto];
+			}
+			else if (Array.isArray(value))
 			{
 				acc[key] = value.map((item) => item instanceof Entity ? item.toJson() : item) as TDto[keyof TDto];
 			}
@@ -42,5 +42,9 @@ export abstract class Entity<TDto extends Dto>
 
 			return acc;
 		}, {} as TDto);
+	}
+
+	protected onFieldChange(_: keyof TDto, __: any): void
+	{
 	}
 }

@@ -73,9 +73,9 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 			new Date(dto?.date).toLocaleDateString("en-CA")
 			: new Date().toLocaleDateString("en-CA"));
 		this.amount = this.assign("amount", dto?.amount);
-		this.isAmountDue = this.assign("isAmountDue", dto?.amount);
+		this.isAmountDue = this.assign("isAmountDue", dto?.isAmountDue);
 		this.commissionAmount = this.assign("commissionAmount", dto?.commissionAmount);
-		this.accountId = this.assign("accountId", dto?.id);
+		this.accountId = this.assign("accountId", dto?.accountId);
 		this.paymentMethodId = this.assign("paymentMethodId", dto?.paymentMethodId);
 		this.description = this.assign("description", dto?.description);
 		this.invoiceId = this.assign("invoiceId", dto?.invoiceId);

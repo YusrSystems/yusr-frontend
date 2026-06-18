@@ -42,8 +42,9 @@ export default function VouchersPage()
 
 		<Cards/>
 
-		<PageTable/>
+		<CrudPage.SearchInput onSearch={ (searchText) => Cubits.vouchers.search(searchText) }/>
 
+		<PageTable/>
 
 		<CrudPage.ChangeDialog
 			changeDialog={ (dto: VoucherDto | undefined, closeDialog) =>
@@ -73,7 +74,7 @@ export default function VouchersPage()
 
 
 		<CrudPage.DeleteDialog
-			entityNameSelector={ (voucher) => voucher.id }
+			entityNameSelector={ () => `"${ t("vouchers.entityName") }"` }
 			service={ Services.voucherApi }
 			onSuccess={ (entity) => Cubits.vouchers.delete(entity) }
 		/>
@@ -118,7 +119,6 @@ function PageTable()
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("vouchers.voucherId"), rowStyles: "w-24"},
-						{rowBody: t("vouchers.voucherId"), rowStyles: "w-24"},
 						{rowBody: t("vouchers.voucherType"), rowStyles: "w-24"},
 						{rowBody: t("vouchers.date"), rowStyles: "w-24"},
 						{rowBody: t("vouchers.account"), rowStyles: "w-40"},
@@ -137,7 +137,6 @@ function PageTable()
 						voucher: Voucher
 					) => [
 						{rowBody: `#${ voucher.id.value }`, rowStyles: ""},
-						{rowBody: `#${ voucher.invoiceId }`, rowStyles: ""},
 						{
 							rowBody: voucher.type.value === VoucherType.Payment ? t("vouchers.paymentVoucher") : t("vouchers.receiptVoucher"),
 							rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -155,7 +154,7 @@ function PageTable()
 							),
 							rowStyles: "font-mono font-bold"
 						},
-						{rowBody: voucher.paymentMethod?.name ?? "-", rowStyles: "text-sm text-gray-600"},
+						{rowBody: voucher.paymentMethod.value.name ?? "-", rowStyles: "text-sm text-gray-600"},
 						...(Services.auth.hasAuth(
 							SystemPermissionsResources.ReportVoucher,
 							SystemPermissionsActions.Get

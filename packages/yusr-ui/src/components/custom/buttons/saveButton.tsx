@@ -7,13 +7,13 @@ import type { BaseApiService } from "../../../networking";
 import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "../../../stateManager";
 import { type RequestResult, ResultStatus } from "../../../types";
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle
 } from "../../pure";
 import { Button } from "../../pure/button";
 
