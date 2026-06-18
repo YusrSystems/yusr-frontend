@@ -274,7 +274,10 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 		this.settlementPercent.value = 0;
 		this.invoiceItems.value?.forEach((item) =>
 		{
-			item.changeSettlement(settlementAmount);
+			const newSettlementPerItem = (settlementAmount ?? 0) / (this.invoiceItems.value?.length ?? 0);
+			const newSettlementPerQtn = Number((newSettlementPerItem / item.quantity.value).toFixed(2));
+
+			item.changeSettlement(newSettlementPerQtn);
 		});
 	}
 
@@ -297,7 +300,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 
 		if (this.settlementAmount.value)
 		{
-			this.changeSettlementPercent(this.settlementAmount.value);
+			this.changeSettlementAmount(this.settlementAmount.value);
 		}
 	}
 
@@ -311,6 +314,11 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 		{
 			this.settlementAmount.value = 0;
 			this.settlementPercent.value = 0;
+		}
+
+		if (this.settlementAmount.value)
+		{
+			this.changeSettlementAmount(this.settlementAmount.value);
 		}
 	}
 

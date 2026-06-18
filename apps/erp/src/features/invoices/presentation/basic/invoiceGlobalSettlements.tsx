@@ -23,7 +23,12 @@ export default function InvoiceGlobalSettlements({invoice}: { invoice: Invoice }
 						label={ t("paymentMethods.fixedAmount") }
 						className="mt-1"
 						value={ invoice.settlementAmount }
-						onChange={ (newValue) => newValue != undefined && invoice.changeSettlementAmount(newValue) }
+						onChange={ (newValue) =>
+						{
+							if (newValue == undefined) return;
+							invoice.changeSettlementAmount(newValue);
+							invoice.syncPaymentVouchers();
+						} }
 						disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return || invoice.invoiceItems.value?.length === 0 }
 					/>
 					<NumberField
@@ -32,7 +37,12 @@ export default function InvoiceGlobalSettlements({invoice}: { invoice: Invoice }
 						max={ 100 }
 						className="mt-1"
 						value={ invoice.settlementPercent }
-						onChange={ (newValue) => newValue != undefined && invoice.changeSettlementPercent(newValue) }
+						onChange={ (newValue) =>
+						{
+							if (newValue == undefined) return;
+							invoice.changeSettlementPercent(newValue);
+							invoice.syncPaymentVouchers();
+						} }
 						disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return || invoice.invoiceItems.value?.length === 0 }
 					/>
 				</FieldsSection>

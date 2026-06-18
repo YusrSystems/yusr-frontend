@@ -158,6 +158,12 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			this.settlement.value,
 			this.quantity.value
 		);
+
+		const invoice = this.getInvoice();
+		if (invoice && invoice.settlementAmount.value)
+		{
+			invoice.changeSettlementAmount(invoice.settlementAmount.value);
+		}
 	}
 
 	public changeSettlement(newSettlement: number | undefined, resetInvoiceSettlements: boolean = false)
