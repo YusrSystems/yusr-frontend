@@ -115,13 +115,13 @@ function PageTable()
 					] }
 					tableRowMapper={ (
 						user
-					) => [{rowBody: `#${ user.id }`, rowStyles: ""}, {
-						rowBody: user.username,
+					) => [{rowBody: `#${ user.id.value }`, rowStyles: ""}, {
+						rowBody: user.username.value,
 						rowStyles: "font-semibold"
 					}, {
-						rowBody: user.isActive ? t("users.active") : t("users.inactive"),
+						rowBody: user.isActive.value ? t("users.active") : t("users.inactive"),
 						rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-							user.isActive ? "bg-green-300" : "bg-red-300"
+							user.isActive.value ? "bg-green-300" : "bg-red-300"
 						} text-slate-800`
 					}] }
 					hasUpdatePermission={ BaseServices.auth.hasAuth(

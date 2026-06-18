@@ -52,11 +52,11 @@ export class User extends ChangeableEntity<UserDto>
 
 		this.username = this.assign("username", dto?.username ?? "");
 		this.password = this.assign("password", dto?.password ?? "");
-		this.isActive = this.assign("isActive", dto?.isActive ?? false);
-		this.branchId = this.assign("branchId", dto?.branchId ?? 0);
-		this.branchName = this.assign("branchName", dto?.branchName ?? "");
-		this.roleId = this.assign("roleId", dto?.roleId ?? 0);
-		this.roleName = this.assign("roleName", dto?.roleName ?? "");
-		this.role = this.assign("role", dto?.role ?? undefined);
+		this.isActive = this.assign("isActive", dto?.isActive ?? true);
+		this.branchId = this.assign("branchId", dto?.branchId);
+		this.branchName = this.assign("branchName", dto?.branchName);
+		this.roleId = this.assign("roleId", dto?.roleId);
+		this.roleName = this.assign("roleName", dto?.roleName);
+		this.role = this.assign("role", dto?.role);
 	}
 }
