@@ -28,7 +28,9 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 		super(dto, [{
 			field: "amount",
 			selector: (d) => d.amount,
-			validators: [Validators.required(i18n.t("accounting:balanceTransfers.amountRequired"))]
+			validators: [Validators.required(i18n.t("accounting:balanceTransfers.amountRequired")),
+				Validators.min(1, i18n.t("accounting:balanceTransfers.amountMin"))
+			]
 		}, {
 			field: "date",
 			selector: (d) => d.date,
@@ -43,12 +45,16 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 			validators: [Validators.required(i18n.t("accounting:balanceTransfers.toAccountRequired"))]
 		}], mode);
 
-		this.description = this.assign("description", dto?.description ?? "");
-		this.date = this.assign("date", dto?.date ?? "");
+		this.description = this.assign("description", dto?.description);
+
+		this.date = this.assign("date", dto?.date ?
+			new Date(dto?.date).toLocaleDateString("en-CA")
+			: new Date().toLocaleDateString("en-CA"));
+
 		this.amount = this.assign("amount", dto?.amount ?? 0.0);
-		this.fromAccountId = this.assign("fromAccountId", dto?.fromAccountId ?? 0);
-		this.toAccountId = this.assign("toAccountId", dto?.toAccountId ?? 0);
-		this.fromAccountName = this.assign("fromAccountName", dto?.fromAccountName ?? "");
-		this.toAccountName = this.assign("toAccountName", dto?.toAccountName ?? "");
+		this.fromAccountId = this.assign("fromAccountId", dto?.fromAccountId);
+		this.toAccountId = this.assign("toAccountId", dto?.toAccountId);
+		this.fromAccountName = this.assign("fromAccountName", dto?.fromAccountName);
+		this.toAccountName = this.assign("toAccountName", dto?.toAccountName);
 	}
 }

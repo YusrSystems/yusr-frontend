@@ -90,7 +90,8 @@
     "amountRequired": "Please enter the amount",
     "dateRequired": "Please select the date",
     "fromAccountRequired": "Please select the account to transfer from",
-    "toAccountRequired": "Please select the account to transfer to"
+    "toAccountRequired": "Please select the account to transfer to",
+    "amountMin": "The amount must be greater than 0"
   },
   "vouchers": {
     "title": "Financial Vouchers",

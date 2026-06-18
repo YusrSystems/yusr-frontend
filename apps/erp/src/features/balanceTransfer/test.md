@@ -21,7 +21,7 @@
 ## Security
 
 - [X] Can't access page when no enough permissions
-- [ ] Edit permission
-- [ ] Create permission
-- [ ] Delete permission
-- [ ] Access fields permission 
+- [X] Edit permission
+- [X] Create permission
+- [X] Delete permission
+- [X] Access fields permission 

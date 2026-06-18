@@ -90,7 +90,8 @@
     "amountRequired": "يرجى إدخال المبلغ",
     "dateRequired": "يرجى اختيار التاريخ",
     "fromAccountRequired": "يرجى اختيار الحساب المحول منه",
-    "toAccountRequired": "يرجى اختيار الحساب المحول إليه"
+    "toAccountRequired": "يرجى اختيار الحساب المحول إليه",
+    "amountMin": "يجب ان يكون المبلغ اكثر من 0"
   },
   "vouchers": {
     "title": "السندات المالية",
