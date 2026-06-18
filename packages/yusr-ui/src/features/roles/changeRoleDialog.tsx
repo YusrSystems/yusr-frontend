@@ -1,7 +1,7 @@
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { type LucideIcon, Pencil, Plus, Trash2 } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import {
@@ -17,6 +17,7 @@ import type { Role, RoleDto } from "../../entities";
 import { SystemApiService } from "../../networking";
 import { BaseServices } from "../../services";
 import type { RequestResult } from "../../types";
+import { ChangeableEntityMode } from "../../stateManager";
 
 
 export const ActionIcons: Record<string, React.ReactNode> = {
@@ -34,14 +35,14 @@ export type PermissionSection = {
 
 export type ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto> = {
 	labels: Record<string, string>;
-	permissionSecions: PermissionSection[];
+	permissionSections: PermissionSection[];
 	onMount?: () => void;
 	onGet?: (entity: TRole, result: RequestResult<TRole>) => void;
 	extraTabs?(entity: TRole): ChangeDialogTabProps[];
 };
 
 export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto>(
-	{entity, service, onSuccess, labels, permissionSecions, onGet, onMount, extraTabs}:
+	{entity, service, onSuccess, labels, permissionSections, onGet, onMount, extraTabs}:
 	& CommonChangeDialogProps<TRole, TRoleDto>
 		& ChangeRoleDialog<TRole, TRoleDto>
 )
@@ -61,12 +62,12 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 				BaseServices.auth.systemPermissions.value = res.data ?? [];
 			}
 
-			if (entity.mode.value === "create" && BaseServices.auth.systemPermissions.value.length > 0)
+			if (entity.mode.value === ChangeableEntityMode.Create && BaseServices.auth.systemPermissions.value.length > 0)
 			{
 				entity.permissions.value = BaseServices.auth.systemPermissions.value;
 			}
 
-			if (entity.mode.value === "update" && entity?.id.value)
+			if (entity.mode.value === ChangeableEntityMode.Update && entity?.id.value)
 			{
 				const res = await service.Get(entity.id.value);
 				if (res.data != undefined)
@@ -87,7 +88,7 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 	return (
 		<ChangeDialog className="sm:max-w-6xl">
 			<ChangeDialog.Header
-				title={ entity.mode.value === "create"
+				title={ entity.mode.value === ChangeableEntityMode.Create
 					? t("commonEntities:roles.addNewTitle")
 					: `${ t("common:crudRow.edit") } ${ t("commonEntities:roles.entityName") }` }
 			/>
@@ -107,7 +108,7 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 	{
 		useSignals();
 
-		const permissionTabs: ChangeDialogTabProps[] = permissionSecions.map((section, index) => ({
+		const permissionTabs: ChangeDialogTabProps[] = permissionSections.map((section, index) => ({
 			active: index === 0,
 			icon: section.icon,
 			label: section.title,

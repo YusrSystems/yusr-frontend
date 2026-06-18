@@ -43,7 +43,7 @@ export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDt
 		}
 
 		const rawResult = await YusrApiHelper.Post<ApiFilterResult<TDto>>(
-			`$/api/${ this.routeName }/Filter?${ params.toString() }`,
+			`/api/${ this.routeName }/Filter?${ params.toString() }`,
 			types
 		);
 

@@ -8,6 +8,6 @@ export class SystemApiService
 
 	async GetSystemPermissions(): Promise<RequestResult<string[]>>
 	{
-		return await YusrApiHelper.Get(`$/api/${ this.routeName }/Permissions`);
+		return await YusrApiHelper.Get(`/api/${ this.routeName }/Permissions`);
 	}
 }

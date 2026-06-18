@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { BaseApiService } from "../../../networking";
-import type { ChangeableEntity, Dto } from "../../../stateManager";
+import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "../../../stateManager";
 import { type RequestResult, ResultStatus } from "../../../types";
 import {
     Dialog,
@@ -64,7 +64,7 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 		let result: RequestResult<TEntity>;
 		const payload = transformData ? await transformData(entity) : entity;
 
-		result = payload.mode.value === "create"
+		result = payload.mode.value === ChangeableEntityMode.Create
 			? await service.Add(payload)
 			: await service.Update(payload);
 

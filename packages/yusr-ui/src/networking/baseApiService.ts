@@ -26,7 +26,7 @@ export abstract class BaseApiService<TEntity extends Entity<TDto>, TDto extends 
 
 	async Get(id: number): Promise<RequestResult<TEntity>>
 	{
-		const rawResult = await YusrApiHelper.Get<TDto>(`$/api/${ this.routeName }/${ id }`);
+		const rawResult = await YusrApiHelper.Get<TDto>(`/api/${ this.routeName }/${ id }`);
 		return {
 			...rawResult,
 			data: rawResult.data ? this.createEntity(rawResult.data) : undefined
@@ -37,7 +37,7 @@ export abstract class BaseApiService<TEntity extends Entity<TDto>, TDto extends 
 	{
 		const t = BaseApiService.getT();
 		const rawResult = await YusrApiHelper.Post<TDto>(
-			`$/api/${ this.routeName }/Add`,
+			`/api/${ this.routeName }/Add`,
 			entity.toJson(),
 			undefined,
 			t("api.saveSuccess")
@@ -53,7 +53,7 @@ export abstract class BaseApiService<TEntity extends Entity<TDto>, TDto extends 
 	{
 		const t = BaseApiService.getT();
 		const rawResult = await YusrApiHelper.Put<TDto>(
-			`$/api/${ this.routeName }/Update`,
+			`/api/${ this.routeName }/Update`,
 			entity.toJson(),
 			undefined,
 			t("api.updateSuccess")
@@ -69,7 +69,7 @@ export abstract class BaseApiService<TEntity extends Entity<TDto>, TDto extends 
 	{
 		const t = BaseApiService.getT();
 		const result = await YusrApiHelper.Delete(
-			`$/api/${ this.routeName }/${ id }`,
+			`/api/${ this.routeName }/${ id }`,
 			undefined,
 			t("api.deleteSuccess")
 		);

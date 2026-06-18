@@ -7,7 +7,7 @@ import { CrudPage, TablePreview, UnauthorizedPage } from "../../components/custo
 import type { Role, RoleDto } from "../../entities";
 import type { RolesApiService } from "../../networking";
 import { BaseServices } from "../../services";
-import { PageCubit, PageError, PageLoaded, PageLoading } from "../../stateManager";
+import { ChangeableEntityMode, PageCubit, PageError, PageLoaded, PageLoading } from "../../stateManager";
 import { ChangeRoleDialog } from "./changeRoleDialog";
 
 
@@ -58,12 +58,12 @@ export function RolesPage<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto
 							service={ rolesApiService }
 							onSuccess={ (data) =>
 							{
-								if (data.mode.value === "create")
+								if (data.mode.value === ChangeableEntityMode.Create)
 								{
 									cubit.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === "update")
+								else if (data.mode.value === ChangeableEntityMode.Update)
 								{
 									cubit.update(data);
 								}

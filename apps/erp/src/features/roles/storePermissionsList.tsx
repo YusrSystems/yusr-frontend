@@ -30,10 +30,7 @@ export default function StorePermissionsList({ authorizedStoreIds }: StorePermis
             onClick={ () => handleToggle(store.id.value) }
             className="flex items-center gap-3 p-3 rounded-lg border border-border cursor-pointer hover:bg-muted transition-colors"
           >
-            <Checkbox
-              checked={ authorizedStoreIds.value.includes(store.id.value) }
-              onCheckedChange={ () => handleToggle(store.id.value) }
-            />
+            <Checkbox checked={ authorizedStoreIds.value.includes(store.id.value) } />
             <span className="text-sm font-medium">{ store.name }</span>
           </div>
         )) }

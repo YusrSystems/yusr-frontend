@@ -15,14 +15,14 @@ export function ErpRolesPage()
 	return (
 		<RolesPage<ErpRole, ErpRoleDto>
 			labels={ getLabels(t) }
-			permissionSecions={ getPermissionSections(t) }
+			permissionSections={ getPermissionSections(t) }
 			rolesApiService={ Services.rolesApi }
 			cubit={ Cubits.roles }
 			toEntity={ (dto) =>
 				dto
 					? ErpRole.load(dto)
 					: ErpRole.create() }
-			onMount={ () => Cubits.stores.init(undefined, {authOnly: true}) }
+			onMount={ () => Cubits.stores.init(undefined, {authOnly: false}) }
 			onGet={ (entity, result) =>
 			{
 				if (result.data != undefined)
