@@ -43,6 +43,7 @@ export default function ChangePaymentMethodDialog(
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
+
 	const title = entity.mode.value === ChangeableEntityMode.Create
 		? t("paymentMethods.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("paymentMethods.entityName") }`;
@@ -88,8 +89,6 @@ export default function ChangePaymentMethodDialog(
 		types.push(AccountType.Box);
 	}
 
-	const canChangeBankAccount = (hasBankPerm || hasBoxPerm) && entity.mode.value === ChangeableEntityMode.Create;
-
 	if (!hasBankPerm && !hasBoxPerm)
 	{
 		toast.warning(t("paymentMethods.noPermissionToEditAdmin"));
@@ -113,10 +112,10 @@ export default function ChangePaymentMethodDialog(
 						error={ entity.getError("accountId") }
 					>
 						<AccountsSearchableSelect
-							label={ entity.accountName }
 							id={ entity.accountId }
+							label={ entity.accountName }
 							types={ types }
-							disabled={ !canChangeBankAccount }
+							disabled={ !((hasBankPerm || hasBoxPerm) && entity.mode.value === ChangeableEntityMode.Create) }
 						/>
 					</FormField>
 				</div>
@@ -125,7 +124,7 @@ export default function ChangePaymentMethodDialog(
 					<SelectField
 						label={ t("paymentMethods.commissionType") }
 						required
-						value={ entity.commissionType || CommissionType.Percent.toString() }
+						value={ entity.commissionType }
 						error={ entity.getError("commissionType") }
 						options={ [{
 							label: t("paymentMethods.percentage"),
@@ -135,9 +134,12 @@ export default function ChangePaymentMethodDialog(
 							value: CommissionType.Amount
 						}] }
 					/>
-					<div className="flex flex-col gap-1">
+					<FormField
+						label={ t("paymentMethods.commissionValue") }
+						required
+						error={ entity.getError("commissionAmount") }
+					>
 						<NumberField
-							label={ t("paymentMethods.commissionValue") }
 							required
 							min={ 0.1 }
 							max={ 100 }
@@ -150,7 +152,7 @@ export default function ChangePaymentMethodDialog(
 								entity.commissionAmount.value ?? 0
 							) }
 						</p>
-					</div>
+					</FormField>
 				</div>
 			</FieldGroup>
 
@@ -160,7 +162,6 @@ export default function ChangePaymentMethodDialog(
 					entity={ entity }
 					service={ service }
 					onSuccess={ (data) => onSuccess?.(data) }
-					disabled={ !canChangeBankAccount }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>

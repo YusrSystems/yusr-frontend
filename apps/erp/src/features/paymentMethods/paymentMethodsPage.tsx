@@ -126,7 +126,7 @@ function PageTable()
 						rowBody: paymentMethod.name.value,
 						rowStyles: "font-semibold"
 					}, {
-						rowBody: paymentMethod.accountName.value || paymentMethod.accountId.value.toString(),
+						rowBody: paymentMethod.accountName.value,
 						rowStyles: ""
 					}, {
 						rowBody: paymentMethod.commissionType.value === CommissionType.Percent

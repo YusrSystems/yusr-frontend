@@ -6,9 +6,9 @@ import { ValidatableEntity } from "./validatableEntity";
 
 export class ChangeableEntityMode
 {
-	protected dummyText?: string = "this dummy text prevents you from comparing mode with strings.";
 	static readonly Create = new ChangeableEntityMode();
 	static readonly Update = new ChangeableEntityMode();
+	protected dummyText?: string = "this dummy text prevents you from comparing mode with strings.";
 
 	constructor()
 	{

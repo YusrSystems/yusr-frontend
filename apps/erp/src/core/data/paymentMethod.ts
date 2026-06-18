@@ -21,8 +21,8 @@ export class PaymentMethodDto extends Dto
 export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
 {
 	public name: Signal<string>;
-	public accountId: Signal<number>;
-	public accountName: Signal<string>;
+	public accountId: Signal<number | undefined>;
+	public accountName: Signal<string | undefined>;
 	public commissionType: Signal<CommissionType>;
 	public commissionAmount: Signal<number>;
 
@@ -47,8 +47,8 @@ export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
 		}], mode);
 
 		this.name = this.assign("name", dto?.name ?? "");
-		this.accountId = this.assign("accountId", dto?.accountId ?? 0);
-		this.accountName = this.assign("accountName", dto?.accountName ?? "");
+		this.accountId = this.assign("accountId", dto?.accountId);
+		this.accountName = this.assign("accountName", dto?.accountName);
 		this.commissionType = this.assign("commissionType", dto?.commissionType ?? CommissionType.Percent);
 		this.commissionAmount = this.assign("commissionAmount", dto?.commissionAmount ?? 0);
 	}
