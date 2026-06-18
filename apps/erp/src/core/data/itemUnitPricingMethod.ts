@@ -54,20 +54,15 @@ export class ItemUnitPricingMethod extends ChangeableEntity<ItemUnitPricingMetho
 		}], ChangeableEntityMode.Create);
 
 		this.itemId = this.assign("itemId", dto?.itemId ?? 0);
-		this.unitId = this.assign("unitId", dto?.unitId ?? 0);
-		this.itemUnitPricingMethodName = this.assign("itemUnitPricingMethodName", dto?.itemUnitPricingMethodName ?? "");
-		this.unitName = this.assign("unitName", dto?.unitName ?? "");
-		this.pricingMethodId = this.assign("pricingMethodId", dto?.pricingMethodId ?? 0);
-		this.pricingMethodName = this.assign("pricingMethodName", dto?.pricingMethodName ?? "");
-		this.quantityMultiplier = this.assign("quantityMultiplier", dto?.quantityMultiplier ?? 0);
+		this.unitId = this.assign("unitId", dto?.unitId);
+		this.unitName = this.assign("unitName", dto?.unitName);
+		this.pricingMethodId = this.assign("pricingMethodId", dto?.pricingMethodId);
+		this.pricingMethodName = this.assign("pricingMethodName", dto?.pricingMethodName);
+		this.quantityMultiplier = this.assign("quantityMultiplier", dto?.quantityMultiplier ?? 1);
 		this.unitPrice = this.assign("unitPrice", dto?.unitPrice ?? 0);
 		this.price = this.assign("price", dto?.price ?? 0);
-		this.barcode = this.assign("barcode", dto?.barcode ?? "");
-	}
-
-	generateBarcode(length = 12): void
-	{
-		this.barcode.value = ItemUnitPricingMethod.generateBarcode(length);
+		this.barcode = this.assign("barcode", dto?.barcode);
+		this.itemUnitPricingMethodName = this.assign("itemUnitPricingMethodName", dto?.itemUnitPricingMethodName);
 	}
 
 	static generateBarcode(length = 12)
@@ -77,5 +72,10 @@ export class ItemUnitPricingMethod extends ChangeableEntity<ItemUnitPricingMetho
 			{length},
 			() => chars[Math.floor(Math.random() * chars.length)]
 		).join("");
+	}
+
+	generateBarcode(length = 12): void
+	{
+		this.barcode.value = ItemUnitPricingMethod.generateBarcode(length);
 	}
 }

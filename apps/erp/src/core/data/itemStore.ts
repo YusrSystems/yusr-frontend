@@ -32,8 +32,8 @@ export class ItemStore extends ChangeableEntity<ItemStoreDto>
 		}], ChangeableEntityMode.Create);
 
 		this.itemId = this.assign("itemId", dto?.itemId ?? 0);
-		this.storeId = this.assign("storeId", dto?.storeId ?? 0);
-		this.storeName = this.assign("storeName", dto?.storeName ?? "");
+		this.storeId = this.assign("storeId", dto?.storeId);
+		this.storeName = this.assign("storeName", dto?.storeName);
 		this.initialQuantity = this.assign("initialQuantity", dto?.initialQuantity ?? 0);
 		this.quantity = this.assign("quantity", dto?.quantity ?? 0);
 	}

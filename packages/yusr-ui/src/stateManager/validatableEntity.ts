@@ -23,13 +23,9 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
 		});
 	}
 
-	protected onFieldChange(field: keyof TDto, newValue: any): void
+	get hasErrors(): boolean
 	{
-		if (this.errors[field])
-		{
-			this.errors[field].value = undefined;
-		}
-		super.onFieldChange(field, newValue);
+		return Object.values(this.errors).some((s) => (s as Signal<string | undefined>).value !== undefined);
 	}
 
 	validate(dto?: Partial<TDto>): boolean
@@ -60,5 +56,14 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
 	clearError(field: keyof TDto)
 	{
 		this.errors[field].value = undefined;
+	}
+
+	protected onFieldChange(field: keyof TDto, newValue: any): void
+	{
+		if (this.errors[field])
+		{
+			this.errors[field].value = undefined;
+		}
+		super.onFieldChange(field, newValue);
 	}
 }

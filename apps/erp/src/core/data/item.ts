@@ -3,6 +3,7 @@ import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, type StorageFile, Va
 import { ItemStore, type ItemStoreDto } from "./itemStore";
 import { ItemTax } from "./itemTax";
 import { ItemUnitPricingMethod, ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
+import { Tax } from "@/core/data/tax.ts";
 
 
 export const ItemType = {
@@ -97,12 +98,7 @@ export default class Item extends ChangeableEntity<ItemDto>
 						return true;
 					}
 
-					if (stores.length <= 0)
-					{
-						return false;
-					}
-
-					return true;
+					return stores.length > 0;
 				},
 				i18n.t("stocking:items.storesValidationError")
 			)]
@@ -135,10 +131,10 @@ export default class Item extends ChangeableEntity<ItemDto>
 		this.initialCost = this.assign("initialCost", dto?.initialCost ?? 0);
 		this.cost = this.assign("cost", dto?.cost ?? 0);
 		this.taxIncluded = this.assign("taxIncluded", dto?.taxIncluded ?? false);
-		this.taxable = this.assign("taxable", dto?.taxable ?? false);
+		this.taxable = this.assign("taxable", dto?.taxable ?? true);
 		this.exemptionReasonCode = this.assign("exemptionReasonCode", dto?.exemptionReasonCode ?? "");
 		this.exemptionReason = this.assign("exemptionReason", dto?.exemptionReason ?? "");
-		this.statusId = this.assign("statusId", dto?.statusId ?? 0);
+		this.statusId = this.assign("statusId", dto?.statusId ?? 1);
 		this.location = this.assign("location", dto?.location ?? "");
 		this.notes = this.assign("notes", dto?.notes ?? "");
 		this.totalTaxes = this.assign("totalTaxes", dto?.totalTaxes ?? 0);
@@ -168,8 +164,32 @@ export default class Item extends ChangeableEntity<ItemDto>
 		const itemResult = super.validate(dto);
 		const taxesResult = this.itemTaxes.value.every((t) => t.validate());
 		const iupmResult = this.itemUnitPricingMethods.value.every((m) => m.validate());
-		const storesResult = this.itemStores.value.every((s) => s.validate());
+		const storesResult = this.type.value === ItemType.Service ? true : this.itemStores.value.every((s) => s.validate());
 		return itemResult && taxesResult && iupmResult && storesResult;
+	}
+
+	public changeTaxable(isTaxable: boolean, taxes: Signal<Tax[]>)
+	{
+		if (isTaxable)
+		{
+			this.itemTaxes.value = taxes.value.filter((t: Tax) => t.isPrimary.value)
+				.map((t: Tax) =>
+					new ItemTax({
+						id: 0,
+						itemId: this.id.value,
+						taxId: t.id.value,
+						taxName: t.name.value,
+						taxPercentage: t.percentage.value
+					})
+				);
+
+			this.exemptionReason.value = "";
+			this.exemptionReasonCode.value = "";
+		}
+		else
+		{
+			this.itemTaxes.value = [];
+		}
 	}
 }
 

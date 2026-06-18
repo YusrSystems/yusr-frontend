@@ -23,6 +23,7 @@ export default function PricingMethodsTable({entity}: { entity: Item; })
 	const addPricingMethod = () =>
 	{
 		const newItem = ItemUnitPricingMethod.create();
+		newItem.generateBarcode();
 		entity.itemUnitPricingMethods.value = [...entity.itemUnitPricingMethods.value, newItem];
 	};
 

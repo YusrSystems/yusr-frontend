@@ -143,7 +143,7 @@ function PageTable()
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("items.itemId"), rowStyles: "w-20"},
-						{rowBody: t("items.itemId"), rowStyles: "w-20"},
+						{rowBody: t("items.itemImages"), rowStyles: "w-20"},
 						{rowBody: t("items.itemType"), rowStyles: "w-24"},
 						{rowBody: t("items.itemName"), rowStyles: "w-48"},
 						{rowBody: t("items.class"), rowStyles: "w-32"},

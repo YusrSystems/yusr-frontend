@@ -32,18 +32,23 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 {
 	useSignals();
 
+	const {t} = useTranslation(["stocking", "common"]);
 	const servicesIds = useMemo(() => signal<ServiceIds>(), []);
-	const currentEntity = useMemo(() => signal<Item>(entity), []);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const currentEntity = useMemo(() => signal<Item>(entity), []); // I left the deps array empty, it causes infinite rerenders if you put anything inside it
+	const isLoading = useMemo(() => signal<boolean>(false), []);
+
 	useEffect(() =>
 	{
-		Cubits.taxes.init();
-		Cubits.pricingMethods.init();
-		Cubits.stores.init();
-		Cubits.units.init();
-
 		const fetch = async () =>
 		{
 			isLoading.value = true;
+
+			Cubits.taxes.init();
+			Cubits.pricingMethods.init();
+			Cubits.stores.init();
+			Cubits.units.init();
+
 			const result = await Services.unitsApi.GetServiceIds();
 			if (result.data)
 			{
@@ -58,16 +63,23 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 					currentEntity.value = Item.load(res.data.toJson());
 				}
 			}
+
 			isLoading.value = false;
 		};
 
-		fetch();
-	}, [currentEntity.value?.id.value]);
-	const {t} = useTranslation(["stocking", "common"]);
-	const isLoading = useMemo(() =>
+		void fetch();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []); // I left the deps array empty, it causes infinite rerenders if you put anything inside it
+
+	useEffect(() =>
 	{
-		return signal<boolean>(false);
-	}, []);
+		if (currentEntity.value.mode.value === ChangeableEntityMode.Create && !entity.isDirty.value && Cubits.taxes.entities.value.length > 0)
+		{
+			entity.changeTaxable(true, Cubits.taxes.entities);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [Cubits.taxes.entities.value]); // I left the deps array like this, it causes infinite rerenders if you put anything inside it
+
 	const {commitFiles} = useStorageFile(
 		() => currentEntity.value.itemImages.value,
 		(v) => (currentEntity.value.itemImages.value = v),
@@ -84,18 +96,19 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const basicHasError = BASIC_FIELDS.some((f) => currentEntity.value.getError(f).value);
-	const storageHasError = STORAGE_FIELDS.some((f) => currentEntity.value.getError(f).value);
-	const pricingHasError = PRICING_FIELDS.some((f) => currentEntity.value.getError(f).value);
+	const basicHasError = BASIC_FIELDS.some((f) => currentEntity.value.getError(f).value)
+		|| currentEntity.value.itemTaxes.value.some((t) => t.hasErrors);
+	const storageHasError = STORAGE_FIELDS.some((f) => currentEntity.value.getError(f).value)
+		|| currentEntity.value.itemStores.value.some((t) => t.hasErrors);
+	const pricingHasError = PRICING_FIELDS.some((f) => currentEntity.value.getError(f).value)
+		|| currentEntity.value.itemUnitPricingMethods.value.some((t) => t.hasErrors);
 
 	const transformDataBeforeSave = async (): Promise<Item> =>
 	{
-		const resolvedFiles = await commitFiles(
+		currentEntity.value.itemImages.value = await commitFiles(
 			currentEntity.value.itemImages.value,
 			`Items`
 		);
-
-		currentEntity.value.itemImages.value = resolvedFiles;
 
 		return currentEntity.value;
 	};

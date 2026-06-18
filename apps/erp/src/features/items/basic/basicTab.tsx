@@ -63,11 +63,23 @@ export default function BasicTab(
 								const numericType = Number(type) as ItemType;
 								entity.type.value = numericType;
 								entity.itemStores.value = [];
+								entity.quantity.value = 0;
 								entity.initialQuantity.value = 0;
+								entity.minQuantity.value = 0;
+								entity.maxQuantity.value = 0;
+								entity.location.value = undefined;
 								entity.sellUnitId.value = numericType === ItemType.Service ? serviceIds.value?.unitId : undefined;
 								entity.sellUnitName.value = numericType === ItemType.Service ? t("items.service") : undefined;
 								entity.itemUnitPricingMethods.value = numericType === ItemType.Service
-									? [ItemUnitPricingMethod.create()]
+									? [ItemUnitPricingMethod.create({
+										unitId: serviceIds.value?.unitId,
+										unitName: t("items.service"),
+										pricingMethodId: serviceIds.value?.pricingMethodId,
+										pricingMethodName: t("items.service"),
+										quantityMultiplier: 1,
+										barcode: ItemUnitPricingMethod.generateBarcode(),
+										itemUnitPricingMethodName: t("items.service")
+									})]
 									: [];
 							} }
 							options={ [{label: t("items.product"), value: ItemType.Product}, {
@@ -80,6 +92,12 @@ export default function BasicTab(
 							label={ t("items.class") }
 							value={ entity.class }
 						/>
+
+						<TextField
+							label={ t("items.brand") }
+							value={ entity.brand }
+						/>
+
 						<SelectField
 							label={ t("items.status") }
 							required
