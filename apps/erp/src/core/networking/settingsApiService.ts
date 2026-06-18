@@ -2,7 +2,7 @@ import { i18n, type RequestResult, YusrApiHelper } from "yusr-ui";
 import type { SettingDto, SharingSetting } from "../data/setting";
 
 
-export default class SettingsApiServiceOld
+export default class SettingsApiService
 {
 	routeName: string = "Settings";
 

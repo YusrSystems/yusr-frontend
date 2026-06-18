@@ -7,7 +7,7 @@ import {
 	type SettingsState
 } from "@/features/setting/logic/settingsState.ts";
 import { Setting, SettingDto } from "@/core/data/setting.ts";
-import SettingsApiServiceOld from "@/core/networking/settingsApiServiceOld.ts";
+import SettingsApiService from "@/core/networking/settingsApiService.ts";
 import { signal } from "@preact/signals-react";
 import { Services } from "@/core/services/services.ts";
 
@@ -27,7 +27,7 @@ export default class SettingsCubit extends Cubit<SettingsState>
 		try
 		{
 			this.emit(new SettingsLoading());
-			const response = await new SettingsApiServiceOld().Get();
+			const response = await new SettingsApiService().Get();
 			if (response.data)
 			{
 				console.log("Settings Data ", response.data);
@@ -55,7 +55,7 @@ export default class SettingsCubit extends Cubit<SettingsState>
 			}
 
 			this.emit(new SettingsSaving());
-			const result = await new SettingsApiServiceOld().Update(
+			const result = await new SettingsApiService().Update(
 				this.formData.toJson()
 			);
 			if (result.data)

@@ -1,6 +1,6 @@
 import logoDark from "@/assets/yusrLogoOnly_Dark.png";
 import logoLight from "@/assets/yusrLogoOnly_Light.png";
-import SettingsApiServiceOld from "@/core/networking/settingsApiServiceOld.ts";
+import SettingsApiService from "@/core/networking/settingsApiService.ts";
 import { Building2, FileText, Globe, Hash, Home, MailOpen, MapPin, Navigation, Phone, Receipt } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -94,7 +94,7 @@ export default function TenantInfoSharingPage()
 		const fetch = async () =>
 		{
 			setInitLoading(true);
-			const response = await new SettingsApiServiceOld().GetForSharing(registrationKey);
+			const response = await new SettingsApiService().GetForSharing(registrationKey);
 			if (response.data)
 			{
 				setSetting(response.data);
