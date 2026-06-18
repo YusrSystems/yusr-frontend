@@ -7,6 +7,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, FormField, NumberField, TextField } from "yusr-ui";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
 
 
 export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
@@ -22,7 +23,7 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 				type="button"
 				className="max-w-45"
 				size="lg"
-				onClick={ () => invoice.invoiceVouchers.value.push(InvoiceVoucher.createCostVoucher(invoice)) }
+				onClick={ () => invoice.invoiceVouchers.value = [...invoice.invoiceVouchers.value, InvoiceVoucher.createCostVoucher(invoice)] }
 			>
 				<Plus className="w-4 h-4 me-2"/> { t("invoices.addCostVoucher") }
 			</Button>
@@ -60,18 +61,10 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 
 							<td className="p-2">
 								<FormField label="">
-									{/*TODO: create payment methods searchable select*/ }
-									{/*<PaymentMethodsSearchableSelect*/ }
-									{/*    selectedId={invoiceVoucher.paymentMethodId}*/ }
-									{/*    selectedLabel={invoiceVoucher.paymentMethodName}*/ }
-									{/*    onValueChange={(pm) => {*/ }
-									{/*        dispatch(slice.formActions.updateVoucher({*/ }
-									{/*            ...invoiceVoucher,*/ }
-									{/*            paymentMethodId: pm?.id,*/ }
-									{/*            paymentMethodName: pm?.name*/ }
-									{/*        }));*/ }
-									{/*    }}*/ }
-									{/*/>*/ }
+									<PaymentMethodsSearchableSelect
+										id={ invoiceVoucher.paymentMethodId }
+										label={ invoiceVoucher.paymentMethodName }
+									/>
 								</FormField>
 							</td>
 

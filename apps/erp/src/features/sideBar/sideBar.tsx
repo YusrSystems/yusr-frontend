@@ -38,7 +38,6 @@ import { useSignals } from "@preact/signals-react/runtime";
 export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 {
 	useSignals();
-	console.log(Services.auth.setting?.companyName.value);
 	const {t} = useTranslation("erpCommon");
 
 	const logoConfig = {

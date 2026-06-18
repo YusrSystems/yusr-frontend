@@ -1,9 +1,11 @@
 import { StorageFileField, StorageType, useStorageFile } from "yusr-ui";
 import type Invoice from "@/core/data/invoices/invoice.ts";
+import { useSignals } from "@preact/signals-react/runtime";
 
 
 export default function InvoiceFilesTab({invoice}: { invoice: Invoice })
 {
+	useSignals();
 	const {fileInputRef, handleFileChange, handleRemoveFile, handleDownload, showFilePreview, getFileSrc} =
 		useStorageFile(
 			() => invoice.invoiceFiles.value,

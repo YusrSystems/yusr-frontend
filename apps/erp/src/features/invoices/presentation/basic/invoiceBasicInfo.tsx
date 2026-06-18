@@ -9,10 +9,12 @@ import StoresSearchableSelect from "@/core/components/searchableSelect/storesSea
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 import { ImportExportType } from "@/core/types/importExportType.ts";
+import { useSignals } from "@preact/signals-react/runtime";
 
 
 export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 {
+	useSignals();
 	const {t} = useTranslation("accounting");
 	const selectedAccount = useMemo(() => signal<Account | undefined>(), []);
 
@@ -75,10 +77,11 @@ export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 				<StoresSearchableSelect
 					id={ invoice.storeId }
 					label={ invoice.storeName }
-					disabled={ invoice.mode.value !== InvoiceMode.Create && invoice.type.value !== InvoiceType.Quotation }
+					disabled={ invoice.isDisabled }
 					onSelect={ () =>
 					{
 						invoice.invoiceItems.value = [];
+						invoice.invoiceVouchers.value = [];
 					} }
 				/>
 			</FormField>
@@ -88,18 +91,16 @@ export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 				required
 				error={ invoice.getError("actionAccountId") }
 			>
-				{ isPurchaseInvoice() && (
-					<AccountsSearchableSelect
-						id={ invoice.actionAccountId }
-						label={ invoice.actionAccountName }
-						disabled={ invoice.mode.value !== InvoiceMode.Create && invoice.type.value !== InvoiceType.Quotation }
-						types={ isPurchaseInvoice() ? [AccountType.Supplier] : [AccountType.Client] }
-						onSelect={ (account) =>
-						{
-							selectedAccount.value = account;
-						} }
-					/>
-				) }
+				<AccountsSearchableSelect
+					id={ invoice.actionAccountId }
+					label={ invoice.actionAccountName }
+					disabled={ invoice.isDisabled }
+					types={ isPurchaseInvoice() ? [AccountType.Supplier] : [AccountType.Client] }
+					onSelect={ (account) =>
+					{
+						selectedAccount.value = account;
+					} }
+				/>
 			</FormField>
 
 			<TextField

@@ -14,7 +14,7 @@ export interface NumberInputProps extends Omit<React.InputHTMLAttributes<HTMLInp
 }
 
 export function NumberInput(
-	{value, onChange, min, max, className, currency, ...props}: NumberInputProps
+	{value, onChange, min, max, className, currency, onBlur, ...props}: NumberInputProps
 )
 {
 	useSignals();
@@ -51,8 +51,16 @@ export function NumberInput(
 				}
 
 				// 3. Mid-typing states — not a number yet, just update display
+
+				if (!inputValue)
+				{
+					localValue.value = inputValue;
+					value.value = 0;
+					onChange?.(0);
+					return;
+				}
+
 				const isMidTyping =
-					!inputValue ||
 					inputValue === "-" ||
 					inputValue === "." ||
 					inputValue === "-." ||
@@ -60,8 +68,8 @@ export function NumberInput(
 				if (isMidTyping)
 				{
 					localValue.value = inputValue;
-					// value.value = undefined;
-					// onChange?.(undefined);
+					// value.value = 0;
+					// onChange?.(0);
 					return;
 				}
 
@@ -108,6 +116,7 @@ export function NumberInput(
 				{
 					value.value = Number(min);
 				}
+				onBlur?.(e);
 			} }
 		/>
 	);

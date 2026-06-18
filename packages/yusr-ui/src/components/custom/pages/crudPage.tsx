@@ -28,7 +28,7 @@ export type CrudPageTableRow<TEntity extends ChangeableEntity<TDto>, TDto extend
 };
 
 export type CrudPageChangeDialogProps<TDto extends Dto> = {
-	changeDialog: (dto: TDto | undefined, closeDialog: () => void) => React.ReactNode;
+	changeDialog: (dto: TDto | undefined, closeDialog: () => void, mode: ChangeableEntityMode | undefined) => React.ReactNode;
 };
 
 export function CrudPage({children}: PropsWithChildren)
@@ -89,19 +89,32 @@ CrudPage.Table = function ({children}: PropsWithChildren)
 };
 
 CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
-	{data, headerRows, tableRowMapper, ...props}:
-	& Omit<CrudPageTableRow<TEntity, TDto>, "onDoubleClick">
-		& Omit<CrudTableRowActionsMenuProps, "onEditClicked" | "onDeleteClicked">
+	{
+		data,
+		headerRows,
+		tableRowMapper,
+		dropdownItems,
+		contextMenuItems,
+		...props
+	}: Omit<CrudPageTableRow<TEntity, TDto>, "onDoubleClick">
+		& Omit<CrudTableRowActionsMenuProps<TEntity, TDto>, "onEditClicked" | "onDeleteClicked" | "entity" | "dropdownItems" | "contextMenuItems">
+		& {
+		dropdownItems?: (entity: TEntity, openEditDialog: (entity: TEntity, mode: ChangeableEntityMode) => void) => React.ReactNode[];
+		contextMenuItems?: (entity: TEntity, openEditDialog: (entity: TEntity, mode: ChangeableEntityMode) => void) => React.ReactNode[];
+	}
 )
 {
 	useSignals();
 	const {i18n} = useTranslation();
 	const {navigate, basePath} = useCrudPageContext();
 
-	const openEditDialog = (entity: TEntity) =>
+	const openEditDialog = (
+		entity: TEntity,
+		mode: ChangeableEntityMode = ChangeableEntityMode.Update
+	) =>
 	{
 		selectedEntity.value = entity;
-		selectedEntity.value.mode.value = ChangeableEntityMode.Update;
+		selectedEntity.value.mode.value = mode;
 		navigate(`${ basePath }/${ entity.id.value }`);
 		isChangeDialogOpen.value = true;
 	};
@@ -123,9 +136,12 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 								className="hover:bg-secondary/50 transition-colors cursor-pointer"
 							>
 								<TableCell>
-									<CrudTableRowActionsMenu
+									<CrudTableRowActionsMenu<TEntity, TDto>
 										{ ...props }
+										entity={ entity }
 										type="dropdown"
+										dropdownItems={ dropdownItems?.(entity, openEditDialog) }
+										contextMenuItems={ contextMenuItems?.(entity, openEditDialog) }
 										onEditClicked={ () => openEditDialog(entity) }
 										onDeleteClicked={ () =>
 										{
@@ -143,15 +159,13 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 							</TableRow>
 						</ContextMenuTrigger>
 
-						<CrudTableRowActionsMenu
+						<CrudTableRowActionsMenu<TEntity, TDto>
 							{ ...props }
+							entity={ entity }
 							type="context"
-							onEditClicked={ () =>
-							{
-								selectedEntity.value = entity;
-								selectedEntity.value.mode.value = ChangeableEntityMode.Update;
-								isChangeDialogOpen.value = true;
-							} }
+							dropdownItems={ dropdownItems?.(entity, openEditDialog) }
+							contextMenuItems={ contextMenuItems?.(entity, openEditDialog) }
+							onEditClicked={ () => openEditDialog(entity) }
 							onDeleteClicked={ () =>
 							{
 								selectedEntity.value = entity;
@@ -223,7 +237,8 @@ CrudPage.ChangeDialog = function <TDto extends Dto, TEntity extends ChangeableEn
 						() =>
 						{
 							isChangeDialogOpen.value = false;
-						}
+						},
+						selectedEntity.value?.mode.value
 					) }
 				</Dialog>
 			) }

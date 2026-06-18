@@ -84,7 +84,7 @@ export default function ChangeBalanceTransferDialog(
 
 	const hasSelectAccountPermission = hasBankPerm || hasBoxPerm;
 	const canChangeBankAccount = hasSelectAccountPermission && entity.mode.value === ChangeableEntityMode.Create;
-	console.log(canChangeBankAccount);
+
 	if (!hasSelectAccountPermission)
 	{
 		toast.warning(t("paymentMethods.noPermissionToEditAdmin"));

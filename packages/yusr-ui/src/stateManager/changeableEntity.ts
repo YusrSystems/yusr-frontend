@@ -2,17 +2,18 @@ import { Signal, signal } from "@preact/signals-react";
 import type { ValidationRule } from "../validation";
 import type { Dto } from "./dto";
 import { ValidatableEntity } from "./validatableEntity";
+import { Entity } from "./entity.ts";
 
 
 export class ChangeableEntityMode
 {
-	static readonly Create = new ChangeableEntityMode();
-	static readonly Update = new ChangeableEntityMode();
+	static readonly Create = new ChangeableEntityMode("create");
+	static readonly Update = new ChangeableEntityMode("update");
 	protected dummyText?: string = "this dummy text prevents you from comparing mode with strings.";
 
-	constructor()
+	constructor(modeName: string)
 	{
-		this.dummyText = "we must change it to silent ts compiler";
+		this.dummyText = modeName;
 	}
 }
 
@@ -52,10 +53,11 @@ export abstract class ChangeableEntity<TDto extends Dto, TMode extends Changeabl
 		TMode extends ChangeableEntityMode = ChangeableEntityMode
 	>(
 		this: new(dto: Partial<TDto> | undefined, mode: TMode) => TEntity,
-		dto: Partial<TDto> | undefined = undefined
+		dto: Partial<TDto> | undefined = undefined,
+		mode: TMode = ChangeableEntityMode.Update as TMode
 	): TEntity
 	{
-		return new this(dto, ChangeableEntityMode.Update as TMode);
+		return new this(dto, mode);
 	}
 
 	resetDirty()
@@ -80,6 +82,19 @@ export abstract class ChangeableEntity<TDto extends Dto, TMode extends Changeabl
 		if (typeof value === "string")
 		{
 			return value.trim();
+		}
+		if (value instanceof Entity)
+		{
+			return value.toJson();
+		}
+		if (Array.isArray(value))
+		{
+			return value.map((item) => this.normalizeForComparison(item));
+		}
+		if (value instanceof Signal)
+		{
+			// defensive: shouldn't normally happen, but unwrap if it does
+			return this.normalizeForComparison(value.value);
 		}
 
 		return value;

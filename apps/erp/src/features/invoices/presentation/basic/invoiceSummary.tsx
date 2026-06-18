@@ -7,6 +7,7 @@ import type Invoice from "@/core/data/invoices/invoice.ts";
 import { Services } from "@/core/services/services.ts";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { useSignals } from "@preact/signals-react/runtime";
 
 
 function SummaryRow({
@@ -49,6 +50,7 @@ function SummaryRow({
 
 export default function InvoiceSummary({invoice}: { invoice: Invoice })
 {
+	useSignals();
 	const {t} = useTranslation("accounting");
 
 	const safe = (value: number) => Number.isFinite(value) ? value : 0;

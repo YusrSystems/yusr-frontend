@@ -1,10 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { FieldsSection, NumberField, TextAreaField } from "yusr-ui";
 import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
+import { useSignals } from "@preact/signals-react/runtime";
 
 
 export default function InvoiceGlobalSettlements({invoice}: { invoice: Invoice })
 {
+	useSignals();
 	const {t} = useTranslation("accounting");
 
 	return (
@@ -21,7 +23,7 @@ export default function InvoiceGlobalSettlements({invoice}: { invoice: Invoice }
 						label={ t("paymentMethods.fixedAmount") }
 						className="mt-1"
 						value={ invoice.settlementAmount }
-						onChange={ (newValue) => newValue && invoice.changeSettlementAmount(newValue) }
+						onChange={ (newValue) => newValue != undefined && invoice.changeSettlementAmount(newValue) }
 						disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return || invoice.invoiceItems.value?.length === 0 }
 					/>
 					<NumberField
@@ -30,7 +32,7 @@ export default function InvoiceGlobalSettlements({invoice}: { invoice: Invoice }
 						max={ 100 }
 						className="mt-1"
 						value={ invoice.settlementPercent }
-						onChange={ (newValue) => newValue && invoice.changeSettlementPercent(newValue) }
+						onChange={ (newValue) => newValue != undefined && invoice.changeSettlementPercent(newValue) }
 						disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return || invoice.invoiceItems.value?.length === 0 }
 					/>
 				</FieldsSection>

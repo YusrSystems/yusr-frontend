@@ -6,10 +6,12 @@ import type Invoice from "@/core/data/invoices/invoice.ts";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
 import { InvoiceVoucher } from "@/core/data/invoices/invoiceVoucher.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { useSignals } from "@preact/signals-react/runtime";
 
 
 export default function InvoicePayments({invoice}: { invoice: Invoice })
 {
+	useSignals();
 	const {t} = useTranslation("accounting");
 
 	const paymentVouchers = invoice.paymentVouchers();
@@ -35,7 +37,7 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 						size="sm"
 						variant="outline"
 						className="h-8 gap-1.5 text-xs"
-						onClick={ () => invoice.invoiceVouchers.value.push(InvoiceVoucher.createPaymentVoucher(invoice)) }
+						onClick={ () => invoice.invoiceVouchers.value = [...invoice.invoiceVouchers.value, InvoiceVoucher.createPaymentVoucher(invoice)] }
 					>
 						<Plus className="w-3.5 h-3.5"/>
 					</Button>

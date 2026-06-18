@@ -1,5 +1,5 @@
 //TODO: must be tested
-import Invoice, { InvoiceDto } from "@/core/data/invoices/invoice.ts";
+import Invoice, { InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import type { InvoicesListReportRequest } from "@/core/data/report/invoicesListReportType.ts";
 import { InvoicesListReportType } from "@/core/data/report/invoicesListReportType.ts";
 import ReportConstants from "@/core/data/report/reportConstants.ts";
@@ -10,12 +10,15 @@ import ReportButton from "@/features/reports/reportButton.tsx";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import type { TFunction } from "i18next";
-import { FileTextIcon, RotateCw } from "lucide-react";
-import { type ReactNode, useEffect, useMemo } from "react";
+import { Copy, FilePlusCorner, FileTextIcon, RotateCw, Undo2 } from "lucide-react";
+import React, { type ReactNode, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-	Button, ChangeableEntityMode,
+	Button,
+	ChangeableEntityMode,
+	ContextMenuItem,
 	CrudPage,
+	DropdownMenuItem,
 	PageError,
 	PageLoaded,
 	PageLoading,
@@ -54,7 +57,7 @@ export default function InvoicesPage({
 })
 {
 	useSignals();
-	useEffect(() => Cubits.invoices.init(), []);
+	useEffect(() => Cubits.invoices.init([fixedType]), [fixedType]);
 	const {t} = useTranslation("accounting");
 
 	if (!hasPagePermission)
@@ -88,14 +91,15 @@ export default function InvoicesPage({
 				<PageTable fixedType={ fixedType } permissionResource={ permissionResource }/>
 
 				<CrudPage.ChangeDialog
-					changeDialog={ (dto: InvoiceDto | undefined, closeDialog) =>
+					changeDialog={ (dto: InvoiceDto | undefined, closeDialog, mode) =>
 					{
 						return (
 							<ChangeInvoiceDialog
 								entity={ dto
-									? Invoice.load(dto)
+									? Invoice.load(dto, mode)
 									: Invoice.create() }
 								service={ Services.invoicesApi }
+								fixedType={ fixedType }
 								onSuccess={ (data: Invoice) =>
 								{
 									if (data.mode.value === ChangeableEntityMode.Create)
@@ -163,7 +167,7 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 		resendingEInvoice.value = false;
 	};
 
-	if (Cubits.pricingMethods.state.value instanceof PageLoading)
+	if (Cubits.invoices.state.value instanceof PageLoading)
 	{
 		return <TablePreview.Loading/>;
 	}
@@ -274,6 +278,60 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 		return {message: "", styles: ""};
 	};
 
+	const getActions = (
+		entity: Invoice,
+		openEditDialog: (entity: Invoice, mode: ChangeableEntityMode) => void,
+		ItemComponent: typeof DropdownMenuItem | typeof ContextMenuItem
+	) =>
+	{
+		const items: React.ReactNode[] = [];
+		if (entity.type.value === InvoiceType.Sell || entity.type.value === InvoiceType.Purchase)
+		{
+			items.push(
+				<ItemComponent
+					className="text-orange-700 font-semibold"
+					onSelect={ () =>
+					{
+						openEditDialog(entity, InvoiceMode.Return);
+					} }
+				>
+					<Undo2 className="h-4 w-4 me-2"/>
+					<h4 className="text-sm">{ t("invoices.return") }</h4>
+				</ItemComponent>
+			);
+
+			items.push(
+				<ItemComponent
+					className="text-blue-600 font-semibold"
+					onSelect={ () =>
+					{
+						openEditDialog(entity, InvoiceMode.Copy);
+					} }
+				>
+					<Copy className="h-4 w-4 me-2"/>
+					{ t("invoices.copyInvoice") }
+				</ItemComponent>
+			);
+		}
+
+		if (entity.type.value === InvoiceType.Quotation)
+		{
+			items.push(
+				<ItemComponent
+					className="text-green-600 font-semibold"
+					onSelect={ () =>
+					{
+						openEditDialog(entity, InvoiceMode.QuotationToSales);
+					} }
+				>
+					<FilePlusCorner className="h-4 w-4 me-2"/>
+					{ t("invoices.convertToSales") }
+				</ItemComponent>
+			);
+		}
+
+		return items;
+	};
 	const getTableRowMapper = (invoice: Invoice) =>
 	{
 		const cells: { rowBody: ReactNode, rowStyles: string }[] = [{rowBody: `#${ invoice.id }`, rowStyles: ""}];
@@ -389,7 +447,7 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 		return cells;
 	};
 
-	if (Cubits.pricingMethods.state.value instanceof PageLoaded)
+	if (Cubits.invoices.state.value instanceof PageLoaded)
 	{
 		return (
 			<CrudPage.Table>
@@ -401,10 +459,15 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 						permissionResource,
 						SystemPermissionsActions.Update
 					) }
-					hasDeletePermission={ Services.auth.hasAuth(
-						permissionResource,
-						SystemPermissionsActions.Delete
-					) }
+					hasDeletePermission={ (entity) => entity.type.value === InvoiceType.Quotation ?
+						Services.auth.hasAuth(
+							permissionResource,
+							SystemPermissionsActions.Delete
+						)
+						: false
+					}
+					dropdownItems={ (entity, openEditDialog) => getActions(entity, openEditDialog, DropdownMenuItem) }
+					contextMenuItems={ (entity, openEditDialog) => getActions(entity, openEditDialog, ContextMenuItem) }
 				/>
 				<CrudPage.TablePagination
 					pageSize={ Cubits.invoices.pageSize.value }
@@ -419,7 +482,7 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 		);
 	}
 
-	if (Cubits.pricingMethods.state.value instanceof PageError)
+	if (Cubits.invoices.state.value instanceof PageError)
 	{
 		return <TablePreview.Error/>;
 	}

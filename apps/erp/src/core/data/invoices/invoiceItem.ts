@@ -115,7 +115,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			quantity: item.storeQuantity.value ? 1 : 0,
 			originalQuantity: item.storeQuantity.value ?? 0,
 			originalCost: item.cost.value ?? 0,
-			cost: (item.cost.value ?? 0) * defaultPricingMethod.quantityMultiplier.value,
+			cost: (item.cost.value ? Number((item.cost.value).toFixed(2)) : 0) * defaultPricingMethod.quantityMultiplier.value,
 			taxExclusivePrice: taxExclusivePrice,
 			taxInclusivePrice: taxInclusivePrice,
 			originalTaxInclusivePrice: taxInclusivePrice,

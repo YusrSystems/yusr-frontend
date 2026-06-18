@@ -25,10 +25,12 @@ import { signal } from "@preact/signals-react";
 import { Services } from "@/core/services/services.ts";
 import type { InvoiceItem } from "@/core/data/invoices/invoiceItem.ts";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
+import { useSignals } from "@preact/signals-react/runtime";
 
 
 export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 {
+	useSignals();
 	const {t} = useTranslation("accounting");
 	const focusedQuantityIndex = useMemo(() => signal<number | undefined>(undefined), []);
 
@@ -255,7 +257,11 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 														label: m.itemUnitPricingMethodName.value,
 														value: m.id.value
 													})) || [] }
-													onValueChange={ (iupmId) => invoiceItem.changeIupm(iupmId) }
+													onValueChange={ (iupmId) =>
+													{
+														invoiceItem.changeIupm(iupmId);
+														invoice.syncPaymentVouchers();
+													} }
 												/>
 											) }
 									</td>
@@ -274,7 +280,12 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 													step={ 0.1 }
 													max={ getMaxAllowedQuantity(invoiceItem.originalQuantity.value) }
 													value={ invoiceItem.quantity }
-													onChange={ (newValue) => newValue && invoiceItem.changeQuantity(newValue) }
+													onChange={ (newValue) =>
+													{
+														if (newValue == undefined) return;
+														invoiceItem.changeQuantity(newValue);
+														invoice.syncPaymentVouchers();
+													} }
 													disabled={ invoice.mode.value === InvoiceMode.Return ? false : invoice.isDisabled }
 													onFocus={ () => focusedQuantityIndex.value = index }
 													onBlur={ () => focusedQuantityIndex.value = undefined }
@@ -309,7 +320,12 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 											min={ getMinAllowedTaxInclusivePrice(invoiceItem.originalTaxInclusivePrice.value) }
 											value={ invoiceItem.taxInclusivePrice }
 											disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return }
-											onChange={ (newVal) => newVal && invoiceItem.changeTaxInclusivePrice(newVal) }
+											onChange={ (newValue) =>
+											{
+												if (newValue == undefined) return;
+												invoiceItem.changeTaxInclusivePrice(newValue);
+												invoice.syncPaymentVouchers();
+											} }
 										/>
 									</td>
 
@@ -318,7 +334,12 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 											<NumberField
 												value={ invoiceItem.settlement }
 												disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return }
-												onChange={ (newValue) => newValue && invoiceItem.changeSettlement(newValue) }
+												onChange={ (newValue) =>
+												{
+													if (newValue == undefined) return;
+													invoiceItem.changeSettlement(newValue);
+													invoice.syncPaymentVouchers();
+												} }
 											/>
 										</td>
 									) }
@@ -352,7 +373,11 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 										{ !invoice.isDisabled && (
 											<button
 												type="button"
-												onClick={ () => invoice.removeItem(index) }
+												onClick={ () =>
+												{
+													invoice.removeItem(index);
+													invoice.syncPaymentVouchers();
+												} }
 												className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
 												aria-label={ t("invoices.deleteItem") }
 											>

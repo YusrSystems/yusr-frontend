@@ -1,21 +1,13 @@
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { TextAreaField } from "yusr-ui";
-import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
-import { Services } from "@/core/services/services.ts";
+import Invoice from "@/core/data/invoices/invoice.ts";
+import { useSignals } from "@preact/signals-react/runtime";
 
 
 export default function InvoicePolicyTab({invoice}: { invoice: Invoice })
 {
+	useSignals();
 	const {t} = useTranslation("accounting");
-
-	useEffect(() =>
-	{
-		if (Services.auth.setting?.invoicePolicy?.value && !invoice.policy.value && invoice.mode.value !== InvoiceMode.Update)
-		{
-			invoice.policy.value = Services.auth.setting?.invoicePolicy?.value;
-		}
-	}, [invoice.mode.value, invoice.policy]);
 
 	return (
 		<TextAreaField

@@ -51,9 +51,9 @@ export class InvoiceDto extends Dto
 
 export class InvoiceMode extends ChangeableEntityMode
 {
-	static readonly Return = new InvoiceMode();
-	static readonly Copy = new InvoiceMode();
-	static readonly QuotationToSales = new InvoiceMode();
+	static readonly Return = new InvoiceMode("return");
+	static readonly Copy = new InvoiceMode("copy");
+	static readonly QuotationToSales = new InvoiceMode("quotationToSales");
 }
 
 export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
@@ -90,7 +90,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 	public invoiceFiles: Signal<StorageFile[]>;
 	public ignoreWarnings: Signal<boolean>;
 
-	constructor(dto: Partial<InvoiceDto> | undefined, mode: InvoiceMode)
+	constructor(dto: Partial<InvoiceDto> | undefined, mode: InvoiceMode = InvoiceMode.Create)
 	{
 		super(dto, [{
 			field: "type",
@@ -126,20 +126,37 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 		this.settlementAmount = this.assign("settlementAmount", dto?.settlementAmount ?? 0);
 		this.settlementPercent = this.assign("settlementPercent", dto?.settlementPercent ?? 0);
 		this.returnStatusId = this.assign("returnStatusId", dto?.returnStatusId ?? InvoiceReturnStatus.NotReturned);
-		this.storeId = this.assign("storeId", dto?.storeId ?? 0);
-		this.actionAccountId = this.assign("actionAccountId", dto?.actionAccountId ?? 0);
+
+		this.storeId = this.assign("storeId", dto?.storeId ?? Services.auth.setting?.mainStoreId);
+		this.storeName = this.assign("storeName", dto?.storeName ?? Services.auth.setting?.mainStoreName);
+
+		this.actionAccountId = this.assign("actionAccountId", dto?.actionAccountId ??
+			(
+				this.type.value === InvoiceType.Purchase
+					? Services.auth.setting?.purchaseAccountId
+					: (this.type.value === InvoiceType.Sell || this.type.value === InvoiceType.Quotation)
+						? Services.auth.setting?.sellAccountId
+						: undefined
+			)
+		);
+		this.actionAccountName = this.assign("actionAccountName", dto?.actionAccountName ??
+			(
+				this.type.value === InvoiceType.Purchase
+					? Services.auth.setting?.purchaseAccountName
+					: (this.type.value === InvoiceType.Sell || this.type.value === InvoiceType.Quotation)
+						? Services.auth.setting?.sellAccountName
+						: undefined
+			));
+
 		this.notes = this.assign("notes", dto?.notes);
 		this.policy = this.assign("policy", dto?.policy);
 		this.importExportType = this.assign("importExportType", dto?.importExportType);
 
-		this.createdAt = this.assign("createdAt", dto?.createdAt ?? new Date());
-		this.createdBy = this.assign("createdBy", dto?.createdBy ?? 0);
-		this.updatedAt = this.assign("updatedAt", dto?.updatedAt ?? new Date());
-		this.updatedBy = this.assign("updatedBy", dto?.updatedBy ?? 0);
-		this.rowVer = this.assign("rowVer", dto?.rowVer ?? 0);
-
-		this.actionAccountName = this.assign("actionAccountName", dto?.actionAccountName);
-		this.storeName = this.assign("storeName", dto?.storeName);
+		this.createdAt = this.assign("createdAt", dto?.createdAt);
+		this.createdBy = this.assign("createdBy", dto?.createdBy);
+		this.updatedAt = this.assign("updatedAt", dto?.updatedAt);
+		this.updatedBy = this.assign("updatedBy", dto?.updatedBy);
+		this.rowVer = this.assign("rowVer", dto?.rowVer);
 
 		this.invoiceItems = this.assign("invoiceItems",
 			(dto?.invoiceItems ?? []).map(x =>
@@ -152,11 +169,19 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 		this.invoiceVouchers = this.assign("invoiceVouchers", (dto?.invoiceVouchers ?? []).map(x => InvoiceVoucher.create(x)));
 		this.invoiceFiles = this.assign("invoiceFiles", dto?.invoiceFiles ?? []);
 		this.ignoreWarnings = this.assign("ignoreWarnings", dto?.ignoreWarnings ?? false);
+
+		const checkChildren = () =>
+		{
+			this.hasChanges.value = this.invoiceVouchers.value.some((m) => m.hasChanges.value)
+				|| this.invoiceItems.value.some((t) => t.hasChanges.value);
+		};
+		this.invoiceVouchers.value.forEach((t) => t.hasChanges.subscribe(checkChildren));
+		this.invoiceItems.value.forEach((s) => s.hasChanges.subscribe(checkChildren));
 	}
 
 	public get isDisabled()
 	{
-		return this.mode.value === InvoiceMode.Update && this.type.value !== InvoiceType.Quotation;
+		return (this.mode.value === InvoiceMode.Update || this.mode.value === InvoiceMode.Return) && this.type.value !== InvoiceType.Quotation;
 	}
 
 	public paymentVouchers()
@@ -192,6 +217,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 
 	public syncPaymentVouchers()
 	{
+
 		if (this.mode.value === ChangeableEntityMode.Update)
 		{
 			return;
@@ -210,7 +236,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 		if (vouchers.length === 0)
 		{
 			this.resetPaymentVouchers();
-			this.createInitialPaymentVoucher(taxInclusivePrice);
+			this.invoiceVouchers.value = [this.createInitialPaymentVoucher(taxInclusivePrice)];
 		}
 		else if (vouchers.length === 1 && vouchers[0])
 		{
