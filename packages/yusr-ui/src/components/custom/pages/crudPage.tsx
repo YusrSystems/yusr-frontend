@@ -95,12 +95,14 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 		tableRowMapper,
 		dropdownItems,
 		contextMenuItems,
+		isShareablePage,
 		...props
 	}: Omit<CrudPageTableRow<TEntity, TDto>, "onDoubleClick">
 		& Omit<CrudTableRowActionsMenuProps<TEntity, TDto>, "onEditClicked" | "onDeleteClicked" | "entity" | "dropdownItems" | "contextMenuItems">
 		& {
 		dropdownItems?: (entity: TEntity, openEditDialog: (entity: TEntity, mode: ChangeableEntityMode) => void) => React.ReactNode[];
 		contextMenuItems?: (entity: TEntity, openEditDialog: (entity: TEntity, mode: ChangeableEntityMode) => void) => React.ReactNode[];
+		isShareablePage?: boolean;
 	}
 )
 {
@@ -115,7 +117,7 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 	{
 		selectedEntity.value = entity;
 		selectedEntity.value.mode.value = mode;
-		navigate(`${ basePath }/${ entity.id.value }`);
+		isShareablePage && navigate(`${ basePath }/${ entity.id.value }`);
 		isChangeDialogOpen.value = true;
 	};
 	return (
@@ -208,6 +210,7 @@ CrudPage.ChangeDialog = function <TDto extends Dto, TEntity extends ChangeableEn
 			const entity = await fetchEntity?.(Number(params.id));
 			if (!entity)
 			{
+				navigate(basePath, {replace: true});
 				return;
 			}
 			console.log(entity);
