@@ -47,7 +47,7 @@ export default function SettingPage()
 		);
 		const updatedLogo = resolvedLogo[0];
 
-		if (cubit.formData.logo && updatedLogo)
+		if (cubit.formData.logo)
 		{
 			cubit.formData.logo.value = updatedLogo;
 		}

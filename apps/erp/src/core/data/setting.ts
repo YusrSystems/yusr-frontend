@@ -7,7 +7,7 @@ import {
 	CurrencyDto,
 	Dto,
 	i18n,
-	type StorageFile,
+	StorageFile,
 	ValidatableEntity,
 	Validators
 } from "yusr-ui";
@@ -145,7 +145,7 @@ export class Setting extends ValidatableEntity<SettingDto>
 		this.vatNumber = this.assign("vatNumber", dto?.vatNumber ?? undefined);
 		this.currencyId = this.assign("currencyId", dto?.currencyId ?? 0);
 		this.currency = this.assign("currency", new Currency(dto?.currency));
-		this.logo = this.assign("logo", dto?.logo ?? undefined);
+		this.logo = this.assign("logo", dto?.logo ? new StorageFile(dto?.logo) : undefined);
 		this.startDate = this.assign("startDate", dto?.startDate ?? new Date());
 		this.endDate = this.assign("endDate", dto?.endDate ?? new Date());
 		this.branchId = this.assign("branchId", dto?.branchId ?? 0);

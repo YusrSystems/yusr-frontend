@@ -7,21 +7,21 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  BranchesSearchableSelect,
-  Button,
-  cn,
-  FieldGroup,
-  FieldsSection,
-  FormField,
-  i18n,
-  Label,
-  StorageFileStatus,
-  StorageType,
-  TextField,
-  useStorageFile
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+	BranchesSearchableSelect,
+	Button,
+	cn,
+	FieldGroup,
+	FieldsSection,
+	FormField,
+	i18n,
+	Label,
+	StorageFileStatus,
+	StorageType,
+	TextField,
+	useStorageFile
 } from "yusr-ui";
 import type { Setting } from "@/core/data/setting.ts";
 import type { Signal } from "@preact/signals-react";
@@ -125,7 +125,7 @@ export default function BasicSection({formData}: { formData: Setting })
 						<p className="text-sm text-muted-foreground">{ t("settings.companyLogoDescription") }</p>
 
 						<div className="flex flex-wrap gap-2 justify-center md:justify-start mt-2">
-							{ (formData.logo.value?.url == undefined || formData.logo.value.status === StorageFileStatus.Delete) && (
+							{ (!formData.logo.value?.url || formData.logo.value.status === StorageFileStatus.Delete) && (
 								<Button
 									type="button"
 									variant="secondary"
