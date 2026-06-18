@@ -16,10 +16,11 @@ const AppLayout = () =>
 			{ (Services.auth.stepsToComplete > 0) && <CompleteAccountVerificationFixedItem/> }
 			<SidebarProvider>
 				<SideBar variant="inset"/>
-				<SidebarInset>
-					<SidebarTrigger className="m-3"/>
-					<div className="flex flex-1 flex-col">
-						<div className="@container/main flex flex-1 flex-col gap-2">
+				<SidebarInset className="overflow-hidden">
+					<SidebarTrigger className=" m-3 shrink-0"/>
+
+					<div className="flex flex-1 flex-col min-h-0">
+						<div className="@container/main flex flex-1 flex-col gap-2 overflow-y-auto">
 							<Outlet/>
 						</div>
 					</div>

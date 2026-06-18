@@ -1,7 +1,7 @@
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardContent, CardFooter, StorageType, TabButton, useStorageFile } from "yusr-ui";
 import BasicSection from "./basicSection";
@@ -33,6 +33,10 @@ export default function SettingPage()
 		false
 	);
 	const cubit = useMemo(() => new SettingsCubit(), []);
+	useEffect(() =>
+	{
+		void cubit.init();
+	}, [cubit]);
 
 	async function Save()
 	{

@@ -31,6 +31,7 @@ export default class SettingsCubit extends Cubit<SettingsState>
 			if (response.data)
 			{
 				this.formData = new Setting(response.data);
+				this.emit(new SettingsInitial());
 			}
 			else
 			{
@@ -60,7 +61,6 @@ export default class SettingsCubit extends Cubit<SettingsState>
 			if (result.data)
 			{
 				Services.auth.setSettings(result.data as SettingDto);
-
 				this.emit(new SettingsInitial());
 			}
 			else
