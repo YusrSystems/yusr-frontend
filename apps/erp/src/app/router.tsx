@@ -55,7 +55,7 @@ export const router = createBrowserRouter([{
 				element: <AppLayout/>,
 				children: [
 					{path: "/dashboard", element: <DashboardPage/>},
-					{path: "/users", element: <UsersPage/>},
+					{path: "/users/:id?", element: <UsersPage/>},
 					{path: "/settings", element: <SettingPage/>},
 					{path: "/taxes", element: <TaxesPage/>},
 					{path: "/branches", element: <BranchesPage onUpdate={ Services.auth.updateBranch }/>},

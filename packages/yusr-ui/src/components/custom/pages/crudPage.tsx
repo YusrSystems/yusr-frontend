@@ -12,6 +12,8 @@ import { CrudTableCard, type CrudTableCardProps } from "../table/crudTableCard";
 import { CrudTableHeader, type CrudTableHeaderProps } from "../table/crudTableHeader";
 import { CrudTablePagination, type CrudTablePaginationProps } from "../table/crudTablePagination";
 import { CrudTableRowActionsMenu, type CrudTableRowActionsMenuProps } from "../table/crudTableRowActionsMenu";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { CrudPageContext } from "./crudPageContext";
 
 
 const isChangeDialogOpen = signal<boolean>(false);
@@ -32,10 +34,21 @@ export type CrudPageChangeDialogProps<TDto extends Dto> = {
 export function CrudPage({children}: PropsWithChildren)
 {
 	useSignals();
+	const navigate = useNavigate();
+	const {pathname} = useLocation();
+	const params = useParams();
+
+	const basePath = params.id
+		? pathname.slice(0, pathname.lastIndexOf(`/${ params.id }`))
+		: pathname;
+	console.log(basePath);
+	console.log(params);
 	return (
-		<div className="px-5 py-3 h-[calc(100vh-70px)] flex flex-col">
-			{ children }
-		</div>
+		<CrudPageContext.Provider value={ {navigate, basePath} }>
+			<div className="px-5 py-3 h-[calc(100vh-70px)] flex flex-col">
+				{ children }
+			</div>
+		</CrudPageContext.Provider>
 	);
 }
 
