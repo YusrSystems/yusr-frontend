@@ -10,6 +10,7 @@ import { Box, Database, DollarSign } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	ChangeableEntityMode,
 	ChangeDialog,
 	type CommonChangeDialogProps,
 	Loading,
@@ -49,7 +50,7 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 				servicesIds.value = result.data;
 			}
 
-			if (currentEntity.value.mode.value === "update" && currentEntity.value?.id)
+			if (currentEntity.value.mode.value === ChangeableEntityMode.Update && currentEntity.value?.id)
 			{
 				const res = await service.Get(currentEntity.value.id.value);
 				if (res.data != undefined)
@@ -74,9 +75,9 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 	);
 
 	if (
-		(currentEntity.value.mode.value === "create"
+		(currentEntity.value.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Add))
-		|| (currentEntity.value.mode.value === "update"
+		|| (currentEntity.value.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Update))
 	)
 	{
@@ -99,7 +100,7 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 		return currentEntity.value;
 	};
 
-	const title = currentEntity.value.mode.value === "create"
+	const title = currentEntity.value.mode.value === ChangeableEntityMode.Create
 		? t("items.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("items.entityName") }`;
 

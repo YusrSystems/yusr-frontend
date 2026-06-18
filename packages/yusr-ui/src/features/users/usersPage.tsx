@@ -6,7 +6,7 @@ import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../
 import { CrudPage, TablePreview, UnauthorizedPage } from "../../components/custom";
 import { User, UserDto } from "../../entities";
 import { BaseCubits, BaseServices } from "../../services";
-import { PageError, PageLoaded, PageLoading } from "../../stateManager";
+import { ChangeableEntityMode, PageError, PageLoaded, PageLoading } from "../../stateManager";
 import { ChangeUserDialog } from "./changeUserDialog";
 
 
@@ -52,12 +52,12 @@ export function UsersPage()
 							service={ BaseServices.usersApi }
 							onSuccess={ (data) =>
 							{
-								if (data.mode.value === "create")
+								if (data.mode.value === ChangeableEntityMode.Create)
 								{
 									BaseCubits.users.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === "update")
+								else if (data.mode.value === ChangeableEntityMode.Update)
 								{
 									BaseCubits.users.update(data);
 								}

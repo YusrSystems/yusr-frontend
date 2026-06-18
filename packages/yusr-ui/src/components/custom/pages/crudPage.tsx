@@ -2,7 +2,7 @@ import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import React, { type PropsWithChildren, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import type { ChangeableEntity, Dto } from "../../..//stateManager";
+import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "../../..//stateManager";
 import { ContextMenu, ContextMenuTrigger } from "../../../components/pure";
 import { Dialog, DialogContent } from "../../pure/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../pure/table";
@@ -102,7 +102,7 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 								onDoubleClick={ () =>
 								{
 									selectedEntity.value = entity;
-									selectedEntity.value.mode.value = "update";
+									selectedEntity.value.mode.value = ChangeableEntityMode.Update;
 									isChangeDialogOpen.value = true;
 								} }
 								className="hover:bg-secondary/50 transition-colors cursor-pointer"
@@ -114,7 +114,7 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 										onEditClicked={ () =>
 										{
 											selectedEntity.value = entity;
-											selectedEntity.value.mode.value = "update";
+											selectedEntity.value.mode.value = ChangeableEntityMode.Update;
 											isChangeDialogOpen.value = true;
 										} }
 										onDeleteClicked={ () =>
@@ -139,7 +139,7 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 							onEditClicked={ () =>
 							{
 								selectedEntity.value = entity;
-								selectedEntity.value.mode.value = "update";
+								selectedEntity.value.mode.value = ChangeableEntityMode.Update;
 								isChangeDialogOpen.value = true;
 							} }
 							onDeleteClicked={ () =>

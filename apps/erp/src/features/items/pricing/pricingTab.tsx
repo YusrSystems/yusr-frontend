@@ -2,7 +2,7 @@ import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearc
 import type Item from "@/core/data/item";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { CheckboxField, FieldsSection, FormField, NumberField } from "yusr-ui";
+import { ChangeableEntityMode, CheckboxField, FieldsSection, FormField, NumberField } from "yusr-ui";
 import { ItemType } from "@/core/data/item.ts";
 import PricingMethodsTable from "./pricingMethodsTable";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
@@ -24,7 +24,7 @@ export default function PricingTab({entity}: { entity: Item; })
 					<UnitsSearchableSelect
 						id={ entity.sellUnitId }
 						label={ entity.sellUnitName }
-						disabled={ entity.type.value === ItemType.Service || entity.mode.value === "update" }
+						disabled={ entity.type.value === ItemType.Service || entity.mode.value === ChangeableEntityMode.Update }
 						onSelect={ (unit) =>
 						{
 							entity.itemUnitPricingMethods.value.forEach((iupm) =>
@@ -41,7 +41,7 @@ export default function PricingTab({entity}: { entity: Item; })
 				<NumberField
 					label={ t("items.initialCost") }
 					required
-					disabled={ entity.mode.value === "update" }
+					disabled={ entity.mode.value === ChangeableEntityMode.Update }
 					value={ entity.initialCost }
 					error={ entity.getError("initialCost") }
 					currency={ <ErpCurrencyIcon/> }

@@ -1,6 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import { i18n } from "../locales";
-import { ChangeableEntity, type ChangeableEntityMode, Dto } from "../stateManager";
+import { ChangeableEntity, ChangeableEntityMode, Dto } from "../stateManager";
 import { Validators } from "../validation";
 import { City, CityDto } from "./city";
 
@@ -28,7 +28,7 @@ export class Branch extends ChangeableEntity<BranchDto>
 	public postalCode: Signal<string | undefined>;
 	public city: Signal<City | undefined>;
 
-	constructor(dto: Partial<BranchDto> | undefined, mode: ChangeableEntityMode = "create")
+	constructor(dto: Partial<BranchDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		super(dto, [{
 			field: "name",

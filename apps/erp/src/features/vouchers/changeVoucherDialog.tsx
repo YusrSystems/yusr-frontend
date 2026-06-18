@@ -1,4 +1,5 @@
 import {
+	ChangeableEntityMode,
 	ChangeDialog,
 	CheckboxField,
 	type CommonChangeDialogProps,
@@ -76,9 +77,9 @@ export default function ChangeVoucherDialog({
 	};
 
 	if (
-		(entity.mode.value === "create"
+		(entity.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Add))
-		|| (entity.mode.value === "update"
+		|| (entity.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Update))
 	)
 	{
@@ -87,7 +88,7 @@ export default function ChangeVoucherDialog({
 
 	const isPayment = entity.type.value === VoucherType.Payment;
 	const isReceipt = entity.type.value === VoucherType.Receipt;
-	const title = entity.mode.value === "create"
+	const title = entity.mode.value === ChangeableEntityMode.Create
 		? t("vouchers.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("vouchers.entityName") }`;
 
@@ -139,7 +140,7 @@ export default function ChangeVoucherDialog({
 
 
 						<AccountsSearchableSelect
-							disabled={ entity.mode.value === "update" }
+							disabled={ entity.mode.value === ChangeableEntityMode.Update }
 							types={ [AccountType.Client, AccountType.Supplier] }
 							id={ entity.accountId }
 							label={ entity.accountName }

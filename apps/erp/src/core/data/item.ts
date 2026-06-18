@@ -1,5 +1,5 @@
 import { type Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, type StorageFile, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, type StorageFile, Validators } from "yusr-ui";
 import { ItemStore, type ItemStoreDto } from "./itemStore";
 import { ItemTax } from "./itemTax";
 import { ItemUnitPricingMethod, ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
@@ -72,7 +72,7 @@ export default class Item extends ChangeableEntity<ItemDto>
 	public itemStores: Signal<ItemStore[]>;
 	public itemImages: Signal<StorageFile[]>;
 
-	constructor(dto: Partial<ItemDto> | undefined, mode: ChangeableEntityMode = "create")
+	constructor(dto: Partial<ItemDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		super(dto, [{
 			field: "name",

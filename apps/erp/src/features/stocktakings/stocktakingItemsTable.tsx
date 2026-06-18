@@ -6,7 +6,7 @@ import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
 import { AlertCircle, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, NumberField, SelectField } from "yusr-ui";
+import { Button, ChangeableEntityMode, NumberField, SelectField } from "yusr-ui";
 import StoreItemSelector from "../items/storeItemSelector";
 
 
@@ -47,7 +47,7 @@ export default function StocktakingItemsTable(
 		if (existingRow)
 		{
 			return existingRow.systemQuantity.value
-				* (entity.mode.value === "create" ? 1 : existingRow.quantityMultiplier.value);
+				* (entity.mode.value === ChangeableEntityMode.Create ? 1 : existingRow.quantityMultiplier.value);
 		}
 		return 0;
 	};
@@ -177,7 +177,7 @@ export default function StocktakingItemsTable(
 	return (
 		<div>
 			<div className="sticky top-0 z-10 pt-4 pb-2 bg-background">
-				{ entity.mode.value === "create" && (
+				{ entity.mode.value === ChangeableEntityMode.Create && (
 					<StoreItemSelector
 						storeId={ entity.storeId }
 						onSelect={ handleStoreItemSelect }
@@ -251,10 +251,10 @@ export default function StocktakingItemsTable(
 																label=""
 																value={ item.actualQuantity }
 																onChange={ (val) => updateActualQuantity(item, val) }
-																disabled={ entity.mode.value === "update" }
+																disabled={ entity.mode.value === ChangeableEntityMode.Update }
 															/>
 														</div>
-														{ entity.mode.value === "create" && (
+														{ entity.mode.value === ChangeableEntityMode.Create && (
 															<Button
 																type="button"
 																variant="ghost"
@@ -268,7 +268,7 @@ export default function StocktakingItemsTable(
 													</div>
 												)) }
 
-												{ entity.mode.value === "create" && availableUnits.length > 0 && (
+												{ entity.mode.value === ChangeableEntityMode.Create && availableUnits.length > 0 && (
 													<div className="mt-1">
 														<SelectField<number>
 															options={ availableUnits.map((iupm) => ({
@@ -282,7 +282,7 @@ export default function StocktakingItemsTable(
 											</div>
 										</td>
 
-										{ entity.mode.value === "create" && (
+										{ entity.mode.value === ChangeableEntityMode.Create && (
 											<td className="p-3 text-center align-top pt-4">
 												<Button
 													type="button"

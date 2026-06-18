@@ -7,7 +7,7 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
+import { ChangeableEntityMode, type CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, FieldsSection, FormField, Loading, TextField } from "yusr-ui";
 import { ItemType } from "@/core/data/item.ts";
 import StocktakingItemsTable from "./stocktakingItemsTable";
@@ -31,7 +31,7 @@ export default function ChangeStocktakingDialog(
 	{
 		Cubits.stores.init();
 
-		if (currentEntity.value.mode.value === "update" && currentEntity.value?.id.value)
+		if (currentEntity.value.mode.value === ChangeableEntityMode.Update && currentEntity.value?.id.value)
 		{
 			isLoading.value = true;
 			const fetch = async () =>
@@ -56,7 +56,7 @@ export default function ChangeStocktakingDialog(
 		}
 	}, [currentEntity.value.storeId.value]);
 
-	const title = currentEntity.value.mode.value === "create"
+	const title = currentEntity.value.mode.value === ChangeableEntityMode.Create
 		? addDialogTitle
 		: updateDialogTitle;
 
@@ -92,7 +92,7 @@ export default function ChangeStocktakingDialog(
 							<StoresSearchableSelect
 								id={ currentEntity.value.storeId }
 								label={ currentEntity.value.storeName }
-								disabled={ currentEntity.value.mode.value === "update" }
+								disabled={ currentEntity.value.mode.value === ChangeableEntityMode.Update }
 								onSelect={ (store) =>
 								{
 									currentEntity.value.storeId.value = store?.id.value;

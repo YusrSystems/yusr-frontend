@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 
 export class UnitDto extends Dto
 {
@@ -10,7 +10,7 @@ export default class Unit extends ChangeableEntity<UnitDto>
 {
   public name: Signal<string>;
 
-  constructor(dto?: Partial<UnitDto> | undefined, mode: ChangeableEntityMode = "create")
+  constructor(dto?: Partial<UnitDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
   {
     super(dto, [{
       field: "name",

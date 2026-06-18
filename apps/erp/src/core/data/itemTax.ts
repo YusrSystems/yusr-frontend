@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 
 
 export class ItemTaxDto extends Dto
@@ -23,7 +23,7 @@ export class ItemTax extends ChangeableEntity<ItemTaxDto>
 			field: "taxId",
 			selector: (d) => d.taxId,
 			validators: [Validators.required(i18n.t("stocking:items.taxRequired"))]
-		}], "create");
+		}], ChangeableEntityMode.Create);
 
 		this.itemId = this.assign("itemId", dto?.itemId ?? 0);
 		this.taxId = this.assign("taxId", dto?.taxId ?? 0);

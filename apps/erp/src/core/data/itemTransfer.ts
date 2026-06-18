@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 import { ItemUnitPricingMethod, type ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
 
 
@@ -28,7 +28,7 @@ export class ItemTransfersItem extends ChangeableEntity<ItemTransfersItemDto>
 
 	constructor(dto?: Partial<ItemTransfersItemDto> | undefined)
 	{
-		super(dto, [], "create");
+		super(dto, [], ChangeableEntityMode.Create);
 
 		this.itemTransferId = this.assign("itemTransferId", dto?.itemTransferId ?? 0);
 		this.itemId = this.assign("itemId", dto?.itemId ?? 0);
@@ -67,7 +67,7 @@ export default class ItemTransfer extends ChangeableEntity<ItemTransferDto>
 	public toStoreName: Signal<string | undefined>;
 	public itemTransfersItems: Signal<ItemTransfersItem[]>;
 
-	constructor(dto?: Partial<ItemTransferDto> | undefined, mode: ChangeableEntityMode = "create")
+	constructor(dto?: Partial<ItemTransferDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		super(dto, [{
 			field: "transferDate",

@@ -1,6 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import { i18n } from "../locales";
-import { ChangeableEntity, type ChangeableEntityMode, Dto } from "../stateManager";
+import { ChangeableEntity, ChangeableEntityMode, Dto } from "../stateManager";
 import { type ValidationRule, Validators } from "../validation";
 import { RoleDto } from "./role";
 
@@ -28,7 +28,7 @@ export class User extends ChangeableEntity<UserDto>
 	public roleName: Signal<string>;
 	public role: Signal<RoleDto>;
 
-	constructor(dto: Partial<UserDto> | undefined, mode: ChangeableEntityMode = "create")
+	constructor(dto: Partial<UserDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		const rules: ValidationRule<Partial<UserDto>>[] = [{
 			field: "username",

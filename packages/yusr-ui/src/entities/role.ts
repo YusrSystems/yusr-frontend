@@ -1,6 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import { i18n } from "../locales";
-import { ChangeableEntity, type ChangeableEntityMode, Dto } from "../stateManager";
+import { ChangeableEntity, ChangeableEntityMode, Dto } from "../stateManager";
 import { Validators } from "../validation";
 
 
@@ -17,7 +17,7 @@ export abstract class Role<TRoleDto extends RoleDto> extends ChangeableEntity<TR
 
 	constructor(
 		dto: Partial<TRoleDto> | undefined,
-		mode: ChangeableEntityMode = "create"
+		mode: ChangeableEntityMode = ChangeableEntityMode.Create
 	)
 	{
 		super(dto, [{

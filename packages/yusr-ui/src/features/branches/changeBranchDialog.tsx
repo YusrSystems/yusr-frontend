@@ -13,6 +13,7 @@ import {
 import { FieldGroup } from "../../components/pure";
 import { Branch, BranchDto } from "../../entities";
 import { BaseCubits, BaseServices } from "../../services";
+import { ChangeableEntityMode } from "../../stateManager";
 
 
 export function ChangeBranchDialog({entity, service, onSuccess}: CommonChangeDialogProps<Branch, BranchDto>)
@@ -20,9 +21,9 @@ export function ChangeBranchDialog({entity, service, onSuccess}: CommonChangeDia
 	useSignals();
 
 	if (
-		(entity.mode.value === "create"
+		(entity.mode.value === ChangeableEntityMode.Create
 			&& !BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Branches, SystemPermissionsActions.Add))
-		|| (entity.mode.value === "update"
+		|| (entity.mode.value === ChangeableEntityMode.Update
 			&& !BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Branches, SystemPermissionsActions.Update))
 	)
 	{
@@ -32,7 +33,7 @@ export function ChangeBranchDialog({entity, service, onSuccess}: CommonChangeDia
 	useEffect(() => BaseCubits.cities.init(), []);
 
 	const {t} = useTranslation(["commonEntities", "common"]);
-	const title = entity.mode.value === "create"
+	const title = entity.mode.value === ChangeableEntityMode.Create
 		? t("branches.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("branches.entityName") }`;
 

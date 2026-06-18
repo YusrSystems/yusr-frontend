@@ -1,6 +1,7 @@
 import { Services } from "@/core/services/services.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import {
+	ChangeableEntityMode,
 	CrudPage,
 	NumbertoWordsService,
 	PageError,
@@ -55,12 +56,12 @@ export default function VouchersPage()
 						service={ Services.voucherApi }
 						onSuccess={ (data) =>
 						{
-							if (data.mode.value === "create")
+							if (data.mode.value === ChangeableEntityMode.Create)
 							{
 								Cubits.vouchers.add(data);
 								closeDialog();
 							}
-							else if (data.mode.value === "update")
+							else if (data.mode.value === ChangeableEntityMode.Update)
 							{
 								Cubits.vouchers.update(data);
 							}

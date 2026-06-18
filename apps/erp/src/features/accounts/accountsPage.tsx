@@ -8,6 +8,7 @@ import { BoxIcon } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	ChangeableEntityMode,
 	CrudPage,
 	PageError,
 	PageLoaded,
@@ -77,12 +78,12 @@ export default function AccountsPage(
 							service={ Services.accountsApi }
 							onSuccess={ (data) =>
 							{
-								if (data.mode.value === "create")
+								if (data.mode.value === ChangeableEntityMode.Create)
 								{
 									Cubits.accounts.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === "update")
+								else if (data.mode.value === ChangeableEntityMode.Update)
 								{
 									Cubits.accounts.update(data);
 								}

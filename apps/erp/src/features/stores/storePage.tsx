@@ -6,13 +6,14 @@ import { Warehouse } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    CrudPage,
-    PageError,
-    PageLoaded,
-    PageLoading,
-    SystemPermissionsActions,
-    TablePreview,
-    UnauthorizedPage
+	ChangeableEntityMode,
+	CrudPage,
+	PageError,
+	PageLoaded,
+	PageLoading,
+	SystemPermissionsActions,
+	TablePreview,
+	UnauthorizedPage
 } from "yusr-ui";
 import ItemsListDialog from "../reports/itemsListDialog";
 import ChangeStoreDialog from "./changeStoreDialog";
@@ -54,12 +55,12 @@ export default function StoresPage()
 							service={ Services.storesApi }
 							onSuccess={ (data) =>
 							{
-								if (data.mode.value === "create")
+								if (data.mode.value === ChangeableEntityMode.Create)
 								{
 									Cubits.stores.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === "update")
+								else if (data.mode.value === ChangeableEntityMode.Update)
 								{
 									Cubits.stores.update(data);
 								}

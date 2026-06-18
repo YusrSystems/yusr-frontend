@@ -7,6 +7,7 @@ import { ArrowRightLeft } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	ChangeableEntityMode,
 	CrudPage,
 	NumbertoWordsService,
 	PageError,
@@ -59,12 +60,12 @@ export default function BalanceTransfersPage()
 							service={ Services.balanceTransfersApi }
 							onSuccess={ (data) =>
 							{
-								if (data.mode.value === "create")
+								if (data.mode.value === ChangeableEntityMode.Create)
 								{
 									Cubits.balanceTransfers.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === "update")
+								else if (data.mode.value === ChangeableEntityMode.Update)
 								{
 									Cubits.balanceTransfers.update(data);
 								}

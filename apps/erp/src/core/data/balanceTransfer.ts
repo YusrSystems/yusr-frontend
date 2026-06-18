@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 
 export class BalanceTransferDto extends Dto
 {
@@ -22,7 +22,7 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
   public fromAccountName: Signal<string>;
   public toAccountName: Signal<string>;
 
-  constructor(dto?: Partial<BalanceTransferDto>, mode: ChangeableEntityMode = "create")
+  constructor(dto?: Partial<BalanceTransferDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
   {
     super(dto, [{
       field: "amount",

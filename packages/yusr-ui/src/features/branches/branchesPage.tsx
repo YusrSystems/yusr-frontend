@@ -7,7 +7,7 @@ import { CrudPage, TablePreview, UnauthorizedPage } from "../../components/custo
 import { Branch, type BranchDto } from "../../entities";
 import { BaseCubits } from "../../services";
 import { BaseServices } from "../../services/baseServices";
-import { PageError, PageLoaded, PageLoading } from "../../stateManager";
+import { ChangeableEntityMode, PageError, PageLoaded, PageLoading } from "../../stateManager";
 import { ChangeBranchDialog } from "./changeBranchDialog";
 
 
@@ -53,11 +53,11 @@ export function BranchesPage({onUpdate}: { onUpdate?: (entity: Branch) => void; 
 							service={ BaseServices.branchesApi }
 							onSuccess={ (data) =>
 							{
-								if (data.mode.value === "create")
+								if (data.mode.value === ChangeableEntityMode.Create)
 								{
 									BaseCubits.branches.add(data);
 								}
-								else if (data.mode.value === "update")
+								else if (data.mode.value === ChangeableEntityMode.Update)
 								{
 									BaseCubits.branches.update(data);
 									onUpdate?.(data);

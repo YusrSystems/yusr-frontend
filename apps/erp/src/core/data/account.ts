@@ -1,5 +1,5 @@
 import { type Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, City, CityDto, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, City, CityDto, Dto, i18n, Validators } from "yusr-ui";
 
 
 export const AccountType = {
@@ -58,7 +58,7 @@ export class AccountContact extends ChangeableEntity<AccountContactDto>
 				},
 				i18n.t("accounting:accounts.contactNumberLength")
 			)]
-		}], "create");
+		}], ChangeableEntityMode.Create);
 
 		this.accountId = this.assign("accountId", dto?.accountId ?? 0);
 		this.number = this.assign("number", dto?.number ?? 0);
@@ -86,7 +86,7 @@ export class Account extends ChangeableEntity<AccountDto, ChangeableEntityMode>
 	public notes: Signal<string | undefined>;
 	public accountContacts: Signal<AccountContact[]>;
 
-	constructor(dto: Partial<AccountDto> | undefined, mode: ChangeableEntityMode = "create")
+	constructor(dto: Partial<AccountDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		super(
 			{

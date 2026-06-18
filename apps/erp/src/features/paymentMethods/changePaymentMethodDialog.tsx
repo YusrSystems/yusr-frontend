@@ -6,6 +6,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
+	ChangeableEntityMode,
 	ChangeDialog,
 	type CommonChangeDialogProps,
 	FieldGroup,
@@ -34,15 +35,15 @@ export default function ChangePaymentMethodDialog(
 	const {t} = useTranslation(["accounting", "common"]);
 
 	if (
-		(entity.mode.value === "create"
+		(entity.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.PaymentMethods, SystemPermissionsActions.Add))
-		|| (entity.mode.value === "update"
+		|| (entity.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.PaymentMethods, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
-	const title = entity.mode.value === "create"
+	const title = entity.mode.value === ChangeableEntityMode.Create
 		? t("paymentMethods.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("paymentMethods.entityName") }`;
 
@@ -87,7 +88,7 @@ export default function ChangePaymentMethodDialog(
 		types.push(AccountType.Box);
 	}
 
-	const canChangeBankAccount = (hasBankPerm || hasBoxPerm) && entity.mode.value === "create";
+	const canChangeBankAccount = (hasBankPerm || hasBoxPerm) && entity.mode.value === ChangeableEntityMode.Create;
 
 	if (!hasBankPerm && !hasBoxPerm)
 	{

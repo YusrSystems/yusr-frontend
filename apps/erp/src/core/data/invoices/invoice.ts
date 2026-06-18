@@ -192,7 +192,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 
 	public syncPaymentVouchers()
 	{
-		if (this.mode.value === "update")
+		if (this.mode.value === ChangeableEntityMode.Update)
 		{
 			return;
 		}

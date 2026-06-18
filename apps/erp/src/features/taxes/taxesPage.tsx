@@ -7,13 +7,14 @@ import { Percent } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    CrudPage,
-    PageError,
-    PageLoaded,
-    PageLoading,
-    SystemPermissionsActions,
-    TablePreview,
-    UnauthorizedPage
+	ChangeableEntityMode,
+	CrudPage,
+	PageError,
+	PageLoaded,
+	PageLoading,
+	SystemPermissionsActions,
+	TablePreview,
+	UnauthorizedPage
 } from "yusr-ui";
 import ChangeTaxDialog from "./changeTaxDialog";
 
@@ -53,12 +54,12 @@ export default function TaxesPage()
 							service={ Services.taxesApi }
 							onSuccess={ (data) =>
 							{
-								if (data.mode.value === "create")
+								if (data.mode.value === ChangeableEntityMode.Create)
 								{
 									Cubits.taxes.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === "update")
+								else if (data.mode.value === ChangeableEntityMode.Update)
 								{
 									Cubits.taxes.update(data);
 								}

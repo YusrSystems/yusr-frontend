@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, type ValidationRule, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, type ValidationRule, Validators } from "yusr-ui";
 
 
 export class TaxDto extends Dto
@@ -15,7 +15,7 @@ export class Tax extends ChangeableEntity<TaxDto>
 	public percentage: Signal<number>;
 	public isPrimary: Signal<boolean>;
 
-	constructor(dto?: Partial<TaxDto> | undefined, mode: ChangeableEntityMode = "create")
+	constructor(dto?: Partial<TaxDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		const rules: ValidationRule<Partial<TaxDto>>[] = [{
 			field: "name",

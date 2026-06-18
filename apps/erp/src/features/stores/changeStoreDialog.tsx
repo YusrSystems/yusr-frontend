@@ -2,7 +2,7 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
+import { ChangeableEntityMode, type CommonChangeDialogProps } from "yusr-ui";
 import { ChangeDialog, FieldGroup, SystemPermissionsActions, TextField } from "yusr-ui";
 import { Store, StoreDto } from "@/core/data/store.ts";
 
@@ -13,16 +13,16 @@ export default function ChangeStoreDialog({entity, service, onSuccess}: CommonCh
 	const {t} = useTranslation(["stocking", "common"]);
 
 	if (
-		(entity.mode.value === "create"
+		(entity.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Stores, SystemPermissionsActions.Add))
-		|| (entity.mode.value === "update"
+		|| (entity.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Stores, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.mode.value === "create"
+	const title = entity.mode.value === ChangeableEntityMode.Create
 		? t("stores.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("stores.entityName") }`;
 

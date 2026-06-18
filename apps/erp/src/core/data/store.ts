@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, type ValidationRule, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, type ValidationRule, Validators } from "yusr-ui";
 
 
 export class StoreDto extends Dto
@@ -13,7 +13,7 @@ export class Store extends ChangeableEntity<StoreDto>
 	public name: Signal<string>;
 	public authorized: Signal<boolean>;
 
-	constructor(dto?: Partial<StoreDto>, mode: ChangeableEntityMode = "create")
+	constructor(dto?: Partial<StoreDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		const rules: ValidationRule<Partial<StoreDto>>[] = [{
 			field: "name",

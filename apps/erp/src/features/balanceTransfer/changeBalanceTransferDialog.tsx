@@ -8,6 +8,7 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
+	ChangeableEntityMode,
 	ChangeDialog,
 	type CommonChangeDialogProps,
 	FieldGroup,
@@ -44,16 +45,16 @@ export default function ChangeBalanceTransferDialog(
 	}, [entity.amount.value, amountToWords]);
 
 	if (
-		(entity.mode.value === "create"
+		(entity.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Add))
-		|| (entity.mode.value === "update"
+		|| (entity.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.mode.value === "create"
+	const title = entity.mode.value === ChangeableEntityMode.Create
 		? t("balanceTransfers.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("balanceTransfers.entityName") }`;
 
@@ -77,7 +78,7 @@ export default function ChangeBalanceTransferDialog(
 		types.push(AccountType.Box);
 	}
 	const hasSelectAccountPermission = hasBankPerm || hasBoxPerm;
-	const canChangeBankAccount = hasSelectAccountPermission && entity.mode.value === "create";
+	const canChangeBankAccount = hasSelectAccountPermission && entity.mode.value === ChangeableEntityMode.Create;
 
 	if (!hasSelectAccountPermission)
 	{

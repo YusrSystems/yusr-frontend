@@ -1,4 +1,4 @@
-import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 import { Signal } from "@preact/signals-react";
 import { PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 
@@ -44,7 +44,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 	public accountName: Signal<string>;
 	public paymentMethod: Signal<PaymentMethod>;
 
-	constructor(dto?: Partial<VoucherDto>, mode: ChangeableEntityMode = "create")
+	constructor(dto?: Partial<VoucherDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		super(dto, [{
 			field: "type",

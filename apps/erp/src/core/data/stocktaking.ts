@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 import { StocktakingItem, type StocktakingItemDto } from "./stocktakingItem";
 
 export class StocktakingDto extends Dto
@@ -18,7 +18,7 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto>
   public storeId: Signal<number | undefined>;
   public storeName: Signal<string | undefined>;
   public items: Signal<StocktakingItem[]>;
-  constructor(dto: Partial<StocktakingDto> | undefined, mode: ChangeableEntityMode = "create")
+  constructor(dto: Partial<StocktakingDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
   {
     super(dto, [{
       field: "storeId",

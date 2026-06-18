@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { type ChangeableEntityMode, Role, RoleDto } from "yusr-ui";
+import { ChangeableEntityMode, Role, RoleDto } from "yusr-ui";
 
 export class ErpRoleDto extends RoleDto
 {
@@ -10,7 +10,7 @@ export class ErpRole extends Role<ErpRoleDto>
 {
   public authorizedStores: Signal<number[]>;
 
-  constructor(dto?: Partial<ErpRoleDto> | undefined, mode: ChangeableEntityMode = "create")
+  constructor(dto?: Partial<ErpRoleDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
   {
     super(dto, mode);
 

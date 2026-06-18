@@ -14,7 +14,7 @@ import { FileTextIcon, RotateCw } from "lucide-react";
 import { type ReactNode, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-	Button,
+	Button, ChangeableEntityMode,
 	CrudPage,
 	PageError,
 	PageLoaded,
@@ -98,12 +98,12 @@ export default function InvoicesPage({
 								service={ Services.invoicesApi }
 								onSuccess={ (data: Invoice) =>
 								{
-									if (data.mode.value === "create")
+									if (data.mode.value === ChangeableEntityMode.Create)
 									{
 										Cubits.invoices.add(data);
 										closeDialog();
 									}
-									else if (data.mode.value === "update")
+									else if (data.mode.value === ChangeableEntityMode.Update)
 									{
 										Cubits.invoices.update(data);
 									}

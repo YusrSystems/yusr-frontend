@@ -7,14 +7,15 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ChangeDialog,
-  type CommonChangeDialogProps,
-  FieldGroup,
-  FieldsSection,
-  FormField,
-  Loading,
-  SystemPermissionsActions,
-  TextField
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	FieldsSection,
+	FormField,
+	Loading,
+	SystemPermissionsActions,
+	TextField
 } from "yusr-ui";
 import { ItemType } from "@/core/data/item.ts";
 import ItemTransfer, { ItemTransferDto } from "../../core/data/itemTransfer";
@@ -29,13 +30,13 @@ export default function ChangeItemTransferDialog(
 	const {t} = useTranslation(["stocking", "common"]);
 	const isLoading = useMemo(() => signal<boolean>(false), []);
 	const currentEntity = useMemo(() => signal<ItemTransfer>(entity), [entity]);
-	const title = entity.mode.value === "create"
+	const title = entity.mode.value === ChangeableEntityMode.Create
 		? t("itemTransfers.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("itemTransfers.entityName") }`;
 
 	useEffect(() =>
 	{
-		if (entity.mode.value === "update" && entity?.id.value)
+		if (entity.mode.value === ChangeableEntityMode.Update && entity?.id.value)
 		{
 			isLoading.value = true;
 			const fetch = async () =>
@@ -58,16 +59,16 @@ export default function ChangeItemTransferDialog(
 
 	useEffect(() =>
 	{
-		if (entity.mode.value === "create" && currentEntity.value?.fromStoreId.value)
+		if (entity.mode.value === ChangeableEntityMode.Create && currentEntity.value?.fromStoreId.value)
 		{
 			Cubits.items.init([ItemType.Product], {storeId: currentEntity.value.fromStoreId.value});
 		}
 	}, [currentEntity.value.fromStoreId.value, entity.mode.value]);
 
 	if (
-		(entity.mode.value === "create"
+		(entity.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.ItemTransfers, SystemPermissionsActions.Add))
-		|| (entity.mode.value === "update"
+		|| (entity.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.ItemTransfers, SystemPermissionsActions.Update))
 	)
 	{
@@ -105,7 +106,7 @@ export default function ChangeItemTransferDialog(
 							<StoresSearchableSelect
 								id={ currentEntity.value.fromStoreId }
 								label={ currentEntity.value.fromStoreName }
-								disabled={ currentEntity.value.mode.value === "update" }
+								disabled={ currentEntity.value.mode.value === ChangeableEntityMode.Update }
 								onSelect={ () =>
 								{
 									currentEntity.value.itemTransfersItems.value = [];
@@ -121,7 +122,7 @@ export default function ChangeItemTransferDialog(
 							<StoresSearchableSelect
 								id={ currentEntity.value.toStoreId }
 								label={ currentEntity.value.toStoreName }
-								disabled={ currentEntity.value.mode.value === "update" }
+								disabled={ currentEntity.value.mode.value === ChangeableEntityMode.Update }
 							/>
 						</FormField>
 					</FieldsSection>

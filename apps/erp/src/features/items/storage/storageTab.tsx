@@ -4,7 +4,7 @@ import { ItemStore } from "@/core/data/itemStore";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, FormField, NumberField, TextField } from "yusr-ui";
+import { Button, ChangeableEntityMode, FormField, NumberField, TextField } from "yusr-ui";
 
 export default function StorageTab({ entity }: { entity: Item; })
 {
@@ -98,7 +98,7 @@ export default function StorageTab({ entity }: { entity: Item; })
                       label=""
                       min={ 0 }
                       value={ store.initialQuantity }
-                      disabled={ entity.mode.value === "update" }
+                      disabled={ entity.mode.value === ChangeableEntityMode.Update }
                       error={ store.getError("initialQuantity") }
                       onChange={ () =>
                       {

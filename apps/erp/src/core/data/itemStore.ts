@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 
 
 export class ItemStoreDto extends Dto
@@ -29,7 +29,7 @@ export class ItemStore extends ChangeableEntity<ItemStoreDto>
 			field: "initialQuantity",
 			selector: (d) => d.initialQuantity,
 			validators: [Validators.min(0, i18n.t("stocking:items.initialQuantityMin"))]
-		}], "create");
+		}], ChangeableEntityMode.Create);
 
 		this.itemId = this.assign("itemId", dto?.itemId ?? 0);
 		this.storeId = this.assign("storeId", dto?.storeId ?? 0);

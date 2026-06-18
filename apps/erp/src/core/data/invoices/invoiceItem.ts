@@ -1,4 +1,4 @@
-import { ChangeableEntity, Dto } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto } from "yusr-ui";
 import { ItemUnitPricingMethod, type ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod.ts";
 import type { Signal } from "@preact/signals-react";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
@@ -57,7 +57,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 	constructor(dto?: Partial<InvoiceItemDto>)
 	{
-		super(dto, [], "create");
+		super(dto, [], ChangeableEntityMode.Create);
 
 		this.index = this.assign("index", dto?.index ?? 0);
 		this.invoiceId = this.assign("invoiceId", dto?.invoiceId ?? 0);

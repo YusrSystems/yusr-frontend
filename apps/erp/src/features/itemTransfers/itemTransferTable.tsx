@@ -5,7 +5,7 @@ import type { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
 import { useSignals } from "@preact/signals-react/runtime";
 import { AlertCircle, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { NumberField, SelectField } from "yusr-ui";
+import { ChangeableEntityMode, NumberField, SelectField } from "yusr-ui";
 import StoreItemSelector from "../items/storeItemSelector";
 
 export default function ItemTransferTable({ entity }: { entity: ItemTransfer; })
@@ -69,7 +69,7 @@ export default function ItemTransferTable({ entity }: { entity: ItemTransfer; })
   return (
     <div>
       <div className="sticky top-0 z-10 pt-4 pb-2 bg-background">
-        { entity.mode.value === "create" && (
+        { entity.mode.value === ChangeableEntityMode.Create && (
           <StoreItemSelector
             storeId={ entity.fromStoreId }
             onSelect={ addItem }
@@ -114,7 +114,7 @@ export default function ItemTransferTable({ entity }: { entity: ItemTransfer; })
 
                     <td className="p-4 text-start">
                       <div className="font-semibold text-foreground">{ row.itemName.value }</div>
-                      { row.itemUnitPricingMethodId.value && entity.mode.value === "create" && (
+                      { row.itemUnitPricingMethodId.value && entity.mode.value === ChangeableEntityMode.Create && (
                         <div className="text-sm font-semibold text-destructive mt-1">
                           { t("itemTransfers.available") }: { getAvailableQuantity(row) }
                         </div>
@@ -129,7 +129,7 @@ export default function ItemTransferTable({ entity }: { entity: ItemTransfer; })
                           value: m.id.value
                         })) || [] }
                         placeholder={ t("itemTransfers.selectPricingMethod") }
-                        disabled={ entity.mode.value === "update" }
+                        disabled={ entity.mode.value === ChangeableEntityMode.Update }
                       />
                     </td>
 
@@ -137,12 +137,12 @@ export default function ItemTransferTable({ entity }: { entity: ItemTransfer; })
                       <NumberField
                         min={ 1 }
                         value={ row.quantity }
-                        disabled={ entity.mode.value === "update" }
+                        disabled={ entity.mode.value === ChangeableEntityMode.Update }
                       />
                     </td>
 
                     <td className="p-4 text-center align-top pt-5">
-                      { entity.mode.value === "create" && (
+                      { entity.mode.value === ChangeableEntityMode.Create && (
                         <button
                           type="button"
                           onClick={ () => removeItem(row.id.value) }

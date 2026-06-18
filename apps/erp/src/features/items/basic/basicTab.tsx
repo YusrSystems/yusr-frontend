@@ -6,6 +6,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
+	ChangeableEntityMode,
 	FieldsSection,
 	SelectField,
 	StorageFileField,
@@ -55,7 +56,7 @@ export default function BasicTab(
 						<SelectField<ItemType>
 							label={ t("items.itemType") }
 							required
-							disabled={ entity.mode.value === "update" }
+							disabled={ entity.mode.value === ChangeableEntityMode.Update }
 							value={ entity.type }
 							onValueChange={ (type: ItemType) =>
 							{

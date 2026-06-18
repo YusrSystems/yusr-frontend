@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 
 
 export const CommissionType = {
@@ -26,7 +26,7 @@ export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
 	public commissionType: Signal<CommissionType>;
 	public commissionAmount: Signal<number>;
 
-	constructor(dto: Partial<PaymentMethodDto> | undefined, mode: ChangeableEntityMode = "create")
+	constructor(dto: Partial<PaymentMethodDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		super(dto, [{
 			field: "name",

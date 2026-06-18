@@ -6,8 +6,14 @@ import { ValidatableEntity } from "./validatableEntity";
 
 export class ChangeableEntityMode
 {
+	protected dummyText?: string = "this dummy text prevents you from comparing mode with strings.";
 	static readonly Create = new ChangeableEntityMode();
 	static readonly Update = new ChangeableEntityMode();
+
+	constructor()
+	{
+		this.dummyText = "we must change it to silent ts compiler";
+	}
 }
 
 export abstract class ChangeableEntity<TDto extends Dto, TMode extends ChangeableEntityMode = ChangeableEntityMode> extends ValidatableEntity<TDto>

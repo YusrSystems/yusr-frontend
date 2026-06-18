@@ -8,14 +8,15 @@ import { Package } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    CrudPage,
-    ImagePreview,
-    PageError,
-    PageLoaded,
-    PageLoading,
-    SystemPermissionsActions,
-    TablePreview,
-    UnauthorizedPage
+	ChangeableEntityMode,
+	CrudPage,
+	ImagePreview,
+	PageError,
+	PageLoaded,
+	PageLoading,
+	SystemPermissionsActions,
+	TablePreview,
+	UnauthorizedPage
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { ItemType } from "@/core/data/item.ts";
@@ -31,7 +32,7 @@ export default function ItemsPage()
 	const {t} = useTranslation("stocking");
 
 	useEffect(() => Cubits.items.init(), []);
-    
+
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Items, SystemPermissionsActions.Get))
 	{
 		return <UnauthorizedPage/>;
@@ -73,12 +74,12 @@ export default function ItemsPage()
 							service={ Services.itemsApi }
 							onSuccess={ (data) =>
 							{
-								if (data.mode.value === "create")
+								if (data.mode.value === ChangeableEntityMode.Create)
 								{
 									Cubits.items.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === "update")
+								else if (data.mode.value === ChangeableEntityMode.Update)
 								{
 									Cubits.items.update(data);
 								}

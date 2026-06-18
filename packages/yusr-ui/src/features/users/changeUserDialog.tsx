@@ -14,6 +14,7 @@ import {
 import { BranchesSearchableSelect } from "../../components/custom/select/branchesSearchableSelect";
 import { User, UserDto } from "../../entities";
 import { BaseCubits, BaseServices } from "../../services";
+import { ChangeableEntityMode } from "../../stateManager";
 
 
 export function ChangeUserDialog({entity, service, onSuccess}: CommonChangeDialogProps<User, UserDto>)
@@ -21,9 +22,9 @@ export function ChangeUserDialog({entity, service, onSuccess}: CommonChangeDialo
 	useSignals();
 
 	if (
-		(entity.mode.value === "create"
+		(entity.mode.value === ChangeableEntityMode.Create
 			&& !BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Users, SystemPermissionsActions.Add))
-		|| (entity.mode.value === "update"
+		|| (entity.mode.value === ChangeableEntityMode.Update
 			&& !BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Users, SystemPermissionsActions.Update))
 	)
 	{
@@ -31,7 +32,7 @@ export function ChangeUserDialog({entity, service, onSuccess}: CommonChangeDialo
 	}
 
 	const {t} = useTranslation(["commonEntities", "common"]);
-	const title = entity.mode.value === "create"
+	const title = entity.mode.value === ChangeableEntityMode.Create
 		? t("users.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("users.entityName") }`;
 

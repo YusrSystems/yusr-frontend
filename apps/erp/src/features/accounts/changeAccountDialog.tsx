@@ -2,7 +2,7 @@ import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
 import {
-	Button,
+	Button, ChangeableEntityMode,
 	ChangeDialog,
 	CitiesSearchableSelect,
 	type CommonChangeDialogProps,
@@ -35,16 +35,16 @@ export default function ChangeAccountDialog(
 	const {t} = useTranslation(["accounting", "common"]);
 
 	if (
-		(entity.mode.value === "create"
+		(entity.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Add))
-		|| (entity.mode.value === "update"
+		|| (entity.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.mode.value === "create"
+	const title = entity.mode.value === ChangeableEntityMode.Create
 		? t("accounts.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("accounts.entityName") }`;
 
@@ -99,7 +99,7 @@ export default function ChangeAccountDialog(
 					{ (entity.type.value === AccountType.Client || entity.type.value === AccountType.Supplier) && (
 						<FormField label={ t("accounts.parentAccount") }>
 							<AccountsSearchableSelect
-								disabled={ entity.mode.value === "update" }
+								disabled={ entity.mode.value === ChangeableEntityMode.Update }
 								types={ entity.type.value === AccountType.Client ? [AccountType.Client] : [AccountType.Supplier] }
 								id={ entity.parentId }
 								label={ entity.parentName }

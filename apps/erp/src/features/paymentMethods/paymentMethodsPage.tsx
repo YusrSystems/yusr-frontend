@@ -5,6 +5,7 @@ import { CreditCardIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	ChangeableEntityMode,
 	CrudPage,
 	PageError,
 	PageLoaded,
@@ -56,12 +57,12 @@ export function PaymentMethodsPage()
 							service={ Services.paymentMethodsApi }
 							onSuccess={ (data) =>
 							{
-								if (data.mode.value === "create")
+								if (data.mode.value === ChangeableEntityMode.Create)
 								{
 									Cubits.paymentMethods.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === "update")
+								else if (data.mode.value === ChangeableEntityMode.Update)
 								{
 									Cubits.paymentMethods.update(data);
 								}

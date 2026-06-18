@@ -6,7 +6,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, CheckboxField, FormField, TextField } from "yusr-ui";
+import { Button, ChangeableEntityMode, CheckboxField, FormField, TextField } from "yusr-ui";
 import { Tax } from "../../../core/data/tax";
 
 export default function TaxesSection({ entity }: { entity: Item; })
@@ -16,7 +16,7 @@ export default function TaxesSection({ entity }: { entity: Item; })
 
   useEffect(() =>
   {
-    if (entity.mode.value === "create" && !entity.isDirty.value && Cubits.taxes.entities?.value.length)
+    if (entity.mode.value === ChangeableEntityMode.Create && !entity.isDirty.value && Cubits.taxes.entities?.value.length)
     {
       handleTaxableChange(true);
     }
