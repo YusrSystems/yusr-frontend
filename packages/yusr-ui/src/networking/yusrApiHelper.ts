@@ -135,7 +135,6 @@ export class YusrApiHelper
 	private static async handleResponse<T>(response: Response, successMessage?: string): Promise<RequestResult<T>>
 	{
 		const t = this.getT();
-
 		if (response.status === ResultStatus.Unauthorized)
 		{
 			window.dispatchEvent(new Event(AuthConstants.UnauthorizedEventName));
@@ -189,19 +188,34 @@ export class YusrApiHelper
 
 		if (!response.ok)
 		{
-			const errorData = await response.json() as RequestResult<any>;
 
-			toast.error(errorData.title || t("api.anErrorOccurred"), {
-				description: errorData.errors.join("\n") || errorData.warnings.join("\n")
-			});
+			try
+			{
+				const errorData = await response.json() as RequestResult<any>;
+				toast.error(errorData.title || t("api.anErrorOccurred"), {
+					description: errorData.errors?.join("\n") || errorData.warnings?.join("\n")
+				});
 
-			return {
-				data: undefined,
-				status: response.status as ResultStatus,
-				title: errorData.title,
-				errors: errorData.errors,
-				warnings: errorData.warnings
-			};
+				return {
+					data: undefined,
+					status: ResultStatus.NotFound,
+					title: errorData.title,
+					errors: errorData.errors,
+					warnings: errorData.warnings
+				};
+			}
+			catch
+			{
+				toast.error(t("api.anErrorOccurred"));
+				return {
+					data: undefined,
+					status: ResultStatus.NotFound,
+					title: "",
+					errors: [""],
+					warnings: [""]
+				};
+
+			}
 		}
 
 		const data = await response.json() as T;

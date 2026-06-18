@@ -58,14 +58,18 @@ export function DateInput({
 
 	useEffect(() =>
 	{
-		if (value?.value)
-		{
-			const local = new Date(value?.value.getFullYear(), value?.value.getMonth(), value?.value.getDate());
-			if (value?.value)
-			{
-				value.value = local;
 
-			}
+		const dateValue = value?.value;
+
+		if (dateValue)
+		{
+			const date = new Date(dateValue);
+
+			value.value = new Date(
+				date.getFullYear(),
+				date.getMonth(),
+				date.getDate()
+			);
 		}
 		else
 		{
@@ -109,7 +113,7 @@ export function DateInput({
 						{
 							const local = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 							onChange?.(local);
-							if (value?.value)
+							if (value)
 							{
 								value.value = local;
 							}

@@ -11,6 +11,7 @@ import {
 	ChangeableEntityMode,
 	ChangeDialog,
 	type CommonChangeDialogProps,
+	DateField,
 	FieldGroup,
 	FieldsSection,
 	FormField,
@@ -22,6 +23,7 @@ import {
 } from "yusr-ui";
 import type { BalanceTransfer, BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { Cubits } from "@/core/services/cubits.ts";
 
 
 export default function ChangeBalanceTransferDialog(
@@ -32,7 +34,29 @@ export default function ChangeBalanceTransferDialog(
 
 	const {t} = useTranslation(["accounting", "common"]);
 	const amountToWords = useMemo(() => signal<string>(""), []);
+	const hasBankPerm = Services.auth.hasAuth(
+		SystemPermissionsResources.AccountBank,
+		SystemPermissionsActions.Get
+	);
 
+	const hasBoxPerm = Services.auth.hasAuth(
+		SystemPermissionsResources.AccountBox,
+		SystemPermissionsActions.Get
+	);
+	const types: AccountType[] = useMemo(() => [], []);
+	if (hasBankPerm)
+	{
+		types.push(AccountType.Bank);
+	}
+
+	if (hasBoxPerm)
+	{
+		types.push(AccountType.Box);
+	}
+	useEffect(() =>
+	{
+		Cubits.accounts.init(types);
+	}, [types]);
 	useEffect(() =>
 	{
 		if (entity.amount.value !== undefined && Services.auth.setting?.currency?.value)
@@ -58,28 +82,9 @@ export default function ChangeBalanceTransferDialog(
 		? t("balanceTransfers.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("balanceTransfers.entityName") }`;
 
-	const hasBankPerm = Services.auth.hasAuth(
-		SystemPermissionsResources.AccountBank,
-		SystemPermissionsActions.Get
-	);
-
-	const hasBoxPerm = Services.auth.hasAuth(
-		SystemPermissionsResources.AccountBox,
-		SystemPermissionsActions.Get
-	);
-	const types: AccountType[] = [];
-	if (hasBankPerm)
-	{
-		types.push(AccountType.Bank);
-	}
-
-	if (hasBoxPerm)
-	{
-		types.push(AccountType.Box);
-	}
 	const hasSelectAccountPermission = hasBankPerm || hasBoxPerm;
 	const canChangeBankAccount = hasSelectAccountPermission && entity.mode.value === ChangeableEntityMode.Create;
-
+	console.log(canChangeBankAccount);
 	if (!hasSelectAccountPermission)
 	{
 		toast.warning(t("paymentMethods.noPermissionToEditAdmin"));
@@ -94,7 +99,10 @@ export default function ChangeBalanceTransferDialog(
 			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
 				<FieldGroup>
 					<FieldsSection title={ t("balanceTransfers.transferDetails") } columns={ 2 }>
-						{ /* TODO: add datefield here (refactor it to new component to use signals) */ }
+						<DateField
+							label={ t("balanceTransfers.transferDate") }
+							value={ entity.date }
+						/>
 						<NumberField
 							label={ t("balanceTransfers.amount") }
 							required
@@ -102,7 +110,6 @@ export default function ChangeBalanceTransferDialog(
 							error={ entity.getError("amount") }
 							currency={ <ErpCurrencyIcon/> }
 						/>
-						4
 						<div className="col-span-full">
 							<TextField
 								label={ t("balanceTransfers.amountInWords") }
@@ -157,7 +164,7 @@ export default function ChangeBalanceTransferDialog(
 					entity={ entity }
 					service={ service }
 					onSuccess={ (data) => onSuccess?.(data) }
-					disabled={ !canChangeBankAccount }
+
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>

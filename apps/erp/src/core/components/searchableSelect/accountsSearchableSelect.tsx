@@ -6,11 +6,11 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import React, { useMemo } from "react";
 import {
-    PageLoaded,
-    PageLoading,
-    SearchableSelect,
-    type SearchableSelectOptionProps,
-    type SearchableSelectProps
+	PageLoaded,
+	PageLoading,
+	SearchableSelect,
+	type SearchableSelectOptionProps,
+	type SearchableSelectProps
 } from "yusr-ui";
 import { AccountType } from "../../data/account";
 
@@ -67,7 +67,6 @@ export default function AccountsSearchableSelect(
 		{
 			return <SearchableSelect.Loading/>;
 		}
-
 		if (Cubits.accounts.state.value instanceof PageLoaded && Cubits.accounts.entities.value.length > 0)
 		{
 			return Cubits.accounts.entities.value.map((entity) => (

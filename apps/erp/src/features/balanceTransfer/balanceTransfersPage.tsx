@@ -47,6 +47,7 @@ export default function BalanceTransfersPage()
 
 			<Cards/>
 
+			<CrudPage.SearchInput onSearch={ (searchText) => Cubits.balanceTransfers.search(searchText) }/>
 			<Table/>
 
 			<CrudPage.ChangeDialog
