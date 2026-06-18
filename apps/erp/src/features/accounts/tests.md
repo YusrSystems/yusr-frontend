@@ -1,12 +1,22 @@
-# Last test date: 6/10/2026 at 6:21 PM
+# Account Tests
+
+- [x] Filter
+- [x] Create
+- [x] Update
+- [x] Delete
+- [x] Get
+- [x] Validations
+
 Page:
+
 - authroization works well, for all CRUD
 - data loaded success from backend
-- search is working 
-- pagination working  
+- search is working
+- pagination working
 - context menu works well
 
 dialog:
+
 - initial defualt values (if needed) - IN CREATE MODE
 - inputs fields are correct and fill the entity
 - forntend validation works well

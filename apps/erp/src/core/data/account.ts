@@ -141,7 +141,7 @@ export class Account extends ChangeableEntity<AccountDto, ChangeableEntityMode>
 		this.buildingNumber = this.assign("buildingNumber", dto?.buildingNumber);
 		this.postalCode = this.assign("postalCode", dto?.postalCode);
 		this.notes = this.assign("notes", dto?.notes);
-		const accountContactsList = (dto?.accountContacts ?? []).map((t) => new AccountContact(t));
+		const accountContactsList = (dto?.accountContacts ?? [new AccountContactDto()]).map((t) => new AccountContact(t));
 
 		this.accountContacts = this.assign("accountContacts", accountContactsList);
 
