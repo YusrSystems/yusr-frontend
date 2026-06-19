@@ -5,18 +5,11 @@ import { EInvoicingEnvironmentType, InvoicePrintSize } from "@/core/data/setting
 import { EInvoicingRegisterButton } from "./eInvoicing/eInvoicingRegisterButton";
 import { useSignals } from "@preact/signals-react/runtime";
 import TaxesSearchableSelect from "@/core/components/searchableSelect/taxesSearchableSelect.tsx";
-import { useEffect } from "react";
-import { Cubits } from "@/core/services/cubits.ts";
 
 
 export default function InvoiceSection({formData}: { formData: Setting })
 {
 	useSignals();
-	useEffect(() =>
-	{
-		Cubits.taxes.init();
-		Cubits.currencies.init();
-	}, []);
 	const {t} = useTranslation("erpCommon");
 
 	return (

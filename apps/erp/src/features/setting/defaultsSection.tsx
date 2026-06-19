@@ -6,20 +6,13 @@ import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import { AccountType } from "@/core/data/account.ts";
 import type { Setting } from "@/core/data/setting.ts";
-import { useEffect } from "react";
-import { Cubits } from "@/core/services/cubits.ts";
 
 
 export default function DefaultsSection({formData}: { formData: Setting })
 {
 	useSignals();
-	useEffect(() =>
-	{
-		Cubits.accounts.init([AccountType.Client, AccountType.Supplier]);
-		Cubits.paymentMethods.init();
-		Cubits.stores.init();
-	}, []);
 	const {t} = useTranslation("erpCommon");
+	
 	return (
 		<div className="space-y-10 animate-in fade-in">
 			<FieldGroup>

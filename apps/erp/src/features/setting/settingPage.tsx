@@ -9,6 +9,8 @@ import DefaultsSection from "./defaultsSection";
 import InvoiceSection from "./invoiceSection";
 import SettingsCubit from "@/features/setting/logic/settingsCubit.ts";
 import { SettingsLoading, SettingsSaving } from "@/features/setting/logic/settingsState.ts";
+import { Cubits } from "@/core/services/cubits.ts";
+import { AccountType } from "@/core/data/account.ts";
 
 
 export default function SettingPage()
@@ -32,11 +34,21 @@ export default function SettingPage()
 		StorageType.Public,
 		false
 	);
+
 	const cubit = useMemo(() => new SettingsCubit(), []);
 	useEffect(() =>
 	{
 		void cubit.init();
 	}, [cubit]);
+
+	useEffect(() =>
+	{
+		Cubits.accounts.init([AccountType.Client, AccountType.Supplier]);
+		Cubits.paymentMethods.init();
+		Cubits.stores.init();
+		Cubits.taxes.init();
+		Cubits.currencies.init();
+	}, []);
 
 	async function Save()
 	{
