@@ -88,3 +88,11 @@ export const router = createBrowserRouter([{
 		{path: "*", element: <NotFoundPage/>}
 	]
 }]);
+
+router.subscribe((state) =>
+{
+	if (state.historyAction === "PUSH" || state.historyAction === "POP")
+	{
+		// console.log("Navigated to:", state.location.pathname);
+	}
+});
