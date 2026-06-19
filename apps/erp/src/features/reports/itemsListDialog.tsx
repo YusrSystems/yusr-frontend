@@ -30,7 +30,8 @@ export default function ItemsListDialog({store, buttonLabel}: { store?: Store; b
 	const itemType = useMemo(() => signal<ItemType | undefined>(undefined), []);
 	const itemClass = useMemo(() => signal<string | undefined>(undefined), []);
 	const brand = useMemo(() => signal<string | undefined>(undefined), []);
-	const selectedStore = useMemo(() => signal<Store>(store ?? Store.create()), [store]);
+	const storeId = useMemo(() => signal<number | undefined>(store?.id.value), [store]);
+	const storeName = useMemo(() => signal<string | undefined>(store?.name.value), [store]);
 
 	return (
 		<>
@@ -59,8 +60,8 @@ export default function ItemsListDialog({store, buttonLabel}: { store?: Store; b
 
 						<FormFieldOld label={ t("accounting:invoices.store") }>
 							<StoresSearchableSelect
-								id={ selectedStore.value?.id }
-								label={ selectedStore.value?.name }
+								id={ storeId }
+								label={ storeName }
 							/>
 						</FormFieldOld>
 
@@ -78,11 +79,11 @@ export default function ItemsListDialog({store, buttonLabel}: { store?: Store; b
 						<ReportButton
 							reportName={ ReportConstants.ItemsList }
 							request={ new ItemsListReportRequest({
-								itemType: itemType.value,
-								class: itemClass.value,
-								brand: brand.value,
-								storeId: selectedStore.value?.id.value,
-								storeName: selectedStore.value?.name.value
+								itemType: itemType.value ?? undefined,
+								class: itemClass.value ?? undefined,
+								brand: brand.value ?? undefined,
+								storeId: storeId.value ?? undefined,
+								storeName: storeName.value ?? undefined
 							}) }
 						/>
 					</DialogFooter>

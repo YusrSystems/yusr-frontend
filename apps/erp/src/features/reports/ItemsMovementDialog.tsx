@@ -24,10 +24,12 @@ import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearc
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import { AccountType } from "@/core/data/account.ts";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
+import { useSignals } from "@preact/signals-react/runtime";
 
 
 export default function ItemsMovementDialog()
 {
+	useSignals();
 	const {t, i18n} = useTranslation("erpCommon");
 
 	const isOpen = useMemo(() => signal(false), []);
