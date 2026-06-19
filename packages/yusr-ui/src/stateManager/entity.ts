@@ -6,16 +6,16 @@ import { EntitySignal } from "./entitySignal";
 export abstract class Entity<TDto extends Dto>
 {
 	id: Signal<number>;
-	private readonly _dto;
+	private _dtoKeys: Set<keyof TDto> = new Set(["id"]);
 
 	protected constructor(dto?: Partial<TDto>)
 	{
 		this.id = signal(dto?.id ?? 0);
-		this._dto = dto;
 	}
 
 	assign(key: keyof TDto, value: any)
 	{
+		this._dtoKeys.add(key);
 		return new EntitySignal(value, (value) =>
 		{
 			this.onFieldChange(key, value);
@@ -24,31 +24,27 @@ export abstract class Entity<TDto extends Dto>
 
 	toJson(): TDto
 	{
-		return (Object.keys(this) as (keyof TDto)[]).reduce((acc, key) =>
+		const dto = {} as TDto;
+
+		this._dtoKeys.forEach((key) =>
 		{
-			const field = this[key as keyof this];
-			const isKeyofDto = this._dto ? key in this._dto : false;
-			if (typeof field === "function" || !isKeyofDto)
-			{
-				return acc;
-			}
-			const value = field instanceof Signal ? field.value : field;
+			const value = (this[key as unknown as keyof this] as Signal<any>).value;
 
 			if (value instanceof Entity)
 			{
-				acc[key] = value.toJson() as TDto[keyof TDto];
+				dto[key] = value.toJson();
 			}
 			else if (Array.isArray(value))
 			{
-				acc[key] = value.map((item) => item instanceof Entity ? item.toJson() : item) as TDto[keyof TDto];
+				dto[key] = value.map((item) => item instanceof Entity ? item.toJson() : item) as TDto[keyof TDto];
 			}
 			else
 			{
-				acc[key] = value as TDto[keyof TDto];
+				dto[key] = value;
 			}
+		});
 
-			return acc;
-		}, {} as TDto);
+		return dto;
 	}
 
 	protected onFieldChange(_: keyof TDto, __: any): void
