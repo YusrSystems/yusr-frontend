@@ -5,7 +5,15 @@ import { PaymentMethodsPage } from "@/features/paymentMethods/paymentMethodsPage
 import { ErpRolesPage } from "@/features/roles/erpRolesPage";
 import VouchersPage from "@/features/vouchers/vouchersPage.tsx";
 import { createBrowserRouter } from "react-router-dom";
-import { BranchesPage, ErrorFallback, MaintenanceFallback, NotFoundPage, ProtectedRoute, UsersPage } from "yusr-ui";
+import {
+	BaseFilterableApiService,
+	BranchesPage,
+	ErrorFallback,
+	MaintenanceFallback,
+	NotFoundPage,
+	ProtectedRoute,
+	UsersPage
+} from "yusr-ui";
 import BanksAccountsPage from "../features/accounts/banksAccountsPage";
 import BoxesAccountsPage from "../features/accounts/boxesAccountsPage";
 import ClientsAccountsPage from "../features/accounts/clientsAccountsPage";
@@ -93,6 +101,6 @@ router.subscribe((state) =>
 {
 	if (state.historyAction === "PUSH" || state.historyAction === "POP")
 	{
-		// console.log("Navigated to:", state.location.pathname);
+		BaseFilterableApiService.abortAll();
 	}
 });
