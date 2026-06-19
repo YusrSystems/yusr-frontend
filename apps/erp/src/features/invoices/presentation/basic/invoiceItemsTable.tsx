@@ -337,7 +337,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 												onChange={ (newValue) =>
 												{
 													if (newValue == undefined) return;
-													invoiceItem.changeSettlement(newValue);
+													invoiceItem.changeSettlement(newValue, true);
 													invoice.syncPaymentVouchers();
 												} }
 											/>
