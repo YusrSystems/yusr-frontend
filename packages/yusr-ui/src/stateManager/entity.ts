@@ -6,10 +6,12 @@ import { EntitySignal } from "./entitySignal";
 export abstract class Entity<TDto extends Dto>
 {
 	id: Signal<number>;
+	private readonly _dto;
 
 	protected constructor(dto?: Partial<TDto>)
 	{
 		this.id = signal(dto?.id ?? 0);
+		this._dto = dto;
 	}
 
 	assign(key: keyof TDto, value: any)
@@ -25,6 +27,11 @@ export abstract class Entity<TDto extends Dto>
 		return (Object.keys(this) as (keyof TDto)[]).reduce((acc, key) =>
 		{
 			const field = this[key as keyof this];
+			const isKeyofDto = this._dto ? key in this._dto : false;
+			if (typeof field === "function" || !isKeyofDto)
+			{
+				return acc;
+			}
 			const value = field instanceof Signal ? field.value : field;
 
 			if (value instanceof Entity)
