@@ -4,14 +4,14 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { RouterProvider } from "react-router-dom";
 import {
-  BaseApiService,
-  NumbertoWordsService,
-  setupAuthListeners,
-  ThemeProvider,
-  Toaster,
-  TooltipProvider,
-  Validators,
-  YusrApiHelper
+	BaseApiService,
+	NumbertoWordsService,
+	setupAuthListeners,
+	ThemeProvider,
+	Toaster,
+	TooltipProvider,
+	Validators,
+	YusrApiHelper
 } from "yusr-ui";
 import { AppNavigator } from "./appNavigator";
 import { router } from "./router";
@@ -45,10 +45,10 @@ function AppBody({i18n}: { i18n: i18n; })
 }
 
 setupAuthListeners({
-	logout: () =>
+	logout: async () =>
 	{
 		Services.auth.logout();
-		AppNavigator.navigate("/login");
+		await AppNavigator.navigate("/login");
 	},
 	syncFromStorage: () => Services.auth.syncFromStorage()
 });

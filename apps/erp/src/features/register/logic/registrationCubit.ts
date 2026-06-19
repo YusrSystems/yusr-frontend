@@ -43,7 +43,7 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 			if (result.status === 200 && result.data)
 			{
 				Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
-				AppNavigator.navigate("/dashboard", true);
+				await AppNavigator.navigate("/dashboard", true);
 				return;
 			}
 			else
@@ -71,7 +71,7 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 		if (result.status === 200 && result.data)
 		{
 			Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
-			AppNavigator.navigate("/dashboard", true);
+			await AppNavigator.navigate("/dashboard", true);
 			return;
 		}
 		else

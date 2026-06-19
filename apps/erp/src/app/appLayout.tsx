@@ -39,9 +39,9 @@ function CompleteAccountVerificationFixedItem()
 	return (
 		<Button
 			className="bg-blue-500 text-white p-5 fixed z-50 bottom-10 inset-e-10"
-			onClick={ () =>
+			onClick={ async () =>
 			{
-				AppNavigator.navigate(nextRoute, true);
+				await AppNavigator.navigate(nextRoute, true);
 				if (nextRoute === "/branches")
 				{
 					toast.info(t("accountVerification.addCityToBranch"));

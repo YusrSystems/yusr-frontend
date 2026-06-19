@@ -288,7 +288,7 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 
 		if (result.status === 200 || result.status === 204)
 		{
-			AppNavigator.navigate("/login", true);
+			await AppNavigator.navigate("/login", true);
 			Services.auth.logout();
 		}
 	};
