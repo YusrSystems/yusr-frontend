@@ -53,8 +53,8 @@ export const router = createBrowserRouter([{
 	children: [
 		{path: "/", element: <LandingPage/>},
 		{path: "/login", element: <LoginPage/>},
-		{path: "/register", element: <MaintenanceFallback/>},
 		{path: "/register", element: <RegisterPage/>},
+		{path: "/register", element: <MaintenanceFallback/>},
 		{path: "/legal", element: <LegalDocViewer/>},
 		{path: "/sharing/:registrationKey", element: <TenantInfoSharingPage/>},
 		{

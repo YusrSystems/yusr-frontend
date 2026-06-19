@@ -21,7 +21,8 @@ export default function VerifyAccountWrapper({children}: { children: React.React
 
 			{ !isVerified && (
 				<div className="fixed inset-0 flex justify-center items-center">
-					<div className="flex max-w-sm flex-col gap-4 text-sm bg-black p-4 rounded-2xl">
+					<div
+						className="flex max-w-sm flex-col gap-4 text-sm bg-background border border-border text-foreground p-4 rounded-2xl">
 						<div className="flex flex-col gap-1.5">
 							<div
 								className="leading-none font-medium">{ i18n.t("common:accountVerification.title") }</div>
