@@ -18,7 +18,7 @@ export default class SettingsApiService
 
 	async Update(entity: SettingDto)
 	{
-		return await YusrApiHelper.Put(
+		return await YusrApiHelper.Put<SettingDto>(
 			`/api/${ this.routeName }/Update`,
 			entity,
 			undefined,

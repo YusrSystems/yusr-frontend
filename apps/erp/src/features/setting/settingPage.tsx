@@ -50,7 +50,7 @@ export default function SettingPage()
 		Cubits.currencies.init();
 	}, []);
 
-	async function Save()
+	async function transformDataBeforeSave()
 	{
 
 		const resolvedLogo = await commitFiles(
@@ -119,7 +119,7 @@ export default function SettingPage()
 					<Button disabled={ isLoading } size="lg" className="px-12 font-bold text-md shadow-lg"
 					        onClick={ async () =>
 							{
-								await Save();
+								await transformDataBeforeSave();
 								await cubit.save();
 							} }>
 						{ isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin"/> }

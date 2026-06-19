@@ -66,6 +66,7 @@ export function UsersPage()
 								else if (data.mode.value === ChangeableEntityMode.Update)
 								{
 									BaseCubits.users.update(data);
+									BaseServices.auth.setLoggedInUser(data);
 								}
 							} }
 						/>

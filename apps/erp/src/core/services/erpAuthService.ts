@@ -1,27 +1,21 @@
 import { AuthService, Branch, User } from "yusr-ui";
 import { Setting, type SettingDto } from "../data/setting";
+import { signal } from "@preact/signals-react";
 
 
 export class ErpAuthService extends AuthService
 {
 	private _settingStorageItemName = "Setting";
 
-	private _setting: Setting | undefined;
+	private _settingSignal = signal<Setting | undefined>(undefined);
 
 	get setting(): Setting | undefined
 	{
-		if (!this._setting)
+		if (!this._settingSignal.value)
 		{
-			const storedSettingString = localStorage.getItem(this._settingStorageItemName);
-			const storedSetting: SettingDto = storedSettingString ? JSON.parse(storedSettingString) : undefined;
-			if (storedSetting == undefined)
-			{
-				return undefined;
-			}
-			this._setting = new Setting(storedSetting);
-			return this._setting;
+			this._settingSignal.value = this.readSettingFromStorage();
 		}
-		return this._setting;
+		return this._settingSignal.value;
 	}
 
 	get isVerifiedAccount(): boolean
@@ -60,35 +54,44 @@ export class ErpAuthService extends AuthService
 
 	setSettings(dto: SettingDto)
 	{
-		this._setting = new Setting(dto);
+		this._settingSignal.value = new Setting(dto);
 	}
 
 	updateBranch(branch: Branch)
 	{
-		if (branch.id.value !== this.setting?.branch?.value?.id.value && this._setting?.branch.value)
+		if (branch.id.value !== this.setting?.branch?.value?.id.value && this._settingSignal.value?.branch.value)
 		{
-			this._setting.branch.value = branch;
-			localStorage.setItem(this._settingStorageItemName, JSON.stringify(this._setting));
+			this._settingSignal.value.branch.value = branch;
+			localStorage.setItem(this._settingStorageItemName, JSON.stringify(this._settingSignal.value));
 		}
 	}
 
 	readonly login = (user: User, setting: Setting) =>
 	{
 		this.baseLogin(user);
-		this._setting = setting;
+		this._settingSignal.value = setting;
 		localStorage.setItem(this._settingStorageItemName, JSON.stringify(setting));
 	};
 
 	readonly logout = () =>
 	{
 		this.baseLogout();
-		this._setting = undefined;
+		this._settingSignal.value = undefined;
 		localStorage.removeItem(this._settingStorageItemName);
 	};
 
 	readonly syncFromStorage = () =>
 	{
 		this.baseSyncFromStorage();
-		this._setting = this.setting;
+		this._settingSignal.value = this.readSettingFromStorage();
 	};
+
+	private readSettingFromStorage(): Setting | undefined
+	{
+		const storedSettingString = localStorage.getItem(this._settingStorageItemName);
+		const storedSetting: SettingDto | undefined = storedSettingString
+			? JSON.parse(storedSettingString)
+			: undefined;
+		return storedSetting ? new Setting(storedSetting) : undefined;
+	}
 }
