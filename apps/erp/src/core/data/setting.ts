@@ -2,7 +2,7 @@ import type { Signal } from "@preact/signals-react";
 import {
 	Branch,
 	BranchDto,
-	City,
+	CityDto,
 	Currency,
 	CurrencyDto,
 	Dto,
@@ -180,7 +180,7 @@ export class SharingSetting
 	public district!: string;
 	public buildingNumber!: string;
 	public postalCode!: string;
-	public city!: City;
+	public city!: CityDto;
 	public logo?: StorageFile;
 
 	constructor(init?: Partial<SharingSetting>)
