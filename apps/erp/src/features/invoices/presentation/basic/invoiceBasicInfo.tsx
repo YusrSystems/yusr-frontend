@@ -1,6 +1,14 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { CheckboxField, DateField, FieldsSection, FormField, SelectField, TextField } from "yusr-ui";
+import {
+	ChangeableEntityMode,
+	CheckboxField,
+	DateField,
+	FieldsSection,
+	FormField,
+	SelectField,
+	TextField
+} from "yusr-ui";
 import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import { signal, useComputed } from "@preact/signals-react";
 import { type Account, AccountType } from "@/core/data/account.ts";
@@ -66,7 +74,7 @@ export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 				required
 				value={ invoice.date }
 				error={ invoice.getError("date") }
-				disabled={ invoice.mode.value === InvoiceMode.Update || invoice.mode.value === InvoiceMode.Return }
+				disabled={ invoice.mode.value === ChangeableEntityMode.Update || invoice.invoiceMode.value === InvoiceMode.Return }
 			/>
 
 			<FormField
@@ -121,7 +129,7 @@ export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 				<SelectField<ImportExportType>
 					label={ t("invoices.importInvoice") }
 					required
-					disabled={ invoice.mode.value === InvoiceMode.Return }
+					disabled={ invoice.invoiceMode.value === InvoiceMode.Return }
 					value={ invoice.importExportType }
 					error={ invoice.getError("importExportType") }
 					options={ [{

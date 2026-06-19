@@ -1,5 +1,5 @@
-import { BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
-import Invoice, { InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice.ts";
+import { BaseApiService, ChangeableEntityMode, type RequestResult, YusrApiHelper } from "yusr-ui";
+import Invoice, { InvoiceDto } from "@/core/data/invoices/invoice.ts";
 import type { EInvoiceStatus } from "@/core/types/eInvoiceStatus.ts";
 
 
@@ -9,7 +9,7 @@ export default class InvoicesApiService extends BaseApiService<Invoice, InvoiceD
 
 	override createEntity(dto: InvoiceDto): Invoice
 	{
-		return new Invoice(dto, InvoiceMode.Create);
+		return new Invoice(dto, ChangeableEntityMode.Create);
 	}
 
 	async GetReturnInvoiceInitialDetails(id: number): Promise<RequestResult<Invoice>>

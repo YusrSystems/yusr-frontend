@@ -65,7 +65,7 @@ export class AccountContact extends ChangeableEntity<AccountContactDto>
 	}
 }
 
-export class Account extends ChangeableEntity<AccountDto, ChangeableEntityMode>
+export class Account extends ChangeableEntity<AccountDto>
 {
 	public type: Signal<number>;
 	public name: Signal<string>;

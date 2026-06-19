@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
 	Button,
+	ChangeableEntityMode,
 	ChangeDialog,
 	type CommonChangeDialogProps,
 	DialogClose,
@@ -40,7 +41,6 @@ export default function ChangeInvoiceDialog({
 	useSignals();
 	const {t} = useTranslation("accounting");
 	const navigate = useNavigate();
-
 	const currentEntity = useMemo(() => signal(entity), []);
 	const isFullyReturned = useMemo(() => signal(false), []);
 	const isLoading = useMemo(() => signal(false), []);
@@ -60,15 +60,19 @@ export default function ChangeInvoiceDialog({
 
 	useEffect(() =>
 	{
-		if (fixedType === InvoiceType.Sell && currentEntity.value.storeId.value)
+		if ((fixedType === InvoiceType.Sell || fixedType === InvoiceType.Quotation) && currentEntity.value.storeId.value)
 		{
 			Cubits.items.init([ItemType.Product, ItemType.Service], {storeId: currentEntity.value.storeId.value});
+		}
+		else
+		{
+			Cubits.items.init([ItemType.Product, ItemType.Service]);
 		}
 	}, [fixedType, currentEntity.value.storeId.value]);
 
 	useEffect(() =>
 	{
-		if (currentEntity.value.mode.value === InvoiceMode.Create)
+		if (currentEntity.value.mode.value === ChangeableEntityMode.Create)
 		{
 			if (Services.auth.setting?.invoicePolicy?.value && !currentEntity.value.policy.value)
 			{
@@ -83,7 +87,7 @@ export default function ChangeInvoiceDialog({
 			const getInvoice = async () =>
 			{
 				let res: RequestResult<Invoice>;
-				if (currentEntity.value.mode.value !== InvoiceMode.Return)
+				if (currentEntity.value.invoiceMode.value !== InvoiceMode.Return)
 				{
 					res = await Services.invoicesApi.Get(entity.id.value);
 				}
@@ -94,33 +98,37 @@ export default function ChangeInvoiceDialog({
 
 				if (res?.data != undefined)
 				{
-					if (currentEntity.value.mode.value === InvoiceMode.Update)
+					if (currentEntity.value.invoiceMode.value === InvoiceMode.Normal)
 					{
 						currentEntity.value = Invoice.load(res.data.toJson());
 					}
-					if (currentEntity.value.mode.value === InvoiceMode.Return)
+					else if (currentEntity.value.invoiceMode.value === InvoiceMode.Return)
 					{
 						res.data.date.value = new Date();
-						currentEntity.value = Invoice.load(res.data.toJson());
-						currentEntity.value.mode.value = InvoiceMode.Return;
+						res.data.originalInvoiceId.value = entity.id.value;
+						res.data.type.value = res.data.type.value === InvoiceType.Sell
+							? InvoiceType.SellReturn
+							: InvoiceType.PurchaseReturn;
+						currentEntity.value = Invoice.create(res.data.toJson());
+						currentEntity.value.invoiceMode.value = InvoiceMode.Return;
 						currentEntity.value.syncPaymentVouchers();
 					}
-					if (currentEntity.value.mode.value === InvoiceMode.Copy)
+					else if (currentEntity.value.invoiceMode.value === InvoiceMode.Copy)
 					{
 						res.data.id.value = 0;
 						res.data.date.value = new Date();
-						currentEntity.value = Invoice.load(res.data.toJson());
-						currentEntity.value.mode.value = InvoiceMode.Copy;
+						currentEntity.value = Invoice.create(res.data.toJson());
+						currentEntity.value.invoiceMode.value = InvoiceMode.Copy;
 						currentEntity.value.syncPaymentVouchers();
 					}
-					if (currentEntity.value.mode.value === InvoiceMode.QuotationToSales)
+					else if (currentEntity.value.invoiceMode.value === InvoiceMode.QuotationToSales)
 					{
 						res.data.id.value = 0;
 						res.data.type.value = InvoiceType.Sell;
 						res.data.date.value = new Date();
 						res.data.notes.value = undefined;
-						currentEntity.value = Invoice.load(res.data.toJson());
-						currentEntity.value.mode.value = InvoiceMode.QuotationToSales;
+						currentEntity.value = Invoice.create(res.data.toJson());
+						currentEntity.value.invoiceMode.value = InvoiceMode.QuotationToSales;
 						currentEntity.value.syncPaymentVouchers();
 					}
 
@@ -145,20 +153,6 @@ export default function ChangeInvoiceDialog({
 			`Invoices`
 		);
 
-		if (currentEntity.value.mode.value === InvoiceMode.Return)
-		{
-			data.type.value = data.type.value === InvoiceType.Sell
-				? InvoiceType.SellReturn
-				: InvoiceType.PurchaseReturn;
-			data.id.value = 0;
-		}
-
-		if (currentEntity.value.mode.value === InvoiceMode.Copy || currentEntity.value.mode.value === InvoiceMode.QuotationToSales)
-		{
-			data.mode.value = InvoiceMode.Create;
-			data.id.value = 0;
-		}
-
 		return data;
 	};
 
@@ -166,15 +160,15 @@ export default function ChangeInvoiceDialog({
 
 	const getDialogTitle = () =>
 	{
-		if (entity.mode.value === InvoiceMode.Return)
+		if (entity.invoiceMode.value === InvoiceMode.Return)
 		{
 			return t("invoices.addReturnInvoice");
 		}
-		if (entity.mode.value === InvoiceMode.QuotationToSales)
+		if (entity.invoiceMode.value === InvoiceMode.QuotationToSales)
 		{
 			return t("invoices.convertToSales");
 		}
-		if (entity.mode.value === InvoiceMode.Copy || entity.mode.value == InvoiceMode.Create)
+		if (entity.invoiceMode.value === InvoiceMode.Copy || entity.mode.value == ChangeableEntityMode.Create)
 		{
 			return isReturn
 				? t("invoices.addReturnInvoice")
@@ -265,7 +259,7 @@ export default function ChangeInvoiceDialog({
 					service={ service }
 					onSuccess={ (data) =>
 					{
-						if (entity.mode.value === InvoiceMode.QuotationToSales)
+						if (currentEntity.value.invoiceMode.value === InvoiceMode.QuotationToSales)
 						{
 							navigate("/sales");
 						}

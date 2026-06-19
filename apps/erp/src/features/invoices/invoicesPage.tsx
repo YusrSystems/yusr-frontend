@@ -91,13 +91,13 @@ export default function InvoicesPage({
 				<PageTable fixedType={ fixedType } permissionResource={ permissionResource }/>
 
 				<CrudPage.ChangeDialog
-					changeDialog={ (dto: InvoiceDto | undefined, closeDialog, mode) =>
+					changeDialog={ (dto: InvoiceDto | undefined, closeDialog) =>
 					{
 						return (
 							<ChangeInvoiceDialog
 								entity={ dto
-									? Invoice.load(dto, mode)
-									: Invoice.create() }
+									? Invoice.load(dto)
+									: Invoice.create({type: fixedType}) }
 								service={ Services.invoicesApi }
 								fixedType={ fixedType }
 								onSuccess={ (data: Invoice) =>
@@ -118,7 +118,7 @@ export default function InvoicesPage({
 				/>
 
 				<CrudPage.DeleteDialog
-					entityNameSelector={ (invoice) => invoice.id }
+					entityNameSelector={ () => `"${ t("invoices.entityName") }"` }
 					service={ Services.invoicesApi }
 					onSuccess={ (entity) => Cubits.invoices.delete(entity) }
 				/>
@@ -142,7 +142,10 @@ function Cards({totalInvoicesTitle}: { totalInvoicesTitle?: string })
 	);
 }
 
-function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, permissionResource: string })
+function PageTable({fixedType, permissionResource}: {
+	fixedType: InvoiceType,
+	permissionResource: string,
+})
 {
 	useSignals();
 	const resendingEInvoice = useMemo(() => signal(false), []);
@@ -280,7 +283,7 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 
 	const getActions = (
 		entity: Invoice,
-		openEditDialog: (entity: Invoice, mode: ChangeableEntityMode) => void,
+		openEditDialog: (entity: Invoice) => void,
 		ItemComponent: typeof DropdownMenuItem | typeof ContextMenuItem
 	) =>
 	{
@@ -292,7 +295,8 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 					className="text-orange-700 font-semibold"
 					onSelect={ () =>
 					{
-						openEditDialog(entity, InvoiceMode.Return);
+						entity.invoiceMode.value = InvoiceMode.Return;
+						openEditDialog(entity);
 					} }
 				>
 					<Undo2 className="h-4 w-4 me-2"/>
@@ -305,7 +309,8 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 					className="text-blue-600 font-semibold"
 					onSelect={ () =>
 					{
-						openEditDialog(entity, InvoiceMode.Copy);
+						entity.invoiceMode.value = InvoiceMode.Copy;
+						openEditDialog(entity);
 					} }
 				>
 					<Copy className="h-4 w-4 me-2"/>
@@ -321,7 +326,8 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 					className="text-green-600 font-semibold"
 					onSelect={ () =>
 					{
-						openEditDialog(entity, InvoiceMode.QuotationToSales);
+						entity.invoiceMode.value = InvoiceMode.QuotationToSales;
+						openEditDialog(entity);
 					} }
 				>
 					<FilePlusCorner className="h-4 w-4 me-2"/>
@@ -466,6 +472,7 @@ function PageTable({fixedType, permissionResource}: { fixedType: InvoiceType, pe
 						)
 						: false
 					}
+					onEditClicked={ (entity) => entity.invoiceMode.value = InvoiceMode.Normal }
 					dropdownItems={ (entity, openEditDialog) => getActions(entity, openEditDialog, DropdownMenuItem) }
 					contextMenuItems={ (entity, openEditDialog) => getActions(entity, openEditDialog, ContextMenuItem) }
 				/>

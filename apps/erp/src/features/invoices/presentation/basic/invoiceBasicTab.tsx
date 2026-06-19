@@ -21,7 +21,7 @@ export default function InvoiceBasicTab({invoice}: { invoice: Invoice })
 			<div className="xl:col-span-8 2xl:col-span-9 space-y-4 min-w-0">
 				<InvoiceBasicInfo invoice={ invoice }/>
 
-				{ !(invoice.isDisabled || invoice.mode.value === InvoiceMode.Return) && (
+				{ !invoice.isDisabled && invoice.invoiceMode.value !== InvoiceMode.Return && (
 					<StoreItemSelector
 						storeId={ invoice.storeId }
 						onSelect={ (item) =>

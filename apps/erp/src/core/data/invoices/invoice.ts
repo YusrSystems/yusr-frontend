@@ -3,7 +3,7 @@ import { InvoiceItem, type InvoiceItemDto } from "@/core/data/invoices/invoiceIt
 import { InvoiceVoucher, type InvoiceVoucherDto } from "@/core/data/invoices/invoiceVoucher.ts";
 import { Services } from "@/core/services/services.ts";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
-import type { Signal } from "@preact/signals-react";
+import { type Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, StorageFile, Validators } from "yusr-ui";
 import type Item from "@/core/data/item.ts";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
@@ -14,8 +14,24 @@ import type { ImportExportType } from "@/core/types/importExportType.ts";
 import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
 
 
+export class InvoiceMode
+{
+	static readonly Normal = new InvoiceMode("normal");
+	static readonly Return = new InvoiceMode("return");
+	static readonly Copy = new InvoiceMode("copy");
+	static readonly QuotationToSales = new InvoiceMode("quotationToSales");
+
+	protected dummyText?: string = "this dummy text prevents you from comparing mode with strings.";
+
+	constructor(modeName: string)
+	{
+		this.dummyText = modeName;
+	}
+}
+
 export class InvoiceDto extends Dto
 {
+	public invoiceMode: InvoiceMode = InvoiceMode.Normal;
 	public type!: InvoiceType;
 	public originalInvoiceId?: number;
 	public date!: string | Date;
@@ -49,15 +65,9 @@ export class InvoiceDto extends Dto
 	public ignoreWarnings: boolean = false;
 }
 
-export class InvoiceMode extends ChangeableEntityMode
+export default class Invoice extends ChangeableEntity<InvoiceDto>
 {
-	static readonly Return = new InvoiceMode("return");
-	static readonly Copy = new InvoiceMode("copy");
-	static readonly QuotationToSales = new InvoiceMode("quotationToSales");
-}
-
-export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
-{
+	public invoiceMode: Signal<InvoiceMode>;
 	public type: Signal<InvoiceType>;
 	public originalInvoiceId: Signal<number | undefined>;
 	public date: Signal<Date>;
@@ -90,7 +100,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 	public invoiceFiles: Signal<StorageFile[]>;
 	public ignoreWarnings: Signal<boolean>;
 
-	constructor(dto: Partial<InvoiceDto> | undefined, mode: InvoiceMode = InvoiceMode.Create)
+	constructor(dto: Partial<InvoiceDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		super(dto, [{
 			field: "type",
@@ -114,6 +124,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 			validators: [Validators.arrayMinLength(1, i18n.t("accounting:invoices.itemsRequired"))]
 		}], mode);
 
+		this.invoiceMode = this.assign("invoiceMode", dto?.invoiceMode ?? InvoiceMode.Normal);
 		this.type = this.assign("type", dto?.type ?? InvoiceType.Sell);
 		this.originalInvoiceId = this.assign("originalInvoiceId", dto?.originalInvoiceId);
 		this.date = this.assign("date", dto?.date ? new Date(dto?.date) : new Date());
@@ -181,7 +192,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 
 	public get isDisabled()
 	{
-		return (this.mode.value === InvoiceMode.Update || this.mode.value === InvoiceMode.Return) && this.type.value !== InvoiceType.Quotation;
+		return (this.mode.value === ChangeableEntityMode.Update || this.invoiceMode.value === InvoiceMode.Return) && this.type.value !== InvoiceType.Quotation;
 	}
 
 	public paymentVouchers()
@@ -275,7 +286,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto, InvoiceMode>
 		this.invoiceItems.value?.forEach((item) =>
 		{
 			const newSettlementPerItem = (settlementAmount ?? 0) / (this.invoiceItems.value?.length ?? 0);
-			const newSettlementPerQtn = Number((newSettlementPerItem / item.quantity.value).toFixed(2));
+			const newSettlementPerQtn = item.quantity.value === 0 ? newSettlementPerItem : Number((newSettlementPerItem / item.quantity.value).toFixed(2));
 
 			item.changeSettlement(newSettlementPerQtn);
 		});

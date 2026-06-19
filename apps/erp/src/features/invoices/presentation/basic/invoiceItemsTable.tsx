@@ -63,7 +63,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 
 	const getMaxAllowedQuantity = (qtn: number) =>
 	{
-		if (invoice.mode.value === InvoiceMode.Return)
+		if (invoice.invoiceMode.value === InvoiceMode.Return)
 		{
 			return qtn;
 		}
@@ -208,7 +208,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 						const isDragging = dragState.value.draggedIndex === index;
 						const isDraggingOver = dragState.value.dragOverIndex === index;
 						const showToolTip = (invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.Sell)
-							&& invoice.mode.value != InvoiceMode.Return;
+							&& invoice.invoiceMode.value != InvoiceMode.Return;
 						const multiplier = invoice.type.value === InvoiceType.Sell ? -1 : 1;
 						const selectedMethod = invoiceItem.itemUnitPricingMethods.value?.find(
 							(p) => p.id.value === invoiceItem.itemUnitPricingMethodId.value);
@@ -244,7 +244,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 									</td>
 
 									<td className="px-2 pt-2">
-										{ (invoice.isDisabled || invoice.mode.value === InvoiceMode.Return)
+										{ (invoice.isDisabled)
 											? <div
 												className="font-semibold text-foreground">{ invoiceItem.itemUnitPricingMethodName }</div>
 											: (
@@ -286,7 +286,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 														invoiceItem.changeQuantity(newValue);
 														invoice.syncPaymentVouchers();
 													} }
-													disabled={ invoice.mode.value === InvoiceMode.Return ? false : invoice.isDisabled }
+													disabled={ invoice.invoiceMode.value === InvoiceMode.Return ? false : invoice.isDisabled }
 													onFocus={ () => focusedQuantityIndex.value = index }
 													onBlur={ () => focusedQuantityIndex.value = undefined }
 												/>
@@ -319,7 +319,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 										<NumberField
 											min={ getMinAllowedTaxInclusivePrice(invoiceItem.originalTaxInclusivePrice.value) }
 											value={ invoiceItem.taxInclusivePrice }
-											disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return }
+											disabled={ invoice.isDisabled }
 											onChange={ (newValue) =>
 											{
 												if (newValue == undefined) return;
@@ -333,7 +333,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 										<td className="px-2 pt-2">
 											<NumberField
 												value={ invoiceItem.settlement }
-												disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return }
+												disabled={ invoice.isDisabled }
 												onChange={ (newValue) =>
 												{
 													if (newValue == undefined) return;
@@ -370,20 +370,18 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 									) }
 
 									<td className="px-2 pt-2 text-center">
-										{ !invoice.isDisabled && (
-											<button
-												type="button"
-												onClick={ () =>
-												{
-													invoice.removeItem(index);
-													invoice.syncPaymentVouchers();
-												} }
-												className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
-												aria-label={ t("invoices.deleteItem") }
-											>
-												<Trash2 className="h-5 w-5"/>
-											</button>
-										) }
+										<button
+											type="button"
+											onClick={ () =>
+											{
+												invoice.removeItem(index);
+												invoice.syncPaymentVouchers();
+											} }
+											className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
+											aria-label={ t("invoices.deleteItem") }
+										>
+											<Trash2 className="h-5 w-5"/>
+										</button>
 									</td>
 								</tr>
 
@@ -400,7 +398,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 											label=""
 											placeholder={ t("invoices.addDiscription") }
 											value={ invoiceItem.notes }
-											disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return }
+											disabled={ invoice.isDisabled }
 										/>
 									</td>
 								</tr>

@@ -78,7 +78,7 @@ export default function ItemsSettlementsPage()
 			/>
 
 			<CrudPage.DeleteDialog
-				entityNameSelector={ (itemsSettlement) => itemsSettlement.id }
+				entityNameSelector={ () => `"${ t("itemsSettlements.entityName") }"` }
 				service={ Services.itemsSettlementsApi }
 				onSuccess={ (entity) => Cubits.itemsSettlements.delete(entity) }
 			/>

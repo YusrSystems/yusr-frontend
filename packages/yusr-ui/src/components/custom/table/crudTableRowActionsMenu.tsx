@@ -12,8 +12,8 @@ type ListType = "dropdown" | "context";
 export type CrudTableRowActionsMenuProps<TEntity extends ChangeableEntity<TDto>, TDto extends Dto> = {
 	entity: TEntity,
 	type?: ListType;
-	onEditClicked: () => void;
-	onDeleteClicked: () => void;
+	onEditClicked?: () => void;
+	onDeleteClicked?: () => void;
 	hasUpdatePermission: ((entity: TEntity) => boolean) | boolean;
 	hasDeletePermission: ((entity: TEntity) => boolean) | boolean;
 	dropdownItems?: React.ReactNode[];

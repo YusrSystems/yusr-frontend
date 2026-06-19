@@ -96,12 +96,14 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 		dropdownItems,
 		contextMenuItems,
 		isShareablePage,
+		onEditClicked,
 		...props
 	}: Omit<CrudPageTableRow<TEntity, TDto>, "onDoubleClick">
 		& Omit<CrudTableRowActionsMenuProps<TEntity, TDto>, "onEditClicked" | "onDeleteClicked" | "entity" | "dropdownItems" | "contextMenuItems">
 		& {
-		dropdownItems?: (entity: TEntity, openEditDialog: (entity: TEntity, mode: ChangeableEntityMode) => void) => React.ReactNode[];
-		contextMenuItems?: (entity: TEntity, openEditDialog: (entity: TEntity, mode: ChangeableEntityMode) => void) => React.ReactNode[];
+		onEditClicked?: (entity: TEntity) => void;
+		dropdownItems?: (entity: TEntity, openEditDialog: (entity: TEntity) => void) => React.ReactNode[];
+		contextMenuItems?: (entity: TEntity, openEditDialog: (entity: TEntity) => void) => React.ReactNode[];
 		isShareablePage?: boolean;
 	}
 )
@@ -110,13 +112,10 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 	const {i18n} = useTranslation();
 	const {navigate, basePath} = useCrudPageContext();
 
-	const openEditDialog = (
-		entity: TEntity,
-		mode: ChangeableEntityMode = ChangeableEntityMode.Update
-	) =>
+	const openEditDialog = (entity: TEntity) =>
 	{
 		selectedEntity.value = entity;
-		selectedEntity.value.mode.value = mode;
+		selectedEntity.value.mode.value = ChangeableEntityMode.Update;
 		isShareablePage && navigate(`${ basePath }/${ entity.id.value }`);
 		isChangeDialogOpen.value = true;
 	};
@@ -134,7 +133,11 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 					<ContextMenu dir={ i18n.dir() } key={ i }>
 						<ContextMenuTrigger asChild>
 							<TableRow
-								onDoubleClick={ () => openEditDialog(entity) }
+								onDoubleClick={ () =>
+								{
+									onEditClicked?.(entity);
+									openEditDialog(entity);
+								} }
 								className="hover:bg-secondary/50 transition-colors cursor-pointer"
 							>
 								<TableCell>
@@ -144,7 +147,11 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 										type="dropdown"
 										dropdownItems={ dropdownItems?.(entity, openEditDialog) }
 										contextMenuItems={ contextMenuItems?.(entity, openEditDialog) }
-										onEditClicked={ () => openEditDialog(entity) }
+										onEditClicked={ () =>
+										{
+											onEditClicked?.(entity);
+											openEditDialog(entity);
+										} }
 										onDeleteClicked={ () =>
 										{
 											selectedEntity.value = entity;
@@ -167,7 +174,11 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 							type="context"
 							dropdownItems={ dropdownItems?.(entity, openEditDialog) }
 							contextMenuItems={ contextMenuItems?.(entity, openEditDialog) }
-							onEditClicked={ () => openEditDialog(entity) }
+							onEditClicked={ () =>
+							{
+								onEditClicked?.(entity);
+								openEditDialog(entity);
+							} }
 							onDeleteClicked={ () =>
 							{
 								selectedEntity.value = entity;
@@ -196,7 +207,7 @@ CrudPage.ChangeDialog = function <TDto extends Dto, TEntity extends ChangeableEn
 	useSignals();
 	const {navigate, basePath} = useCrudPageContext();
 	const params = useParams();
-	
+
 	useEffect(() =>
 	{
 		if (!params.id)
@@ -206,14 +217,12 @@ CrudPage.ChangeDialog = function <TDto extends Dto, TEntity extends ChangeableEn
 
 		async function loadEntity()
 		{
-			console.log("loading entity. .  .");
 			const entity = await fetchEntity?.(Number(params.id));
 			if (!entity)
 			{
 				navigate(basePath, {replace: true});
 				return;
 			}
-			console.log(entity);
 			selectedEntity.value = entity;
 			isChangeDialogOpen.value = true;
 		}

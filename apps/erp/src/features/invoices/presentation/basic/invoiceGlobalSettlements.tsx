@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { FieldsSection, NumberField, TextAreaField } from "yusr-ui";
-import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
+import Invoice from "@/core/data/invoices/invoice.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 
 
@@ -29,7 +29,7 @@ export default function InvoiceGlobalSettlements({invoice}: { invoice: Invoice }
 							invoice.changeSettlementAmount(newValue);
 							invoice.syncPaymentVouchers();
 						} }
-						disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return || invoice.invoiceItems.value?.length === 0 }
+						disabled={ invoice.isDisabled || invoice.invoiceItems.value?.length === 0 }
 					/>
 					<NumberField
 						label={ t("paymentMethods.percentage") }
@@ -43,14 +43,14 @@ export default function InvoiceGlobalSettlements({invoice}: { invoice: Invoice }
 							invoice.changeSettlementPercent(newValue);
 							invoice.syncPaymentVouchers();
 						} }
-						disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return || invoice.invoiceItems.value?.length === 0 }
+						disabled={ invoice.isDisabled || invoice.invoiceItems.value?.length === 0 }
 					/>
 				</FieldsSection>
 
 				<TextAreaField
 					label={ t("invoices.settlementReason") }
 					value={ invoice.settlementReason }
-					disabled={ invoice.isDisabled || invoice.mode.value === InvoiceMode.Return || invoice.invoiceItems.value?.length === 0
+					disabled={ invoice.isDisabled || invoice.invoiceItems.value?.length === 0
 						|| (invoice.settlementPercent.value === 0 && invoice.settlementAmount.value === 0) }
 					collapsible
 				/>

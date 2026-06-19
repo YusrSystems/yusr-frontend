@@ -78,7 +78,7 @@ export default function StocktakingsPage()
 			/>
 
 			<CrudPage.DeleteDialog
-				entityNameSelector={ (stocktaking) => stocktaking.id }
+				entityNameSelector={ () => `"${ t("stocktakings.entityName") }"` }
 				service={ Services.stocktakingApi }
 				onSuccess={ (entity) => Cubits.stocktaking.delete(entity) }
 			/>
