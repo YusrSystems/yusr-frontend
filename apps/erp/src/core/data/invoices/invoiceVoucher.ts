@@ -1,7 +1,7 @@
 import type Invoice from "@/core/data/invoices/invoice.ts";
 import { Services } from "@/core/services/services.ts";
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, ChangeableEntityMode, Dto } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
 
 
@@ -34,7 +34,23 @@ export class InvoiceVoucher extends ChangeableEntity<InvoiceVoucherDto>
 
 	constructor(dto: Partial<InvoiceVoucherDto> | undefined)
 	{
-		super(dto, [], ChangeableEntityMode.Create);
+		super(dto, [{
+			field: "accountId",
+			selector: (d) => d.accountId,
+			validators: [Validators.required()]
+		}, {
+			field: "paymentMethodId",
+			selector: (d) => d.paymentMethodId,
+			validators: [Validators.required()]
+		}, {
+			field: "amount",
+			selector: (d) => d.amount,
+			validators: [Validators.custom((value: number) => value > 0, i18n.t("validators.min", {min: 0}))]
+		}, {
+			field: "description",
+			selector: (d) => d.description,
+			validators: [Validators.optional(Validators.maxLength(200))]
+		}], ChangeableEntityMode.Create);
 
 		this.invoiceId = this.assign("invoiceId", dto?.invoiceId ?? 0);
 		this.voucherId = this.assign("voucherId", dto?.voucherId ?? 0);

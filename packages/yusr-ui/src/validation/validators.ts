@@ -11,43 +11,6 @@ export class Validators
 		this.t = t;
 	}
 
-	private static getT(): TFunction<"common">
-	{
-		if (!this.t)
-		{
-			// Return a fallback TFunction that returns default messages
-			return this.getFallbackT();
-		}
-		return this.t;
-	}
-
-	private static getFallbackT(): TFunction<"common">
-	{
-		const fallbackMessages: Record<string, string> = {
-			"validators.required": "هذا الحقل مطلوب",
-			"validators.min": "القيمة يجب أن تكون أكبر من {{min}}",
-			"validators.max": "القيمة يجب أن تكون أصغر من {{max}}",
-			"validators.minLength": "يجب أن طول النص أكبر من {{min}}",
-			"validators.maxLength": "يجب أن طول النص أقل من {{max}}",
-			"validators.exactLength": "يجب أن يكون طول النص {{length}} خانات",
-			"validators.numeric": "يجب أن يحتوي الحقل على أرقام فقط",
-			"validators.arrayMinLength": "يجب اختيار عنصر واحد على الأقل"
-		};
-
-		return ((key: string, options?: { [key: string]: any; }) =>
-		{
-			let message = fallbackMessages[key] || key;
-			if (options)
-			{
-				Object.entries(options).forEach(([k, v]) =>
-				{
-					message = message.replace(`{{${ k }}}`, v);
-				});
-			}
-			return message;
-		}) as TFunction<"common">;
-	}
-
 	static required(message?: string): ValidatorFn
 	{
 		const t = this.getT();
@@ -190,5 +153,42 @@ export class Validators
 		{
 			return !fn(value, formData) ? message : null;
 		};
+	}
+
+	private static getT(): TFunction<"common">
+	{
+		if (!this.t)
+		{
+			// Return a fallback TFunction that returns default messages
+			return this.getFallbackT();
+		}
+		return this.t;
+	}
+
+	private static getFallbackT(): TFunction<"common">
+	{
+		const fallbackMessages: Record<string, string> = {
+			"validators.required": "هذا الحقل مطلوب",
+			"validators.min": "القيمة يجب أن تكون أكبر من {{min}}",
+			"validators.max": "القيمة يجب أن تكون أصغر من {{max}}",
+			"validators.minLength": "يجب أن يكون طول النص أكبر من {{min}}",
+			"validators.maxLength": "يجب أن يكون طول النص أقل من {{max}}",
+			"validators.exactLength": "يجب أن يكون طول النص {{length}} خانات",
+			"validators.numeric": "يجب أن يحتوي الحقل على أرقام فقط",
+			"validators.arrayMinLength": "يجب اختيار عنصر واحد على الأقل"
+		};
+
+		return ((key: string, options?: { [key: string]: any; }) =>
+		{
+			let message = fallbackMessages[key] || key;
+			if (options)
+			{
+				Object.entries(options).forEach(([k, v]) =>
+				{
+					message = message.replace(`{{${ k }}}`, v);
+				});
+			}
+			return message;
+		}) as TFunction<"common">;
 	}
 }

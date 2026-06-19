@@ -49,7 +49,7 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 							<td className="p-2 text-center font-bold text-muted-foreground">{ index + 1 }</td>
 
 							<td className="p-2">
-								<FormField label="">
+								<FormField label="" error={ invoiceVoucher.getError("accountId") }>
 									<AccountsSearchableSelect
 										label={ invoiceVoucher.accountName }
 										id={ invoiceVoucher.accountId }
@@ -60,7 +60,7 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 							</td>
 
 							<td className="p-2">
-								<FormField label="">
+								<FormField label="" error={ invoiceVoucher.getError("paymentMethodId") }>
 									<PaymentMethodsSearchableSelect
 										id={ invoiceVoucher.paymentMethodId }
 										label={ invoiceVoucher.paymentMethodName }
@@ -72,6 +72,7 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 								<NumberField
 									label=""
 									value={ invoiceVoucher.amount }
+									error={ invoiceVoucher.getError("amount") }
 									currency={ <ErpCurrencyIcon/> }
 								/>
 							</td>
@@ -80,6 +81,7 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 								<TextField
 									label=""
 									value={ invoiceVoucher.description }
+									error={ invoiceVoucher.getError("description") }
 								/>
 							</td>
 

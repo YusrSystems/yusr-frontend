@@ -33,7 +33,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 	useSignals();
 	const {t} = useTranslation("accounting");
 	const focusedQuantityIndex = useMemo(() => signal<number | undefined>(undefined), []);
-
+	const errorMessage = invoice.getError("invoiceItems");
 	const hasSettlementPerm = Services.auth.hasAuth(
 		SystemPermissionsResources.InvoiceAddSettlement,
 		SystemPermissionsActions.Get
@@ -135,7 +135,19 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 
 	if (invoice.invoiceItems.value?.length === 0)
 	{
-		return <TablePreview.Empty/>;
+		return (
+			<div>
+				<TablePreview.Empty
+					className={ `bg-muted/20 rounded-lg border overflow-hidden overflow-x-auto transition-colors ${
+						errorMessage.value ? "border-red-500" : ""
+					}` }/>
+				{ invoice.getError("invoiceItems").value && (
+					<div className="text-sm font-medium text-red-500 mt-2 animate-in fade-in slide-in-from-top-1">
+						{ invoice.getError("invoiceItems").value }
+					</div>
+				) }
+			</div>
+		);
 	}
 
 	const fixedColCount = 7; // drag handler + number + item + pricingMethod + quantity + price + totalPrice
@@ -280,6 +292,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 													step={ 0.1 }
 													max={ getMaxAllowedQuantity(invoiceItem.originalQuantity.value) }
 													value={ invoiceItem.quantity }
+													error={ invoiceItem.getError("quantity") }
 													onChange={ (newValue) =>
 													{
 														if (newValue == undefined) return;
@@ -320,6 +333,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 											min={ getMinAllowedTaxInclusivePrice(invoiceItem.originalTaxInclusivePrice.value) }
 											value={ invoiceItem.taxInclusivePrice }
 											disabled={ invoice.isDisabled }
+											error={ invoiceItem.getError("taxInclusivePrice") }
 											onChange={ (newValue) =>
 											{
 												if (newValue == undefined) return;
@@ -398,6 +412,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 											label=""
 											placeholder={ t("invoices.addDiscription") }
 											value={ invoiceItem.notes }
+											error={ invoiceItem.getError("notes") }
 											disabled={ invoice.isDisabled }
 										/>
 									</td>
@@ -408,6 +423,8 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 					</tbody>
 				</table>
 			</div>
+
+
 		</div>
 	);
 }

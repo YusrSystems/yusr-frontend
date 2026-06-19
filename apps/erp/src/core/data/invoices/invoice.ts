@@ -5,7 +5,7 @@ import { Services } from "@/core/services/services.ts";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 import { type Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, StorageFile, Validators } from "yusr-ui";
-import type Item from "@/core/data/item.ts";
+import Item from "@/core/data/item.ts";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
 import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
@@ -172,12 +172,21 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.invoiceItems = this.assign("invoiceItems",
 			(dto?.invoiceItems ?? []).map(x =>
 			{
-				const item = InvoiceItem.create(x);
+				const item = mode === ChangeableEntityMode.Update
+					? InvoiceItem.load(x)
+					: InvoiceItem.create(x);
 				item.getInvoice = () => this;
 				return item;
 			})
 		);
-		this.invoiceVouchers = this.assign("invoiceVouchers", (dto?.invoiceVouchers ?? []).map(x => InvoiceVoucher.create(x)));
+		this.invoiceVouchers = this.assign("invoiceVouchers",
+			(dto?.invoiceVouchers ?? []).map(x =>
+				mode === ChangeableEntityMode.Update
+					? InvoiceVoucher.load(x)
+					: InvoiceVoucher.create(x)
+			)
+		);
+
 		this.invoiceFiles = this.assign("invoiceFiles", dto?.invoiceFiles ?? []);
 		this.ignoreWarnings = this.assign("ignoreWarnings", dto?.ignoreWarnings ?? false);
 
@@ -193,6 +202,14 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 	public get isDisabled()
 	{
 		return (this.mode.value === ChangeableEntityMode.Update || this.invoiceMode.value === InvoiceMode.Return) && this.type.value !== InvoiceType.Quotation;
+	}
+
+	override validate(dto?: Partial<InvoiceDto>): boolean
+	{
+		const invoiceResult = super.validate(dto);
+		const itemsResult = this.invoiceItems.value.every((t) => t.validate());
+		const vouchersResult = this.invoiceVouchers.value.every((m) => m.validate());
+		return invoiceResult && itemsResult && vouchersResult;
 	}
 
 	public paymentVouchers()

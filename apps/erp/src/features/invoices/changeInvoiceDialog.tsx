@@ -216,6 +216,12 @@ export default function ChangeInvoiceDialog({
 		);
 	}
 
+	const basicHasError = currentEntity.value.hasErrors
+		|| currentEntity.value.invoiceItems.value.some((t) => t.hasErrors)
+		|| currentEntity.value.paymentVouchers().some((t) => t.hasErrors);
+
+	const costHasError = currentEntity.value.costVouchers().some((t) => t.hasErrors);
+
 	return (
 		<ChangeDialog className="sm:max-w-[100vw] sm:w-screen sm:h-screen">
 			<ChangeDialog.Header title={ getDialogTitle() }/>
@@ -226,6 +232,7 @@ export default function ChangeInvoiceDialog({
 						label: t("invoices.basicInfo"),
 						icon: Box,
 						active: true,
+						hasError: basicHasError,
 						content: <InvoiceBasicTab invoice={ currentEntity.value }/>
 					},
 					...(currentEntity.value.type.value !== InvoiceType.Quotation
@@ -233,6 +240,7 @@ export default function ChangeInvoiceDialog({
 							label: t("invoices.invoiceCosts"),
 							icon: BanknoteArrowUp,
 							active: false,
+							hasError: costHasError,
 							content: <InvoiceCostsTab invoice={ currentEntity.value }/>
 						}]
 						: []),

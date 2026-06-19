@@ -1,6 +1,6 @@
 import { Plus, Trash2, Wallet } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, CrudEmptyTablePreview, NumberField } from "yusr-ui";
+import { Button, CrudEmptyTablePreview, FormField, NumberField } from "yusr-ui";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 import type Invoice from "@/core/data/invoices/invoice.ts";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
@@ -65,15 +65,17 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 								className="flex items-center gap-3 px-4 py-2"
 							>
 								<div className="flex-1 min-w-0">
-									<PaymentMethodsSearchableSelect
-										id={ invoiceVoucher.paymentMethodId }
-										label={ invoiceVoucher.paymentMethodName }
-										onSelect={ (pm) =>
-										{
-											invoiceVoucher.paymentMethodId.value = pm?.id.value;
-											invoiceVoucher.paymentMethodName.value = pm?.name.value;
-										} }
-									/>
+									<FormField label="" error={ invoiceVoucher.getError("paymentMethodId") }>
+										<PaymentMethodsSearchableSelect
+											id={ invoiceVoucher.paymentMethodId }
+											label={ invoiceVoucher.paymentMethodName }
+											onSelect={ (pm) =>
+											{
+												invoiceVoucher.paymentMethodId.value = pm?.id.value;
+												invoiceVoucher.paymentMethodName.value = pm?.name.value;
+											} }
+										/>
+									</FormField>
 								</div>
 
 								<div className="w-36 shrink-0">
@@ -81,6 +83,7 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 										min={ 0 }
 										max={ unpaidPrice + (invoiceVoucher.amount.value ?? 0) }
 										value={ invoiceVoucher.amount }
+										error={ invoiceVoucher.getError("amount") }
 										currency={ <ErpCurrencyIcon/> }
 									/>
 								</div>
