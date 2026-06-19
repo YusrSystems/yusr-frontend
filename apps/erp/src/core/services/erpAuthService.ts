@@ -52,19 +52,19 @@ export class ErpAuthService extends AuthService
 		return "/";
 	}
 
-	setSettings(dto: SettingDto)
+	readonly setSettings = (dto: SettingDto) =>
 	{
 		this._settingSignal.value = new Setting(dto);
-	}
+	};
 
-	updateBranch(branch: Branch)
+	readonly updateBranch = (branch: Branch) =>
 	{
-		if (branch.id.value !== this.setting?.branch?.value?.id.value && this._settingSignal.value?.branch.value)
+		if (branch.id.value === this._settingSignal?.value?.branchId?.value)
 		{
 			this._settingSignal.value.branch.value = branch;
 			localStorage.setItem(this._settingStorageItemName, JSON.stringify(this._settingSignal.value));
 		}
-	}
+	};
 
 	readonly login = (user: User, setting: Setting) =>
 	{
