@@ -13,7 +13,7 @@ export function EmployeesAccountsPage()
 	return (
 		<AccountsPage
 			title={ t("employees.title") }
-			fixedType={ AccountType.Client }
+			fixedType={ AccountType.Employee }
 			hasPagePermission={ Services.auth.hasAuth(
 				SystemPermissionsResources.AccountEmployee,
 				SystemPermissionsActions.Get
