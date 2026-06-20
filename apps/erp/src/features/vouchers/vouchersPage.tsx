@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
-import { BoxIcon } from "lucide-react";
+import { FileText } from "lucide-react";
 import { Voucher, type VoucherDto, VoucherType } from "@/core/data/voucher.ts";
 import ReportButton from "@/features/reports/reportButton.tsx";
 import ReportConstants from "@/core/data/report/reportConstants.ts";
@@ -93,7 +93,7 @@ function Cards()
 			cards={ [{
 				title: t("vouchers.totalVouchers"),
 				data: (Cubits.vouchers.count.value ?? 0).toString(),
-				icon: <BoxIcon className="h-4 w-4 text-muted-foreground"/>
+				icon: <FileText className="h-4 w-4 text-muted-foreground"/>
 			}] }
 		/>
 	);
