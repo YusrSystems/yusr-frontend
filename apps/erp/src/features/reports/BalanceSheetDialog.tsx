@@ -1,14 +1,14 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Button,
-  DateField,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
+	Button,
+	DateField,
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle
 } from "yusr-ui";
 import { BalanceSheetReportRequest } from "../../core/data/report/balanceSheetReportRequest";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -46,7 +46,9 @@ export default function BalanceSheetDialog()
 					<DialogFooter>
 						<ReportButton
 							reportName={ ReportConstants.BalanceSheet }
-							request={ new BalanceSheetReportRequest({toDate: toDate.value}) }
+							request={ new BalanceSheetReportRequest({
+								toDate: toDate.value?.toLocaleDateString("en-CA") ?? undefined
+							}) }
 						/>
 					</DialogFooter>
 				</DialogContent>

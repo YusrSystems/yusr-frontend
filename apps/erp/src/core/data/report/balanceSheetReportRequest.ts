@@ -1,12 +1,12 @@
 import type { BaseReportRequest } from "./baseReportRequest";
 
+
 export class BalanceSheetReportRequest implements BaseReportRequest
 {
-  toDate: Date;
+	toDate!: string;
 
-  constructor(init?: Partial<BalanceSheetReportRequest>)
-  {
-    this.toDate = new Date();
-    Object.assign(this, init);
-  }
+	constructor(init?: Partial<BalanceSheetReportRequest>)
+	{
+		Object.assign(this, init);
+	}
 }

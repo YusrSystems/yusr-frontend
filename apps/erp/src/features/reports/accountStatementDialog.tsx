@@ -24,7 +24,7 @@ export function AccountStatementButton({account}: { account: Account; })
 	const {t, i18n} = useTranslation("erpCommon");
 	const isOpen = useMemo(() => signal(false), []);
 	const fromDate = useMemo(() => signal<Date>(new Date()), []);
-	const toDate = useMemo(() => signal<Date>(), []);
+	const toDate = useMemo(() => signal<Date>(new Date()), []);
 
 	useEffect(() =>
 	{
@@ -60,8 +60,8 @@ export function AccountStatementButton({account}: { account: Account; })
 							reportName={ ReportConstants.AccountStatement }
 							request={ new AccountStatementReportRequest({
 								accountId: account.id.value,
-								fromDate: fromDate.value,
-								toDate: toDate.value
+								fromDate: fromDate.value?.toLocaleDateString("en-CA") ?? undefined,
+								toDate: toDate.value?.toLocaleDateString("en-CA") ?? undefined
 							}) }
 						>
 						</ReportButton>
