@@ -5,11 +5,11 @@ import { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
 import {
-    PageLoaded,
-    PageLoading,
-    SearchableSelect,
-    type SearchableSelectOptionProps,
-    type SearchableSelectProps
+	PageLoaded,
+	PageLoading,
+	SearchableSelect,
+	type SearchableSelectOptionProps,
+	type SearchableSelectProps
 } from "yusr-ui";
 
 
@@ -63,7 +63,7 @@ const Option = React.memo(
 	{
 		useSignals();
 		return (
-			<SearchableSelect.Option
+			<SearchableSelect.Option<PaymentMethod, PaymentMethodDto>
 				labelSelector="name"
 				{ ...props }
 			>

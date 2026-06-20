@@ -97,7 +97,7 @@ const Option = React.memo(
 	{
 		useSignals();
 		return (
-			<SearchableSelect.Option
+			<SearchableSelect.Option<Account, AccountDto>
 				labelSelector="name"
 				{ ...props }
 			>

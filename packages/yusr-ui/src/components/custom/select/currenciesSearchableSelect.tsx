@@ -47,7 +47,7 @@ const Option = React.memo(
 	{
 		useSignals();
 		return (
-			<SearchableSelect.Option
+			<SearchableSelect.Option<Currency, CurrencyDto>
 				labelSelector="name"
 				{ ...props }
 			>

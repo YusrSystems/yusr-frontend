@@ -1,6 +1,6 @@
 import { useSignals } from "@preact/signals-react/runtime";
 import { User2Icon } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPage, TablePreview, UnauthorizedPage } from "../../components/custom";
@@ -8,7 +8,6 @@ import { User, UserDto } from "../../entities";
 import { BaseCubits, BaseServices } from "../../services";
 import { ChangeableEntityMode, PageError, PageLoaded, PageLoading } from "../../stateManager";
 import { ChangeUserDialog } from "./changeUserDialog";
-import { UsersApiService } from "../../networking";
 
 
 export function UsersPage()
@@ -19,7 +18,6 @@ export function UsersPage()
 	}
 
 	const {t} = useTranslation("commonEntities");
-	const service = useMemo(() => new UsersApiService(), []);
 	useEffect(() =>
 	{
 		BaseCubits.users.init();
@@ -43,11 +41,6 @@ export function UsersPage()
 			<PageTable/>
 
 			<CrudPage.ChangeDialog
-				fetchEntity={ async (id: number) =>
-				{
-					const result = await service.Get(id);
-					return result.data;
-				} }
 				changeDialog={ (dto: UserDto | undefined, closeDialog) =>
 				{
 					return (

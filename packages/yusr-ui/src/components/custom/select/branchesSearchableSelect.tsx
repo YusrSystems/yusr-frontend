@@ -5,53 +5,54 @@ import { BaseCubits } from "../../../services";
 import { PageLoaded, PageLoading } from "../../../stateManager";
 import { SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "./searchableSelect";
 
-export function BranchesSearchableSelect({ ...props }: SearchableSelectProps<Branch, BranchDto>)
+
+export function BranchesSearchableSelect({...props}: SearchableSelectProps<Branch, BranchDto>)
 {
-  useSignals();
+	useSignals();
 
-  return (
-    <SearchableSelect>
-      <SearchableSelect.Trigger label={ props.label } disabled={ props.disabled } />
-      <SearchableSelect.Content>
-        <SearchableSelect.SearchInput onSearch={ (searchInput) => BaseCubits.branches.search(searchInput) } />
-        <SearchableSelect.Command>
-          <SearchableSelect.NullOption { ...props } />
-          <CommandItems />
-        </SearchableSelect.Command>
-      </SearchableSelect.Content>
-    </SearchableSelect>
-  );
+	return (
+		<SearchableSelect>
+			<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
+			<SearchableSelect.Content>
+				<SearchableSelect.SearchInput onSearch={ (searchInput) => BaseCubits.branches.search(searchInput) }/>
+				<SearchableSelect.Command>
+					<SearchableSelect.NullOption { ...props } />
+					<CommandItems/>
+				</SearchableSelect.Command>
+			</SearchableSelect.Content>
+		</SearchableSelect>
+	);
 
-  function CommandItems()
-  {
-    useSignals();
-    if (BaseCubits.branches.state.value instanceof PageLoading)
-    {
-      return <SearchableSelect.Loading />;
-    }
+	function CommandItems()
+	{
+		useSignals();
+		if (BaseCubits.branches.state.value instanceof PageLoading)
+		{
+			return <SearchableSelect.Loading/>;
+		}
 
-    if (BaseCubits.branches.state.value instanceof PageLoaded && BaseCubits.branches.entities.value.length > 0)
-    {
-      return BaseCubits.branches.entities.value.map((entity) => (
-        <Option key={ entity.id.value } item={ entity } { ...props } />
-      ));
-    }
+		if (BaseCubits.branches.state.value instanceof PageLoaded && BaseCubits.branches.entities.value.length > 0)
+		{
+			return BaseCubits.branches.entities.value.map((entity) => (
+				<Option key={ entity.id.value } item={ entity } { ...props } />
+			));
+		}
 
-    return <SearchableSelect.Empty />;
-  }
+		return <SearchableSelect.Empty/>;
+	}
 }
 
 const Option = React.memo(
-  function Option({ ...props }: Omit<SearchableSelectOptionProps<Branch, BranchDto>, "labelSelector">)
-  {
-    useSignals();
-    return (
-      <SearchableSelect.Option
-        labelSelector="name"
-        { ...props }
-      >
-        <SearchableSelect.OptionBody label={ props.item.name.value } />
-      </SearchableSelect.Option>
-    );
-  }
+	function Option({...props}: Omit<SearchableSelectOptionProps<Branch, BranchDto>, "labelSelector">)
+	{
+		useSignals();
+		return (
+			<SearchableSelect.Option<Branch, BranchDto>
+				labelSelector="name"
+				{ ...props }
+			>
+				<SearchableSelect.OptionBody label={ props.item.name.value }/>
+			</SearchableSelect.Option>
+		);
+	}
 );

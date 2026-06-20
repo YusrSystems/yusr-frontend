@@ -6,7 +6,7 @@ import { EntitySignal } from "./entitySignal";
 export abstract class Entity<TDto extends Dto>
 {
 	id: Signal<number>;
-	private _dtoKeys: Set<keyof TDto> = new Set(["id"]);
+	private _dtoKeys: Set<string> = new Set(["id"]);
 
 	protected constructor(dto?: Partial<TDto>)
 	{
@@ -15,7 +15,7 @@ export abstract class Entity<TDto extends Dto>
 
 	assign(key: keyof TDto, value: any)
 	{
-		this._dtoKeys.add(key);
+		this._dtoKeys.add(key as string);
 		return new EntitySignal(value, (value) =>
 		{
 			this.onFieldChange(key, value);
@@ -32,15 +32,15 @@ export abstract class Entity<TDto extends Dto>
 
 			if (value instanceof Entity)
 			{
-				dto[key] = value.toJson();
+				dto[key as keyof TDto] = value.toJson();
 			}
 			else if (Array.isArray(value))
 			{
-				dto[key] = value.map((item) => item instanceof Entity ? item.toJson() : item) as TDto[keyof TDto];
+				dto[key as keyof TDto] = value.map((item) => item instanceof Entity ? item.toJson() : item) as TDto[keyof TDto];
 			}
 			else
 			{
-				dto[key] = value;
+				dto[key as keyof TDto] = value;
 			}
 		});
 
