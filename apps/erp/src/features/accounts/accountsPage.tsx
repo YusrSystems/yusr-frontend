@@ -105,11 +105,11 @@ export default function AccountsPage(
 function Cards({count}: { count: Signal<number>; })
 {
 	useSignals();
-	const {t} = useTranslation("stocking");
+	const {t} = useTranslation("accounting");
 	return (
 		<CrudPage.Cards
 			cards={ [{
-				title: t("units.totalUnits"),
+				title: t("accounts.totalAccounts"),
 				data: (count.value ?? 0).toString(),
 				icon: <BoxIcon className="h-4 w-4 text-muted-foreground"/>
 			}] }
