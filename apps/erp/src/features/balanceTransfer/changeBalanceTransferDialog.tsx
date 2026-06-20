@@ -108,6 +108,7 @@ export default function ChangeBalanceTransferDialog(
 						<NumberField
 							label={ t("balanceTransfers.amount") }
 							required
+							min={ 0 }
 							value={ entity.amount }
 							error={ entity.getError("amount") }
 							currency={ <ErpCurrencyIcon/> }
