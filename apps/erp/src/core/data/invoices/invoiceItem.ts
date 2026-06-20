@@ -2,7 +2,7 @@ import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "y
 import { ItemUnitPricingMethod, type ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod.ts";
 import type { Signal } from "@preact/signals-react";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
-import type Item from "@/core/data/item.ts";
+import Item, { ItemType } from "@/core/data/item.ts";
 import type Invoice from "@/core/data/invoices/invoice.ts";
 
 
@@ -129,8 +129,8 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			itemUnitPricingMethods: (item.itemUnitPricingMethods.value ?? []).map(x => x.toJson()),
 
 			// Financials
-			quantity: item.storeQuantity.value ? 1 : 0,
-			originalQuantity: item.storeQuantity.value ?? 0,
+			quantity: item.type.value === ItemType.Service ? 1 : item.storeQuantity.value ? 1 : 0,
+			originalQuantity: item.type.value === ItemType.Service ? 1 : item.storeQuantity.value ? 1 : 0,
 			originalCost: item.cost.value ?? 0,
 			cost: (item.cost.value ? Number((item.cost.value).toFixed(2)) : 0) * defaultPricingMethod.quantityMultiplier.value,
 			taxExclusivePrice: taxExclusivePrice,
