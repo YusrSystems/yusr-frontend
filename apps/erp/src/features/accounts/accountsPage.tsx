@@ -4,7 +4,7 @@ import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import type { Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { BoxIcon } from "lucide-react";
+import { WalletIcon } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -111,7 +111,7 @@ function Cards({count}: { count: Signal<number>; })
 			cards={ [{
 				title: t("accounts.totalAccounts"),
 				data: (count.value ?? 0).toString(),
-				icon: <BoxIcon className="h-4 w-4 text-muted-foreground"/>
+				icon: <WalletIcon className="h-4 w-4 text-muted-foreground"/>
 			}] }
 		/>
 	);
