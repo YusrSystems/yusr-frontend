@@ -130,7 +130,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 			// Financials
 			quantity: item.type.value === ItemType.Service ? 1 : item.storeQuantity.value ? 1 : 0,
-			originalQuantity: item.type.value === ItemType.Service ? 1 : item.storeQuantity.value ? 1 : 0,
+			originalQuantity: item.storeQuantity.value ?? 0,
 			originalCost: item.cost.value ?? 0,
 			cost: (item.cost.value ? Number((item.cost.value).toFixed(2)) : 0) * defaultPricingMethod.quantityMultiplier.value,
 			taxExclusivePrice: taxExclusivePrice,
