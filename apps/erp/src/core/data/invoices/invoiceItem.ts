@@ -11,6 +11,7 @@ export class InvoiceItemDto extends Dto
 	public index!: number;
 	public invoiceId!: number;
 	public itemId!: number;
+	public itemType!: number;
 	public itemUnitPricingMethodId!: number;
 	public quantity!: number;
 	public originalQuantity!: number;
@@ -36,6 +37,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 	public index: Signal<number>;
 	public invoiceId: Signal<number>;
 	public itemId: Signal<number | undefined>;
+	public itemType: Signal<ItemType>;
 	public itemUnitPricingMethodId: Signal<number | undefined>;
 	public quantity: Signal<number>;
 	public originalQuantity: Signal<number>;
@@ -79,6 +81,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		this.index = this.assign("index", dto?.index ?? 0);
 		this.invoiceId = this.assign("invoiceId", dto?.invoiceId ?? 0);
 		this.itemId = this.assign("itemId", dto?.itemId);
+		this.itemType = this.assign("itemType", dto?.itemType);
 		this.itemUnitPricingMethodId = this.assign("itemUnitPricingMethodId", dto?.itemUnitPricingMethodId);
 		this.quantity = this.assign("quantity", dto?.quantity ?? 0);
 		this.originalQuantity = this.assign("originalQuantity", dto?.originalQuantity ?? 0);
@@ -121,6 +124,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			index: (invoice.invoiceItems.value?.length ?? -1) + 1,
 			invoiceId: 0,
 			itemId: item.id.value,
+			itemType: item.type.value,
 			itemName: item.name.value,
 
 			// Pricing Method Details
