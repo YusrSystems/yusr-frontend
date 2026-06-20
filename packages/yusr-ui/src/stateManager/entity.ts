@@ -1,53 +1,53 @@
 import { Signal, signal } from "@preact/signals-react";
 import type { Dto } from "./dto";
+import { EntitySignal } from "./entitySignal";
+
 
 export abstract class Entity<TDto extends Dto>
 {
-  id: Signal<number>;
+	id: Signal<number>;
+	private _dtoKeys: Set<string> = new Set(["id"]);
 
-  constructor(dto: Partial<TDto>)
-  {
-    this.id = signal((dto as Dto).id ?? 0);
+	protected constructor(dto?: Partial<TDto>)
+	{
+		this.id = signal(dto?.id ?? 0);
+	}
 
-    (Object.keys(dto) as (keyof TDto)[]).forEach((key) =>
-    {
-      const sig = signal(dto[key]);
+	assign(key: keyof TDto, value: any)
+	{
+		this._dtoKeys.add(key as string);
+		return new EntitySignal(value, (value) =>
+		{
+			this.onFieldChange(key, value);
+		});
+	}
 
-      (this as any)[key] = new Proxy(sig, {
-        set: (target, prop, value) =>
-        {
-          if (prop === "value" && Reflect.get(target, prop) !== value)
-          {
-            const success = Reflect.set(target, prop, value);
-            this.onFieldChange(key, value);
-            return success;
-          }
-          return Reflect.set(target, prop, value);
-        }
-      });
-    });
-  }
+	toJson(): TDto
+	{
+		const dto = {} as TDto;
 
-  protected onFieldChange(_: keyof TDto, __: any): void
-  {}
+		this._dtoKeys.forEach((key) =>
+		{
+			const value = (this[key as unknown as keyof this] as Signal<any>).value;
 
-  toJson(): TDto
-  {
-    return (Object.keys(this) as (keyof TDto)[]).reduce((acc, key) =>
-    {
-      const field = this[key as keyof this];
-      const value = field instanceof Signal ? field.value : field;
+			if (value instanceof Entity)
+			{
+				dto[key as keyof TDto] = value.toJson();
+			}
+			else if (Array.isArray(value))
+			{
+				dto[key as keyof TDto] = value.map((item) => item instanceof Entity ? item.toJson() : item) as TDto[keyof TDto];
+			}
+			else
+			{
+				dto[key as keyof TDto] = value;
+			}
+		});
 
-      if (Array.isArray(value))
-      {
-        acc[key] = value.map((item) => item instanceof Entity ? item.toJson() : item) as TDto[keyof TDto];
-      }
-      else
-      {
-        acc[key] = value as TDto[keyof TDto];
-      }
+		return dto;
+	}
 
-      return acc;
-    }, {} as TDto);
-  }
+	protected onFieldChange(_: keyof TDto, __: any): void
+	{
+	}
 }

@@ -6,27 +6,21 @@ export * from "./background/yusrBackground";
 
 // Buttons
 export * from "./buttons/copyButton";
-export * from "./buttons/saveButtonOld";
 export * from "./buttons/tabButton";
 
 // Containers
 export * from "./containers/dynamicListContainer";
 export * from "./containers/yusrApp";
+
 // Dialogs
 export * from "./dialogs/changeDialog";
-export * from "./dialogs/changeDialogOld";
-export * from "./dialogs/changeDialogTabbed";
-export * from "./dialogs/commonChangeDialogProps";
-export * from "./dialogs/deleteDialogOld";
-export * from "./dialogs/dialogType";
+export * from "./dialogs/commonChangeDialogProps.ts";
 
 // Currency
-export * from "./currency/currencyIcon";
+export * from "./currency/currencyIcon.tsx";
 
 // Fields
 export * from "./fields/checkboxField";
-export * from "./fields/checkboxFieldOld";
-export * from "./fields/dateField";
 export * from "./fields/dateTimeField";
 export * from "./fields/fieldsSection";
 export * from "./fields/formField";
@@ -38,6 +32,7 @@ export * from "./fields/selectField";
 export * from "./fields/storageFilesField";
 export * from "./fields/textAreaField";
 export * from "./fields/textField";
+export * from "./fields/dateField.tsx";
 
 // Images
 export * from "./images/imagePreview";
@@ -46,36 +41,28 @@ export * from "./images/zoomableImage";
 
 // Inputs
 export * from "./inputs/baseInput";
-export * from "./inputs/dateInput";
 export * from "./inputs/dateTimeInput";
-export * from "./inputs/numberInputOld";
 export * from "./inputs/otpInput";
 export * from "./inputs/searchInput";
 export * from "./inputs/selectInput";
-export * from "./inputs/textAreaInputOld";
+export * from "./inputs/dateInput.tsx";
 
 // locale
 export * from "./locale/languageToggle";
 
 // Pages
 export * from "./pages/crudPage";
-export * from "./pages/crudPageOld";
 
 // permissions
 export * from "./permissions/permissionCard";
 export * from "./permissions/permissionSkeleton";
 
 // Select
-export * from "./select/branchesSearchableSelectOld";
-export * from "./select/changableSearchableSelect";
 export * from "./select/citiesSearchableSelect";
-export * from "./select/citiesSearchableSelectOld";
 export * from "./select/currenciesSearchableSelect";
-export * from "./select/currenciesSearchableSelectOld";
 export * from "./select/rolesSearchableSelect";
-export * from "./select/rolesSearchableSelectOld";
 export * from "./select/searchableSelect";
-export * from "./select/searchableSelectOld";
+export * from "./select/branchesSearchableSelect.tsx";
 
 // Separators
 export * from "./separators/titleSeparator";
@@ -97,11 +84,8 @@ export * from "./table/columnVisibilityToggle";
 export * from "./table/crudEmptyTablePreview";
 export * from "./table/crudTable";
 export * from "./table/crudTableBodyRow";
-export * from "./table/crudTableCardOld";
-export * from "./table/crudTableHeaderOld";
 export * from "./table/crudTableHeaderRows";
 export * from "./table/crudTablePagination";
-export * from "./table/crudTableRowActionsMenuOld";
 export * from "./table/tablePreview";
 
 // Theme

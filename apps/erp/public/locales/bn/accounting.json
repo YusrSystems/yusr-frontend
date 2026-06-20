@@ -90,7 +90,8 @@
     "amountRequired": "অনুগ্রহ করে পরিমাণ লিখুন",
     "dateRequired": "অনুগ্রহ করে তারিখ নির্বাচন করুন",
     "fromAccountRequired": "অনুগ্রহ করে যে অ্যাকাউন্ট থেকে ট্রান্সফার করবেন তা নির্বাচন করুন",
-    "toAccountRequired": "অনুগ্রহ করে যে অ্যাকাউন্টে ট্রান্সফার করবেন তা নির্বাচন করুন"
+    "toAccountRequired": "অনুগ্রহ করে যে অ্যাকাউন্টে ট্রান্সফার করবেন তা নির্বাচন করুন",
+    "amountMin": "পরিমাণ ০ এর বেশি হতে হবে"
   },
   "vouchers": {
     "title": "আর্থিক ভাউচার",
@@ -261,6 +262,7 @@
     "commissionTypeRequired": "অনুগ্রহ করে কমিশনের ধরন নির্বাচন করুন",
     "commissionValueRequired": "অনুগ্রহ করে কমিশনের মান লিখুন",
     "commissionHintPercent": "প্রতি {{d}} টির মধ্যে {{n}} টি",
-    "commissionHintAmount": "লেনদেন প্রতি {{amount}} নির্ধারিত"
+    "commissionHintAmount": "লেনদেন প্রতি {{amount}} নির্ধারিত",
+    "noPermissionToEditAdmin": "আপনি অ্যাডমিন অ্যাকাউন্ট সম্পাদনা করতে পারবেন না কারণ আপনার প্রয়োজনীয় অনুমতি নেই"
   }
 }

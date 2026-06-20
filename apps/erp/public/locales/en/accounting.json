@@ -90,7 +90,8 @@
     "amountRequired": "Please enter the amount",
     "dateRequired": "Please select the date",
     "fromAccountRequired": "Please select the account to transfer from",
-    "toAccountRequired": "Please select the account to transfer to"
+    "toAccountRequired": "Please select the account to transfer to",
+    "amountMin": "The amount must be greater than 0"
   },
   "vouchers": {
     "title": "Financial Vouchers",
@@ -261,6 +262,7 @@
     "commissionTypeRequired": "Please select commission type",
     "commissionValueRequired": "Please enter commission value",
     "commissionHintPercent": "{{n}} of every {{d}}",
-    "commissionHintAmount": "flat {{amount}} per transaction"
+    "commissionHintAmount": "flat {{amount}} per transaction",
+    "noPermissionToEditAdmin": "You cannot edit the admin account because you do not have the required permissions"
   }
 }

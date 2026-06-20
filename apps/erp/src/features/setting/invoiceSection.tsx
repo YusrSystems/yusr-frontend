@@ -1,105 +1,93 @@
 import { useTranslation } from "react-i18next";
-import { FieldGroup, FieldsSection, FormFieldOld, SelectFieldOld, SelectInputOld, TextAreaFieldOld, useAppDispatch, useFormErrors } from "yusr-ui";
-import TaxesSearchableSelectOld from "../../core/components/searchableSelect/taxesSearchableSelectOld";
-import { EInvoicingEnvironmentType, InvoicePrintSize, SettingSlice } from "../../core/data/settingOld";
-import { useAppSelector } from "../../core/state/store";
+import { CurrenciesSearchableSelect, FieldGroup, FieldsSection, FormField, SelectField, TextAreaField } from "yusr-ui";
+import type { Setting } from "@/core/data/setting.ts";
+import { EInvoicingEnvironmentType, InvoicePrintSize } from "@/core/data/setting.ts";
 import { EInvoicingRegisterButton } from "./eInvoicing/eInvoicingRegisterButton";
+import { useSignals } from "@preact/signals-react/runtime";
+import TaxesSearchableSelect from "@/core/components/searchableSelect/taxesSearchableSelect.tsx";
 
-export default function InvoiceSection()
+
+export default function InvoiceSection({formData}: { formData: Setting })
 {
-  const { t } = useTranslation("erpCommon");
-  const { formData, errors } = useAppSelector((state) => state.settingForm);
-  const { getError, isInvalid } = useFormErrors(errors);
+	useSignals();
+	const {t} = useTranslation("erpCommon");
 
-  const currencyState = useAppSelector((state) => state.currency);
-  const dispatch = useAppDispatch();
+	return (
+		<div className="space-y-10 animate-in fade-in">
+			<FieldGroup>
+				<FieldsSection title={ t("settings.invoiceAndTaxSettings") } columns={ 2 }>
+					<FormField
+						label={ t("settings.defaultCurrency") }
+						required
+						error={ formData.getError("currencyId") }
+					>
+						<CurrenciesSearchableSelect
+							id={ formData.currencyId }
+							label={ formData.currency?.value?.name }
+						/>
 
-  return (
-    <div className="space-y-10 animate-in fade-in">
-      <FieldGroup>
-        <FieldsSection title={ t("settings.invoiceAndTaxSettings") } columns={ 2 }>
-          <FormFieldOld
-            label={ t("settings.defaultCurrency") }
-            required
-            isInvalid={ isInvalid("currencyId") }
-            error={ getError("currencyId") }
-          >
-            <SelectInputOld
-              value={ formData.currencyId?.toString() || "" }
-              disabled={ currencyState.isLoading }
-              isInvalid={ isInvalid("currencyId") }
-              options={ currencyState.entities.data?.map((c) => ({ label: c.name, value: c.id.toString() }))
-                || [] }
-              onValueChange={ (val) => dispatch(SettingSlice.formActions.updateFormData({ currencyId: Number(val) })) }
-            />
-          </FormFieldOld>
+					</FormField>
 
-          <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium">{ t("settings.defaultTax") }</label>
-            <TaxesSearchableSelectOld
-              showNullOption
-              selectedId={ formData.mainTaxId }
-              selectedLabel={ formData.mainTax?.name }
-              onValueChange={ (tax) =>
-                dispatch(SettingSlice.formActions.updateFormData({ mainTaxId: tax?.id, mainTax: tax })) }
-            />
-          </div>
+					<div className="flex flex-col gap-1.5 w-full">
+						<label className="text-sm font-medium">{ t("settings.defaultTax") }</label>
 
-          <SelectFieldOld
-            label={ t("settings.invoicePrintSize") }
-            value={ formData.invoicePrintSize?.toString() || InvoicePrintSize.A4.toString() }
-            onValueChange={ (val) =>
-              dispatch(SettingSlice.formActions.updateFormData({ invoicePrintSize: Number(val) as InvoicePrintSize })) }
-            options={ [{ label: t("settings.a4Paper"), value: InvoicePrintSize.A4.toString() }, {
-              label: t("settings.thermalPrinter"),
-              value: InvoicePrintSize.ThermalPrinter.toString()
-            }] }
-          />
-        </FieldsSection>
+						<TaxesSearchableSelect
+							id={ formData.mainTaxId }
+							label={ formData.mainTax?.value?.name }
+						/>
+					</div>
 
-        <FieldsSection columns={ 1 }>
-          <TextAreaFieldOld
-            label={ t("settings.invoicePolicy") }
-            value={ formData.invoicePolicy || "" }
-            onChange={ (e) => dispatch(SettingSlice.formActions.updateFormData({ invoicePolicy: e.target.value })) }
-            rows={ 3 }
-            placeholder={ t("settings.invoicePolicyPlaceholder") }
-          />
-        </FieldsSection>
-      </FieldGroup>
+					<SelectField
+						label={ t("settings.invoicePrintSize") }
+						value={ formData.invoicePrintSize || InvoicePrintSize.A4 }
+						onValueChange={ (val) =>
+						{
+							formData.invoicePrintSize.value = val;
+						} }
+						options={
+							[
+								{
+									label: t("settings.a4Paper"),
+									value: InvoicePrintSize.A4
+								},
+								{
+									label: t("settings.thermalPrinter"),
+									value: InvoicePrintSize.ThermalPrinter
+								}
+							] }
+					/>
+				</FieldsSection>
 
-      <EInvoicingRegisterButton
-        title="Testing"
-        subtitle="sandbox"
-        linkType={ EInvoicingEnvironmentType.Test }
-        linked={ formData.eInvoicingEnvironmentType === EInvoicingEnvironmentType.Test }
-        onFinish={ () =>
-          dispatch(
-            SettingSlice.formActions.updateFormData({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Test })
-          ) }
-      />
+				<FieldsSection columns={ 1 }>
+					<TextAreaField
+						label={ t("settings.invoicePolicy") }
+						value={ formData.invoicePolicy }
+						rows={ 3 }
+						placeholder={ t("settings.invoicePolicyPlaceholder") }
+					/>
+				</FieldsSection>
+			</FieldGroup>
 
-      <EInvoicingRegisterButton
-        title="Fatoora Simulation"
-        subtitle={ t("settings.simulationSubtitle") }
-        linkType={ EInvoicingEnvironmentType.Simulation }
-        linked={ formData.eInvoicingEnvironmentType === EInvoicingEnvironmentType.Simulation }
-        onFinish={ () =>
-          dispatch(
-            SettingSlice.formActions.updateFormData({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Simulation })
-          ) }
-      />
+			<EInvoicingRegisterButton
+				formData={ formData }
+				title="Testing"
+				subtitle="sandbox"
+				linkType={ EInvoicingEnvironmentType.Test }
+			/>
 
-      <EInvoicingRegisterButton
-        title="Fatoora Portal"
-        subtitle={ t("settings.productionSubtitle") }
-        linkType={ EInvoicingEnvironmentType.Production }
-        linked={ formData.eInvoicingEnvironmentType === EInvoicingEnvironmentType.Production }
-        onFinish={ () =>
-          dispatch(
-            SettingSlice.formActions.updateFormData({ eInvoicingEnvironmentType: EInvoicingEnvironmentType.Production })
-          ) }
-      />
-    </div>
-  );
+			<EInvoicingRegisterButton
+				formData={ formData }
+				title="Fatoora Simulation"
+				subtitle={ t("settings.simulationSubtitle") }
+				linkType={ EInvoicingEnvironmentType.Simulation }
+			/>
+
+			<EInvoicingRegisterButton
+				formData={ formData }
+				title="Fatoora Portal"
+				subtitle={ t("settings.productionSubtitle") }
+				linkType={ EInvoicingEnvironmentType.Production }
+			/>
+		</div>
+	);
 }

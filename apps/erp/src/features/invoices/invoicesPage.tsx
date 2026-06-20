@@ -1,512 +1,538 @@
-import VerfiAccountWrapper from "@/core/components/verfiAccountWrapper";
+//TODO: must be tested
+import Invoice, { InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice.ts";
+import type { InvoicesListReportRequest } from "@/core/data/report/invoicesListReportType.ts";
+import { InvoicesListReportType } from "@/core/data/report/invoicesListReportType.ts";
+import ReportConstants from "@/core/data/report/reportConstants.ts";
+import { Cubits } from "@/core/services/cubits";
+import { Services } from "@/core/services/services";
+import ChangeInvoiceDialog from "@/features/invoices/changeInvoiceDialog.tsx";
+import ReportButton from "@/features/reports/reportButton.tsx";
+import { signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
 import type { TFunction } from "i18next";
 import { Copy, FilePlusCorner, FileTextIcon, RotateCw, Undo2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import React, { type ReactNode, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import {
+	Button,
+	ChangeableEntityMode,
+	ContextMenuItem,
+	CrudPage,
+	DropdownMenuItem,
+	PageError,
+	PageLoaded,
+	PageLoading,
+	SystemPermissionsActions,
+	TablePreview,
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+	UnauthorizedPage
+} from "yusr-ui";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { InvoiceType } from "@/core/types/invoiceType";
+import VerifyAccountWrapper from "@/core/components/verifyAccountWrapper.tsx";
+import { EInvoicingEnvironmentType } from "@/core/data/setting.ts";
+import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
+import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { toast } from "sonner";
-import { Button, ContextMenuItem, CrudPageOld, CurrencyIcon, DropdownMenuItem, type IDialogState, type IEntityState, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, type TableBodyRowInfo, Tooltip, TooltipContent, TooltipTrigger } from "yusr-ui";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import type AccountOld from "../../core/data/account";
-import type { AccountSliceType } from "../../core/data/account";
-import Invoice, { EInvoiceStatus, InvoiceSlice, InvoiceStatus, InvoiceType } from "../../core/data/invoice";
-import { InvoicesListReportRequest, InvoicesListReportType } from "../../core/data/report/invoicesListReportType";
-import ReportConstants from "../../core/data/report/reportConstants";
-import { EInvoicingEnvironmentType } from "../../core/data/settingOld";
-import InvoicesApiService from "../../core/networking/invoiceApiService";
-import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
-import ReportButton from "../reports/reportButton";
-import ChangeInvoiceDialog, { type InvoiceDialogMode } from "./changeInvoiceDialog";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+
 
 export default function InvoicesPage({
-  entityName,
-  addNewItemTitle,
-  totalInvoicesTitle,
-  title,
-  slice,
-  stateKey,
-  dialogStateKey,
-  fixedType: fixedType,
-  selectFormState,
-  accountSlice,
-  accountState,
-  hasPagePermission,
-  basePath
+	totalInvoicesTitle,
+	title,
+	fixedType,
+	hasPagePermission,
+	permissionResource
 }: {
-  entityName?: string;
-  addNewItemTitle?: string;
-  totalInvoicesTitle?: string;
-  title: string;
-  slice: ReturnType<typeof InvoiceSlice.create>;
-  stateKey: keyof RootState;
-  dialogStateKey: keyof RootState;
-  fixedType?: InvoiceType;
-  selectFormState: (state: any) => { formData: Partial<Invoice>; errors: Record<string, string>; };
-  accountSlice: AccountSliceType;
-  accountState: IEntityState<AccountOld>;
-  hasPagePermission: boolean;
-  basePath?: string;
+	entityName?: string;
+	addNewItemTitle?: string;
+	totalInvoicesTitle?: string;
+	title: string;
+	fixedType: InvoiceType;
+	hasPagePermission: boolean;
+	basePath?: string;
+	permissionResource: string;
 })
 {
-  const { t } = useTranslation(["accounting", "common"]);
-  const dispatch = useAppDispatch();
-  const [searchText, setSearchText] = useState<string | undefined>(undefined);
-  const [customMode, setCustomMode] = useState<InvoiceDialogMode | undefined>(undefined);
-  const invoiceState = useAppSelector((state) => state[stateKey] as IEntityState<Invoice>);
-  const authState = useAppSelector((state) => state.auth);
-  const invoiceDialogState = useAppSelector((state) => state[dialogStateKey] as IDialogState<Invoice>);
-  const [resendingEInvoice, setResendingEInvoice] = useState(false);
+	useSignals();
+	useEffect(() => Cubits.invoices.init([fixedType]), [fixedType]);
+	const {t} = useTranslation("accounting");
 
-  const permissions = useAppSelector((state) =>
-    selectPermissionsByResource(state, SystemPermissionsResources.Invoices)
-  );
+	if (!hasPagePermission)
+	{
+		return <UnauthorizedPage/>;
+	}
 
-  const getPaymentStatus = (invoice: Invoice): { message: string; styles: string; } =>
-  {
-    if (invoice.paidAmount === 0)
-    {
-      return { message: t("invoices.notPaid"), styles: "bg-red-100 text-red-800" };
-    }
+	return (
+		<VerifyAccountWrapper>
+			<CrudPage>
+				<CrudPage.Header
+					title={ title }
+					addButtonTitle={ t("invoices.addNewTitle") }
+					isAddButtonVisible={ Services.auth.hasAuth(
+						SystemPermissionsResources.Invoices,
+						SystemPermissionsActions.Add
+					) }
+					actionButtons={
+						Services.auth.hasAuth(
+							SystemPermissionsResources.ReportInvoiceList,
+							SystemPermissionsActions.Get
+						)
+							? [<InvoicesReportButton fixedType={ fixedType }/>]
+							: []
+					}
+				/>
+				<Cards totalInvoicesTitle={ totalInvoicesTitle }/>
 
-    if (invoice.paidAmount === invoice.fullAmount)
-    {
-      return { message: t("invoices.fullyPaid"), styles: "bg-green-100 text-green-800" };
-    }
+				<CrudPage.SearchInput onSearch={ (searchText) => Cubits.invoices.search(searchText) }/>
 
-    if (invoice.paidAmount > invoice.fullAmount)
-    {
-      return { message: t("invoices.overpaid"), styles: "bg-red-100 text-red-800" };
-    }
+				<PageTable fixedType={ fixedType } permissionResource={ permissionResource }/>
 
-    return {
-      message: t("invoices.partiallyPaid", { amount: invoice.paidAmount, currency: authState.setting?.currency?.code }),
-      styles: "bg-orange-100 text-orange-800"
-    };
-  };
+				<CrudPage.ChangeDialog
+					changeDialog={ (dto: InvoiceDto | undefined, closeDialog) =>
+					{
+						return (
+							<ChangeInvoiceDialog
+								entity={ dto
+									? Invoice.load(dto)
+									: Invoice.create({type: fixedType}) }
+								service={ Services.invoicesApi }
+								fixedType={ fixedType }
+								onSuccess={ (data: Invoice) =>
+								{
+									if (data.mode.value === ChangeableEntityMode.Create)
+									{
+										Cubits.invoices.add(data);
+										closeDialog();
+									}
+									else if (data.mode.value === ChangeableEntityMode.Update)
+									{
+										Cubits.invoices.update(data);
+									}
+								} }
+							/>
+						);
+					} }
+				/>
 
-  const getEInvoiceStatus = (invoice: Invoice): { message: string; styles: string; } =>
-  {
-    if (
-      authState.setting?.eInvoicingEnvironmentType === EInvoicingEnvironmentType.NotRegistered
-      || invoice.statusId !== InvoiceStatus.Valid
-      || (invoice.type !== InvoiceType.Sell && invoice.type !== InvoiceType.SellReturn)
-    )
-    {
-      return { message: "", styles: "" };
-    }
+				<CrudPage.DeleteDialog
+					entityNameSelector={ () => `"${ t("invoices.entityName") }"` }
+					service={ Services.invoicesApi }
+					onSuccess={ (entity) => Cubits.invoices.delete(entity) }
+				/>
+			</CrudPage>
+		</VerifyAccountWrapper>
+	);
+}
 
-    if (invoice.eInvoiceStatus === EInvoiceStatus.NotSent)
-    {
-      return { message: t("invoices.notSent"), styles: "bg-red-100 text-red-800" };
-    }
+function Cards({totalInvoicesTitle}: { totalInvoicesTitle?: string })
+{
+	useSignals();
+	const {t} = useTranslation("accounting");
+	return (
+		<CrudPage.Cards
+			cards={ [{
+				title: totalInvoicesTitle ?? t("invoices.totalInvoices"),
+				data: (Cubits.invoices.count.value ?? 0).toString(),
+				icon: <FileTextIcon className="h-4 w-4 text-muted-foreground"/>
+			}] }
+		/>
+	);
+}
 
-    if (invoice.eInvoiceStatus === EInvoiceStatus.SentWithWarnings)
-    {
-      return { message: t("invoices.sentWithWarnings"), styles: "bg-orange-100 text-orange-800" };
-    }
+function PageTable({fixedType, permissionResource}: {
+	fixedType: InvoiceType,
+	permissionResource: string,
+})
+{
+	useSignals();
+	const resendingEInvoice = useMemo(() => signal(false), []);
+	const {t} = useTranslation(["accounting", "common"]);
 
-    if (invoice.eInvoiceStatus === EInvoiceStatus.SentCorrectly)
-    {
-      return { message: t("invoices.sent"), styles: "bg-green-100 text-green-800" };
-    }
+	const resendEInvoice = async (invoice: Invoice) =>
+	{
+		resendingEInvoice.value = true;
+		const res = await Services.invoicesApi.ResendEInvoice(invoice.id.value);
+		if (res.status === 200 && res.data != undefined)
+		{
+			if (res.data === EInvoiceStatus.NotSent)
+			{
+				toast.error(t("invoices.resendFailed"));
+			}
+			else
+			{
+				toast.success(t("invoices.resendSuccess"));
+			}
+			invoice.eInvoiceStatus.value = res.data;
+		}
+		resendingEInvoice.value = false;
+	};
 
-    return { message: "", styles: "" };
-  };
+	if (Cubits.invoices.state.value instanceof PageLoading)
+	{
+		return <TablePreview.Loading/>;
+	}
+	const getTableHeadRows = () =>
+	{
+		const rows = [{rowBody: "", rowStyles: "text-left w-12.5"}, {
+			rowBody: t("invoices.invoiceId"),
+			rowStyles: "w-24"
+		}];
 
-  const service = useMemo(() => new InvoicesApiService(), []);
+		if (fixedType === InvoiceType.Quotation)
+		{
+			rows.push({rowBody: t("invoices.notes"), rowStyles: "w-32"});
+		}
+		else
+		{
+			rows.push({rowBody: t("invoices.type"), rowStyles: "w-32"});
+		}
 
-  const getActions = (
-    entity: Invoice,
-    ItemComponent: React.ComponentType<React.ComponentProps<any>>
-  ) =>
-  {
-    const items: React.ReactNode[] = [];
-    if (entity.type === InvoiceType.Sell || entity.type === InvoiceType.Purchase)
-    {
-      items.push(
-        <ItemComponent
-          className="text-orange-700 font-semibold"
-          onSelect={ () =>
-          {
-            setCustomMode("return");
-            dispatch(slice.dialogActions.openChangeDialog(entity));
-          } }
-        >
-          <Undo2 className="h-4 w-4 me-2" />
-          <h4 className="text-sm">{ t("invoices.return") }</h4>
-        </ItemComponent>
-      );
+		rows.push(
+			{rowBody: t("invoices.date"), rowStyles: "w-32"},
+			{rowBody: t("invoices.account"), rowStyles: "w-48"},
+			{rowBody: t("invoices.store"), rowStyles: "w-32"},
+			{rowBody: t("invoices.total"), rowStyles: "w-32"}
+		);
 
-      items.push(
-        <ItemComponent
-          className="text-blue-600 font-semibold"
-          onSelect={ () =>
-          {
-            setCustomMode("copy");
+		if (fixedType === InvoiceType.Sell)
+		{
+			rows.push(
+				{rowBody: t("invoices.status"), rowStyles: "w-32"},
+				{rowBody: "", rowStyles: "w-32"}
+			);
+		}
 
-            dispatch(slice.dialogActions.openChangeDialog(entity));
-          } }
-        >
-          <Copy className="h-4 w-4 me-2" />
-          { t("invoices.copyInvoice") }
-        </ItemComponent>
-      );
-    }
+		if (
+			Services.auth.setting?.eInvoicingEnvironmentType.value !== EInvoicingEnvironmentType.NotRegistered
+			&& fixedType === InvoiceType.Sell
+		)
+		{
+			rows.push({rowBody: t("invoices.eInvoiceStatus"), rowStyles: "w-50"});
+		}
 
-    if (entity.type === InvoiceType.Quotation)
-    {
-      items.push(
-        <ItemComponent
-          className="text-green-600 font-semibold"
-          onSelect={ () =>
-          {
-            setCustomMode("quotationToSales");
+		if (
+			Services.auth.hasAuth(
+				SystemPermissionsResources.ReportInvoice,
+				SystemPermissionsActions.Get
+			)
+		)
+		{
+			rows.push({rowBody: "", rowStyles: "w-32"});
+		}
 
-            dispatch(slice.dialogActions.openChangeDialog(entity));
-          } }
-        >
-          <FilePlusCorner className="h-4 w-4 me-2" />
-          { t("invoices.convertToSales") }
-        </ItemComponent>
-      );
-    }
+		return rows;
+	};
 
-    return items;
-  };
+	const getPaymentStatus = (invoice: Invoice): { message: string; styles: string; } =>
+	{
+		if (invoice.paidAmount.value === 0)
+		{
+			return {message: t("invoices.notPaid"), styles: "bg-red-100 text-red-800"};
+		}
 
-  const resendEInvoice = async (invoice: Invoice) =>
-  {
-    setResendingEInvoice(true);
-    const res = await service.ResendEInvoice(invoice.id);
-    if (res.status === 200 && res.data != undefined)
-    {
-      if (res.data === EInvoiceStatus.NotSent)
-      {
-        toast.error(t("invoices.resendFailed"));
-      }
-      else
-      {
-        toast.success(t("invoices.resendSuccess"));
-      }
-      dispatch(slice.entityActions.refresh({ data: { ...invoice, eInvoiceStatus: res.data } }));
-    }
-    setResendingEInvoice(false);
-  };
+		if (invoice.paidAmount.value === invoice.fullAmount.value)
+		{
+			return {message: t("invoices.fullyPaid"), styles: "bg-green-100 text-green-800"};
+		}
 
-  const getTableHeadRows = () =>
-  {
-    const rows = [{ rowName: "", rowStyles: "text-left w-12.5" }, {
-      rowName: t("invoices.invoiceId"),
-      rowStyles: "w-24"
-    }];
+		if (invoice.paidAmount.value > invoice.fullAmount.value)
+		{
+			return {message: t("invoices.overpaid"), styles: "bg-red-100 text-red-800"};
+		}
 
-    if (fixedType === InvoiceType.Quotation)
-    {
-      rows.push({ rowName: t("invoices.notes"), rowStyles: "w-32" });
-    }
-    else
-    {
-      rows.push({ rowName: t("invoices.type"), rowStyles: "w-32" });
-    }
+		return {
+			message: t("invoices.partiallyPaid", {
+				amount: invoice.paidAmount.value,
+				currency: Services.auth.setting?.currency?.value.code.value
+			}),
+			styles: "bg-orange-100 text-orange-800"
+		};
+	};
 
-    rows.push(
-      { rowName: t("invoices.date"), rowStyles: "w-32" },
-      { rowName: t("invoices.account"), rowStyles: "w-48" },
-      { rowName: t("invoices.store"), rowStyles: "w-32" },
-      { rowName: t("invoices.total"), rowStyles: "w-32" }
-    );
+	const getEInvoiceStatus = (invoice: Invoice): { message: string; styles: string; } =>
+	{
+		if (
+			Services.auth.setting?.eInvoicingEnvironmentType.value === EInvoicingEnvironmentType.NotRegistered
+			|| invoice.statusId.value !== InvoiceStatus.Valid
+			|| (invoice.type.value !== InvoiceType.Sell && invoice.type.value !== InvoiceType.SellReturn)
+		)
+		{
+			return {message: "", styles: ""};
+		}
 
-    if (fixedType === InvoiceType.Sell)
-    {
-      rows.push(
-        { rowName: t("invoices.status"), rowStyles: "w-32" },
-        { rowName: "", rowStyles: "w-32" }
-      );
-    }
+		if (invoice.eInvoiceStatus.value === EInvoiceStatus.NotSent)
+		{
+			return {message: t("invoices.notSent"), styles: "bg-red-100 text-red-800"};
+		}
 
-    if (
-      authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
-      && fixedType === InvoiceType.Sell
-    )
-    {
-      rows.push({ rowName: t("invoices.eInvoiceStatus"), rowStyles: "w-50" });
-    }
+		if (invoice.eInvoiceStatus.value === EInvoiceStatus.SentWithWarnings)
+		{
+			return {message: t("invoices.sentWithWarnings"), styles: "bg-orange-100 text-orange-800"};
+		}
 
-    if (
-      SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.ReportInvoice,
-        SystemPermissionsActions.Get
-      )
-    )
-    {
-      rows.push({ rowName: "", rowStyles: "w-32" });
-    }
+		if (invoice.eInvoiceStatus.value === EInvoiceStatus.SentCorrectly)
+		{
+			return {message: t("invoices.sent"), styles: "bg-green-100 text-green-800"};
+		}
 
-    return rows;
-  };
+		return {message: "", styles: ""};
+	};
 
-  const getTableRowMapper = (invoice: Invoice) =>
-  {
-    const cells: TableBodyRowInfo[] = [{ rowName: `#${invoice.id}`, rowStyles: "" }];
+	const getActions = (
+		entity: Invoice,
+		openEditDialog: (entity: Invoice) => void,
+		ItemComponent: typeof DropdownMenuItem | typeof ContextMenuItem
+	) =>
+	{
+		const items: React.ReactNode[] = [];
+		if (entity.type.value === InvoiceType.Sell || entity.type.value === InvoiceType.Purchase)
+		{
+			items.push(
+				<ItemComponent
+					className="text-orange-700 font-semibold"
+					onSelect={ () =>
+					{
+						entity.invoiceMode.value = InvoiceMode.Return;
+						openEditDialog(entity);
+					} }
+				>
+					<Undo2 className="h-4 w-4 me-2"/>
+					<h4 className="text-sm">{ t("invoices.return") }</h4>
+				</ItemComponent>
+			);
 
-    if (fixedType === InvoiceType.Quotation)
-    {
-      cells.push({ rowName: invoice.notes, rowStyles: "font-semibold" });
-    }
-    else
-    {
-      cells.push({ rowName: getInvoiceTypeName(invoice.type, t), rowStyles: "font-semibold" });
-    }
+			items.push(
+				<ItemComponent
+					className="text-blue-600 font-semibold"
+					onSelect={ () =>
+					{
+						entity.invoiceMode.value = InvoiceMode.Copy;
+						openEditDialog(entity);
+					} }
+				>
+					<Copy className="h-4 w-4 me-2"/>
+					{ t("invoices.copyInvoice") }
+				</ItemComponent>
+			);
+		}
 
-    cells.push(
-      { rowName: new Date(invoice.date).toLocaleDateString("en-CA"), rowStyles: "" },
-      { rowName: invoice.actionAccountName || "-", rowStyles: "" },
-      { rowName: invoice.storeName || "-", rowStyles: "" },
-      {
-        rowName: (
-          <div className="flex items-center gap-1">
-            { (invoice.fullAmount ?? 0).toLocaleString("en-US") }
-            <CurrencyIcon />
-          </div>
-        ),
-        rowStyles: "font-bold text-blue-600"
-      }
-    );
+		if (entity.type.value === InvoiceType.Quotation)
+		{
+			items.push(
+				<ItemComponent
+					className="text-green-600 font-semibold"
+					onSelect={ () =>
+					{
+						entity.invoiceMode.value = InvoiceMode.QuotationToSales;
+						openEditDialog(entity);
+					} }
+				>
+					<FilePlusCorner className="h-4 w-4 me-2"/>
+					{ t("invoices.convertToSales") }
+				</ItemComponent>
+			);
+		}
 
-    if (fixedType === InvoiceType.Sell)
-    {
-      cells.push(
-        {
-          rowName: invoice.statusId === InvoiceStatus.Valid
-            ? t("invoices.valid")
-            : t("invoices.deleted"),
-          rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            invoice.statusId === InvoiceStatus.Valid
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`
-        },
-        {
-          rowName: getPaymentStatus(invoice).message,
-          rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            getPaymentStatus(invoice).styles
-          }`
-        }
-      );
-    }
+		return items;
+	};
+	const getTableRowMapper = (invoice: Invoice) =>
+	{
+		const cells: { rowBody: ReactNode, rowStyles: string }[] = [{rowBody: `#${ invoice.id }`, rowStyles: ""}];
 
-    if (
-      authState.setting?.eInvoicingEnvironmentType !== EInvoicingEnvironmentType.NotRegistered
-      && fixedType === InvoiceType.Sell
-    )
-    {
-      cells.push({
-        rowName: (
-          <div className="flex items-center gap-2">
-            { getEInvoiceStatus(invoice).message && (
-              <span
-                className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  getEInvoiceStatus(invoice).styles
-                }` }
-              >
+		if (fixedType === InvoiceType.Quotation)
+		{
+			cells.push({rowBody: invoice.notes, rowStyles: "font-semibold"});
+		}
+		else
+		{
+			cells.push({rowBody: getInvoiceTypeName(invoice.type.value, t), rowStyles: "font-semibold"});
+		}
+
+		cells.push(
+			{rowBody: new Date(invoice.date.value).toLocaleDateString("en-CA"), rowStyles: ""},
+			{rowBody: invoice.actionAccountName || "-", rowStyles: ""},
+			{rowBody: invoice.storeName || "-", rowStyles: ""},
+			{
+				rowBody: (
+					<div className="flex items-center gap-1">
+						{ Number(invoice.fullAmount ?? 0).toLocaleString("en-US") }
+						<ErpCurrencyIcon/>
+					</div>
+				),
+				rowStyles: "font-bold text-blue-600"
+			}
+		);
+
+		if (fixedType === InvoiceType.Sell)
+		{
+			cells.push(
+				{
+					rowBody: invoice.statusId.value === InvoiceStatus.Valid
+						? t("invoices.valid")
+						: t("invoices.deleted"),
+					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+						invoice.statusId.value === InvoiceStatus.Valid
+							? "bg-green-100 text-green-800"
+							: "bg-red-100 text-red-800"
+					}`
+				},
+				{
+					rowBody: getPaymentStatus(invoice).message,
+					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+						getPaymentStatus(invoice).styles
+					}`
+				}
+			);
+		}
+
+		if (
+			Services.auth.setting?.eInvoicingEnvironmentType.value !== EInvoicingEnvironmentType.NotRegistered
+			&& fixedType === InvoiceType.Sell
+		)
+		{
+			cells.push({
+				rowBody: (
+					<div className="flex items-center gap-2">
+						{ getEInvoiceStatus(invoice).message && (
+							<span
+								className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+									getEInvoiceStatus(invoice).styles
+								}` }
+							>
                 { getEInvoiceStatus(invoice).message }
               </span>
-            ) }
-            { invoice.eInvoiceStatus === EInvoiceStatus.NotSent
-              && invoice.statusId === InvoiceStatus.Valid
-              && (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.SellReturn) && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-50"
-                    onClick={ () => resendEInvoice(invoice) }
-                    disabled={ resendingEInvoice }
-                  >
-                    <RotateCw className="h-3.5 w-3.5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top">
-                  <p>{ t("invoices.resendTooltip") }</p>
-                </TooltipContent>
-              </Tooltip>
-            ) }
-          </div>
-        ),
-        rowStyles: ""
-      });
-    }
+						) }
+						{ invoice.eInvoiceStatus.value === EInvoiceStatus.NotSent
+							&& invoice.statusId.value === InvoiceStatus.Valid
+							&& (invoice.type.value === InvoiceType.Sell || invoice.type.value === InvoiceType.SellReturn) && (
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<Button
+											variant="ghost"
+											size="icon"
+											className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-50"
+											onClick={ () => resendEInvoice(invoice) }
+											disabled={ resendingEInvoice.value }
+										>
+											<RotateCw className="h-3.5 w-3.5"/>
+										</Button>
+									</TooltipTrigger>
+									<TooltipContent side="top">
+										<p>{ t("invoices.resendTooltip") }</p>
+									</TooltipContent>
+								</Tooltip>
+							) }
+					</div>
+				),
+				rowStyles: ""
+			});
+		}
 
-    if (
-      SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.ReportAccountStatement,
-        SystemPermissionsActions.Get
-      ) && invoice.statusId === InvoiceStatus.Valid
-    )
-    {
-      cells.push({
-        rowName: (
-          <ReportButton
-            reportName={ ReportConstants.Invoice }
-            request={ { invoiceId: invoice.id } }
-            fileName={ `${invoice.id}-${getInvoiceTypeName(invoice.type, t)}-${invoice.actionAccountName}` }
-          />
-        ),
-        rowStyles: "w-32"
-      });
-    }
+		if (
+			Services.auth.hasAuth(
+				SystemPermissionsResources.ReportAccountStatement,
+				SystemPermissionsActions.Get
+			) && invoice.statusId.value === InvoiceStatus.Valid
+		)
+		{
+			cells.push({
+				rowBody: (
+					<ReportButton
+						reportName={ ReportConstants.Invoice }
+						request={ {invoiceId: invoice.id} }
+						fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type.value, t) }-${ invoice.actionAccountName }` }
+					/>
+				),
+				rowStyles: "w-32"
+			});
+		}
 
-    return cells;
-  };
+		return cells;
+	};
 
-  return (
-    <VerfiAccountWrapper>
-      <CrudPageOld<Invoice>
-        basePath={ basePath }
-        routeIdParam="id"
-        onRouteOpen={ async (id) =>
-        {
-          if (!hasPagePermission)
-          {
-            return;
-          }
+	if (Cubits.invoices.state.value instanceof PageLoaded)
+	{
+		return (
+			<CrudPage.Table>
+				<CrudPage.TableBody<Invoice, InvoiceDto>
+					data={ Cubits.invoices.entities.value }
+					headerRows={ getTableHeadRows() }
+					tableRowMapper={ (invoice: Invoice) => getTableRowMapper(invoice) }
+					hasUpdatePermission={ Services.auth.hasAuth(
+						permissionResource,
+						SystemPermissionsActions.Update
+					) }
+					hasDeletePermission={ (entity) => entity.type.value === InvoiceType.Quotation ?
+						Services.auth.hasAuth(
+							permissionResource,
+							SystemPermissionsActions.Delete
+						)
+						: false
+					}
+					onEditClicked={ (entity) => entity.invoiceMode.value = InvoiceMode.Normal }
+					dropdownItems={ (entity, openEditDialog) => getActions(entity, openEditDialog, DropdownMenuItem) }
+					contextMenuItems={ (entity, openEditDialog) => getActions(entity, openEditDialog, ContextMenuItem) }
+				/>
+				<CrudPage.TablePagination
+					pageSize={ Cubits.invoices.pageSize.value }
+					totalNumber={ Cubits.invoices.count.value }
+					currentPage={ Cubits.invoices.currentPage.value }
+					onPageChanged={ (newPage) =>
+					{
+						Cubits.invoices.changePage(newPage);
+					} }
+				/>
+			</CrudPage.Table>
+		);
+	}
 
-          const invoice = (await service.Get(id)).data;
-          if (invoice == undefined)
-          {
-            return;
-          }
+	if (Cubits.invoices.state.value instanceof PageError)
+	{
+		return <TablePreview.Error/>;
+	}
 
-          if (
-            (fixedType === InvoiceType.Purchase
-              && (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.SellReturn
-                || invoice.type === InvoiceType.Quotation))
-            || (fixedType === InvoiceType.Sell
-              && (invoice.type === InvoiceType.Purchase || invoice.type === InvoiceType.PurchaseReturn))
-          )
-          {
-            toast.error(t("invoices.invoiceNotFound"));
-            return;
-          }
+	return <TablePreview.Empty/>;
+}
 
-          dispatch(slice.dialogActions.openChangeDialog(invoice));
-        } }
-        title={ title }
-        entityName={ entityName ?? t("invoices.entityName") }
-        addNewItemTitle={ addNewItemTitle ?? t("invoices.addNewTitle") }
-        onSearchTextChange={ setSearchText }
-        actionButtons={ SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.ReportInvoiceList,
-            SystemPermissionsActions.Get
-          )
-          ? [
-            <ReportButton<InvoicesListReportRequest>
-              reportName={ ReportConstants.InvoicesList }
-              request={ {
-                types: fixedType === InvoiceType.Sell
-                  ? [InvoiceType.Sell, InvoiceType.SellReturn, InvoiceType.Quotation]
-                  : [InvoiceType.Purchase, InvoiceType.PurchaseReturn],
-                searchText: searchText,
-                reportType: InvoicesListReportType.InvoicesList
-              } }
-            />
-          ]
-          : [] }
-        permissions={ {
-          getPermission: permissions.getPermission,
-          addPermission: permissions.addPermission,
-          updatePermission: permissions.updatePermission,
-          deletePermission: false
-        } }
-        perRowPermissions={ (entity) =>
-        {
-          return {
-            getPermission: permissions.getPermission,
-            addPermission: permissions.addPermission,
-            updatePermission: permissions.updatePermission,
-            deletePermission: entity.type === InvoiceType.Quotation ? permissions.deletePermission : false
-          };
-        } }
-        hasPagePermission={ hasPagePermission }
-        entityState={ invoiceState }
-        useSlice={ () => invoiceDialogState }
-        service={ service }
-        cards={ [{
-          title: totalInvoicesTitle ?? t("invoices.totalInvoices"),
-          data: (invoiceState.entities?.count ?? 0).toString(),
-          icon: <FileTextIcon className="h-4 w-4 text-muted-foreground" />
-        }] }
-        tableHeadRows={ getTableHeadRows() }
-        tableRowMapper={ (invoice: Invoice) => getTableRowMapper(invoice) }
-        actions={ {
-          filter: slice.entityActions.filter,
-          openChangeDialog: (entity) =>
-          {
-            setCustomMode(undefined);
-            return dispatch(slice.dialogActions.openChangeDialog(entity));
-          },
-          openDeleteDialog: (entity) => slice.dialogActions.openDeleteDialog(entity),
-          setIsChangeDialogOpen: (open) =>
-          {
-            if (!open)
-            {
-              setCustomMode(undefined);
-            }
-            return slice.dialogActions.setIsChangeDialogOpen(open);
-          },
-          setIsDeleteDialogOpen: (open) => slice.dialogActions.setIsDeleteDialogOpen(open),
-          refresh: slice.entityActions.refresh,
-          setCurrentPage: (page) => slice.entityActions.setCurrentPage(page)
-        } }
-        ChangeDialog={ 
-          <ChangeInvoiceDialog
-            entity={ customMode === "quotationToSales"
-              ? ({ ...invoiceDialogState.selectedRow, type: InvoiceType.Sell } as Invoice)
-              : (invoiceDialogState.selectedRow || undefined) }
-            mode={ customMode ?? (invoiceDialogState.selectedRow ? "update" : "create") }
-            service={ service }
-            slice={ slice }
-            stateKey={ stateKey }
-            selectFormState={ selectFormState }
-            fixedType={ customMode === "quotationToSales" ? InvoiceType.Sell : fixedType }
-            accountSlice={ accountSlice }
-            accountState={ accountState }
-            onSuccess={ (data, mode) =>
-            {
-              dispatch(slice.entityActions.refresh({ data: data }));
-              if (mode === "create" || mode === "return")
-              {
-                setCustomMode(undefined);
-                dispatch(slice.dialogActions.setIsChangeDialogOpen(false));
-              }
-            } }
-          />
-         }
-        dorpdownItems={ (entity) => getActions(entity, DropdownMenuItem) }
-        contextMenuItems={ (entity) => getActions(entity, ContextMenuItem) }
-      />
-    </VerfiAccountWrapper>
-  );
+function InvoicesReportButton({fixedType}: { fixedType?: InvoiceType })
+{
+	useSignals();
+	return (
+		<ReportButton<InvoicesListReportRequest>
+			reportName={ ReportConstants.InvoicesList }
+			request={ {
+				// Sell page covers Sell + SellReturn + Quotation;
+				// Purchase page covers Purchase + PurchaseReturn.
+				types:
+					fixedType === InvoiceType.Sell
+						? [InvoiceType.Sell, InvoiceType.SellReturn, InvoiceType.Quotation]
+						: [InvoiceType.Purchase, InvoiceType.PurchaseReturn],
+				// Read the live search text from the cubit so the report is scoped
+				searchText: Cubits.invoices.searchText.value,
+				reportType: InvoicesListReportType.InvoicesList
+			} }
+		/>
+	);
 }
 
 const getInvoiceTypeName = (type: InvoiceType, t: TFunction<"accounting">) =>
 {
-  switch (type)
-  {
-    case InvoiceType.Sell:
-      return t("invoices.sellInvoice");
-    case InvoiceType.Purchase:
-      return t("invoices.purchaseInvoice");
-    case InvoiceType.SellReturn:
-      return t("invoices.sellReturn");
-    case InvoiceType.Quotation:
-      return t("invoices.quotation");
-    case InvoiceType.PurchaseReturn:
-      return t("invoices.purchaseReturn");
-    default:
-      return t("invoices.unknown");
-  }
+	switch (type)
+	{
+		case InvoiceType.Sell:
+			return t("invoices.sellInvoice");
+		case InvoiceType.Purchase:
+			return t("invoices.purchaseInvoice");
+		case InvoiceType.SellReturn:
+			return t("invoices.sellReturn");
+		case InvoiceType.Quotation:
+			return t("invoices.quotation");
+		case InvoiceType.PurchaseReturn:
+			return t("invoices.purchaseReturn");
+		default:
+			return t("invoices.unknown");
+	}
 };

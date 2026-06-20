@@ -1,13 +1,19 @@
-import { ApiConstants, BaseFilterableApiServiceOld, type RequestResult, YusrApiHelper } from "yusr-ui";
-import type DashboardData from "../data/dashboardData";
+import { BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
+import { DashboardData, DashboardDataDto } from "@/core/data/dashboardData.ts";
 
-export default class DashboardApiService extends BaseFilterableApiServiceOld<DashboardData>
+
+export default class DashboardApiService extends BaseApiService<DashboardData, DashboardDataDto>
 {
-  routeName: string = "dashboard";
+	routeName: string = "dashboard";
 
-  async get(): Promise<RequestResult<DashboardData>>
-  {
-    const url = `${ApiConstants.baseUrl}/${this.routeName}`;
-    return await YusrApiHelper.Get<DashboardData>(url);
-  }
+	async get(): Promise<RequestResult<DashboardDataDto>>
+	{
+		const url = `/api/${ this.routeName }`;
+		return await YusrApiHelper.Get<DashboardDataDto>(url);
+	}
+
+	override createEntity(dto: DashboardDataDto): DashboardData
+	{
+		return new DashboardData(dto);
+	}
 }

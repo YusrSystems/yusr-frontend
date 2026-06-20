@@ -1,163 +1,169 @@
-import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/banksAndBoxesSearchableSelect";
-import { useEffect, useMemo } from "react";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect";
+import { AccountType } from "@/core/data/account";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogPropsOld } from "yusr-ui";
-import { ChangeDialogOld, FieldGroup, FormFieldOld, NumberFieldOld, SelectFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { BanksAndBoxesSlice } from "../../core/data/account";
-import type PaymentMethod from "../../core/data/paymentMethod";
-import { CommissionType, PaymentMethodSlice, PaymentMethodValidationRules } from "../../core/data/paymentMethod";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import { toast } from "sonner";
+import {
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	FormField,
+	NumberField,
+	SelectField,
+	SystemPermissionsActions,
+	TextField
+} from "yusr-ui";
+import type { PaymentMethod, PaymentMethodDto } from "@/core/data/paymentMethod.ts";
+import { CommissionType } from "@/core/data/paymentMethod.ts";
+import { useEffect } from "react";
+import { Cubits } from "@/core/services/cubits";
 
-export default function ChangePaymentMethodDialog({
-  entity,
-  mode,
-  service,
-  filterDataOutside,
-  onSuccess
-}: CommonChangeDialogPropsOld<PaymentMethod> & {
-  filterDataOutside?: boolean;
-})
+
+export default function ChangePaymentMethodDialog(
+	{entity, service, onSuccess}: CommonChangeDialogProps<PaymentMethod, PaymentMethodDto>
+)
 {
-  const { t } = useTranslation(["accounting", "common"]);
-  const dispatch = useAppDispatch();
-  const accountState = useAppSelector((state) => state.banksAndBoxes);
+	useSignals();
+	useEffect(() =>
+	{
+		Cubits.accounts.init([AccountType.Bank, AccountType.Box]);
+	}, []);
 
-  const initialValues = useMemo(
-    () => ({
-      ...entity,
-      name: entity?.name || "",
-      accountId: entity?.accountId || undefined,
-      accountName: entity?.accountName || "",
-      commissionType: entity?.commissionType || CommissionType.Percent,
-      commissionAmount: entity?.commissionAmount || 0
-    }),
-    [entity]
-  );
+	const {t} = useTranslation(["accounting", "common"]);
 
-  const { formData, errors } = useAppSelector((state) => state.paymentMethodForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    PaymentMethodValidationRules.validationRules(t),
-    (errors) => dispatch(PaymentMethodSlice.formActions.setErrors(errors))
-  );
-  useFormInit(PaymentMethodSlice.formActions.setInitialData, initialValues);
+	if (
+		(entity.mode.value === ChangeableEntityMode.Create
+			&& !Services.auth.hasAuth(SystemPermissionsResources.PaymentMethods, SystemPermissionsActions.Add))
+		|| (entity.mode.value === ChangeableEntityMode.Update
+			&& !Services.auth.hasAuth(SystemPermissionsResources.PaymentMethods, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-  useEffect(() =>
-  {
-    if (filterDataOutside)
-    {
-      return;
-    }
-    dispatch(BanksAndBoxesSlice.entityActions.filter());
-  }, []);
+	const title = entity.mode.value === ChangeableEntityMode.Create
+		? t("paymentMethods.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("paymentMethods.entityName") }`;
 
-  function formatCommission(type: CommissionType, amount: number): string | null
-  {
-    if (type === CommissionType.Amount)
-    {
-      return t("paymentMethods.commissionHintAmount", { amount });
-    }
+	function formatCommission(type: CommissionType, amount: number): string | null
+	{
+		if (type === CommissionType.Amount)
+		{
+			return t("paymentMethods.commissionHintAmount", {amount});
+		}
 
-    let numerator = amount;
-    let denominator = 100;
+		let numerator = amount;
+		let denominator = 100;
 
-    while (numerator % 1 !== 0)
-    {
-      numerator *= 10;
-      denominator *= 10;
-    }
+		while (numerator % 1 !== 0)
+		{
+			numerator *= 10;
+			denominator *= 10;
+		}
 
-    numerator = Math.round(numerator);
+		numerator = Math.round(numerator);
 
-    return t("paymentMethods.commissionHintPercent", { n: numerator, d: denominator });
-  }
+		return t("paymentMethods.commissionHintPercent", {n: numerator, d: denominator});
+	}
 
-  const title = mode === "create"
-    ? t("paymentMethods.addNewTitle")
-    : `${t("common:crudRow.edit")} ${t("paymentMethods.entityName")}`;
+	const hasBankPerm = Services.auth.hasAuth(
+		SystemPermissionsResources.AccountBank,
+		SystemPermissionsActions.Get
+	);
 
-  return (
-    <ChangeDialogOld<PaymentMethod>
-      title={ title }
-      className="sm:max-w-xl"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => accountState.isLoading }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-    >
-      <FieldGroup>
-        <div className="grid grid-cols-2 gap-4">
-          <TextFieldOld
-            label={ t("paymentMethods.methodName") }
-            required
-            value={ formData.name || "" }
-            onChange={ (e) => dispatch(PaymentMethodSlice.formActions.updateFormData({ name: e.target.value })) }
-            isInvalid={ isInvalid("name") }
-            error={ getError("name") }
-          />
+	const hasBoxPerm = Services.auth.hasAuth(
+		SystemPermissionsResources.AccountBox,
+		SystemPermissionsActions.Get
+	);
+	const types: AccountType[] = [];
+	if (hasBankPerm)
+	{
+		types.push(AccountType.Bank);
+	}
 
-          <FormFieldOld
-            label={ t("paymentMethods.responsibleAccount") }
-            required
-            isInvalid={ isInvalid("accountId") }
-            error={ getError("accountId") }
-          >
-            <BanksAndBoxesSearchableSelect
-              selectedId={ formData.accountId }
-              selectedLabel={ formData.accountName }
-              isInvalid={ isInvalid("accountId") }
-              disabled={ mode === "update" }
-              onValueChange={ (account) =>
-              {
-                dispatch(PaymentMethodSlice.formActions.updateFormData({
-                  accountId: account?.id,
-                  accountName: account?.name
-                }));
-              } }
-            />
-          </FormFieldOld>
-        </div>
+	if (hasBoxPerm)
+	{
+		types.push(AccountType.Box);
+	}
 
-        <div className="grid grid-cols-2 gap-4">
-          <SelectFieldOld
-            label={ t("paymentMethods.commissionType") }
-            required
-            value={ formData.commissionType?.toString() || CommissionType.Percent.toString() }
-            onValueChange={ (val) =>
-              dispatch(
-                PaymentMethodSlice.formActions.updateFormData({ commissionType: Number(val) as CommissionType })
-              ) }
-            isInvalid={ isInvalid("commissionType") }
-            error={ getError("commissionType") }
-            options={ [{ label: t("paymentMethods.percentage"), value: CommissionType.Percent.toString() }, {
-              label: t("paymentMethods.fixedAmount"),
-              value: CommissionType.Amount.toString()
-            }] }
-          />
-          <div className="flex flex-col gap-1">
-            <NumberFieldOld
-              label={ t("paymentMethods.commissionValue") }
-              required
-              min={ 0.1 }
-              max={ 100 }
-              value={ formData.commissionAmount || "" }
-              onChange={ (e) =>
-                dispatch(PaymentMethodSlice.formActions.updateFormData({ commissionAmount: Number(e) })) }
-              isInvalid={ isInvalid("commissionAmount") }
-              error={ getError("commissionAmount") }
-            />
-            <p className="text-sm text-red-600 font-bold">
-              { formatCommission(
-                formData.commissionType ?? CommissionType.Percent,
-                formData.commissionAmount ?? 0
-              ) }
-            </p>
-          </div>
-        </div>
-      </FieldGroup>
-    </ChangeDialogOld>
-  );
+	if (!hasBankPerm && !hasBoxPerm)
+	{
+		toast.warning(t("paymentMethods.noPermissionToEditAdmin"));
+	}
+
+	return (
+		<ChangeDialog className="sm:max-w-lg">
+			<ChangeDialog.Header title={ title }/>
+			<FieldGroup>
+				<div className="grid grid-cols-2 gap-4">
+					<TextField
+						label={ t("paymentMethods.methodName") }
+						required
+						value={ entity.name }
+						error={ entity.getError("name") }
+					/>
+
+					<FormField
+						label={ t("paymentMethods.responsibleAccount") }
+						required
+						error={ entity.getError("accountId") }
+					>
+						<AccountsSearchableSelect
+							id={ entity.accountId }
+							label={ entity.accountName }
+							types={ types }
+							disabled={ !((hasBankPerm || hasBoxPerm) && entity.mode.value === ChangeableEntityMode.Create) }
+						/>
+					</FormField>
+				</div>
+
+				<div className="grid grid-cols-2 gap-4">
+					<SelectField
+						label={ t("paymentMethods.commissionType") }
+						required
+						value={ entity.commissionType }
+						error={ entity.getError("commissionType") }
+						options={ [{
+							label: t("paymentMethods.percentage"),
+							value: CommissionType.Percent
+						}, {
+							label: t("paymentMethods.fixedAmount"),
+							value: CommissionType.Amount
+						}] }
+					/>
+					<FormField
+						label={ t("paymentMethods.commissionValue") }
+						required
+						error={ entity.getError("commissionAmount") }
+					>
+						<NumberField
+							required
+							min={ 0.1 }
+							max={ 100 }
+							value={ entity.commissionAmount }
+							error={ entity.getError("commissionAmount") }
+						/>
+						<p className="text-sm text-red-600 font-bold">
+							{ formatCommission(
+								entity.commissionType.value ?? CommissionType.Percent,
+								entity.commissionAmount.value ?? 0
+							) }
+						</p>
+					</FormField>
+				</div>
+			</FieldGroup>
+
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+				<ChangeDialog.SaveButton<PaymentMethod, PaymentMethodDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data) }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

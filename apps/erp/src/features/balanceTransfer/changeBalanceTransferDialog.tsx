@@ -1,165 +1,174 @@
-import BanksAndBoxesSearchableSelect from "@/core/components/searchableSelect/banksAndBoxesSearchableSelect";
-import { useEffect, useMemo, useState } from "react";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect";
+import { AccountType } from "@/core/data/account";
+import { Services } from "@/core/services/services";
+import { signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogPropsOld } from "yusr-ui";
-import { ChangeDialogOld, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormFieldOld, NumberFieldOld, NumbertoWordsService, TextAreaFieldOld, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { BanksAndBoxesSlice } from "../../core/data/account";
-import type BalanceTransfer from "../../core/data/balanceTransfer";
-import { BalanceTransferSlice, BalanceTransferValidationRules } from "../../core/data/balanceTransfer";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import { toast } from "sonner";
+import {
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	DateField,
+	FieldGroup,
+	FieldsSection,
+	FormField,
+	NumberField,
+	NumbertoWordsService,
+	SystemPermissionsActions,
+	TextAreaField,
+	TextField
+} from "yusr-ui";
+import type { BalanceTransfer, BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { Cubits } from "@/core/services/cubits.ts";
+
 
 export default function ChangeBalanceTransferDialog(
-  { entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<BalanceTransfer>
+	{entity, service, onSuccess}: CommonChangeDialogProps<BalanceTransfer, BalanceTransferDto>
 )
 {
-  const { t } = useTranslation(["accounting", "common"]);
-  const [amountToWords, setAmountToWords] = useState("");
-  const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const accountState = useAppSelector((state) => state.banksAndBoxes);
+	useSignals();
 
-  const initialValues = useMemo(() => ({
-    ...entity,
-    date: entity?.date || new Date().toLocaleDateString("en-CA"),
-    amount: entity?.amount || 0
-  }), [entity]);
+	const {t} = useTranslation(["accounting", "common"]);
+	const amountToWords = useMemo(() => signal<string>(""), []);
+	const hasBankPerm = Services.auth.hasAuth(
+		SystemPermissionsResources.AccountBank,
+		SystemPermissionsActions.Get
+	);
 
-  const { formData, errors } = useAppSelector((state) => state.balanceTransferForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    BalanceTransferValidationRules.validationRules(t),
-    (errors) => dispatch(BalanceTransferSlice.formActions.setErrors(errors))
-  );
-  useFormInit(BalanceTransferSlice.formActions.setInitialData, initialValues);
+	const hasBoxPerm = Services.auth.hasAuth(
+		SystemPermissionsResources.AccountBox,
+		SystemPermissionsActions.Get
+	);
+	const types: AccountType[] = useMemo(() => [], []);
+	if (hasBankPerm)
+	{
+		types.push(AccountType.Bank);
+	}
 
-  useEffect(() =>
-  {
-    dispatch(BanksAndBoxesSlice.entityActions.filter(undefined));
-  }, [dispatch]);
+	if (hasBoxPerm)
+	{
+		types.push(AccountType.Box);
+	}
+	useEffect(() =>
+	{
+		Cubits.accounts.init(types);
+	}, [types]);
+	useEffect(() =>
+	{
+		if (entity.amount.value !== undefined && Services.auth.setting?.currency?.value)
+		{
+			amountToWords.value = NumbertoWordsService.ConvertAmount(
+				entity.amount.value,
+				Services.auth.setting.currency.value
+			);
+		}
+	}, [entity.amount.value, amountToWords]);
 
-  useEffect(() =>
-  {
-    if (formData.amount !== undefined && authState.setting?.currency)
-    {
-      setAmountToWords(NumbertoWordsService.ConvertAmount(formData.amount, authState.setting.currency));
-    }
-  }, [formData.amount, authState.setting?.currency]);
+	if (
+		(entity.mode.value === ChangeableEntityMode.Create
+			&& !Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Add))
+		|| (entity.mode.value === ChangeableEntityMode.Update
+			&& !Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-  const availableFromAccounts = useMemo(() =>
-  {
-    return accountState.entities.data?.filter((a) => a.id !== formData.toAccountId) ?? [];
-  }, [accountState.entities.data, formData.toAccountId]);
+	const title = entity.mode.value === ChangeableEntityMode.Create
+		? t("balanceTransfers.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("balanceTransfers.entityName") }`;
 
-  const availableToAccounts = useMemo(() =>
-  {
-    return accountState.entities.data?.filter((a) => a.id !== formData.fromAccountId) ?? [];
-  }, [accountState.entities.data, formData.fromAccountId]);
+	const hasSelectAccountPermission = hasBankPerm || hasBoxPerm;
+	const canChangeBankAccount = hasSelectAccountPermission && entity.mode.value === ChangeableEntityMode.Create;
 
-  return (
-    <ChangeDialogOld<BalanceTransfer>
-      title={ mode === "create"
-        ? t("balanceTransfers.addNewTitle")
-        : `${t("common:crudRow.edit")} ${t("balanceTransfers.entityName")}` }
-      className="sm:max-w-2xl"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => accountState.isLoading }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-    >
-      <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
-        <FieldGroup>
-          <FieldsSection title={ t("balanceTransfers.transferDetails") } columns={ 2 }>
-            <DateField
-              label={ t("balanceTransfers.transferDate") }
-              required
-              value={ formData.date ? new Date(formData.date) : undefined }
-              onChange={ (date) => dispatch(BalanceTransferSlice.formActions.updateFormData({ date: date })) }
-              isInvalid={ isInvalid("date") }
-              error={ getError("date") }
-            />
+	if (!hasSelectAccountPermission)
+	{
+		toast.warning(t("paymentMethods.noPermissionToEditAdmin"));
+	}
 
-            <NumberFieldOld
-              label={ t("balanceTransfers.amount") }
-              required
-              value={ formData.amount || 0 }
-              onChange={ (val) => dispatch(BalanceTransferSlice.formActions.updateFormData({ amount: val })) }
-              isInvalid={ isInvalid("amount") }
-              error={ getError("amount") }
-              currency={ <CurrencyIcon /> }
-            />
-            <div className="col-span-full">
-              <TextFieldOld
-                label={ t("balanceTransfers.amountInWords") }
-                value={ amountToWords }
-                onChange={ () => undefined }
-                disabled
-              />
-            </div>
-          </FieldsSection>
+	return (
+		<ChangeDialog className="sm:max-w-lg">
+			<ChangeDialog.Header
+				title={ title }
+			/>
 
-          <FieldsSection title={ t("balanceTransfers.transferParties") } columns={ 2 }>
-            <FormFieldOld
-              label={ t("balanceTransfers.fromAccount") }
-              required
-              isInvalid={ isInvalid("fromAccountId") }
-              error={ getError("fromAccountId") }
-            >
-              <BanksAndBoxesSearchableSelect
-                selectedId={ formData.fromAccountId }
-                selectedLabel={ formData.fromAccountName }
-                items={ availableFromAccounts }
-                isInvalid={ isInvalid("fromAccountId") }
-                onValueChange={ (account) =>
-                {
-                  dispatch(
-                    BalanceTransferSlice.formActions.updateFormData({
-                      fromAccountId: account?.id,
-                      fromAccountName: account?.name
-                    })
-                  );
-                } }
-              />
-            </FormFieldOld>
+			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
+				<FieldGroup>
+					<FieldsSection title={ t("balanceTransfers.transferDetails") } columns={ 2 }>
+						<DateField
+							label={ t("balanceTransfers.transferDate") }
+							value={ entity.date }
+							required
+							error={ entity.getError("date") }
+						/>
+						<NumberField
+							label={ t("balanceTransfers.amount") }
+							required
+							value={ entity.amount }
+							error={ entity.getError("amount") }
+							currency={ <ErpCurrencyIcon/> }
+						/>
+						<div className="col-span-full">
+							<TextField
+								label={ t("balanceTransfers.amountInWords") }
+								value={ amountToWords }
+								disabled
+							/>
+						</div>
+					</FieldsSection>
 
-            <FormFieldOld
-              label={ t("balanceTransfers.toAccount") }
-              required
-              isInvalid={ isInvalid("toAccountId") }
-              error={ getError("toAccountId") }
-            >
-              <BanksAndBoxesSearchableSelect
-                selectedId={ formData.toAccountId }
-                selectedLabel={ formData.toAccountName }
-                items={ availableToAccounts }
-                isInvalid={ isInvalid("toAccountId") }
-                onValueChange={ (account) =>
-                {
-                  dispatch(
-                    BalanceTransferSlice.formActions.updateFormData({
-                      toAccountId: account?.id,
-                      toAccountName: account?.name
-                    })
-                  );
-                } }
-              />
-            </FormFieldOld>
-          </FieldsSection>
+					<FieldsSection title={ t("balanceTransfers.transferParties") } columns={ 2 }>
+						<FormField
+							label={ t("balanceTransfers.fromAccount") }
+							required
+							error={ entity.getError("fromAccountId") }
+						>
+							<AccountsSearchableSelect
+								label={ entity.fromAccountName }
+								id={ entity.fromAccountId }
+								types={ types }
+								disabled={ !canChangeBankAccount }
+							/>
+						</FormField>
 
-          <FieldsSection title={ t("balanceTransfers.additionalInfo") } columns={ 1 }>
-            <TextAreaFieldOld
-              label={ t("balanceTransfers.description") }
-              value={ formData.description || "" }
-              onChange={ (e) =>
-                dispatch(BalanceTransferSlice.formActions.updateFormData({ description: e.target.value })) }
-              rows={ 3 }
-              placeholder={ ". . ." }
-            />
-          </FieldsSection>
-        </FieldGroup>
-      </div>
-    </ChangeDialogOld>
-  );
+						<FormField
+							label={ t("balanceTransfers.toAccount") }
+							required
+							error={ entity.getError("toAccountId") }
+						>
+							<AccountsSearchableSelect
+								label={ entity.toAccountName }
+								id={ entity.toAccountId }
+								types={ types }
+								disabled={ !canChangeBankAccount }
+							/>
+						</FormField>
+					</FieldsSection>
+
+					<FieldsSection title={ t("balanceTransfers.additionalInfo") } columns={ 1 }>
+						<TextAreaField
+							label={ t("balanceTransfers.description") }
+							value={ entity.description }
+							rows={ 3 }
+							placeholder={ ". . ." }
+						/>
+					</FieldsSection>
+				</FieldGroup>
+			</div>
+
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+				<ChangeDialog.SaveButton<BalanceTransfer, BalanceTransferDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data) }
+
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

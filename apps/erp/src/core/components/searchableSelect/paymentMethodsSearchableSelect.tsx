@@ -1,39 +1,84 @@
-import type PaymentMethod from "@/core/data/paymentMethod";
-import { PaymentMethodSlice } from "@/core/data/paymentMethod";
-import PaymentMethodsApiService from "@/core/networking/paymentMethodApiService";
-import ChangePaymentMethodDialog from "@/features/paymentMethods/changePaymentMethodDialog";
-import { type BasicSearchableSelectParamsOld, ChangableSearchableSelect } from "yusr-ui";
-import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
-import { useAppSelector } from "../../state/store";
+import { Cubits } from "@/core/services/cubits";
+import { Services } from "@/core/services/services.ts";
+import type { PaymentMethod } from "@/core/data/paymentMethod.ts"; // paymentMethod
+import { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
+import { useSignals } from "@preact/signals-react/runtime";
+import React from "react";
+import {
+	PageLoaded,
+	PageLoading,
+	SearchableSelect,
+	type SearchableSelectOptionProps,
+	type SearchableSelectProps
+} from "yusr-ui";
+
 
 export default function PaymentMethodsSearchableSelect(
-  { ...props }: BasicSearchableSelectParamsOld<PaymentMethod>
+	{...props}: SearchableSelectProps<PaymentMethod, PaymentMethodDto>
 )
 {
-  const PaymentMethodState = useAppSelector((state) => state.paymentMethod);
-  const authState = useAppSelector((state) => state.auth);
+	useSignals();
 
-  return (
-    <ChangableSearchableSelect<PaymentMethod, {
-      filterDataOutside?: boolean;
-    }>
-      labelKey="name"
-      createKey="name"
-      state={ PaymentMethodState }
-      apiService={ new PaymentMethodsApiService() }
-      systemPermissionsResources={ SystemPermissionsResources.PaymentMethods }
-      entityActions={ {
-        filter: PaymentMethodSlice.entityActions.filter,
-        refresh: PaymentMethodSlice.entityActions.refresh
-      } }
-      allowAdd={ false }
-      allowUpdate={ false }
-      changeDialog={ ChangePaymentMethodDialog }
-      changeDialogProps={ {
-        filterDataOutside: true
-      } }
-      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
-      { ...props }
-    />
-  );
+	return (
+		<SearchableSelect>
+			<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
+			<SearchableSelect.Content>
+				<SearchableSelect.SearchInput
+					onSearch={ (searchInput) =>
+					{
+						Cubits.paymentMethods.search(searchInput);
+					} }
+				/>
+				<SearchableSelect.Command>
+					<SearchableSelect.NullOption { ...props } />
+					<CommandItems/>
+				</SearchableSelect.Command>
+			</SearchableSelect.Content>
+		</SearchableSelect>
+	);
+
+	function CommandItems()
+	{
+		useSignals();
+		if (Cubits.paymentMethods.state.value instanceof PageLoading)
+		{
+			return <SearchableSelect.Loading/>;
+		}
+
+		if (Cubits.paymentMethods.state.value instanceof PageLoaded && Cubits.paymentMethods.entities.value.length > 0)
+		{
+			return Cubits.paymentMethods.entities.value.map((entity) => (
+				<Option key={ entity.id.value } item={ entity } { ...props } />
+			));
+		}
+
+		return <SearchableSelect.Empty/>;
+	}
 }
+
+const Option = React.memo(
+	function Option(
+		{...props}: Omit<SearchableSelectOptionProps<PaymentMethod, PaymentMethodDto>, "labelSelector">
+	)
+	{
+		useSignals();
+		return (
+			<SearchableSelect.Option<PaymentMethod, PaymentMethodDto>
+				labelSelector="name"
+				{ ...props }
+			>
+				<SearchableSelect.OptionBody label={ props.item.name.value }/>
+				<SearchableSelect.DeleteOptionButton
+					onDelete={ async () =>
+					{
+						const result = await Services.paymentMethodsApi.Delete(props.item.id.value);
+						if (result.status === 200)
+						{
+							Cubits.paymentMethods.delete(props.item);
+						}
+					} }
+				/>
+			</SearchableSelect.Option>
+		);
+	}
+);

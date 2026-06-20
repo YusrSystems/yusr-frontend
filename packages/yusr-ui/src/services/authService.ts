@@ -1,70 +1,79 @@
 import { Signal, signal } from "@preact/signals-react";
 import { AuthConstants, User, UserDto } from "../index";
 
+
 export abstract class AuthService
 {
-  private _isAuthenticated = false;
-  private _loggedInUser: User | undefined;
-  public systemPermissions: Signal<string[]> = signal([]);
+	public systemPermissions: Signal<string[]> = signal([]);
+	private _isAuthenticatedSignal: Signal<boolean> = signal(false);
+	private _loggedInUserSignal: Signal<User | undefined> = signal(undefined);
 
-  get loggedInUser(): User | undefined
-  {
-    if (!this._loggedInUser)
-    {
-      const storedItemString = localStorage.getItem(AuthConstants.LoggedInUserStorageItemName);
-      const storedItem: UserDto = storedItemString ? JSON.parse(storedItemString) : undefined;
-      if (storedItem == undefined)
-      {
-        return undefined;
-      }
-      this._loggedInUser = new User(storedItem);
-      return this._loggedInUser;
-    }
-    return this._loggedInUser;
-  }
+	get loggedInUser(): User | undefined
+	{
+		if (!this._loggedInUserSignal.value)
+		{
+			this._loggedInUserSignal.value = this.readLoggedInUserFromStorage();
+		}
+		return this._loggedInUserSignal.value;
+	}
 
-  get isAuthenticated(): boolean
-  {
-    this._isAuthenticated = localStorage.getItem(AuthConstants.AuthCheckStorageItemName) === "true";
-    return this._isAuthenticated;
-  }
+	get isAuthenticated(): boolean
+	{
+		this._isAuthenticatedSignal.value = localStorage.getItem(AuthConstants.AuthCheckStorageItemName) === "true";
+		return this._isAuthenticatedSignal.value;
+	}
 
-  protected readonly baseLogin = (user: User) =>
-  {
-    this._isAuthenticated = true;
-    this._loggedInUser = user;
+	setLoggedInUser(user: User)
+	{
+		if (user.id.value === this._loggedInUserSignal.value?.id.value)
+		{
+			this._loggedInUserSignal.value = user;
+		}
+	}
 
-    localStorage.setItem(AuthConstants.AuthCheckStorageItemName, "true");
-    localStorage.setItem(AuthConstants.LoggedInUserStorageItemName, JSON.stringify(user.toJson()));
-  };
+	FormatFunc = (resource: string, action: string) =>
+	{
+		return `${ resource }.${ action }`;
+	};
 
-  protected readonly baseLogout = () =>
-  {
-    this._isAuthenticated = false;
-    this._loggedInUser = undefined;
+	readonly hasAuth = (resource: string, action: string): boolean =>
+	{
+		const formattedPermissions = AuthConstants.FormatFunc(resource, action);
+		if (this.loggedInUser == undefined)
+		{
+			return false;
+		}
+		return this.loggedInUser?.role.value.permissions.includes(formattedPermissions);
+	};
 
-    localStorage.removeItem(AuthConstants.AuthCheckStorageItemName);
-    localStorage.removeItem(AuthConstants.LoggedInUserStorageItemName);
-  };
+	protected readonly baseLogin = (user: User) =>
+	{
+		this._isAuthenticatedSignal.value = true;
+		this._loggedInUserSignal.value = user;
 
-  protected readonly baseSyncFromStorage = () =>
-  {
-    this._isAuthenticated = this.isAuthenticated;
-    this._loggedInUser = this.loggedInUser;
-  };
+		localStorage.setItem(AuthConstants.AuthCheckStorageItemName, "true");
+		localStorage.setItem(AuthConstants.LoggedInUserStorageItemName, JSON.stringify(user.toJson()));
+	};
 
-  FormatFunc = (resource: string, action: string) =>
-  {
-    return `${resource}.${action}`;
-  };
+	protected readonly baseLogout = () =>
+	{
+		this._isAuthenticatedSignal.value = false;
+		this._loggedInUserSignal.value = undefined;
 
-  readonly hasAuth = (resource: string, action: string): boolean =>
-  {
-    const formattedPermissions = AuthConstants.FormatFunc(resource, action);
-    if (this.loggedInUser == undefined)
-    {
-      return false;
-    }
-    return this.loggedInUser?.role.value.permissions.includes(formattedPermissions);
-  };
+		localStorage.removeItem(AuthConstants.AuthCheckStorageItemName);
+		localStorage.removeItem(AuthConstants.LoggedInUserStorageItemName);
+	};
+
+	protected readonly baseSyncFromStorage = () =>
+	{
+		this._isAuthenticatedSignal.value = localStorage.getItem(AuthConstants.AuthCheckStorageItemName) === "true";
+		this._loggedInUserSignal.value = this.readLoggedInUserFromStorage();
+	};
+
+	private readLoggedInUserFromStorage(): User | undefined
+	{
+		const storedItemString = localStorage.getItem(AuthConstants.LoggedInUserStorageItemName);
+		const storedItem: UserDto | undefined = storedItemString ? JSON.parse(storedItemString) : undefined;
+		return storedItem ? new User(storedItem) : undefined;
+	}
 }

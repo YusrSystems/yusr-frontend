@@ -1,153 +1,173 @@
-import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
-import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
-import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
-import type AccountOld from "@/core/data/account";
-import type ItemOld from "@/core/data/itemOld";
-import type StoreOld from "@/core/data/store";
-import { useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, DateField, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FormFieldOld, SelectFieldOld } from "yusr-ui";
-import { ItemsMovementReportGroupOption, ItemsMovementReportRequest, ItemsMovementReportTransType } from "../../core/data/report/itemsMovementReportRequest";
+import {
+	Button,
+	DateField,
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	FormField,
+	SelectField
+} from "yusr-ui";
+import {
+	ItemsMovementReportGroupOption,
+	ItemsMovementReportRequest,
+	ItemsMovementReportTransType
+} from "@/core/data/report/itemsMovementReportRequest.ts";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
+import { signal } from "@preact/signals-react";
+import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect.tsx";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
+import { AccountType } from "@/core/data/account.ts";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
+import { useSignals } from "@preact/signals-react/runtime";
+
 
 export default function ItemsMovementDialog()
 {
-  const { t, i18n } = useTranslation("erpCommon");
+	useSignals();
+	const {t, i18n} = useTranslation("erpCommon");
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [transTypeId, setTransTypeId] = useState<ItemsMovementReportTransType | undefined>(undefined);
-  const [item, setItem] = useState<ItemOld | undefined>(undefined);
-  const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
-  const [toDate, setToDate] = useState<Date | undefined>(undefined);
-  const [fromAccount, setFromAccount] = useState<AccountOld | undefined>(undefined);
-  const [toAccount, setToAccount] = useState<AccountOld | undefined>(undefined);
-  const [fromStore, setFromStore] = useState<StoreOld | undefined>(undefined);
-  const [toStore, setToStore] = useState<StoreOld | undefined>(undefined);
-  const [groupOption, setGroupOption] = useState<ItemsMovementReportGroupOption | undefined>(undefined);
+	const isOpen = useMemo(() => signal(false), []);
+	const fromDate = useMemo(() => signal<Date>(), []);
+	const toDate = useMemo(() => signal<Date>(), []);
+	const transType = useMemo(() => signal<ItemsMovementReportTransType>(), []);
+	const itemId = useMemo(() => signal<number>(), []);
+	const itemName = useMemo(() => signal<string>(), []);
+	const fromAccountId = useMemo(() => signal<number>(), []);
+	const fromAccountName = useMemo(() => signal<string>(), []);
+	const toAccountId = useMemo(() => signal<number>(), []);
+	const toAccountName = useMemo(() => signal<string>(), []);
 
-  return (
-    <>
-      <Button variant="outline" size="sm" onClick={ () => setIsOpen(true) }>
-        { t("reports.create") }
-      </Button>
-      <Dialog open={ isOpen } onOpenChange={ setIsOpen }>
-        <DialogContent dir={ i18n.dir() } className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{ t("reports.itemsMovement") }</DialogTitle>
-            <DialogDescription>{ t("reports.itemsMovementDescription") }</DialogDescription>
-          </DialogHeader>
+	const fromStoreId = useMemo(() => signal<number>(), []);
+	const fromStoreName = useMemo(() => signal<string>(), []);
+	const toStoreId = useMemo(() => signal<number>(), []);
+	const toStoreName = useMemo(() => signal<string>(), []);
+	const groupOption = useMemo(() => signal<ItemsMovementReportGroupOption>(), []);
 
-          <div className="flex flex-col gap-4 py-2">
-            <SelectFieldOld
-              label={ t("reports.movementType") }
-              value={ transTypeId?.toString() ?? "" }
-              onValueChange={ (val) => setTransTypeId(val ? Number(val) as ItemsMovementReportTransType : undefined) }
-              options={ [
-                { label: t("reports.sell"), value: ItemsMovementReportTransType.Sell.toString() },
-                { label: t("reports.purchase"), value: ItemsMovementReportTransType.Purchase.toString() },
-                { label: t("reports.sellReturn"), value: ItemsMovementReportTransType.SellReturn.toString() },
-                { label: t("reports.purchaseReturn"), value: ItemsMovementReportTransType.PurchaseReturn.toString() },
-                { label: t("reports.transfer"), value: ItemsMovementReportTransType.Transfer.toString() },
-                { label: t("reports.settlement"), value: ItemsMovementReportTransType.Settlement.toString() }
-              ] }
-            />
+	return (
+		<>
+			<Button variant="outline" size="sm" onClick={ () => isOpen.value = true }>
+				{ t("reports.create") }
+			</Button>
+			<Dialog open={ isOpen.value } onOpenChange={ (open) => isOpen.value = open }>
+				<DialogContent dir={ i18n.dir() } className="sm:max-w-md">
+					<DialogHeader>
+						<DialogTitle>{ t("reports.itemsMovement") }</DialogTitle>
+						<DialogDescription>{ t("reports.itemsMovementDescription") }</DialogDescription>
+					</DialogHeader>
 
-            <FormFieldOld label={ t("reports.item") }>
-              <ItemsSearchableSelect
-                showNullOption
-                selectedId={ item?.id }
-                selectedLabel={ item?.name }
-                onValueChange={ (item) => setItem(item) }
-              />
-            </FormFieldOld>
+					<div className="flex flex-col gap-4 py-2">
+						<SelectField
+							label={ t("reports.movementType") }
+							value={ transType }
+							options={ [
+								{label: t("reports.sell"), value: ItemsMovementReportTransType.Sell},
+								{label: t("reports.purchase"), value: ItemsMovementReportTransType.Purchase},
+								{
+									label: t("reports.sellReturn"),
+									value: ItemsMovementReportTransType.SellReturn
+								},
+								{
+									label: t("reports.purchaseReturn"),
+									value: ItemsMovementReportTransType.PurchaseReturn
+								},
+								{label: t("reports.transfer"), value: ItemsMovementReportTransType.Transfer},
+								{
+									label: t("reports.settlement"),
+									value: ItemsMovementReportTransType.Settlement
+								}
+							] }
+						/>
 
-            <div className="grid grid-cols-2 gap-3">
-              <DateField
-                label={ t("reports.fromDate") }
-                value={ fromDate }
-                onChange={ (date) => setFromDate(date ?? undefined) }
-              />
-              <DateField
-                label={ t("reports.toDate") }
-                value={ toDate }
-                onChange={ (date) => setToDate(date ?? undefined) }
-              />
-            </div>
+						<FormField label={ t("reports.item") }>
+							<ItemsSearchableSelect
+								id={ itemId }
+								label={ itemName }
+							/>
+						</FormField>
 
-            <div className="grid grid-cols-2 gap-3">
-              <FormFieldOld label={ t("reports.fromAccount") }>
-                <ClientsAndSuppliersSearchableSelect
-                  showNullOption
-                  selectedId={ fromAccount?.id }
-                  selectedLabel={ fromAccount?.name }
-                  onValueChange={ (account) => setFromAccount(account) }
-                />
-              </FormFieldOld>
+						<div className="grid grid-cols-2 gap-3">
+							<DateField
+								label={ t("reports.fromDate") }
+								value={ fromDate }
+							/>
+							<DateField
+								label={ t("reports.toDate") }
+								value={ toDate }
+							/>
+						</div>
 
-              <FormFieldOld label={ t("reports.toAccount") }>
-                <ClientsAndSuppliersSearchableSelect
-                  showNullOption
-                  selectedId={ toAccount?.id }
-                  selectedLabel={ toAccount?.name }
-                  onValueChange={ (account) => setToAccount(account) }
-                />
-              </FormFieldOld>
-            </div>
+						<div className="grid grid-cols-2 gap-3">
+							<FormField label={ t("reports.fromAccount") }>
+								<AccountsSearchableSelect
+									id={ fromAccountId }
+									label={ fromAccountName }
+									types={ [AccountType.Client, AccountType.Supplier] }
+								/>
+							</FormField>
 
-            <div className="grid grid-cols-2 gap-3">
-              <FormFieldOld label={ t("reports.fromStore") }>
-                <StoresSearchableSelectOld
-                  showNullOption
-                  selectedId={ fromStore?.id }
-                  selectedLabel={ fromStore?.name }
-                  onValueChange={ (store) => setFromStore(store) }
-                />
-              </FormFieldOld>
+							<FormField label={ t("reports.toAccount") }>
+								<AccountsSearchableSelect
+									id={ toAccountId }
+									label={ toAccountName }
+									types={ [AccountType.Client, AccountType.Supplier] }
+								/>
+							</FormField>
+						</div>
 
-              <FormFieldOld label={ t("reports.toStore") }>
-                <StoresSearchableSelectOld
-                  showNullOption
-                  selectedId={ toStore?.id }
-                  selectedLabel={ toStore?.name }
-                  onValueChange={ (store) => setToStore(store) }
-                />
-              </FormFieldOld>
-            </div>
+						<div className="grid grid-cols-2 gap-3">
+							<FormField label={ t("reports.fromStore") }>
+								<StoresSearchableSelect
+									id={ fromStoreId }
+									label={ fromStoreName }
+								/>
+							</FormField>
 
-            <SelectFieldOld
-              label={ t("reports.groupBy") }
-              value={ groupOption?.toString() ?? "" }
-              onValueChange={ (val) => setGroupOption(val ? Number(val) as ItemsMovementReportGroupOption : undefined) }
-              options={ [
-                { label: t("reports.item"), value: ItemsMovementReportGroupOption.Item.toString() },
-                { label: t("reports.from"), value: ItemsMovementReportGroupOption.From.toString() },
-                { label: t("reports.to"), value: ItemsMovementReportGroupOption.To.toString() },
-                { label: t("reports.day"), value: ItemsMovementReportGroupOption.Day.toString() },
-                { label: t("reports.month"), value: ItemsMovementReportGroupOption.Month.toString() },
-                { label: t("reports.year"), value: ItemsMovementReportGroupOption.Year.toString() }
-              ] }
-            />
-          </div>
+							<FormField label={ t("reports.toStore") }>
+								<StoresSearchableSelect
+									id={ toStoreId }
+									label={ toStoreName }
+								/>
+							</FormField>
+						</div>
 
-          <DialogFooter>
-            <ReportButton
-              reportName={ ReportConstants.ItemsMovement }
-              request={ new ItemsMovementReportRequest({
-                transTypeId: transTypeId ?? null,
-                itemId: item?.id ?? null,
-                fromDate: fromDate?.toLocaleDateString("en-CA") ?? null,
-                toDate: toDate?.toLocaleDateString("en-CA") ?? null,
-                fromAccountId: fromAccount?.id ?? null,
-                toAccountId: toAccount?.id ?? null,
-                fromStoreId: fromStore?.id ?? null,
-                toStoreId: toStore?.id ?? null,
-                groupOption: groupOption ?? null
-              }) }
-            />
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
-  );
+						<SelectField
+							label={ t("reports.groupBy") }
+							value={ groupOption }
+							options={ [
+								{label: t("reports.item"), value: ItemsMovementReportGroupOption.Item},
+								{label: t("reports.from"), value: ItemsMovementReportGroupOption.From},
+								{label: t("reports.to"), value: ItemsMovementReportGroupOption.To},
+								{label: t("reports.day"), value: ItemsMovementReportGroupOption.Day},
+								{label: t("reports.month"), value: ItemsMovementReportGroupOption.Month},
+								{label: t("reports.year"), value: ItemsMovementReportGroupOption.Year}
+							] }
+						/>
+					</div>
+
+					<DialogFooter>
+						<ReportButton
+							reportName={ ReportConstants.ItemsMovement }
+							request={ new ItemsMovementReportRequest({
+								transTypeId: transType.value ?? null,
+								itemId: itemId.value ?? null,
+								fromDate: fromDate.value?.toLocaleDateString("en-CA") ?? null,
+								toDate: toDate.value?.toLocaleDateString("en-CA") ?? null,
+								fromAccountId: fromAccountId.value ?? null,
+								toAccountId: toAccountId.value ?? null,
+								fromStoreId: fromStoreId.value ?? null,
+								toStoreId: toStoreId.value ?? null,
+								groupOption: groupOption.value ?? null
+							}) }
+						/>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</>
+	);
 }

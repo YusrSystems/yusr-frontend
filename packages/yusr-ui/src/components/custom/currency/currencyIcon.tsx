@@ -1,11 +1,11 @@
 import { SaudiRiyal } from "lucide-react";
-import { useSelector } from "react-redux";
+import { Currency } from "../../../entities";
+import type { Signal } from "@preact/signals-react";
 
-export function CurrencyIcon({ className }: { className?: string; })
+
+export function CurrencyIcon({className, currency}: { className?: string; currency: Signal<Currency> })
 {
-  const authState = useSelector((state: any) => state.auth);
-
-  return (authState.setting?.currencyId === 1
-    ? <SaudiRiyal className={ className ?? "w-4 h-4 shrink-0" } />
-    : <span className="text-[10px]">{ authState.setting?.currency?.code }</span>);
+	return (currency.value.id.value === 1
+		? <SaudiRiyal className={ className ?? "w-4 h-4 shrink-0" }/>
+		: <span className="text-[10px]">{ currency.value.code.value }</span>);
 }

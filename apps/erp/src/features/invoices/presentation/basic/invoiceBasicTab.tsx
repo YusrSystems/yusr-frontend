@@ -1,56 +1,52 @@
-import { InvoiceType } from "@/core/data/invoice";
-import { ItemType } from "@/core/data/itemOld";
-import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
-import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
-import StoreItemSelector from "../../../items/storeItemSelector";
-import { useInvoiceContext } from "../../logic/invoiceContext";
+import { InvoiceType } from "@/core/types/invoiceType.ts";
+import { SystemPermissionsActions } from "yusr-ui";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import InvoicePayments from "../payments/invoicePayments";
 import InvoiceBasicInfo from "./invoiceBasicInfo";
 import InvoiceGlobalSettlements from "./invoiceGlobalSettlements";
 import InvoiceItemsTable from "./invoiceItemsTable";
 import InvoiceSummary from "./invoiceSummary";
+import { Services } from "@/core/services/services.ts";
+import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
+import StoreItemSelector from "@/features/items/storeItemSelector.tsx";
+import { useSignals } from "@preact/signals-react/runtime";
 
-export default function InvoiceBasicTab()
+
+export default function InvoiceBasicTab({invoice}: { invoice: Invoice })
 {
-  const {
-    formData,
-    mode,
-    slice,
-    authState,
-    dispatch,
-    disabled
-  } = useInvoiceContext();
+	useSignals();
+	return (
+		<div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+			{ /* LEFT WORKSPACE */ }
+			<div className="xl:col-span-8 2xl:col-span-9 space-y-4 min-w-0">
+				<InvoiceBasicInfo invoice={ invoice }/>
 
-  return (
-    <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
-      { /* LEFT WORKSPACE */ }
-      <div className="xl:col-span-8 2xl:col-span-9 space-y-4 min-w-0">
-        <InvoiceBasicInfo />
+				{ !invoice.isDisabled && invoice.invoiceMode.value !== InvoiceMode.Return && (
+					<StoreItemSelector
+						storeId={ invoice.storeId }
+						onSelect={ (item) =>
+						{
+							invoice.addItem(item);
+							invoice.syncPaymentVouchers();
+						} }
+					/>
+				) }
 
-        { !(disabled || mode === "return") && (
-          <StoreItemSelector
-            storeId={ formData.storeId }
-            itemTypes={ [ItemType.Product, ItemType.Service] }
-            onSelect={ (item) => dispatch(slice.formActions.addItem(item)) }
-          />
-        ) }
+				<InvoiceItemsTable invoice={ invoice }/>
+			</div>
 
-        <InvoiceItemsTable />
-      </div>
+			{ /* RIGHT SIDEBAR */ }
+			<div className="xl:col-span-4 2xl:col-span-3">
+				<div className="sticky top-4 space-y-4">
+					{ Services.auth.hasAuth(
+						SystemPermissionsResources.InvoiceAddSettlement,
+						SystemPermissionsActions.Get
+					) && <InvoiceGlobalSettlements invoice={ invoice }/> }
 
-      { /* RIGHT SIDEBAR */ }
-      <div className="xl:col-span-4 2xl:col-span-3">
-        <div className="sticky top-4 space-y-4">
-          { SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.InvoiceAddSettlement,
-            SystemPermissionsActions.Get
-          ) && <InvoiceGlobalSettlements /> }
-
-          <InvoiceSummary />
-          { formData.type !== InvoiceType.Quotation && <InvoicePayments /> }
-        </div>
-      </div>
-    </div>
-  );
+					<InvoiceSummary invoice={ invoice }/>
+					{ invoice.type.value !== InvoiceType.Quotation && <InvoicePayments invoice={ invoice }/> }
+				</div>
+			</div>
+		</div>
+	);
 }

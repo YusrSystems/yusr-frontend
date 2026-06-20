@@ -1,25 +1,17 @@
-import type { ResourcePermissions } from "@/auth";
+import { useNavigate } from "react-router-dom";
 import { createContext, useContext } from "react";
-import type { BaseEntity } from "../../../entities";
-import type { CrudActionsOld } from "./crudPageOld";
 
-interface crudPageContextProps<T extends BaseEntity>
+
+export type CrudPageContextType = {
+	navigate: ReturnType<typeof useNavigate>;
+	basePath: string;
+};
+
+export const CrudPageContext = createContext<CrudPageContextType | null>(null);
+
+export function useCrudPageContext(): CrudPageContextType
 {
-  actions: CrudActionsOld<T>;
-  permissions: ResourcePermissions;
-  dispatch: any;
-  handleOpenChangeDialog: (entity: T) => void;
-  handleSetIsChangeDialogOpen: (open: boolean) => void;
-}
-
-export const CrudPageContext = createContext<crudPageContextProps<any> | undefined>(undefined);
-
-export function useCrudPageContext<T extends BaseEntity>(): crudPageContextProps<T>
-{
-  const context = useContext(CrudPageContext) as crudPageContextProps<T> | undefined;
-  if (context === undefined)
-  {
-    throw new Error("useCrudPageContext must be used within a CrudPageContextProvider");
-  }
-  return context;
+	const ctx = useContext(CrudPageContext);
+	if (!ctx) throw new Error("This subcomponent must be used inside <CrudPage>.");
+	return ctx;
 }

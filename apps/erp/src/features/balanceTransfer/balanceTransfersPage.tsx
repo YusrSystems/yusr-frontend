@@ -1,123 +1,206 @@
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import ReportConstants from "@/core/data/report/reportConstants";
+import { Cubits } from "@/core/services/cubits";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRightLeft } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPageOld, CurrencyIcon, NumbertoWordsService, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import BalanceTransfer, { BalanceTransferSlice } from "../../core/data/balanceTransfer";
-import ReportConstants from "../../core/data/report/reportConstants";
-import BalanceTransfersApiService from "../../core/networking/balanceTransferApiService";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import {
+	ChangeableEntityMode,
+	CrudPage,
+	NumbertoWordsService,
+	PageError,
+	PageLoaded,
+	PageLoading,
+	SystemPermissionsActions,
+	TablePreview,
+	UnauthorizedPage
+} from "yusr-ui";
 import ReportButton from "../reports/reportButton";
 import ChangeBalanceTransferDialog from "./changeBalanceTransferDialog";
+import { BalanceTransfer, BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
-export default function BalanceTransfersPage() {
-  const { t } = useTranslation("accounting");
-  const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const transferState = useAppSelector((state) => state.balanceTransfer);
-  const transferDialogState = useAppSelector((state) => state.balanceTransferDialog);
 
-  const permissions = useAppSelector((state) =>
-    selectPermissionsByResource(state, SystemPermissionsResources.BalanceTransfers)
-  );
+export default function BalanceTransfersPage()
+{
+	useSignals();
+	const {t} = useTranslation("accounting");
+	useEffect(() => Cubits.balanceTransfers.init(), []);
 
-  const service = useMemo(() => new BalanceTransfersApiService(), []);
+	if (!Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Get))
+	{
+		return <UnauthorizedPage/>;
+	}
 
-  return (
-    <CrudPageOld<BalanceTransfer>
-      title={t("balanceTransfers.title")}
-      entityName={t("balanceTransfers.entityName")}
-      addNewItemTitle={t("balanceTransfers.addNewTitle")}
-      permissions={permissions}
-      hasPagePermission={SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.BalanceTransfers,
-        SystemPermissionsActions.Get
-      )}
-      entityState={transferState}
-      useSlice={() => transferDialogState}
-      service={service}
-      cards={[{
-        title: t("balanceTransfers.totalTransfers"),
-        data: (transferState.entities?.count ?? 0).toString(),
-        icon: <ArrowRightLeft className="h-4 w-4 text-muted-foreground" />
-      }]}
-      tableHeadRows={[
-        { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: t("balanceTransfers.transferId"), rowStyles: "w-24" },
-        { rowName: t("balanceTransfers.date"), rowStyles: "w-24" },
-        { rowName: t("balanceTransfers.fromAccount"), rowStyles: "w-40" },
-        { rowName: t("balanceTransfers.toAccount"), rowStyles: "w-40" },
-        { rowName: t("balanceTransfers.amount"), rowStyles: "w-32" },
-        { rowName: t("balanceTransfers.description"), rowStyles: "w-48" },
-        ...(SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
-          SystemPermissionsResources.ReportBalanceTransfer,
-          SystemPermissionsActions.Get
-        )
-          ? [{ rowName: "", rowStyles: "w-32" }]
-          : [])
-      ]}
-      tableRowMapper={(
-        transfer: BalanceTransfer
-      ) => [
-          { rowName: `#${transfer.id}`, rowStyles: "" },
-          { rowName: new Date(transfer.date).toLocaleDateString("en-CA"), rowStyles: "" },
-          { rowName: transfer.fromAccountName ?? "-", rowStyles: "font-semibold text-red-600" },
-          { rowName: transfer.toAccountName ?? "-", rowStyles: "font-semibold text-green-600" },
-          {
-            rowName: (
-              <div className="flex items-center gap-1">
-                {(transfer.amount ?? 0).toLocaleString("en-US")}
-                <CurrencyIcon />
-              </div>
-            ),
-            rowStyles: "font-mono font-bold"
-          },
-          { rowName: transfer.description ?? "-", rowStyles: "text-sm text-gray-500 truncate max-w-[200px]" },
-          ...(SystemPermissions.hasAuth(
-            authState.loggedInUser?.role?.permissions ?? [],
-            SystemPermissionsResources.ReportBalanceTransfer,
-            SystemPermissionsActions.Get
-          )
-            ? [{
-              rowName: (
-                <ReportButton
-                  reportName={ReportConstants.BalanceTransfer}
-                  request={{
-                    balanceTransferId: transfer.id,
-                    tafqit: authState.setting?.currency
-                      ? NumbertoWordsService.ConvertAmount(transfer.amount, authState.setting.currency)
-                      : NumbertoWordsService.Convert(transfer.amount)
-                  }}
-                />
-              ),
-              rowStyles: "w-32"
-            }]
-            : [])
-        ]}
-      actions={{
-        filter: BalanceTransferSlice.entityActions.filter,
-        openChangeDialog: (entity) => BalanceTransferSlice.dialogActions.openChangeDialog(entity),
-        openDeleteDialog: (entity) => BalanceTransferSlice.dialogActions.openDeleteDialog(entity),
-        setIsChangeDialogOpen: (open) => BalanceTransferSlice.dialogActions.setIsChangeDialogOpen(open),
-        setIsDeleteDialogOpen: (open) => BalanceTransferSlice.dialogActions.setIsDeleteDialogOpen(open),
-        refresh: BalanceTransferSlice.entityActions.refresh,
-        setCurrentPage: (page) => BalanceTransferSlice.entityActions.setCurrentPage(page)
-      }}
-      ChangeDialog={
-        <ChangeBalanceTransferDialog
-          entity={transferDialogState.selectedRow || undefined}
-          mode={transferDialogState.selectedRow ? "update" : "create"}
-          service={service}
-          onSuccess={(data, mode) => {
-            dispatch(BalanceTransferSlice.entityActions.refresh({ data: data }));
-            if (mode === "create") {
-              dispatch(BalanceTransferSlice.dialogActions.setIsChangeDialogOpen(false));
-            }
-          }}
-        />
-      }
-    />
-  );
+	return (
+		<CrudPage>
+			<CrudPage.Header
+				title={ t("balanceTransfers.title") }
+				addButtonTitle={ t("balanceTransfers.addNewTitle") }
+				isAddButtonVisible={ Services.auth.hasAuth(
+					SystemPermissionsResources.BalanceTransfers,
+					SystemPermissionsActions.Add
+				) }
+			/>
+
+			<Cards/>
+
+			<CrudPage.SearchInput onSearch={ (searchText) => Cubits.balanceTransfers.search(searchText) }/>
+			<Table/>
+
+			<CrudPage.ChangeDialog
+				changeDialog={ (dto: BalanceTransferDto | undefined, closeDialog) =>
+				{
+					return (
+						<ChangeBalanceTransferDialog
+							entity={ dto
+								? BalanceTransfer.load(dto)
+								: BalanceTransfer.create() }
+							service={ Services.balanceTransfersApi }
+							onSuccess={ (data) =>
+							{
+								if (data.mode.value === ChangeableEntityMode.Create)
+								{
+									Cubits.balanceTransfers.add(data);
+									closeDialog();
+								}
+								else if (data.mode.value === ChangeableEntityMode.Update)
+								{
+									Cubits.balanceTransfers.update(data);
+								}
+							} }
+						/>
+					);
+				} }
+			/>
+
+			<CrudPage.DeleteDialog
+				entityNameSelector={ (balanceTransfer) => balanceTransfer.description }
+				service={ Services.balanceTransfersApi }
+				onSuccess={ (entity) => Cubits.balanceTransfers.delete(entity) }
+			/>
+		</CrudPage>
+	);
+}
+
+function Cards()
+{
+	useSignals();
+	const {t} = useTranslation("accounting");
+
+	return (
+		<CrudPage.Cards
+			cards={ [{
+				title: t("balanceTransfers.totalTransfers"),
+				data: Cubits.balanceTransfers.count.value.toString(),
+				icon: <ArrowRightLeft className="h-4 w-4 text-muted-foreground"/>
+			}] }
+		/>
+	);
+}
+
+function Table()
+{
+	useSignals();
+	const {t} = useTranslation("accounting");
+	if (Cubits.balanceTransfers.state.value instanceof PageLoading)
+	{
+		return <TablePreview.Loading/>;
+	}
+
+	if (Cubits.balanceTransfers.state.value instanceof PageLoaded)
+	{
+		return (
+			<CrudPage.Table>
+				<CrudPage.TableBody<BalanceTransfer, BalanceTransferDto>
+					data={ Cubits.balanceTransfers.entities.value }
+					headerRows={ [
+						{rowBody: "", rowStyles: "text-left w-12.5"},
+						{rowBody: t("balanceTransfers.transferId"), rowStyles: "w-24"},
+						{rowBody: t("balanceTransfers.date"), rowStyles: "w-24"},
+						{rowBody: t("balanceTransfers.fromAccount"), rowStyles: "w-40"},
+						{rowBody: t("balanceTransfers.toAccount"), rowStyles: "w-40"},
+						{rowBody: t("balanceTransfers.amount"), rowStyles: "w-32"},
+						{rowBody: t("balanceTransfers.description"), rowStyles: "w-48"},
+						...(Services.auth.hasAuth(
+							SystemPermissionsResources.ReportBalanceTransfer,
+							SystemPermissionsActions.Get
+						)
+							? [{rowBody: "", rowStyles: "w-32"}]
+							: [])
+					] }
+					tableRowMapper={ (
+						transfer: BalanceTransfer
+					) => [
+						{rowBody: `#${ transfer.id.value }`, rowStyles: ""},
+						{rowBody: new Date(transfer.date.value).toLocaleDateString("en-CA"), rowStyles: ""},
+						{rowBody: transfer.fromAccountName.value ?? "-", rowStyles: "font-semibold text-red-600"},
+						{rowBody: transfer.toAccountName.value ?? "-", rowStyles: "font-semibold text-green-600"},
+						{
+							rowBody: (
+								<div className="flex items-center gap-1">
+									{ (transfer.amount.value ?? 0).toLocaleString("en-US") }
+									<ErpCurrencyIcon/>
+								</div>
+							),
+							rowStyles: "font-mono font-bold"
+						},
+						{
+							rowBody: transfer.description ?? "-",
+							rowStyles: "text-sm text-gray-500 truncate max-w-[200px]"
+						},
+						...(Services.auth.hasAuth(
+							SystemPermissionsResources.ReportBalanceTransfer,
+							SystemPermissionsActions.Get
+						)
+							? [{
+								rowBody: (
+									<ReportButton
+										reportName={ ReportConstants.BalanceTransfer }
+										request={ {
+											balanceTransferId: transfer.id,
+											tafqit: Services.auth.setting?.currency?.value
+												? NumbertoWordsService.ConvertAmount(
+													transfer.amount.value,
+													Services.auth.setting?.currency.value
+												)
+												: NumbertoWordsService.Convert(transfer.amount.value)
+										} }
+									/>
+								),
+								rowStyles: "w-32"
+							}]
+							: [])
+					] }
+					hasUpdatePermission={ Services.auth.hasAuth(
+						SystemPermissionsResources.BalanceTransfers,
+						SystemPermissionsActions.Update
+					) }
+					hasDeletePermission={ Services.auth.hasAuth(
+						SystemPermissionsResources.BalanceTransfers,
+						SystemPermissionsActions.Delete
+					) }
+				/>
+
+				<CrudPage.TablePagination
+					pageSize={ Cubits.balanceTransfers.pageSize.value }
+					totalNumber={ Cubits.balanceTransfers.count.value }
+					currentPage={ Cubits.balanceTransfers.currentPage.value }
+					onPageChanged={ (newPage) =>
+					{
+						Cubits.balanceTransfers.changePage(newPage);
+					} }
+				/>
+			</CrudPage.Table>
+		);
+	}
+
+	if (Cubits.balanceTransfers.state.value instanceof PageError)
+	{
+		return <TablePreview.Error/>;
+	}
+
+	return <TablePreview.Empty/>;
 }

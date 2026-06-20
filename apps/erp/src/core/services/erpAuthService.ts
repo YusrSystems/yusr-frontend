@@ -1,77 +1,97 @@
-import { AuthService, User } from "yusr-ui";
+import { AuthService, Branch, User } from "yusr-ui";
 import { Setting, type SettingDto } from "../data/setting";
+import { signal } from "@preact/signals-react";
+
 
 export class ErpAuthService extends AuthService
 {
-  private _setting: Setting | undefined;
-  private _settingStorageItemName = "Setting";
+	private _settingStorageItemName = "Setting";
 
-  get setting(): Setting | undefined
-  {
-    if (!this._setting)
-    {
-      const storedSettingString = localStorage.getItem(this._settingStorageItemName);
-      const storedSetting: SettingDto = storedSettingString ? JSON.parse(storedSettingString) : undefined;
-      if (storedSetting == undefined)
-      {
-        return undefined;
-      }
-      this._setting = new Setting(storedSetting);
-      return this._setting;
-    }
-    return this._setting;
-  }
+	private _settingSignal = signal<Setting | undefined>(undefined);
 
-  readonly login = (user: User, setting: Setting) =>
-  {
-    this.baseLogin(user);
-    this._setting = setting;
-    localStorage.setItem(this._settingStorageItemName, JSON.stringify(setting));
-  };
+	get setting(): Setting | undefined
+	{
+		if (!this._settingSignal.value)
+		{
+			this._settingSignal.value = this.readSettingFromStorage();
+		}
+		return this._settingSignal.value;
+	}
 
-  readonly logout = () =>
-  {
-    this.baseLogout();
-    this._setting = undefined;
-    localStorage.removeItem(this._settingStorageItemName);
-  };
+	get isVerifiedAccount(): boolean
+	{
+		return Boolean(this.setting?.companyPhone?.value && this.setting?.branch?.value?.cityId.value);
+	}
 
-  readonly syncFromStorage = () =>
-  {
-    this.baseSyncFromStorage();
-    this._setting = this.setting;
-  };
+	get stepsToComplete(): number
+	{
+		let counter = 0;
 
-  get isVerifiedAccount(): boolean
-  {
-    return Boolean(this.setting?.companyPhone?.value && this.setting?.branch?.value.cityId);
-  }
-  get stepsToComplete(): number
-  {
-    let counter = 0;
+		if (!this.setting?.companyPhone?.value)
+		{
+			counter += 1;
+		}
+		if (!this.setting?.branch?.value?.cityId.value)
+		{
+			counter += 1;
+		}
 
-    if (!Boolean(this.setting?.companyPhone?.value))
-    {
-      counter += 1;
-    }
-    if (!Boolean(this.setting?.branch?.value.cityId))
-    {
-      counter += 1;
-    }
+		return counter;
+	}
 
-    return counter;
-  }
+	get nextRoute(): string
+	{
+		if (!this.setting?.branch?.value?.cityId.value)
+		{
+			return "/branches";
+		}
+		if (!this.setting?.companyPhone?.value)
+		{
+			return "/settings";
+		}
+		return "/";
+	}
 
-  get nextRoute(): string
-  {
-    if (!Boolean(this.setting?.branch?.value.cityId))
-    {
-      return "/branches";
-    }
-    if (!Boolean(this.setting?.companyPhone?.value))
-    {
-      return "/settings";
-    }
-    return "/";
-  }
+	readonly setSettings = (dto: SettingDto) =>
+	{
+		this._settingSignal.value = new Setting(dto);
+	};
+
+	readonly updateBranch = (branch: Branch) =>
+	{
+		if (branch.id.value === this._settingSignal?.value?.branchId?.value)
+		{
+			this._settingSignal.value.branch.value = branch;
+			localStorage.setItem(this._settingStorageItemName, JSON.stringify(this._settingSignal.value));
+		}
+	};
+
+	readonly login = (user: User, setting: Setting) =>
+	{
+		this.baseLogin(user);
+		this._settingSignal.value = setting;
+		localStorage.setItem(this._settingStorageItemName, JSON.stringify(setting));
+	};
+
+	readonly logout = () =>
+	{
+		this.baseLogout();
+		this._settingSignal.value = undefined;
+		localStorage.removeItem(this._settingStorageItemName);
+	};
+
+	readonly syncFromStorage = () =>
+	{
+		this.baseSyncFromStorage();
+		this._settingSignal.value = this.readSettingFromStorage();
+	};
+
+	private readSettingFromStorage(): Setting | undefined
+	{
+		const storedSettingString = localStorage.getItem(this._settingStorageItemName);
+		const storedSetting: SettingDto | undefined = storedSettingString
+			? JSON.parse(storedSettingString)
+			: undefined;
+		return storedSetting ? new Setting(storedSetting) : undefined;
+	}
 }

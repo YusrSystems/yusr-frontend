@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, type ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 
 export class PricingMethodDto extends Dto
 {
@@ -8,19 +8,16 @@ export class PricingMethodDto extends Dto
 
 export default class PricingMethod extends ChangeableEntity<PricingMethodDto>
 {
-  protected initialValue(dto?: Partial<PricingMethodDto> | undefined): PricingMethodDto
-  {
-    return { id: 0, name: "", ...dto };
-  }
+  public name: Signal<string>;
 
-  declare name: Signal<string>;
-
-  constructor(dto: PricingMethodDto, mode: ChangeableEntityMode = "create")
+  constructor(dto: Partial<PricingMethodDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
   {
     super(dto, [{
       field: "name",
       selector: (d) => d.name,
       validators: [Validators.required(i18n.t("stocking:pricingMethods.nameRequired"))]
     }], mode);
+
+    this.name = this.assign("name", dto?.name ?? "");
   }
 }

@@ -5,95 +5,99 @@ import type { Dto } from "./dto";
 import type { Entity } from "./entity";
 import { PageEmpty, PageInitial, PageLoaded, PageLoading, type PageState } from "./pageStates";
 
+
 export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends Cubit<PageState>
 {
-  protected _service: BaseFilterableApiService<TEntity, TDto>;
-  public pageSize: Signal<number>;
-  public currentPage: Signal<number>;
-  public searchText: Signal<string | undefined>;
-  public types: Signal<number[] | undefined>;
-  entities: Signal<TEntity[]>;
-  count: Signal<number>;
+	public pageSize: Signal<number>;
+	public currentPage: Signal<number>;
+	public searchText: Signal<string | undefined>;
+	entities: Signal<TEntity[]>;
+	count: Signal<number>;
+	protected _service: BaseFilterableApiService<TEntity, TDto>;
+	protected types: Signal<number[] | undefined>;
+	protected queryParams: Signal<Record<string, string | number | boolean> | undefined>;
 
-  constructor(service: BaseFilterableApiService<TEntity, TDto>, pageSize: number = 100)
-  {
-    super(new PageInitial());
-    this._service = service;
-    this.pageSize = signal(pageSize);
-    this.currentPage = signal(1);
-    this.searchText = signal(undefined);
-    this.types = signal([]);
-    this.entities = signal<TEntity[]>([]);
-    this.count = signal(0);
-  }
+	constructor(service: BaseFilterableApiService<TEntity, TDto>, pageSize: number = 100)
+	{
+		super(new PageInitial());
+		this._service = service;
+		this.pageSize = signal(pageSize);
+		this.currentPage = signal(1);
+		this.searchText = signal(undefined);
+		this.types = signal([]);
+		this.queryParams = signal({});
+		this.entities = signal<TEntity[]>([]);
+		this.count = signal(0);
+	}
 
-  private async _filter()
-  {
-    this.emit(new PageLoading());
+	async filter(
+		pageNumber?: number,
+		rowsPerPage?: number,
+		searchText?: string,
+		types?: number[],
+		queryParams?: Record<string, string | number | boolean>
+	): Promise<void>
+	{
+		this.currentPage.value = pageNumber ?? this.currentPage.value;
+		this.pageSize.value = rowsPerPage ?? this.pageSize.value;
+		this.searchText.value = searchText;
+		this.types.value = types;
+		this.queryParams.value = queryParams ?? this.queryParams.value;
 
-    let result;
-    if (Boolean(this.types.value))
-    {
-      result = await this._service.Filter(this.currentPage.value, this.pageSize.value, this.searchText.value, {
-        types: this.types.value ?? [],
-        searchText: this.searchText.value
-      });
-    }
-    else
-    {
-      result = await this._service.Filter(this.currentPage.value, this.pageSize.value, this.searchText.value);
-    }
+		this.emit(new PageLoading());
 
-    if (!result.data?.length)
-    {
-      this.entities.value = [];
-      this.count.value = 0;
-      this.emit(new PageEmpty());
-      return;
-    }
+		const result = await this._service.Filter(
+			this.currentPage.value,
+			this.pageSize.value,
+			this.searchText.value,
+			this.types.value,
+			this.queryParams.value
+		);
 
-    this.entities.value = result.data;
-    this.count.value = result.count ?? 0;
-    this.emit(new PageLoaded());
-  }
+		if (!result.data?.length)
+		{
+			this.entities.value = [];
+			this.count.value = 0;
+			this.emit(new PageEmpty());
+			return;
+		}
 
-  init(types?: number[])
-  {
-    this.searchText.value = undefined;
-    this.currentPage.value = 1;
-    this.types.value = types;
-    this._filter();
-  }
+		this.entities.value = result.data;
+		this.count.value = result.count ?? 0;
+		this.emit(new PageLoaded());
+	}
 
-  changePage(pageNumber: number)
-  {
-    this.currentPage.value = pageNumber;
-    this._filter();
-  }
+	init(types?: number[], queryParams?: Record<string, string | number | boolean>): void
+	{
+		this.filter(1, undefined, undefined, types, queryParams);
+	}
 
-  search(searchText: string | undefined)
-  {
-    this.searchText.value = searchText;
-    this.currentPage.value = 1;
-    this._filter();
-  }
+	changePage(pageNumber: number)
+	{
+		this.filter(pageNumber, undefined, undefined, this.types.value);
+	}
 
-  add(entity: TEntity)
-  {
-    this.entities.value = [entity, ...this.entities.value];
-  }
+	search(searchText: string | undefined)
+	{
+		this.filter(1, undefined, searchText, this.types.value);
+	}
 
-  update(entity: TEntity)
-  {
-    this.entities.value = this.entities.value.map((e) => e.id.value === entity.id.value ? entity : e);
-  }
+	add(entity: TEntity)
+	{
+		this.entities.value = [entity, ...this.entities.value];
+	}
 
-  delete(entity: TEntity)
-  {
-    this.entities.value = this.entities.value.filter((e) => e.id.value !== entity.id.value);
-    if (this.entities.value.length === 0)
-    {
-      this._filter();
-    }
-  }
+	update(entity: TEntity)
+	{
+		this.entities.value = this.entities.value.map((e) => e.id.value === entity.id.value ? entity : e);
+	}
+
+	delete(entity: TEntity)
+	{
+		this.entities.value = this.entities.value.filter((e) => e.id.value !== entity.id.value);
+		if (this.entities.value.length === 0)
+		{
+			this.filter(1);
+		}
+	}
 }

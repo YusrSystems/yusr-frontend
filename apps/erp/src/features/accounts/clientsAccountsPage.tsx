@@ -1,52 +1,26 @@
 import { Services } from "@/core/services/services";
 import { useTranslation } from "react-i18next";
-import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { AccountType, ClientsSlice } from "../../core/data/account";
-import { useAppSelector } from "../../core/state/store";
-import AccountsPageOld, { AccountsPage } from "./accountsPage";
+import { SystemPermissionsActions } from "yusr-ui";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { AccountType } from "@/core/data/account.ts";
+import AccountsPage from "./accountsPage";
 
-export default function ClientsAccountsPageOld()
+
+export default function ClientsAccountsPage()
 {
-  const { t } = useTranslation("accounting");
-  const authState = useAppSelector((state) => state.auth);
+	const {t} = useTranslation("accounting");
 
-  return (
-    <AccountsPageOld
-      title={ t("clients.title") }
-      slice={ ClientsSlice }
-      fixedType={ AccountType.Client }
-      selectEntityState={ (state) => state.clients }
-      selectDialogState={ (state) => state.clientsDialog }
-      selectFormState={ (state) => state.clientsForm }
-      hasPagePermission={ SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.AccountClient,
-        SystemPermissionsActions.Get
-      ) && SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.Accounts,
-        SystemPermissionsActions.Get
-      ) }
-    />
-  );
-}
-
-export function ClientsAccountsPage()
-{
-  const { t } = useTranslation("accounting");
-
-  return (
-    <AccountsPage
-      title={ t("clients.title") }
-      fixedType={ AccountType.Client }
-      hasPagePermission={ Services.auth.hasAuth(
-        SystemPermissionsResources.AccountClient,
-        SystemPermissionsActions.Get
-      ) && Services.auth.hasAuth(
-        SystemPermissionsResources.Accounts,
-        SystemPermissionsActions.Get
-      ) }
-    />
-  );
+	return (
+		<AccountsPage
+			title={ t("clients.title") }
+			fixedType={ AccountType.Client }
+			hasPagePermission={ Services.auth.hasAuth(
+				SystemPermissionsResources.AccountClient,
+				SystemPermissionsActions.Get
+			) && Services.auth.hasAuth(
+				SystemPermissionsResources.Accounts,
+				SystemPermissionsActions.Get
+			) }
+		/>
+	);
 }

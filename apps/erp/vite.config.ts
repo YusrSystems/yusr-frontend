@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import { defineConfig } from "vite";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -15,7 +15,9 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://yusrerp.runasp.net",
+        target: mode === "development"
+          ? "https://yusrerpdev.runasp.net"
+          : "https://yusrerp.runasp.net",
         changeOrigin: true,
         secure: true
       }
@@ -28,4 +30,4 @@ export default defineConfig({
     //   }
     // }
   }
-});
+}));

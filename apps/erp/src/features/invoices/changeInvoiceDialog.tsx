@@ -1,413 +1,281 @@
-import { StoreSlice } from "@/core/data/storeSlice";
 import { BanknoteArrowUp, Box, CheckCircle2, FolderKanban, Siren } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import type { CommonChangeDialogPropsOld, DialogMode, IEntityState } from "yusr-ui";
-import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, StorageType, useFormErrors, useFormInit, useStorageFile, useValidate } from "yusr-ui";
-import AccountOld, { type AccountSliceType } from "../../core/data/account";
-import type Invoice from "../../core/data/invoice";
-import { InvoiceRelationType, InvoiceSlice, InvoiceStatus, InvoiceType, InvoiceValidationRules } from "../../core/data/invoice";
-import { ItemType } from "../../core/data/itemOld";
-import { PaymentMethodSlice } from "../../core/data/paymentMethod";
-import InvoicesApiService from "../../core/networking/invoiceApiService";
-import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
-import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
-import { InvoiceContext } from "./logic/invoiceContext";
+import {
+	Button,
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	DialogClose,
+	DialogFooter,
+	Loading,
+	type RequestResult,
+	StorageType,
+	useStorageFile
+} from "yusr-ui";
 import InvoiceItemsMath from "./logic/invoiceItemsMath";
-import { useInvoiceLogic } from "./logic/useInvoiceLogic";
 import InvoiceBasicTab from "./presentation/basic/invoiceBasicTab";
 import InvoiceCostsTab from "./presentation/costs/invoiceCostsTab";
 import InvoiceFilesTab from "./presentation/files/invoiceFilesTab";
 import InvoicePolicyTab from "./presentation/policy/invoicePolicyTab";
+import Invoice, { type InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice.ts";
+import { signal } from "@preact/signals-react";
+import { Cubits } from "@/core/services/cubits.ts";
+import { useSignals } from "@preact/signals-react/runtime";
+import { AccountType } from "@/core/data/account.ts";
+import { InvoiceType } from "@/core/types/invoiceType";
+import { ItemType } from "@/core/data/item.ts";
+import { Services } from "@/core/services/services.ts";
 
-export type InvoiceSliceType = ReturnType<typeof InvoiceSlice.create>;
-export type InvoiceDialogMode = DialogMode | "return" | "copy" | "quotationToSales";
 
 export default function ChangeInvoiceDialog({
-  entity,
-  mode,
-  service,
-  onSuccess,
-  slice,
-  fixedType,
-  selectFormState,
-  accountSlice,
-  accountState
-}: Omit<CommonChangeDialogPropsOld<Invoice>, "mode" | "onSuccess"> & {
-  mode: InvoiceDialogMode;
-  onSuccess?: (data: Invoice, mode: InvoiceDialogMode) => void;
-  slice: InvoiceSliceType;
-  stateKey: keyof RootState;
-  fixedType?: InvoiceType;
-  selectFormState: (state: any) => { formData: Partial<Invoice>; errors: Record<string, string>; };
-  accountSlice: AccountSliceType;
-  accountState: IEntityState<AccountOld>;
+	entity,
+	service,
+	onSuccess,
+	fixedType
+}: CommonChangeDialogProps<Invoice, InvoiceDto> & {
+	fixedType?: InvoiceType;
 })
 {
-  const { t, i18n } = useTranslation("accounting");
-  const [currentMode, setCurrentMode] = useState<InvoiceDialogMode>(mode);
-  const originalMode = React.useRef<InvoiceDialogMode>(mode);
-  const [initLoading, setInitLoading] = useState(false);
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const authState = useAppSelector((state) => state.auth);
-  const { createInitialPaymentVoucher } = useInvoiceLogic(authState);
-  const invoiceTaxInclusivePrice = () => InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(formData?.invoiceItems ?? []);
-  const { commitFiles } = useStorageFile(
-      () => formData.invoiceFiles ?? [],
-      (files) => dispatch(slice.formActions.updateFormData({ invoiceFiles: Array.isArray(files) ? files : [files] })),
-    StorageType.Private
-  );
+	useSignals();
+	const {t} = useTranslation("accounting");
+	const navigate = useNavigate();
+	const currentEntity = useMemo(() => signal(entity), []);
+	const isFullyReturned = useMemo(() => signal(false), []);
+	const isLoading = useMemo(() => signal(false), []);
 
-  const initialValues = useMemo(
-    () => ({
-      ...entity,
-      type: entity?.type ?? fixedType,
-      actionAccountId: entity?.actionAccountId
-        ?? ((entity?.type ?? fixedType) === InvoiceType.Purchase
-          ? authState.setting?.purchaseAccountId
-          : authState.setting?.sellAccountId),
-      actionAccountName: entity?.actionAccountName
-        ?? ((entity?.type ?? fixedType) === InvoiceType.Purchase
-          ? authState.setting?.purchaseAccountName
-          : authState.setting?.sellAccountName),
-      storeId: entity?.storeId ?? authState.setting?.mainStoreId,
-      storeName: entity?.storeName ?? authState.setting?.mainStoreName,
-      statusId: entity?.statusId ?? InvoiceStatus.Valid,
-      date: entity?.date
-        ? new Date(entity.date).toLocaleDateString("en-CA")
-        : new Date().toLocaleDateString("en-CA"),
-      settlementAmount: entity?.settlementAmount ?? 0,
-      settlementPercent: entity?.settlementPercent ?? 0,
-      settlementReason: entity?.settlementReason ?? undefined,
-      paidAmount: entity?.paidAmount ?? 0,
-      fullAmount: entity?.fullAmount ?? 0,
-      invoiceItems: entity?.invoiceItems ?? [],
-      invoiceVouchers: entity?.invoiceVouchers ?? []
-    }),
-    [entity]
-  );
+	const {commitFiles} = useStorageFile(
+		() => currentEntity.value.invoiceFiles.value ?? [],
+		(files) => currentEntity.value.invoiceFiles.value = files,
+		StorageType.Private
+	);
 
-  const { formData, errors } = useAppSelector(selectFormState);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const [fullyReturned, setFullyReturned] = useState(false);
+	useEffect(() =>
+	{
+		Cubits.accounts.init(fixedType == InvoiceType.Purchase || fixedType == InvoiceType.PurchaseReturn ? [AccountType.Supplier] : [AccountType.Client]);
+		Cubits.paymentMethods.init();
+		Cubits.stores.init();
+	}, [fixedType]);
 
-  const paymentVouchers = () =>
-    formData.invoiceVouchers?.filter((v) => v.invoiceRelationType == InvoiceRelationType.Payment) ?? [];
-  const { validate } = useValidate(
-    formData,
-    InvoiceValidationRules.validationRules(t),
-    (errors) => dispatch(slice.formActions.setErrors(errors))
-  );
+	useEffect(() =>
+	{
+		if ((fixedType === InvoiceType.Sell || fixedType === InvoiceType.Quotation) && currentEntity.value.storeId.value)
+		{
+			Cubits.items.init([ItemType.Product, ItemType.Service], {storeId: currentEntity.value.storeId.value});
+		}
+		else
+		{
+			Cubits.items.init([ItemType.Product, ItemType.Service]);
+		}
+	}, [fixedType, currentEntity.value.storeId.value]);
 
-  useFormInit(slice.formActions.setInitialData, initialValues);
+	useEffect(() =>
+	{
+		if (currentEntity.value.mode.value === ChangeableEntityMode.Create)
+		{
+			if (Services.auth.setting?.invoicePolicy?.value && !currentEntity.value.policy.value)
+			{
+				currentEntity.value.policy.value = Services.auth.setting?.invoicePolicy?.value;
+			}
+			return;
+		}
+		if (currentEntity.value.id.value != undefined)
+		{
+			isLoading.value = true;
 
-  useEffect(() =>
-  {
-    originalMode.current = mode;
-  }, [mode]);
+			const getInvoice = async () =>
+			{
+				let res: RequestResult<Invoice>;
+				if (currentEntity.value.invoiceMode.value !== InvoiceMode.Return)
+				{
+					res = await Services.invoicesApi.Get(entity.id.value);
+				}
+				else
+				{
+					res = await Services.invoicesApi.GetReturnInvoiceInitialDetails(entity.id.value);
+				}
 
-  useEffect(() =>
-  {
-    dispatch(accountSlice.entityActions.filter());
-    dispatch(PaymentMethodSlice.entityActions.filter());
-    dispatch(StoreSlice.entityActions.filter());
-  }, [dispatch]);
+				if (res?.data != undefined)
+				{
+					if (currentEntity.value.invoiceMode.value === InvoiceMode.Normal)
+					{
+						currentEntity.value = Invoice.load(res.data.toJson());
+					}
+					else if (currentEntity.value.invoiceMode.value === InvoiceMode.Return)
+					{
+						res.data.date.value = new Date();
+						res.data.originalInvoiceId.value = entity.id.value;
+						res.data.type.value = res.data.type.value === InvoiceType.Sell
+							? InvoiceType.SellReturn
+							: InvoiceType.PurchaseReturn;
+						currentEntity.value = Invoice.create(res.data.toJson());
+						currentEntity.value.invoiceMode.value = InvoiceMode.Return;
+						currentEntity.value.syncPaymentVouchers();
+					}
+					else if (currentEntity.value.invoiceMode.value === InvoiceMode.Copy)
+					{
+						res.data.id.value = 0;
+						res.data.date.value = new Date();
+						currentEntity.value = Invoice.create(res.data.toJson());
+						currentEntity.value.invoiceMode.value = InvoiceMode.Copy;
+						currentEntity.value.syncPaymentVouchers();
+					}
+					else if (currentEntity.value.invoiceMode.value === InvoiceMode.QuotationToSales)
+					{
+						res.data.id.value = 0;
+						res.data.type.value = InvoiceType.Sell;
+						res.data.date.value = new Date();
+						res.data.notes.value = undefined;
+						currentEntity.value = Invoice.create(res.data.toJson());
+						currentEntity.value.invoiceMode.value = InvoiceMode.QuotationToSales;
+						currentEntity.value.syncPaymentVouchers();
+					}
 
-  useEffect(() =>
-  {
-    if (formData.storeId)
-    {
-      dispatch(fetchStoreItems({
-        pageNumber: 1,
-        rowsPerPage: 100,
-        storeId: formData.type === InvoiceType.Purchase ? undefined : formData.storeId ?? 0,
-        request: new FilterByTypeRequest({ types: [ItemType.Product, ItemType.Service] })
-      }));
-    }
-  }, [dispatch, formData.storeId]);
+					isFullyReturned.value = res.data.invoiceItems.value.length === 0;
+				}
 
-  useEffect(() =>
-  {
-    if (currentMode === "update")
-    {
-      return;
-    }
+				isLoading.value = false;
+			};
 
-    const taxInclusivePrice = invoiceTaxInclusivePrice();
+			void getInvoice();
+		}
+	}, [entity.id.value, entity.mode.value]);
 
-    if (formData.type === InvoiceType.Quotation)
-    {
-      dispatch(slice.formActions.resetPaymentVouchers({}));
-      dispatch(
-        slice.formActions.updateFormData({
-          fullAmount: taxInclusivePrice
-        })
-      );
-      return;
-    }
+	const transformDataBeforeSave = async (data: Invoice): Promise<Invoice> =>
+	{
 
-    if (paymentVouchers().length === 0)
-    {
-      dispatch(slice.formActions.resetPaymentVouchers({}));
-      dispatch(
-        slice.formActions.addVoucher(createInitialPaymentVoucher(formData as Invoice, taxInclusivePrice))
-      );
-    }
-    else if (paymentVouchers().length === 1)
-    {
-      const voucher = paymentVouchers()[0];
-      const isVoucherAccountIdValid = voucher.accountId != undefined && voucher.accountId !== 0;
-      const updatedVoucher = {
-        ...voucher,
-        amount: taxInclusivePrice,
-        amountReceived: taxInclusivePrice,
-        accountId: isVoucherAccountIdValid ? voucher.accountId : formData.actionAccountId,
-        accountName: isVoucherAccountIdValid ? voucher.accountName : formData.actionAccountName
-      };
-      dispatch(slice.formActions.updateVoucher(updatedVoucher));
-    }
+		data.fullAmount.value = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(currentEntity.value.invoiceItems.value ?? []);
+		data.invoiceItems.value.forEach((ii, index) => ii.index.value = index);
 
-    dispatch(
-      slice.formActions.updateFormData({
-        fullAmount: taxInclusivePrice,
-        paidAmount: taxInclusivePrice
-      })
-    );
-  }, [formData.invoiceItems, formData.actionAccountId, formData.type, accountState.entities.data?.length]);
+		data.invoiceFiles.value = await commitFiles(
+			currentEntity.value.invoiceFiles.value,
+			`Invoices`
+		);
 
-  useEffect(() =>
-  {
-    if (entity?.id != undefined && currentMode !== "create")
-    {
-      setInitLoading(true);
+		return data;
+	};
 
-      const getInvoice = async () =>
-      {
-        let res = undefined;
+	const isReturn = currentEntity.value.type.value === InvoiceType.SellReturn || currentEntity.value.type.value === InvoiceType.PurchaseReturn;
 
-        if (currentMode !== "return")
-        {
-          res = await service.Get(entity.id);
-        }
-        else
-        {
-          res = await new InvoicesApiService().GetReturnInvoiceInitialDetails(entity.id);
-        }
+	const getDialogTitle = () =>
+	{
+		if (entity.invoiceMode.value === InvoiceMode.Return)
+		{
+			return t("invoices.addReturnInvoice");
+		}
+		if (entity.invoiceMode.value === InvoiceMode.QuotationToSales)
+		{
+			return t("invoices.convertToSales");
+		}
+		if (entity.invoiceMode.value === InvoiceMode.Copy || entity.mode.value == ChangeableEntityMode.Create)
+		{
+			return isReturn
+				? t("invoices.addReturnInvoice")
+				: fixedType === InvoiceType.Quotation
+					? t("invoices.addNewQuotationTitle")
+					: t("invoices.addInvoice");
+		}
+		return isReturn
+			? t("invoices.editReturnInvoice")
+			: fixedType === InvoiceType.Quotation
+				? t("invoices.editQuotation")
+				: t("invoices.editInvoice");
+	};
 
-        if (res?.data != undefined)
-        {
-          dispatch(slice.formActions.updateFormData({
-            ...res.data,
-            // override date and id for copy
-            ...(currentMode === "copy" && {
-              id: 0,
-              date: new Date().toLocaleDateString("en-CA")
-            }),
-            // override type and id for quotationToSales
-            ...(currentMode === "quotationToSales" && {
-              type: InvoiceType.Sell,
-              id: 0,
-              notes: undefined,
-              date: new Date().toLocaleDateString("en-CA")
-            })
-          }));
-          setFullyReturned(res.data.invoiceItems.length === 0);
-        }
+	if (isLoading.value)
+	{
+		return (
+			<ChangeDialog>
+				<ChangeDialog.Header title={ getDialogTitle() }/>
+				<Loading entityName={ t("invoices.entityName") }/>
+			</ChangeDialog>
+		);
+	}
 
-        if (currentMode === "copy")
-        {
-          setCurrentMode("create");
-        }
+	if (isFullyReturned.value)
+	{
+		return (
+			<ChangeDialog>
+				<ChangeDialog.Header title={ getDialogTitle() }/>
 
-        if (currentMode === "quotationToSales")
-        {
-          setCurrentMode("create");
-        }
+				<div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
+					<div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+						<CheckCircle2 className="h-8 w-8 text-green-600"/>
+					</div>
+					<h3 className="text-lg font-semibold">{ t("invoices.fullyReturned") }</h3>
+					<p className="text-sm text-muted-foreground">{ t("invoices.fullyReturnedMessage") }</p>
+				</div>
 
-        setInitLoading(false);
-      };
+				<DialogFooter>
+					<DialogClose asChild>
+						<Button variant="outline">{ t("invoices.close") }</Button>
+					</DialogClose>
+				</DialogFooter>
+			</ChangeDialog>
+		);
+	}
 
-      getInvoice();
-    }
-  }, [dispatch, entity?.id]);
+	const basicHasError = currentEntity.value.hasErrors
+		|| currentEntity.value.invoiceItems.value.some((t) => t.hasErrors)
+		|| currentEntity.value.paymentVouchers().some((t) => t.hasErrors);
 
-  const transformDataBeforeSave = async (data: Invoice | Partial<Invoice>): Promise<Invoice | Partial<Invoice>> =>
-  {
-    let transformedData = { ...data, fullAmount: invoiceTaxInclusivePrice() };
-    // sent items index
-    transformedData.invoiceItems = transformedData.invoiceItems?.map((item, index) => ({
-      ...item,
-      index
-    }));
+	const costHasError = currentEntity.value.costVouchers().some((t) => t.hasErrors);
 
-    const resolvedFiles = await commitFiles(
-      formData.invoiceFiles,
-      `Invoices`
-    );
+	return (
+		<ChangeDialog className="sm:max-w-[100vw] sm:w-screen sm:h-screen">
+			<ChangeDialog.Header title={ getDialogTitle() }/>
 
-    dispatch(slice.formActions.updateFormData({ invoiceFiles: resolvedFiles }));
+			<ChangeDialog.Tabbed
+				tabs={ [
+					{
+						label: t("invoices.basicInfo"),
+						icon: Box,
+						active: true,
+						hasError: basicHasError,
+						content: <InvoiceBasicTab invoice={ currentEntity.value }/>
+					},
+					...(currentEntity.value.type.value !== InvoiceType.Quotation
+						? [{
+							label: t("invoices.invoiceCosts"),
+							icon: BanknoteArrowUp,
+							active: false,
+							hasError: costHasError,
+							content: <InvoiceCostsTab invoice={ currentEntity.value }/>
+						}]
+						: []),
+					{
+						label: t("invoices.invoicePolicy"),
+						icon: Siren,
+						active: false,
+						content: <InvoicePolicyTab invoice={ currentEntity.value }/>
+					},
+					{
+						label: t("invoices.invoiceAttachments"),
+						icon: FolderKanban,
+						active: false,
+						content: <InvoiceFilesTab invoice={ currentEntity.value }/>
+					}
+				] }
+			/>
 
-    transformedData = {
-      ...transformedData,
-      invoiceFiles: resolvedFiles
-    };
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
 
-    if (currentMode === "return")
-    {
-      return {
-        ...transformedData,
-        type: (transformedData as Invoice).type === InvoiceType.Sell
-          ? InvoiceType.SellReturn
-          : InvoiceType.PurchaseReturn,
-        originalInvoiceId: (transformedData as Invoice).id,
-        id: 0
-      };
-    }
-    return transformedData;
-  };
-
-  const isReturn = formData.type === InvoiceType.SellReturn || formData.type === InvoiceType.PurchaseReturn;
-
-  const getDialogTitle = () =>
-  {
-    if (currentMode === "return")
-    {
-      return t("invoices.addReturnInvoice");
-    }
-    if (currentMode === "quotationToSales")
-    {
-      return t("invoices.convertToSales");
-    }
-    if (currentMode === "create")
-    {
-      return isReturn
-        ? t("invoices.addReturnInvoice")
-        : fixedType === InvoiceType.Quotation
-        ? t("invoices.addNewQuotationTitle")
-        : t("invoices.addInvoice");
-    }
-    return isReturn
-      ? t("invoices.editReturnInvoice")
-      : fixedType === InvoiceType.Quotation
-      ? t("invoices.editQuotation")
-      : t("invoices.editInvoice");
-  };
-
-  const resolvedDialogMode = (): DialogMode =>
-  {
-    if (currentMode === "copy" || currentMode === "quotationToSales" || currentMode === "return")
-    {
-      return "create";
-    }
-    return currentMode as DialogMode;
-  };
-
-  if (initLoading)
-  {
-    return (
-      <DialogContent dir={ i18n.dir() }>
-        <DialogHeader>
-          <DialogTitle>{ getDialogTitle() }</DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
-        <Loading entityName={ t("invoices.entityName") } />
-      </DialogContent>
-    );
-  }
-
-  if (fullyReturned)
-  {
-    return (
-      <DialogContent dir={ i18n.dir() }>
-        <DialogHeader>
-          <DialogTitle>{ getDialogTitle() }</DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
-
-        <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <CheckCircle2 className="h-8 w-8 text-green-600" />
-          </div>
-          <h3 className="text-lg font-semibold">{ t("invoices.fullyReturned") }</h3>
-          <p className="text-sm text-muted-foreground">{ t("invoices.fullyReturnedMessage") }</p>
-        </div>
-
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">{ t("invoices.close") }</Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    );
-  }
-
-  const disabled = currentMode === "update" && formData.type !== InvoiceType.Quotation;
-
-  return (
-    <InvoiceContext.Provider
-      value={ {
-        formData,
-        errors,
-        getError,
-        isInvalid,
-        slice,
-        mode: currentMode,
-        authState,
-        dispatch,
-        disabled,
-        accountSlice,
-        accountState
-      } }
-    >
-      <ChangeDialogTabbed<Invoice>
-        changeDialogProps={ {
-          title: getDialogTitle(),
-          className: "sm:max-w-[100vw] sm:w-screen sm:h-screen",
-          formData,
-          dialogMode: resolvedDialogMode(),
-          service,
-          onSuccess: (data) =>
-          {
-            if (originalMode.current === "quotationToSales")
-            {
-              navigate("/sales");
-            }
-            onSuccess?.(data, currentMode);
-          },
-          validate,
-          transformData: transformDataBeforeSave
-        } }
-        tabs={ [
-          {
-            label: t("invoices.basicInfo"),
-            icon: Box,
-            active: true,
-            content: <InvoiceBasicTab />
-          },
-          ...(formData.type !== InvoiceType.Quotation
-            ? [{
-              label: t("invoices.invoiceCosts"),
-              icon: BanknoteArrowUp,
-              active: false,
-              content: <InvoiceCostsTab />
-            }]
-            : []),
-          {
-            label: t("invoices.invoicePolicy"),
-            icon: Siren,
-            active: false,
-            content: <InvoicePolicyTab mode={ mode } />
-          },
-          {
-            label: t("invoices.invoiceAttachments"),
-            icon: FolderKanban,
-            active: false,
-            content: <InvoiceFilesTab />
-          }
-        ] }
-      />
-    </InvoiceContext.Provider>
-  );
+				<ChangeDialog.SaveButton<Invoice, InvoiceDto>
+					entity={ currentEntity.value }
+					service={ service }
+					onSuccess={ (data) =>
+					{
+						if (currentEntity.value.invoiceMode.value === InvoiceMode.QuotationToSales)
+						{
+							navigate("/sales");
+						}
+						onSuccess?.(data);
+					} }
+					transformData={ transformDataBeforeSave }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

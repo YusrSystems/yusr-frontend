@@ -1,32 +1,30 @@
-import { ApiConstants, type ApiFilterResult, BaseApiServiceOld, FilterByTypeRequest, type RequestResult, YusrApiHelper } from "yusr-ui";
-import type Invoice from "../data/invoice";
-import type { EInvoiceStatus } from "../data/invoice";
+import { BaseApiService, ChangeableEntityMode, type RequestResult, YusrApiHelper } from "yusr-ui";
+import Invoice, { InvoiceDto } from "@/core/data/invoices/invoice.ts";
+import type { EInvoiceStatus } from "@/core/types/eInvoiceStatus.ts";
 
-export default class InvoicesApiService extends BaseApiServiceOld<Invoice>
+
+export default class InvoicesApiService extends BaseApiService<Invoice, InvoiceDto>
 {
-  routeName: string = "Invoices";
+	routeName: string = "Invoices";
 
-  async FilterByTypes(
-    pageNumber: number,
-    rowsPerPage: number,
-    request: FilterByTypeRequest
-  ): Promise<RequestResult<ApiFilterResult<Invoice>>>
-  {
-    return await YusrApiHelper.Post(
-      `${ApiConstants.baseUrl}/${this.routeName}/FilterByTypes?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
-      request
-    );
-  }
+	override createEntity(dto: InvoiceDto): Invoice
+	{
+		return new Invoice(dto, ChangeableEntityMode.Create);
+	}
 
-  async GetReturnInvoiceInitialDetails(id: number): Promise<RequestResult<Invoice>>
-  {
-    return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/GetReturnInvoiceInitialDetails/${id}`);
-  }
+	async GetReturnInvoiceInitialDetails(id: number): Promise<RequestResult<Invoice>>
+	{
+		const rawResult = await YusrApiHelper.Get<InvoiceDto>(`/api/${ this.routeName }/GetReturnInvoiceInitialDetails/${ id }`);
+		return {
+			...rawResult,
+			data: rawResult.data ? this.createEntity(rawResult.data) : undefined
+		};
+	}
 
-  async ResendEInvoice(invoiceId: number): Promise<RequestResult<EInvoiceStatus>>
-  {
-    return await YusrApiHelper.Put(
-      `${ApiConstants.baseUrl}/${this.routeName}/ResendEInvoice/${invoiceId}`
-    );
-  }
+	async ResendEInvoice(invoiceId: number): Promise<RequestResult<EInvoiceStatus>>
+	{
+		return await YusrApiHelper.Put(
+			`/api/${ this.routeName }/ResendEInvoice/${ invoiceId }`
+		);
+	}
 }

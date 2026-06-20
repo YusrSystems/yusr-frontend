@@ -90,7 +90,8 @@
     "amountRequired": "يرجى إدخال المبلغ",
     "dateRequired": "يرجى اختيار التاريخ",
     "fromAccountRequired": "يرجى اختيار الحساب المحول منه",
-    "toAccountRequired": "يرجى اختيار الحساب المحول إليه"
+    "toAccountRequired": "يرجى اختيار الحساب المحول إليه",
+    "amountMin": "يجب ان يكون المبلغ اكثر من 0"
   },
   "vouchers": {
     "title": "السندات المالية",
@@ -262,6 +263,7 @@
     "commissionTypeRequired": "يرجى اختيار نوع العمولة",
     "commissionValueRequired": "يرجى إدخال قيمة العمولة",
     "commissionHintPercent": "{{n}} من كل {{d}}",
-    "commissionHintAmount": "{{amount}} ثابتة لكل معاملة"
+    "commissionHintAmount": "{{amount}} ثابتة لكل معاملة",
+    "noPermissionToEditAdmin": "لن تتمكن من تعديل الحساب المسؤول لعدم امتلاكك الصلاحيات المطلوبة"
   }
 }

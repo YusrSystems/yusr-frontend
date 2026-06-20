@@ -90,7 +90,8 @@
     "amountRequired": "कृपया राशि दर्ज करें",
     "dateRequired": "कृपया तारीख चुनें",
     "fromAccountRequired": "कृपया वह खाता चुनें जहाँ से स्थानांतरण करना है",
-    "toAccountRequired": "कृपया वह खाता चुनें जहाँ स्थानांतरण करना है"
+    "toAccountRequired": "कृपया वह खाता चुनें जहाँ स्थानांतरण करना है",
+    "amountMin": "राशि 0 से अधिक होनी चाहिए"
   },
   "vouchers": {
     "title": "वित्तीय वाउचर",
@@ -261,6 +262,7 @@
     "commissionTypeRequired": "कृपया कमीशन प्रकार चुनें",
     "commissionValueRequired": "कृपया कमीशन मान दर्ज करें",
     "commissionHintPercent": "हर {{d}} में से {{n}}",
-    "commissionHintAmount": "प्रति लेनदेन {{amount}} निर्धारित"
+    "commissionHintAmount": "प्रति लेनदेन {{amount}} निर्धारित",
+    "noPermissionToEditAdmin": "आप एडमिन खाते को संपादित नहीं कर सकते क्योंकि आपके पास आवश्यक अनुमतियाँ नहीं हैं"
   }
 }

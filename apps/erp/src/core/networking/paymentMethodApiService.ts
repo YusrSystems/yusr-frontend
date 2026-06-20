@@ -1,7 +1,13 @@
-import { BaseApiServiceOld } from "yusr-ui";
-import type PaymentMethod from "../data/paymentMethod";
+import { PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
+import { BaseApiService } from "yusr-ui";
 
-export default class PaymentMethodsApiService extends BaseApiServiceOld<PaymentMethod>
+
+export default class PaymentMethodsApiService extends BaseApiService<PaymentMethod, PaymentMethodDto>
 {
-  routeName: string = "PaymentMethods";
+	routeName: string = "PaymentMethods";
+
+	override createEntity(dto: PaymentMethodDto): PaymentMethod
+	{
+		return new PaymentMethod(dto);
+	}
 }

@@ -1,136 +1,190 @@
 import type { Signal } from "@preact/signals-react";
-import { type BranchOld, CityOld, type Currency, Dto, i18n, type StorageFile, ValidatableEntity, Validators } from "yusr-ui";
-import type { TaxOld } from "./tax";
+import {
+	Branch,
+	BranchDto,
+	CityDto,
+	Currency,
+	CurrencyDto,
+	Dto,
+	i18n,
+	StorageFile,
+	ValidatableEntity,
+	Validators
+} from "yusr-ui";
+import { Tax, type TaxDto } from "./tax";
+
 
 export const EInvoicingEnvironmentType = {
-  Production: 0,
-  Simulation: 1,
-  Test: 2,
-  NotRegistered: 3
+	Production: 0,
+	Simulation: 1,
+	Test: 2,
+	NotRegistered: 3
 } as const;
 
 export type EInvoicingEnvironmentType = typeof EInvoicingEnvironmentType[keyof typeof EInvoicingEnvironmentType];
 
 export const InvoicePrintSize = {
-  A4: 0,
-  ThermalPrinter: 1
+	A4: 0,
+	ThermalPrinter: 1
 } as const;
 
 export type InvoicePrintSize = typeof InvoicePrintSize[keyof typeof InvoicePrintSize];
 
 export class SettingDto extends Dto
 {
-  public registrationKey!: string;
-  public email!: string;
-  public companyName!: string;
-  public companyPhone!: string;
-  public companyBusinessCategory?: string;
-  public crn?: string;
-  public vatNumber?: string;
+	public registrationKey!: string;
+	public email!: string;
+	public companyName!: string;
+	public companyPhone!: string;
+	public companyBusinessCategory?: string;
+	public crn?: string;
+	public vatNumber?: string;
 
-  public currencyId!: number;
-  public currency?: Currency;
+	public currencyId!: number;
+	public currency!: CurrencyDto;
 
-  public logo?: StorageFile;
+	public logo?: StorageFile;
 
-  public startDate!: Date;
-  public endDate!: Date;
+	public startDate!: Date;
+	public endDate!: Date;
 
-  public branchId!: number;
-  public branch?: BranchOld;
+	public branchId!: number;
+	public branch?: BranchDto;
 
-  public mainTaxId!: number;
-  public mainTax?: TaxOld;
+	public mainTaxId!: number;
+	public mainTax?: TaxDto;
 
-  public sellAccountId?: number;
-  public sellAccountName?: string;
+	public sellAccountId?: number;
+	public sellAccountName?: string;
 
-  public purchaseAccountId?: number;
-  public purchaseAccountName?: string;
+	public purchaseAccountId?: number;
+	public purchaseAccountName?: string;
 
-  public mainPaymentMethodId?: number;
-  public mainPaymentMethodName?: string;
+	public mainPaymentMethodId?: number;
+	public mainPaymentMethodName?: string;
 
-  public mainStoreId?: number;
-  public mainStoreName?: string;
+	public mainStoreId?: number;
+	public mainStoreName?: string;
 
-  public invoicePolicy?: string;
-  public invoicePrintSize!: InvoicePrintSize;
-  public eInvoicingEnvironmentType!: EInvoicingEnvironmentType;
+	public invoicePolicy?: string;
+	public invoicePrintSize!: InvoicePrintSize;
+	public eInvoicingEnvironmentType!: EInvoicingEnvironmentType;
 }
 
 export class Setting extends ValidatableEntity<SettingDto>
 {
-  declare registrationKey: Signal<string>;
-  declare email: Signal<string>;
-  declare companyName: Signal<string>;
-  declare companyPhone: Signal<string>;
-  declare companyBusinessCategory?: Signal<string>;
-  declare crn?: Signal<string>;
-  declare vatNumber?: Signal<string>;
-  declare currencyId: Signal<number>;
-  declare currency?: Signal<Currency>;
-  declare logo?: Signal<StorageFile>;
-  declare startDate: Signal<Date>;
-  declare endDate: Signal<Date>;
-  declare branchId: Signal<number>;
-  declare branch?: Signal<BranchOld>;
-  declare mainTaxId: Signal<number>;
-  declare mainTax?: Signal<TaxOld>;
-  declare sellAccountId?: Signal<number>;
-  declare sellAccountName?: Signal<string>;
-  declare purchaseAccountId?: Signal<number>;
-  declare purchaseAccountName?: Signal<string>;
-  declare mainPaymentMethodId?: Signal<number>;
-  declare mainPaymentMethodName?: Signal<string>;
-  declare mainStoreId?: Signal<number>;
-  declare mainStoreName?: Signal<string>;
-  declare invoicePolicy?: Signal<string>;
-  declare invoicePrintSize: Signal<InvoicePrintSize>;
-  declare eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType>;
+	public registrationKey: Signal<string>;
+	public email: Signal<string>;
+	public companyName: Signal<string>;
+	public companyPhone: Signal<string>;
+	public companyBusinessCategory?: Signal<string>;
+	public crn: Signal<string | undefined>;
+	public vatNumber: Signal<string | undefined>;
 
-  constructor(dto: Partial<SettingDto>)
-  {
-    super(dto, [{
-      field: "companyName",
-      selector: (d) => d.companyName,
-      validators: [Validators.required(i18n.t("erpCommon:settings.companyNameRequired"))]
-    }, {
-      field: "companyPhone",
-      selector: (d) => d.companyPhone,
-      validators: [Validators.required(i18n.t("erpCommon:settings.companyPhoneRequired"))]
-    }, {
-      field: "branchId",
-      selector: (d) => d.branchId,
-      validators: [Validators.required(i18n.t("erpCommon:settings.branchRequired"))]
-    }, {
-      field: "email",
-      selector: (d) => d.email,
-      validators: [Validators.required(i18n.t("erpCommon:settings.emailRequired"))]
-    }, {
-      field: "currencyId",
-      selector: (d) => d.currencyId,
-      validators: [Validators.required(i18n.t("erpCommon:settings.currencyRequired"))]
-    }]);
-  }
+	public currencyId: Signal<number>;
+	public currency: Signal<Currency>;
+
+	public logo: Signal<StorageFile | undefined>;
+
+	public startDate: Signal<Date>;
+	public endDate: Signal<Date>;
+
+	public branchId: Signal<number>;
+	public branch: Signal<Branch | undefined>;
+
+	public mainTaxId: Signal<number>;
+	public mainTax: Signal<Tax | undefined>;
+
+	public sellAccountId: Signal<number | undefined>;
+	public sellAccountName: Signal<string> | undefined;
+
+	public purchaseAccountId: Signal<number | undefined>;
+	public purchaseAccountName: Signal<string | undefined>;
+
+	public mainPaymentMethodId: Signal<number | undefined>;
+	public mainPaymentMethodName: Signal<string | undefined>;
+
+	public mainStoreId: Signal<number | undefined>;
+	public mainStoreName: Signal<string | undefined>;
+
+	public invoicePolicy: Signal<string | undefined>;
+	public invoicePrintSize: Signal<InvoicePrintSize>;
+
+	public eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType>;
+
+	constructor(dto: Partial<SettingDto>)
+	{
+		super(dto, [{
+			field: "companyName",
+			selector: (d) => d.companyName,
+			validators: [Validators.required(i18n.t("erpCommon:settings.companyNameRequired"))]
+		}, {
+			field: "companyPhone",
+			selector: (d) => d.companyPhone,
+			validators: [Validators.required(i18n.t("erpCommon:settings.companyPhoneRequired"))]
+		}, {
+			field: "branchId",
+			selector: (d) => d.branchId,
+			validators: [Validators.required(i18n.t("erpCommon:settings.branchRequired"))]
+		}, {
+			field: "email",
+			selector: (d) => d.email,
+			validators: [Validators.required(i18n.t("erpCommon:settings.emailRequired"))]
+		}, {
+			field: "currencyId",
+			selector: (d) => d.currencyId,
+			validators: [Validators.required(i18n.t("erpCommon:settings.currencyRequired"))]
+		}]);
+
+		this.registrationKey = this.assign("registrationKey", dto?.registrationKey ?? "");
+		this.email = this.assign("email", dto?.email ?? "");
+		this.companyName = this.assign("companyName", dto?.companyName ?? "");
+		this.companyPhone = this.assign("companyPhone", dto?.companyPhone ?? "");
+		this.companyBusinessCategory = this.assign("companyBusinessCategory", dto?.companyBusinessCategory ?? undefined);
+		this.crn = this.assign("crn", dto?.crn ?? undefined);
+		this.vatNumber = this.assign("vatNumber", dto?.vatNumber ?? undefined);
+		this.currencyId = this.assign("currencyId", dto?.currencyId ?? 0);
+		this.currency = this.assign("currency", new Currency(dto?.currency));
+		this.logo = this.assign("logo", dto?.logo ? new StorageFile(dto?.logo) : undefined);
+		this.startDate = this.assign("startDate", dto?.startDate ?? new Date());
+		this.endDate = this.assign("endDate", dto?.endDate ?? new Date());
+		this.branchId = this.assign("branchId", dto?.branchId ?? 0);
+		this.branch = this.assign("branch", new Branch(dto?.branch));
+		this.mainTaxId = this.assign("mainTaxId", dto?.mainTaxId ?? 0);
+		this.mainTax = this.assign("mainTax", new Tax(dto?.mainTax));
+		this.sellAccountId = this.assign("sellAccountId", dto?.sellAccountId ?? undefined);
+		this.sellAccountName = this.assign("sellAccountName", dto?.sellAccountName ?? undefined);
+		this.purchaseAccountId = this.assign("purchaseAccountId", dto?.purchaseAccountId ?? undefined);
+		this.purchaseAccountName = this.assign("purchaseAccountName", dto?.purchaseAccountName ?? undefined);
+		this.mainPaymentMethodId = this.assign("mainPaymentMethodId", dto?.mainPaymentMethodId ?? undefined);
+		this.mainPaymentMethodName = this.assign("mainPaymentMethodName", dto?.mainPaymentMethodName ?? undefined);
+		this.mainStoreId = this.assign("mainStoreId", dto?.mainStoreId ?? undefined);
+		this.mainStoreName = this.assign("mainStoreName", dto?.mainStoreName ?? undefined);
+		this.invoicePolicy = this.assign("invoicePolicy", dto?.invoicePolicy ?? undefined);
+		this.invoicePrintSize = this.assign("invoicePrintSize", dto?.invoicePrintSize ?? InvoicePrintSize.A4);
+		this.eInvoicingEnvironmentType = this.assign(
+			"eInvoicingEnvironmentType",
+			dto?.eInvoicingEnvironmentType ?? EInvoicingEnvironmentType.Simulation
+		);
+	}
 }
 
 export class SharingSetting
 {
-  public registrationKey!: string;
-  public companyName!: string;
-  public companyPhone!: string;
-  public crn?: string;
-  public vatNumber?: string;
-  public street!: string;
-  public district!: string;
-  public buildingNumber!: string;
-  public postalCode!: string;
-  public city!: CityOld;
-  public logo?: StorageFile;
+	public registrationKey!: string;
+	public companyName!: string;
+	public companyPhone!: string;
+	public crn?: string;
+	public vatNumber?: string;
+	public street!: string;
+	public district!: string;
+	public buildingNumber!: string;
+	public postalCode!: string;
+	public city!: CityDto;
+	public logo?: StorageFile;
 
-  constructor(init?: Partial<SharingSetting>)
-  {
-    Object.assign(this, init);
-  }
+	constructor(init?: Partial<SharingSetting>)
+	{
+		Object.assign(this, init);
+	}
 }

@@ -2,67 +2,76 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, FieldsSection, NumberField, SelectField, SystemPermissionsActions, TextField } from "yusr-ui";
-import { Tax, TaxDto } from "../../core/data/tax";
+import { ChangeableEntityMode, type CommonChangeDialogProps } from "yusr-ui";
+import {
+  ChangeDialog,
+  FieldGroup,
+  FieldsSection,
+  NumberField,
+  SelectField,
+  SystemPermissionsActions,
+  TextField
+} from "yusr-ui";
+import { Tax, TaxDto } from "@/core/data/tax.ts";
 
-export default function ChangeTaxDialog({ entity, service, onSuccess }: CommonChangeDialogProps<Tax, TaxDto>)
+
+export default function ChangeTaxDialog({entity, service, onSuccess}: CommonChangeDialogProps<Tax, TaxDto>)
 {
-  useSignals();
+	useSignals();
+	const {t} = useTranslation(["accounting", "common"]);
 
-  if (
-    (entity.mode.value === "create"
-      && !Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Add))
-    || (entity.mode.value === "update"
-      && !Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Update))
-  )
-  {
-    return <ChangeDialog.Unauthorized />;
-  }
+	if (
+		(entity.mode.value === ChangeableEntityMode.Create
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Add))
+		|| (entity.mode.value === ChangeableEntityMode.Update
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-  const { t } = useTranslation(["accounting", "common"]);
-  const title = entity.mode.value === "create"
-    ? t("taxes.addNewTitle")
-    : `${t("common:crudRow.edit")} ${t("taxes.entityName")}`;
+	const title = entity.mode.value === ChangeableEntityMode.Create
+		? t("taxes.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("taxes.entityName") }`;
 
-  return (
-    <ChangeDialog className="sm:max-w-lg">
-      <ChangeDialog.Header title={ title } />
+	return (
+		<ChangeDialog className="sm:max-w-lg">
+			<ChangeDialog.Header title={ title }/>
 
-      <FieldGroup>
-        <TextField
-          label={ t("taxes.taxName") }
-          required
-          value={ entity.name }
-          error={ entity.getError("name") }
-        />
-        <FieldsSection columns={ 2 }>
-          <NumberField
-            label={ t("taxes.percentage") }
-            required
-            min={ 1 }
-            max={ 100 }
-            value={ entity.percentage }
-            error={ entity.getError("percentage") }
-          />
-          <SelectField
-            label={ t("taxes.isPrimary") }
-            value={ entity.isPrimary }
-            required
-            options={ [{ label: t("common:yes"), value: true }, { label: t("common:no"), value: false }] }
-          />
-        </FieldsSection>
-      </FieldGroup>
+			<FieldGroup>
+				<TextField
+					label={ t("taxes.taxName") }
+					required
+					value={ entity.name }
+					error={ entity.getError("name") }
+				/>
+				<FieldsSection columns={ 2 }>
+					<NumberField
+						label={ t("taxes.percentage") }
+						required
+						min={ 1 }
+						max={ 100 }
+						value={ entity.percentage }
+						error={ entity.getError("percentage") }
+					/>
+					<SelectField
+						label={ t("taxes.isPrimary") }
+						value={ entity.isPrimary }
+						required
+						options={ [{label: t("common:yes"), value: true}, {label: t("common:no"), value: false}] }
+					/>
+				</FieldsSection>
+			</FieldGroup>
 
-      <ChangeDialog.Footer>
-        <ChangeDialog.Close />
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
 
-        <ChangeDialog.SaveButton<Tax, TaxDto>
-          entity={ entity }
-          service={ service }
-          onSuccess={ (data) => onSuccess?.(data) }
-        />
-      </ChangeDialog.Footer>
-    </ChangeDialog>
-  );
+				<ChangeDialog.SaveButton<Tax, TaxDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data) }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

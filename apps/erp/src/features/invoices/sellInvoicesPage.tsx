@@ -1,37 +1,30 @@
+//TODO: must be tested
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
+import InvoicesPage from "@/features/invoices/invoicesPage.tsx";
 import { useTranslation } from "react-i18next";
-import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import { ClientsSlice } from "../../core/data/account";
-import { InvoiceType, SalesSlice } from "../../core/data/invoice";
-import { useAppSelector } from "../../core/state/store";
-import InvoicesPage from "./invoicesPage";
+import { SystemPermissionsActions } from "yusr-ui";
+import { InvoiceType } from "@/core/types/invoiceType.ts";
 
-export default function SellInvoicesPage()
+
+export default function SellInvoicesPageOld()
 {
-  const { t } = useTranslation("accounting");
-  const authState = useAppSelector((state) => state.auth);
-  const clientsState = useAppSelector((state) => state.clients);
+	const {t} = useTranslation("accounting");
 
-  return (
-    <InvoicesPage
-      basePath="/sales"
-      slice={ SalesSlice }
-      stateKey="sales"
-      dialogStateKey="salesDialog"
-      title={ t("invoices.salesManagement") }
-      fixedType={ InvoiceType.Sell }
-      selectFormState={ (state) => state.salesForm }
-      accountSlice={ ClientsSlice }
-      accountState={ clientsState }
-      hasPagePermission={ SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.InvoiceSell,
-        SystemPermissionsActions.Get
-      ) && SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.Invoices,
-        SystemPermissionsActions.Get
-      ) }
-    />
-  );
+	return (
+		<InvoicesPage
+			permissionResource={ SystemPermissionsResources.Invoices }
+
+			basePath="/sales"
+			title={ t("invoices.salesManagement") }
+			fixedType={ InvoiceType.Sell }
+			hasPagePermission={ Services.auth.hasAuth(
+				SystemPermissionsResources.InvoiceSell,
+				SystemPermissionsActions.Get
+			) && Services.auth.hasAuth(
+				SystemPermissionsResources.Invoices,
+				SystemPermissionsActions.Get
+			) }
+		/>
+	);
 }

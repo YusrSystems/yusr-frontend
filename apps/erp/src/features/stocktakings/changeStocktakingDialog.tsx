@@ -1,168 +1,128 @@
-import StoresSearchableSelectOld from "@/core/components/searchableSelect/storesSearchableSelectOld";
-import { StoreSlice } from "@/core/data/storeSlice";
-import { useEffect, useMemo, useState } from "react";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import type { StocktakingDto } from "@/core/data/stocktaking";
+import Stocktaking from "@/core/data/stocktaking";
+import { StocktakingItem } from "@/core/data/stocktakingItem";
+import { Cubits } from "@/core/services/cubits";
+import { signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogPropsOld } from "yusr-ui";
-import { ChangeDialogOld, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormFieldOld, Loading, TextFieldOld, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { ItemType } from "../../core/data/itemOld";
-import Stocktaking, { StocktakingItem, StocktakingSlice, StocktakingValidationRules } from "../../core/data/stocktaking";
-import StoreOld from "../../core/data/store";
-import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import { ChangeableEntityMode, type CommonChangeDialogProps } from "yusr-ui";
+import { ChangeDialog, FieldGroup, FieldsSection, FormField, Loading, TextField } from "yusr-ui";
+import { ItemType } from "@/core/data/item.ts";
 import StocktakingItemsTable from "./stocktakingItemsTable";
 
+
 export default function ChangeStocktakingDialog(
-  { entity, mode, service, onSuccess }: CommonChangeDialogPropsOld<Stocktaking>
+	{entity, service, onSuccess, addDialogTitle, updateDialogTitle}:
+	& CommonChangeDialogProps<Stocktaking, StocktakingDto>
+		& {
+		addDialogTitle: string;
+		updateDialogTitle: string;
+	}
 )
 {
-  const { t } = useTranslation(["stocking", "common"]);
-  const dispatch = useAppDispatch();
-  const [initLoading, setInitLoading] = useState(false);
-  const storeState = useAppSelector((state) => state.store);
+	useSignals();
+	const {t} = useTranslation(["stocking", "common"]);
+	const isLoading = useMemo(() => signal<boolean>(false), []);
+	const currentEntity = useMemo(() => signal<Stocktaking>(entity), [entity]);
 
-  const initialValues = useMemo(() => ({
-    ...entity,
-    date: entity?.date ? new Date(entity.date).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
-    items: entity?.items || []
-  }), [entity]);
+	useEffect(() =>
+	{
+		Cubits.stores.init();
 
-  const { formData, errors } = useAppSelector((state) => state.stocktakingForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    StocktakingValidationRules.validationRules(t),
-    (errors) => dispatch(StocktakingSlice.formActions.setErrors(errors))
-  );
-  useFormInit(StocktakingSlice.formActions.setInitialData, initialValues);
+		if (currentEntity.value.mode.value === ChangeableEntityMode.Update && currentEntity.value?.id.value)
+		{
+			isLoading.value = true;
+			const fetch = async () =>
+			{
+				const res = await service.Get(currentEntity.value.id.value);
+				if (res.data != undefined)
+				{
+					res.data.date.value = new Date(res.data.date.value).toLocaleDateString("en-CA");
+					currentEntity.value = Stocktaking.load(res.data.toJson());
+				}
+				isLoading.value = false;
+			};
+			void fetch();
+		}
+	}, [currentEntity, isLoading, service]);
 
-  useEffect(() =>
-  {
-    dispatch(StoreSlice.entityActions.filter());
-  }, [dispatch]);
+	useEffect(() =>
+	{
+		if (currentEntity.value?.storeId.value)
+		{
+			Cubits.items.init([ItemType.Product], {storeId: currentEntity.value.storeId.value});
+		}
+	}, [currentEntity.value.storeId.value]);
 
-  useEffect(() =>
-  {
-    if (formData.storeId)
-    {
-      dispatch(fetchStoreItems({
-        pageNumber: 1,
-        rowsPerPage: 100,
-        storeId: formData.storeId,
-        request: new FilterByTypeRequest({ types: [ItemType.Product] })
-      }));
-    }
-  }, [dispatch, formData.storeId]);
+	const title = currentEntity.value.mode.value === ChangeableEntityMode.Create
+		? addDialogTitle
+		: updateDialogTitle;
 
-  useEffect(() =>
-  {
-    if (mode === "update" && entity?.id)
-    {
-      setInitLoading(true);
-      const getItem = async () =>
-      {
-        const res = await service.Get(entity.id);
-        if (res.data != undefined)
-        {
-          dispatch(StocktakingSlice.formActions.setInitialData(res.data));
-        }
-        setInitLoading(false);
-      };
-      getItem();
-    }
-  }, [entity?.id, mode]);
+	if (isLoading.value)
+	{
+		return (
+			<ChangeDialog>
+				<ChangeDialog.Header title={ title }/>
+				<Loading entityName={ t("stocktakings.entityName") }/>
+			</ChangeDialog>
+		);
+	}
 
-  const handleStoreChange = (store?: StoreOld) =>
-  {
-    dispatch(StocktakingSlice.formActions.updateFormData({
-      storeId: store?.id,
-      storeName: store?.name,
-      items: []
-    }));
-    StocktakingSlice.formActions.clearError("storeId");
-  };
+	return (
+		<ChangeDialog className="sm:max-w-7xl">
+			<ChangeDialog.Header title={ title }/>
 
-  if (initLoading)
-  {
-    return (
-      <DialogContent dir="rtl">
-        <DialogHeader>
-          <DialogTitle>
-            { mode === "create"
-              ? t("stocktakings.addNewTitle")
-              : `${t("common:crudRow.edit")} ${t("stocktakings.entityName")}` }
-          </DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
-        <Loading entityName={ t("stocktakings.entityName") } />
-      </DialogContent>
-    );
-  }
+			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
+				<FieldGroup>
+					<FieldsSection columns={ 2 }>
+						<TextField
+							label={ t("stocktakings.stocktakingDate") }
+							value={ currentEntity.value.date }
+							required
+							disabled
+						/>
 
-  return (
-    <ChangeDialogOld<Stocktaking>
-      title={ mode === "create"
-        ? t("stocktakings.addNewTitle")
-        : `${t("common:crudRow.edit")} ${t("stocktakings.entityName")}` }
-      className="sm:max-w-7xl"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => storeState.isLoading }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-    >
-      <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
-        <FieldGroup>
-          <FieldsSection columns={ 2 }>
-            <TextFieldOld
-              label={ t("stocktakings.stocktakingDate") }
-              required
-              value={ formData.date
-                ? new Date(formData.date).toLocaleDateString("en-CA")
-                : "" }
-              isInvalid={ isInvalid("date") }
-              error={ getError("date") }
-              disabled
-            />
+						<FormField
+							label={ t("stocktakings.store") }
+							required
+							error={ currentEntity.value.getError("storeId") }
+						>
+							<StoresSearchableSelect
+								id={ currentEntity.value.storeId }
+								label={ currentEntity.value.storeName }
+								disabled={ currentEntity.value.mode.value === ChangeableEntityMode.Update }
+								onSelect={ (store) =>
+								{
+									currentEntity.value.storeId.value = store?.id.value;
+									currentEntity.value.storeName.value = store?.name.value;
+									currentEntity.value.items.value = [];
+								} }
+							/>
+						</FormField>
+					</FieldsSection>
 
-            <FormFieldOld
-              label={ t("stocktakings.store") }
-              required
-              isInvalid={ isInvalid("storeId") }
-              error={ getError("storeId") }
-            >
-              <StoresSearchableSelectOld
-                selectedId={ formData.storeId }
-                selectedLabel={ formData.storeName }
-                disabled={ mode === "update" }
-                isInvalid={ isInvalid("storeId") }
-                onValueChange={ handleStoreChange }
-              />
-            </FormFieldOld>
-          </FieldsSection>
+					<TextField
+						label={ t("stocktakings.description") }
+						value={ currentEntity.value.description }
+					/>
 
-          <TextFieldOld
-            label={ t("stocktakings.description") }
-            value={ formData.description || "" }
-            onChange={ (e) => dispatch(StocktakingSlice.formActions.updateFormData({ description: e.target.value })) }
-          />
+					<StocktakingItemsTable
+						entity={ currentEntity.value }
+						createInstance={ () => StocktakingItem.create() }
+					/>
+				</FieldGroup>
+			</div>
 
-          { formData.storeId && (
-            <StocktakingItemsTable
-              formData={ formData }
-              errors={ errors }
-              handleChange={ (update) =>
-                dispatch(
-                  StocktakingSlice.formActions.updateFormData(
-                    update as Partial<Stocktaking> | ((prev: Partial<Stocktaking>) => Partial<Stocktaking>)
-                  )
-                ) }
-              createInstance={ () => new StocktakingItem() }
-              mode={ mode }
-            />
-          ) }
-        </FieldGroup>
-      </div>
-    </ChangeDialogOld>
-  );
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+				<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
+					entity={ currentEntity.value }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data) }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

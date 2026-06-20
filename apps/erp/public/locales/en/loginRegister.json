@@ -15,7 +15,8 @@
     "password": {
       "label": "Password",
       "placeholder": "••••••••",
-      "required": "Password is required"
+      "required": "Password is required",
+      "minLength": "Password must be at least 6 characters"
     },
     "rememberMe": "Remember me",
     "button": "Log in",
@@ -23,7 +24,6 @@
     "registerLink": "Sign up",
     "backToHome": "Back to Homepage"
   },
-
   "register": {
     "title": "Create a new account",
     "subtitle": "Enter your company details to get started",
@@ -116,7 +116,8 @@
       "password": {
         "label": "User Password",
         "placeholder": "••••••••",
-        "required": "Password is required"
+        "required": "Password is required",
+        "minLength": "Password must be at least 6 characters"
       },
       "acceptPolicies": "I agree to the",
       "termsAndPrivacy": "Terms of Service and Privacy Policy",

@@ -1,29 +1,31 @@
-import { DateInput, type DateInputProps } from "../inputs/dateInput";
-import { FormFieldOld } from "./formField";
+import { DateInput, type DateInputProps } from "../inputs/dateInput.tsx";
+import { FormField } from "./formField";
+import type { Signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
+
 
 interface DateFieldProps extends DateInputProps
 {
-  label: string;
-  error?: string;
-  required?: boolean;
+	label: string;
+	error?: Signal<string | undefined>;
+	required?: boolean;
 }
 
 export function DateField({
-  label,
-  error,
-  isInvalid,
-  required,
-  ...props
+	label,
+	error,
+	required,
+	...props
 }: DateFieldProps)
 {
-  return (
-    <FormFieldOld
-      label={ label }
-      error={ error }
-      isInvalid={ isInvalid }
-      required={ required }
-    >
-      <DateInput { ...props } isInvalid={ isInvalid } />
-    </FormFieldOld>
-  );
+	useSignals();
+	return (
+		<FormField
+			label={ label }
+			error={ error }
+			required={ required }
+		>
+			<DateInput { ...props } />
+		</FormField>
+	);
 }
