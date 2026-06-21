@@ -1,21 +1,22 @@
 import { YusrApiHelper, YusrBackground } from "yusr-ui";
 import { LoginForm } from "./loginForm";
 import { Services } from "@/core/services/services.ts";
+import { useEffect } from "react";
 
 
 export default function LoginPage()
 {
-	const Logout = async () =>
+	useEffect(() =>
 	{
-		const result = await YusrApiHelper.Post(`/api/Logout`);
-
-		if (result.status === 200 || result.status === 204)
+		(async () =>
 		{
-			Services.auth.logout();
-		}
-	};
-
-	void Logout();
+			const result = await YusrApiHelper.Post(`/api/Logout`);
+			if (result.status === 200 || result.status === 204)
+			{
+				Services.auth.logout();
+			}
+		})();
+	}, []);
 
 	return (
 		<div className="flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
