@@ -11,7 +11,6 @@ import {
 	ErrorFallback,
 	MaintenanceFallback,
 	NotFoundPage,
-	ProtectedRoute,
 	UsersPage
 } from "yusr-ui";
 import BanksAccountsPage from "../features/accounts/banksAccountsPage";
@@ -38,6 +37,7 @@ import AppLayout from "./appLayout";
 import SellInvoicesPage from "@/features/invoices/sellInvoicesPage";
 import PurchaseInvoicesPage from "@/features/invoices/purchaseInvoices.tsx";
 import QuotationInvoicesPage from "@/features/invoices/quotationInvoicesPage.tsx";
+import AuthGate from "@/app/authGate.tsx";
 
 
 const refreshPage = () =>
@@ -58,7 +58,7 @@ export const router = createBrowserRouter([{
 		{path: "/legal", element: <LegalDocViewer/>},
 		{path: "/sharing/:registrationKey", element: <TenantInfoSharingPage/>},
 		{
-			element: <ProtectedRoute isAuthenticated={ Services.auth.isAuthenticated }/>,
+			element: <AuthGate/>,
 			children: [{
 				element: <AppLayout/>,
 				children: [
