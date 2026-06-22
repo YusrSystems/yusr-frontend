@@ -8,7 +8,7 @@ import {
 	Button,
 	Card,
 	CardContent,
-	CheckboxField,
+	CheckboxFieldLabelComponent,
 	cn,
 	Field,
 	FieldDescription,
@@ -165,24 +165,24 @@ function AcceptTerms({cubit}: { cubit: RegistrationCubit; })
 	useSignals();
 	return (
 		<div className="py-1">
-			<CheckboxField
+			<CheckboxFieldLabelComponent
 				checked={ cubit.formData.hasAcceptedPolicies }
 				required={ true }
 				error={ cubit.formData.getError("hasAcceptedPolicies") }
-				// label={
-				// 	<span className="text-sm text-muted-foreground leading-snug">
-				// 		{ i18n.t("loginRegister:register.accountInfo.acceptPolicies") }{ " " }
-				// 		<a
-				// 			rel="noopener noreferrer"
-				// 			href="https://erp.yusrsys.com/legal"
-				// 			target="_blank"
-				// 			onClick={ (e) => e.stopPropagation() }
-				// 			className="text-primary font-medium underline underline-offset-4 hover:text-primary/80 transition-colors"
-				// 		>
-				// 			{ i18n.t("loginRegister:register.accountInfo.termsAndPrivacy") }
-				// 		</a>
-				// 	</span>
-				// }
+				label={
+					<span className="text-sm text-muted-foreground leading-snug">
+						{ i18n.t("loginRegister:register.accountInfo.acceptPolicies") }{ " " }
+						<a
+							rel="noopener noreferrer"
+							href="https://erp.yusrsys.com/legal"
+							target="_blank"
+							onClick={ (e) => e.stopPropagation() }
+							className="text-primary font-medium underline underline-offset-4 hover:text-primary/80 transition-colors"
+						>
+							{ i18n.t("loginRegister:register.accountInfo.termsAndPrivacy") }
+						</a>
+					</span>
+				}
 			/>
 		</div>
 	);
