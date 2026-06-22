@@ -325,7 +325,7 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 			</SidebarContent>
 
 			<SidebarFooter>
-				<SideBarUserData user={ Services.auth.loggedInUser }/>
+				<SideBarUserData/>
 			</SidebarFooter>
 		</Sidebar>
 	);

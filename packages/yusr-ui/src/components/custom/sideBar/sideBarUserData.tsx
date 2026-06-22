@@ -7,26 +7,26 @@ import { Separator } from "../../pure/separator";
 import { useSignals } from "@preact/signals-react/runtime";
 import type { Signal } from "@preact/signals-react";
 import { signal } from "@preact/signals-react";
-import { useEffect, useMemo } from "react";
-import { Building2, ShieldCheck, Unlink, User as UserIcon } from "lucide-react";
+import React, { useEffect, useMemo } from "react";
+import { Building2, Loader2, ShieldCheck, Unlink, User as UserIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { GoogleLogin } from "@react-oauth/google";
-import { ContinueWithGoogleCubit } from "../../../stateManager/continueWithGoogleCubit.ts";
-import { BaseServices } from "../../../services";
+import { ContinueWithGoogleLoadingState } from "../../../stateManager/continueWithGoogleCubit.ts";
+import { BaseCubits, BaseServices } from "../../../services";
 import { PasswordField } from "../index.ts";
 import { toast } from "sonner";
 
 
-export function SideBarUserData({user}: { user: User | undefined })
+export function SideBarUserData()
 {
 	useSignals();
 	const {i18n} = useTranslation("common");
 	const isDialogOpen = useMemo(() => signal<boolean>(false), []);
 	const dir = i18n.dir();
-	const cubit = useMemo(() => new ContinueWithGoogleCubit(), []);
+
 	useEffect(() =>
 	{
-		void cubit.init();
+		void BaseCubits.continueWithGoogle.init();
 	}, []);
 
 	return (
@@ -39,35 +39,38 @@ export function SideBarUserData({user}: { user: User | undefined })
 						className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
 						onClick={ () => (isDialogOpen.value = true) }
 					>
-						<Avatar className="h-8 w-8 rounded-lg grayscale">
-							<AvatarImage src="/avatars/shadcn.jpg" alt={ user?.username.value }/>
+						<Avatar className="h-8 w-8 rounded-lg">
+							<AvatarImage
+								src={ BaseCubits.continueWithGoogle.userMetadata.value.picture.value ?? "/avatars/shadcn.jpg" }
+								alt={ BaseServices.auth.loggedInUser?.username.value }
+								referrerPolicy="no-referrer"
+							/>
 							<AvatarFallback className="rounded-lg">
-								{ user?.username.value?.slice(0, 2).toUpperCase() ?? "??" }
+								{ BaseServices.auth.loggedInUser?.username.value?.slice(0, 2).toUpperCase() ?? "??" }
 							</AvatarFallback>
 						</Avatar>
 						<div className="grid flex-1 text-start text-sm leading-tight">
-							<span className="truncate font-medium">{ user?.username.value }</span>
+							<span
+								className="truncate font-medium">{ BaseServices.auth.loggedInUser?.username.value }</span>
 							<span className="truncate text-xs text-muted-foreground">
-                                { user?.roleName.value }
+                                { BaseServices.auth.loggedInUser?.roleName.value }
                             </span>
 						</div>
 					</SidebarMenuButton>
 				</SidebarMenuItem>
 			</SidebarMenu>
 
-			<UserInfoDialog user={ user } isOpen={ isDialogOpen } cubit={ cubit }/>
+			<UserInfoDialog user={ BaseServices.auth.loggedInUser } isOpen={ isDialogOpen }/>
 		</>
 	);
 }
 
 function UserInfoDialog({
 	user,
-	isOpen,
-	cubit
+	isOpen
 }: {
 	user: User | undefined;
 	isOpen: Signal<boolean>;
-	cubit: ContinueWithGoogleCubit;
 })
 {
 	useSignals();
@@ -91,7 +94,11 @@ function UserInfoDialog({
 
 					<div className="flex items-center gap-4 py-2">
 						<Avatar className="h-14 w-14 shrink-0 ">
-							<AvatarImage src="/avatars/shadcn.jpg" alt={ user?.username.value }/>
+							<AvatarImage
+								src={ BaseCubits.continueWithGoogle.userMetadata.value.picture.value ?? "/avatars/shadcn.jpg" }
+								alt={ user?.username.value }
+								referrerPolicy="no-referrer"
+							/>
 							<AvatarFallback className="text-base">
 								{ user?.username.value?.slice(0, 2).toUpperCase() ?? "??" }
 							</AvatarFallback>
@@ -130,10 +137,7 @@ function UserInfoDialog({
 
 						<Separator/>
 
-						<GoogleRow
-							cubit={ cubit }
-							onRequestDisconnect={ () => (isDisconnectDialogOpen.value = true) }
-						/>
+						<GoogleRow onRequestDisconnect={ () => (isDisconnectDialogOpen.value = true) }/>
 					</div>
 				</DialogContent>
 			</Dialog>
@@ -141,7 +145,6 @@ function UserInfoDialog({
 			<DisconnectGoogleDialog
 				isOpen={ isDisconnectDialogOpen }
 				password={ disconnectPassword }
-				cubit={ cubit }
 				dir={ dir }
 			/>
 		</>
@@ -170,19 +173,16 @@ function InfoRow({
 }
 
 function GoogleRow({
-	cubit,
 	onRequestDisconnect
 }: {
-	cubit: ContinueWithGoogleCubit;
 	onRequestDisconnect: () => void;
 })
 {
 	useSignals();
 	const {t} = useTranslation("common");
-	const user = BaseServices.auth.loggedInUser;
-	const metadata = user?.userMetadata?.value;
-	const isConnected = Boolean(metadata?.connectedEmail.value);
-	const email = metadata?.connectedEmail.value;
+
+	const isConnected = Boolean(BaseCubits.continueWithGoogle.userMetadata.value.connectedEmail.value);
+
 	return (
 		<div className="flex items-center justify-between gap-2">
 			<div className="flex items-center gap-2 text-muted-foreground">
@@ -198,25 +198,27 @@ function GoogleRow({
                                text-xs font-medium text-foreground transition-colors
                                hover:bg-destructive/10 hover:text-destructive"
 				>
-					<span className="max-w-[130px] truncate">{ email }</span>
+					<span
+						className="max-w-[130px] truncate">{ BaseCubits.continueWithGoogle.userMetadata.value.connectedEmail.value }</span>
 					<Unlink className="h-3 w-3 shrink-0 "/>
 				</button>
 			) : (
 				<div className="flex items-center justify-center gap-1">
-					<GoogleLogin onSuccess={ async (res) =>
-					{
-						const token = res.credential;
-						if (!token)
+					<GoogleLogin
+						shape={ "circle" }
+						type={ "icon" }
+						auto_select={ false }
+						text={ "signup_with" }
+						size={ "large" }
+						onSuccess={ async (res) =>
 						{
-							throw new Error("Token not provided");
-						}
-						await cubit.Connect(token);
-					} }
-					             shape={ "circle" }
-					             type={ "icon" }
-					             auto_select={ false }
-					             text={ "signup_with" }
-					             size={ "large" }
+							const token = res.credential;
+							if (!token)
+							{
+								throw new Error("Token not provided");
+							}
+							await BaseCubits.continueWithGoogle.Connect(token);
+						} }
 					/>
 				</div>
 			) }
@@ -227,12 +229,10 @@ function GoogleRow({
 function DisconnectGoogleDialog({
 	isOpen,
 	password,
-	cubit,
 	dir
 }: {
 	isOpen: Signal<boolean>;
 	password: Signal<string>;
-	cubit: ContinueWithGoogleCubit;
 	dir: "ltr" | "rtl";
 })
 {
@@ -252,12 +252,15 @@ function DisconnectGoogleDialog({
 			toast.error(t("login:password.minLengthError"));
 			return;
 		}
-		await cubit.disconnect(password.value);
+		await BaseCubits.continueWithGoogle.disconnect(password.value);
 		close();
 	};
 
+	const isLoading = BaseCubits.continueWithGoogle.state.value instanceof ContinueWithGoogleLoadingState;
+
 	return (
 		<Dialog open={ isOpen.value } onOpenChange={ (open) => (open ? (isOpen.value = true) : close()) }>
+
 			<DialogContent className="sm:max-w-sm" dir={ dir }>
 				<DialogHeader>
 					<DialogTitle>{ t("sidebar.userInfo.google.disconnectDialog.title") }</DialogTitle>
@@ -265,32 +268,45 @@ function DisconnectGoogleDialog({
 						{ t("sidebar.userInfo.google.disconnectDialog.description") }
 					</DialogDescription>
 				</DialogHeader>
+				{ isLoading && (
+					<div
+						className="p-8 text-center text-muted-foreground flex flex-col items-center justify-center">
+						<Loader2 className="h-8 w-8 animate-spin text-primary mb-4"/>
+					</div>
+				) }
 
-				<PasswordField
-					label={ t("sidebar.userInfo.google.disconnectDialog.passwordLabel") }
-					id="disconnectPassword"
-					placeholder={ t("sidebar.userInfo.google.disconnectDialog.passwordPlaceholder") }
-					value={ password }
-					required
-				/>
+				{ !isLoading && (
+					<>
+						<PasswordField
+							label={ t("sidebar.userInfo.google.disconnectDialog.passwordLabel") }
+							id="disconnectPassword"
+							placeholder={ t("sidebar.userInfo.google.disconnectDialog.passwordPlaceholder") }
+							value={ password }
+							required
+						/>
 
-				<div className="flex justify-end gap-2 pt-2">
-					<button
-						type="button"
-						onClick={ close }
-						className="rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted transition-colors"
-					>
-						{ t("sidebar.userInfo.google.disconnectDialog.cancel") }
-					</button>
-					<button
-						type="button"
-						onClick={ handleConfirm }
-						className="rounded-md px-3 py-1.5 text-xs font-medium text-white bg-destructive hover:bg-destructive/90 transition-colors"
-					>
-						{ t("sidebar.userInfo.google.disconnectDialog.confirm") }
-					</button>
-				</div>
+						<div className="flex justify-end gap-2 pt-2">
+							<button
+								type="button"
+								onClick={ close }
+								disabled={ isLoading }
+								className="rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted transition-colors"
+							>
+								{ t("sidebar.userInfo.google.disconnectDialog.cancel") }
+							</button>
+							<button
+								type="button"
+								onClick={ handleConfirm }
+								disabled={ isLoading }
+								className="rounded-md px-3 py-1.5 text-xs font-medium text-white bg-destructive hover:bg-destructive/90 transition-colors"
+							>
+								{ t("sidebar.userInfo.google.disconnectDialog.confirm") }
+							</button>
+						</div>
+					</>
+				) }
 			</DialogContent>
+
 		</Dialog>
 	);
 }
