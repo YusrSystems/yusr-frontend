@@ -244,6 +244,24 @@
     "commaSeparatedPlaceholder": "Enter values separated by commas",
     "loadingFields": "Loading fields...",
     "loadFieldsError": "An error occurred while loading filter fields",
-    "clickToExpand": "Click to expand"
+    "clickToExpand": "Click to expand",
+    "filterHelp": {
+      "title": "How Advanced Filter Works",
+      "andTitle": "Conditions (Same Group)",
+      "andDesc": "When you add multiple rules within the same group, a record must match all of these rules. This makes your search more precise.",
+      "orTitle": "Groups",
+      "orDesc": "When you add a new group, you create an alternative condition. A record will appear if it matches either the first group or the second group.",
+      "resultAnd": "Result: Shows only \"Electronics\" with price greater than 500.",
+      "resultOr": "Result: Shows all \"Electronics\" and all \"Clothing\".",
+      "mockCategory": "Category",
+      "mockElectronics": "Electronics",
+      "mockClothing": "Clothing",
+      "mockPrice": "Price",
+      "mockEqual": "Equals",
+      "mockGreaterThan": "Greater Than",
+      "group": "Group",
+      "and": "And",
+      "or": "Or"
+    }
   }
 }

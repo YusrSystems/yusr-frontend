@@ -17,6 +17,7 @@ import { FilterOperator } from "./filterOperator.ts";
 import type { FilterFieldMetadataDto } from "./filterFieldMetadataDto.ts";
 import { FilterGroup, type FilterGroupDto } from "./filterGroup.ts";
 import { FilterRule } from "./filterRule.ts";
+import { FilterHelpDialog } from "./filterHelpDialog.tsx";
 
 
 export const MAX_GROUPS = 5;
@@ -39,6 +40,7 @@ export function FilterSection({fieldsCubit, onApply, onClear, renderCustomInput}
 	useSignals();
 	const {t} = useTranslation("common");
 	const isOpen = useMemo(() => signal(false), []);
+	const isDialogOpen = useMemo(() => signal(false), []);
 	const groups = useMemo(() => signal<FilterGroup[]>([FilterGroup.create()]), []);
 	const activeFilterCount = useMemo(() => signal(0), []);
 
@@ -145,7 +147,7 @@ export function FilterSection({fieldsCubit, onApply, onClear, renderCustomInput}
 	};
 
 	return (
-		<Collapsible open={ isOpen.value } onOpenChange={ (open) => isOpen.value = open }
+		<Collapsible open={ isOpen.value && !isDialogOpen.value } onOpenChange={ (open) => isOpen.value = open }
 		             className="border border-b-0 rounded-t-xl bg-card shadow-sm"
 		>
 			<CollapsibleTrigger asChild>
@@ -167,12 +169,18 @@ export function FilterSection({fieldsCubit, onApply, onClear, renderCustomInput}
 							{ t("filter.title", "Advanced Filters") }
 						</span>
 
+
 						{ activeFilterCount.value > 0 && (
 							<span
 								className="rounded-full bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 shadow-sm">
 								{ activeFilterCount.value }
 							</span>
 						) }
+
+						<FilterHelpDialog
+							open={ isDialogOpen.value }
+							onOpenChange={ (open) => isDialogOpen.value = open }
+						/>
 					</div>
 
 					<div className="flex items-center gap-2 text-muted-foreground">
