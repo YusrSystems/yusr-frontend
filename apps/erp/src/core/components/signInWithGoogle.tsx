@@ -1,12 +1,10 @@
 import { useSignals } from "@preact/signals-react/runtime";
 import { GoogleLogin } from "@react-oauth/google";
-import { useTranslation } from "react-i18next";
 
 
 export default function SignInWithGoogle({onLogin}: { onLogin: (token: string) => Promise<void> })
 {
 	useSignals();
-	const {t} = useTranslation("login");
 	return <div className="w-full ">
 		<div className="flex content-center justify-center gap-4">
 

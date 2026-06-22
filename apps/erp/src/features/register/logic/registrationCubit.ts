@@ -18,7 +18,8 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 		email: "",
 		userPassword: "",
 		username: "",
-		id: 0
+		id: 0,
+		hasAcceptedPolicies: false
 	});
 
 	constructor()

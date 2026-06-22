@@ -1,5 +1,4 @@
 import placeholderImg from "@/assets/placeholder.svg";
-import { Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useMemo } from "react";
@@ -9,6 +8,7 @@ import {
 	Button,
 	Card,
 	CardContent,
+	CheckboxField,
 	cn,
 	Field,
 	FieldDescription,
@@ -62,7 +62,7 @@ export function RegisterForm({
 							</div>
 
 							<RegisterInfo cubit={ cubit }/>
-							<AcceptTerms hasAcceptedPolicies={ cubit.formData.hasAcceptedPolicies }/>
+							<AcceptTerms cubit={ cubit }/>
 							<SubmitButton
 								isLoading={ isLoading }
 								onSubmit={ async () =>
@@ -160,36 +160,30 @@ function RegisterInfo({cubit}: { cubit: RegistrationCubit; })
 	);
 }
 
-function AcceptTerms({hasAcceptedPolicies}: { hasAcceptedPolicies: Signal<boolean>; })
+function AcceptTerms({cubit}: { cubit: RegistrationCubit; })
 {
 	useSignals();
 	return (
-		<div className="flex items-start space-x-2 rtl:space-x-reverse">
-			<span className="text-red-500">*</span>
-			<input
-				type="checkbox"
-				id="acceptPolicies"
-				checked={ hasAcceptedPolicies.value }
-				onChange={ () => hasAcceptedPolicies.value = !hasAcceptedPolicies.value }
-				className="mt-1 me-2 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+		<div className="py-1">
+			<CheckboxField
+				checked={ cubit.formData.hasAcceptedPolicies }
+				required={ true }
+				error={ cubit.formData.getError("hasAcceptedPolicies") }
+				label={
+					<span className="text-sm text-muted-foreground leading-snug">
+						{ i18n.t("loginRegister:register.accountInfo.acceptPolicies") }{ " " }
+						<a
+							rel="noopener noreferrer"
+							href="https://erp.yusrsys.com/legal"
+							target="_blank"
+							onClick={ (e) => e.stopPropagation() }
+							className="text-primary font-medium underline underline-offset-4 hover:text-primary/80 transition-colors"
+						>
+							{ i18n.t("loginRegister:register.accountInfo.termsAndPrivacy") }
+						</a>
+					</span>
+				}
 			/>
-			<label
-				htmlFor="acceptPolicies"
-				className={ cn(
-					"text-sm text-muted-foreground",
-					!hasAcceptedPolicies.value && "border border-b-2 border-t-0 border-l-0 border-r-0 border-red-600  "
-				) }
-			>
-				{ i18n.t("loginRegister:register.accountInfo.acceptPolicies") }{ " " }
-				<a
-					rel="noopener noreferrer"
-					href="https://erp.yusrsys.com/legal"
-					target="_blank"
-					className="text-primary hover:underline"
-				>
-					{ i18n.t("loginRegister:register.accountInfo.termsAndPrivacy") }
-				</a>
-			</label>
 		</div>
 	);
 }

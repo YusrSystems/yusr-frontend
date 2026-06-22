@@ -61,7 +61,6 @@ export class ContinueWithGoogleCubit extends Cubit<ContinueWithGoogleState>
 	{
 		const user = BaseServices.auth.loggedInUser;
 		const metadata = user?.userMetadata;
-		console.log(metadata);
 		if (metadata)
 		{
 			metadata.value.connectedEmail.value = email;

@@ -181,7 +181,6 @@ function GoogleRow({
 	const {t} = useTranslation("common");
 	const user = BaseServices.auth.loggedInUser;
 	const metadata = user?.userMetadata?.value;
-	console.log("metadata email: ", metadata?.connectedEmail.value);
 	const isConnected = Boolean(metadata?.connectedEmail.value);
 	const email = metadata?.connectedEmail.value;
 	return (
