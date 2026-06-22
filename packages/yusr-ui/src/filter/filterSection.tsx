@@ -151,7 +151,7 @@ export function FilterSection({fieldsCubit, onApply, onClear, renderCustomInput}
 			<CollapsibleTrigger asChild>
 				<button
 					type="button"
-					className={ `bg-muted flex w-full items-center justify-between px-4 py-3.5 transition-all outline-none border-b ${
+					className={ `bg-muted rounded-t-xl flex w-full items-center justify-between px-4 py-3.5 transition-all outline-none border-b ${
 						isOpen.value
 							? "bg-muted/30 border-border"
 							: "bg-background hover:bg-muted/40 border-transparent"
