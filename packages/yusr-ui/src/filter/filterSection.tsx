@@ -146,7 +146,7 @@ export function FilterSection({fieldsCubit, onApply, onClear, renderCustomInput}
 
 	return (
 		<Collapsible open={ isOpen.value } onOpenChange={ (open) => isOpen.value = open }
-		             className="border border-b-0 rounded-t-xl bg-card overflow-hidden shadow-sm"
+		             className="border border-b-0 rounded-t-xl bg-card shadow-sm"
 		>
 			<CollapsibleTrigger asChild>
 				<button
@@ -189,7 +189,7 @@ export function FilterSection({fieldsCubit, onApply, onClear, renderCustomInput}
 			</CollapsibleTrigger>
 
 			<CollapsibleContent>
-				<div className="px-4 py-4 flex flex-col gap-4 border-t max-h-100 overflow-y-auto">
+				<div className="px-4 py-4 flex flex-col gap-4 border-t max-h-90 overflow-y-auto">
 					{ isLoading && (
 						<div className="text-sm text-muted-foreground py-4">{ t("filter.loadingFields") }</div>
 					) }
