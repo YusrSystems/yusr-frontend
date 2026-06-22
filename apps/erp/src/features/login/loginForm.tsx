@@ -117,7 +117,7 @@ export function LoginForm({className, ...props}: React.ComponentProps<"div">)
 										: i18n.t("login:button") }
 								</Button>
 							</Field>
-							<SignInWithGoogle onLogin={ cubit.externalAuthRegister }/>
+							<SignInWithGoogle onLogin={ (token) => cubit.externalAuthRegister(token) }/>
 							<FieldDescription className="text-center">
 								{ i18n.t("login:noAccount") } <Link
 								to="/register">{ i18n.t("login:registerLink") }</Link>

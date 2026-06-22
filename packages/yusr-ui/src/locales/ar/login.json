@@ -1,24 +1,26 @@
 {
-    "title": "أهلا بك مجددًا",
-    "subtitle": "سجل الدخول إلى حسابك",
-    "email": {
-        "label": "البريد الإلكتروني",
-        "placeholder": "m@example.com",
-        "required": "البريد الإلكتروني مطلوب"
-    },
-    "username": {
-        "label": "اسم المستخدم",
-        "placeholder": "أدخل اسم المستخدم",
-        "required": "اسم المستخدم مطلوب"
-    },
-    "password": {
-        "label": "كلمة المرور",
-        "placeholder": "••••••••",
-        "required": "كلمة المرور مطلوبة"
-    },
-    "rememberMe": "تذكرني",
-    "button": "تسجيل الدخول",
-    "noAccount": "لا تملك حسابًا بعد؟",
-    "registerLink": "سجل معنا",
-    "backToHome": "الرجوع للصفحة الرئيسية"
+  "title": "أهلا بك مجددًا",
+  "subtitle": "سجل الدخول إلى حسابك",
+  "email": {
+    "label": "البريد الإلكتروني",
+    "placeholder": "m@example.com",
+    "required": "البريد الإلكتروني مطلوب"
+  },
+  "username": {
+    "label": "اسم المستخدم",
+    "placeholder": "أدخل اسم المستخدم",
+    "required": "اسم المستخدم مطلوب"
+  },
+  "password": {
+    "label": "كلمة المرور",
+    "placeholder": "••••••••",
+    "required": "كلمة المرور مطلوبة",
+    "minLengthError": "كلمة المرور يجب أن تكون أكثر من 8 أحرف"
+  },
+  "rememberMe": "تذكرني",
+  "button": "تسجيل الدخول",
+  "noAccount": "لا تملك حسابًا بعد؟",
+  "registerLink": "سجل معنا",
+  "backToHome": "الرجوع للصفحة الرئيسية",
+  "continueWithGoogle": "الاستمرار مع جوجل"
 }

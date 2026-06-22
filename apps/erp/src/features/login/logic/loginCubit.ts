@@ -4,7 +4,6 @@ import { Services } from "@/core/services/services";
 import { signal } from "@preact/signals-react";
 import { Cubit, LoginRequest, User, UserDto, YusrApiHelper } from "yusr-ui";
 import { LoginInitialState, LoginLoadingState } from "./loginState";
-import { RegistrationStateError } from "@/features/register/logic/registrationState.ts";
 
 
 const emailStorageItemName = "loginEmail";
@@ -58,6 +57,8 @@ export default class LoginCubit extends Cubit<LoginInitialState>
 	public async externalAuthRegister(
 		token: string)
 	{
+		this.emit(new LoginLoadingState());
+
 		const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
 			`/api/Login/external-login`,
 			{
@@ -75,7 +76,7 @@ export default class LoginCubit extends Cubit<LoginInitialState>
 		}
 		else
 		{
-			this.emit(new RegistrationStateError());
+			this.emit(new LoginInitialState());
 		}
 	}
 

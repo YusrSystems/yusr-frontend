@@ -263,5 +263,31 @@
       "and": "اور",
       "or": "یا"
     }
+  },
+  "sidebar": {
+    "userInfo": {
+      "title": "اکاؤنٹ کی تفصیلات",
+      "description": "آپ کی پروفائل اور رسائی کی معلومات۔",
+      "active": "فعال",
+      "inactive": "غیر فعال",
+      "role": "کردار",
+      "branch": "شاخ",
+      "username": "صارف نام",
+      "google": {
+        "label": "Google اکاؤنٹ",
+        "connect": "جوڑیں",
+        "disconnect": "منقطع کریں",
+        "chooseAccount": "ایک اکاؤنٹ منتخب کریں",
+        "useAnotherAccount": "دوسرا اکاؤنٹ استعمال کریں",
+        "disconnectDialog": {
+          "title": "ڈسکنیکٹ کی تصدیق کریں",
+          "description": "اپنے اکاؤنٹ کے لیے پاس ورڈ مرتب کریں تاکہ آپ دوبارہ لاگ ان کر سکیں۔",
+          "passwordLabel": "پاس ورڈ",
+          "passwordPlaceholder": "اپنا پاس ورڈ درج کریں",
+          "confirm": "ڈسکنیکٹ کریں",
+          "cancel": "منسوخ کریں"
+        }
+      }
+    }
   }
 }

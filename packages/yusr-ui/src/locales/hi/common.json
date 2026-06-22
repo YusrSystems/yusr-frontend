@@ -263,5 +263,31 @@
       "and": "और",
       "or": "या"
     }
+  },
+  "sidebar": {
+    "userInfo": {
+      "title": "खाता विवरण",
+      "description": "आपकी प्रोफ़ाइल और पहुँच की जानकारी।",
+      "active": "सक्रिय",
+      "inactive": "निष्क्रिय",
+      "role": "भूमिका",
+      "branch": "शाखा",
+      "username": "उपयोगकर्ता नाम",
+      "google": {
+        "label": "Google खाता",
+        "connect": "जोड़ें",
+        "disconnect": "हटाएं",
+        "chooseAccount": "एक खाता चुनें",
+        "useAnotherAccount": "दूसरा खाता उपयोग करें",
+        "disconnectDialog": {
+          "title": "डिस्कनेक्ट की पुष्टि करें",
+          "description": "अपने खाते के लिए एक पासवर्ड सेट करें ताकि आप फिर से लॉग इन कर सकें।",
+          "passwordLabel": "पासवर्ड",
+          "passwordPlaceholder": "अपना पासवर्ड दर्ज करें",
+          "confirm": "डिस्कनेक्ट करें",
+          "cancel": "रद्द करें"
+        }
+      }
+    }
   }
 }

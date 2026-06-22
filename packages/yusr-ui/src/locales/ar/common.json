@@ -262,6 +262,32 @@
       "group": "المجموعة",
       "and": "و",
       "or": "أو"
+    },
+    "sidebar": {
+      "userInfo": {
+        "title": "تفاصيل الحساب",
+        "description": "معلومات ملفك الشخصي وصلاحيات الوصول.",
+        "active": "نشط",
+        "inactive": "غير نشط",
+        "role": "الدور",
+        "branch": "الفرع",
+        "username": "اسم المستخدم",
+        "google": {
+          "label": "حساب Google",
+          "connect": "ربط",
+          "disconnect": "فصل",
+          "chooseAccount": "اختر حسابًا",
+          "useAnotherAccount": "استخدام حساب آخر",
+          "disconnectDialog": {
+            "title": "تأكيد الفصل",
+            "description": "قم بتعيين كلمة مرور لحسابك لتتمكن من الدخول مرة اخرى",
+            "passwordLabel": "كلمة المرور",
+            "passwordPlaceholder": "أدخل كلمة المرور",
+            "confirm": "فصل",
+            "cancel": "إلغاء"
+          }
+        }
+      }
     }
   }
 }

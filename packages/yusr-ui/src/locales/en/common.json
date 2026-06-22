@@ -263,5 +263,31 @@
       "and": "And",
       "or": "Or"
     }
+  },
+  "sidebar": {
+    "userInfo": {
+      "title": "Account Details",
+      "description": "Your profile and access information.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "role": "Role",
+      "branch": "Branch",
+      "username": "Username",
+      "google": {
+        "label": "Google Account",
+        "connect": "Connect",
+        "disconnect": "Disconnect",
+        "chooseAccount": "Choose an account",
+        "useAnotherAccount": "Use another account",
+        "disconnectDialog": {
+          "title": "Confirm Disconnect",
+          "description": "Set a password for your account so you can log in again.",
+          "passwordLabel": "Password",
+          "passwordPlaceholder": "Enter your password",
+          "confirm": "Disconnect",
+          "cancel": "Cancel"
+        }
+      }
+    }
   }
 }
