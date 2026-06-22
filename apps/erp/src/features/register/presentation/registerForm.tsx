@@ -69,7 +69,7 @@ export function RegisterForm({
 									await cubit.register() }
 							/>
 
-							<SignInWithGoogle onLogin={ cubit.externalAuthRegister }/>
+							<SignInWithGoogle onLogin={ (token) => cubit.externalAuthRegister(token) }/>
 
 							<FieldDescription className="text-center">
 								{ t("register.alreadyHaveAccount") }{ " " }
