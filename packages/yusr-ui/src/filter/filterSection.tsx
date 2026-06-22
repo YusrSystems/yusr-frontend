@@ -170,7 +170,7 @@ export function FilterSection({fieldsCubit, onApply, onClear, renderCustomInput}
 						{ activeFilterCount.value > 0 && (
 							<span
 								className="rounded-full bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 shadow-sm">
-								{ activeFilterCount.value } { t("filter.active", "Active") }
+								{ activeFilterCount.value }
 							</span>
 						) }
 					</div>
