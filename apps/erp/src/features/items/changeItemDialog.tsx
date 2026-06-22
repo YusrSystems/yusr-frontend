@@ -46,8 +46,6 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 
 			Cubits.taxes.init();
 			Cubits.pricingMethods.init();
-			Cubits.stores.init();
-			Cubits.units.init();
 
 			const result = await Services.unitsApi.GetServiceIds();
 			if (result.data)

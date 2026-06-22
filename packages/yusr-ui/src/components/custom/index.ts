@@ -63,6 +63,7 @@ export * from "./select/currenciesSearchableSelect";
 export * from "./select/rolesSearchableSelect";
 export * from "./select/searchableSelect";
 export * from "./select/branchesSearchableSelect.tsx";
+export * from "./select/multiSearchableSelect.tsx";
 
 // Separators
 export * from "./separators/titleSeparator";

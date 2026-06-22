@@ -158,6 +158,8 @@
     "editInvoice": "Edit Invoice",
     "editQuotation": "Edit Quotation",
     "editReturnInvoice": "Edit Return Invoice",
+    "notReturned": "Not Returned",
+    "partialReturned": "Partially Returned",
     "fullyReturned": "Fully Returned",
     "fullyReturnedMessage": "All items of this invoice have been returned previously",
     "close": "Close",

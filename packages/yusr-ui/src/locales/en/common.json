@@ -23,7 +23,9 @@
     "loading": "Loading...",
     "noData": "No data found",
     "nullOption": "Not specified",
-    "addOption": "Add \"{{value}}\""
+    "addOption": "Add \"{{value}}\"",
+    "selectedCount": "{{count}} selected",
+    "clearAll": "Clear All"
   },
   "pagination": {
     "previous": "Previous",
@@ -228,5 +230,20 @@
     "enterPhoneToVerify": "To complete verification, please enter the organization's phone number",
     "addCityToBranch": "Add a city to the main branch, you can also edit the branch name to suit your organization",
     "addCompanyPhone": "Add the organization's phone number"
+  },
+  "filter": {
+    "title": "Filter",
+    "group": "Group",
+    "addRule": "Add Rule",
+    "addGroup": "Add Group",
+    "removeGroup": "Remove Group",
+    "apply": "Apply",
+    "clear": "Clear",
+    "selectField": "Select Field",
+    "selectOperator": "Select Operator",
+    "commaSeparatedPlaceholder": "Enter values separated by commas",
+    "loadingFields": "Loading fields...",
+    "loadFieldsError": "An error occurred while loading filter fields",
+    "clickToExpand": "Click to expand"
   }
 }

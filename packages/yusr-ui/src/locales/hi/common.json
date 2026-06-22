@@ -23,7 +23,9 @@
     "loading": "लोड हो रहा है...",
     "noData": "कोई डेटा नहीं",
     "nullOption": "अनिर्दिष्ट",
-    "addOption": "\"{{value}}\" जोड़ें"
+    "addOption": "\"{{value}}\" जोड़ें",
+    "selectedCount": "{{count}} चयनित",
+    "clearAll": "सभी साफ़ करें"
   },
   "pagination": {
     "previous": "पिछला",
@@ -228,5 +230,20 @@
     "enterPhoneToVerify": "सत्यापन पूरा करने के लिए, कृपया संस्था का फ़ोन नंबर दर्ज करें",
     "addCityToBranch": "मुख्य शाखा में एक शहर जोड़ें, आप अपनी संस्था के अनुसार शाखा का नाम भी बदल सकते हैं",
     "addCompanyPhone": "संस्था का फ़ोन नंबर जोड़ें"
+  },
+  "filter": {
+    "title": "फ़िल्टर",
+    "group": "समूह",
+    "addRule": "नियम जोड़ें",
+    "addGroup": "समूह जोड़ें",
+    "removeGroup": "समूह हटाएँ",
+    "apply": "लागू करें",
+    "clear": "साफ़ करें",
+    "selectField": "फ़ील्ड चुनें",
+    "selectOperator": "ऑपरेटर चुनें",
+    "commaSeparatedPlaceholder": "अल्पविराम से अलग मान दर्ज करें",
+    "loadingFields": "फ़ील्ड लोड हो रहे हैं...",
+    "loadFieldsError": "फ़िल्टर फ़ील्ड लोड करते समय एक त्रुटि हुई",
+    "clickToExpand": "विस्तार करने के लिए क्लिक करें"
   }
 }

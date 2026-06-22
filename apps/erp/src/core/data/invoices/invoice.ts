@@ -12,6 +12,7 @@ import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus";
 import type { ImportExportType } from "@/core/types/importExportType.ts";
 import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
+import { PaymentStatus } from "@/core/types/paymentStatus.ts";
 
 
 export class InvoiceMode
@@ -44,6 +45,7 @@ export class InvoiceDto extends Dto
 	public settlementAmount!: number;
 	public settlementPercent!: number;
 	public returnStatusId!: InvoiceReturnStatus;
+	public paymentStatusId!: PaymentStatus;
 	public storeId!: number;
 	public actionAccountId!: number;
 	public notes?: string;
@@ -80,6 +82,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 	public settlementAmount: Signal<number>;
 	public settlementPercent: Signal<number>;
 	public returnStatusId: Signal<InvoiceReturnStatus>;
+	public paymentStatusId!: Signal<PaymentStatus>;
 	public storeId: Signal<number>;
 	public actionAccountId: Signal<number>;
 	public notes: Signal<string | undefined>;
@@ -137,6 +140,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.settlementAmount = this.assign("settlementAmount", dto?.settlementAmount ?? 0);
 		this.settlementPercent = this.assign("settlementPercent", dto?.settlementPercent ?? 0);
 		this.returnStatusId = this.assign("returnStatusId", dto?.returnStatusId ?? InvoiceReturnStatus.NotReturned);
+		this.paymentStatusId = this.assign("paymentStatusId", dto?.paymentStatusId ?? PaymentStatus.NotPaid);
 
 		this.storeId = this.assign("storeId", dto?.storeId ?? Services.auth.setting?.mainStoreId);
 		this.storeName = this.assign("storeName", dto?.storeName ?? Services.auth.setting?.mainStoreName);

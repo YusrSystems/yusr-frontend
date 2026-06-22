@@ -5,3 +5,4 @@ export * from "./entity";
 export * from "./validatableEntity";
 export * from "./changeableEntity.ts";
 export * from "./pageStates";
+export * from "./filterFieldsCubit.ts";

@@ -1,6 +1,6 @@
 import type { BalanceTransfer, BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import { ItemsCubit } from "@/features/items/state/itemsCubit";
-import { BaseCubits, PageCubit } from "yusr-ui";
+import { BaseCubits, FilterFieldsCubit, PageCubit } from "yusr-ui";
 import { Account, AccountDto } from "../data/account";
 import { ErpRole, ErpRoleDto } from "../data/erpRole";
 import ItemTransfer, { ItemTransferDto } from "../data/itemTransfer";
@@ -33,6 +33,11 @@ export class Cubits extends BaseCubits
 	public static override roles = new PageCubit<ErpRole, ErpRoleDto>(Services.rolesApi);
 	public static readonly vouchers = new PageCubit<Voucher, VoucherDto>(Services.voucherApi);
 	public static readonly invoices = new PageCubit<Invoice, InvoiceDto>(Services.invoicesApi);
+
+	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");
+	public static readonly itemFilterFields = new FilterFieldsCubit("Items");
+	public static readonly invoiceFilterFields = new FilterFieldsCubit("Invoices");
+
 	static
 	{
 		BaseCubits.roles = Cubits.roles;

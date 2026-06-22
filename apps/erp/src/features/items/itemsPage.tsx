@@ -10,6 +10,9 @@ import { useTranslation } from "react-i18next";
 import {
 	ChangeableEntityMode,
 	CrudPage,
+	FilterLabelWrapper,
+	FilterSection,
+	type FilterValueInputProps,
 	ImagePreview,
 	PageError,
 	PageLoaded,
@@ -24,6 +27,9 @@ import ReportConstants from "../../core/data/report/reportConstants";
 import ItemStatementButton from "../reports/itemStatementDialog";
 import ReportButton from "../reports/reportButton";
 import ChangeItemDialog from "./changeItemDialog";
+import { type Signal } from "@preact/signals-react";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
+import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect.tsx";
 
 
 export default function ItemsPage()
@@ -31,7 +37,12 @@ export default function ItemsPage()
 
 	const {t} = useTranslation("stocking");
 
-	useEffect(() => Cubits.items.init(), []);
+	useEffect(() =>
+	{
+		Cubits.items.init();
+		Cubits.stores.init();
+		Cubits.units.init();
+	}, []);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Items, SystemPermissionsActions.Get))
 	{
@@ -54,11 +65,16 @@ export default function ItemsPage()
 
 			<Cards/>
 
+			<FilterSection
+				fieldsCubit={ Cubits.itemFilterFields }
+				onApply={ (groups) => Cubits.items.applyFilterGroups(groups) }
+				onClear={ () => Cubits.items.clearFilterGroups() }
+				renderCustomInput={ RenderItemFilterInput }
+			/>
+
 			<CrudPage.SearchInput
-				onSearch={ (text) =>
-				{
-					Cubits.items.search(text);
-				} }
+				className="rounded-t-none!"
+				onSearch={ (text) => Cubits.items.search(text) }
 			/>
 
 			<PageTable/>
@@ -221,4 +237,44 @@ function PageTable()
 	}
 
 	return <TablePreview.Empty/>;
+}
+
+function RenderItemFilterInput({rule, field}: FilterValueInputProps)
+{
+	useSignals();
+
+	if (field.propertyName === "ItemStores")
+	{
+		return (
+			<FilterLabelWrapper rule={ rule }>
+				{ label => (
+					<StoresSearchableSelect
+						id={ rule.value as unknown as Signal<number | undefined> }
+						label={ label }
+						onSelect={ entity =>
+							rule.value.value = entity ? entity.id.value : ""
+						}
+					/>
+				) }
+			</FilterLabelWrapper>
+		);
+	}
+
+	if (field.propertyName === "SellUnitId")
+	{
+		return (
+			<FilterLabelWrapper rule={ rule }>
+				{ label => (
+					<UnitsSearchableSelect
+						id={ rule.value as unknown as Signal<number | undefined> }
+						label={ label }
+						onSelect={ entity =>
+							rule.value.value = entity ? entity.id.value : ""
+						}
+					/>
+				) }
+			</FilterLabelWrapper>
+		);
+	}
+	return undefined;
 }

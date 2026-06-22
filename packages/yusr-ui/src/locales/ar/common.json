@@ -23,7 +23,9 @@
     "loading": "جاري التحميل...",
     "noData": "لا توجد بيانات",
     "nullOption": "غير محدد",
-    "addOption": "إضافة \"{{value}}\""
+    "addOption": "إضافة \"{{value}}\"",
+    "selectedCount": "{{count}} محدد",
+    "clearAll": "مسح الكل"
   },
   "pagination": {
     "previous": "السابق",
@@ -228,5 +230,20 @@
     "enterPhoneToVerify": "لإكمال التحقق, يرجى ادخال رقم هاتف المؤسسة",
     "addCityToBranch": "قم باضافة مدينة للفرع الرئيسي, ايضا يمكنك تعديل إسم الفرع بما يناسب مؤسستك",
     "addCompanyPhone": "قم باضافة رقم هاتف المؤسسة"
+  },
+  "filter": {
+    "title": "التصفية",
+    "group": "المجموعة",
+    "addRule": "إضافة شرط",
+    "addGroup": "إضافة مجموعة",
+    "removeGroup": "حذف المجموعة",
+    "apply": "تطبيق",
+    "clear": "مسح",
+    "selectField": "اختر الحقل",
+    "selectOperator": "اختر العملية",
+    "commaSeparatedPlaceholder": "أدخل القيم مفصولة بفواصل",
+    "loadingFields": "جارٍ تحميل الحقول...",
+    "loadFieldsError": "حدث خطأ أثناء تحميل حقول التصفية",
+    "clickToExpand": "انقر للتوسيع"
   }
 }

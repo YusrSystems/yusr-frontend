@@ -23,7 +23,9 @@
     "loading": "লোড হচ্ছে...",
     "noData": "কোন ডেটা নেই",
     "nullOption": "নির্ধারিত নয়",
-    "addOption": "\"{{value}}\" যোগ করুন"
+    "addOption": "\"{{value}}\" যোগ করুন",
+    "selectedCount": "{{count}}টি নির্বাচিত",
+    "clearAll": "সব清除 করুন"
   },
   "pagination": {
     "previous": "পূর্ববর্তী",
@@ -228,5 +230,20 @@
     "enterPhoneToVerify": "যাচাইকরণ সম্পন্ন করতে, অনুগ্রহ করে প্রতিষ্ঠানের ফোন নম্বর লিখুন",
     "addCityToBranch": "প্রধান শাখায় একটি শহর যোগ করুন, আপনি আপনার প্রতিষ্ঠান অনুযায়ী শাখার নামও পরিবর্তন করতে পারেন",
     "addCompanyPhone": "প্রতিষ্ঠানের ফোন নম্বর যোগ করুন"
+  },
+  "filter": {
+    "title": "ফিল্টার",
+    "group": "গ্রুপ",
+    "addRule": "নিয়ম যোগ করুন",
+    "addGroup": "গ্রুপ যোগ করুন",
+    "removeGroup": "গ্রুপ মুছুন",
+    "apply": "প্রয়োগ করুন",
+    "clear": "সাফ করুন",
+    "selectField": "ফিল্ড নির্বাচন করুন",
+    "selectOperator": "অপারেটর নির্বাচন করুন",
+    "commaSeparatedPlaceholder": "কমা দ্বারা পৃথক মান লিখুন",
+    "loadingFields": "ফিল্ড লোড হচ্ছে...",
+    "loadFieldsError": "ফিল্টার ফিল্ড লোড করার সময় একটি ত্রুটি ঘটেছে",
+    "clickToExpand": "প্রসারিত করতে ক্লিক করুন"
   }
 }

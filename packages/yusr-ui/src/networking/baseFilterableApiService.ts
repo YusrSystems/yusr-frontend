@@ -2,6 +2,7 @@ import { Dto, Entity } from "../stateManager";
 import type { ApiFilterResult } from "../types";
 import type { FilterResult } from "../types/filterResult";
 import { YusrApiHelper } from "./yusrApiHelper";
+import type { FilterGroupDto } from "../filter/filterGroup.ts";
 
 
 export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDto extends Dto>
@@ -22,7 +23,8 @@ export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDt
 		rowsPerPage: number,
 		searchText?: string,
 		types?: number[],
-		queryParams?: Record<string, string | number | boolean>
+		queryParams?: Record<string, string | number | boolean>,
+		groups?: FilterGroupDto[]
 	): Promise<FilterResult<TEntity, TDto>>
 	{
 		const params = new URLSearchParams();
@@ -40,10 +42,12 @@ export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDt
 		const controller = new AbortController();
 		const {signal} = controller;
 
+		const body = {types, groups: groups ?? []};
 		BaseFilterableApiService._pendingRequests.add(controller);
+
 		const rawResult = await YusrApiHelper.Post<ApiFilterResult<TDto>>(
 			`/api/${ this.routeName }/Filter?${ params.toString() }`,
-			types,
+			body,
 			{signal}
 		);
 		BaseFilterableApiService._pendingRequests.delete(controller);

@@ -23,7 +23,9 @@
     "loading": "لوڈ ہو رہا ہے...",
     "noData": "کوئی ڈیٹا نہیں",
     "nullOption": "غیر متعین",
-    "addOption": "\"{{value}}\" شامل کریں"
+    "addOption": "\"{{value}}\" شامل کریں",
+    "selectedCount": "{{count}} منتخب",
+    "clearAll": "سب صاف کریں"
   },
   "pagination": {
     "previous": "پچھلا",
@@ -228,5 +230,20 @@
     "enterPhoneToVerify": "تصدیق مکمل کرنے کے لیے، براہ کرم ادارے کا فون نمبر درج کریں",
     "addCityToBranch": "مرکزی شاخ میں ایک شہر شامل کریں، آپ اپنے ادارے کے مطابق شاخ کا نام بھی تبدیل کر سکتے ہیں",
     "addCompanyPhone": "ادارے کا فون نمبر شامل کریں"
+  },
+  "filter": {
+    "title": "فلٹر",
+    "group": "گروپ",
+    "addRule": "قاعدہ شامل کریں",
+    "addGroup": "گروپ شامل کریں",
+    "removeGroup": "گروپ حذف کریں",
+    "apply": "لاگو کریں",
+    "clear": "صاف کریں",
+    "selectField": "فیلڈ منتخب کریں",
+    "selectOperator": "آپریٹر منتخب کریں",
+    "commaSeparatedPlaceholder": "کوما سے الگ کردہ اقدار درج کریں",
+    "loadingFields": "فیلڈز لوڈ ہو رہے ہیں...",
+    "loadFieldsError": "فلٹر فیلڈز لوڈ کرتے وقت ایک خرابی پیش آگئی",
+    "clickToExpand": "توسیع کے لیے کلک کریں"
   }
 }

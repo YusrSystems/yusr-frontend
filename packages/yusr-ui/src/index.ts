@@ -21,4 +21,6 @@ export * from "./stateManager";
 
 export * from "./locales/i18n";
 
+export * from "./filter";
+
 export { publicKeys };
