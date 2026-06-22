@@ -142,24 +142,24 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.returnStatusId = this.assign("returnStatusId", dto?.returnStatusId ?? InvoiceReturnStatus.NotReturned);
 		this.paymentStatusId = this.assign("paymentStatusId", dto?.paymentStatusId ?? PaymentStatus.NotPaid);
 
-		this.storeId = this.assign("storeId", dto?.storeId ?? Services.auth.setting?.mainStoreId);
-		this.storeName = this.assign("storeName", dto?.storeName ?? Services.auth.setting?.mainStoreName);
+		this.storeId = this.assign("storeId", dto?.storeId ?? Services.auth.setting?.mainStoreId.value);
+		this.storeName = this.assign("storeName", dto?.storeName ?? Services.auth.setting?.mainStoreName.value);
 
 		this.actionAccountId = this.assign("actionAccountId", dto?.actionAccountId ??
 			(
 				this.type.value === InvoiceType.Purchase
-					? Services.auth.setting?.purchaseAccountId
+					? Services.auth.setting?.purchaseAccountId.value
 					: (this.type.value === InvoiceType.Sell || this.type.value === InvoiceType.Quotation)
-						? Services.auth.setting?.sellAccountId
+						? Services.auth.setting?.sellAccountId.value
 						: undefined
 			)
 		);
 		this.actionAccountName = this.assign("actionAccountName", dto?.actionAccountName ??
 			(
 				this.type.value === InvoiceType.Purchase
-					? Services.auth.setting?.purchaseAccountName
+					? Services.auth.setting?.purchaseAccountName.value
 					: (this.type.value === InvoiceType.Sell || this.type.value === InvoiceType.Quotation)
-						? Services.auth.setting?.sellAccountName
+						? Services.auth.setting?.sellAccountName?.value
 						: undefined
 			));
 
