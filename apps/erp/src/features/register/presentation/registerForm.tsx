@@ -19,8 +19,7 @@ import {
 } from "yusr-ui";
 import { RegistrationCubit } from "../logic/registrationCubit";
 import { RegistrationStateLoading } from "../logic/registrationState";
-
-import { GoogleLogin } from "@react-oauth/google";
+import SignInWithGoogle from "@/core/components/signInWithGoogle.tsx";
 
 
 export interface RegisterFormProps
@@ -70,7 +69,7 @@ export function RegisterForm({
 									await cubit.register() }
 							/>
 
-							<SignInWithGoogle cubit={ cubit }/>
+							<SignInWithGoogle onLogin={ cubit.externalAuthRegister }/>
 
 							<FieldDescription className="text-center">
 								{ t("register.alreadyHaveAccount") }{ " " }
@@ -215,22 +214,4 @@ function SubmitButton({isLoading, onSubmit}: { isLoading: boolean; onSubmit: () 
 	);
 }
 
-function SignInWithGoogle({cubit}: { cubit: RegistrationCubit; })
-{
-	useSignals();
-	return (
-		<div className="flex flex-col gap-2 items-center ">
-			<div className="border-t-2 border-gray-900 border-dashed w-full"></div>
-			<GoogleLogin
-				onSuccess={ async (response) =>
-				{
-					if (!response.credential)
-					{
-						return;
-					}
-					await cubit.externalAuthRegister(response.credential);
-				} }
-			/>
-		</div>
-	);
-}
+

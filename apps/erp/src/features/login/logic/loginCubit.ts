@@ -4,6 +4,7 @@ import { Services } from "@/core/services/services";
 import { signal } from "@preact/signals-react";
 import { Cubit, LoginRequest, User, UserDto, YusrApiHelper } from "yusr-ui";
 import { LoginInitialState, LoginLoadingState } from "./loginState";
+import { RegistrationStateError } from "@/features/register/logic/registrationState.ts";
 
 
 const emailStorageItemName = "loginEmail";
@@ -51,6 +52,30 @@ export default class LoginCubit extends Cubit<LoginInitialState>
 		else
 		{
 			this.emit(new LoginInitialState());
+		}
+	}
+
+	public async externalAuthRegister(
+		token: string)
+	{
+		const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
+			`/api/Login/external-login`,
+			{
+				provider: "google",
+				token,
+				isRegister: false
+			}
+		);
+
+		if (result.status === 200 && result.data)
+		{
+			Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
+			await AppNavigator.navigate("/dashboard", true);
+			return;
+		}
+		else
+		{
+			this.emit(new RegistrationStateError());
 		}
 	}
 

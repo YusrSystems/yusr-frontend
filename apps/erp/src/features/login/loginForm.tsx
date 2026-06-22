@@ -4,20 +4,21 @@ import { ArrowRight, Loader2 } from "lucide-react";
 import React, { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Button,
-  Card,
-  CardContent,
-  Checkbox,
-  cn,
-  Field,
-  FieldDescription,
-  FieldGroup,
-  i18n,
-  PasswordField,
-  TextField
+	Button,
+	Card,
+	CardContent,
+	Checkbox,
+	cn,
+	Field,
+	FieldDescription,
+	FieldGroup,
+	i18n,
+	PasswordField,
+	TextField
 } from "yusr-ui";
 import LoginCubit from "./logic/loginCubit";
 import { LoginLoadingState } from "./logic/loginState";
+import SignInWithGoogle from "@/core/components/signInWithGoogle.tsx";
 
 
 export function LoginForm({className, ...props}: React.ComponentProps<"div">)
@@ -116,6 +117,7 @@ export function LoginForm({className, ...props}: React.ComponentProps<"div">)
 										: i18n.t("login:button") }
 								</Button>
 							</Field>
+							<SignInWithGoogle onLogin={ cubit.externalAuthRegister }/>
 							<FieldDescription className="text-center">
 								{ i18n.t("login:noAccount") } <Link
 								to="/register">{ i18n.t("login:registerLink") }</Link>
