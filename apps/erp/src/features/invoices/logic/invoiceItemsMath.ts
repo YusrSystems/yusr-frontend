@@ -130,7 +130,7 @@ export default class InvoiceItemsMath
 			totalCost: totalCost,
 			totalTaxesAmount: totalTaxesAmount,
 			invoiceCosts: invoiceCostsAmount,
-			profit: profit
+			profit: profit - invoiceCostsAmount
 		};
 	}
 
