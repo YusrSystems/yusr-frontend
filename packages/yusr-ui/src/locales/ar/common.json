@@ -23,7 +23,9 @@
     "loading": "جاري التحميل...",
     "noData": "لا توجد بيانات",
     "nullOption": "غير محدد",
-    "addOption": "إضافة \"{{value}}\""
+    "addOption": "إضافة \"{{value}}\"",
+    "selectedCount": "{{count}} محدد",
+    "clearAll": "مسح الكل"
   },
   "pagination": {
     "previous": "السابق",
@@ -228,5 +230,64 @@
     "enterPhoneToVerify": "لإكمال التحقق, يرجى ادخال رقم هاتف المؤسسة",
     "addCityToBranch": "قم باضافة مدينة للفرع الرئيسي, ايضا يمكنك تعديل إسم الفرع بما يناسب مؤسستك",
     "addCompanyPhone": "قم باضافة رقم هاتف المؤسسة"
+  },
+  "filter": {
+    "title": "التصفية",
+    "group": "المجموعة",
+    "addRule": "إضافة شرط",
+    "addGroup": "إضافة مجموعة",
+    "removeGroup": "حذف المجموعة",
+    "apply": "تطبيق",
+    "clear": "مسح",
+    "selectField": "اختر الحقل",
+    "selectOperator": "اختر العملية",
+    "commaSeparatedPlaceholder": "أدخل القيم مفصولة بفواصل",
+    "loadingFields": "جارٍ تحميل الحقول...",
+    "loadFieldsError": "حدث خطأ أثناء تحميل حقول التصفية",
+    "clickToExpand": "انقر للتوسيع",
+    "filterHelp": {
+      "title": "كيف تعمل التصفية المتقدمة",
+      "andTitle": "الشروط (نفس المجموعة)",
+      "andDesc": "عند إضافة قواعد متعددة داخل نفس المجموعة، يجب أن يتطابق السجل مع جميع هذه القواعد. هذا يجعل بحثك أكثر دقة.",
+      "orTitle": "المجموعات",
+      "orDesc": "عند إضافة مجموعة جديدة، فإنك تنشئ شرطًا بديلًا. سيظهر السجل إذا كان يطابق المجموعة الأولى أو المجموعة الثانية.",
+      "resultAnd": "النتيجة: يعرض فقط \"الإلكترونيات\" التي يزيد سعرها عن 500.",
+      "resultOr": "النتيجة: يعرض جميع \"الإلكترونيات\" وجميع \"الملابس\".",
+      "mockCategory": "الفئة",
+      "mockElectronics": "إلكترونيات",
+      "mockClothing": "ملابس",
+      "mockPrice": "السعر",
+      "mockEqual": "يساوي",
+      "mockGreaterThan": "أكبر من",
+      "group": "المجموعة",
+      "and": "و",
+      "or": "أو"
+    }
+  },
+  "sidebar": {
+    "userInfo": {
+      "title": "تفاصيل الحساب",
+      "description": "معلومات ملفك الشخصي وصلاحيات الوصول.",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "role": "الدور",
+      "branch": "الفرع",
+      "username": "اسم المستخدم",
+      "google": {
+        "label": "حساب Google",
+        "connect": "ربط",
+        "disconnect": "فصل",
+        "chooseAccount": "اختر حسابًا",
+        "useAnotherAccount": "استخدام حساب آخر",
+        "disconnectDialog": {
+          "title": "تأكيد الفصل",
+          "description": "قم بتعيين كلمة مرور لحسابك لتتمكن من الدخول مرة اخرى",
+          "passwordLabel": "كلمة المرور",
+          "passwordPlaceholder": "أدخل كلمة المرور",
+          "confirm": "فصل",
+          "cancel": "إلغاء"
+        }
+      }
+    }
   }
 }

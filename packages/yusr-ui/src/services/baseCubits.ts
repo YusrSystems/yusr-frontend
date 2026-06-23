@@ -1,17 +1,18 @@
 import {
-  type Branch,
-  type BranchDto,
-  type City,
-  type CityDto,
-  type Currency,
-  CurrencyDto,
-  type Role,
-  type RoleDto,
-  type User,
-  type UserDto
+	type Branch,
+	type BranchDto,
+	type City,
+	type CityDto,
+	type Currency,
+	CurrencyDto,
+	type Role,
+	type RoleDto,
+	type User,
+	type UserDto
 } from "../entities";
 import { PageCubit } from "../stateManager";
 import { BaseServices } from "./baseServices";
+import { ContinueWithGoogleCubit } from "../stateManager/continueWithGoogleCubit";
 
 
 export class BaseCubits
@@ -21,4 +22,5 @@ export class BaseCubits
 	public static readonly currencies = new PageCubit<Currency, CurrencyDto>(BaseServices.currenciesApi);
 	public static roles: PageCubit<Role<RoleDto>, RoleDto>;
 	public static readonly users = new PageCubit<User, UserDto>(BaseServices.usersApi);
+	public static readonly continueWithGoogle = new ContinueWithGoogleCubit();
 }

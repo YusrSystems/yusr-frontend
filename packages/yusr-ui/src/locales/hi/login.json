@@ -1,24 +1,26 @@
 {
-    "title": "फिर से स्वागत है",
-    "subtitle": "अपने खाते में लॉगिन करें",
-    "email": {
-        "label": "ईमेल",
-        "placeholder": "m@example.com",
-        "required": "ईमेल आवश्यक है"
-    },
-    "username": {
-        "label": "उपयोगकर्ता नाम",
-        "placeholder": "उपयोगकर्ता नाम दर्ज करें",
-        "required": "उपयोगकर्ता नाम आवश्यक है"
-    },
-    "password": {
-        "label": "पासवर्ड",
-        "placeholder": "••••••••",
-        "required": "पासवर्ड आवश्यक है"
-    },
-    "rememberMe": "मुझे याद रखें",
-    "button": "लॉगिन करें",
-    "noAccount": "अभी तक कोई खाता नहीं है?",
-    "registerLink": "पंजीकरण करें",
-    "backToHome": "होमपेज पर वापस जाएं"
+  "title": "फिर से स्वागत है",
+  "subtitle": "अपने खाते में लॉगिन करें",
+  "email": {
+    "label": "ईमेल",
+    "placeholder": "m@example.com",
+    "required": "ईमेल आवश्यक है"
+  },
+  "username": {
+    "label": "उपयोगकर्ता नाम",
+    "placeholder": "उपयोगकर्ता नाम दर्ज करें",
+    "required": "उपयोगकर्ता नाम आवश्यक है"
+  },
+  "password": {
+    "label": "पासवर्ड",
+    "placeholder": "••••••••",
+    "required": "पासवर्ड आवश्यक है",
+    "minLengthError": "पासवर्ड 8 अक्षरों से अधिक होना चाहिए"
+  },
+  "rememberMe": "मुझे याद रखें",
+  "button": "लॉगिन करें",
+  "noAccount": "अभी तक कोई खाता नहीं है?",
+  "registerLink": "पंजीकरण करें",
+  "backToHome": "होमपेज पर वापस जाएं",
+  "continueWithGoogle": "Google के साथ जारी रखें"
 }

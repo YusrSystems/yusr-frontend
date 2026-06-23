@@ -54,6 +54,32 @@ export default class LoginCubit extends Cubit<LoginInitialState>
 		}
 	}
 
+	public async externalAuthRegister(
+		token: string)
+	{
+		this.emit(new LoginLoadingState());
+
+		const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
+			`/api/Login/external-login`,
+			{
+				provider: "google",
+				token,
+				isRegister: false
+			}
+		);
+
+		if (result.status === 200 && result.data)
+		{
+			Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
+			await AppNavigator.navigate("/dashboard", true);
+			return;
+		}
+		else
+		{
+			this.emit(new LoginInitialState());
+		}
+	}
+
 	private performRememberMe(): void
 	{
 		if (this.rememberMe.value)

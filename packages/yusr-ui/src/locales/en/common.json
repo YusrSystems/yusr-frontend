@@ -23,7 +23,9 @@
     "loading": "Loading...",
     "noData": "No data found",
     "nullOption": "Not specified",
-    "addOption": "Add \"{{value}}\""
+    "addOption": "Add \"{{value}}\"",
+    "selectedCount": "{{count}} selected",
+    "clearAll": "Clear All"
   },
   "pagination": {
     "previous": "Previous",
@@ -228,5 +230,64 @@
     "enterPhoneToVerify": "To complete verification, please enter the organization's phone number",
     "addCityToBranch": "Add a city to the main branch, you can also edit the branch name to suit your organization",
     "addCompanyPhone": "Add the organization's phone number"
+  },
+  "filter": {
+    "title": "Filter",
+    "group": "Group",
+    "addRule": "Add Rule",
+    "addGroup": "Add Group",
+    "removeGroup": "Remove Group",
+    "apply": "Apply",
+    "clear": "Clear",
+    "selectField": "Select Field",
+    "selectOperator": "Select Operator",
+    "commaSeparatedPlaceholder": "Enter values separated by commas",
+    "loadingFields": "Loading fields...",
+    "loadFieldsError": "An error occurred while loading filter fields",
+    "clickToExpand": "Click to expand",
+    "filterHelp": {
+      "title": "How Advanced Filter Works",
+      "andTitle": "Conditions (Same Group)",
+      "andDesc": "When you add multiple rules within the same group, a record must match all of these rules. This makes your search more precise.",
+      "orTitle": "Groups",
+      "orDesc": "When you add a new group, you create an alternative condition. A record will appear if it matches either the first group or the second group.",
+      "resultAnd": "Result: Shows only \"Electronics\" with price greater than 500.",
+      "resultOr": "Result: Shows all \"Electronics\" and all \"Clothing\".",
+      "mockCategory": "Category",
+      "mockElectronics": "Electronics",
+      "mockClothing": "Clothing",
+      "mockPrice": "Price",
+      "mockEqual": "Equals",
+      "mockGreaterThan": "Greater Than",
+      "group": "Group",
+      "and": "And",
+      "or": "Or"
+    }
+  },
+  "sidebar": {
+    "userInfo": {
+      "title": "Account Details",
+      "description": "Your profile and access information.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "role": "Role",
+      "branch": "Branch",
+      "username": "Username",
+      "google": {
+        "label": "Google Account",
+        "connect": "Connect",
+        "disconnect": "Disconnect",
+        "chooseAccount": "Choose an account",
+        "useAnotherAccount": "Use another account",
+        "disconnectDialog": {
+          "title": "Confirm Disconnect",
+          "description": "Set a password for your account so you can log in again.",
+          "passwordLabel": "Password",
+          "passwordPlaceholder": "Enter your password",
+          "confirm": "Disconnect",
+          "cancel": "Cancel"
+        }
+      }
+    }
   }
 }

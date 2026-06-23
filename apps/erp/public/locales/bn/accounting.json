@@ -158,6 +158,8 @@
     "editInvoice": "ইনভয়েস সম্পাদনা করুন",
     "editQuotation": "কোটেশন সম্পাদনা করুন",
     "editReturnInvoice": "ফেরত ইনভয়েস সম্পাদনা করুন",
+    "notReturned": "ফেরত দেওয়া হয়নি",
+    "partialReturned": "আংশিকভাবে ফেরত দেওয়া হয়েছে",
     "fullyReturned": "সম্পূর্ণ ফেরত দেওয়া হয়েছে",
     "fullyReturnedMessage": "এই ইনভয়েসের সমস্ত আইটেম আগেই ফেরত দেওয়া হয়েছে",
     "close": "বন্ধ করুন",

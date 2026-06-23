@@ -1,4 +1,4 @@
-import type { Signal } from "@preact/signals-react";
+import { signal, type Signal } from "@preact/signals-react";
 import { i18n } from "../locales";
 import { ChangeableEntity, ChangeableEntityMode, Dto } from "../stateManager";
 import { type ValidationRule, Validators } from "../validation";
@@ -59,4 +59,16 @@ export class User extends ChangeableEntity<UserDto>
 		this.roleName = this.assign("roleName", dto?.roleName);
 		this.role = this.assign("role", dto?.role);
 	}
+}
+
+export class UserMetadataDto
+{
+	public connectedEmail?: string;
+	public picture?: string;
+}
+
+export class UserMetadata
+{
+	public connectedEmail: Signal<string | undefined> = signal();
+	public picture: Signal<string | undefined> = signal();
 }

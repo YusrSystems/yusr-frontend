@@ -1,178 +1,174 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="preload">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/yusrLogo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html class="preload" dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8"/>
+    <link href="/yusrLogo.png" rel="icon" type="image/png"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>يُسر | Yusr</title>
 
+    <script async defer src="https://accounts.google.com/gsi/client"></script>
     <script>
-    (function()
-    {
-      const theme = localStorage.getItem("ui-theme");
-      if (
-        theme === "dark"
-        || (!theme
-          && window.matchMedia("(prefers-color-scheme: dark)").matches)
-      )
-      {
-        document.documentElement.classList.add("dark");
-      }
-    })();
+        (function () {
+            const theme = localStorage.getItem("ui-theme");
+            if (
+                theme === "dark"
+                || (!theme
+                    && window.matchMedia("(prefers-color-scheme: dark)").matches)
+            ) {
+                document.documentElement.classList.add("dark");
+            }
+        })();
     </script>
 
     <!-- OpenGraph -->
-    <meta property="og:title" content="يُسر | Yusr" />
+    <meta content="يُسر | Yusr" property="og:title"/>
     <meta
-      property="og:description"
-      content="برنامج محاسبي متكامل لإدارة أعمالك"
+            content="برنامج محاسبي متكامل لإدارة أعمالك"
+            property="og:description"
     />
-    <meta property="og:image" content="/src/assets/YusrLogo_right_white.png" />
-    <meta property="og:type" content="website" />
+    <meta content="/src/assets/YusrLogo_right_white.png" property="og:image"/>
+    <meta content="website" property="og:type"/>
 
     <style>
-    :root {
-      --background: #ffffff;
-      --border: #e5e7eb;
-      --primary: #2563eb;
-      --muted-foreground: #6b7280;
-      --foreground: #09090b;
-    }
+        :root {
+            --background: #ffffff;
+            --border: #e5e7eb;
+            --primary: #2563eb;
+            --muted-foreground: #6b7280;
+            --foreground: #09090b;
+        }
 
-    .dark {
-      --background: #0a0a0a;
-      --border: #27272a;
-      --primary: #3b82f6;
-      --muted-foreground: #a1a1aa;
-      --foreground: #fafafa;
-    }
+        .dark {
+            --background: #0a0a0a;
+            --border: #27272a;
+            --primary: #3b82f6;
+            --muted-foreground: #a1a1aa;
+            --foreground: #fafafa;
+        }
 
-    /* ✅ Disable transitions during preload */
-    .preload * {
-      transition: none !important;
-    }
+        /* ✅ Disable transitions during preload */
+        .preload * {
+            transition: none !important;
+        }
 
-    body {
-      margin: 0;
-      background: var(--background);
-      font-family: "IBM Plex Sans Arabic", sans-serif;
-    }
+        body {
+            margin: 0;
+            background: var(--background);
+            font-family: "IBM Plex Sans Arabic", sans-serif;
+        }
 
-    #initial-loader {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      background: var(--background);
-      opacity: 0;
-    }
+        #initial-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: var(--background);
+            opacity: 0;
+        }
 
-    html.loaded #initial-loader {
-      opacity: 1;
-    }
+        html.loaded #initial-loader {
+            opacity: 1;
+        }
 
-    #initial-loader.hiding {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
+        #initial-loader.hiding {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
 
-    #loader-logo {
-      width: 40px;
-      height: auto;
-      object-fit: contain;
-      display: block;
-    }
+        #loader-logo {
+            width: 40px;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
 
-    #loader-bar-track {
-      position: relative;
-      height: 2px;
-      width: 180px;
-      border-radius: 9999px;
-      background: var(--border);
-      overflow: hidden;
-    }
+        #loader-bar-track {
+            position: relative;
+            height: 2px;
+            width: 180px;
+            border-radius: 9999px;
+            background: var(--border);
+            overflow: hidden;
+        }
 
-    #loader-bar-fill {
-      position: absolute;
-      inset: 0;
-      background: #2563eb; /* fallback */
-      background: var(--primary);
-      transform-origin: left;
-      transform: scaleX(0);
-      transition: transform 0.25s ease-out;
-    }
+        #loader-bar-fill {
+            position: absolute;
+            inset: 0;
+            background: #2563eb; /* fallback */
+            background: var(--primary);
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform 0.25s ease-out;
+        }
 
-    #loader-pct {
-      margin-top: 8px;
-      font-size: 11px;
-      font-variant-numeric: tabular-nums;
-      text-align: center;
-      color: var(--muted-foreground);
-    }
+        #loader-pct {
+            margin-top: 8px;
+            font-size: 11px;
+            font-variant-numeric: tabular-nums;
+            text-align: center;
+            color: var(--muted-foreground);
+        }
     </style>
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect"/>
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&display=swap"
-      rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&display=swap"
+            rel="stylesheet"
     />
-    <link rel="preload" as="image" href="/yusrLogo.png" />
-  </head>
+    <link as="image" href="/yusrLogo.png" rel="preload"/>
+</head>
 
-  <body>
-    <!-- Loader -->
-    <div id="initial-loader">
-      <img
-        id="loader-logo"
-        src="/yusrLogo.png"
-        alt="يُسر"
-        width="40"
-        height="40"
-      />
-      <div>
+<body>
+<!-- Loader -->
+<div id="initial-loader">
+    <img
+            alt="يُسر"
+            height="40"
+            id="loader-logo"
+            src="/yusrLogo.png"
+            width="40"
+    />
+    <div>
         <div id="loader-bar-track">
-          <div id="loader-bar-fill"></div>
+            <div id="loader-bar-fill"></div>
         </div>
-      </div>
     </div>
+</div>
 
-    <!-- React root -->
-    <div id="root"></div>
+<!-- React root -->
+<div id="root"></div>
 
-    <script>
+<script>
     const fill = document.getElementById("loader-bar-fill");
     const loader = document.getElementById("initial-loader");
     let i = 0;
-    function tick()
-    {
-      i++;
-      const p = Math.round((i / 5) * 100);
-      fill.style.transform = `scaleX(${p / 100})`;
-      if (i < 6)
-      {
-        setTimeout(tick, 180);
-      }
+
+    function tick() {
+        i++;
+        const p = Math.round((i / 5) * 100);
+        fill.style.transform = `scaleX(${p / 100})`;
+        if (i < 6) {
+            setTimeout(tick, 180);
+        }
     }
 
-    window.addEventListener("load", () =>
-    {
-      document.documentElement.classList.remove("preload");
-      document.documentElement.classList.add("loaded");
+    window.addEventListener("load", () => {
+        document.documentElement.classList.remove("preload");
+        document.documentElement.classList.add("loaded");
 
-      setTimeout(() =>
-      {
-        tick();
-      }, 120);
+        setTimeout(() => {
+            tick();
+        }, 120);
     });
-    </script>
+</script>
 
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<script src="/src/main.tsx" type="module"></script>
+</body>
 </html>

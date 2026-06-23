@@ -161,6 +161,8 @@
     "editInvoice": "تعديل الفاتورة",
     "editQuotation": "تعديل عرض السعر",
     "editReturnInvoice": "تعديل مرتجع فاتورة",
+    "notReturned": "لم يتم الاسترجاع",
+    "partialReturned": "تم الاسترجاع جزئياً",
     "fullyReturned": "تم الاسترجاع بالكامل",
     "fullyReturnedMessage": "تم استرجاع جميع بنود هذه الفاتورة مسبقاً",
     "close": "إغلاق",

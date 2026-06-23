@@ -7,7 +7,7 @@ import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import ChangeInvoiceDialog from "@/features/invoices/changeInvoiceDialog.tsx";
 import ReportButton from "@/features/reports/reportButton.tsx";
-import { signal } from "@preact/signals-react";
+import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import type { TFunction } from "i18next";
 import { Copy, FilePlusCorner, FileTextIcon, RotateCw, Undo2 } from "lucide-react";
@@ -19,9 +19,13 @@ import {
 	ContextMenuItem,
 	CrudPage,
 	DropdownMenuItem,
+	FilterLabelWrapper,
+	FilterSection,
+	type FilterValueInputProps,
 	PageError,
 	PageLoaded,
 	PageLoading,
+	SelectField,
 	SystemPermissionsActions,
 	TablePreview,
 	Tooltip,
@@ -37,6 +41,12 @@ import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
 import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { toast } from "sonner";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
+import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus.ts";
+import { PaymentStatus } from "@/core/types/paymentStatus.ts";
+import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect.tsx";
+import { AccountType } from "@/core/data/account.ts";
 
 
 export default function InvoicesPage({
@@ -57,8 +67,19 @@ export default function InvoicesPage({
 })
 {
 	useSignals();
-	useEffect(() => Cubits.invoices.init([fixedType]), [fixedType]);
 	const {t} = useTranslation("accounting");
+
+	useEffect(() =>
+	{
+		Cubits.invoices.init([fixedType]);
+		Cubits.accounts.init(fixedType == InvoiceType.Purchase || fixedType == InvoiceType.PurchaseReturn ? [AccountType.Supplier] : [AccountType.Client]);
+	}, [fixedType]);
+
+	useEffect(() =>
+	{
+		Cubits.items.init();
+		Cubits.stores.init();
+	}, []);
 
 	if (!hasPagePermission)
 	{
@@ -84,9 +105,24 @@ export default function InvoicesPage({
 							: []
 					}
 				/>
+
 				<Cards totalInvoicesTitle={ totalInvoicesTitle }/>
 
-				<CrudPage.SearchInput onSearch={ (searchText) => Cubits.invoices.search(searchText) }/>
+				<FilterSection
+					fieldsCubit={ Cubits.invoiceFilterFields }
+					onApply={ (groups) => Cubits.invoices.applyFilterGroups(groups) }
+					onClear={ () => Cubits.invoices.clearFilterGroups() }
+					renderCustomInput={ (props: FilterValueInputProps) => RenderInvoiceFilterInput({
+						rule: props.rule,
+						field: props.field,
+						fixedType: fixedType
+					}) }
+				/>
+
+				<CrudPage.SearchInput
+					className="rounded-t-none!"
+					onSearch={ (searchText) => Cubits.invoices.search(searchText) }
+				/>
 
 				<PageTable fixedType={ fixedType } permissionResource={ permissionResource }/>
 
@@ -205,6 +241,8 @@ function PageTable({fixedType, permissionResource}: {
 			);
 		}
 
+		rows.push({rowBody: "", rowStyles: "w-32"});
+
 		if (
 			Services.auth.setting?.eInvoicingEnvironmentType.value !== EInvoicingEnvironmentType.NotRegistered
 			&& fixedType === InvoiceType.Sell
@@ -248,6 +286,24 @@ function PageTable({fixedType, permissionResource}: {
 				amount: invoice.paidAmount.value,
 				currency: Services.auth.setting?.currency?.value.code.value
 			}),
+			styles: "bg-orange-100 text-orange-800"
+		};
+	};
+
+	const getReturnStatus = (invoice: Invoice): { message: string; styles: string; } =>
+	{
+		if (invoice.returnStatusId.value === InvoiceReturnStatus.NotReturned)
+		{
+			return {message: t("invoices.notReturned"), styles: "bg-green-100 text-green-800"};
+		}
+
+		if (invoice.returnStatusId.value === InvoiceReturnStatus.FullyReturned)
+		{
+			return {message: t("invoices.fullyReturned"), styles: "bg-red-100 text-red-800"};
+		}
+
+		return {
+			message: t("invoices.partialReturned"),
 			styles: "bg-orange-100 text-orange-800"
 		};
 	};
@@ -353,6 +409,7 @@ function PageTable({fixedType, permissionResource}: {
 
 		cells.push(
 			{rowBody: new Date(invoice.date.value).toLocaleDateString("en-CA"), rowStyles: ""},
+			// {rowBody: new Date(invoice.date.value).toLocaleDateString("en-CA", {timeZone: "UTC"}), rowStyles: ""},
 			{rowBody: invoice.actionAccountName || "-", rowStyles: ""},
 			{rowBody: invoice.storeName || "-", rowStyles: ""},
 			{
@@ -383,6 +440,12 @@ function PageTable({fixedType, permissionResource}: {
 					rowBody: getPaymentStatus(invoice).message,
 					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
 						getPaymentStatus(invoice).styles
+					}`
+				},
+				{
+					rowBody: getReturnStatus(invoice).message,
+					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+						getReturnStatus(invoice).styles
 					}`
 				}
 			);
@@ -536,3 +599,88 @@ const getInvoiceTypeName = (type: InvoiceType, t: TFunction<"accounting">) =>
 			return t("invoices.unknown");
 	}
 };
+
+function RenderInvoiceFilterInput({rule, field, fixedType}: FilterValueInputProps & { fixedType: InvoiceType })
+{
+	useSignals();
+	const {t} = useTranslation("accounting");
+
+	if (field.propertyName === "ActionAccountId")
+	{
+		return (
+			<FilterLabelWrapper rule={ rule }>
+				{ label => (
+					<AccountsSearchableSelect
+						id={ rule.value as unknown as Signal<number | undefined> }
+						label={ label }
+						onSelect={ entity =>
+							rule.value.value = entity ? entity.id.value : ""
+						}
+						types={ [fixedType] }
+					/>
+				) }
+			</FilterLabelWrapper>
+		);
+	}
+
+	if (field.propertyName === "StoreId")
+	{
+		return (
+			<FilterLabelWrapper rule={ rule }>
+				{ label => (
+					<StoresSearchableSelect
+						id={ rule.value as unknown as Signal<number | undefined> }
+						label={ label }
+						onSelect={ entity => rule.value.value = entity ? entity.id.value : "" }
+					/>
+				) }
+			</FilterLabelWrapper>
+		);
+	}
+
+	if (field.propertyName === "ReturnStatusId")
+	{
+		return (
+			<SelectField<InvoiceReturnStatus>
+				required
+				value={ rule.value as unknown as Signal<InvoiceReturnStatus | undefined> }
+				onValueChange={ (type) => rule.value.value = type }
+				options={ [{label: t("invoices.notReturned"), value: InvoiceReturnStatus.NotReturned}, {
+					label: t("invoices.partialReturned"),
+					value: InvoiceReturnStatus.PartialReturned
+				}, {
+					label: t("invoices.fullyReturned"),
+					value: InvoiceReturnStatus.FullyReturned
+				}] }
+			/>
+		);
+	}
+
+	if (field.propertyName === "PaymentStatus")
+	{
+		return (
+			<SelectField<PaymentStatus>
+				required
+				value={ rule.value as unknown as Signal<PaymentStatus | undefined> }
+				onValueChange={ (type) => rule.value.value = type }
+				options={ [{label: t("invoices.notPaid"), value: PaymentStatus.NotPaid}, {
+					label: t("invoices.partiallyPaid", {amount: "", currency: ""}),
+					value: PaymentStatus.PartiallyPaid
+				}, {
+					label: t("invoices.fullyPaid"),
+					value: PaymentStatus.FullyPaid
+				}, {
+					label: t("invoices.overpaid"),
+					value: PaymentStatus.Overpaid
+				}] }
+			/>
+		);
+	}
+
+	if (field.propertyName === "InvoiceItems")
+	{
+		return <ItemsMultiSearchableSelect onToggle={ (ids) => rule.value.value = ids }/>;
+	}
+
+	return undefined;
+}

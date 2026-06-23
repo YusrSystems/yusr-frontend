@@ -1,24 +1,26 @@
 {
-    "title": "Welcome back",
-    "subtitle": "Log in to your account",
-    "email": {
-        "label": "Email",
-        "placeholder": "m@example.com",
-        "required": "Email is required"
-    },
-    "username": {
-        "label": "Username",
-        "placeholder": "Enter your username",
-        "required": "Username is required"
-    },
-    "password": {
-        "label": "Password",
-        "placeholder": "••••••••",
-        "required": "Password is required"
-    },
-    "rememberMe": "Remember me",
-    "button": "Log in",
-    "noAccount": "Don't have an account?",
-    "registerLink": "Sign up",
-    "backToHome": "Back to Homepage"
+  "title": "Welcome back",
+  "subtitle": "Log in to your account",
+  "email": {
+    "label": "Email",
+    "placeholder": "m@example.com",
+    "required": "Email is required"
+  },
+  "username": {
+    "label": "Username",
+    "placeholder": "Enter your username",
+    "required": "Username is required"
+  },
+  "password": {
+    "label": "Password",
+    "placeholder": "••••••••",
+    "required": "Password is required",
+    "minLengthError": "Password must be more than 8 characters"
+  },
+  "rememberMe": "Remember me",
+  "button": "Log in",
+  "noAccount": "Don't have an account?",
+  "registerLink": "Sign up",
+  "backToHome": "Back to Homepage",
+  "continueWithGoogle": "Continue with Google"
 }

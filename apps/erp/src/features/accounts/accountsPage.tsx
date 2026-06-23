@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import {
 	ChangeableEntityMode,
 	CrudPage,
+	FilterSection,
 	PageError,
 	PageLoaded,
 	PageLoading,
@@ -37,6 +38,7 @@ export default function AccountsPage(
 	const {t} = useTranslation("accounting");
 	useEffect(() => Cubits.accounts.init([fixedType]), [fixedType]);
 	const searchText = useMemo(() => Cubits.accounts.searchText, []);
+
 	if (!hasPagePermission)
 	{
 		return <UnauthorizedPage/>;
@@ -61,9 +63,19 @@ export default function AccountsPage(
 					: [] }
 			/>
 
+
 			<Cards count={ Cubits.accounts.count }/>
 
-			<CrudPage.SearchInput onSearch={ (searchText) => Cubits.accounts.search(searchText) }/>
+			<FilterSection
+				fieldsCubit={ Cubits.accountFilterFields }
+				onApply={ (groups) => Cubits.accounts.applyFilterGroups(groups) }
+				onClear={ () => Cubits.accounts.clearFilterGroups() }
+			/>
+
+			<CrudPage.SearchInput
+				className="rounded-t-none!"
+				onSearch={ (searchText) => Cubits.accounts.search(searchText) }
+			/>
 
 			<PageTable/>
 

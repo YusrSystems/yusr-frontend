@@ -58,13 +58,17 @@ export function DateInput({
 
 	useEffect(() =>
 	{
-
 		const dateValue = value?.value;
 
 		if (dateValue)
 		{
 			const date = new Date(dateValue);
 
+			// value.value = new Date(Date.UTC(
+			// 	date.getUTCFullYear(),
+			// 	date.getUTCMonth(),
+			// 	date.getUTCDate()
+			// ));
 			value.value = new Date(
 				date.getFullYear(),
 				date.getMonth(),
@@ -112,6 +116,7 @@ export function DateInput({
 						if (date)
 						{
 							const local = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+							// const local = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
 							onChange?.(local);
 							if (value)
 							{

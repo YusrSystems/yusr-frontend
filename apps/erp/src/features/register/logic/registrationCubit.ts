@@ -18,7 +18,8 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 		email: "",
 		userPassword: "",
 		username: "",
-		id: 0
+		id: 0,
+		hasAcceptedPolicies: false
 	});
 
 	constructor()
@@ -60,6 +61,7 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 	public async externalAuthRegister(
 		token: string)
 	{
+		this.emit(new RegistrationStateLoading());
 		const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
 			`/api/Login/external-login`,
 			{
@@ -67,6 +69,8 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 				token
 			}
 		);
+
+		this.emit(new RegistrationStateInitial());
 
 		if (result.status === 200 && result.data)
 		{
