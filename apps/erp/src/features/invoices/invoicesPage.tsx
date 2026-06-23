@@ -408,7 +408,8 @@ function PageTable({fixedType, permissionResource}: {
 		}
 
 		cells.push(
-			{rowBody: new Date(invoice.date.value).toLocaleDateString("en-CA", {timeZone: "UTC"}), rowStyles: ""},
+			{rowBody: new Date(invoice.date.value).toLocaleDateString("en-CA"), rowStyles: ""},
+			// {rowBody: new Date(invoice.date.value).toLocaleDateString("en-CA", {timeZone: "UTC"}), rowStyles: ""},
 			{rowBody: invoice.actionAccountName || "-", rowStyles: ""},
 			{rowBody: invoice.storeName || "-", rowStyles: ""},
 			{
