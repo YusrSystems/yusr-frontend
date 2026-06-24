@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
 	Button,
 	DateField,
+	DateService,
 	Dialog,
 	DialogContent,
 	DialogDescription,
@@ -22,7 +23,7 @@ export default function BalanceSheetDialog()
 	useSignals();
 	const {t, i18n} = useTranslation("erpCommon");
 	const isOpen = useMemo(() => signal(false), []);
-	const toDate = useMemo(() => signal<Date>(new Date()), []);
+	const toDate = useMemo(() => signal<string>(DateService.formatDateOnly(new Date())), []);
 
 	return (
 		<>
@@ -47,7 +48,7 @@ export default function BalanceSheetDialog()
 						<ReportButton
 							reportName={ ReportConstants.BalanceSheet }
 							request={ new BalanceSheetReportRequest({
-								toDate: toDate.value?.toLocaleDateString("en-CA") ?? undefined
+								toDate: toDate.value ?? undefined
 							}) }
 						/>
 					</DialogFooter>

@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
 import { ItemUnitPricingMethod, type ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
 
 
@@ -49,7 +49,7 @@ export class ItemTransfersItem extends ChangeableEntity<ItemTransfersItemDto>
 export class ItemTransferDto extends Dto
 {
 	public description?: string;
-	public transferDate!: string | Date;
+	public date!: string;
 	public fromStoreId!: number;
 	public fromStoreName?: string;
 	public toStoreId!: number;
@@ -60,7 +60,7 @@ export class ItemTransferDto extends Dto
 export default class ItemTransfer extends ChangeableEntity<ItemTransferDto>
 {
 	public description: Signal<string | undefined>;
-	public transferDate: Signal<string>;
+	public date: Signal<string>;
 	public fromStoreId: Signal<number | undefined>;
 	public fromStoreName: Signal<string | undefined>;
 	public toStoreId: Signal<number | undefined>;
@@ -70,8 +70,8 @@ export default class ItemTransfer extends ChangeableEntity<ItemTransferDto>
 	constructor(dto?: Partial<ItemTransferDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		super(dto, [{
-			field: "transferDate",
-			selector: (d) => d.transferDate,
+			field: "date",
+			selector: (d) => d.date,
 			validators: [Validators.required(i18n.t("stocking:itemTransfers.transferDateRequired"))]
 		}, {
 			field: "fromStoreId",
@@ -94,9 +94,7 @@ export default class ItemTransfer extends ChangeableEntity<ItemTransferDto>
 		}], mode);
 
 		this.description = this.assign("description", dto?.description ?? undefined);
-		this.transferDate = this.assign("transferDate", dto?.transferDate ?
-			new Date(dto?.transferDate).toLocaleDateString("en-CA")
-			: new Date().toLocaleDateString("en-CA"));
+		this.date = this.assign("date", dto?.date ?? DateService.formatDateOnly(new Date()));
 		this.fromStoreId = this.assign("fromStoreId", dto?.fromStoreId ?? undefined);
 		this.fromStoreName = this.assign("fromStoreName", dto?.fromStoreName ?? undefined);
 		this.toStoreId = this.assign("toStoreId", dto?.toStoreId ?? undefined);

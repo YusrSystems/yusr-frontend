@@ -7,6 +7,7 @@ import {
 	ChangeableEntityMode,
 	ChangeDialog,
 	type CommonChangeDialogProps,
+	DateService,
 	DialogClose,
 	DialogFooter,
 	Loading,
@@ -104,7 +105,7 @@ export default function ChangeInvoiceDialog({
 					}
 					else if (currentEntity.value.invoiceMode.value === InvoiceMode.Return)
 					{
-						res.data.date.value = new Date();
+						res.data.date.value = DateService.formatDateOnly(new Date());
 						res.data.originalInvoiceId.value = entity.id.value;
 						res.data.type.value = res.data.type.value === InvoiceType.Sell
 							? InvoiceType.SellReturn
@@ -116,7 +117,7 @@ export default function ChangeInvoiceDialog({
 					else if (currentEntity.value.invoiceMode.value === InvoiceMode.Copy)
 					{
 						res.data.id.value = 0;
-						res.data.date.value = new Date();
+						res.data.date.value = DateService.formatDateOnly(new Date());
 						currentEntity.value = Invoice.create(res.data.toJson());
 						currentEntity.value.invoiceMode.value = InvoiceMode.Copy;
 						currentEntity.value.syncPaymentVouchers();
@@ -125,7 +126,7 @@ export default function ChangeInvoiceDialog({
 					{
 						res.data.id.value = 0;
 						res.data.type.value = InvoiceType.Sell;
-						res.data.date.value = new Date();
+						res.data.date.value = DateService.formatDateOnly(new Date());
 						res.data.notes.value = undefined;
 						currentEntity.value = Invoice.create(res.data.toJson());
 						currentEntity.value.invoiceMode.value = InvoiceMode.QuotationToSales;

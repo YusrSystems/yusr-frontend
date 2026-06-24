@@ -1,11 +1,11 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
 
 
 export class BalanceTransferDto extends Dto
 {
 	public description?: string;
-	public date!: Date;
+	public date!: string;
 	public amount!: number;
 	public fromAccountId!: number;
 	public toAccountId!: number;
@@ -16,7 +16,7 @@ export class BalanceTransferDto extends Dto
 export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 {
 	public description: Signal<string>;
-	public date: Signal<Date>;
+	public date: Signal<string>;
 	public amount: Signal<number>;
 	public fromAccountId: Signal<number>;
 	public toAccountId: Signal<number>;
@@ -32,10 +32,6 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 				Validators.min(1, i18n.t("accounting:balanceTransfers.amountMin"))
 			]
 		}, {
-			field: "date",
-			selector: (d) => d.date,
-			validators: [Validators.required(i18n.t("accounting:balanceTransfers.dateRequired"))]
-		}, {
 			field: "fromAccountId",
 			selector: (d) => d.fromAccountId,
 			validators: [Validators.required(i18n.t("accounting:balanceTransfers.fromAccountRequired"))]
@@ -46,11 +42,7 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 		}], mode);
 
 		this.description = this.assign("description", dto?.description);
-
-		this.date = this.assign("date", dto?.date ?
-			new Date(dto?.date).toLocaleDateString("en-CA")
-			: new Date().toLocaleDateString("en-CA"));
-
+		this.date = this.assign("date", dto?.date ?? DateService.formatDateOnly(new Date()));
 		this.amount = this.assign("amount", dto?.amount ?? 0.0);
 		this.fromAccountId = this.assign("fromAccountId", dto?.fromAccountId);
 		this.toAccountId = this.assign("toAccountId", dto?.toAccountId);

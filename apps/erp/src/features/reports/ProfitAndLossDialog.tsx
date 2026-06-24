@@ -1,19 +1,20 @@
 import { useTranslation } from "react-i18next";
 import {
-    Button,
-    DateField,
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
+	Button,
+	DateField,
+	DateService,
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle
 } from "yusr-ui";
 import { InvoicesListReportRequest, InvoicesListReportType } from "@/core/data/report/invoicesListReportType.ts";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
 import { useSignals } from "@preact/signals-react/runtime";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 
@@ -24,13 +25,13 @@ export default function ProfitAndLossDialog()
 	const {t, i18n} = useTranslation("erpCommon");
 
 	const isOpen = useMemo(() => signal(false), []);
-	const fromDate = useMemo(() => signal<Date>(new Date()), []);
-	const toDate = useMemo(() => signal<Date>(new Date()), []);
-
-	useEffect(() =>
+	const fromDate = useMemo(() =>
 	{
-		fromDate.value.setMonth(fromDate.value.getMonth() - 1);
-	}, [fromDate.value]);
+		const date = new Date();
+		date.setMonth(date.getMonth() - 1);
+		return signal<string>(DateService.formatDateOnly(date));
+	}, []);
+	const toDate = useMemo(() => signal<string>(DateService.formatDateOnly(new Date())), []);
 
 	return (
 		<>
@@ -59,8 +60,8 @@ export default function ProfitAndLossDialog()
 						<ReportButton
 							reportName={ ReportConstants.InvoicesList }
 							request={ new InvoicesListReportRequest({
-								fromDate: fromDate.value?.toLocaleDateString("en-CA") ?? undefined,
-								toDate: toDate.value?.toLocaleDateString("en-CA") ?? undefined,
+								fromDate: fromDate.value ?? undefined,
+								toDate: toDate.value ?? undefined,
 								reportType: InvoicesListReportType.ProfitAndLoss,
 								types: [InvoiceType.Sell, InvoiceType.SellReturn, InvoiceType.Purchase, InvoiceType.PurchaseReturn]
 							}) }

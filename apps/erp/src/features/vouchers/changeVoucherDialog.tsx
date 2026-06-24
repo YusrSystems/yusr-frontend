@@ -130,7 +130,7 @@ export default function ChangeVoucherDialog({
 					<DateField
 						label={ t("vouchers.date") }
 						required
-						value={ entity.date ? signal(new Date(entity.date.value)) : undefined }
+						value={ entity.date }
 						error={ entity.getError("date") }
 					/>
 				</FieldsSection>

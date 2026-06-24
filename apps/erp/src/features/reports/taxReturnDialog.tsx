@@ -1,14 +1,15 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Button,
-  DateField,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
+	Button,
+	DateField,
+	DateService,
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle
 } from "yusr-ui";
 import ReportConstants from "../../core/data/report/reportConstants";
 import { TaxReturnReportRequest } from "@/core/data/report/taxReturnReportRequest.ts";
@@ -23,13 +24,13 @@ export default function TaxReturnDialog()
 	const {t, i18n} = useTranslation("erpCommon");
 
 	const isOpen = useMemo(() => signal(false), []);
-	const fromDate = useMemo(() => signal<Date>(new Date()), []);
-	const toDate = useMemo(() => signal<Date>(new Date()), []);
-
-	useEffect(() =>
+	const fromDate = useMemo(() =>
 	{
-		fromDate.value.setMonth(fromDate.value.getMonth() - 1);
-	}, [fromDate.value]);
+		const date = new Date();
+		date.setMonth(date.getMonth() - 1);
+		return signal<string>(DateService.formatDateOnly(date));
+	}, []);
+	const toDate = useMemo(() => signal<string>(DateService.formatDateOnly(new Date())), []);
 
 	return (
 		<>
@@ -58,8 +59,8 @@ export default function TaxReturnDialog()
 						<ReportButton
 							reportName={ ReportConstants.TaxReturn }
 							request={ new TaxReturnReportRequest({
-								fromDate: fromDate.value.toLocaleDateString("en-CA"),
-								toDate: toDate.value.toLocaleDateString("en-CA")
+								fromDate: fromDate.value,
+								toDate: toDate.value
 							}) }
 						/>
 					</DialogFooter>

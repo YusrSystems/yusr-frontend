@@ -131,7 +131,7 @@ function PageTable()
 						transfer
 					) => [
 						{rowBody: `#${ transfer.id.value }`},
-						{rowBody: new Date(transfer.transferDate.value).toLocaleDateString("en-CA"), rowStyles: ""},
+						{rowBody: transfer.date.value, rowStyles: ""},
 						{rowBody: transfer.fromStoreName.value, rowStyles: "font-semibold"},
 						{rowBody: transfer.toStoreName.value, rowStyles: "font-semibold"},
 						{rowBody: transfer.description.value || "-", rowStyles: "text-muted-foreground"},

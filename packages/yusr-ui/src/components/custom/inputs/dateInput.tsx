@@ -1,7 +1,6 @@
-import { format } from "date-fns";
 import { arSA, enUS } from "date-fns/locale";
 import { ChevronDownIcon } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
@@ -9,12 +8,13 @@ import { Calendar } from "../../pure/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../../pure/popover";
 import { signal, type Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
+import { DateService } from "../../../services";
 
 
 export interface DateInputProps
 {
-	value?: Signal<Date | undefined>;
-	onChange?: (date: Date | undefined) => void;
+	value?: Signal<string | undefined>;
+	onChange?: (date: string | undefined) => void;
 	placeholder?: string;
 	locale?: any;
 	startYear?: number;
@@ -56,33 +56,7 @@ export function DateInput({
 		disabledDays.push({after: maxDate});
 	}
 
-	useEffect(() =>
-	{
-		const dateValue = value?.value;
-
-		if (dateValue)
-		{
-			const date = new Date(dateValue);
-
-			// value.value = new Date(Date.UTC(
-			// 	date.getUTCFullYear(),
-			// 	date.getUTCMonth(),
-			// 	date.getUTCDate()
-			// ));
-			value.value = new Date(
-				date.getFullYear(),
-				date.getMonth(),
-				date.getDate()
-			);
-		}
-		else
-		{
-			if (value?.value)
-			{
-				value.value = undefined;
-			}
-		}
-	}, [value]);
+	const selectedDate = value?.value ? DateService.parseDateOnly(value.value) : undefined;
 
 	return (
 		<Popover open={ isOpen.value } onOpenChange={ () =>
@@ -99,28 +73,23 @@ export function DateInput({
 					) }
 					disabled={ disabled }
 				>
-					{ value?.value
-						? (
-							format(value?.value, "PPP", {locale: dateFnsLocale})
-						)
-						: <span>{ defaultPlaceholder }</span> }
+					{ value?.value ? value?.value : <span>{ defaultPlaceholder }</span> }
 					<ChevronDownIcon className="h-4 w-4 opacity-50"/>
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-0" align="start">
 				<Calendar
 					mode="single"
-					selected={ value?.value }
+					selected={ selectedDate }
 					onSelect={ (date) =>
 					{
 						if (date)
 						{
-							const local = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-							// const local = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-							onChange?.(local);
+							const formatted = DateService.formatDateOnly(date);
+							onChange?.(formatted);
 							if (value)
 							{
-								value.value = local;
+								value.value = formatted;
 							}
 						}
 						else

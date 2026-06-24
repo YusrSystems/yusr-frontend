@@ -91,7 +91,7 @@ export default function InvoicesPage({
 			<CrudPage>
 				<CrudPage.Header
 					title={ title }
-					addButtonTitle={ t("invoices.addNewTitle") }
+					addButtonTitle={ fixedType === InvoiceType.Quotation ? t("invoices.addNewQuotationTitle") : t("invoices.addNewTitle") }
 					isAddButtonVisible={ Services.auth.hasAuth(
 						SystemPermissionsResources.Invoices,
 						SystemPermissionsActions.Add
@@ -408,8 +408,7 @@ function PageTable({fixedType, permissionResource}: {
 		}
 
 		cells.push(
-			{rowBody: new Date(invoice.date.value).toLocaleDateString("en-CA"), rowStyles: ""},
-			// {rowBody: new Date(invoice.date.value).toLocaleDateString("en-CA", {timeZone: "UTC"}), rowStyles: ""},
+			{rowBody: invoice.date.value, rowStyles: ""},
 			{rowBody: invoice.actionAccountName || "-", rowStyles: ""},
 			{rowBody: invoice.storeName || "-", rowStyles: ""},
 			{

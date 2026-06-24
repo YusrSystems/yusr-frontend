@@ -134,7 +134,7 @@ function PageTable()
 						stocktaking
 					) => [
 						{rowBody: `#${ stocktaking.id }`, rowStyles: ""},
-						{rowBody: new Date(stocktaking.date.value).toLocaleDateString("en-CA"), rowStyles: "font-mono"},
+						{rowBody: stocktaking.date.value, rowStyles: ""},
 						{rowBody: stocktaking.storeName, rowStyles: "font-semibold"},
 						{rowBody: stocktaking.description ?? "-", rowStyles: "text-sm text-gray-500"},
 						...(Services.auth.hasAuth(

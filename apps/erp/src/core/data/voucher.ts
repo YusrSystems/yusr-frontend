@@ -1,4 +1,4 @@
-import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
 import { Signal } from "@preact/signals-react";
 import { PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 
@@ -12,7 +12,7 @@ export type VoucherType = (typeof VoucherType)[keyof typeof VoucherType];
 export class VoucherDto extends Dto
 {
 	public type!: VoucherType;
-	public date!: string | Date;
+	public date!: string;
 	public amount!: number;
 	public isAmountDue!: boolean;
 	public commissionAmount!: number;
@@ -30,7 +30,7 @@ export class VoucherDto extends Dto
 export class Voucher extends ChangeableEntity<VoucherDto>
 {
 	public type: Signal<VoucherType>;
-	public date: Signal<string | Date>;
+	public date: Signal<string>;
 	public amount: Signal<number>;
 	public isAmountDue: Signal<boolean>;
 	public commissionAmount: Signal<number>;
@@ -69,9 +69,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 		}], mode);
 
 		this.type = this.assign("type", dto?.type ? dto.type : VoucherType.Payment);
-		this.date = this.assign("date", dto?.date ?
-			new Date(dto?.date).toLocaleDateString("en-CA")
-			: new Date().toLocaleDateString("en-CA"));
+		this.date = this.assign("date", dto?.date ?? DateService.formatDateOnly(new Date()));
 		this.amount = this.assign("amount", dto?.amount);
 		this.isAmountDue = this.assign("isAmountDue", dto?.isAmountDue);
 		this.commissionAmount = this.assign("commissionAmount", dto?.commissionAmount);

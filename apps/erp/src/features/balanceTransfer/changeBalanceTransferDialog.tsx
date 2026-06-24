@@ -103,7 +103,7 @@ export default function ChangeBalanceTransferDialog(
 							label={ t("balanceTransfers.transferDate") }
 							value={ entity.date }
 							required
-							error={ entity.getError("date") }
+							disabled
 						/>
 						<NumberField
 							label={ t("balanceTransfers.amount") }

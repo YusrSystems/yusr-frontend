@@ -128,6 +128,7 @@ export class YusrApiHelper
 	{
 		return {
 			"Accept-Language": this.getLanguage() || document.documentElement.lang || "ar",
+			"X-TimeZone": Intl.DateTimeFormat().resolvedOptions().timeZone,
 			...(extra || {})
 		};
 	}
