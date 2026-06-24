@@ -38,7 +38,7 @@ import SellInvoicesPage from "@/features/invoices/sellInvoicesPage";
 import PurchaseInvoicesPage from "@/features/invoices/purchaseInvoices.tsx";
 import QuotationInvoicesPage from "@/features/invoices/quotationInvoicesPage.tsx";
 import AuthGate from "@/app/authGate.tsx";
-
+// import ReportPage from "@/features/report/reportPage.tsx";
 
 const refreshPage = () =>
 {
@@ -52,6 +52,7 @@ export const router = createBrowserRouter([{
 	),
 	children: [
 		{path: "/", element: <LandingPage/>},
+		// {path: "/report", element: <ReportPage/>},
 		{path: "/login", element: <LoginPage/>},
 		{path: "/register", element: <RegisterPage/>},
 		{path: "/register", element: <MaintenanceFallback/>},
