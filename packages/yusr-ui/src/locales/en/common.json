@@ -289,5 +289,61 @@
         }
       }
     }
+  },
+  "theme": {
+    "appearance": "Appearance",
+    "presets": "Presets",
+    "custom": "Custom",
+    "customDesc": "Pick a swatch, or use the picker for an exact value.",
+    "light": "Light",
+    "dark": "Dark",
+    "radius": "Corner radius",
+    "livePreview": "Preview",
+    "previewRevenue": "Revenue",
+    "previewInvoices": "Invoices",
+    "previewVat": "VAT due",
+    "mockTitle": "Recent invoices",
+    "mockSubtitle": "Updates live as you edit.",
+    "previewLive": "Live",
+    "sampleInput": "Customer name",
+    "sampleSelect": "Payment terms",
+    "previewAutoRemind": "Send automatic reminders",
+    "primaryBtn": "Confirm",
+    "secondaryBtn": "Cancel",
+    "field": {
+      "primary": "Primary",
+      "background": "Background",
+      "card": "Card",
+      "ring": "Ring"
+    },
+    "group": {
+      "neutral": "Neutral",
+      "blue": "Blue",
+      "green": "Green",
+      "warm": "Warm",
+      "bold": "Bold"
+    },
+    "preset": {
+      "default": "Default",
+      "slate": "Slate",
+      "graphite": "Graphite",
+      "paper": "Paper",
+      "ocean": "Ocean",
+      "steel": "Steel",
+      "navy": "Navy",
+      "sky": "Sky",
+      "emerald": "Emerald",
+      "sage": "Sage",
+      "mint": "Mint",
+      "forest": "Forest",
+      "sunset": "Sunset",
+      "amber": "Amber",
+      "clay": "Clay",
+      "rose": "Rose",
+      "ink": "Ink",
+      "violet": "Violet",
+      "crimson": "Crimson",
+      "indigo": "Indigo"
+    }
   }
 }

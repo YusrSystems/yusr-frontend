@@ -289,5 +289,61 @@
         }
       }
     }
+  },
+  "theme": {
+    "appearance": "চেহারা",
+    "presets": "প্রিসেট",
+    "custom": "কাস্টম",
+    "customDesc": "একটি রঙ বাছাই করুন, অথবা সঠিক মানের জন্য পিকার ব্যবহার করুন।",
+    "light": "হালকা",
+    "dark": "গাঢ়",
+    "radius": "কোণার ব্যাসার্ধ",
+    "livePreview": "পূর্বরূপ",
+    "previewRevenue": "আয়",
+    "previewInvoices": "চালান",
+    "previewVat": "প্রদেয় ভ্যাট",
+    "mockTitle": "সাম্প্রতিক চালান",
+    "mockSubtitle": "আপনি সম্পাদনা করার সাথে সাথে লাইভ আপডেট হয়।",
+    "previewLive": "লাইভ",
+    "sampleInput": "গ্রাহকের নাম",
+    "sampleSelect": "পেমেন্ট শর্তাবলী",
+    "previewAutoRemind": "স্বয়ংক্রিয় রিমাইন্ডার পাঠান",
+    "primaryBtn": "নিশ্চিত করুন",
+    "secondaryBtn": "বাতিল করুন",
+    "field": {
+      "primary": "প্রাথমিক",
+      "background": "পটভূমি",
+      "card": "কার্ড",
+      "ring": "রিং"
+    },
+    "group": {
+      "neutral": "নিরপেক্ষ",
+      "blue": "নীল",
+      "green": "সবুজ",
+      "warm": "উষ্ণ",
+      "bold": "সাহসী"
+    },
+    "preset": {
+      "default": "ডিফল্ট",
+      "slate": "স্লেট",
+      "graphite": "গ্রাফাইট",
+      "paper": "কাগজ",
+      "ocean": "মহাসাগর",
+      "steel": "ইস্পাত",
+      "navy": "নেভি",
+      "sky": "আকাশ",
+      "emerald": "পান্না",
+      "sage": "ঋষি",
+      "mint": "পুদিনা",
+      "forest": "বন",
+      "sunset": "সূর্যাস্ত",
+      "amber": "অ্যাম্বার",
+      "clay": "কাদামাটি",
+      "rose": "গোলাপ",
+      "ink": "কালি",
+      "violet": "বেগুনি",
+      "crimson": "ক্রিমসন",
+      "indigo": "ইন্ডিগো"
+    }
   }
 }

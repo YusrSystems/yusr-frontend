@@ -289,5 +289,61 @@
         }
       }
     }
+  },
+  "theme": {
+    "appearance": "उपस्थिति",
+    "presets": "प्रीसेट",
+    "custom": "कस्टम",
+    "customDesc": "एक रंग चुनें, या सटीक मान के लिए पिकर का उपयोग करें।",
+    "light": "हल्का",
+    "dark": "गहरा",
+    "radius": "कोने की त्रिज्या",
+    "livePreview": "पूर्वावलोकन",
+    "previewRevenue": "राजस्व",
+    "previewInvoices": "चालान",
+    "previewVat": "देय वैट",
+    "mockTitle": "हाल के चालान",
+    "mockSubtitle": "आपके संपादन के साथ लाइव अपडेट होता है।",
+    "previewLive": "लाइव",
+    "sampleInput": "ग्राहक का नाम",
+    "sampleSelect": "भुगतान शर्तें",
+    "previewAutoRemind": "स्वचालित रिमाइंडर भेजें",
+    "primaryBtn": "पुष्टि करें",
+    "secondaryBtn": "रद्द करें",
+    "field": {
+      "primary": "प्राथमिक",
+      "background": "पृष्ठभूमि",
+      "card": "कार्ड",
+      "ring": "रिंग"
+    },
+    "group": {
+      "neutral": "तटस्थ",
+      "blue": "नीला",
+      "green": "हरा",
+      "warm": "गर्म",
+      "bold": "बोल्ड"
+    },
+    "preset": {
+      "default": "डिफ़ॉल्ट",
+      "slate": "स्लेट",
+      "graphite": "ग्रेफाइट",
+      "paper": "कागज",
+      "ocean": "महासागर",
+      "steel": "स्टील",
+      "navy": "नेवी",
+      "sky": "आकाश",
+      "emerald": "पन्ना",
+      "sage": "ऋषि",
+      "mint": "पुदीना",
+      "forest": "जंगल",
+      "sunset": "सूर्यास्त",
+      "amber": "एम्बर",
+      "clay": "मिट्टी",
+      "rose": "गुलाब",
+      "ink": "स्याही",
+      "violet": "बैंगनी",
+      "crimson": "क्रिमसन",
+      "indigo": "इंडिगो"
+    }
   }
 }

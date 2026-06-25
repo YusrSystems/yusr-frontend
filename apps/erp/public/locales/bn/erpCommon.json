@@ -29,7 +29,6 @@
     "account": "অ্যাকাউন্ট",
     "quotationInvoices": "কোটেশনসমূহ"
   },
-
   "dashborad": {
     "income": "মোট আয়",
     "totalPassengers": "মোট যাত্রী",
@@ -75,7 +74,6 @@
       "december": "ডিসেম্বর"
     }
   },
-
   "permissions": {
     "resources": {
       "branches": "শাখা",
@@ -149,13 +147,11 @@
       "reports": "সিস্টেম রিপোর্ট"
     }
   },
-
   "storeItemSelector": {
     "addItems": "আইটেম যোগ করুন:",
     "scanBarcode": "বারকোড স্ক্যান করুন...",
     "selectItem": "আইটেম নির্বাচন করুন..."
   },
-
   "settings": {
     "loading": "সেটিংস লোড হচ্ছে...",
     "title": "সিস্টেম সেটিংস",
@@ -211,9 +207,9 @@
     "visitZatca": "ভেরিফিকেশন কোড পেতে কর্তৃপক্ষের ওয়েবসাইট দেখুন",
     "shareInfoCard": "প্রতিষ্ঠানের তথ্য কার্ড",
     "copied": "কপি করা হয়েছে",
-    "copyLink": "লিংক কপি করুন"
+    "copyLink": "লিংক কপি করুন",
+    "theme": "থিম ও চেহারা"
   },
-
   "reports": {
     "title": "রিপোর্ট",
     "subtitle": "ব্যবসায়িক রিপোর্ট তৈরি ও এক্সপোর্ট করুন",
@@ -262,12 +258,10 @@
     "InvoicesList": "চালানের তালিকা",
     "InvoicesListDescription": "বিস্তৃত ফিল্টারিং অপশন সহ চালান দেখুন"
   },
-
   "accountStatement": {
     "button": "অ্যাকাউন্ট স্টেটমেন্ট",
     "title": "অ্যাকাউন্ট স্টেটমেন্ট"
   },
-
   "itemStatement": {
     "button": "আইটেম স্টেটমেন্ট",
     "title": "আইটেম স্টেটমেন্ট",
