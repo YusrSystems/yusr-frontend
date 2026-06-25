@@ -2,12 +2,15 @@ import { useTranslation } from "react-i18next";
 import { FieldsSection, NumberField, TextAreaField } from "yusr-ui";
 import Invoice from "@/core/data/invoices/invoice.ts";
 import { useSignals } from "@preact/signals-react/runtime";
+import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 
 
 export default function InvoiceGlobalSettlements({invoice}: { invoice: Invoice })
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
+
+	const basePrice = InvoiceItemsMath.CalcInvoiceBaseTaxInclusivePrice(invoice.invoiceItems.value ?? []);
 
 	return (
 		<div className="border border-border rounded-xl bg-background overflow-hidden">
@@ -23,6 +26,7 @@ export default function InvoiceGlobalSettlements({invoice}: { invoice: Invoice }
 						label={ t("paymentMethods.fixedAmount") }
 						className="mt-1"
 						value={ invoice.settlementAmount }
+						min={ -basePrice }
 						onChange={ (newValue) =>
 						{
 							if (newValue == undefined) return;
@@ -34,7 +38,6 @@ export default function InvoiceGlobalSettlements({invoice}: { invoice: Invoice }
 					<NumberField
 						label={ t("paymentMethods.percentage") }
 						min={ -100 }
-						max={ 100 }
 						className="mt-1"
 						value={ invoice.settlementPercent }
 						onChange={ (newValue) =>
