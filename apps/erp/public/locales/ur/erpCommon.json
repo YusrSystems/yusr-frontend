@@ -29,7 +29,6 @@
     "account": "اکاؤنٹ",
     "quotationInvoices": "کوٹیشنز"
   },
-
   "dashborad": {
     "income": "کل آمدنی",
     "totalPassengers": "کل مسافر",
@@ -75,7 +74,6 @@
       "december": "دسمبر"
     }
   },
-
   "permissions": {
     "resources": {
       "branches": "برانچز",
@@ -149,13 +147,11 @@
       "reports": "سسٹم رپورٹس"
     }
   },
-
   "storeItemSelector": {
     "addItems": "آئٹمز شامل کریں:",
     "scanBarcode": "بارکوڈ اسکین کریں...",
     "selectItem": "آئٹم منتخب کریں..."
   },
-
   "settings": {
     "loading": "ترتیبات لوڈ ہو رہی ہیں...",
     "title": "سسٹم کی ترتیبات",
@@ -211,9 +207,9 @@
     "visitZatca": "تصدیقی کوڈ حاصل کرنے کے لیے اتھارٹی کی ویب سائٹ ملاحظہ کریں",
     "shareInfoCard": "تنظیم کی معلومات کارڈ",
     "copied": "کاپی ہو گیا",
-    "copyLink": "لنک کاپی کریں"
+    "copyLink": "لنک کاپی کریں",
+    "theme": "تھیم اور ظاہریت"
   },
-
   "reports": {
     "title": "رپورٹس",
     "subtitle": "کاروباری رپورٹس بنائیں اور ایکسپورٹ کریں",
@@ -262,12 +258,10 @@
     "InvoicesList": "انوائسز کی فہرست",
     "InvoicesListDescription": "جامع فلٹرنگ اختیارات کے ساتھ انوائسز دیکھیں"
   },
-
   "accountStatement": {
     "button": "اکاؤنٹ سٹیٹمنٹ",
     "title": "اکاؤنٹ سٹیٹمنٹ"
   },
-
   "itemStatement": {
     "button": "آئٹم سٹیٹمنٹ",
     "title": "آئٹم سٹیٹمنٹ",

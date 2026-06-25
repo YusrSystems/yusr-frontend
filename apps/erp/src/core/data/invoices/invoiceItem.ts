@@ -2,7 +2,7 @@ import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "y
 import { ItemUnitPricingMethod, type ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod.ts";
 import type { Signal } from "@preact/signals-react";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
-import type Item from "@/core/data/item.ts";
+import Item, { ItemType } from "@/core/data/item.ts";
 import type Invoice from "@/core/data/invoices/invoice.ts";
 
 
@@ -11,6 +11,7 @@ export class InvoiceItemDto extends Dto
 	public index!: number;
 	public invoiceId!: number;
 	public itemId!: number;
+	public itemType!: number;
 	public itemUnitPricingMethodId!: number;
 	public quantity!: number;
 	public originalQuantity!: number;
@@ -36,6 +37,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 	public index: Signal<number>;
 	public invoiceId: Signal<number>;
 	public itemId: Signal<number | undefined>;
+	public itemType: Signal<ItemType>;
 	public itemUnitPricingMethodId: Signal<number | undefined>;
 	public quantity: Signal<number>;
 	public originalQuantity: Signal<number>;
@@ -79,6 +81,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		this.index = this.assign("index", dto?.index ?? 0);
 		this.invoiceId = this.assign("invoiceId", dto?.invoiceId ?? 0);
 		this.itemId = this.assign("itemId", dto?.itemId);
+		this.itemType = this.assign("itemType", dto?.itemType);
 		this.itemUnitPricingMethodId = this.assign("itemUnitPricingMethodId", dto?.itemUnitPricingMethodId);
 		this.quantity = this.assign("quantity", dto?.quantity ?? 0);
 		this.originalQuantity = this.assign("originalQuantity", dto?.originalQuantity ?? 0);
@@ -121,6 +124,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			index: (invoice.invoiceItems.value?.length ?? -1) + 1,
 			invoiceId: 0,
 			itemId: item.id.value,
+			itemType: item.type.value,
 			itemName: item.name.value,
 
 			// Pricing Method Details
@@ -129,7 +133,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			itemUnitPricingMethods: (item.itemUnitPricingMethods.value ?? []).map(x => x.toJson()),
 
 			// Financials
-			quantity: item.storeQuantity.value ? 1 : 0,
+			quantity: item.type.value === ItemType.Service ? 1 : item.storeQuantity.value ? 1 : 0,
 			originalQuantity: item.storeQuantity.value ?? 0,
 			originalCost: item.cost.value ?? 0,
 			cost: (item.cost.value ? Number((item.cost.value).toFixed(2)) : 0) * defaultPricingMethod.quantityMultiplier.value,

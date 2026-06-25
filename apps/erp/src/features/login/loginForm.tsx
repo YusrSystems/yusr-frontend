@@ -110,14 +110,15 @@ export function LoginForm({className, ...props}: React.ComponentProps<"div">)
 								<Button
 									type="button"
 									onClick={ async () => await cubit.login() }
+									className="rounded-sm"
 									disabled={ isLoading }
 								>
 									{ isLoading
 										? <Loader2 className="h-4 w-4 animate-spin"/>
 										: i18n.t("login:button") }
 								</Button>
+								<SignInWithGoogle onLogin={ (token) => cubit.externalAuthRegister(token) }/>
 							</Field>
-							<SignInWithGoogle onLogin={ (token) => cubit.externalAuthRegister(token) }/>
 							<FieldDescription className="text-center">
 								{ i18n.t("login:noAccount") } <Link
 								to="/register">{ i18n.t("login:registerLink") }</Link>

@@ -1,14 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {
-	ChangeableEntityMode,
-	CheckboxField,
-	DateField,
-	FieldsSection,
-	FormField,
-	SelectField,
-	TextField
-} from "yusr-ui";
+import { CheckboxField, DateField, FieldsSection, FormField, SelectField, TextField } from "yusr-ui";
 import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import { signal, useComputed } from "@preact/signals-react";
 import { type Account, AccountType } from "@/core/data/account.ts";
@@ -74,7 +66,7 @@ export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 				required
 				value={ invoice.date }
 				error={ invoice.getError("date") }
-				disabled={ invoice.mode.value === ChangeableEntityMode.Update || invoice.invoiceMode.value === InvoiceMode.Return }
+				disabled={ invoice.type.value !== InvoiceType.Quotation }
 			/>
 
 			<FormField

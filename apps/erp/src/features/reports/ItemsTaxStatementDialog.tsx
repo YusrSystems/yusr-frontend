@@ -1,20 +1,20 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    Button,
-    DateField,
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    FormFieldOld,
-    SelectField
+	Button,
+	DateField,
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	FormFieldOld,
+	SelectField
 } from "yusr-ui";
 import {
-    ItemsTaxStatementReportRequest,
-    ItemsTaxStatementReportType
+	ItemsTaxStatementReportRequest,
+	ItemsTaxStatementReportType
 } from "@/core/data/report/itemsTaxStatementReportRequest.ts";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
@@ -29,10 +29,10 @@ export default function ItemsTaxStatementDialog()
 	const {t, i18n} = useTranslation("erpCommon");
 
 	const isOpen = useMemo(() => signal(false), []);
-	const fromDate = useMemo(() => signal<Date>(), []);
+	const fromDate = useMemo(() => signal<string>(), []);
+	const toDate = useMemo(() => signal<string>(), []);
 	const itemId = useMemo(() => signal<number>(), []);
 	const itemName = useMemo(() => signal<string>(), []);
-	const toDate = useMemo(() => signal<Date>(), []);
 	const type = useMemo(() => signal<ItemsTaxStatementReportType>(ItemsTaxStatementReportType.Sales), []);
 
 	return (
@@ -80,8 +80,8 @@ export default function ItemsTaxStatementDialog()
 						<ReportButton
 							reportName={ ReportConstants.ItemTaxStatement }
 							request={ new ItemsTaxStatementReportRequest({
-								fromDate: fromDate.value?.toLocaleDateString("en-CA"),
-								toDate: toDate.value?.toLocaleDateString("en-CA"),
+								fromDate: fromDate.value,
+								toDate: toDate.value,
 								itemId: itemId.value,
 								type: type.value
 							}) }

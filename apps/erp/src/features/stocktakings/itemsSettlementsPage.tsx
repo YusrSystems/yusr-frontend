@@ -134,7 +134,7 @@ function PageTable()
 						settlement
 					) => [
 						{rowBody: `#${ settlement.id.value }`, rowStyles: ""},
-						{rowBody: new Date(settlement.date.value).toLocaleDateString("en-CA"), rowStyles: "font-mono"},
+						{rowBody: settlement.date.value, rowStyles: ""},
 						{rowBody: settlement.storeName.value, rowStyles: "font-semibold"},
 						{rowBody: settlement.description.value ?? "-", rowStyles: "text-sm text-gray-500"},
 						...(Services.auth.hasAuth(

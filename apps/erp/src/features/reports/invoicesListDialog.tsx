@@ -1,16 +1,17 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Button,
-  DateField,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  FormField,
-  FormFieldOld
+	Button,
+	DateField,
+	DateService,
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	FormField,
+	FormFieldOld
 } from "yusr-ui";
 import { InvoicesListReportRequest, InvoicesListReportType } from "@/core/data/report/invoicesListReportType.ts";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -31,19 +32,19 @@ export default function InvoicesListDialog()
 	const {t, i18n} = useTranslation(["erpCommon", "accounting"]);
 
 	const isOpen = useMemo(() => signal(false), []);
-	const fromDate = useMemo(() => signal<Date>(new Date()), []);
-	const toDate = useMemo(() => signal<Date>(), []);
+	const fromDate = useMemo(() =>
+	{
+		const date = new Date();
+		date.setMonth(date.getMonth() - 1);
+		return signal<string>(DateService.formatDateOnly(date));
+	}, []);
+	const toDate = useMemo(() => signal<string>(DateService.formatDateOnly(new Date())), []);
 	const accountId = useMemo(() => signal<number>(), []);
 	const accountName = useMemo(() => signal<string>(), []);
 	const storeId = useMemo(() => signal<number>(), []);
 	const itemId = useMemo(() => signal<number>(), []);
 	const storeName = useMemo(() => signal<string>(), []);
 	const items = useMemo(() => signal<Item[]>([]), []);
-
-	useEffect(() =>
-	{
-		fromDate.value.setMonth(fromDate.value.getMonth() - 1);
-	}, [fromDate.value]);
 
 	return (
 		<>
@@ -121,8 +122,8 @@ export default function InvoicesListDialog()
 						<ReportButton
 							reportName={ ReportConstants.InvoicesList }
 							request={ new InvoicesListReportRequest({
-								fromDate: fromDate.value?.toLocaleDateString("en-CA") ?? undefined,
-								toDate: toDate.value?.toLocaleDateString("en-CA") ?? undefined,
+								fromDate: fromDate.value ?? undefined,
+								toDate: toDate.value ?? undefined,
 								reportType: InvoicesListReportType.ProfitAndLoss,
 								types: [InvoiceType.Sell, InvoiceType.SellReturn, InvoiceType.Purchase, InvoiceType.PurchaseReturn],
 								actionAccountId: accountId.value,

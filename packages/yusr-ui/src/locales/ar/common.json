@@ -289,5 +289,61 @@
         }
       }
     }
+  },
+  "theme": {
+    "appearance": "المظهر",
+    "presets": "القوالب الجاهزة",
+    "custom": "مخصص",
+    "customDesc": "اختر لونًا، أو استخدم المنتقي للحصول على قيمة دقيقة.",
+    "light": "فاتح",
+    "dark": "داكن",
+    "radius": "نصف قطر الزوايا",
+    "livePreview": "معاينة",
+    "previewRevenue": "الإيرادات",
+    "previewInvoices": "الفواتير",
+    "previewVat": "ضريبة القيمة المضافة المستحقة",
+    "mockTitle": "الفواتير الأخيرة",
+    "mockSubtitle": "يتم التحديث فورًا أثناء التعديل.",
+    "previewLive": "مباشر",
+    "sampleInput": "اسم العميل",
+    "sampleSelect": "شروط الدفع",
+    "previewAutoRemind": "إرسال تذكيرات تلقائية",
+    "primaryBtn": "تأكيد",
+    "secondaryBtn": "إلغاء",
+    "field": {
+      "primary": "أساسي",
+      "background": "الخلفية",
+      "card": "البطاقة",
+      "ring": "الحلقة"
+    },
+    "group": {
+      "neutral": "محايد",
+      "blue": "أزرق",
+      "green": "أخضر",
+      "warm": "دافئ",
+      "bold": "جريء"
+    },
+    "preset": {
+      "default": "الافتراضي",
+      "slate": "أردواز",
+      "graphite": "جرافيت",
+      "paper": "ورق",
+      "ocean": "محيط",
+      "steel": "فولاذ",
+      "navy": "بحري",
+      "sky": "سماء",
+      "emerald": "زمرد",
+      "sage": "مريمية",
+      "mint": "نعناع",
+      "forest": "غابة",
+      "sunset": "غروب",
+      "amber": "كهرمان",
+      "clay": "طين",
+      "rose": "وردي",
+      "ink": "حبر",
+      "violet": "بنفسجي",
+      "crimson": "قرمزي",
+      "indigo": "نيلي"
+    }
   }
 }

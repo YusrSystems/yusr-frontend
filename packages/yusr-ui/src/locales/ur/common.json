@@ -289,5 +289,61 @@
         }
       }
     }
+  },
+  "theme": {
+    "appearance": "ظاہریت",
+    "presets": "پریسیٹس",
+    "custom": "حسب مرضی",
+    "customDesc": "ایک رنگ منتخب کریں، یا درست قیمت کے لیے پیکر استعمال کریں۔",
+    "light": "ہلکا",
+    "dark": "گہرا",
+    "radius": "کونے کا رداس",
+    "livePreview": "پیش منظر",
+    "previewRevenue": "آمدنی",
+    "previewInvoices": "انوائسز",
+    "previewVat": "واجب الادا ویٹ",
+    "mockTitle": "حالیہ انوائسز",
+    "mockSubtitle": "ترمیم کرتے ہی اپ ڈیٹس زندہ ہیں۔",
+    "previewLive": "براہ راست",
+    "sampleInput": "گاہک کا نام",
+    "sampleSelect": "ادائیگی کی شرائط",
+    "previewAutoRemind": "خودکار یاد دہانیاں بھیجیں",
+    "primaryBtn": "تصدیق کریں",
+    "secondaryBtn": "منسوخ کریں",
+    "field": {
+      "primary": "بنیادی",
+      "background": "پس منظر",
+      "card": "کارڈ",
+      "ring": "انگوٹھی"
+    },
+    "group": {
+      "neutral": "غیر جانبدار",
+      "blue": "نیلا",
+      "green": "سبز",
+      "warm": "گرم",
+      "bold": "بولڈ"
+    },
+    "preset": {
+      "default": "پہلے سے طے شدہ",
+      "slate": "سلیٹ",
+      "graphite": "گریفائٹ",
+      "paper": "کاغذ",
+      "ocean": "سمندر",
+      "steel": "اسٹیل",
+      "navy": "بحری",
+      "sky": "آسمان",
+      "emerald": "زمرد",
+      "sage": "سیج",
+      "mint": "پودینہ",
+      "forest": "جنگل",
+      "sunset": "غروب",
+      "amber": "عنبر",
+      "clay": "مٹی",
+      "rose": "گلاب",
+      "ink": "سیاہی",
+      "violet": "وایلیٹ",
+      "crimson": "کرمسن",
+      "indigo": "انڈگو"
+    }
   }
 }

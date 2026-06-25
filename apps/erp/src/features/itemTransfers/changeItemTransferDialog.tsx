@@ -44,7 +44,6 @@ export default function ChangeItemTransferDialog(
 				const res = await service.Get(entity.id.value);
 				if (res.data != undefined)
 				{
-					res.data.transferDate.value = new Date(res.data.transferDate.value).toLocaleDateString("en-CA");
 					currentEntity.value = ItemTransfer.load(res.data.toJson());
 				}
 				isLoading.value = false;
@@ -93,9 +92,9 @@ export default function ChangeItemTransferDialog(
 				<FieldGroup>
 					<FieldsSection columns={ 3 }>
 						<TextField
-							label={ t("itemTransfers.stocktakingDate") }
+							label={ t("itemTransfers.date") }
 							required
-							value={ currentEntity.value.transferDate }
+							value={ currentEntity.value.date }
 							disabled
 						/>
 						<FormField

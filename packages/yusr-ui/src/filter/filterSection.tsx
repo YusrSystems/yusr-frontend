@@ -457,41 +457,16 @@ function DateFilterInput({rule}: { rule: FilterValueInputProps["rule"] })
 {
 	useSignals();
 
-	const dateSignal = useMemo(() =>
-	{
-		const val = rule.value.value;
-		if (typeof val === "string" && val !== "")
-		{
-			const parsed = new Date(val);
-			return signal(!isNaN(parsed.getTime()) ? parsed : undefined);
-		}
-		return signal<Date | undefined>(undefined);
-	}, [rule]);
-
-	useEffect(() =>
-	{
-		if (rule.value.value === "" || rule.value.value === null)
-		{
-			dateSignal.value = undefined;
-		}
-	}, [rule.value.value, dateSignal]);
+	const dateValue = typeof rule.value.value === "string" && rule.value.value !== ""
+		? rule.value.value
+		: undefined;
 
 	return (
 		<DateInput
-			value={ dateSignal }
+			value={ signal(dateValue) }
 			onChange={ (date) =>
 			{
-				if (!date)
-				{
-					rule.value.value = "";
-				}
-				else
-				{
-					const year = date.getFullYear();
-					const month = String(date.getMonth() + 1).padStart(2, "0");
-					const day = String(date.getDate()).padStart(2, "0");
-					rule.value.value = `${ year }-${ month }-${ day }`;
-				}
+				rule.value.value = date ?? "";
 			} }
 		/>
 	);

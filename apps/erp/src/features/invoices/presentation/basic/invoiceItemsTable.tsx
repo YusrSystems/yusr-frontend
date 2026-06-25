@@ -26,6 +26,7 @@ import { Services } from "@/core/services/services.ts";
 import type { InvoiceItem } from "@/core/data/invoices/invoiceItem.ts";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 import { useSignals } from "@preact/signals-react/runtime";
+import { ItemType } from "@/core/data/item.ts";
 
 
 export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
@@ -264,7 +265,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 													value={ invoiceItem.itemUnitPricingMethodId }
 													placeholder={ t("invoices.selectPricingMethod") }
 													error={ invoiceItem.getError("itemUnitPricingMethodId") }
-													disabled={ invoice.isDisabled }
+													disabled={ invoice.isDisabled || invoiceItem.itemType.value === ItemType.Service }
 													options={ invoiceItem.itemUnitPricingMethods.value?.map((m) => ({
 														label: m.itemUnitPricingMethodName.value,
 														value: m.id.value
@@ -299,7 +300,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 														invoiceItem.changeQuantity(newValue);
 														invoice.syncPaymentVouchers();
 													} }
-													disabled={ invoice.invoiceMode.value === InvoiceMode.Return ? false : invoice.isDisabled }
+													disabled={ invoiceItem.itemType.value === ItemType.Service || (invoice.invoiceMode.value === InvoiceMode.Return ? false : invoice.isDisabled) }
 													onFocus={ () => focusedQuantityIndex.value = index }
 													onBlur={ () => focusedQuantityIndex.value = undefined }
 												/>

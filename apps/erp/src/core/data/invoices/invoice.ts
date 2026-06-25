@@ -4,7 +4,7 @@ import { InvoiceVoucher, type InvoiceVoucherDto } from "@/core/data/invoices/inv
 import { Services } from "@/core/services/services.ts";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 import { type Signal } from "@preact/signals-react";
-import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, StorageFile, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, StorageFile, Validators } from "yusr-ui";
 import Item from "@/core/data/item.ts";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
@@ -35,7 +35,7 @@ export class InvoiceDto extends Dto
 	public invoiceMode: InvoiceMode = InvoiceMode.Normal;
 	public type!: InvoiceType;
 	public originalInvoiceId?: number;
-	public date!: string | Date;
+	public date!: string;
 	public delegateEmp?: string;
 	public statusId!: InvoiceStatus;
 	public eInvoiceStatus!: EInvoiceStatus;
@@ -72,7 +72,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 	public invoiceMode: Signal<InvoiceMode>;
 	public type: Signal<InvoiceType>;
 	public originalInvoiceId: Signal<number | undefined>;
-	public date: Signal<Date>;
+	public date: Signal<string>;
 	public delegateEmp: Signal<string | undefined>;
 	public statusId: Signal<InvoiceStatus>;
 	public eInvoiceStatus: Signal<EInvoiceStatus>;
@@ -130,7 +130,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.invoiceMode = this.assign("invoiceMode", dto?.invoiceMode ?? InvoiceMode.Normal);
 		this.type = this.assign("type", dto?.type ?? InvoiceType.Sell);
 		this.originalInvoiceId = this.assign("originalInvoiceId", dto?.originalInvoiceId);
-		this.date = this.assign("date", dto?.date ? new Date(dto?.date) : new Date());
+		this.date = this.assign("date", dto?.date ?? DateService.formatDateOnly(new Date()));
 		this.delegateEmp = this.assign("delegateEmp", dto?.delegateEmp);
 		this.statusId = this.assign("statusId", dto?.statusId ?? InvoiceStatus.Valid);
 		this.eInvoiceStatus = this.assign("eInvoiceStatus", dto?.eInvoiceStatus ?? EInvoiceStatus.NotSent);

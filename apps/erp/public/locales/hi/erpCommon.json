@@ -29,7 +29,6 @@
     "account": "खाता",
     "quotationInvoices": "कोटेशन"
   },
-
   "dashborad": {
     "income": "कुल आय",
     "totalPassengers": "कुल यात्री",
@@ -75,7 +74,6 @@
       "december": "दिसंबर"
     }
   },
-
   "permissions": {
     "resources": {
       "branches": "शाखाएँ",
@@ -149,13 +147,11 @@
       "reports": "सिस्टम रिपोर्ट"
     }
   },
-
   "storeItemSelector": {
     "addItems": "वस्तुएँ जोड़ें:",
     "scanBarcode": "बारकोड स्कैन करें...",
     "selectItem": "वस्तु चुनें..."
   },
-
   "settings": {
     "loading": "सेटिंग्स लोड हो रही हैं...",
     "title": "सिस्टम सेटिंग्स",
@@ -211,9 +207,9 @@
     "visitZatca": "सत्यापन कोड प्राप्त करने के लिए प्राधिकरण की वेबसाइट पर जाएँ",
     "shareInfoCard": "संगठन सूचना कार्ड",
     "copied": "कॉपी हो गया",
-    "copyLink": "लिंक कॉपी करें"
+    "copyLink": "लिंक कॉपी करें",
+    "theme": "थीम और उपस्थिति"
   },
-
   "reports": {
     "title": "रिपोर्ट",
     "subtitle": "व्यावसायिक रिपोर्ट बनाएँ और निर्यात करें",
@@ -262,12 +258,10 @@
     "InvoicesList": "चालान सूची",
     "InvoicesListDescription": "व्यापक फ़िल्टरिंग विकल्पों के साथ चालान देखें"
   },
-
   "accountStatement": {
     "button": "खाता विवरण",
     "title": "खाता विवरण"
   },
-
   "itemStatement": {
     "button": "वस्तु विवरण",
     "title": "वस्तु विवरण",

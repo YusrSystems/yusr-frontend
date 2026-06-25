@@ -1,4 +1,4 @@
-import { Cubit } from "yusr-ui";
+import { Cubit, type ThemeSettings } from "yusr-ui";
 import {
 	SettingsError,
 	SettingsInitial,
@@ -7,14 +7,14 @@ import {
 	type SettingsState
 } from "@/features/setting/logic/settingsState.ts";
 import { Setting } from "@/core/data/setting.ts";
-import { signal } from "@preact/signals-react";
+import { Signal, signal } from "@preact/signals-react";
 import { Services } from "@/core/services/services.ts";
 
 
 export default class SettingsCubit extends Cubit<SettingsState>
 {
 	public formData = new Setting({});
-	public activeTab = signal<"basic" | "invoicing" | "accounts" | "subscription">("basic");
+	public activeTab = signal<"basic" | "invoicing" | "accounts" | "theme">("basic");
 
 	constructor()
 	{
@@ -43,7 +43,7 @@ export default class SettingsCubit extends Cubit<SettingsState>
 		}
 	}
 
-	public async save()
+	public async save(draftTheme: Signal<ThemeSettings | undefined>)
 	{
 		try
 		{
@@ -60,6 +60,8 @@ export default class SettingsCubit extends Cubit<SettingsState>
 			if (result.data)
 			{
 				Services.auth.setSettings(result.data);
+				draftTheme.value = undefined; // remove it
+				// themeSettings.value = draftTheme.value;
 				this.emit(new SettingsInitial());
 			}
 			else

@@ -143,7 +143,7 @@ function PageTable()
 								voucher.type.value === VoucherType.Payment ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
 							}`
 						},
-						{rowBody: new Date(voucher.date.value).toLocaleDateString("en-CA"), rowStyles: ""},
+						{rowBody: voucher.date.value, rowStyles: ""},
 						{rowBody: voucher.accountName ?? "-", rowStyles: "font-semibold"},
 						{
 							rowBody: (

@@ -29,7 +29,6 @@
     "account": "Account",
     "quotationInvoices": "Quotations"
   },
-
   "dashborad": {
     "income": "Total Income",
     "totalPassengers": "Total Passengers",
@@ -75,7 +74,6 @@
       "december": "December"
     }
   },
-
   "permissions": {
     "resources": {
       "branches": "Branches",
@@ -149,13 +147,11 @@
       "reports": "System Reports"
     }
   },
-
   "storeItemSelector": {
     "addItems": "Add Items:",
     "scanBarcode": "Scan barcode...",
     "selectItem": "Select item..."
   },
-
   "settings": {
     "loading": "Loading settings...",
     "title": "System Settings",
@@ -211,9 +207,9 @@
     "visitZatca": "Visit the authority's website to get a verification code",
     "shareInfoCard": "Organization Information Card",
     "copied": "Copied",
-    "copyLink": "Copy Link"
+    "copyLink": "Copy Link",
+    "theme": "Theme & Appearance"
   },
-
   "reports": {
     "title": "Reports",
     "subtitle": "Create and export business reports",
@@ -262,12 +258,10 @@
     "InvoicesList": "Invoices List",
     "InvoicesListDescription": "View invoices with comprehensive filtering options"
   },
-
   "accountStatement": {
     "button": "Account Statement",
     "title": "Account Statement"
   },
-
   "itemStatement": {
     "button": "Item Statement",
     "title": "Item Statement",

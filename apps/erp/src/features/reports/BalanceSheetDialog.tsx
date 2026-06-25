@@ -1,14 +1,15 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Button,
-  DateField,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
+	Button,
+	DateField,
+	DateService,
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle
 } from "yusr-ui";
 import { BalanceSheetReportRequest } from "../../core/data/report/balanceSheetReportRequest";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -22,7 +23,7 @@ export default function BalanceSheetDialog()
 	useSignals();
 	const {t, i18n} = useTranslation("erpCommon");
 	const isOpen = useMemo(() => signal(false), []);
-	const toDate = useMemo(() => signal<Date>(new Date()), []);
+	const toDate = useMemo(() => signal<string>(DateService.formatDateOnly(new Date())), []);
 
 	return (
 		<>
@@ -46,7 +47,9 @@ export default function BalanceSheetDialog()
 					<DialogFooter>
 						<ReportButton
 							reportName={ ReportConstants.BalanceSheet }
-							request={ new BalanceSheetReportRequest({toDate: toDate.value}) }
+							request={ new BalanceSheetReportRequest({
+								toDate: toDate.value ?? undefined
+							}) }
 						/>
 					</DialogFooter>
 				</DialogContent>

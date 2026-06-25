@@ -33,8 +33,8 @@ export default function ItemsMovementDialog()
 	const {t, i18n} = useTranslation("erpCommon");
 
 	const isOpen = useMemo(() => signal(false), []);
-	const fromDate = useMemo(() => signal<Date>(), []);
-	const toDate = useMemo(() => signal<Date>(), []);
+	const fromDate = useMemo(() => signal<string>(), []);
+	const toDate = useMemo(() => signal<string>(), []);
 	const transType = useMemo(() => signal<ItemsMovementReportTransType>(), []);
 	const itemId = useMemo(() => signal<number>(), []);
 	const itemName = useMemo(() => signal<string>(), []);
@@ -156,8 +156,8 @@ export default function ItemsMovementDialog()
 							request={ new ItemsMovementReportRequest({
 								transTypeId: transType.value ?? null,
 								itemId: itemId.value ?? null,
-								fromDate: fromDate.value?.toLocaleDateString("en-CA") ?? null,
-								toDate: toDate.value?.toLocaleDateString("en-CA") ?? null,
+								fromDate: fromDate.value ?? null,
+								toDate: toDate.value ?? null,
 								fromAccountId: fromAccountId.value ?? null,
 								toAccountId: toAccountId.value ?? null,
 								fromStoreId: fromStoreId.value ?? null,

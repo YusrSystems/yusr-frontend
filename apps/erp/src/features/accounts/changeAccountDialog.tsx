@@ -2,7 +2,8 @@ import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
 import {
-	Button, ChangeableEntityMode,
+	Button,
+	ChangeableEntityMode,
 	ChangeDialog,
 	CitiesSearchableSelect,
 	type CommonChangeDialogProps,
@@ -23,6 +24,8 @@ import AccountsSearchableSelect from "@/core/components/searchableSelect/account
 import { Plus, Trash2 } from "lucide-react";
 import { type Account, AccountContact, type AccountDto, AccountType } from "@/core/data/account.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { useMemo } from "react";
+import { type Signal, signal } from "@preact/signals-react";
 
 
 export default function ChangeAccountDialog(
@@ -33,18 +36,19 @@ export default function ChangeAccountDialog(
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
+	const currentEntity = useMemo(() => signal<Account>(entity), []); // I left the deps array empty, it causes infinite rerenders if you put anything inside it
 
 	if (
-		(entity.mode.value === ChangeableEntityMode.Create
+		(currentEntity.value.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Add))
-		|| (entity.mode.value === ChangeableEntityMode.Update
+		|| (currentEntity.value.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.mode.value === ChangeableEntityMode.Create
+	const title = currentEntity.value.mode.value === ChangeableEntityMode.Create
 		? t("accounts.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("accounts.entityName") }`;
 
@@ -53,12 +57,12 @@ export default function ChangeAccountDialog(
 		SystemPermissionsActions.Get
 	);
 
-	const requiresTaxInfo = entity?.type.value === AccountType.Client
-		|| entity?.type.value === AccountType.Supplier
-		|| entity?.type.value === AccountType.Employee;
+	const requiresTaxInfo = currentEntity.value?.type.value === AccountType.Client
+		|| currentEntity.value?.type.value === AccountType.Supplier
+		|| currentEntity.value?.type.value === AccountType.Employee;
 
-	const isBox = entity?.type.value === AccountType.Box;
-	const isBank = entity?.type.value === AccountType.Bank;
+	const isBox = currentEntity.value?.type.value === AccountType.Box;
+	const isBank = currentEntity.value?.type.value === AccountType.Bank;
 	const requiresAddress = !isBank;
 	const requiresContacts = !isBank && !isBox;
 
@@ -80,8 +84,8 @@ export default function ChangeAccountDialog(
 							<SelectField
 								label={ t("accounts.accountType") }
 								required
-								value={ entity.type }
-								error={ entity.getError("type") }
+								value={ currentEntity.value.type }
+								error={ currentEntity.value.getError("type") }
 								options={ selectTypes.map((type) => ({
 									value: type,
 									label: accountTypeLabels[type]
@@ -92,17 +96,17 @@ export default function ChangeAccountDialog(
 					<TextField
 						label={ t("accounts.accountName") }
 						required
-						value={ entity.name }
-						error={ entity.getError("name") }
+						value={ currentEntity.value.name }
+						error={ currentEntity.value.getError("name") }
 					/>
 
-					{ (entity.type.value === AccountType.Client || entity.type.value === AccountType.Supplier) && (
+					{ (currentEntity.value.type.value === AccountType.Client || currentEntity.value.type.value === AccountType.Supplier) && (
 						<FormField label={ t("accounts.parentAccount") }>
 							<AccountsSearchableSelect
-								disabled={ entity.mode.value === ChangeableEntityMode.Update }
-								types={ entity.type.value === AccountType.Client ? [AccountType.Client] : [AccountType.Supplier] }
-								id={ entity.parentId }
-								label={ entity.parentName }
+								disabled={ currentEntity.value.mode.value === ChangeableEntityMode.Update }
+								types={ currentEntity.value.type.value === AccountType.Client ? [AccountType.Client] : [AccountType.Supplier] }
+								id={ currentEntity.value.parentId }
+								label={ currentEntity.value.parentName }
 								showAddButton={ false }
 							/>
 						</FormField>
@@ -111,7 +115,7 @@ export default function ChangeAccountDialog(
 					{ canShowBalance && (
 						<NumberField
 							label={ t("accounts.openingBalance") }
-							value={ entity.initialBalance }
+							value={ currentEntity.value.initialBalance }
 							currency={ <ErpCurrencyIcon/> }
 						/>
 					) }
@@ -120,15 +124,15 @@ export default function ChangeAccountDialog(
 						<NumberField
 							label={ t("accounts.balance") }
 							disabled
-							value={ entity.balance }
+							value={ currentEntity.value.balance }
 							currency={ <ErpCurrencyIcon/> }
 						/>
 					) }
 				</FieldsSection>
 
-				{ requiresTaxInfo && <TaxFields entity={ entity }/> }
+				{ requiresTaxInfo && <TaxFields entity={ currentEntity }/> }
 
-				{ isBank && <BankFields entity={ entity }/> }
+				{ isBank && <BankFields entity={ currentEntity }/> }
 
 				<div
 					className={ `grid gap-6 ${
@@ -137,14 +141,14 @@ export default function ChangeAccountDialog(
 							: "grid-cols-1"
 					}` }
 				>
-					{ requiresAddress && <AddressFields entity={ entity }/> }
-					{ requiresContacts && <ContactsFields entity={ entity }/> }
+					{ requiresAddress && <AddressFields entity={ currentEntity }/> }
+					{ requiresContacts && <ContactsFields entity={ currentEntity }/> }
 				</div>
 
 				<FieldsSection title={ t("accounts.additionalInfo") } columns={ 1 }>
 					<TextAreaField
 						label={ t("accounts.notes") }
-						value={ entity.notes }
+						value={ currentEntity.value.notes }
 						rows={ 3 }
 					/>
 				</FieldsSection>
@@ -152,21 +156,16 @@ export default function ChangeAccountDialog(
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
 				<ChangeDialog.SaveButton<Account, AccountDto>
-					entity={ entity }
+					entity={ currentEntity.value }
 					service={ service }
 					onSuccess={ (data) => onSuccess?.(data) }
-					transformData={ (entity) =>
-					{
-						entity.accountContacts.value = entity.accountContacts.value.filter((c) => Boolean(c.number.value));
-						return entity;
-					} }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>
 	);
 }
 
-function BankFields({entity}: { entity: Account; })
+function BankFields({entity}: { entity: Signal<Account>; })
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
@@ -174,13 +173,13 @@ function BankFields({entity}: { entity: Account; })
 		<FieldsSection title={ t("accounts.bankingInfo") } columns={ 2 }>
 			<TextField
 				label={ t("accounts.bankAccountNumber") }
-				value={ entity.bankAccountNumber || "" }
+				value={ entity.value.bankAccountNumber || "" }
 			/>
 		</FieldsSection>
 	);
 }
 
-function TaxFields({entity}: { entity: Account; })
+function TaxFields({entity}: { entity: Signal<Account>; })
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
@@ -188,19 +187,19 @@ function TaxFields({entity}: { entity: Account; })
 		<FieldsSection title={ t("accounts.taxCommercialInfo") } columns={ 2 }>
 			<TextField
 				label={ t("accounts.vatNumber") }
-				value={ entity.vatNumber }
-				error={ entity.getError("vatNumber") }
+				value={ entity.value.vatNumber }
+				error={ entity.value.getError("vatNumber") }
 			/>
 			<TextField
 				label={ t("accounts.crn") }
-				value={ entity.crn }
-				error={ entity.getError("crn") }
+				value={ entity.value.crn }
+				error={ entity.value.getError("crn") }
 			/>
 		</FieldsSection>
 	);
 }
 
-function ContactsFields({entity}: { entity: Account; })
+function ContactsFields({entity}: { entity: Signal<Account>; })
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
@@ -209,9 +208,9 @@ function ContactsFields({entity}: { entity: Account; })
 		<FieldsSection title={ t("accounts.contactNumbers") } columns={ 1 }>
 			<div className="relative flex flex-col max-h-50 border rounded-md overflow-hidden">
 				<div className="space-y-3 overflow-y-auto p-3 flex-1 min-h-0">
-					{ entity.accountContacts?.value.length === 0 && <TablePreviewCompact.Empty/> }
-					{ entity.accountContacts?.value.length > 0
-						&& entity.accountContacts?.value.map((contact, index) => (
+					{ entity.value.accountContacts?.value.length === 0 && <TablePreviewCompact.Empty/> }
+					{ entity.value.accountContacts?.value.length > 0
+						&& entity.value.accountContacts?.value.map((contact, index) => (
 							<div key={ index } className="flex items-center gap-3">
 								<div className="flex-1">
 									<PhoneField
@@ -226,7 +225,7 @@ function ContactsFields({entity}: { entity: Account; })
 									size="icon"
 									onClick={ () =>
 									{
-										entity.accountContacts.value = entity.accountContacts.value.filter((_, i) =>
+										entity.value.accountContacts.value = entity.value.accountContacts.value.filter((_, i) =>
 											i !== index
 										);
 									} }
@@ -244,7 +243,7 @@ function ContactsFields({entity}: { entity: Account; })
 						size="sm"
 						onClick={ () =>
 						{
-							entity.accountContacts.value = [...entity.accountContacts.value, AccountContact.create()];
+							entity.value.accountContacts.value = [...entity.value.accountContacts.value, AccountContact.create()];
 						} }
 						className="w-full border-dashed"
 					>
@@ -257,7 +256,7 @@ function ContactsFields({entity}: { entity: Account; })
 	);
 }
 
-function AddressFields({entity}: { entity: Account; })
+function AddressFields({entity}: { entity: Signal<Account>; })
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
@@ -267,30 +266,30 @@ function AddressFields({entity}: { entity: Account; })
 			<div className="flex flex-col gap-1.5 w-full">
 				<label className="text-sm font-medium">{ t("accounts.city") }</label>
 				<CitiesSearchableSelect
-					id={ entity.cityId }
-					label={ entity.cityName }
+					id={ entity.value.cityId }
+					label={ entity.value.cityName }
 				/>
 			</div>
 			<div className="grid grid-cols-2 gap-2">
 				<TextField
 					label={ t("accounts.district") }
-					value={ entity.district }
+					value={ entity.value.district }
 				/>
 				<TextField
 					label={ t("accounts.street") }
-					value={ entity.street }
+					value={ entity.value.street }
 				/>
 			</div>
 			<div className="grid grid-cols-2 gap-2">
 				<TextField
 					label={ t("accounts.buildingNumber") }
-					value={ entity.buildingNumber }
-					error={ entity.getError("buildingNumber") }
+					value={ entity.value.buildingNumber }
+					error={ entity.value.getError("buildingNumber") }
 				/>
 				<TextField
 					label={ t("accounts.postalCode") }
-					value={ entity.postalCode }
-					error={ entity.getError("postalCode") }
+					value={ entity.value.postalCode }
+					error={ entity.value.getError("postalCode") }
 				/>
 			</div>
 		</FieldsSection>

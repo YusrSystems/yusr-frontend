@@ -3,7 +3,17 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Card, CardContent, CardFooter, StorageType, TabButton, useStorageFile } from "yusr-ui";
+import {
+	Button,
+	Card,
+	CardContent,
+	CardFooter,
+	StorageType,
+	TabButton,
+	ThemeSection,
+	type ThemeSettings,
+	useStorageFile
+} from "yusr-ui";
 import BasicSection from "./basicSection";
 import DefaultsSection from "./defaultsSection";
 import InvoiceSection from "./invoiceSection";
@@ -11,12 +21,14 @@ import SettingsCubit from "@/features/setting/logic/settingsCubit.ts";
 import { SettingsLoading, SettingsSaving } from "@/features/setting/logic/settingsState.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 import { AccountType } from "@/core/data/account.ts";
+import { signal } from "@preact/signals-react";
 
 
 export default function SettingPage()
 {
 	useSignals();
 	const {t} = useTranslation("erpCommon");
+	const draftTheme = signal<ThemeSettings | undefined>(undefined);
 
 	const {commitFiles} = useStorageFile(
 		() => Services.auth?.setting?.logo?.value ? [Services.auth?.setting?.logo.value] : [],
@@ -107,12 +119,20 @@ export default function SettingPage()
 						onClick={ () => cubit.activeTab.value = "accounts" }
 						content={ <></> }
 					/>
+					{/*<TabButton*/ }
+					{/*	active={ cubit.activeTab.value === "theme" }*/ }
+					{/*	icon={ Palette }*/ }
+					{/*	label={ t("settings.theme", "Theme & Appearance") }*/ }
+					{/*	onClick={ () => cubit.activeTab.value = "theme" }*/ }
+					{/*	content={ <></> }*/ }
+					{/*/>*/ }
 				</div>
 
 				<CardContent className="py-3 min-h-[50vh]">
 					{ cubit.activeTab.value === "basic" && <BasicSection formData={ cubit.formData }/> }
 					{ cubit.activeTab.value === "invoicing" && <InvoiceSection formData={ cubit.formData }/> }
 					{ cubit.activeTab.value === "accounts" && <DefaultsSection formData={ cubit.formData }/> }
+					{ cubit.activeTab.value === "theme" && <ThemeSection draftTheme={ draftTheme }/> }
 				</CardContent>
 
 				<CardFooter className="flex justify-end border-t pt-4">
@@ -120,7 +140,7 @@ export default function SettingPage()
 					        onClick={ async () =>
 							{
 								await transformDataBeforeSave();
-								await cubit.save();
+								await cubit.save(draftTheme);
 							} }>
 						{ isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin"/> }
 						{ t("settings.save") }

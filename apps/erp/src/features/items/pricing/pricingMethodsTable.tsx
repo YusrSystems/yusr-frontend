@@ -116,7 +116,11 @@ export default function PricingMethodsTable({entity}: { entity: Item; })
 										disabled={ method.unitId.value === entity.sellUnitId.value }
 										value={ method.quantityMultiplier }
 										error={ method.getError("quantityMultiplier") }
-										onChange={ () => entity.clearError("itemUnitPricingMethods") }
+										onChange={ () =>
+										{
+											method.price.value = (method.unitPrice.value ?? 0) * (method.quantityMultiplier.value ?? 1);
+											entity.clearError("itemUnitPricingMethods");
+										} }
 									/>
 								</td>
 								<td className="p-3">

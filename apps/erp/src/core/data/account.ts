@@ -46,7 +46,7 @@ export class AccountContact extends ChangeableEntity<AccountContactDto>
 	public accountId: Signal<number>;
 	public number: Signal<string>;
 
-	constructor(dto?: Partial<AccountContactDto>)
+	constructor(dto: Partial<AccountContactDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		super(dto, [{
 			field: "number",
@@ -58,10 +58,10 @@ export class AccountContact extends ChangeableEntity<AccountContactDto>
 				},
 				i18n.t("accounting:accounts.contactNumberLength")
 			)]
-		}], ChangeableEntityMode.Create);
+		}], mode);
 
 		this.accountId = this.assign("accountId", dto?.accountId ?? 0);
-		this.number = this.assign("number", dto?.number ?? 0);
+		this.number = this.assign("number", dto?.number ?? "");
 	}
 }
 
@@ -88,17 +88,7 @@ export class Account extends ChangeableEntity<AccountDto>
 
 	constructor(dto: Partial<AccountDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
-		super(
-			{
-				...dto,
-				accountContacts: (dto?.accountContacts ?? [{
-					id: 0,
-					accountId: dto?.id ?? 0,
-					number: ""
-				} as AccountContactDto])
-					.map((t) => t instanceof AccountContact ? t : new AccountContact(t)) as unknown[] as AccountContactDto[]
-			},
-			[{
+		super(dto, [{
 				field: "type",
 				selector: (d) => d.type,
 				validators: [Validators.required(i18n.t("accounting:accounts.typeRequired"))]
@@ -141,9 +131,13 @@ export class Account extends ChangeableEntity<AccountDto>
 		this.buildingNumber = this.assign("buildingNumber", dto?.buildingNumber);
 		this.postalCode = this.assign("postalCode", dto?.postalCode);
 		this.notes = this.assign("notes", dto?.notes);
-		const accountContactsList = (dto?.accountContacts ?? [new AccountContactDto()]).map((t) => new AccountContact(t));
 
-		this.accountContacts = this.assign("accountContacts", accountContactsList);
+		const accountContactsSignalArray = (dto?.accountContacts ?? [new AccountContactDto()]).map((x) =>
+			mode === ChangeableEntityMode.Update
+				? AccountContact.load(x)
+				: AccountContact.create(x)
+		);
+		this.accountContacts = this.assign("accountContacts", accountContactsSignalArray);
 
 		const checkChildren = () =>
 		{
@@ -159,5 +153,12 @@ export class Account extends ChangeableEntity<AccountDto>
 			return false;
 		}
 		return this.accountContacts.value.every((c) => c.validate());
+	}
+
+	override toJson(): AccountDto
+	{
+		const dto = super.toJson();
+		dto.accountContacts = dto.accountContacts.filter((c) => Boolean(c.number));
+		return dto;
 	}
 }
