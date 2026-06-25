@@ -37,7 +37,11 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 						size="sm"
 						variant="outline"
 						className="h-8 gap-1.5 text-xs"
-						onClick={ () => invoice.invoiceVouchers.value = [...invoice.invoiceVouchers.value, InvoiceVoucher.createPaymentVoucher(invoice)] }
+						onClick={ () =>
+						{
+							invoice.invoiceVouchers.value = [...invoice.invoiceVouchers.value, InvoiceVoucher.createPaymentVoucher(invoice)];
+							invoice.updatePaidAmount();
+						} }
 					>
 						<Plus className="w-3.5 h-3.5"/>
 					</Button>
@@ -85,6 +89,7 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 										value={ invoiceVoucher.amount }
 										error={ invoiceVoucher.getError("amount") }
 										currency={ <ErpCurrencyIcon/> }
+										onChange={ () => invoice.updatePaidAmount() }
 									/>
 								</div>
 
@@ -93,7 +98,11 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 									size="icon"
 									variant="ghost"
 									className="w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-									onClick={ () => invoice.removeVoucher(invoiceVoucher.voucherId) }
+									onClick={ () =>
+									{
+										invoice.removeVoucher(invoiceVoucher.voucherId);
+										invoice.updatePaidAmount();
+									} }
 								>
 									<Trash2 className="w-4 h-4"/>
 								</Button>

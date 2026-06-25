@@ -103,6 +103,11 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 	public invoiceFiles: Signal<StorageFile[]>;
 	public ignoreWarnings: Signal<boolean>;
 
+	public get isDisabled()
+	{
+		return (this.mode.value === ChangeableEntityMode.Update || this.invoiceMode.value === InvoiceMode.Return) && this.type.value !== InvoiceType.Quotation;
+	}
+
 	constructor(dto: Partial<InvoiceDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		super(dto, [{
@@ -203,11 +208,6 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.invoiceItems.value.forEach((s) => s.hasChanges.subscribe(checkChildren));
 	}
 
-	public get isDisabled()
-	{
-		return (this.mode.value === ChangeableEntityMode.Update || this.invoiceMode.value === InvoiceMode.Return) && this.type.value !== InvoiceType.Quotation;
-	}
-
 	override validate(dto?: Partial<InvoiceDto>): boolean
 	{
 		const invoiceResult = super.validate(dto);
@@ -231,6 +231,11 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.invoiceVouchers.value = this.invoiceVouchers.value?.filter((v) =>
 			v.invoiceRelationType.value !== InvoiceRelationType.Payment
 		);
+	}
+
+	public updatePaidAmount()
+	{
+		this.paidAmount.value = InvoiceItemsMath.CalcInvoicePaidPrice(this.invoiceVouchers.value);
 	}
 
 	public createInitialPaymentVoucher(taxInclusivePrice: number)
