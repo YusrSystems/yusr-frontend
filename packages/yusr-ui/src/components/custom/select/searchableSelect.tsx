@@ -43,7 +43,7 @@ export function SearchableSelect<TEntity extends Entity<TDto>, TDto extends Dto>
 				searchInput: searchInput
 			} }
 		>
-			<Popover open={ isOpen.value } onOpenChange={ (open) => isOpen.value = open } modal={ false }>
+			<Popover open={ isOpen.value } onOpenChange={ (open) => isOpen.value = open } modal={ true }>
 				{ children }
 			</Popover>
 		</SearchableSelectContext.Provider>
@@ -65,6 +65,7 @@ SearchableSelect.Trigger = function (
 				variant="outline"
 				role="combobox"
 				aria-expanded={ data.isOpen.value }
+
 				className={ cn(
 					"w-full justify-between px-3 font-normal",
 					className
