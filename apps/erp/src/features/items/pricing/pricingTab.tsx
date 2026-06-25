@@ -38,18 +38,20 @@ export default function PricingTab({entity}: { entity: Item; })
 					/>
 				</FormField>
 
-				<NumberField
-					label={ t("items.initialCost") }
-					required
-					disabled={ entity.mode.value === ChangeableEntityMode.Update }
-					value={ entity.initialCost }
-					error={ entity.getError("initialCost") }
-					currency={ <ErpCurrencyIcon/> }
-				/>
+				{ entity.type.value === ItemType.Product && (
+					<NumberField
+						label={ t("items.initialCost") }
+						required
+						disabled={ entity.mode.value === ChangeableEntityMode.Update }
+						value={ entity.initialCost }
+						error={ entity.getError("initialCost") }
+						currency={ <ErpCurrencyIcon/> }
+					/>
+				) }
 
 				<NumberField
-					label={ t("items.cost") }
-					disabled
+					label={ entity.type.value !== ItemType.Service ? t("items.averageCostWithoutTax") : t("items.costWithTax") }
+					disabled={ entity.type.value !== ItemType.Service }
 					value={ entity.cost }
 					currency={ <ErpCurrencyIcon/> }
 				/>

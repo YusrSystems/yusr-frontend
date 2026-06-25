@@ -1,6 +1,6 @@
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, SystemPermissionsActions, Validators } from "yusr-ui";
 import { ItemUnitPricingMethod, type ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod.ts";
-import type { Signal } from "@preact/signals-react";
+import { type Signal } from "@preact/signals-react";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 import Item, { ItemType } from "@/core/data/item.ts";
 import type Invoice from "@/core/data/invoices/invoice.ts";
@@ -13,7 +13,7 @@ export class InvoiceItemDto extends Dto
 	public index!: number;
 	public invoiceId!: number;
 	public itemId!: number;
-	public itemType!: number;
+	public itemType!: ItemType;
 	public itemUnitPricingMethodId!: number;
 	public quantity!: number;
 	public originalQuantity!: number;

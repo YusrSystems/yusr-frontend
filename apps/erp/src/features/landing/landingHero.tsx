@@ -44,14 +44,14 @@ export default function LandingHero()
 			</h1>
 
 			{ /* Subtitle */ }
-			<p className="mt-6 text-3xl font-bold tracking-tight text-primary md:text-5xl">
+			<h2 className="mt-6 text-3xl font-bold tracking-tight text-primary md:text-5xl">
 				{ t("hero.subtitle") }
-			</p>
+			</h2>
 
 			{ /* Description */ }
-			<p className="mx-auto mt-8 max-w-2xl text-lg font-medium leading-relaxed text-muted-foreground md:text-xl">
+			<h4 className="mx-auto mt-8 max-w-2xl text-lg font-medium leading-relaxed text-muted-foreground md:text-xl">
 				{ t("hero.description") }
-			</p>
+			</h4>
 
 			{ /* CTA Buttons */ }
 			<div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row ltr:flex-row-reverse">

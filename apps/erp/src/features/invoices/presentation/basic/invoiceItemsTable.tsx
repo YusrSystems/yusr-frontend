@@ -281,7 +281,11 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 
 									{ isVisible("cost") && (
 										<td className="px-2 pt-2">
-											<NumberField disabled value={ invoiceItem.cost }/>
+											<NumberField
+												min={ 0 }
+												value={ invoiceItem.cost }
+												disabled={ invoiceItem.itemType.value !== ItemType.Service }
+											/>
 										</td>
 									) }
 
