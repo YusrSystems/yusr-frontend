@@ -77,82 +77,84 @@ export default function ChangeAccountDialog(
 	return (
 		<ChangeDialog className="sm:max-w-4xl">
 			<ChangeDialog.Header title={ title }/>
-			<FieldGroup>
-				<FieldsSection title={ t("accounts.basicInfo") } columns={ 2 }>
-					{ (selectTypes && selectTypes.length > 0)
-						&& (
-							<SelectField
-								label={ t("accounts.accountType") }
-								required
-								value={ currentEntity.value.type }
-								error={ currentEntity.value.getError("type") }
-								options={ selectTypes.map((type) => ({
-									value: type,
-									label: accountTypeLabels[type]
-								})) }
+			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
+				<FieldGroup>
+					<FieldsSection title={ t("accounts.basicInfo") } columns={ 2 }>
+						{ (selectTypes && selectTypes.length > 0)
+							&& (
+								<SelectField
+									label={ t("accounts.accountType") }
+									required
+									value={ currentEntity.value.type }
+									error={ currentEntity.value.getError("type") }
+									options={ selectTypes.map((type) => ({
+										value: type,
+										label: accountTypeLabels[type]
+									})) }
+								/>
+							) }
+
+						<TextField
+							label={ t("accounts.accountName") }
+							required
+							value={ currentEntity.value.name }
+							error={ currentEntity.value.getError("name") }
+						/>
+
+						{ (currentEntity.value.type.value === AccountType.Client || currentEntity.value.type.value === AccountType.Supplier) && (
+							<FormField label={ t("accounts.parentAccount") }>
+								<AccountsSearchableSelect
+									disabled={ currentEntity.value.mode.value === ChangeableEntityMode.Update }
+									types={ currentEntity.value.type.value === AccountType.Client ? [AccountType.Client] : [AccountType.Supplier] }
+									id={ currentEntity.value.parentId }
+									label={ currentEntity.value.parentName }
+									showAddButton={ false }
+								/>
+							</FormField>
+						) }
+
+						{ canShowBalance && (
+							<NumberField
+								label={ t("accounts.openingBalance") }
+								value={ currentEntity.value.initialBalance }
+								currency={ <ErpCurrencyIcon/> }
 							/>
 						) }
 
-					<TextField
-						label={ t("accounts.accountName") }
-						required
-						value={ currentEntity.value.name }
-						error={ currentEntity.value.getError("name") }
-					/>
-
-					{ (currentEntity.value.type.value === AccountType.Client || currentEntity.value.type.value === AccountType.Supplier) && (
-						<FormField label={ t("accounts.parentAccount") }>
-							<AccountsSearchableSelect
-								disabled={ currentEntity.value.mode.value === ChangeableEntityMode.Update }
-								types={ currentEntity.value.type.value === AccountType.Client ? [AccountType.Client] : [AccountType.Supplier] }
-								id={ currentEntity.value.parentId }
-								label={ currentEntity.value.parentName }
-								showAddButton={ false }
+						{ canShowBalance && (
+							<NumberField
+								label={ t("accounts.balance") }
+								disabled
+								value={ currentEntity.value.balance }
+								currency={ <ErpCurrencyIcon/> }
 							/>
-						</FormField>
-					) }
+						) }
+					</FieldsSection>
 
-					{ canShowBalance && (
-						<NumberField
-							label={ t("accounts.openingBalance") }
-							value={ currentEntity.value.initialBalance }
-							currency={ <ErpCurrencyIcon/> }
+					{ requiresTaxInfo && <TaxFields entity={ currentEntity }/> }
+
+					{ isBank && <BankFields entity={ currentEntity }/> }
+
+					<div
+						className={ `grid gap-6 ${
+							requiresAddress && requiresContacts
+								? "grid-cols-1 md:grid-cols-2"
+								: "grid-cols-1"
+						}` }
+					>
+						{ requiresAddress && <AddressFields entity={ currentEntity }/> }
+						{ requiresContacts && <ContactsFields entity={ currentEntity }/> }
+					</div>
+
+					<FieldsSection title={ t("accounts.additionalInfo") } columns={ 1 }>
+						<TextAreaField
+							label={ t("accounts.notes") }
+							value={ currentEntity.value.notes }
+							rows={ 3 }
 						/>
-					) }
-
-					{ canShowBalance && (
-						<NumberField
-							label={ t("accounts.balance") }
-							disabled
-							value={ currentEntity.value.balance }
-							currency={ <ErpCurrencyIcon/> }
-						/>
-					) }
-				</FieldsSection>
-
-				{ requiresTaxInfo && <TaxFields entity={ currentEntity }/> }
-
-				{ isBank && <BankFields entity={ currentEntity }/> }
-
-				<div
-					className={ `grid gap-6 ${
-						requiresAddress && requiresContacts
-							? "grid-cols-1 md:grid-cols-2"
-							: "grid-cols-1"
-					}` }
-				>
-					{ requiresAddress && <AddressFields entity={ currentEntity }/> }
-					{ requiresContacts && <ContactsFields entity={ currentEntity }/> }
-				</div>
-
-				<FieldsSection title={ t("accounts.additionalInfo") } columns={ 1 }>
-					<TextAreaField
-						label={ t("accounts.notes") }
-						value={ currentEntity.value.notes }
-						rows={ 3 }
-					/>
-				</FieldsSection>
-			</FieldGroup>
+					</FieldsSection>
+				</FieldGroup>
+			</div>
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
 				<ChangeDialog.SaveButton<Account, AccountDto>

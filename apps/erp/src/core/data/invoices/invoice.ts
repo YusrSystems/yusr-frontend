@@ -103,6 +103,11 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 	public invoiceFiles: Signal<StorageFile[]>;
 	public ignoreWarnings: Signal<boolean>;
 
+	public get isDisabled()
+	{
+		return (this.mode.value === ChangeableEntityMode.Update || this.invoiceMode.value === InvoiceMode.Return) && this.type.value !== InvoiceType.Quotation;
+	}
+
 	constructor(dto: Partial<InvoiceDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
 		super(dto, [{
@@ -203,11 +208,6 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.invoiceItems.value.forEach((s) => s.hasChanges.subscribe(checkChildren));
 	}
 
-	public get isDisabled()
-	{
-		return (this.mode.value === ChangeableEntityMode.Update || this.invoiceMode.value === InvoiceMode.Return) && this.type.value !== InvoiceType.Quotation;
-	}
-
 	override validate(dto?: Partial<InvoiceDto>): boolean
 	{
 		const invoiceResult = super.validate(dto);
@@ -231,6 +231,11 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.invoiceVouchers.value = this.invoiceVouchers.value?.filter((v) =>
 			v.invoiceRelationType.value !== InvoiceRelationType.Payment
 		);
+	}
+
+	public updatePaidAmount()
+	{
+		this.paidAmount.value = InvoiceItemsMath.CalcInvoicePaidPrice(this.invoiceVouchers.value);
 	}
 
 	public createInitialPaymentVoucher(taxInclusivePrice: number)
@@ -286,33 +291,6 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.paidAmount.value = taxInclusivePrice;
 	}
 
-	public changeSettlementPercent(settlementPercent: number)
-	{
-		this.settlementPercent.value = settlementPercent;
-		this.settlementAmount.value = 0;
-		this.invoiceItems.value?.forEach((item) =>
-		{
-			const newSettlement = Number(
-				(item.taxInclusivePrice.value * ((this.settlementPercent.value ?? 0) / 100)).toFixed(2)
-			);
-
-			item.changeSettlement(newSettlement);
-		});
-	}
-
-	public changeSettlementAmount(settlementAmount: number)
-	{
-		this.settlementAmount.value = settlementAmount;
-		this.settlementPercent.value = 0;
-		this.invoiceItems.value?.forEach((item) =>
-		{
-			const newSettlementPerItem = (settlementAmount ?? 0) / (this.invoiceItems.value?.length ?? 0);
-			const newSettlementPerQtn = item.quantity.value === 0 ? newSettlementPerItem : Number((newSettlementPerItem / item.quantity.value).toFixed(2));
-
-			item.changeSettlement(newSettlementPerQtn);
-		});
-	}
-
 	public addItem(storeItem: Item)
 	{
 		const existingItem = this.invoiceItems.value?.find((item) => item.itemId.value === storeItem.id.value);
@@ -357,5 +335,53 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 	public removeVoucher(voucherId: Signal<number>): void
 	{
 		this.invoiceVouchers.value = this.invoiceVouchers.value?.filter((v) => v.voucherId.value !== voucherId.value);
+	}
+
+	public changeSettlementPercent(settlementPercent: number)
+	{
+		this.settlementPercent.value = settlementPercent;
+		this.settlementAmount.value = 0;
+		this._changeSettlement(settlementPercent);
+	}
+
+	public changeSettlementAmount(settlementAmount: number)
+	{
+		this.settlementAmount.value = settlementAmount;
+		this.settlementPercent.value = 0;
+
+		const basePrice = InvoiceItemsMath.CalcInvoiceBaseTaxInclusivePrice(this.invoiceItems.value ?? []);
+		const exactPercent = basePrice === 0 ? 0 : (settlementAmount / basePrice) * 100;
+
+		this._changeSettlement(exactPercent);
+
+		// 2. --- PENNY ERROR CORRECTION ---
+		if (basePrice !== 0 && this.invoiceItems.value && this.invoiceItems.value.length > 0)
+		{
+			const targetInvoicePrice = Number((basePrice + settlementAmount).toFixed(2));
+			const currentInvoicePrice = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(this.invoiceItems.value);
+			const diff = Number((targetInvoicePrice - currentInvoicePrice).toFixed(2));
+
+			if (diff !== 0)
+			{
+				// Prefer an item with quantity == 1 to absorb the penny cleanly, otherwise fallback to the first item
+				const targetItem = this.invoiceItems.value.find(i => i.quantity.value === 1) || this.invoiceItems.value[0];
+
+				if (targetItem)
+				{
+					const settlementAdjustment = diff / targetItem.quantity.value;
+					const adjustedSettlement = Number((targetItem.settlement.value + settlementAdjustment).toFixed(2));
+					targetItem.changeSettlement(adjustedSettlement);
+				}
+			}
+		}
+	}
+
+	private _changeSettlement(settlementPercent: number)
+	{
+		this.invoiceItems.value?.forEach((item) =>
+		{
+			const newSettlement = Number((item.taxInclusivePrice.value * (settlementPercent / 100)).toFixed(2));
+			item.changeSettlement(newSettlement);
+		});
 	}
 }

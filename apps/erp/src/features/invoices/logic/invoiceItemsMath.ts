@@ -90,6 +90,16 @@ export default class InvoiceItemsMath
 		return price;
 	}
 
+	public static CalcInvoiceBaseTaxInclusivePrice(invoiceItems: InvoiceItem[])
+	{
+		const price = invoiceItems.reduce(
+			(sum, i) =>
+				sum + ((i.taxInclusivePrice.value ?? 0) * (i.quantity.value ?? 0)),
+			0
+		);
+		return Number(price.toFixed(2));
+	}
+
 	public static CalcInvoiceItemProfit(invoiceItem: InvoiceItem): InvoiceItemProfitResult
 	{
 		const taxInclusivePrice = (invoiceItem.taxInclusivePrice.value ?? 0) + (invoiceItem.settlement.value ?? 0);

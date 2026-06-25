@@ -1,9 +1,11 @@
-import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, SystemPermissionsActions, Validators } from "yusr-ui";
 import { ItemUnitPricingMethod, type ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod.ts";
 import type { Signal } from "@preact/signals-react";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 import Item, { ItemType } from "@/core/data/item.ts";
 import type Invoice from "@/core/data/invoices/invoice.ts";
+import { Services } from "@/core/services/services.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 
 
 export class InvoiceItemDto extends Dto
@@ -133,7 +135,9 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			itemUnitPricingMethods: (item.itemUnitPricingMethods.value ?? []).map(x => x.toJson()),
 
 			// Financials
-			quantity: item.type.value === ItemType.Service ? 1 : item.storeQuantity.value ? 1 : 0,
+			quantity: item.type.value === ItemType.Service ?
+				1 : item.storeQuantity.value
+					? 1 : Services.auth.hasAuth(SystemPermissionsResources.InvoiceSellBeyondAvailableQuantity, SystemPermissionsActions.Get) ? 1 : 0,
 			originalQuantity: item.storeQuantity.value ?? 0,
 			originalCost: item.cost.value ?? 0,
 			cost: (item.cost.value ? Number((item.cost.value).toFixed(2)) : 0) * defaultPricingMethod.quantityMultiplier.value,

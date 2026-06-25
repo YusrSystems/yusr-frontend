@@ -137,8 +137,16 @@ export function NumberInput({
 				const unformattedEventValue = e.target.value.replace(/,/g, "");
 				if (!unformattedEventValue && min != undefined)
 				{
-					value.value = Number(min);
-					localValue.value = formatWithCommas(String(min));
+					if (0 >= Number(min))
+					{
+						value.value = 0;
+						localValue.value = formatWithCommas("0");
+					}
+					else
+					{
+						value.value = Number(min);
+						localValue.value = formatWithCommas(String(min));
+					}
 				}
 				onBlur?.(e);
 			} }

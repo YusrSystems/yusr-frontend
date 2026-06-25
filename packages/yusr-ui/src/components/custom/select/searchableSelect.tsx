@@ -65,6 +65,7 @@ SearchableSelect.Trigger = function (
 				variant="outline"
 				role="combobox"
 				aria-expanded={ data.isOpen.value }
+
 				className={ cn(
 					"w-full justify-between px-3 font-normal",
 					className
