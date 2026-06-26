@@ -17,6 +17,7 @@ export default function PurchaseInvoicesPage()
 			basePath="/purchases"
 			title={ t("invoices.purchasesManagement") }
 			fixedType={ InvoiceType.Purchase }
+			filterTypes={ [InvoiceType.Purchase, InvoiceType.PurchaseReturn] }
 			hasPagePermission={ Services.auth.hasAuth(
 				SystemPermissionsResources.InvoicePurchase,
 				SystemPermissionsActions.Get

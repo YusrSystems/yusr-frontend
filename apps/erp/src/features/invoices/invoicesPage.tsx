@@ -53,6 +53,7 @@ export default function InvoicesPage({
 	totalInvoicesTitle,
 	title,
 	fixedType,
+	filterTypes,
 	hasPagePermission,
 	permissionResource
 }: {
@@ -61,6 +62,7 @@ export default function InvoicesPage({
 	totalInvoicesTitle?: string;
 	title: string;
 	fixedType: InvoiceType;
+	filterTypes: InvoiceType[];
 	hasPagePermission: boolean;
 	basePath?: string;
 	permissionResource: string;
@@ -71,7 +73,11 @@ export default function InvoicesPage({
 
 	useEffect(() =>
 	{
-		Cubits.invoices.init([fixedType]);
+		Cubits.invoices.init(filterTypes);
+	}, [filterTypes]);
+
+	useEffect(() =>
+	{
 		Cubits.accounts.init(fixedType == InvoiceType.Purchase || fixedType == InvoiceType.PurchaseReturn ? [AccountType.Supplier] : [AccountType.Client]);
 	}, [fixedType]);
 
@@ -115,7 +121,7 @@ export default function InvoicesPage({
 					renderCustomInput={ (props: FilterValueInputProps) => RenderInvoiceFilterInput({
 						rule: props.rule,
 						field: props.field,
-						fixedType: fixedType
+						filterTypes: filterTypes
 					}) }
 				/>
 
@@ -266,17 +272,17 @@ function PageTable({fixedType, permissionResource}: {
 
 	const getPaymentStatus = (invoice: Invoice): { message: string; styles: string; } =>
 	{
-		if (invoice.paidAmount.value === 0)
+		if (invoice.paymentStatusId.value === PaymentStatus.NotPaid)
 		{
 			return {message: t("invoices.notPaid"), styles: "bg-red-100 text-red-800"};
 		}
 
-		if (invoice.paidAmount.value === invoice.fullAmount.value)
+		if (invoice.paymentStatusId.value === PaymentStatus.FullyPaid)
 		{
 			return {message: t("invoices.fullyPaid"), styles: "bg-green-100 text-green-800"};
 		}
 
-		if (invoice.paidAmount.value > invoice.fullAmount.value)
+		if (invoice.paymentStatusId.value > PaymentStatus.Overpaid)
 		{
 			return {message: t("invoices.overpaid"), styles: "bg-red-100 text-red-800"};
 		}
@@ -599,7 +605,7 @@ const getInvoiceTypeName = (type: InvoiceType, t: TFunction<"accounting">) =>
 	}
 };
 
-function RenderInvoiceFilterInput({rule, field, fixedType}: FilterValueInputProps & { fixedType: InvoiceType })
+function RenderInvoiceFilterInput({rule, field, filterTypes}: FilterValueInputProps & { filterTypes: InvoiceType[] })
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
@@ -615,7 +621,7 @@ function RenderInvoiceFilterInput({rule, field, fixedType}: FilterValueInputProp
 						onSelect={ entity =>
 							rule.value.value = entity ? entity.id.value : ""
 						}
-						types={ [fixedType] }
+						types={ filterTypes }
 					/>
 				) }
 			</FilterLabelWrapper>

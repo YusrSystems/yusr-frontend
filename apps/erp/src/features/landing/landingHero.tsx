@@ -49,30 +49,32 @@ export default function LandingHero()
 			</h2>
 
 			{ /* Description */ }
-			<h4 className="mx-auto mt-8 max-w-2xl text-lg font-medium leading-relaxed text-muted-foreground md:text-xl">
+			<p className="mx-auto mt-8 max-w-2xl text-lg font-medium leading-relaxed text-muted-foreground md:text-xl">
 				{ t("hero.description") }
-			</h4>
+			</p>
 
 			{ /* CTA Buttons */ }
 			<div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row ltr:flex-row-reverse">
-				<Link to="/register">
-					<Button
-						size="lg"
-						className="flex ltr:flex-row-reverse h-14 rounded-full px-10 text-lg shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
-					>
+				<Button
+					asChild
+					size="lg"
+					className="flex ltr:flex-row-reverse h-14 rounded-full px-10 text-lg shadow-lg shadow-primary/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+				>
+					<Link to="/register">
 						{ t("hero.cta_start") }
 						<ArrowLeft className="ms-2 h-5 w-5 transition-transform ltr:rotate-180"/>
-					</Button>
-				</Link>
-				<a href="#features">
-					<Button
-						size="lg"
-						variant="outline"
-						className="h-14 rounded-full px-10 text-lg backdrop-blur-sm transition-transform hover:scale-[1.02] active:scale-[0.98]"
-					>
+					</Link>
+				</Button>
+				<Button
+					asChild
+					size="lg"
+					variant="outline"
+					className="h-14 rounded-full px-10 text-lg backdrop-blur-sm transition-transform hover:scale-[1.02] active:scale-[0.98]"
+				>
+					<a href="#features">
 						{ t("hero.cta_features") }
-					</Button>
-				</a>
+					</a>
+				</Button>
 			</div>
 
 			{ /* ZATCA Badge */ }
@@ -86,12 +88,12 @@ export default function LandingHero()
 				{ /* Swap with actual ZATCA logo images */ }
 				<img
 					src={ Zatca_lg_light }
-					alt="ZATCA"
+					alt="ZATCA Logo"
 					className="block h-40 object-contain opacity-80 dark:hidden"
 				/>
 				<img
 					src={ Zatca_lg_dark }
-					alt="ZATCA"
+					alt="ZATCA Logo"
 					className="hidden h-40 object-contain opacity-80 dark:block"
 				/>
 			</div>

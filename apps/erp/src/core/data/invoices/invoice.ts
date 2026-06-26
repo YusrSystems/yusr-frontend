@@ -233,11 +233,6 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		);
 	}
 
-	public updatePaidAmount()
-	{
-		this.paidAmount.value = InvoiceItemsMath.CalcInvoicePaidPrice(this.invoiceVouchers.value);
-	}
-
 	public createInitialPaymentVoucher(taxInclusivePrice: number)
 	{
 		return InvoiceVoucher.create({
@@ -250,6 +245,11 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 			amount: taxInclusivePrice,
 			amountReceived: taxInclusivePrice
 		});
+	}
+
+	public updatePaidAmount()
+	{
+		this.paidAmount.value = InvoiceItemsMath.CalcInvoicePaidPrice(this.invoiceVouchers.value);
 	}
 
 	public syncPaymentVouchers()
@@ -270,7 +270,11 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 			return;
 		}
 
-		if (vouchers.length === 0)
+		if (taxInclusivePrice === 0)
+		{
+			this.resetPaymentVouchers();
+		}
+		else if (vouchers.length === 0)
 		{
 			this.resetPaymentVouchers();
 			this.invoiceVouchers.value = [this.createInitialPaymentVoucher(taxInclusivePrice)];
