@@ -18,6 +18,7 @@ export default function SellInvoicesPageOld()
 			basePath="/sales"
 			title={ t("invoices.salesManagement") }
 			fixedType={ InvoiceType.Sell }
+			filterTypes={ [InvoiceType.Sell, InvoiceType.SellReturn] }
 			hasPagePermission={ Services.auth.hasAuth(
 				SystemPermissionsResources.InvoiceSell,
 				SystemPermissionsActions.Get

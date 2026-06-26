@@ -19,6 +19,7 @@ export default function QuotationInvoicesPage()
 			basePath="/quotations"
 			title={ t("invoices.quotationsManagement") }
 			fixedType={ InvoiceType.Quotation }
+			filterTypes={ [InvoiceType.Quotation] }
 			hasPagePermission={ Services.auth.hasAuth(
 				SystemPermissionsResources.InvoiceSell,
 				SystemPermissionsActions.Get
