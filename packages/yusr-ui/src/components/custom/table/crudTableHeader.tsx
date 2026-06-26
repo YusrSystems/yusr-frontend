@@ -48,7 +48,7 @@ export function CrudTableHeader(
 	);
 }
 
-function TableHeaderActionButtons({actionButtons}: { actionButtons?: ReactNode[]; })
+export function TableHeaderActionButtons({actionButtons}: { actionButtons?: ReactNode[]; })
 {
 	const isMenuOpen = useSignal(false);
 	const menuRef = useRef<HTMLDivElement>(null);

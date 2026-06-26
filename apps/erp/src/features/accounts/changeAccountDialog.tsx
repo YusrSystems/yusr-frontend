@@ -16,7 +16,8 @@ import {
 	SystemPermissionsActions,
 	TablePreviewCompact,
 	TextAreaField,
-	TextField
+	TextField,
+	YoutubeButton
 } from "yusr-ui";
 
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
@@ -156,12 +157,18 @@ export default function ChangeAccountDialog(
 				</FieldGroup>
 			</div>
 			<ChangeDialog.Footer>
-				<ChangeDialog.Close/>
-				<ChangeDialog.SaveButton<Account, AccountDto>
-					entity={ currentEntity.value }
-					service={ service }
-					onSuccess={ (data) => onSuccess?.(data) }
-				/>
+				<div className="flex items-center justify-between w-full">
+					<YoutubeButton/>
+					<div className="flex justify-end gap-3">
+						<ChangeDialog.Close/>
+						<ChangeDialog.SaveButton<Account, AccountDto>
+							entity={ currentEntity.value }
+							service={ service }
+							onSuccess={ (data) => onSuccess?.(data) }
+						/>
+					</div>
+				</div>
+
 			</ChangeDialog.Footer>
 		</ChangeDialog>
 	);
