@@ -15,8 +15,10 @@ import {
 	PageLoaded,
 	PageLoading,
 	SystemPermissionsActions,
+	TableHeaderActionButtons,
 	TablePreview,
-	UnauthorizedPage
+	UnauthorizedPage,
+	YoutubeButton
 } from "yusr-ui";
 import { Account, type AccountDto, type AccountType } from "@/core/data/account.ts";
 import ReportConstants from "../../core/data/report/reportConstants";
@@ -46,25 +48,41 @@ export default function AccountsPage(
 
 	return (
 		<CrudPage>
-			<CrudPage.Header
-				title={ title }
-				addButtonTitle={ t("accounts.addNewTitle") }
-				isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Add) }
-				actionButtons={ Services.auth.hasAuth(
-					SystemPermissionsResources.ReportAccountList,
-					SystemPermissionsActions.Get
-				)
-					? [
-						<ReportButton<AccountsListReportRequest>
-							reportName={ ReportConstants.AccountsList }
-							request={ {type: fixedType, searchText: searchText.value} }
-						/>
-					]
-					: [] }
-			/>
+			<CrudPage.HeaderContainer>
+				<div className="flex flex-col sm:flex-row sm:items-center gap-3 ">
+					<h1>
+						{ title }
+					</h1>
 
+					<YoutubeButton/>
+				</div>
+
+				<CrudPage.HeaderButtonsContainer>
+					<TableHeaderActionButtons actionButtons={
+						Services.auth.hasAuth(
+							SystemPermissionsResources.ReportAccountList,
+							SystemPermissionsActions.Get
+						)
+							? [
+								<ReportButton<AccountsListReportRequest>
+									reportName={ ReportConstants.AccountsList }
+									request={ {type: fixedType, searchText: searchText.value} }
+								/>
+							] : []
+					}/>
+
+
+					{ Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Add) && (
+						<CrudPage.AddButton title={ t("accounts.addNewTitle") }/>
+					) }
+				</CrudPage.HeaderButtonsContainer>
+			</CrudPage.HeaderContainer>
 
 			<Cards count={ Cubits.accounts.count }/>
+
+			<div className="mb-5">
+
+			</div>
 
 			<FilterSection
 				fieldsCubit={ Cubits.accountFilterFields }

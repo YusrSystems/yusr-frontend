@@ -3,7 +3,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import React, { type PropsWithChildren, type ReactNode, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "../../..//stateManager";
-import { ContextMenu, ContextMenuTrigger } from "../../../components/pure";
+import { Button, type ButtonProps, ContextMenu, ContextMenuTrigger } from "../../../components/pure";
 import { Dialog, DialogContent } from "../../pure/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../pure/table";
 import { DeleteDialog, type DeleteDialogProps } from "../dialogs/deleteDialog";
@@ -14,6 +14,7 @@ import { CrudTablePagination, type CrudTablePaginationProps } from "../table/cru
 import { CrudTableRowActionsMenu, type CrudTableRowActionsMenuProps } from "../table/crudTableRowActionsMenu";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { CrudPageContext, useCrudPageContext } from "./crudPageContext";
+import { PlusIcon } from "lucide-react";
 
 
 const isChangeDialogOpen = signal<boolean>(false);
@@ -50,6 +51,7 @@ export function CrudPage({children}: PropsWithChildren)
 	);
 }
 
+// TODO: this is old, we must remove it
 CrudPage.Header = function ({...props}: Omit<CrudTableHeaderProps, "onAddButtonClicked">)
 {
 	useSignals();
@@ -62,6 +64,56 @@ CrudPage.Header = function ({...props}: Omit<CrudTableHeaderProps, "onAddButtonC
 			} }
 			{ ...props }
 		/>
+	);
+};
+
+CrudPage.HeaderContainer = function ({className, children}: { className?: string } & PropsWithChildren)
+{
+	return (
+		<div className={ `flex justify-between mb-8 gap-3 ${ className }` }>
+			{ children }
+		</div>
+	);
+};
+
+CrudPage.HeaderButtonsContainer = function ({className, children}: { className?: string } & PropsWithChildren)
+{
+	return (
+		<div className={ `flex gap-3 ${ className }` }>
+			{ children }
+		</div>
+	);
+};
+
+CrudPage.AddButton = function ({title, onClick}: { title: string } & ButtonProps)
+{
+	useSignals();
+	return (
+		<Button variant="default" onClick={ (e) =>
+		{
+			selectedEntity.value = undefined;
+			isChangeDialogOpen.value = true;
+			onClick?.(e);
+		} }>
+			<PlusIcon className="h-4 w-4"/>
+			{ title }
+		</Button>
+	);
+};
+
+CrudPage.AddButton = function ({title, onClick}: { title: string } & ButtonProps)
+{
+	useSignals();
+	return (
+		<Button variant="default" onClick={ (e) =>
+		{
+			selectedEntity.value = undefined;
+			isChangeDialogOpen.value = true;
+			onClick?.(e);
+		} }>
+			<PlusIcon className="h-4 w-4"/>
+			{ title }
+		</Button>
 	);
 };
 

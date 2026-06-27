@@ -7,6 +7,7 @@ export * from "./background/yusrBackground";
 // Buttons
 export * from "./buttons/copyButton";
 export * from "./buttons/tabButton";
+export * from "./buttons/youtubeButton";
 
 // Containers
 export * from "./containers/dynamicListContainer";
@@ -88,6 +89,7 @@ export * from "./table/crudTableBodyRow";
 export * from "./table/crudTableHeaderRows";
 export * from "./table/crudTablePagination";
 export * from "./table/tablePreview";
+export * from "./table/crudTableHeader";
 
 // Theme
 export * from "./theme/themeProvider";
