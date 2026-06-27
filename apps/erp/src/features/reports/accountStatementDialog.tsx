@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import {
 	Button,
 	DateField,
-	DateService,
 	Dialog,
 	DialogContent,
 	DialogDescription,
@@ -24,13 +23,8 @@ export function AccountStatementButton({account}: { account: Account; })
 	useSignals();
 	const {t, i18n} = useTranslation("erpCommon");
 	const isOpen = useMemo(() => signal(false), []);
-	const fromDate = useMemo(() =>
-	{
-		const date = new Date();
-		date.setMonth(date.getMonth() - 1);
-		return signal<string>(DateService.formatDateOnly(date));
-	}, []);
-	const toDate = useMemo(() => signal<string>(DateService.formatDateOnly(new Date())), []);
+	const fromDate = useMemo(() => signal<string>(), []);
+	const toDate = useMemo(() => signal<string>(), []);
 
 	return (
 		<>
@@ -61,8 +55,8 @@ export function AccountStatementButton({account}: { account: Account; })
 							reportName={ ReportConstants.AccountStatement }
 							request={ new AccountStatementReportRequest({
 								accountId: account.id.value,
-								fromDate: fromDate.value ?? undefined,
-								toDate: toDate.value ?? undefined
+								fromDate: fromDate.value || null,
+								toDate: toDate.value || null
 							}) }
 						>
 						</ReportButton>
