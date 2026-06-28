@@ -2,14 +2,14 @@
 
 ## Permissions
 
-- [ ] Verify the page is inaccessible and shows an unauthorized message without `Get` permission.
-- [ ] Verify the "Add New Cost Adjustment" button is hidden without `Add` permission.
-- [ ] Verify the "Edit" action in the table row dropdown is hidden without `Update` permission.
+- [X] Verify the page is inaccessible and shows an unauthorized message without `Get` permission.
+- [X] Verify the "Add New Cost Adjustment" button is hidden without `Add` permission.
+- [X] Verify the "Edit" action in the table row dropdown is hidden without `Update` permission.
 
 ## Listing & Filtering
 
-- [ ] Verify the table loads and displays existing cost adjustments correctly.
-- [ ] Verify pagination works correctly when there are multiple pages of records.
+- [X] Verify the table loads and displays existing cost adjustments correctly.
+- [X] Verify pagination works correctly when there are multiple pages of records.
 - [ ] Verify the search input filters the table correctly (e.g., by item name or notes).
 - [ ] Verify the "Total Adjustments" card displays the correct total count of records.
 

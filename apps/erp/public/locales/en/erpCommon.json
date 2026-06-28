@@ -28,7 +28,7 @@
     "settings": "Settings",
     "account": "Account",
     "quotationInvoices": "Quotations",
-    "costAdjustments": "Cost Adjustments"
+    "costAdjustments": "Items Cost Adjustment"
   },
   "dashborad": {
     "income": "Total Income",
@@ -97,7 +97,8 @@
       "taxes": "Taxes",
       "obligations": "Obligations",
       "posTerminals": "POS Terminals",
-      "authorizedStores": "Authorized Stores"
+      "authorizedStores": "Authorized Stores",
+      "costAdjustments": "Items Cost Adjustment"
     },
     "invoice": {
       "addSettlement": "Add settlement to invoice",

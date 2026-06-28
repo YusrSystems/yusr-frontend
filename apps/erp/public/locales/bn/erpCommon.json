@@ -28,7 +28,7 @@
     "settings": "সেটিংস",
     "account": "অ্যাকাউন্ট",
     "quotationInvoices": "কোটেশনসমূহ",
-    "costAdjustments": "খরচ সমন্বয়"
+    "costAdjustments": "আইটেমের খরচ সমন্বয়"
   },
   "dashborad": {
     "income": "মোট আয়",
@@ -97,7 +97,8 @@
       "taxes": "ট্যাক্স",
       "obligations": "বাধ্যবাধকতা",
       "posTerminals": "পিওএস টার্মিনাল",
-      "authorizedStores": "অনুমোদিত গুদাম"
+      "authorizedStores": "অনুমোদিত গুদাম",
+      "costAdjustments": "আইটেমের খরচ সমন্বয়"
     },
     "invoice": {
       "addSettlement": "ইনভয়েসে নিষ্পত্তি যোগ করুন",

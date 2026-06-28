@@ -28,7 +28,7 @@
     "settings": "सेटिंग्स",
     "account": "खाता",
     "quotationInvoices": "कोटेशन",
-    "costAdjustments": "लागत समायोजन"
+    "costAdjustments": "आइटम लागत समायोजन"
   },
   "dashborad": {
     "income": "कुल आय",
@@ -97,7 +97,8 @@
       "taxes": "कर",
       "obligations": "दायित्व",
       "posTerminals": "पीओएस टर्मिनल",
-      "authorizedStores": "अधिकृत गोदाम"
+      "authorizedStores": "अधिकृत गोदाम",
+      "costAdjustments": "आइटम लागत समायोजन"
     },
     "invoice": {
       "addSettlement": "चालान में निपटान जोड़ें",

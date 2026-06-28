@@ -28,7 +28,7 @@
     "settings": "ترتیبات",
     "account": "اکاؤنٹ",
     "quotationInvoices": "کوٹیشنز",
-    "costAdjustments": "قیمت کی تبدیلیاں"
+    "costAdjustments": "اشیاء کی لاگت کی ایڈجسٹمنٹ"
   },
   "dashborad": {
     "income": "کل آمدنی",
@@ -97,7 +97,8 @@
       "taxes": "ٹیکسز",
       "obligations": "ذمہ داریاں",
       "posTerminals": "پی او ایس ٹرمینلز",
-      "authorizedStores": "مجاز گودام"
+      "authorizedStores": "مجاز گودام",
+      "costAdjustments": "اشیاء کی لاگت کی ایڈجسٹمنٹ"
     },
     "invoice": {
       "addSettlement": "انوائس میں تصفیہ شامل کریں",

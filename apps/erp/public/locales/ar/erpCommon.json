@@ -28,7 +28,7 @@
     "itemsSettlements": "تسوية المواد",
     "settings": "الإعدادات",
     "account": "الحساب",
-    "costAdjustments": "ضبط التكلفة"
+    "costAdjustments": "ضبط تكلفة المواد"
   },
   "dashborad": {
     "income": "مجموع الدخل",
@@ -97,7 +97,8 @@
       "taxes": "الضرائب",
       "obligations": "الالتزامات",
       "posTerminals": "نقاط البيع",
-      "authorizedStores": "المستودعات المسموح بها"
+      "authorizedStores": "المستودعات المسموح بها",
+      "costAdjustments": "ضبط تكلفة المواد"
     },
     "invoice": {
       "addSettlement": "إضافة تسوية للفاتورة",
