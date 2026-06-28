@@ -165,5 +165,22 @@
     "quantityMultiplierMin": "معامل الكمية يجب أن يكون 1 أو أكثر",
     "unitPriceMin": "سعر الوحدة يجب أن يكون 0 أو أكثر",
     "itemUnitPricingMethodNameRequired": "اسم طريقة التسعير مطلوب"
+  },
+  "costAdjustments": {
+    "title": "ضبط تكلفة المواد",
+    "addNewTitle": "إضافة ضبط تكلفة جديد",
+    "entityName": "ضبط التكلفة",
+    "totalAdjustments": "إجمالي عمليات الضبط",
+    "date": "التاريخ",
+    "item": "المادة",
+    "oldCost": "التكلفة القديمة",
+    "newCost": "التكلفة الجديدة",
+    "quantity": "الكمية",
+    "notes": "ملاحظات",
+    "dateRequired": "التاريخ مطلوب",
+    "itemRequired": "المادة مطلوبة",
+    "newCostRequired": "التكلفة الجديدة مطلوبة",
+    "newCostMin": "يجب أن تكون التكلفة الجديدة 0 أو أكثر",
+    "adjustmentId": "رقم الضبط"
   }
 }

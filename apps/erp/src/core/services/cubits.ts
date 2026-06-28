@@ -13,6 +13,7 @@ import { type Voucher, VoucherDto } from "@/core/data/voucher.ts";
 import Invoice, { type InvoiceDto } from "@/core/data/invoices/invoice.ts";
 import type { Store, StoreDto } from "@/core/data/store.ts";
 import { PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
+import CostAdjustment, { type CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
 
 
 export class Cubits extends BaseCubits
@@ -33,6 +34,7 @@ export class Cubits extends BaseCubits
 	public static override roles = new PageCubit<ErpRole, ErpRoleDto>(Services.rolesApi);
 	public static readonly vouchers = new PageCubit<Voucher, VoucherDto>(Services.voucherApi);
 	public static readonly invoices = new PageCubit<Invoice, InvoiceDto>(Services.invoicesApi);
+	public static readonly costAdjustments = new PageCubit<CostAdjustment, CostAdjustmentDto>(Services.costAdjustmentsApi);
 
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");
 	public static readonly itemFilterFields = new FilterFieldsCubit("Items");

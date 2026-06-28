@@ -27,7 +27,8 @@
     "itemsSettlements": "স্টক সমন্বয়",
     "settings": "সেটিংস",
     "account": "অ্যাকাউন্ট",
-    "quotationInvoices": "কোটেশনসমূহ"
+    "quotationInvoices": "কোটেশনসমূহ",
+    "costAdjustments": "খরচ সমন্বয়"
   },
   "dashborad": {
     "income": "মোট আয়",

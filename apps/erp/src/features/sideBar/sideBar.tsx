@@ -184,6 +184,13 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 					SystemPermissionsActions.Get
 				)
 			}, {
+				title: t("sidebar.costAdjustments"),
+				url: "/costAdjustments",
+				hasAuth: Services.auth.hasAuth(
+					SystemPermissionsResources.CostAdjustments,
+					SystemPermissionsActions.Get
+				)
+			}, {
 				title: t("sidebar.itemTransfers"),
 				url: "/itemTransfers",
 				hasAuth: Services.auth.hasAuth(

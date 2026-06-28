@@ -165,5 +165,22 @@
     "quantityMultiplierMin": "मात्रा गुणक 1 या अधिक होना चाहिए",
     "unitPriceMin": "इकाई मूल्य 0 या अधिक होना चाहिए",
     "itemUnitPricingMethodNameRequired": "मूल्य निर्धारण विधि का नाम आवश्यक है"
+  },
+  "costAdjustments": {
+    "title": "आइटम लागत समायोजन",
+    "addNewTitle": "नया लागत समायोजन जोड़ें",
+    "entityName": "लागत समायोजन",
+    "totalAdjustments": "कुल समायोजन",
+    "date": "तारीख",
+    "item": "आइटम",
+    "oldCost": "पुरानी लागत",
+    "newCost": "नई लागत",
+    "quantity": "मात्रा",
+    "notes": "टिप्पणियाँ",
+    "dateRequired": "तारीख आवश्यक है",
+    "itemRequired": "आइटम आवश्यक है",
+    "newCostRequired": "नई लागत आवश्यक है",
+    "newCostMin": "नई लागत 0 या उससे अधिक होनी चाहिए",
+    "adjustmentId": "समायोजन आईडी"
   }
 }

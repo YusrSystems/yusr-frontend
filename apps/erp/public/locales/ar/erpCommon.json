@@ -27,7 +27,8 @@
     "stocktakings": "جرد المواد",
     "itemsSettlements": "تسوية المواد",
     "settings": "الإعدادات",
-    "account": "الحساب"
+    "account": "الحساب",
+    "costAdjustments": "ضبط التكلفة"
   },
   "dashborad": {
     "income": "مجموع الدخل",

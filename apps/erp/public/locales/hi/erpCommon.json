@@ -27,7 +27,8 @@
     "itemsSettlements": "स्टॉक समायोजन",
     "settings": "सेटिंग्स",
     "account": "खाता",
-    "quotationInvoices": "कोटेशन"
+    "quotationInvoices": "कोटेशन",
+    "costAdjustments": "लागत समायोजन"
   },
   "dashborad": {
     "income": "कुल आय",

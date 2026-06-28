@@ -165,5 +165,22 @@
     "quantityMultiplierMin": "مقدار ضریب 1 یا اس سے زیادہ ہونا چاہیے",
     "unitPriceMin": "یونٹ قیمت 0 یا اس سے زیادہ ہونی چاہیے",
     "itemUnitPricingMethodNameRequired": "قیمت کے طریقہ کار کا نام درکار ہے"
+  },
+  "costAdjustments": {
+    "title": "آئٹمز کی قیمت میں تبدیلی",
+    "addNewTitle": "نئی قیمت کی تبدیلی شامل کریں",
+    "entityName": "قیمت کی تبدیلی",
+    "totalAdjustments": "کل تبدیلیاں",
+    "date": "تاریخ",
+    "item": "آئٹم",
+    "oldCost": "پرانی قیمت",
+    "newCost": "نئی قیمت",
+    "quantity": "مقدار",
+    "notes": "نوٹس",
+    "dateRequired": "تاریخ درکار ہے",
+    "itemRequired": "آئٹم درکار ہے",
+    "newCostRequired": "نئی قیمت درکار ہے",
+    "newCostMin": "نئی قیمت 0 یا اس سے زیادہ ہونی چاہیے",
+    "adjustmentId": "تبدیلی کی آئی ڈی"
   }
 }

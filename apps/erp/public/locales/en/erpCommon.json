@@ -27,7 +27,8 @@
     "itemsSettlements": "Stock Settlements",
     "settings": "Settings",
     "account": "Account",
-    "quotationInvoices": "Quotations"
+    "quotationInvoices": "Quotations",
+    "costAdjustments": "Cost Adjustments"
   },
   "dashborad": {
     "income": "Total Income",
