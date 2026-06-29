@@ -173,11 +173,12 @@
     "invoicePrintSize": "انوائس پرنٹ سائز",
     "a4Paper": "A4 کاغذ",
     "thermalPrinter": "تھرمل پرنٹر",
-    "invoicePolicy": "انوائس پالیسی (انوائس کے نیچے ظاہر ہوتی ہے)",
+    "salesInvoicePolicy": "سیلز انوائس پالیسی (انوائس کے نیچے ظاہر ہوتی ہے)",
+    "quotationInvoicePolicy": "کوٹیشن پالیسی (کوٹیشن کے نیچے ظاہر ہوتی ہے)",
     "invoicePolicyPlaceholder": "مثال: فروخت شدہ سامان 3 دن بعد واپس یا تبدیل نہیں کیا جا سکتا...",
     "simulationSubtitle": "اتھارٹی کے ساتھ ٹیسٹ کنکشن",
     "productionSubtitle": "اتھارٹی سے رابطہ کریں اور دستاویزات باضابطہ طور پر بھیجیں",
-    "defaultAccountsAndWarehouses": "ڈیفالٹ اکاؤنٹس اور گودام",
+    "defaultValues": "طے شدہ اقدار",
     "defaultWarehouse": "ڈیفالٹ گودام",
     "defaultPaymentMethod": "ڈیفالٹ ادائیگی کا طریقہ",
     "defaultSalesAccount": "ڈیفالٹ سیلز اکاؤنٹ",
@@ -211,7 +212,8 @@
     "referralLink": "حوالہ لنک",
     "copied": "کاپی ہو گیا",
     "copyLink": "لنک کاپی کریں",
-    "theme": "تھیم اور ظاہریت"
+    "theme": "تھیم اور ظاہریت",
+    "eInvoicing": "ای-انوائسنگ"
   },
   "reports": {
     "title": "رپورٹس",

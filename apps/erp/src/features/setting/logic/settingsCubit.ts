@@ -14,7 +14,7 @@ import { Services } from "@/core/services/services.ts";
 export default class SettingsCubit extends Cubit<SettingsState>
 {
 	public formData = new Setting({});
-	public activeTab = signal<"basic" | "invoicing" | "accounts" | "theme">("basic");
+	public activeTab = signal<"basic" | "invoicing" | "eInvoicing" | "accounts" | "theme">("basic");
 
 	constructor()
 	{

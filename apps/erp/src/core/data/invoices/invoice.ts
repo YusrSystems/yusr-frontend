@@ -169,7 +169,9 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 			));
 
 		this.notes = this.assign("notes", dto?.notes);
-		this.policy = this.assign("policy", dto?.policy);
+
+		this.policy = this.assign("policy", dto?.policy ?? Services.auth.setting?.getInvoicePolicy(this.type.value));
+
 		this.importExportType = this.assign("importExportType", dto?.importExportType);
 
 		this.createdAt = this.assign("createdAt", dto?.createdAt);

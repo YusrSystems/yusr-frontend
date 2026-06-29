@@ -173,11 +173,12 @@
     "invoicePrintSize": "Invoice Print Size",
     "a4Paper": "A4 Paper",
     "thermalPrinter": "Thermal Printer",
-    "invoicePolicy": "Invoice Policy (appears at the bottom of the invoice)",
+    "salesInvoicePolicy": "Sales Invoice Policy (appears at the bottom of the invoice)",
+    "quotationInvoicePolicy": "Quotation Policy (appears at the bottom of the quotation)",
     "invoicePolicyPlaceholder": "Example: Sold goods cannot be returned or exchanged after 3 days...",
     "simulationSubtitle": "Test connection with the authority",
     "productionSubtitle": "Connect with the authority and send documents officially",
-    "defaultAccountsAndWarehouses": "Default Accounts & Stores",
+    "defaultValues": "Default Values",
     "defaultWarehouse": "Default Store",
     "defaultPaymentMethod": "Default Payment Method",
     "defaultSalesAccount": "Default Sales Account",
@@ -211,7 +212,8 @@
     "referralLink": "Referral Link",
     "copied": "Copied",
     "copyLink": "Copy Link",
-    "theme": "Theme & Appearance"
+    "theme": "Theme & Appearance",
+    "eInvoicing": "E-Invoicing"
   },
   "reports": {
     "title": "Reports",
