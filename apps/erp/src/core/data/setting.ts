@@ -39,6 +39,7 @@ export class SettingDto extends Dto
 	public companyBusinessCategory?: string;
 	public crn?: string;
 	public vatNumber?: string;
+	public referralsCount!: number;
 
 	public currencyId!: number;
 	public currency!: CurrencyDto;
@@ -80,6 +81,7 @@ export class Setting extends ValidatableEntity<SettingDto>
 	public companyBusinessCategory?: Signal<string>;
 	public crn: Signal<string | undefined>;
 	public vatNumber: Signal<string | undefined>;
+	public referralsCount: Signal<number>;
 
 	public currencyId: Signal<number>;
 	public currency: Signal<Currency>;
@@ -143,7 +145,8 @@ export class Setting extends ValidatableEntity<SettingDto>
 		this.companyBusinessCategory = this.assign("companyBusinessCategory", dto?.companyBusinessCategory ?? undefined);
 		this.crn = this.assign("crn", dto?.crn ?? undefined);
 		this.vatNumber = this.assign("vatNumber", dto?.vatNumber ?? undefined);
-		this.currencyId = this.assign("currencyId", dto?.currencyId ?? 0);
+		this.referralsCount = this.assign("referralsCount", dto?.referralsCount ?? 0);
+		this.currencyId = this.assign("currencyId", dto?.currencyId ?? undefined);
 		this.currency = this.assign("currency", new Currency(dto?.currency));
 		this.logo = this.assign("logo", dto?.logo ? new StorageFile(dto?.logo) : undefined);
 		this.startDate = this.assign("startDate", dto?.startDate ?? new Date());

@@ -1,7 +1,7 @@
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { differenceInDays, format } from "date-fns";
-import { Camera, Check, Copy, Download, Share2, Trash2, Upload } from "lucide-react";
+import { Camera, Check, Copy, Download, Trash2, Upload } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,6 +25,7 @@ import {
 } from "yusr-ui";
 import type { Setting } from "@/core/data/setting.ts";
 import type { Signal } from "@preact/signals-react";
+import ReferralCard from "@/features/dashboard/referralCard.tsx";
 
 
 export default function BasicSection({formData}: { formData: Setting })
@@ -43,6 +44,7 @@ export default function BasicSection({formData}: { formData: Setting })
 	);
 
 	const shareUrl = `${ window.location.origin }/sharing/${ formData.registrationKey.value }`;
+	const registerUrl = `${ window.location.origin }/register/${ formData.registrationKey.value }`;
 
 	const handleCopyLink = async () =>
 	{
@@ -105,25 +107,26 @@ export default function BasicSection({formData}: { formData: Setting })
 
 	return (
 		<div className="space-y-5 animate-in fade-in">
-			{ /* LOGO SECTION */ }
-			<div
-				className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-6 p-4 rounded-xl border bg-muted/10 shadow-sm">
-				{ /* Logo Part */ }
-				<div className="flex flex-col md:flex-row items-center gap-6">
-					<Avatar className="h-32 w-32 border-4 border-background shadow-md">
-						<AvatarImage
-							src={ formData.logo.value?.status !== StorageFileStatus.Delete ? formData.logo.value?.url || "" : "" }
-							className="object-cover bg-white"
-						/>
-						<AvatarFallback className="bg-secondary">
-							<Camera className="h-10 w-10 text-muted-foreground"/>
-						</AvatarFallback>
-					</Avatar>
+			<ReferralCard/>
 
-					<div className="flex flex-col gap-3 text-center md:text-start">
+			<div className="flex gap-6">
+
+				{ /* LOGO SECTION */ }
+				<div
+					className="w-full flex flex-col justify-between items-center lg:items-start gap-6 p-4 rounded-lg border bg-muted/10 shadow-sm">
+					{ /* Logo Part */ }
+					<div className="flex flex-col items-center gap-6">
 						<h3 className="text-lg font-bold">{ t("settings.companyLogo") }</h3>
 						<p className="text-sm text-muted-foreground">{ t("settings.companyLogoDescription") }</p>
-
+						<Avatar className="h-32 w-32 border-4 border-background shadow-md">
+							<AvatarImage
+								src={ formData.logo.value?.status !== StorageFileStatus.Delete ? formData.logo.value?.url || "" : "" }
+								className="object-cover bg-white"
+							/>
+							<AvatarFallback className="bg-secondary">
+								<Camera className="h-10 w-10 text-muted-foreground"/>
+							</AvatarFallback>
+						</Avatar>
 						<div className="flex flex-wrap gap-2 justify-center md:justify-start mt-2">
 							{ (!formData.logo.value?.url || formData.logo.value.status === StorageFileStatus.Delete) && (
 								<Button
@@ -160,56 +163,89 @@ export default function BasicSection({formData}: { formData: Setting })
 				</div>
 
 				{ /* Sharing Part (Beside Logo) */ }
-				{ shareUrl && (
-					<div
-						className="flex flex-col items-center gap-3 w-full md:w-auto bg-muted/20 p-3 rounded-lg border">
-						<div className="flex items-center gap-2 text-primary font-semibold">
-							<Share2 className="h-4 w-4"/>
-							<span className="text-sm">{ t("settings.shareInfoCard") }</span>
-						</div>
+				<div className="w-full flex flex-col items-center gap-3 bg-muted/20 p-3 rounded-lg border">
 
-						<div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full md:w-auto">
-							<div ref={ qrRef } className="bg-white p-2 rounded border shadow-sm shrink-0">
-								<QRCodeCanvas
-									value={ shareUrl }
-									size={ 100 }
-									level="H"
-								/>
-							</div>
+					<h3 className="text-lg font-bold">{ t("settings.shareInfoCard") }</h3>
 
-							<div className="flex flex-col gap-2 w-full sm:w-auto min-w-35">
-								<Button
-									type="button"
-									variant={ isCopied ? "default" : "default" }
-									size="sm"
-									className={ `${ isCopied ? "bg-green-600 hover:bg-green-700" : "" }` }
-									onClick={ handleCopyLink }
-								>
-									{ isCopied ? <Check className="h-4 w-4 me-2"/> : <Copy className="h-4 w-4 me-2"/> }
-									{ isCopied ? t("settings.copied") : t("settings.copyLink") }
-								</Button>
-
-								<Button
-									type="button"
-									variant="outline"
-									size="sm"
-									onClick={ handleDownloadQR }
-								>
-									<Download className="h-4 w-4 me-2"/>
-									{ t("settings.download", "تحميل الرمز") }
-								</Button>
-							</div>
-						</div>
-						<a
-							href={ shareUrl }
-							target="_blank"
-							rel="noopener noreferrer"
-							className="text-xs text-blue-600 hover:text-primary text-center"
-						>
-							{ shareUrl }
-						</a>
+					<div ref={ qrRef } className="bg-white p-2 rounded border shadow-sm shrink-0">
+						<QRCodeCanvas
+							value={ shareUrl }
+							size={ 150 }
+							level="H"
+						/>
 					</div>
-				) }
+
+					<Button
+						type="button"
+						className={ `w-full ${ isCopied ? "bg-green-600 hover:bg-green-700" : "" }` }
+						onClick={ handleCopyLink }
+					>
+						{ isCopied ? <Check className="h-4 w-4 me-2"/> : <Copy className="h-4 w-4 me-2"/> }
+						{ isCopied ? t("settings.copied") : t("settings.copyLink") }
+					</Button>
+
+					<Button
+						type="button"
+						variant="outline"
+						onClick={ handleDownloadQR }
+						className="w-full"
+					>
+						<Download className="h-4 w-4 me-2"/>
+						{ t("settings.download", "تحميل الرمز") }
+					</Button>
+
+					<a
+						href={ shareUrl }
+						target="_blank"
+						rel="noopener noreferrer"
+						className="text-xs text-blue-600 hover:text-primary text-center"
+					>
+						{ shareUrl }
+					</a>
+				</div>
+
+				<div className="w-full flex flex-col items-center gap-3 bg-muted/20 p-3 rounded-lg border">
+
+					<h3 className="text-lg font-bold">{ t("settings.referralLink") }</h3>
+
+					<div ref={ qrRef } className="bg-white p-2 rounded border shadow-sm shrink-0">
+						<QRCodeCanvas
+							value={ registerUrl }
+							size={ 150 }
+							level="H"
+						/>
+					</div>
+
+					<Button
+						type="button"
+						className={ `w-full ${ isCopied ? "bg-green-600 hover:bg-green-700" : "" }` }
+						onClick={ handleCopyLink }
+					>
+						{ isCopied ? <Check className="h-4 w-4 me-2"/> : <Copy className="h-4 w-4 me-2"/> }
+						{ isCopied ? t("settings.copied") : t("settings.copyLink") }
+					</Button>
+
+					<Button
+						type="button"
+						variant="outline"
+						onClick={ handleDownloadQR }
+						className="w-full"
+					>
+						<Download className="h-4 w-4 me-2"/>
+						{ t("settings.download", "تحميل الرمز") }
+					</Button>
+
+					<a
+						href={ registerUrl }
+						target="_blank"
+						rel="noopener noreferrer"
+						className="text-xs text-blue-600 hover:text-primary text-center"
+					>
+						{ registerUrl }
+					</a>
+				</div>
+
+
 			</div>
 
 			{ /* BASIC INFO */ }
