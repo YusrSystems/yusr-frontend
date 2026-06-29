@@ -109,11 +109,11 @@ export default function BasicSection({formData}: { formData: Setting })
 		<div className="space-y-5 animate-in fade-in">
 			<ReferralCard/>
 
-			<div className="flex gap-6">
+			<div className="flex flex-col lg:flex-row gap-6">
 
 				{ /* LOGO SECTION */ }
 				<div
-					className="w-full flex flex-col justify-between items-center lg:items-start gap-6 p-4 rounded-lg border bg-muted/10 shadow-sm">
+					className="w-full min-w-60 flex flex-col justify-between items-center lg:items-start gap-6 p-4 rounded-lg border bg-muted/10 shadow-sm">
 					{ /* Logo Part */ }
 					<div className="flex flex-col items-center gap-6">
 						<h3 className="text-lg font-bold">{ t("settings.companyLogo") }</h3>
