@@ -165,5 +165,22 @@
     "quantityMultiplierMin": "Quantity multiplier must be 1 or greater",
     "unitPriceMin": "Unit price must be 0 or greater",
     "itemUnitPricingMethodNameRequired": "Pricing method name is required"
+  },
+  "costAdjustments": {
+    "title": "Items Cost Adjustment",
+    "addNewTitle": "Add New Cost Adjustment",
+    "entityName": "Cost Adjustment",
+    "totalAdjustments": "Total Adjustments",
+    "date": "Date",
+    "item": "Item",
+    "oldCost": "Old Cost",
+    "newCost": "New Cost",
+    "quantity": "Quantity",
+    "notes": "Notes",
+    "dateRequired": "Date is required",
+    "itemRequired": "Item is required",
+    "newCostRequired": "New cost is required",
+    "newCostMin": "New cost must be 0 or greater",
+    "adjustmentId": "Adjustment ID"
   }
 }

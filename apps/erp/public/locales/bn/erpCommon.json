@@ -27,7 +27,8 @@
     "itemsSettlements": "স্টক সমন্বয়",
     "settings": "সেটিংস",
     "account": "অ্যাকাউন্ট",
-    "quotationInvoices": "কোটেশনসমূহ"
+    "quotationInvoices": "কোটেশনসমূহ",
+    "costAdjustments": "আইটেমের খরচ সমন্বয়"
   },
   "dashborad": {
     "income": "মোট আয়",
@@ -96,7 +97,8 @@
       "taxes": "ট্যাক্স",
       "obligations": "বাধ্যবাধকতা",
       "posTerminals": "পিওএস টার্মিনাল",
-      "authorizedStores": "অনুমোদিত গুদাম"
+      "authorizedStores": "অনুমোদিত গুদাম",
+      "costAdjustments": "আইটেমের খরচ সমন্বয়"
     },
     "invoice": {
       "addSettlement": "ইনভয়েসে নিষ্পত্তি যোগ করুন",
@@ -171,11 +173,12 @@
     "invoicePrintSize": "ইনভয়েস প্রিন্ট সাইজ",
     "a4Paper": "A4 কাগজ",
     "thermalPrinter": "থার্মাল প্রিন্টার",
-    "invoicePolicy": "ইনভয়েস নীতি (ইনভয়েসের নিচে প্রদর্শিত হবে)",
+    "salesInvoicePolicy": "সেলস ইনভয়েস নীতি (ইনভয়েসের নিচে প্রদর্শিত হয়)",
+    "quotationInvoicePolicy": "কোটেশন নীতি (কোটেশনের নিচে প্রদর্শিত হয়)",
     "invoicePolicyPlaceholder": "উদাহরণ: বিক্রিত পণ্য ৩ দিন পরে ফেরত বা বিনিময় করা যাবে না...",
     "simulationSubtitle": "কর্তৃপক্ষের সাথে টেস্ট সংযোগ",
     "productionSubtitle": "কর্তৃপক্ষের সাথে সংযোগ করুন এবং নথিগুলো আনুষ্ঠানিকভাবে পাঠান",
-    "defaultAccountsAndWarehouses": "ডিফল্ট অ্যাকাউন্ট ও গুদাম",
+    "defaultValues": "ডিফল্ট মানসমূহ",
     "defaultWarehouse": "ডিফল্ট গুদাম",
     "defaultPaymentMethod": "ডিফল্ট পেমেন্ট পদ্ধতি",
     "defaultSalesAccount": "ডিফল্ট বিক্রয় অ্যাকাউন্ট",
@@ -206,9 +209,11 @@
     "noCode": "ভেরিফিকেশন কোড পাননি?",
     "visitZatca": "ভেরিফিকেশন কোড পেতে কর্তৃপক্ষের ওয়েবসাইট দেখুন",
     "shareInfoCard": "প্রতিষ্ঠানের তথ্য কার্ড",
+    "referralLink": "রেফারেল লিংক",
     "copied": "কপি করা হয়েছে",
     "copyLink": "লিংক কপি করুন",
-    "theme": "থিম ও চেহারা"
+    "theme": "থিম ও চেহারা",
+    "eInvoicing": "ই-ইনভয়েসিং"
   },
   "reports": {
     "title": "রিপোর্ট",

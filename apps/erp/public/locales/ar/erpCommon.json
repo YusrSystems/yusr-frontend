@@ -27,7 +27,8 @@
     "stocktakings": "جرد المواد",
     "itemsSettlements": "تسوية المواد",
     "settings": "الإعدادات",
-    "account": "الحساب"
+    "account": "الحساب",
+    "costAdjustments": "ضبط تكلفة المواد"
   },
   "dashborad": {
     "income": "مجموع الدخل",
@@ -96,7 +97,8 @@
       "taxes": "الضرائب",
       "obligations": "الالتزامات",
       "posTerminals": "نقاط البيع",
-      "authorizedStores": "المستودعات المسموح بها"
+      "authorizedStores": "المستودعات المسموح بها",
+      "costAdjustments": "ضبط تكلفة المواد"
     },
     "invoice": {
       "addSettlement": "إضافة تسوية للفاتورة",
@@ -171,11 +173,12 @@
     "invoicePrintSize": "حجم طباعة الفاتورة",
     "a4Paper": "ورق A4",
     "thermalPrinter": "طابعة حرارية (Thermal)",
-    "invoicePolicy": "سياسة الفواتير (تظهر أسفل الفاتورة)",
+    "salesInvoicePolicy": "سياسة فواتير البيع (تظهر أسفل الفاتورة)",
+    "quotationInvoicePolicy": "سياسة عروض الأسعار (تظهر أسفل عرض السعر)",
     "invoicePolicyPlaceholder": "مثال: البضاعة المباعة لا ترد ولا تستبدل بعد 3 أيام...",
     "simulationSubtitle": "تجربة الربط مع الهيئة",
     "productionSubtitle": "الربط مع الهيئة وإرسال المستندات بشكل رسمي",
-    "defaultAccountsAndWarehouses": "الحسابات والمستودعات الافتراضية",
+    "defaultValues": "القيم الافتراضية",
     "defaultWarehouse": "المستودع الافتراضي",
     "defaultPaymentMethod": "طريقة الدفع الافتراضية",
     "defaultSalesAccount": "حساب المبيعات الافتراضي",
@@ -206,9 +209,11 @@
     "noCode": "لم تحصل على رمز التحقق؟",
     "visitZatca": "زُر موقع الهيئة للحصول على رمز التحقق",
     "shareInfoCard": "بطاقة تعريف المؤسسة",
+    "referralLink": "رابط التوصية",
     "copied": "تم النسخ",
     "copyLink": "نسخ الرابط",
-    "theme": "المظهر والسمة"
+    "theme": "المظهر والسمة",
+    "eInvoicing": "الفوترة الإلكترونية"
   },
   "reports": {
     "title": "التقارير",

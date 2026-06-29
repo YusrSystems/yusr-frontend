@@ -26,7 +26,7 @@ export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => 
 	[SystemPermissionsResources.Taxes]: t("permissions.resources.taxes"),
 	[SystemPermissionsResources.Obligations]: t("permissions.resources.obligations"),
 	[SystemPermissionsResources.PosTerminals]: t("permissions.resources.posTerminals"),
-
+	[SystemPermissionsResources.CostAdjustments]: t("permissions.resources.costAdjustments"),
 	// Invoice Permission Settings
 	[SystemPermissionsResources.InvoiceAddSettlement]: t("permissions.invoice.addSettlement"),
 	[SystemPermissionsResources.InvoiceShowProfit]: t("permissions.invoice.showProfit"),
@@ -86,6 +86,7 @@ export const getPermissionSections = (t: TFunction<"erpCommon">) => [{
 		SystemPermissionsResources.ItemTransfers,
 		SystemPermissionsResources.ItemsSettlements,
 		SystemPermissionsResources.Stocktakings,
+		SystemPermissionsResources.CostAdjustments,
 		SystemPermissionsResources.Units,
 		SystemPermissionsResources.PricingMethods,
 		SystemPermissionsResources.Stores,

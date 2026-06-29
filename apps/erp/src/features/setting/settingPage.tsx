@@ -22,6 +22,7 @@ import { SettingsLoading, SettingsSaving } from "@/features/setting/logic/settin
 import { Cubits } from "@/core/services/cubits.ts";
 import { AccountType } from "@/core/data/account.ts";
 import { signal } from "@preact/signals-react";
+import EInvoiceSection from "@/features/setting/eInvoicing/eInvoiceSection.tsx";
 
 
 export default function SettingPage()
@@ -113,6 +114,13 @@ export default function SettingPage()
 						content={ <></> }
 					/>
 					<TabButton
+						active={ cubit.activeTab.value === "eInvoicing" }
+						icon={ Receipt }
+						label={ t("settings.eInvoicing") }
+						onClick={ () => cubit.activeTab.value = "eInvoicing" }
+						content={ <></> }
+					/>
+					<TabButton
 						active={ cubit.activeTab.value === "accounts" }
 						icon={ Wallet }
 						label={ t("settings.defaultAccounts") }
@@ -131,6 +139,7 @@ export default function SettingPage()
 				<CardContent className="py-3 min-h-[50vh]">
 					{ cubit.activeTab.value === "basic" && <BasicSection formData={ cubit.formData }/> }
 					{ cubit.activeTab.value === "invoicing" && <InvoiceSection formData={ cubit.formData }/> }
+					{ cubit.activeTab.value === "eInvoicing" && <EInvoiceSection formData={ cubit.formData }/> }
 					{ cubit.activeTab.value === "accounts" && <DefaultsSection formData={ cubit.formData }/> }
 					{ cubit.activeTab.value === "theme" && <ThemeSection draftTheme={ draftTheme }/> }
 				</CardContent>

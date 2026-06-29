@@ -27,7 +27,8 @@
     "itemsSettlements": "स्टॉक समायोजन",
     "settings": "सेटिंग्स",
     "account": "खाता",
-    "quotationInvoices": "कोटेशन"
+    "quotationInvoices": "कोटेशन",
+    "costAdjustments": "आइटम लागत समायोजन"
   },
   "dashborad": {
     "income": "कुल आय",
@@ -96,7 +97,8 @@
       "taxes": "कर",
       "obligations": "दायित्व",
       "posTerminals": "पीओएस टर्मिनल",
-      "authorizedStores": "अधिकृत गोदाम"
+      "authorizedStores": "अधिकृत गोदाम",
+      "costAdjustments": "आइटम लागत समायोजन"
     },
     "invoice": {
       "addSettlement": "चालान में निपटान जोड़ें",
@@ -171,11 +173,12 @@
     "invoicePrintSize": "चालान प्रिंट आकार",
     "a4Paper": "A4 पेपर",
     "thermalPrinter": "थर्मल प्रिंटर",
-    "invoicePolicy": "चालान नीति (चालान के नीचे दिखाई देती है)",
+    "salesInvoicePolicy": "सेल्स इनवॉइस नीति (इनवॉइस के नीचे दिखाई देती है)",
+    "quotationInvoicePolicy": "कोटेशन नीति (कोटेशन के नीचे दिखाई देती है)",
     "invoicePolicyPlaceholder": "उदाहरण: बेचा गया सामान 3 दिनों के बाद वापस या बदला नहीं जा सकता...",
     "simulationSubtitle": "प्राधिकरण के साथ परीक्षण कनेक्शन",
     "productionSubtitle": "प्राधिकरण से कनेक्ट करें और दस्तावेज़ आधिकारिक रूप से भेजें",
-    "defaultAccountsAndWarehouses": "डिफ़ॉल्ट खाते और गोदाम",
+    "defaultValues": "डिफ़ॉल्ट मान",
     "defaultWarehouse": "डिफ़ॉल्ट गोदाम",
     "defaultPaymentMethod": "डिफ़ॉल्ट भुगतान विधि",
     "defaultSalesAccount": "डिफ़ॉल्ट बिक्री खाता",
@@ -206,9 +209,11 @@
     "noCode": "सत्यापन कोड नहीं मिला?",
     "visitZatca": "सत्यापन कोड प्राप्त करने के लिए प्राधिकरण की वेबसाइट पर जाएँ",
     "shareInfoCard": "संगठन सूचना कार्ड",
+    "referralLink": "रेफरल लिंक",
     "copied": "कॉपी हो गया",
     "copyLink": "लिंक कॉपी करें",
-    "theme": "थीम और उपस्थिति"
+    "theme": "थीम और उपस्थिति",
+    "eInvoicing": "ई-इनवॉइसिंग"
   },
   "reports": {
     "title": "रिपोर्ट",

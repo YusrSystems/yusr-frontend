@@ -27,7 +27,8 @@
     "itemsSettlements": "Stock Settlements",
     "settings": "Settings",
     "account": "Account",
-    "quotationInvoices": "Quotations"
+    "quotationInvoices": "Quotations",
+    "costAdjustments": "Items Cost Adjustment"
   },
   "dashborad": {
     "income": "Total Income",
@@ -96,7 +97,8 @@
       "taxes": "Taxes",
       "obligations": "Obligations",
       "posTerminals": "POS Terminals",
-      "authorizedStores": "Authorized Stores"
+      "authorizedStores": "Authorized Stores",
+      "costAdjustments": "Items Cost Adjustment"
     },
     "invoice": {
       "addSettlement": "Add settlement to invoice",
@@ -171,11 +173,12 @@
     "invoicePrintSize": "Invoice Print Size",
     "a4Paper": "A4 Paper",
     "thermalPrinter": "Thermal Printer",
-    "invoicePolicy": "Invoice Policy (appears at the bottom of the invoice)",
+    "salesInvoicePolicy": "Sales Invoice Policy (appears at the bottom of the invoice)",
+    "quotationInvoicePolicy": "Quotation Policy (appears at the bottom of the quotation)",
     "invoicePolicyPlaceholder": "Example: Sold goods cannot be returned or exchanged after 3 days...",
     "simulationSubtitle": "Test connection with the authority",
     "productionSubtitle": "Connect with the authority and send documents officially",
-    "defaultAccountsAndWarehouses": "Default Accounts & Stores",
+    "defaultValues": "Default Values",
     "defaultWarehouse": "Default Store",
     "defaultPaymentMethod": "Default Payment Method",
     "defaultSalesAccount": "Default Sales Account",
@@ -206,9 +209,11 @@
     "noCode": "Didn't receive a verification code?",
     "visitZatca": "Visit the authority's website to get a verification code",
     "shareInfoCard": "Organization Information Card",
+    "referralLink": "Referral Link",
     "copied": "Copied",
     "copyLink": "Copy Link",
-    "theme": "Theme & Appearance"
+    "theme": "Theme & Appearance",
+    "eInvoicing": "E-Invoicing"
   },
   "reports": {
     "title": "Reports",

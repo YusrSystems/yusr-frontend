@@ -165,5 +165,22 @@
     "quantityMultiplierMin": "পরিমাণ গুণক 1 বা তার বেশি হতে হবে",
     "unitPriceMin": "ইউনিট মূল্য 0 বা তার বেশি হতে হবে",
     "itemUnitPricingMethodNameRequired": "মূল্য নির্ধারণ পদ্ধতির নাম প্রয়োজন"
+  },
+  "costAdjustments": {
+    "title": "আইটেম খরচ সমন্বয়",
+    "addNewTitle": "নতুন খরচ সমন্বয় যোগ করুন",
+    "entityName": "খরচ সমন্বয়",
+    "totalAdjustments": "মোট সমন্বয়",
+    "date": "তারিখ",
+    "item": "আইটেম",
+    "oldCost": "পুরানো খরচ",
+    "newCost": "নতুন খরচ",
+    "quantity": "পরিমাণ",
+    "notes": "নোট",
+    "dateRequired": "তারিখ প্রয়োজন",
+    "itemRequired": "আইটেম প্রয়োজন",
+    "newCostRequired": "নতুন খরচ প্রয়োজন",
+    "newCostMin": "নতুন খরচ ০ বা তার বেশি হতে হবে",
+    "adjustmentId": "সমন্বয় আইডি"
   }
 }

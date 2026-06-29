@@ -75,12 +75,9 @@ export default function ChangeInvoiceDialog({
 	{
 		if (currentEntity.value.mode.value === ChangeableEntityMode.Create)
 		{
-			if (Services.auth.setting?.invoicePolicy?.value && !currentEntity.value.policy.value)
-			{
-				currentEntity.value.policy.value = Services.auth.setting?.invoicePolicy?.value;
-			}
 			return;
 		}
+
 		if (currentEntity.value.id.value != undefined)
 		{
 			isLoading.value = true;
@@ -128,6 +125,7 @@ export default function ChangeInvoiceDialog({
 						res.data.type.value = InvoiceType.Sell;
 						res.data.date.value = DateService.formatDateOnly(new Date());
 						res.data.notes.value = undefined;
+						res.data.policy.value = Services.auth.setting?.getInvoicePolicy(res.data.type.value);
 						currentEntity.value = Invoice.create(res.data.toJson());
 						currentEntity.value.invoiceMode.value = InvoiceMode.QuotationToSales;
 						currentEntity.value.syncPaymentVouchers();
