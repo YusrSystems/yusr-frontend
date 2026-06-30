@@ -25,7 +25,7 @@ export function ItemsListReportTable()
 			</tr>
 			</thead>
 			<tbody>
-			{ Cubits.items.entities.value.map((item, idx) =>
+			{ Cubits.items.reportEntities.value.map((item, idx) =>
 			{
 				const isEven = idx % 2 === 0;
 				return (
