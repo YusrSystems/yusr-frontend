@@ -4,12 +4,15 @@ import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Package, Printer } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	Button,
 	ChangeableEntityMode,
 	CrudPage,
+	Dialog,
+	DialogContent,
+	DialogTrigger,
 	FilterLabelWrapper,
 	FilterSection,
 	type FilterValueInputProps,
@@ -25,9 +28,10 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { ItemType } from "@/core/data/item.ts";
 import ItemStatementButton from "../reports/itemStatementDialog";
 import ChangeItemDialog from "./changeItemDialog";
-import { type Signal } from "@preact/signals-react";
+import { signal, type Signal } from "@preact/signals-react";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect.tsx";
+import ItemsListReport from "@/features/reports/itemsList/itemsListReport.tsx";
 
 
 export default function ItemsPage()
@@ -54,14 +58,7 @@ export default function ItemsPage()
 				addButtonTitle={ t("items.addNewTitle") }
 				isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Items, SystemPermissionsActions.Add) }
 				actionButtons={ [
-					<Button
-						key="print-list"
-						variant="outline"
-						onClick={ () => window.open("/reports/itemsList", "_blank") }
-					>
-						<Printer className="h-4 w-4"/>
-						تقرير قائمة المواد
-					</Button>
+					<ReportDialogButton/>
 				] }
 			/>
 
@@ -268,4 +265,31 @@ function RenderItemFilterInput({rule, field}: FilterValueInputProps)
 		);
 	}
 	return undefined;
+}
+
+function ReportDialogButton()
+{
+	useSignals();
+	const isOpen = useMemo(() => signal(false), []);
+	return <Dialog
+
+		open={ isOpen.value }
+		onOpenChange={ (open) => (isOpen.value = open) }
+	>
+		<DialogTrigger asChild>
+			<Button
+				key="print-list"
+				variant="outline"
+			>
+				<Printer className="h-4 w-4"/>
+				تقرير قائمة المواد
+			</Button>
+		</DialogTrigger>
+
+		<DialogContent className="sm:max-w-[100vw] sm:w-screen sm:h-screen overflow-y-auto">
+			<ItemsListReport/>
+		</DialogContent>
+
+
+	</Dialog>;
 }

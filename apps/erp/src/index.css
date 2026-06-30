@@ -10,16 +10,40 @@
 
 /* 1. Set the default variable (Global) */
 :root {
-  --main-font: "Geist", "Inter", system-ui, sans-serif;
+    --main-font: "Geist", "Inter", system-ui, sans-serif;
 }
 
 /* 2. Override when the document is RTL (Arabic locale) */
 [dir="rtl"] {
-  --main-font: "IBM Plex Sans Arabic", "Geist", sans-serif;
+    --main-font: "IBM Plex Sans Arabic", "Geist", sans-serif;
 }
 
 body {
-  font-family: var(--main-font);
+    font-family: var(--main-font);
 }
 
 @source "../../../packages/yusr-ui/src/**/*.{ts,tsx}";
+
+@media print {
+    /* Hide everything */
+    body * {
+        visibility: hidden !important;
+    }
+
+    /* Show only the report */
+    #print-report,
+    #print-report * {
+        visibility: visible !important;
+    }
+
+    /* Make the report occupy the page */
+    #print-report {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+
+
+    }
+}

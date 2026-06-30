@@ -48,7 +48,7 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
 		this.types.value = types;
 		this.queryParams.value = queryParams ?? this.queryParams.value;
 		this.groups.value = groups ?? this.groups.value;
-
+		console.log("From filter in page cubit: ", this.groups.value);
 		this.emit(new PageLoading());
 
 		const result = await this._service.Filter(
@@ -115,5 +115,35 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
 		{
 			this.filter(1);
 		}
+	}
+}
+
+export class PageReportableCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends PageCubit<TEntity, TDto>
+{
+	reportEntities: Signal<TEntity[]> = signal([]);
+
+	public async filterReport()
+	{
+		this.emit(new PageLoading());
+		console.log(this.groups.value);
+		console.log("Filtering based on :", this.types.value, " and, ", this.groups.value);
+		const result = await this._service.Filter(
+			1,
+			1000,
+			this.searchText.value,
+			this.types.value,
+			this.queryParams.value,
+			this.groups.value
+		);
+
+		if (!result.data?.length)
+		{
+			this.reportEntities.value = [];
+			this.emit(new PageEmpty());
+			return;
+		}
+
+		this.reportEntities.value = result.data;
+		this.emit(new PageLoaded());
 	}
 }

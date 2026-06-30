@@ -17,7 +17,7 @@ export default function ItemsListReport()
 {
 	useEffect(() =>
 	{
-		Cubits.items.init();
+		Cubits.items.filterReport();
 	}, []);
 
 	if (!Services.auth.hasAuth(

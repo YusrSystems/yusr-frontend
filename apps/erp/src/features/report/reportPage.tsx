@@ -4,7 +4,7 @@ import type { PropsWithChildren } from "react";
 export default function ReportPage({children}: PropsWithChildren)
 {
 	return (
-		<div className="min-h-screen p-4 md:p-8 flex flex-col">
+		<div className="min-h-screen p-4 md:p-8 flex flex-col print:overflow-visible" id="print-report">
 
 			<style>{ `
 				@media print {
