@@ -1,13 +1,13 @@
 import type { ItemDto } from "@/core/data/item";
 import Item from "@/core/data/item";
-import type { ItemsListReportRequest } from "@/core/data/report/itemsListReportRequest";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
-import { Package } from "lucide-react";
+import { Package, Printer } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	Button,
 	ChangeableEntityMode,
 	CrudPage,
 	FilterLabelWrapper,
@@ -23,9 +23,7 @@ import {
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { ItemType } from "@/core/data/item.ts";
-import ReportConstants from "../../core/data/report/reportConstants";
 import ItemStatementButton from "../reports/itemStatementDialog";
-import ReportButton from "../reports/reportButton";
 import ChangeItemDialog from "./changeItemDialog";
 import { type Signal } from "@preact/signals-react";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
@@ -55,12 +53,16 @@ export default function ItemsPage()
 				title={ t("items.title") }
 				addButtonTitle={ t("items.addNewTitle") }
 				isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Items, SystemPermissionsActions.Add) }
-				actionButtons={ Services.auth.hasAuth(
-					SystemPermissionsResources.ReportItemList,
-					SystemPermissionsActions.Get
-				)
-					? [<ItemsReportButton/>]
-					: [] }
+				actionButtons={ [
+					<Button
+						key="print-list"
+						variant="outline"
+						onClick={ () => window.open("/reports/itemsList", "_blank") }
+					>
+						<Printer className="h-4 w-4"/>
+						تقرير قائمة المواد
+					</Button>
+				] }
 			/>
 
 			<Cards/>
@@ -111,17 +113,6 @@ export default function ItemsPage()
 				onSuccess={ (entity) => Cubits.items.delete(entity) }
 			/>
 		</CrudPage>
-	);
-}
-
-function ItemsReportButton()
-{
-	useSignals();
-	return (
-		<ReportButton<ItemsListReportRequest>
-			reportName={ ReportConstants.ItemsList }
-			request={ {searchText: Cubits.items.searchText.value} }
-		/>
 	);
 }
 

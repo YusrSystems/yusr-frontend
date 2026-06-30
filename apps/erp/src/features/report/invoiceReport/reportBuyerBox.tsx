@@ -9,6 +9,8 @@ interface BuyerBoxProps
 
 export function ReportBuyerBox({account}: BuyerBoxProps)
 {
+
+	const isStandard = Boolean(account.vatNumber);
 	return (
 		<div className="rounded-xl border border-border bg-card text-card-foreground shadow-xs overflow-hidden w-full">
 			<div
@@ -18,20 +20,25 @@ export function ReportBuyerBox({account}: BuyerBoxProps)
 			</div>
 
 			<div className="p-3 flex flex-col gap-2.5 w-full" dir="rtl">
-				<div className="grid grid-cols-2 gap-3 w-full">
+				{ !isStandard && (
 					<ReportField labelAr="الاسم" labelEn="Name" value={ account.name }/>
-					<ReportField labelAr="السجل التجاري" labelEn="CRN" value={ account.crn || "-" }/>
-				</div>
+				) }
 
-				{ account.vatNumber && (
-					<div className="grid grid-cols-2 gap-3 w-full">
-						<ReportField
-							labelAr="العنوان"
-							labelEn="Address"
-							value={ `${ account.cityName || "" } - ${ account.district || "" } - ${ account.postalCode || "" }` }
-						/>
-						<ReportField labelAr="الرقم الضريبي" labelEn="VAT" value={ account.vatNumber || "-" }/>
-					</div>
+				{ isStandard && (
+					<>
+						<div className="grid grid-cols-2 gap-3 w-full">
+							<ReportField labelAr="الاسم" labelEn="Name" value={ account.name }/>
+							<ReportField labelAr="السجل التجاري" labelEn="CRN" value={ account.crn || "-" }/>
+						</div>
+						<div className="grid grid-cols-2 gap-3 w-full">
+							<ReportField
+								labelAr="العنوان"
+								labelEn="Address"
+								value={ `${ account.cityName || "" } - ${ account.district || "" } - ${ account.postalCode || "" }` }
+							/>
+							<ReportField labelAr="الرقم الضريبي" labelEn="VAT" value={ account.vatNumber || "-" }/>
+						</div>
+					</>
 				) }
 			</div>
 		</div>

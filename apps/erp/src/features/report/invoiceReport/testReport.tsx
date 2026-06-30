@@ -54,6 +54,9 @@ import { ReportBuyerBox } from "@/features/report/invoiceReport/reportBuyerBox.t
 import { type InvoiceLineItem, ReportInvoiceTable } from "@/features/report/invoiceReport/reportInvoiceTable.tsx";
 import { ReportInvoiceSummary } from "@/features/report/invoiceReport/reportInvoiceSummary.tsx";
 import type { AccountDto } from "@/core/data/account.ts";
+import type { InvoiceDto } from "@/core/data/invoices/invoice.ts";
+import { InvoiceType } from "@/core/types/invoiceType.ts";
+import ReportPageHeader from "@/features/report/reportPageHeader.tsx";
 
 // --- Test data, shaped like InvoiceRendererData. Swap with real data later. ---
 
@@ -303,11 +306,18 @@ const testItems: InvoiceLineItem[] = [
 	}
 ];
 
+const invoice: InvoiceDto = {
+	id: 1,
+	type: InvoiceType.Sell,
+	storeName: "test",
+	date: "2026-06-30"
+};
+
 const account: AccountDto = {
 	name: "Standard Invoice Account",
 	cityName: "الجماوات - السلام - 5423 - 12345",
-	crn: "-",
-	vatNumber: "399999999800003"
+	crn: "-"
+	// vatNumber: "399999999800003"
 };
 
 const testSummary = {
@@ -331,24 +341,28 @@ export function TestReport()
 	return (
 		<ReportPage>
 			<ReportContainer>
+
 				<ReportHeader>
 					<ReportHeader.CompanySection/>
 					<ReportHeader.TitleSection titleAr="فاتورة بيع ضريبية" titleEn="SALES TAX INVOICE">
-						<ReportHeader.Id id={ 602 }/>
+						<ReportHeader.Id id={ invoice.id }/>
 					</ReportHeader.TitleSection>
 					<ReportHeader.MetaDataSection/>
 				</ReportHeader>
 
 				<div className="flex flex-col gap-3 pt-5 pb-2">
 					<div className="flex justify-between gap-8 py-1">
-						<ReportField labelAr="المستودع:" labelEn="Store:" value="مخزن B"/>
-						<ReportField labelAr="بتاريخ:" labelEn="Date:" value="2026-06-26"/>
+						<ReportField labelAr="المستودع:" labelEn="Store:" value={ invoice.storeName }/>
+						<ReportField labelAr="بتاريخ:" labelEn="Date:" value={ invoice.date }/>
 					</div>
 
 					<ReportBuyerBox account={ account }/>
 				</div>
 
 				<ReportPageContainer>
+					<ReportPageHeader>
+
+					</ReportPageHeader>
 					<ReportPageBody>
 						<div className="py-2">
 							<ReportInvoiceTable items={ testItems }/>
