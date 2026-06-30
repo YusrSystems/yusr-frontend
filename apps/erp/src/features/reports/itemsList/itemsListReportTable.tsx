@@ -30,7 +30,8 @@ export function ItemsListReportTable()
 				const isEven = idx % 2 === 0;
 				return (
 					<tr key={ item.id.value }>
-						<ReportTableTd isEven={ isEven }>{ idx + 1 }</ReportTableTd>
+						<ReportTableTd
+							isEven={ isEven }>{ idx + 1 + ((Cubits.items.currentPage.value - 1) * Cubits.items.pageSize.value) }</ReportTableTd>
 						<ReportTableTd isEven={ isEven }>{ item.id.value }</ReportTableTd>
 						<ReportTableTd isEven={ isEven } align="start">{ item.type }</ReportTableTd>
 						<ReportTableTd isEven={ isEven } align="start">{ item.name }</ReportTableTd>
