@@ -23,27 +23,3 @@ body {
 }
 
 @source "../../../packages/yusr-ui/src/**/*.{ts,tsx}";
-
-@media print {
-    /* Hide everything */
-    body * {
-        visibility: hidden !important;
-    }
-
-    /* Show only the report */
-    #print-report,
-    #print-report * {
-        visibility: visible !important;
-    }
-
-    /* Make the report occupy the page */
-    #print-report {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-
-
-    }
-}

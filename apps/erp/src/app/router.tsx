@@ -40,7 +40,7 @@ import QuotationInvoicesPage from "@/features/invoices/quotationInvoicesPage.tsx
 import AuthGate from "@/app/authGate.tsx";
 import CostAdjustmentsPage from "@/features/costAdjustments/costAdjustmentsPage.tsx";
 import { TestReport } from "@/features/report/invoiceReport/testReport.tsx";
-import ItemsListReport from "@/features/reports/itemsList/itemsListReport.tsx";
+import { ItemsListReport } from "@/features/reports/itemsList/itemsListReport.tsx";
 // import ReportPage from "@/features/report/reportPage.tsx";
 
 const refreshPage = () =>

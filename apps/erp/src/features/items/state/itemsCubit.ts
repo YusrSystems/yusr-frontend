@@ -2,10 +2,10 @@ import type { BarcodeResult, ItemDto } from "@/core/data/item";
 import Item from "@/core/data/item";
 import { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
 import { Services } from "@/core/services/services";
-import { PageReportableCubit } from "yusr-ui";
+import { PageCubit } from "yusr-ui";
 
 
-export class ItemsCubit extends PageReportableCubit<Item, ItemDto>
+export class ItemsCubit extends PageCubit<Item, ItemDto>
 {
 	constructor()
 	{

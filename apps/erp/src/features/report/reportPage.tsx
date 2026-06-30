@@ -4,16 +4,19 @@ import type { PropsWithChildren } from "react";
 export default function ReportPage({children}: PropsWithChildren)
 {
 	return (
-		<div className="min-h-screen p-4 md:p-8 flex flex-col print:overflow-visible" id="print-report">
+		<div className="report min-h-screen p-4 md:p-8 flex flex-col print:p-0">
 
 			<style>{ `
 				@media print {
 					@page { 
-						margin: 3mm 3mm 12mm 3mm; 
+						margin: 5mm 5mm 12mm 5mm; 
 					}
 					body { 
 						-webkit-print-color-adjust: exact !important; 
 						print-color-adjust: exact !important; 
+					}
+					body > div:first-of-type {
+					   display: none !important;
 					}
 				}
 			` }</style>

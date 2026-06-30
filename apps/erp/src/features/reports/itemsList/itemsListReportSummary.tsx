@@ -14,10 +14,13 @@ export function ItemsListReportSummary()
 					<SummaryRow.Label label="مجموع التكاليف"/>
 					<SummaryRow.Label label="Total Costs"/>
 				</div>
-				<SummaryRow.Value className="text-destructive!" value={ numberFmt(Cubits.items.entities.value.reduce(
-					(sum, item) => sum + (item.quantity.value * item.cost.value),
-					0
-				)) }/>
+				<SummaryRow.Value
+					className="text-destructive!"
+					value={ numberFmt(Cubits.items.entities.value.reduce(
+						(sum, item) => sum + (item.quantity.value * item.cost.value),
+						0
+					)) }
+				/>
 			</SummaryRow>
 		</div>
 	);

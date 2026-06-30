@@ -4,15 +4,12 @@ import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Package, Printer } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	Button,
 	ChangeableEntityMode,
 	CrudPage,
-	Dialog,
-	DialogContent,
-	DialogTrigger,
 	FilterLabelWrapper,
 	FilterSection,
 	type FilterValueInputProps,
@@ -28,16 +25,17 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { ItemType } from "@/core/data/item.ts";
 import ItemStatementButton from "../reports/itemStatementDialog";
 import ChangeItemDialog from "./changeItemDialog";
-import { signal, type Signal } from "@preact/signals-react";
+import { type Signal } from "@preact/signals-react";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect.tsx";
-import ItemsListReport from "@/features/reports/itemsList/itemsListReport.tsx";
+import { ItemsListReport } from "@/features/reports/itemsList/itemsListReport.tsx";
+import { createPortal } from "react-dom";
 
 
 export default function ItemsPage()
 {
 
-	const {t} = useTranslation("stocking");
+	const {t} = useTranslation(["stocking", "erpCommon"]);
 
 	useEffect(() =>
 	{
@@ -52,64 +50,86 @@ export default function ItemsPage()
 	}
 
 	return (
-		<CrudPage>
-			<CrudPage.Header
-				title={ t("items.title") }
-				addButtonTitle={ t("items.addNewTitle") }
-				isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Items, SystemPermissionsActions.Add) }
-				actionButtons={ [
-					<ReportDialogButton/>
-				] }
-			/>
-
-			<Cards/>
-
-			<FilterSection
-				fieldsCubit={ Cubits.itemFilterFields }
-				onApply={ (groups) => Cubits.items.applyFilterGroups(groups) }
-				onClear={ () => Cubits.items.clearFilterGroups() }
-				renderCustomInput={ RenderItemFilterInput }
-			/>
-
-			<CrudPage.SearchInput
-				className="rounded-t-none!"
-				onSearch={ (text) => Cubits.items.search(text) }
-			/>
-
-			<PageTable/>
-
-			<CrudPage.ChangeDialog
-				changeDialog={ (dto: ItemDto | undefined, closeDialog) =>
-				{
-					return (
-						<ChangeItemDialog
-							entity={ dto
-								? Item.load(dto)
-								: Item.create() }
-							service={ Services.itemsApi }
-							onSuccess={ (data) =>
+		<>
+			<CrudPage>
+				<CrudPage.Header
+					title={ t("items.title") }
+					addButtonTitle={ t("items.addNewTitle") }
+					isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Items, SystemPermissionsActions.Add) }
+					actionButtons={ [
+						<Button
+							key="print-list"
+							variant="outline"
+							onClick={ () =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								setTimeout(() =>
 								{
-									Cubits.items.add(data);
-									closeDialog();
-								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
-								{
-									Cubits.items.update(data);
-								}
+									window.print();
+								}, 100);
 							} }
-						/>
-					);
-				} }
-			/>
+						>
+							<Printer className="h-4 w-4"/>
+							{ t("erpCommon:reports.itemsList") }
+						</Button>
+					] }
+				/>
 
-			<CrudPage.DeleteDialog
-				entityNameSelector={ (item) => item.name }
-				service={ Services.itemsApi }
-				onSuccess={ (entity) => Cubits.items.delete(entity) }
-			/>
-		</CrudPage>
+				<Cards/>
+
+				<FilterSection
+					fieldsCubit={ Cubits.itemFilterFields }
+					onApply={ (groups) => Cubits.items.applyFilterGroups(groups) }
+					onClear={ () => Cubits.items.clearFilterGroups() }
+					renderCustomInput={ RenderItemFilterInput }
+				/>
+
+				<CrudPage.SearchInput
+					className="rounded-t-none!"
+					onSearch={ (text) => Cubits.items.search(text) }
+				/>
+
+				<PageTable/>
+
+				<CrudPage.ChangeDialog
+					changeDialog={ (dto: ItemDto | undefined, closeDialog) =>
+					{
+						return (
+							<ChangeItemDialog
+								entity={ dto
+									? Item.load(dto)
+									: Item.create() }
+								service={ Services.itemsApi }
+								onSuccess={ (data) =>
+								{
+									if (data.mode.value === ChangeableEntityMode.Create)
+									{
+										Cubits.items.add(data);
+										closeDialog();
+									}
+									else if (data.mode.value === ChangeableEntityMode.Update)
+									{
+										Cubits.items.update(data);
+									}
+								} }
+							/>
+						);
+					} }
+				/>
+
+				<CrudPage.DeleteDialog
+					entityNameSelector={ (item) => item.name }
+					service={ Services.itemsApi }
+					onSuccess={ (entity) => Cubits.items.delete(entity) }
+				/>
+			</CrudPage>
+
+			{ createPortal(
+				<div className="hidden print:block print:w-full print:static">
+					<ItemsListReport/>
+				</div>,
+				document.body
+			) }
+		</>
 	);
 }
 
@@ -265,31 +285,4 @@ function RenderItemFilterInput({rule, field}: FilterValueInputProps)
 		);
 	}
 	return undefined;
-}
-
-function ReportDialogButton()
-{
-	useSignals();
-	const isOpen = useMemo(() => signal(false), []);
-	return <Dialog
-
-		open={ isOpen.value }
-		onOpenChange={ (open) => (isOpen.value = open) }
-	>
-		<DialogTrigger asChild>
-			<Button
-				key="print-list"
-				variant="outline"
-			>
-				<Printer className="h-4 w-4"/>
-				تقرير قائمة المواد
-			</Button>
-		</DialogTrigger>
-
-		<DialogContent className="sm:max-w-[100vw] sm:w-screen sm:h-screen overflow-y-auto">
-			<ItemsListReport/>
-		</DialogContent>
-
-
-	</Dialog>;
 }

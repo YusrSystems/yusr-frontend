@@ -9,7 +9,7 @@ export function ItemsListReportTable()
 {
 	useSignals();
 	return (
-		<table className="w-full border-collapse rounded-[5px] overflow-hidden">
+		<table className="w-full mt-5 border-collapse rounded-lg overflow-hidden">
 			<thead>
 			<tr>
 				<ReportTableTh ar="الرقم" en="No."/>
@@ -25,7 +25,7 @@ export function ItemsListReportTable()
 			</tr>
 			</thead>
 			<tbody>
-			{ Cubits.items.reportEntities.value.map((item, idx) =>
+			{ Cubits.items.entities.value.map((item, idx) =>
 			{
 				const isEven = idx % 2 === 0;
 				return (
