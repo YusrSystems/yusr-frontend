@@ -4,12 +4,13 @@ import ReportHeader from "@/features/report/reportHeader.tsx";
 import { ReportPageContainer } from "@/features/report/reportPageContainer.tsx";
 import ReportPageHeader from "@/features/report/reportPageHeader.tsx";
 import { ReportPageBody } from "@/features/report/reportPageBody.tsx";
-import { ItemsListTableReport } from "@/features/reports/itemsList/itemsListTableReport.tsx";
+import { ItemsListReportTable } from "@/features/reports/itemsList/itemsListReportTable.tsx";
 import { useEffect } from "react";
 import { Cubits } from "@/core/services/cubits.ts";
 import { Services } from "@/core/services/services.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { SystemPermissionsActions, UnauthorizedPage } from "yusr-ui";
+import { ItemsListReportSummary } from "@/features/reports/itemsList/itemsListReportSummary.tsx";
 
 
 export default function ItemsListReport()
@@ -48,9 +49,9 @@ export default function ItemsListReport()
 					</ReportPageHeader>
 					<ReportPageBody>
 						<div className="py-2">
-							<ItemsListTableReport/>
+							<ItemsListReportTable/>
 						</div>
-						{/*<ReportInvoiceSummary data={ testSummary }/>*/ }
+						<ItemsListReportSummary/>
 					</ReportPageBody>
 
 				</ReportPageContainer>
