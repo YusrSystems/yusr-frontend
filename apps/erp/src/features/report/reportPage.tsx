@@ -1,17 +1,20 @@
-import ReportHeader from "@/features/report/reportHeader.tsx";
-import ReportFooter from "@/features/report/reportFooter.tsx";
-import ReportTable from "@/features/report/reportTable.tsx";
+import type { PropsWithChildren } from "react";
 
 
-export default function ReportPage()
+export default function ReportPage({children}: PropsWithChildren)
 {
 	return (
-		<div className="min-h-screen bg-muted/30 p-4 md:p-8 print:p-0 print:bg-white">
+		<div className="min-h-screen p-4 md:p-8 flex flex-col">
 
 			<style>{ `
 				@media print {
-					@page { margin: 15mm; }
-					body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+					@page { 
+						margin: 3mm 3mm 12mm 3mm; 
+					}
+					body { 
+						-webkit-print-color-adjust: exact !important; 
+						print-color-adjust: exact !important; 
+					}
 				}
 			` }</style>
 
@@ -24,21 +27,8 @@ export default function ReportPage()
 				</button>
 			</div>
 
-			<div
-				className="max-w-5xl mx-auto bg-card text-card-foreground shadow-sm border border-border rounded-lg p-6 md:p-10 print:shadow-none print:border-none print:p-0 print:max-w-full relative pb-20 print:bg-white print:text-black">
+			{ children }
 
-				<ReportHeader>
-					<ReportHeader.CompanyCard logoUrl="/path-to-your-logo.png"/>
-					<ReportHeader.Title/>
-					<ReportHeader.MetaData/>
-				</ReportHeader>
-
-				<div className="my-8 border-t border-border print:border-black/20"/>
-
-				<ReportTable/>
-
-				<ReportFooter/>
-			</div>
 		</div>
 	);
 }

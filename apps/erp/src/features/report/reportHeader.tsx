@@ -1,76 +1,85 @@
-import { type ComponentProps, type PropsWithChildren, useMemo } from "react";
+import { type ComponentProps, type PropsWithChildren } from "react";
 import { Card, cn } from "yusr-ui";
-import { type Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
+import { Services } from "@/core/services/services.ts";
 
 
 export default function ReportHeader({children}: PropsWithChildren)
 {
 	return (
 		<div
-			className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 print:flex-row print:items-center">
+			className="grid grid-cols-3 p-3 rounded-md items-center gap-5 bg-accent">
 			{ children }
 		</div>
 	);
 }
 
-export type CompanyCardProps = ComponentProps<typeof Card> & {
-	logoUrl?: string;
-};
-
-ReportHeader.CompanyCard = function CompanyCard({className, logoUrl, ...props}: CompanyCardProps)
+ReportHeader.CompanySection = function CompanyCard({className, ...props}: ComponentProps<typeof Card>)
 {
 	useSignals();
-	const isImageError: Signal<boolean> = useMemo(() => signal<boolean>(false), []);
+
 	return (
 		<div className={ cn("flex items-center gap-4", className) } { ...props }>
 			<div
-				className="w-16 h-16 shrink-0 rounded-md overflow-hidden border border-border bg-muted flex items-center justify-center print:border-black/20">
-				{ !isImageError.value && logoUrl ? (
+				className="w-20 h-20 shrink-0 rounded-md overflow-hidden border border-border bg-muted flex items-center justify-center">
+				{ Services.auth.setting?.logo.value?.url ? (
 					<img
-						src={ logoUrl }
+						src={ Services.auth.setting?.logo.value.url }
 						alt="Company Logo"
 						className="w-full h-full object-contain"
-						onError={ () => isImageError.value = true }
 					/>
 				) : (
-					<span className="text-2xl font-bold text-muted-foreground print:text-black/50">Y</span>
+					<span
+						className="text-2xl font-bold text-muted-foreground">{ Services.auth.setting?.companyName.value.at(0) }
+					</span>
 				) }
 			</div>
 
-			<div className="flex flex-col text-sm text-muted-foreground print:text-black/80">
-				<h5 className="font-bold text-xl text-foreground print:text-black mb-1">Yusr</h5>
-				<p>الرقم الضريبي: 2323233232323323</p>
-				<p>قباء - المحبوبة - 1234 - 34343</p>
-				<p>0534924601</p>
+			<div className="flex flex-col text-[10px] text-muted-foreground">
+				<h3 className="font-bold text-lg text-primary mb-1">{ Services.auth.setting?.companyName.value }</h3>
+				<p>{ Services.auth.setting?.vatNumber.value }</p>
+				<p>
+					{ Services.auth.setting?.branch.value?.cityName.value } - { Services.auth.setting?.branch.value?.district.value } - { Services.auth.setting?.branch.value?.postalCode.value }
+				</p>
+				<p>{ Services.auth.setting?.companyPhone.value }</p>
 			</div>
 		</div>
 	);
 };
 
-ReportHeader.Title = function Title()
+ReportHeader.TitleSection = function Title({titleAr, titleEn, children}: {
+	titleAr: string,
+	titleEn: string
+} & PropsWithChildren)
 {
 	return (
-		<div className="text-center flex-1">
-			<h1 className="text-3xl font-extrabold tracking-tight text-foreground print:text-black uppercase">
-				Invoice Report
+		<div className="flex flex-col gap-1 text-center h-full w-full">
+			<h1 className="text-lg font-extrabold tracking-tight text-primary uppercase">
+				{ titleAr }
 			</h1>
-			<p className="text-muted-foreground text-sm mt-1 print:text-black/70">Monthly Summary</p>
+			<h2 className="text-lg font-extrabold tracking-tight text-primary uppercase">
+				{ titleEn }
+			</h2>
+			{ children }
 		</div>
 	);
 };
 
-ReportHeader.MetaData = function MetaData()
+ReportHeader.Id = function Title({id}: { id: number })
 {
 	return (
-		<div className="flex flex-col text-right text-sm bg-muted/50 print:bg-transparent p-3 rounded-md print:p-0">
-			<div className="flex justify-between gap-4">
-				<span className="font-medium text-muted-foreground print:text-black/70">Prepared By:</span>
-				<span className="font-semibold text-foreground print:text-black">Hbraa</span>
-			</div>
-			<div className="flex justify-between gap-4 mt-1">
-				<span className="font-medium text-muted-foreground print:text-black/70">Date:</span>
-				<span className="font-semibold text-foreground print:text-black">2026/06/24</span>
+		<p className="text-destructive font-bold">{ id }</p>
+	);
+};
+
+ReportHeader.MetaDataSection = function MetaData({children}: PropsWithChildren)
+{
+	return (
+		<div className="h-full relative ">
+			{ children }
+			<div className="absolute bottom-0 w-full flex justify-end gap-4 text-[10px] text-foreground">
+				<span>{ Services.auth.loggedInUser?.username.value }</span>
+				<span>{ new Date().toDateString() }</span>
 			</div>
 		</div>
 	);
