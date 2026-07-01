@@ -25,7 +25,7 @@ import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
-import { CommissionType, type PaymentMethod } from "@/core/data/paymentMethod.ts";
+import { CommissionType, PaymentMethod } from "@/core/data/paymentMethod.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
@@ -167,9 +167,9 @@ export default function ChangeVoucherDialog({
 						<PaymentMethodsSearchableSelect
 							id={ entity.value.paymentMethodId }
 							label={ entity.value.paymentMethod.value?.name }
-							onSelect={ (pm: PaymentMethod) =>
+							onSelect={ (pm) =>
 							{
-								selectedPaymentMethod.value = pm;
+								selectedPaymentMethod.value = new PaymentMethod(pm);
 								reCalculateCommission();
 							} }
 						/>

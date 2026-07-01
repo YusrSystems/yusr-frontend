@@ -9,7 +9,7 @@ import { TaxDto } from "../data/tax";
 import { UnitDto } from "../data/unit";
 import { Services } from "./services";
 import { VoucherDto } from "@/core/data/voucher.ts";
-import Invoice, { type InvoiceDto } from "@/core/data/invoices/invoice.ts";
+import { type InvoiceDto } from "@/core/data/invoices/invoice.ts";
 import type { StoreDto } from "@/core/data/store.ts";
 import { type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { type CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
@@ -32,7 +32,7 @@ export class Cubits extends BaseCubits
 	public static readonly balanceTransfers = new PageCubit<BalanceTransferDto>(Services.balanceTransfersApi);
 	public static override roles = new PageCubit<ErpRoleDto>(Services.rolesApi);
 	public static readonly vouchers = new PageCubit<VoucherDto>(Services.voucherApi);
-	public static readonly invoices = new PageCubit<Invoice, InvoiceDto>(Services.invoicesApi);
+	public static readonly invoices = new PageCubit<InvoiceDto>(Services.invoicesApi);
 
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");
 	public static readonly itemFilterFields = new FilterFieldsCubit("Items");

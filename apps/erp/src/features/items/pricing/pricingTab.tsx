@@ -29,7 +29,7 @@ export default function PricingTab({entity}: { entity: Item; })
 						{
 							entity.itemUnitPricingMethods.value.forEach((iupm) =>
 							{
-								if (iupm.unitId.value === unit?.id.value)
+								if (iupm.unitId.value === unit?.id)
 								{
 									iupm.quantityMultiplier.value = 1;
 								}

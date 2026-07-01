@@ -2,7 +2,7 @@ import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, SystemPermissionsAct
 import { ItemUnitPricingMethod, type ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod.ts";
 import { type Signal } from "@preact/signals-react";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
-import Item, { ItemType } from "@/core/data/item.ts";
+import { ItemDto, ItemType } from "@/core/data/item.ts";
 import type Invoice from "@/core/data/invoices/invoice.ts";
 import { Services } from "@/core/services/services.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
@@ -105,10 +105,10 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			.map(x => ItemUnitPricingMethod.create(x)));
 	}
 
-	public static createFromItem(invoice: Invoice, item: Item)
+	public static createFromItem(invoice: Invoice, item: ItemDto)
 	{
-		const defaultPricingMethod = item.itemUnitPricingMethods.value?.find((p) => p.unitId.value === item.sellUnitId.value)
-			?? item.itemUnitPricingMethods.value[0];
+		const defaultPricingMethod = item.itemUnitPricingMethods?.find((p) => p.unitId === item.sellUnitId)
+			?? item.itemUnitPricingMethods[0];
 
 		if (!defaultPricingMethod)
 		{
@@ -116,31 +116,31 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		}
 
 		const {taxExclusivePrice, taxInclusivePrice} = InvoiceItemsMath.GetPrices(
-			item.taxIncluded.value,
-			defaultPricingMethod?.price.value ?? 0,
-			item.totalTaxes.value ?? 0
+			item.taxIncluded,
+			defaultPricingMethod?.price ?? 0,
+			item.totalTaxes ?? 0
 		);
 
 		const ii = InvoiceItem.create({
 			id: 0,
 			index: (invoice.invoiceItems.value?.length ?? -1) + 1,
 			invoiceId: 0,
-			itemId: item.id.value,
-			itemType: item.type.value,
-			itemName: item.name.value,
+			itemId: item.id,
+			itemType: item.type,
+			itemName: item.name,
 
 			// Pricing Method Details
-			itemUnitPricingMethodId: defaultPricingMethod?.id.value,
-			itemUnitPricingMethodName: defaultPricingMethod?.itemUnitPricingMethodName.value,
-			itemUnitPricingMethods: (item.itemUnitPricingMethods.value ?? []).map(x => x.toJson()),
+			itemUnitPricingMethodId: defaultPricingMethod?.id,
+			itemUnitPricingMethodName: defaultPricingMethod?.itemUnitPricingMethodName,
+			itemUnitPricingMethods: (item.itemUnitPricingMethods ?? []),
 
 			// Financials
-			quantity: item.type.value === ItemType.Service ?
-				1 : item.storeQuantity.value
+			quantity: item.type === ItemType.Service ?
+				1 : item.storeQuantity
 					? 1 : Services.auth.hasAuth(SystemPermissionsResources.InvoiceSellBeyondAvailableQuantity, SystemPermissionsActions.Get) ? 1 : 0,
-			originalQuantity: item.storeQuantity.value ?? 0,
-			originalCost: item.cost.value ?? 0,
-			cost: (item.cost.value ? Number((item.cost.value).toFixed(2)) : 0) * defaultPricingMethod.quantityMultiplier.value,
+			originalQuantity: item.storeQuantity ?? 0,
+			originalCost: item.cost ?? 0,
+			cost: (item.cost ? Number((item.cost).toFixed(2)) : 0) * defaultPricingMethod.quantityMultiplier,
 			taxExclusivePrice: taxExclusivePrice,
 			taxInclusivePrice: taxInclusivePrice,
 			originalTaxInclusivePrice: taxInclusivePrice,
@@ -149,12 +149,12 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			taxInclusiveTotalPrice: taxInclusivePrice,
 
 			// Taxes
-			taxable: item.taxable.value ?? false,
-			taxIncluded: item.taxIncluded.value ?? false,
-			totalTaxesPerc: item.totalTaxes.value ?? 0,
+			taxable: item.taxable ?? false,
+			taxIncluded: item.taxIncluded ?? false,
+			totalTaxesPerc: item.totalTaxes ?? 0,
 
 			// Misc
-			notes: item.description.value
+			notes: item.description
 		});
 
 		ii.getInvoice = () => invoice;

@@ -5,7 +5,7 @@ import { Services } from "@/core/services/services.ts";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 import { type Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, StorageFile, Validators } from "yusr-ui";
-import Item from "@/core/data/item.ts";
+import { ItemDto } from "@/core/data/item.ts";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
 import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
@@ -297,9 +297,9 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.paidAmount.value = taxInclusivePrice;
 	}
 
-	public addItem(storeItem: Item)
+	public addItem(storeItem: ItemDto)
 	{
-		const existingItem = this.invoiceItems.value?.find((item) => item.itemId.value === storeItem.id.value);
+		const existingItem = this.invoiceItems.value?.find((item) => item.itemId.value === storeItem.id);
 
 		if (existingItem)
 		{

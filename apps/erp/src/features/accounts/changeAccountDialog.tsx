@@ -31,7 +31,7 @@ import { type Signal, signal } from "@preact/signals-react";
 
 export default function ChangeAccountDialog(
 	{dto, service, onSuccess, fixedType, selectTypes}: CommonChangeDialogProps<AccountDto> & {
-		fixedType: AccountType;
+		fixedType?: AccountType;
 		selectTypes?: AccountType[];
 	}
 )

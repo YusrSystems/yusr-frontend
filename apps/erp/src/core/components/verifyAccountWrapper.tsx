@@ -1,5 +1,6 @@
 import { i18n, Separator } from "yusr-ui";
 import { Services } from "../services/services";
+import React from "react";
 
 
 export default function VerifyAccountWrapper({children}: { children: React.ReactNode; })
