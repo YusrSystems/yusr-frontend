@@ -5,7 +5,6 @@ import ItemsApiService from "../networking/itemApiService";
 import ItemsSettlementsApiService from "../networking/itemsSettlementsApiService";
 import ItemTransferApiService from "../networking/itemTransferApiService";
 import PaymentMethodsApiService from "../networking/paymentMethodApiService";
-import PricingMethodsApiService from "../networking/pricingMethodsApiService";
 import StocktakingsApiService from "../networking/stocktakingApiService";
 import UnitsApiService from "../networking/unitApiService";
 import { ErpAuthService } from "./erpAuthService";
@@ -17,6 +16,7 @@ import CostAdjustmentsApiService from "@/core/networking/costAdjustmentsApiServi
 import { TaxDto } from "@/core/data/tax.ts";
 import type { StoreDto } from "@/core/data/store.ts";
 import type { ErpRoleDto } from "@/core/data/erpRole.ts";
+import type { PricingMethodDto } from "@/core/data/pricingMethod.ts";
 
 
 export class Services extends BaseServices
@@ -27,7 +27,7 @@ export class Services extends BaseServices
 	public static readonly taxesApi = new BaseApiService<TaxDto>("Taxes");
 	public static readonly storesApi = new BaseApiService<StoreDto>("Stores");
 	public static readonly unitsApi = new UnitsApiService("Units");
-	public static readonly pricingMethodsApi = new PricingMethodsApiService();
+	public static readonly pricingMethodsApi = new BaseApiService<PricingMethodDto>("PricingMethods");
 	public static readonly itemsApi = new ItemsApiService();
 	public static readonly accountsApi = new AccountApiService();
 	public static readonly paymentMethodsApi = new PaymentMethodsApiService();
