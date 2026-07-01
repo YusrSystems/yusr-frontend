@@ -7,7 +7,7 @@ import ItemTransfer, { ItemTransferDto } from "../data/itemTransfer";
 import PricingMethod, { PricingMethodDto } from "../data/pricingMethod";
 import Stocktaking, { StocktakingDto } from "../data/stocktaking";
 import { TaxDto } from "../data/tax";
-import Unit, { UnitDto } from "../data/unit";
+import { UnitDto } from "../data/unit";
 import { Services } from "./services";
 import { type Voucher, VoucherDto } from "@/core/data/voucher.ts";
 import Invoice, { type InvoiceDto } from "@/core/data/invoices/invoice.ts";
@@ -20,7 +20,7 @@ export class Cubits extends BaseCubits
 {
 	public static readonly taxes = new PageCubit<TaxDto>(Services.taxesApi);
 	public static readonly stores = new PageCubit<StoreDto>(Services.storesApi);
-	public static readonly units = new PageCubit<Unit, UnitDto>(Services.unitsApi);
+	public static readonly units = new PageCubit<UnitDto>(Services.unitsApi);
 	public static readonly pricingMethods = new PageCubit<PricingMethod, PricingMethodDto>(Services.pricingMethodsApi);
 	public static readonly paymentMethods = new PageCubit<PaymentMethod, PaymentMethodDto>(Services.paymentMethodsApi);
 	public static readonly accounts = new PageCubit<Account, AccountDto>(Services.accountsApi);

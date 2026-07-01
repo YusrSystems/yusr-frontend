@@ -1,5 +1,4 @@
 import type { UnitDto } from "@/core/data/unit";
-import Unit from "@/core/data/unit";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -31,7 +30,7 @@ export default function UnitsPage()
 	}
 
 	return (
-		<CrudPage>
+		<CrudPage<UnitDto>>
 			<CrudPage.Header
 				title={ t("units.title") }
 				addButtonTitle={ t("units.addNewTitle") }
@@ -49,18 +48,16 @@ export default function UnitsPage()
 				{
 					return (
 						<ChangeUnitDialog
-							entity={ dto
-								? Unit.load(dto)
-								: Unit.create() }
+							dto={ dto }
 							service={ Services.unitsApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									Cubits.units.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									Cubits.units.update(data);
 								}
@@ -108,7 +105,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<Unit, UnitDto>
+				<CrudPage.TableBody<UnitDto>
 					data={ Cubits.units.entities.value }
 					headerRows={ [{rowBody: "", rowStyles: "text-left w-12.5"}, {
 						rowBody: t("units.unitId"),
