@@ -8,7 +8,7 @@ import { StocktakingDto } from "../data/stocktaking";
 import { TaxDto } from "../data/tax";
 import { UnitDto } from "../data/unit";
 import { Services } from "./services";
-import { type Voucher, VoucherDto } from "@/core/data/voucher.ts";
+import { VoucherDto } from "@/core/data/voucher.ts";
 import Invoice, { type InvoiceDto } from "@/core/data/invoices/invoice.ts";
 import type { StoreDto } from "@/core/data/store.ts";
 import { type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
@@ -27,7 +27,7 @@ export class Cubits extends BaseCubits
 	public static readonly itemTransfers = new PageCubit<ItemTransferDto>(Services.itemTransfersApi);
 	public static readonly items = new ItemsCubit();
 	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(Services.costAdjustmentsApi);
-	public static readonly paymentMethods = new PageCubit<PaymentMethod, PaymentMethodDto>(Services.paymentMethodsApi);
+	public static readonly paymentMethods = new PageCubit<PaymentMethodDto>(Services.paymentMethodsApi);
 	public static readonly accounts = new PageCubit<AccountDto>(Services.accountsApi);
 	public static readonly balanceTransfers = new PageCubit<BalanceTransfer, BalanceTransferDto>(
 		Services.balanceTransfersApi

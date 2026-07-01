@@ -1,12 +1,9 @@
 import { BaseApiService, BaseServices, RolesApiService } from "yusr-ui";
-import AccountApiService from "../networking/accountApiService";
 import BalanceTransfersApiService from "../networking/balanceTransferApiService";
 import ItemsApiService from "../networking/itemApiService";
-import PaymentMethodsApiService from "../networking/paymentMethodApiService";
 import UnitsApiService from "../networking/unitApiService";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
-import VouchersApiService from "@/core/networking/voucherApiService.ts";
 import InvoicesApiService from "@/core/networking/invoiceApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
 import { TaxDto } from "@/core/data/tax.ts";
@@ -17,6 +14,7 @@ import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
 import type { CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
 import type { PricingMethodDto } from "@/core/data/pricingMethod.ts";
 import { type AccountDto } from "@/core/data/account.ts";
+import type { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 
 
 export class Services extends BaseServices
@@ -40,7 +38,6 @@ export class Services extends BaseServices
 	public static readonly voucherApi = new BaseApiService<VoucherDto>("Vouchers");
 	public static readonly invoicesApi = new InvoicesApiService();
 	public static readonly settingApi = new SettingsApiService();
-	public static readonly costAdjustmentsApi = new BaseApiService<CostAdjustmentDto>("CostAdjustments");
 
 	static
 	{
