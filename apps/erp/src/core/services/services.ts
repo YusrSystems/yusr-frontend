@@ -1,5 +1,4 @@
 import { BaseApiService, BaseServices, RolesApiService } from "yusr-ui";
-import BalanceTransfersApiService from "../networking/balanceTransferApiService";
 import ItemsApiService from "../networking/itemApiService";
 import UnitsApiService from "../networking/unitApiService";
 import { ErpAuthService } from "./erpAuthService";
@@ -15,6 +14,8 @@ import type { CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
 import type { PricingMethodDto } from "@/core/data/pricingMethod.ts";
 import { type AccountDto } from "@/core/data/account.ts";
 import type { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
+import { type BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
+import type { VoucherDto } from "@/core/data/voucher.ts";
 
 
 export class Services extends BaseServices
@@ -33,11 +34,11 @@ export class Services extends BaseServices
 	public static readonly itemsApi = new ItemsApiService();
 	public static readonly accountsApi = new BaseApiService<AccountDto>("Accounts");
 	public static readonly paymentMethodsApi = new BaseApiService<PaymentMethodDto>("PaymentMethods");
-	public static readonly balanceTransfersApi = new BalanceTransfersApiService();
-	public static readonly dashboardApi = new DashboardApiService();
+	public static readonly balanceTransfersApi = new BaseApiService<BalanceTransferDto>("BalanceTransfers");
 	public static readonly voucherApi = new BaseApiService<VoucherDto>("Vouchers");
 	public static readonly invoicesApi = new InvoicesApiService();
 	public static readonly settingApi = new SettingsApiService();
+	public static readonly dashboardApi = new DashboardApiService();
 
 	static
 	{
