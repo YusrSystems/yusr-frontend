@@ -1,4 +1,5 @@
 import { BaseApiService, BaseServices, RolesApiService } from "yusr-ui";
+import AccountApiService from "../networking/accountApiService";
 import BalanceTransfersApiService from "../networking/balanceTransferApiService";
 import ItemsApiService from "../networking/itemApiService";
 import PaymentMethodsApiService from "../networking/paymentMethodApiService";
@@ -33,12 +34,13 @@ export class Services extends BaseServices
 	public static readonly costAdjustmentsApi = new BaseApiService<CostAdjustmentDto>("CostAdjustments");
 	public static readonly itemsApi = new ItemsApiService();
 	public static readonly accountsApi = new BaseApiService<AccountDto>("Accounts");
-	public static readonly paymentMethodsApi = new PaymentMethodsApiService();
+	public static readonly paymentMethodsApi = new BaseApiService<PaymentMethodDto>("PaymentMethods");
 	public static readonly balanceTransfersApi = new BalanceTransfersApiService();
 	public static readonly dashboardApi = new DashboardApiService();
-	public static readonly voucherApi = new VouchersApiService();
+	public static readonly voucherApi = new BaseApiService<VoucherDto>("Vouchers");
 	public static readonly invoicesApi = new InvoicesApiService();
 	public static readonly settingApi = new SettingsApiService();
+	public static readonly costAdjustmentsApi = new BaseApiService<CostAdjustmentDto>("CostAdjustments");
 
 	static
 	{

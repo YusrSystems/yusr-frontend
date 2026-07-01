@@ -14,7 +14,7 @@ import {
 	TextAreaField,
 	TextField
 } from "yusr-ui";
-import { type Voucher, VoucherDto, VoucherType } from "@/core/data/voucher.ts";
+import { Voucher, VoucherDto, VoucherType } from "@/core/data/voucher.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Services } from "@/core/services/services.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
@@ -30,16 +30,18 @@ import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function ChangeVoucherDialog({
-	entity,
+	dto,
 	service,
 	onSuccess
-}: CommonChangeDialogProps<Voucher, VoucherDto>)
+}: CommonChangeDialogProps<VoucherDto>)
 {
 	useSignals();
+	const entity = useMemo(() => signal<Voucher>(dto ? Voucher.load(dto) : Voucher.create()), []);
 
 	const {t} = useTranslation(["accounting", "common"]);
 	const amountToWords = useMemo(() => signal<string>(""), []);
-	const selectedPaymentMethod = useMemo(() => signal<PaymentMethod | undefined>(entity.paymentMethod.value), [entity.paymentMethod.value]);
+	const selectedPaymentMethod = useMemo(() =>
+		signal<PaymentMethod | undefined>(entity.value.paymentMethod.value), [entity.value.paymentMethod.value]);
 
 	useEffect(() =>
 	{
@@ -49,50 +51,53 @@ export default function ChangeVoucherDialog({
 
 	useEffect(() =>
 	{
-		if (entity.amount.value !== undefined && Services.auth.setting?.currency?.value)
+		if (entity.value.amount.value !== undefined && Services.auth.setting?.currency?.value)
 		{
 			amountToWords.value = NumbertoWordsService.ConvertAmount(
-				entity.amount.value,
+				entity.value.amount.value,
 				Services.auth.setting.currency.value
 			);
 		}
-	}, [entity.amount.value, amountToWords]);
+	}, [entity.value.amount.value, amountToWords]);
 
 	const reCalculateCommission = () =>
 	{
-		if (entity.type.value == undefined || entity.amount.value == undefined || selectedPaymentMethod.value == undefined || entity.type.value === VoucherType.Payment)
+		if (entity.value.type.value == undefined ||
+			entity.value.amount.value == undefined ||
+			selectedPaymentMethod.value == undefined ||
+			entity.value.type.value === VoucherType.Payment)
 		{
-			entity.commissionAmount.value = 0;
+			entity.value.commissionAmount.value = 0;
 			return;
 		}
 
 		if (selectedPaymentMethod.value?.commissionType.value === CommissionType.Percent)
 		{
-			entity.commissionAmount.value = (entity.amount.value * (selectedPaymentMethod.value.commissionAmount.value ?? 0)) / 100;
+			entity.value.commissionAmount.value = (entity.value.amount.value * (selectedPaymentMethod.value.commissionAmount.value ?? 0)) / 100;
 			return;
 		}
 		else if (selectedPaymentMethod.value?.commissionType.value === CommissionType.Amount)
 		{
-			entity.commissionAmount.value = selectedPaymentMethod.value.commissionAmount.value ?? 0;
+			entity.value.commissionAmount.value = selectedPaymentMethod.value.commissionAmount.value ?? 0;
 			return;
 		}
 
-		entity.commissionAmount.value = 0;
+		entity.value.commissionAmount.value = 0;
 	};
 
 	if (
-		(entity.mode.value === ChangeableEntityMode.Create
+		(entity.value.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Add))
-		|| (entity.mode.value === ChangeableEntityMode.Update
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const isPayment = entity.type.value === VoucherType.Payment;
-	const isReceipt = entity.type.value === VoucherType.Receipt;
-	const title = entity.mode.value === ChangeableEntityMode.Create
+	const isPayment = entity.value.type.value === VoucherType.Payment;
+	const isReceipt = entity.value.type.value === VoucherType.Receipt;
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? t("vouchers.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("vouchers.entityName") }`;
 
@@ -104,8 +109,8 @@ export default function ChangeVoucherDialog({
 					<SelectField
 						label={ t("vouchers.voucherType") }
 						required
-						value={ entity.type }
-						error={ entity.getError("type") }
+						value={ entity.value.type }
+						error={ entity.value.getError("type") }
 						options={
 							[
 								{
@@ -121,7 +126,7 @@ export default function ChangeVoucherDialog({
 						{
 							if (newType === VoucherType.Receipt)
 							{
-								entity.isAmountDue.value = false;
+								entity.value.isAmountDue.value = false;
 							}
 							reCalculateCommission();
 						} }
@@ -130,8 +135,8 @@ export default function ChangeVoucherDialog({
 					<DateField
 						label={ t("vouchers.date") }
 						required
-						value={ entity.date }
-						error={ entity.getError("date") }
+						value={ entity.value.date }
+						error={ entity.value.getError("date") }
 					/>
 				</FieldsSection>
 
@@ -139,15 +144,15 @@ export default function ChangeVoucherDialog({
 					<FormField
 						label={ t("vouchers.account") }
 						required
-						error={ entity.getError("accountId") }
+						error={ entity.value.getError("accountId") }
 					>
 
 
 						<AccountsSearchableSelect
-							disabled={ entity.mode.value === ChangeableEntityMode.Update }
+							disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
 							types={ [AccountType.Client, AccountType.Supplier] }
-							id={ entity.accountId }
-							label={ entity.accountName }
+							id={ entity.value.accountId }
+							label={ entity.value.accountName }
 							showAddButton={ false }
 						/>
 
@@ -157,12 +162,12 @@ export default function ChangeVoucherDialog({
 					<FormField
 						label={ t("vouchers.paymentMethod") }
 						required
-						error={ entity.getError("paymentMethodId") }
+						error={ entity.value.getError("paymentMethodId") }
 					>
 						<PaymentMethodsSearchableSelect
-							id={ entity.paymentMethodId }
-							label={ entity.paymentMethod.value?.name }
-							onSelect={ (pm) =>
+							id={ entity.value.paymentMethodId }
+							label={ entity.value.paymentMethod.value?.name }
+							onSelect={ (pm: PaymentMethod) =>
 							{
 								selectedPaymentMethod.value = pm;
 								reCalculateCommission();
@@ -175,8 +180,8 @@ export default function ChangeVoucherDialog({
 					<NumberField
 						label={ t("vouchers.amount") }
 						required
-						value={ entity.amount }
-						error={ entity.getError("amount") }
+						value={ entity.value.amount }
+						error={ entity.value.getError("amount") }
 						currency={ <ErpCurrencyIcon/> }
 						onChange={ () => reCalculateCommission() }
 					/>
@@ -184,7 +189,7 @@ export default function ChangeVoucherDialog({
 					{ isReceipt && (
 						<TextField
 							label={ t("vouchers.commissionAmount") }
-							value={ entity.commissionAmount }
+							value={ entity.value.commissionAmount }
 							disabled
 							className="bg-muted"
 						/>
@@ -195,8 +200,8 @@ export default function ChangeVoucherDialog({
 							required
 							id="isAmountDue"
 							label={ t("vouchers.amountDue") }
-							error={ entity.getError("isAmountDue") }
-							checked={ entity.isAmountDue ?? false }
+							error={ entity.value.getError("isAmountDue") }
+							checked={ entity.value.isAmountDue ?? false }
 						/>
 					) }
 
@@ -211,19 +216,19 @@ export default function ChangeVoucherDialog({
 				<FieldsSection title={ t("vouchers.partyInfo") } columns={ 2 }>
 					<TextField
 						label={ t("vouchers.giver") }
-						value={ entity.giver }
+						value={ entity.value.giver }
 					/>
 					<TextField
 						label={ t("vouchers.recipient") }
-						value={ entity.recipient }
+						value={ entity.value.recipient }
 					/>
 				</FieldsSection>
 
-				{ entity.invoiceId.value && (
+				{ entity.value.invoiceId.value && (
 					<FieldsSection title={ t("vouchers.systemLinks") } columns={ 1 }>
 						<TextField
 							label={ t("vouchers.relatedInvoice") }
-							value={ signal(`#${ entity.invoiceId.value }`) }
+							value={ signal(`#${ entity.value.invoiceId.value }`) }
 							disabled={ true }
 							className="bg-muted w-1/2"
 						/>
@@ -233,7 +238,7 @@ export default function ChangeVoucherDialog({
 				<FieldsSection columns={ 1 }>
 					<TextAreaField
 						label={ t("vouchers.description") }
-						value={ entity.description || "" }
+						value={ entity.value.description || "" }
 						rows={ 15 }
 					/>
 				</FieldsSection>
@@ -245,7 +250,7 @@ export default function ChangeVoucherDialog({
 			<ChangeDialog.SaveButton<Voucher, VoucherDto>
 				entity={ entity }
 				service={ service }
-				onSuccess={ (data) => onSuccess?.(data) }
+				onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 			/>
 		</ChangeDialog.Footer>
 	</ChangeDialog>;

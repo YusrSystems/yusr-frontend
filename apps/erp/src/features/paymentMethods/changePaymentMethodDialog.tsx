@@ -16,14 +16,14 @@ import {
 	SystemPermissionsActions,
 	TextField
 } from "yusr-ui";
-import type { PaymentMethod, PaymentMethodDto } from "@/core/data/paymentMethod.ts";
-import { CommissionType } from "@/core/data/paymentMethod.ts";
-import { useEffect } from "react";
+import { CommissionType, PaymentMethod, PaymentMethodDto } from "@/core/data/paymentMethod.ts";
+import { useEffect, useMemo } from "react";
 import { Cubits } from "@/core/services/cubits";
+import { signal } from "@preact/signals-react";
 
 
 export default function ChangePaymentMethodDialog(
-	{entity, service, onSuccess}: CommonChangeDialogProps<PaymentMethod, PaymentMethodDto>
+	{dto, service, onSuccess}: CommonChangeDialogProps<PaymentMethodDto>
 )
 {
 	useSignals();
@@ -31,20 +31,21 @@ export default function ChangePaymentMethodDialog(
 	{
 		Cubits.accounts.init([AccountType.Bank, AccountType.Box]);
 	}, []);
+	const entity = useMemo(() => signal<PaymentMethod>(dto ? PaymentMethod.load(dto) : PaymentMethod.create()), []);
 
 	const {t} = useTranslation(["accounting", "common"]);
 
 	if (
-		(entity.mode.value === ChangeableEntityMode.Create
+		(entity.value.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.PaymentMethods, SystemPermissionsActions.Add))
-		|| (entity.mode.value === ChangeableEntityMode.Update
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.PaymentMethods, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.mode.value === ChangeableEntityMode.Create
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? t("paymentMethods.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("paymentMethods.entityName") }`;
 
@@ -102,20 +103,20 @@ export default function ChangePaymentMethodDialog(
 					<TextField
 						label={ t("paymentMethods.methodName") }
 						required
-						value={ entity.name }
-						error={ entity.getError("name") }
+						value={ entity.value.name }
+						error={ entity.value.getError("name") }
 					/>
 
 					<FormField
 						label={ t("paymentMethods.responsibleAccount") }
 						required
-						error={ entity.getError("accountId") }
+						error={ entity.value.getError("accountId") }
 					>
 						<AccountsSearchableSelect
-							id={ entity.accountId }
-							label={ entity.accountName }
+							id={ entity.value.accountId }
+							label={ entity.value.accountName }
 							types={ types }
-							disabled={ !((hasBankPerm || hasBoxPerm) && entity.mode.value === ChangeableEntityMode.Create) }
+							disabled={ !((hasBankPerm || hasBoxPerm) && entity.value.mode.value === ChangeableEntityMode.Create) }
 						/>
 					</FormField>
 				</div>
@@ -124,8 +125,8 @@ export default function ChangePaymentMethodDialog(
 					<SelectField
 						label={ t("paymentMethods.commissionType") }
 						required
-						value={ entity.commissionType }
-						error={ entity.getError("commissionType") }
+						value={ entity.value.commissionType }
+						error={ entity.value.getError("commissionType") }
 						options={ [{
 							label: t("paymentMethods.percentage"),
 							value: CommissionType.Percent
@@ -137,19 +138,19 @@ export default function ChangePaymentMethodDialog(
 					<FormField
 						label={ t("paymentMethods.commissionValue") }
 						required
-						error={ entity.getError("commissionAmount") }
+						error={ entity.value.getError("commissionAmount") }
 					>
 						<NumberField
 							required
 							min={ 0.1 }
 							max={ 100 }
-							value={ entity.commissionAmount }
-							error={ entity.getError("commissionAmount") }
+							value={ entity.value.commissionAmount }
+							error={ entity.value.getError("commissionAmount") }
 						/>
 						<p className="text-sm text-red-600 font-bold">
 							{ formatCommission(
-								entity.commissionType.value ?? CommissionType.Percent,
-								entity.commissionAmount.value ?? 0
+								entity.value.commissionType.value ?? CommissionType.Percent,
+								entity.value.commissionAmount.value ?? 0
 							) }
 						</p>
 					</FormField>
@@ -161,7 +162,7 @@ export default function ChangePaymentMethodDialog(
 				<ChangeDialog.SaveButton<PaymentMethod, PaymentMethodDto>
 					entity={ entity }
 					service={ service }
-					onSuccess={ (data) => onSuccess?.(data) }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>
