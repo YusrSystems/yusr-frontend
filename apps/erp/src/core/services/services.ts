@@ -25,7 +25,7 @@ export class Services extends BaseServices
 
 	public static readonly taxesApi = new BaseApiService<TaxDto>("Taxes");
 	public static readonly storesApi = new BaseApiService<StoreDto>("Stores");
-	public static readonly unitsApi = new UnitsApiService("Units");
+	public static readonly unitsApi = new UnitsApiService();
 	public static readonly pricingMethodsApi = new BaseApiService<PricingMethodDto>("PricingMethods");
 	public static readonly stocktakingApi = new BaseApiService<StocktakingDto>("Stocktakings");
 	public static readonly itemsSettlementsApi = new BaseApiService<StocktakingDto>("ItemSettlements");

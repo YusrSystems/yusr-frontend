@@ -6,9 +6,9 @@ import type { UnitDto } from "../data/unit";
 export default class UnitsApiService extends BaseApiService<UnitDto>
 {
 
-	constructor(routeName: string)
+	constructor()
 	{
-		super(routeName);
+		super("Units");
 	}
 
 	async GetServiceIds(): Promise<RequestResult<ServiceIds>>
