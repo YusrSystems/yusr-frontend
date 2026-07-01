@@ -25,16 +25,16 @@ export class Cubits extends BaseCubits
 	public static readonly stocktaking = new PageCubit<StocktakingDto>(Services.stocktakingApi);
 	public static readonly itemsSettlements = new PageCubit<StocktakingDto>(Services.itemsSettlementsApi);
 	public static readonly itemTransfers = new PageCubit<ItemTransferDto>(Services.itemTransfersApi);
+	public static readonly items = new ItemsCubit();
+	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(Services.costAdjustmentsApi);
 	public static readonly paymentMethods = new PageCubit<PaymentMethod, PaymentMethodDto>(Services.paymentMethodsApi);
 	public static readonly accounts = new PageCubit<Account, AccountDto>(Services.accountsApi);
 	public static readonly balanceTransfers = new PageCubit<BalanceTransfer, BalanceTransferDto>(
 		Services.balanceTransfersApi
 	);
-	public static readonly items = new ItemsCubit();
 	public static override roles = new PageCubit<ErpRoleDto>(Services.rolesApi);
 	public static readonly vouchers = new PageCubit<Voucher, VoucherDto>(Services.voucherApi);
 	public static readonly invoices = new PageCubit<Invoice, InvoiceDto>(Services.invoicesApi);
-	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(Services.costAdjustmentsApi);
 
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");
 	public static readonly itemFilterFields = new FilterFieldsCubit("Items");

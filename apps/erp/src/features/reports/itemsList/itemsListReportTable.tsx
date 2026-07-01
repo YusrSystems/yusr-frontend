@@ -42,19 +42,19 @@ export function ItemsListReportTable()
 				{
 					const isEven = idx % 2 === 0;
 					return (
-						<tr key={ item.id.value }>
+						<tr key={ item.id }>
 							<ReportTableTd
 								isEven={ isEven }>{ idx + 1 + ((Cubits.items.currentPage.value - 1) * Cubits.items.pageSize.value) }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ item.id.value }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>{ item.id }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.type }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.name }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.class }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.brand }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.sellUnitName }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity.value) }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(item.cost.value) }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity) }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>{ formatNumber(item.cost) }</ReportTableTd>
 							<ReportTableTd
-								isEven={ isEven }>{ formatNumber(item.quantity.value * item.cost.value) }</ReportTableTd>
+								isEven={ isEven }>{ formatNumber(item.quantity * item.cost) }</ReportTableTd>
 						</tr>
 					);
 				}) }

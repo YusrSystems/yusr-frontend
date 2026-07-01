@@ -17,7 +17,7 @@ export function ItemsListReportSummary()
 				<SummaryRow.Value
 					className="text-destructive!"
 					value={ formatNumber(Cubits.items.entities.value.reduce(
-						(sum, item) => sum + (item.quantity.value * item.cost.value),
+						(sum, item) => sum + (item.quantity * item.cost),
 						0
 					)) }
 				/>

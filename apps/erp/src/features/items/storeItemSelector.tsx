@@ -20,20 +20,20 @@ export default function StoreItemSelector({storeId, onSelect}: StoreItemSelector
 	useSignals();
 	const {t} = useTranslation("erpCommon");
 	const barcode = useMemo(() => signal(""), []);
-	const barcodeLaoding = useMemo(() => signal(false), []);
+	const barcodeLoading = useMemo(() => signal(false), []);
 	const itemId = useMemo(() => signal<number | undefined>(undefined), []);
 
 	const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) =>
 	{
 		if (e.key === "Enter" && barcode.value && storeId?.value)
 		{
-			barcodeLaoding.value = true;
+			barcodeLoading.value = true;
 			const res = await Cubits.items.getByBarcode(barcode.value, storeId.value);
 			if (res)
 			{
 				onSelect?.(res.item, res.selectedIupm);
 			}
-			barcodeLaoding.value = false;
+			barcodeLoading.value = false;
 			barcode.value = "";
 		}
 	};
@@ -53,7 +53,7 @@ export default function StoreItemSelector({storeId, onSelect}: StoreItemSelector
 					value={ barcode.value }
 					onChange={ (e) => barcode.value = e.target.value }
 					onKeyDown={ handleKeyDown }
-					disabled={ barcodeLaoding.value }
+					disabled={ barcodeLoading.value }
 					className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pl-10"
 				/>
 				<ScanBarcode className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>

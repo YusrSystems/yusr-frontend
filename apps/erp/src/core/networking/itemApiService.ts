@@ -1,15 +1,12 @@
 import { BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
 import type { BarcodeResult, ItemDto } from "../data/item";
-import Item from "../data/item";
 
 
-export default class ItemsApiService extends BaseApiService<Item, ItemDto>
+export default class ItemsApiService extends BaseApiService<ItemDto>
 {
-	routeName: string = "Items";
-
-	override createEntity(dto: ItemDto): Item
+	constructor()
 	{
-		return new Item(dto);
+		super("Items");
 	}
 
 	async GetByBarcode(

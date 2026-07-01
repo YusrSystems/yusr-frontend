@@ -3,7 +3,7 @@ import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, type StorageFile, Va
 import { ItemStore, type ItemStoreDto } from "./itemStore";
 import { ItemTax, ItemTaxDto } from "./itemTax";
 import { ItemUnitPricingMethod, ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
-import { Tax } from "@/core/data/tax.ts";
+import { TaxDto } from "@/core/data/tax.ts";
 
 
 export const ItemType = {
@@ -168,18 +168,18 @@ export default class Item extends ChangeableEntity<ItemDto>
 		return itemResult && taxesResult && iupmResult && storesResult;
 	}
 
-	public changeTaxable(isTaxable: boolean, taxes: Signal<Tax[]>)
+	public changeTaxable(isTaxable: boolean, taxes: Signal<TaxDto[]>)
 	{
 		if (isTaxable)
 		{
-			this.itemTaxes.value = taxes.value.filter((t: Tax) => t.isPrimary.value)
-				.map((t: Tax) =>
+			this.itemTaxes.value = taxes.value.filter((t) => t.isPrimary)
+				.map((t) =>
 					new ItemTax({
 						id: 0,
 						itemId: this.id.value,
-						taxId: t.id.value,
-						taxName: t.name.value,
-						taxPercentage: t.percentage.value
+						taxId: t.id,
+						taxName: t.name,
+						taxPercentage: t.percentage
 					})
 				);
 

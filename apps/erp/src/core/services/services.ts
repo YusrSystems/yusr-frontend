@@ -30,6 +30,7 @@ export class Services extends BaseServices
 	public static readonly stocktakingApi = new BaseApiService<StocktakingDto>("Stocktakings");
 	public static readonly itemsSettlementsApi = new BaseApiService<StocktakingDto>("ItemSettlements");
 	public static readonly itemTransfersApi = new BaseApiService<ItemTransferDto>("ItemTransfers");
+	public static readonly costAdjustmentsApi = new BaseApiService<CostAdjustmentDto>("CostAdjustments");
 	public static readonly itemsApi = new ItemsApiService();
 	public static readonly accountsApi = new AccountApiService();
 	public static readonly paymentMethodsApi = new PaymentMethodsApiService();
@@ -38,7 +39,6 @@ export class Services extends BaseServices
 	public static readonly voucherApi = new VouchersApiService();
 	public static readonly invoicesApi = new InvoicesApiService();
 	public static readonly settingApi = new SettingsApiService();
-	public static readonly costAdjustmentsApi = new BaseApiService<CostAdjustmentDto>("CostAdjustments");
 
 	static
 	{
