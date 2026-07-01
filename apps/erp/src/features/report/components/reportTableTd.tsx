@@ -1,14 +1,18 @@
-export function ReportTableTd({children, isEven, align = "center"}: {
+import React from "react";
+
+
+export function ReportTableTd({children, isEven, align = "center", className = ""}: {
 	children: React.ReactNode;
 	isEven: boolean;
-	align?: "center" | "start"
+	align?: "center" | "start";
+	className?: string;
 })
 {
 	return (
 		<td
 			className={ `border border-border p-1.5 text-[8pt] text-foreground print:break-inside-avoid ${
 				isEven ? "bg-muted/50" : "bg-background"
-			} ${ align === "start" ? "text-start" : "text-center" }` }
+			} ${ align === "start" ? "text-start" : "text-center" } ${ className }` }
 		>
 			{ children }
 		</td>

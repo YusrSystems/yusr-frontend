@@ -4,11 +4,15 @@ import { ReportTableTh } from "@/features/report/components/reportTableTh.tsx";
 import { ReportTableTd } from "@/features/report/components/reportTableTd.tsx";
 import { formatNumber } from "@/features/report/utils/formating.ts";
 import { PageError, PageLoaded, PageLoading, TablePreview } from "yusr-ui";
+import { Link } from "react-router-dom";
+import { ItemType } from "@/core/data/item.ts";
+import { useTranslation } from "react-i18next";
 
 
 export function ItemsListReportTable()
 {
 	useSignals();
+	const {t} = useTranslation("stocking");
 
 	if (Cubits.items.state.value instanceof PageLoading)
 	{
@@ -45,9 +49,24 @@ export function ItemsListReportTable()
 						<tr key={ item.id }>
 							<ReportTableTd
 								isEven={ isEven }>{ idx + 1 + ((Cubits.items.currentPage.value - 1) * Cubits.items.pageSize.value) }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ item.id }</ReportTableTd>
-							<ReportTableTd isEven={ isEven } align="start">{ item.type }</ReportTableTd>
-							<ReportTableTd isEven={ isEven } align="start">{ item.name }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }
+							               className="p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!">
+								<Link
+									to={ `/items/${ item.id }` }
+									target="_blank"
+									rel="noopener noreferrer"
+									className="block w-full h-full"
+								>
+									{ item.id }
+								</Link>
+							</ReportTableTd>
+							<ReportTableTd
+								isEven={ isEven }
+								className={ `print:font-medium font-bold! ${ item.type === ItemType.Product ? "text-sky-500!" : "text-emerald-600!" }` }
+								align="start">{ item.type === ItemType.Product ? t("items.product") : t("items.service") }
+							</ReportTableTd>
+							<ReportTableTd isEven={ isEven }
+							               align="start">{ item.name }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.class }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.brand }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.sellUnitName }</ReportTableTd>
