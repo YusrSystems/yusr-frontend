@@ -5,7 +5,7 @@ import { YusrApiHelper } from "./yusrApiHelper";
 import type { FilterGroupDto } from "../filter/filterGroup.ts";
 
 
-export abstract class BaseFilterableApiService<TDto extends Dto>
+export class BaseFilterableApiService<TDto extends Dto>
 {
 	private static _pendingRequests = new Set<AbortController>();
 	protected routeName: string;

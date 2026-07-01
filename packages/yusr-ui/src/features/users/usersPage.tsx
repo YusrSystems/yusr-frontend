@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPage, TablePreview, UnauthorizedPage } from "../../components/custom";
-import { User, UserDto } from "../../entities";
+import { UserDto } from "../../entities";
 import { BaseCubits, BaseServices } from "../../services";
 import { ChangeableEntityMode, PageError, PageLoaded, PageLoading } from "../../stateManager";
 import { ChangeUserDialog } from "./changeUserDialog";
@@ -24,7 +24,7 @@ export function UsersPage()
 	}, []);
 
 	return (
-		<CrudPage>
+		<CrudPage<UserDto>>
 			<CrudPage.Header
 				title={ t("users.title") }
 				addButtonTitle={ t("users.addNewTitle") }
@@ -45,18 +45,16 @@ export function UsersPage()
 				{
 					return (
 						<ChangeUserDialog
-							entity={ dto
-								? User.load(dto)
-								: User.create() }
+							dto={ dto }
 							service={ BaseServices.usersApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									BaseCubits.users.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									BaseCubits.users.update(data);
 									BaseServices.auth.setLoggedInUser(data);
@@ -105,7 +103,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<User, UserDto>
+				<CrudPage.TableBody<UserDto>
 					data={ BaseCubits.users.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
@@ -115,13 +113,13 @@ function PageTable()
 					] }
 					tableRowMapper={ (
 						user
-					) => [{rowBody: `#${ user.id.value }`, rowStyles: ""}, {
-						rowBody: user.username.value,
+					) => [{rowBody: `#${ user.id }`, rowStyles: ""}, {
+						rowBody: user.username,
 						rowStyles: "font-semibold"
 					}, {
-						rowBody: user.isActive.value ? t("users.active") : t("users.inactive"),
+						rowBody: user.isActive ? t("users.active") : t("users.inactive"),
 						rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-							user.isActive.value ? "bg-green-300" : "bg-red-300"
+							user.isActive ? "bg-green-300" : "bg-red-300"
 						} text-slate-800`
 					}] }
 					hasUpdatePermission={ BaseServices.auth.hasAuth(

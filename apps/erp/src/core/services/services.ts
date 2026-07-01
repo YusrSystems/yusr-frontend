@@ -1,14 +1,12 @@
-import { BaseApiService, BaseServices } from "yusr-ui";
+import { BaseApiService, BaseServices, RolesApiService } from "yusr-ui";
 import AccountApiService from "../networking/accountApiService";
 import BalanceTransfersApiService from "../networking/balanceTransferApiService";
-import { ErpRoleApiService } from "../networking/erpRoleApiService";
 import ItemsApiService from "../networking/itemApiService";
 import ItemsSettlementsApiService from "../networking/itemsSettlementsApiService";
 import ItemTransferApiService from "../networking/itemTransferApiService";
 import PaymentMethodsApiService from "../networking/paymentMethodApiService";
 import PricingMethodsApiService from "../networking/pricingMethodsApiService";
 import StocktakingsApiService from "../networking/stocktakingApiService";
-import { StoresApiService } from "../networking/storeApiService";
 import UnitsApiService from "../networking/unitApiService";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
@@ -17,15 +15,17 @@ import InvoicesApiService from "@/core/networking/invoiceApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
 import CostAdjustmentsApiService from "@/core/networking/costAdjustmentsApiService.ts";
 import { TaxDto } from "@/core/data/tax.ts";
+import type { StoreDto } from "@/core/data/store.ts";
+import type { ErpRoleDto } from "@/core/data/erpRole.ts";
 
 
 export class Services extends BaseServices
 {
 	public static override auth: ErpAuthService = new ErpAuthService();
-	public static override rolesApi = new ErpRoleApiService();
+	public static override rolesApi = new RolesApiService<ErpRoleDto>;
 
 	public static readonly taxesApi = new BaseApiService<TaxDto>("Taxes");
-	public static readonly storesApi = new StoresApiService();
+	public static readonly storesApi = new BaseApiService<StoreDto>("Stores");
 	public static readonly unitsApi = new UnitsApiService();
 	public static readonly pricingMethodsApi = new PricingMethodsApiService();
 	public static readonly itemsApi = new ItemsApiService();
