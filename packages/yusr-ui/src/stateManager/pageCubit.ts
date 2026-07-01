@@ -2,24 +2,23 @@ import { type Signal, signal } from "@preact/signals-react";
 import type { BaseFilterableApiService } from "../networking";
 import { Cubit } from "./cubit";
 import type { Dto } from "./dto";
-import type { Entity } from "./entity";
 import { PageEmpty, PageInitial, PageLoaded, PageLoading, type PageState } from "./pageStates";
 import type { FilterGroupDto } from "../filter/filterGroup.ts";
 
 
-export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends Cubit<PageState>
+export class PageCubit<TDto extends Dto> extends Cubit<PageState>
 {
 	public pageSize: Signal<number>;
 	public currentPage: Signal<number>;
 	public searchText: Signal<string | undefined>;
-	entities: Signal<TEntity[]>;
+	entities: Signal<TDto[]>;
 	count: Signal<number>;
-	protected _service: BaseFilterableApiService<TEntity, TDto>;
+	protected _service: BaseFilterableApiService<TDto>;
 	protected types: Signal<number[] | undefined>;
 	protected queryParams: Signal<Record<string, string | number | boolean> | undefined>;
 	protected groups: Signal<FilterGroupDto[] | undefined>;
 
-	constructor(service: BaseFilterableApiService<TEntity, TDto>, pageSize: number = 100)
+	constructor(service: BaseFilterableApiService<TDto>, pageSize: number = 100)
 	{
 		super(new PageInitial());
 		this._service = service;
@@ -29,7 +28,7 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
 		this.types = signal([]);
 		this.queryParams = signal({});
 		this.groups = signal(undefined);
-		this.entities = signal<TEntity[]>([]);
+		this.entities = signal<TDto[]>([]);
 		this.count = signal(0);
 	}
 
@@ -98,19 +97,19 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
 		this.filter(1, undefined, searchText, this.types.value, undefined, this.groups.value);
 	}
 
-	add(entity: TEntity)
+	add(dto: TDto)
 	{
-		this.entities.value = [entity, ...this.entities.value];
+		this.entities.value = [dto, ...this.entities.value];
 	}
 
-	update(entity: TEntity)
+	update(dto: TDto)
 	{
-		this.entities.value = this.entities.value.map((e) => e.id.value === entity.id.value ? entity : e);
+		this.entities.value = this.entities.value.map((e) => e.id === dto.id ? dto : e);
 	}
 
-	delete(entity: TEntity)
+	delete(dto: TDto)
 	{
-		this.entities.value = this.entities.value.filter((e) => e.id.value !== entity.id.value);
+		this.entities.value = this.entities.value.filter((e) => e.id !== dto.id);
 		if (this.entities.value.length === 0)
 		{
 			this.filter(1);

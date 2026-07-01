@@ -6,7 +6,7 @@ import { ErpRole, ErpRoleDto } from "../data/erpRole";
 import ItemTransfer, { ItemTransferDto } from "../data/itemTransfer";
 import PricingMethod, { PricingMethodDto } from "../data/pricingMethod";
 import Stocktaking, { StocktakingDto } from "../data/stocktaking";
-import { Tax, TaxDto } from "../data/tax";
+import { TaxDto } from "../data/tax";
 import Unit, { UnitDto } from "../data/unit";
 import { Services } from "./services";
 import { type Voucher, VoucherDto } from "@/core/data/voucher.ts";
@@ -18,7 +18,7 @@ import CostAdjustment, { type CostAdjustmentDto } from "@/core/data/costAdjustme
 
 export class Cubits extends BaseCubits
 {
-	public static readonly taxes = new PageCubit<Tax, TaxDto>(Services.taxesApi);
+	public static readonly taxes = new PageCubit<TaxDto>(Services.taxesApi);
 	public static readonly stores = new PageCubit<Store, StoreDto>(Services.storesApi);
 	public static readonly units = new PageCubit<Unit, UnitDto>(Services.unitsApi);
 	public static readonly pricingMethods = new PageCubit<PricingMethod, PricingMethodDto>(Services.pricingMethodsApi);

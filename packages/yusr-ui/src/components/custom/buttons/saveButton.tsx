@@ -1,4 +1,4 @@
-import { signal } from "@preact/signals-react";
+import { type Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Loader2 } from "lucide-react";
 import { useMemo } from "react";
@@ -20,14 +20,14 @@ import { Button } from "../../pure/button";
 
 export interface SaveButtonProps<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>
 {
-	entity: TEntity;
-	service: BaseApiService<TEntity, TDto>;
+	entity: Signal<TEntity>;
+	service: BaseApiService<TDto>;
 	label?: string;
 	variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
 	className?: string;
 	disabled?: boolean;
-	onSuccess?: (newData: TEntity) => void;
-	transformData?: (data: TEntity) => TEntity | Promise<TEntity>;
+	onSuccess?: (newData: TDto) => void;
+	transformData?: (data: TDto) => TDto | Promise<TDto>;
 }
 
 export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
@@ -54,25 +54,25 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 
 	async function Save()
 	{
-		if (!entity.validate())
+		if (!entity.value.validate())
 		{
 			return;
 		}
 
 		loading.value = true;
 
-		let result: RequestResult<TEntity>;
-		const payload = transformData ? await transformData(entity) : entity;
+		let result: RequestResult<TDto>;
+		const dto = entity.value.toJson();
+		const payload = transformData ? await transformData(dto) : dto;
 
-		result = payload.mode.value === ChangeableEntityMode.Create
+		result = entity.value.mode.value === ChangeableEntityMode.Create
 			? await service.Add(payload)
 			: await service.Update(payload);
 
 		if (result?.data)
 		{
-			result.data.mode.value = payload.mode.value;
-			entity.resetChanged();
-			entity.resetDirty();
+			entity.value.resetChanged();
+			entity.value.resetDirty();
 		}
 
 		loading.value = false;
@@ -101,7 +101,7 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 	{
 		showWarnings.value = false;
 		pendingIgnore.value = true;
-		entity.ignoreWarnings.value = true;
+		entity.value.ignoreWarnings.value = true;
 		await Save();
 		pendingIgnore.value = false;
 	}
@@ -112,7 +112,7 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 	return (
 		<>
 			<Button
-				disabled={ loading.value || pendingIgnore.value || !entity.hasChanges.value || disabled }
+				disabled={ loading.value || pendingIgnore.value || !entity.value.hasChanges.value || disabled }
 				onClick={ () => Save() }
 				variant={ variant }
 				className={ className }

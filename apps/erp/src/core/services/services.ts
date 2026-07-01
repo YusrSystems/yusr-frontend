@@ -1,4 +1,4 @@
-import { BaseServices } from "yusr-ui";
+import { BaseApiService, BaseServices } from "yusr-ui";
 import AccountApiService from "../networking/accountApiService";
 import BalanceTransfersApiService from "../networking/balanceTransferApiService";
 import { ErpRoleApiService } from "../networking/erpRoleApiService";
@@ -9,7 +9,6 @@ import PaymentMethodsApiService from "../networking/paymentMethodApiService";
 import PricingMethodsApiService from "../networking/pricingMethodsApiService";
 import StocktakingsApiService from "../networking/stocktakingApiService";
 import { StoresApiService } from "../networking/storeApiService";
-import TaxesApiService from "../networking/taxesApiService";
 import UnitsApiService from "../networking/unitApiService";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
@@ -17,6 +16,7 @@ import VouchersApiService from "@/core/networking/voucherApiService.ts";
 import InvoicesApiService from "@/core/networking/invoiceApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
 import CostAdjustmentsApiService from "@/core/networking/costAdjustmentsApiService.ts";
+import { TaxDto } from "@/core/data/tax.ts";
 
 
 export class Services extends BaseServices
@@ -24,7 +24,7 @@ export class Services extends BaseServices
 	public static override auth: ErpAuthService = new ErpAuthService();
 	public static override rolesApi = new ErpRoleApiService();
 
-	public static readonly taxesApi = new TaxesApiService();
+	public static readonly taxesApi = new BaseApiService<TaxDto>("Taxes");
 	public static readonly storesApi = new StoresApiService();
 	public static readonly unitsApi = new UnitsApiService();
 	public static readonly pricingMethodsApi = new PricingMethodsApiService();

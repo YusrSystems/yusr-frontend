@@ -1,22 +1,25 @@
-import { Dto, Entity } from "../stateManager";
+import { Dto } from "../stateManager";
 import type { ApiFilterResult } from "../types";
 import type { FilterResult } from "../types/filterResult";
 import { YusrApiHelper } from "./yusrApiHelper";
 import type { FilterGroupDto } from "../filter/filterGroup.ts";
 
 
-export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDto extends Dto>
+export abstract class BaseFilterableApiService<TDto extends Dto>
 {
 	private static _pendingRequests = new Set<AbortController>();
-	abstract routeName: string;
+	protected routeName: string;
+
+	constructor(routeName: string)
+	{
+		this.routeName = routeName;
+	}
 
 	public static abortAll()
 	{
 		this._pendingRequests.forEach((request: AbortController) => request.abort());
 		this._pendingRequests.clear();
 	}
-
-	abstract createEntity(dto: TDto): TEntity;
 
 	async Filter(
 		pageNumber: number,
@@ -25,7 +28,7 @@ export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDt
 		types?: number[],
 		queryParams?: Record<string, string | number | boolean>,
 		groups?: FilterGroupDto[]
-	): Promise<FilterResult<TEntity, TDto>>
+	): Promise<FilterResult<TDto>>
 	{
 		const params = new URLSearchParams();
 		params.set("pageNumber", pageNumber.toString());
@@ -53,7 +56,7 @@ export abstract class BaseFilterableApiService<TEntity extends Entity<TDto>, TDt
 		BaseFilterableApiService._pendingRequests.delete(controller);
 
 		return {
-			data: rawResult?.data?.data?.map((dto: TDto) => this.createEntity(dto)) ?? [],
+			data: rawResult?.data?.data ?? [],
 			count: rawResult?.data?.count ?? 0
 		};
 	}
