@@ -11,11 +11,10 @@ import {
 } from "lucide-react";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { SystemPermissionsActions } from "yusr-ui";
+import { Button, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import BalanceSheetDialog from "./BalanceSheetDialog";
 import InvoicesListDialog from "./invoicesListDialog";
-import ItemsListDialog from "./itemsListDialog";
 import ItemsMovementDialog from "./ItemsMovementDialog";
 import ItemsTaxStatementDialog from "./ItemsTaxStatementDialog";
 import ProfitAndLossDialog from "./ProfitAndLossDialog";
@@ -23,6 +22,7 @@ import TaxReturnDialog from "./taxReturnDialog";
 import { Cubits } from "@/core/services/cubits.ts";
 import { AccountType } from "@/core/data/account.ts";
 import { Services } from "@/core/services/services.ts";
+import { AppNavigator } from "@/app/appNavigator.ts";
 
 
 interface Report
@@ -176,7 +176,8 @@ export default function ReportsPage()
 		icon: Package,
 		iconColor: "text-green-700",
 		reports: [{
-			comp: <ItemsListDialog/>,
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/itemsList") }>{ t("reports.create") }</Button>,
 			name: t("reports.itemsList"),
 			description: t("reports.itemsListDescription"),
 			icon: PackageSearch,

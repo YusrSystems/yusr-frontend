@@ -1,7 +1,7 @@
 import { SummaryRow } from "@/features/report/components/summaryRow.tsx";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Cubits } from "@/core/services/cubits.ts";
-import { numberFmt } from "@/features/report/utils/formating.ts";
+import { formatNumber } from "@/features/report/utils/formating.ts";
 
 
 export function ItemsListReportSummary()
@@ -16,7 +16,7 @@ export function ItemsListReportSummary()
 				</div>
 				<SummaryRow.Value
 					className="text-destructive!"
-					value={ numberFmt(Cubits.items.entities.value.reduce(
+					value={ formatNumber(Cubits.items.entities.value.reduce(
 						(sum, item) => sum + (item.quantity.value * item.cost.value),
 						0
 					)) }

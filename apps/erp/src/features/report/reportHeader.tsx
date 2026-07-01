@@ -1,7 +1,8 @@
-import { type ComponentProps, type PropsWithChildren } from "react";
+import { type ComponentProps, type PropsWithChildren, useEffect, useRef } from "react";
 import { Card, cn } from "yusr-ui";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Services } from "@/core/services/services.ts";
+import { formatDate } from "@/features/report/utils/formating.ts";
 
 
 export default function ReportHeader({children}: PropsWithChildren)
@@ -74,12 +75,33 @@ ReportHeader.Id = function Title({id}: { id: number })
 
 ReportHeader.MetaDataSection = function MetaData({children}: PropsWithChildren)
 {
+	const dateRef = useRef<HTMLSpanElement>(null);
+	const initialDate = formatDate(new Date());
+
+	useEffect(() =>
+	{
+		const handleBeforePrint = () =>
+		{
+			const freshDate = formatDate(new Date());
+			if (dateRef.current)
+			{
+				dateRef.current.textContent = freshDate;
+			}
+		};
+
+		window.addEventListener("beforeprint", handleBeforePrint);
+		return () =>
+		{
+			window.removeEventListener("beforeprint", handleBeforePrint);
+		};
+	}, []);
+
 	return (
 		<div className="h-full relative ">
 			{ children }
 			<div className="absolute bottom-0 w-full flex justify-end gap-4 text-[10px] text-foreground">
 				<span>{ Services.auth.loggedInUser?.username.value }</span>
-				<span>{ new Date().toDateString() }</span>
+				<span ref={ dateRef }>{ initialDate }</span>
 			</div>
 		</div>
 	);

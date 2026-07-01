@@ -40,7 +40,7 @@ import QuotationInvoicesPage from "@/features/invoices/quotationInvoicesPage.tsx
 import AuthGate from "@/app/authGate.tsx";
 import CostAdjustmentsPage from "@/features/costAdjustments/costAdjustmentsPage.tsx";
 import { TestReport } from "@/features/report/invoiceReport/testReport.tsx";
-import { ItemsListReport } from "@/features/reports/itemsList/itemsListReport.tsx";
+import { ItemsListReportPage } from "@/features/reports/itemsList/itemsListReportPage.tsx";
 // import ReportPage from "@/features/report/reportPage.tsx";
 
 const refreshPage = () =>
@@ -94,12 +94,12 @@ export const router = createBrowserRouter([{
 					{path: "/itemTransfers", element: <ItemTransfersPage/>},
 					{path: "/stocktakings", element: <StocktakingsPage/>},
 					{path: "/itemsSettlements", element: <ItemsSettlementsPage/>},
-					{path: "/reports", element: <ReportsPage/>}
+					{path: "/reports", element: <ReportsPage/>},
 
+					// reports
+					{path: "/reports/itemsList", element: <ItemsListReportPage/>}
 				]
-			},
-				// reports
-				{path: "/reports/itemsList", element: <ItemsListReport/>}
+			}
 			]
 		},
 		{path: "*", element: <NotFoundPage/>}

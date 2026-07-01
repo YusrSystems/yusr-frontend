@@ -125,7 +125,7 @@ export default function ItemsPage()
 
 			{ createPortal(
 				<div className="hidden print:block print:w-full print:static">
-					<ItemsListReport/>
+					<ItemsListReport isPortal={ true }/>
 				</div>,
 				document.body
 			) }
@@ -247,7 +247,7 @@ function PageTable()
 	return <TablePreview.Empty/>;
 }
 
-function RenderItemFilterInput({rule, field}: FilterValueInputProps)
+export function RenderItemFilterInput({rule, field}: FilterValueInputProps)
 {
 	useSignals();
 

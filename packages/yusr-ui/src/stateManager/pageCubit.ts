@@ -73,9 +73,9 @@ export class PageCubit<TEntity extends Entity<TDto>, TDto extends Dto> extends C
 		this.emit(new PageLoaded());
 	}
 
-	init(types?: number[], queryParams?: Record<string, string | number | boolean>): void
+	init(types?: number[], queryParams?: Record<string, string | number | boolean>, rowsPerPage: number = 100): void
 	{
-		this.filter(1, undefined, undefined, types, queryParams);
+		this.filter(1, rowsPerPage, undefined, types, queryParams);
 	}
 
 	applyFilterGroups(groups: FilterGroupDto[]): void
