@@ -1,5 +1,4 @@
 import type { ItemDto } from "@/core/data/item";
-import Item from "@/core/data/item";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -51,7 +50,7 @@ export default function ItemsPage()
 
 	return (
 		<>
-			<CrudPage>
+			<CrudPage<ItemDto>>
 				<CrudPage.Header
 					title={ t("items.title") }
 					addButtonTitle={ t("items.addNewTitle") }
@@ -95,18 +94,16 @@ export default function ItemsPage()
 					{
 						return (
 							<ChangeItemDialog
-								entity={ dto
-									? Item.load(dto)
-									: Item.create() }
+								dto={ dto }
 								service={ Services.itemsApi }
-								onSuccess={ (data) =>
+								onSuccess={ (data, mode) =>
 								{
-									if (data.mode.value === ChangeableEntityMode.Create)
+									if (mode === ChangeableEntityMode.Create)
 									{
 										Cubits.items.add(data);
 										closeDialog();
 									}
-									else if (data.mode.value === ChangeableEntityMode.Update)
+									else if (mode === ChangeableEntityMode.Update)
 									{
 										Cubits.items.update(data);
 									}
@@ -162,7 +159,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<Item, ItemDto>
+				<CrudPage.TableBody<ItemDto>
 					data={ Cubits.items.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
@@ -187,7 +184,7 @@ function PageTable()
 						{
 							rowBody: (
 								<ImagePreview
-									files={ item.itemImages.value }
+									files={ item.itemImages }
 									size={ 40 }
 									fallback={
 										<div className="w-10 h-10 rounded bg-muted flex items-center justify-center">
@@ -199,9 +196,9 @@ function PageTable()
 							rowStyles: ""
 						},
 						{
-							rowBody: item.type.value === ItemType.Product ? t("items.product") : t("items.service"),
+							rowBody: item.type === ItemType.Product ? t("items.product") : t("items.service"),
 							rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-								item.type.value === ItemType.Product
+								item.type === ItemType.Product
 									? "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400"
 									: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
 							}`
@@ -260,7 +257,7 @@ export function RenderItemFilterInput({rule, field}: FilterValueInputProps)
 						id={ rule.value as unknown as Signal<number | undefined> }
 						label={ label }
 						onSelect={ entity =>
-							rule.value.value = entity ? entity.id.value : ""
+							rule.value.value = entity ? entity.id : ""
 						}
 					/>
 				) }
@@ -277,7 +274,7 @@ export function RenderItemFilterInput({rule, field}: FilterValueInputProps)
 						id={ rule.value as unknown as Signal<number | undefined> }
 						label={ label }
 						onSelect={ entity =>
-							rule.value.value = entity ? entity.id.value : ""
+							rule.value.value = entity ? entity.id : ""
 						}
 					/>
 				) }

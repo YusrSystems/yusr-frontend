@@ -82,7 +82,7 @@ export default function PricingMethodsTable({entity}: { entity: Item; })
 											disabled={ isService }
 											onSelect={ (unit) =>
 											{
-												if (unit?.id.value === entity.sellUnitId.value)
+												if (unit?.id === entity.sellUnitId.value)
 												{
 													method.quantityMultiplier.value = 1;
 												}

@@ -1,20 +1,19 @@
 import type { PricingMethodDto } from "@/core/data/pricingMethod";
-import PricingMethod from "@/core/data/pricingMethod";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
 import {
-  PageLoaded,
-  PageLoading,
-  SearchableSelect,
-  type SearchableSelectOptionProps,
-  type SearchableSelectProps
+	PageLoaded,
+	PageLoading,
+	SearchableSelect,
+	type SearchableSelectOptionProps,
+	type SearchableSelectProps
 } from "yusr-ui";
 
 
 export default function PricingMethodsSearchableSelect(
-	{...props}: SearchableSelectProps<PricingMethod, PricingMethodDto>
+	{...props}: SearchableSelectProps<PricingMethodDto>
 )
 {
 	useSignals();
@@ -51,7 +50,7 @@ export default function PricingMethodsSearchableSelect(
 		)
 		{
 			return Cubits.pricingMethods.entities.value.map((entity) => (
-				<Option key={ entity.id.value } item={ entity } { ...props } />
+				<Option key={ entity.id } item={ entity } { ...props } />
 			));
 		}
 
@@ -59,7 +58,7 @@ export default function PricingMethodsSearchableSelect(
 			<SearchableSelect.AddOptionButton
 				onCreate={ async (searchText) =>
 				{
-					await Services.pricingMethodsApi.Add(PricingMethod.create({name: searchText}));
+					await Services.pricingMethodsApi.Add({name: searchText} as PricingMethodDto);
 					Cubits.pricingMethods.init();
 				} }
 			/>
@@ -69,20 +68,20 @@ export default function PricingMethodsSearchableSelect(
 
 const Option = React.memo(
 	function Option(
-		{...props}: Omit<SearchableSelectOptionProps<PricingMethod, PricingMethodDto>, "labelSelector">
+		{...props}: Omit<SearchableSelectOptionProps<PricingMethodDto>, "labelSelector">
 	)
 	{
 		useSignals();
 		return (
-			<SearchableSelect.Option<PricingMethod, PricingMethodDto>
+			<SearchableSelect.Option<PricingMethodDto>
 				labelSelector="name"
 				{ ...props }
 			>
-				<SearchableSelect.OptionBody label={ props.item.name.value }/>
+				<SearchableSelect.OptionBody label={ props.item.name }/>
 				<SearchableSelect.DeleteOptionButton
 					onDelete={ async () =>
 					{
-						const result = await Services.unitsApi.Delete(props.item.id.value);
+						const result = await Services.unitsApi.Delete(props.item.id);
 						if (result.status === 200)
 						{
 							Cubits.pricingMethods.delete(props.item);

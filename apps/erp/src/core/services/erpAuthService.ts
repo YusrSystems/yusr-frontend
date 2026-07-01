@@ -1,4 +1,4 @@
-import { AuthService, Branch, User } from "yusr-ui";
+import { AuthService, Branch, BranchDto, User } from "yusr-ui";
 import { Setting, type SettingDto } from "../data/setting";
 import { signal } from "@preact/signals-react";
 
@@ -57,11 +57,11 @@ export class ErpAuthService extends AuthService
 		this._settingSignal.value = new Setting(dto);
 	};
 
-	readonly updateBranch = (branch: Branch) =>
+	readonly updateBranch = (branch: BranchDto) =>
 	{
-		if (branch.id.value === this._settingSignal?.value?.branchId?.value)
+		if (branch.id === this._settingSignal?.value?.branchId?.value)
 		{
-			this._settingSignal.value.branch.value = branch;
+			this._settingSignal.value.branch.value = new Branch(branch);
 			localStorage.setItem(this._settingStorageItemName, JSON.stringify(this._settingSignal.value));
 		}
 	};

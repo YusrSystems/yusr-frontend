@@ -1,30 +1,33 @@
 import { useSignals } from "@preact/signals-react/runtime";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import {
-  ChangeDialog,
-  type CommonChangeDialogProps,
-  FieldsSection,
-  FormField,
-  RolesSearchableSelect,
-  SelectField,
-  TextField
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldsSection,
+	FormField,
+	RolesSearchableSelect,
+	SelectField,
+	TextField
 } from "../../components/custom";
 import { BranchesSearchableSelect } from "../../components/custom/select/branchesSearchableSelect";
 import { User, UserDto } from "../../entities";
 import { BaseCubits, BaseServices } from "../../services";
 import { ChangeableEntityMode } from "../../stateManager";
+import { signal } from "@preact/signals-react";
 
 
-export function ChangeUserDialog({entity, service, onSuccess}: CommonChangeDialogProps<User, UserDto>)
+export function ChangeUserDialog({dto, service, onSuccess}: CommonChangeDialogProps<UserDto>)
 {
 	useSignals();
 
+	const entity = useMemo(() => signal<User>(dto ? User.load(dto) : User.create()), []);
+
 	if (
-		(entity.mode.value === ChangeableEntityMode.Create
+		(entity.value.mode.value === ChangeableEntityMode.Create
 			&& !BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Users, SystemPermissionsActions.Add))
-		|| (entity.mode.value === ChangeableEntityMode.Update
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
 			&& !BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Users, SystemPermissionsActions.Update))
 	)
 	{
@@ -32,7 +35,7 @@ export function ChangeUserDialog({entity, service, onSuccess}: CommonChangeDialo
 	}
 
 	const {t} = useTranslation(["commonEntities", "common"]);
-	const title = entity.mode.value === ChangeableEntityMode.Create
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? t("users.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("users.entityName") }`;
 
@@ -50,35 +53,35 @@ export function ChangeUserDialog({entity, service, onSuccess}: CommonChangeDialo
 				<TextField
 					label={ t("users.username") }
 					required
-					value={ entity.username }
-					error={ entity.getError("username") }
+					value={ entity.value.username }
+					error={ entity.value.getError("username") }
 				/>
 
 				<TextField
 					label={ t("users.password") }
 					required
-					value={ entity.password }
-					error={ entity.getError("password") }
+					value={ entity.value.password }
+					error={ entity.value.getError("password") }
 				/>
 
-				<FormField label={ t("users.role") } required error={ entity.getError("roleId") }>
+				<FormField label={ t("users.role") } required error={ entity.value.getError("roleId") }>
 					<RolesSearchableSelect
-						id={ entity.roleId }
-						label={ entity.roleName }
+						id={ entity.value.roleId }
+						label={ entity.value.roleName }
 					/>
 				</FormField>
 
-				<FormField label={ t("users.branch") } required error={ entity.getError("branchId") }>
+				<FormField label={ t("users.branch") } required error={ entity.value.getError("branchId") }>
 					<BranchesSearchableSelect
-						id={ entity.branchId }
-						label={ entity.branchName }
+						id={ entity.value.branchId }
+						label={ entity.value.branchName }
 					/>
 				</FormField>
 
 				<SelectField
 					label={ t("users.userStatus") }
 					required
-					value={ entity.isActive }
+					value={ entity.value.isActive }
 					options={ [{label: t("users.active"), value: true}, {label: t("users.inactive"), value: false}] }
 				/>
 			</FieldsSection>
@@ -89,7 +92,7 @@ export function ChangeUserDialog({entity, service, onSuccess}: CommonChangeDialo
 				<ChangeDialog.SaveButton<User, UserDto>
 					entity={ entity }
 					service={ service }
-					onSuccess={ (data) => onSuccess?.(data) }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>

@@ -10,6 +10,7 @@ import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
+	Branch,
 	BranchesSearchableSelect,
 	Button,
 	cn,
@@ -291,7 +292,7 @@ export default function BasicSection({formData}: { formData: Setting })
 							label={ formData.branch.value?.name }
 							onSelect={ (branch) =>
 							{
-								formData.branch.value = branch;
+								formData.branch.value = new Branch(branch);
 							} }
 						/>
 					</FormField>
@@ -356,7 +357,7 @@ function FieldNoticeablePing({isError, onClick}: { onClick?: () => void; isError
 		<span
 			onClick={ onClick }
 			className={ cn(
-				"relative cursor-pointer flex size-3 -inset-s-[3%]",
+				"relative cursor-pointer flex size-3 inset-s-[-3%]",
 				isError.value ? "top-[54%]" : "top-[70%]"
 			) }
 		>

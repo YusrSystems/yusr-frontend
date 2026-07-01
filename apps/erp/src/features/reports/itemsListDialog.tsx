@@ -1,7 +1,7 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { ItemType } from "@/core/data/item";
 import { ItemsListReportRequest } from "@/core/data/report/itemsListReportRequest";
-import { Store } from "@/core/data/store";
+import { StoreDto } from "@/core/data/store";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useMemo } from "react";
@@ -22,7 +22,7 @@ import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
 
 
-export default function ItemsListDialog({store, buttonLabel}: { store?: Store; buttonLabel?: string; })
+export default function ItemsListDialog({store, buttonLabel}: { store?: StoreDto; buttonLabel?: string; })
 {
 	useSignals();
 	const {t, i18n} = useTranslation(["erpCommon", "stocking", "accounting", "common"]);
@@ -30,8 +30,8 @@ export default function ItemsListDialog({store, buttonLabel}: { store?: Store; b
 	const itemType = useMemo(() => signal<ItemType | undefined>(undefined), []);
 	const itemClass = useMemo(() => signal<string | undefined>(undefined), []);
 	const brand = useMemo(() => signal<string | undefined>(undefined), []);
-	const storeId = useMemo(() => signal<number | undefined>(store?.id.value), [store]);
-	const storeName = useMemo(() => signal<string | undefined>(store?.name.value), [store]);
+	const storeId = useMemo(() => signal<number | undefined>(store?.id), [store]);
+	const storeName = useMemo(() => signal<string | undefined>(store?.name), [store]);
 
 	return (
 		<>

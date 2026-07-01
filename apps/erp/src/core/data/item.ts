@@ -1,9 +1,9 @@
 import { type Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, type StorageFile, Validators } from "yusr-ui";
 import { ItemStore, type ItemStoreDto } from "./itemStore";
-import { ItemTax } from "./itemTax";
+import { ItemTax, ItemTaxDto } from "./itemTax";
 import { ItemUnitPricingMethod, ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
-import { Tax } from "@/core/data/tax.ts";
+import { TaxDto } from "@/core/data/tax.ts";
 
 
 export const ItemType = {
@@ -37,9 +37,9 @@ export class ItemDto extends Dto
 	public location?: string;
 	public notes?: string;
 	public totalTaxes!: number;
-	public itemUnitPricingMethods: ItemUnitPricingMethod[] = [];
-	public itemTaxes: ItemTax[] = [];
-	public itemStores: ItemStore[] = [];
+	public itemUnitPricingMethods: ItemUnitPricingMethodDto[] = [];
+	public itemTaxes: ItemTaxDto[] = [];
+	public itemStores: ItemStoreDto[] = [];
 	public itemImages: StorageFile[] = [];
 }
 
@@ -168,18 +168,18 @@ export default class Item extends ChangeableEntity<ItemDto>
 		return itemResult && taxesResult && iupmResult && storesResult;
 	}
 
-	public changeTaxable(isTaxable: boolean, taxes: Signal<Tax[]>)
+	public changeTaxable(isTaxable: boolean, taxes: Signal<TaxDto[]>)
 	{
 		if (isTaxable)
 		{
-			this.itemTaxes.value = taxes.value.filter((t: Tax) => t.isPrimary.value)
-				.map((t: Tax) =>
+			this.itemTaxes.value = taxes.value.filter((t) => t.isPrimary)
+				.map((t) =>
 					new ItemTax({
 						id: 0,
 						itemId: this.id.value,
-						taxId: t.id.value,
-						taxName: t.name.value,
-						taxPercentage: t.percentage.value
+						taxId: t.id,
+						taxName: t.name,
+						taxPercentage: t.percentage
 					})
 				);
 
@@ -193,14 +193,8 @@ export default class Item extends ChangeableEntity<ItemDto>
 	}
 }
 
-export class BarcodeResultDto
+export class BarcodeResult
 {
 	public item!: ItemDto;
 	public selectedIupm!: ItemUnitPricingMethodDto;
-}
-
-export class BarcodeResult
-{
-	public item!: Item;
-	public selectedIupm!: ItemUnitPricingMethod;
 }

@@ -12,11 +12,9 @@ import { ChangeRoleDialog } from "./changeRoleDialog";
 
 
 export function RolesPage<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto>(
-	{rolesApiService, cubit, toEntity, ...props}: ChangeRoleDialog<TRole, TRoleDto> & {
-		rolesApiService: RolesApiService<TRole, TRoleDto>;
-		cubit: PageCubit<TRole, TRoleDto>;
-	} & {
-		toEntity: (dto?: TRoleDto) => TRole;
+	{rolesApiService, cubit, ...props}: ChangeRoleDialog<TRole, TRoleDto> & {
+		rolesApiService: RolesApiService<TRoleDto>;
+		cubit: PageCubit<TRoleDto>;
 	}
 )
 {
@@ -33,7 +31,7 @@ export function RolesPage<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto
 	}, []);
 
 	return (
-		<CrudPage>
+		<CrudPage<TRoleDto>>
 			<CrudPage.Header
 				title={ t("roles.title") }
 				addButtonTitle={ t("roles.addNewTitle") }
@@ -49,21 +47,21 @@ export function RolesPage<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto
 
 			<RoleTable cubit={ cubit }/>
 
-			<CrudPage.ChangeDialog
+			<CrudPage.ChangeDialog<TRoleDto>
 				changeDialog={ (dto: TRoleDto | undefined, closeDialog) =>
 				{
 					return (
 						<ChangeRoleDialog
-							entity={ toEntity(dto) }
+							dto={ dto }
 							service={ rolesApiService }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									cubit.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									cubit.update(data);
 								}
@@ -83,8 +81,8 @@ export function RolesPage<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto
 	);
 }
 
-function RoleCards<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto>(
-	{cubit}: { cubit: PageCubit<TRole, TRoleDto>; }
+function RoleCards<TRoleDto extends RoleDto>(
+	{cubit}: { cubit: PageCubit<TRoleDto>; }
 )
 {
 	useSignals();
@@ -100,8 +98,8 @@ function RoleCards<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto>(
 	);
 }
 
-function RoleTable<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto>(
-	{cubit}: { cubit: PageCubit<TRole, TRoleDto>; }
+function RoleTable<TRoleDto extends RoleDto>(
+	{cubit}: { cubit: PageCubit<TRoleDto>; }
 )
 {
 	useSignals();
@@ -116,7 +114,7 @@ function RoleTable<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto>(
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<TRole, TRoleDto>
+				<CrudPage.TableBody<TRoleDto>
 					data={ cubit.entities.value }
 					headerRows={ [{rowBody: "", rowStyles: "text-left w-12.5"}, {
 						rowBody: t("roles.roleId"),

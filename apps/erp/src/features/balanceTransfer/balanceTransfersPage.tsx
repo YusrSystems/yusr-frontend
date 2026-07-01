@@ -19,7 +19,7 @@ import {
 } from "yusr-ui";
 import ReportButton from "../reports/reportButton";
 import ChangeBalanceTransferDialog from "./changeBalanceTransferDialog";
-import { BalanceTransfer, BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
+import { BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
@@ -35,7 +35,7 @@ export default function BalanceTransfersPage()
 	}
 
 	return (
-		<CrudPage>
+		<CrudPage<BalanceTransferDto>>
 			<CrudPage.Header
 				title={ t("balanceTransfers.title") }
 				addButtonTitle={ t("balanceTransfers.addNewTitle") }
@@ -55,18 +55,16 @@ export default function BalanceTransfersPage()
 				{
 					return (
 						<ChangeBalanceTransferDialog
-							entity={ dto
-								? BalanceTransfer.load(dto)
-								: BalanceTransfer.create() }
+							dto={ dto }
 							service={ Services.balanceTransfersApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									Cubits.balanceTransfers.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									Cubits.balanceTransfers.update(data);
 								}
@@ -76,8 +74,8 @@ export default function BalanceTransfersPage()
 				} }
 			/>
 
-			<CrudPage.DeleteDialog
-				entityNameSelector={ (balanceTransfer) => balanceTransfer.description }
+			<CrudPage.DeleteDialog<BalanceTransferDto>
+				entityNameSelector={ () => `"${ t("balanceTransfers.entityName") }"` }
 				service={ Services.balanceTransfersApi }
 				onSuccess={ (entity) => Cubits.balanceTransfers.delete(entity) }
 			/>
@@ -114,7 +112,7 @@ function Table()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<BalanceTransfer, BalanceTransferDto>
+				<CrudPage.TableBody<BalanceTransferDto>
 					data={ Cubits.balanceTransfers.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
@@ -132,16 +130,16 @@ function Table()
 							: [])
 					] }
 					tableRowMapper={ (
-						transfer: BalanceTransfer
+						transfer
 					) => [
-						{rowBody: `#${ transfer.id.value }`, rowStyles: ""},
-						{rowBody: new Date(transfer.date.value).toLocaleDateString("en-CA"), rowStyles: ""},
-						{rowBody: transfer.fromAccountName.value ?? "-", rowStyles: "font-semibold text-red-600"},
-						{rowBody: transfer.toAccountName.value ?? "-", rowStyles: "font-semibold text-green-600"},
+						{rowBody: `#${ transfer.id }`, rowStyles: ""},
+						{rowBody: new Date(transfer.date).toLocaleDateString("en-CA"), rowStyles: ""},
+						{rowBody: transfer.fromAccountName ?? "-", rowStyles: "font-semibold text-red-600"},
+						{rowBody: transfer.toAccountName ?? "-", rowStyles: "font-semibold text-green-600"},
 						{
 							rowBody: (
 								<div className="flex items-center gap-1">
-									{ (transfer.amount.value ?? 0).toLocaleString("en-US") }
+									{ (transfer.amount ?? 0).toLocaleString("en-US") }
 									<ErpCurrencyIcon/>
 								</div>
 							),
@@ -163,10 +161,10 @@ function Table()
 											balanceTransferId: transfer.id,
 											tafqit: Services.auth.setting?.currency?.value
 												? NumbertoWordsService.ConvertAmount(
-													transfer.amount.value,
+													transfer.amount,
 													Services.auth.setting?.currency.value
 												)
-												: NumbertoWordsService.Convert(transfer.amount.value)
+												: NumbertoWordsService.Convert(transfer.amount)
 										} }
 									/>
 								),

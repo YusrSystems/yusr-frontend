@@ -1,4 +1,4 @@
-import { Dto, type Entity } from "../../../stateManager";
+import { Dto } from "../../../stateManager";
 import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import React, { type PropsWithChildren, useMemo } from "react";
@@ -20,21 +20,21 @@ import { Check, ChevronsUpDown, Loader2, X } from "lucide-react";
 import { SearchInput, type SearchInputParams } from "../../custom";
 
 
-export type MultiSearchableSelectOptionProps<TEntity extends Entity<TDto>, TDto extends Dto> = {
+export type MultiSearchableSelectOptionProps<TDto extends Dto> = {
 	ids: Signal<number[]>;
 	labels?: Signal<Record<number, string>>;
-	labelSelector: keyof TEntity;
-	item: TEntity;
+	labelSelector: keyof TDto;
+	item: TDto;
 	disabled?: boolean;
 	onToggle?: (ids: number[]) => void;
 };
 
-export type MultiSearchableSelectProps<TEntity extends Entity<TDto>, TDto extends Dto> = Omit<
-	MultiSearchableSelectOptionProps<TEntity, TDto>,
+export type MultiSearchableSelectProps<TDto extends Dto> = Omit<
+	MultiSearchableSelectOptionProps<TDto>,
 	"labelSelector" | "item"
 >;
 
-export function MultiSearchableSelect<TEntity extends Entity<TDto>, TDto extends Dto>({children}: PropsWithChildren)
+export function MultiSearchableSelect<TDto extends Dto>({children}: PropsWithChildren)
 {
 	useSignals();
 	const isOpen = useMemo(() => signal<boolean>(false), []);
@@ -169,7 +169,7 @@ MultiSearchableSelect.OptionBody = function ({label}: { label: string; })
 };
 
 // Toggles membership in `ids` instead of replacing the value; popover stays open after selection
-MultiSearchableSelect.Option = function <TEntity extends Entity<TDto>, TDto extends Dto>(
+MultiSearchableSelect.Option = function <TDto extends Dto>(
 	{
 		ids,
 		labels,
@@ -178,11 +178,11 @@ MultiSearchableSelect.Option = function <TEntity extends Entity<TDto>, TDto exte
 		disabled,
 		onToggle,
 		children
-	}: MultiSearchableSelectOptionProps<TEntity, TDto> & PropsWithChildren
+	}: MultiSearchableSelectOptionProps<TDto> & PropsWithChildren
 )
 {
 	useSignals();
-	const itemId = item.id.value;
+	const itemId = item.id;
 	const isSelected = ids.value.includes(itemId);
 
 	return (

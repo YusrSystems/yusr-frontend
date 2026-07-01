@@ -4,25 +4,25 @@ import { Button } from "../../pure/button";
 import { ContextMenuContent, ContextMenuGroup, ContextMenuItem } from "../../pure/context-menu";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../pure/dropdown-menu";
 import React from "react";
-import { type ChangeableEntity, type Dto } from "../../../stateManager";
+import { type Dto } from "../../../stateManager";
 
 
 type ListType = "dropdown" | "context";
 
-export type CrudTableRowActionsMenuProps<TEntity extends ChangeableEntity<TDto>, TDto extends Dto> = {
-	entity: TEntity,
+export type CrudTableRowActionsMenuProps<TDto extends Dto> = {
+	dto: TDto,
 	type?: ListType;
 	onEditClicked?: () => void;
 	onDeleteClicked?: () => void;
-	hasUpdatePermission: ((entity: TEntity) => boolean) | boolean;
-	hasDeletePermission: ((entity: TEntity) => boolean) | boolean;
+	hasUpdatePermission: ((dto: TDto) => boolean) | boolean;
+	hasDeletePermission: ((dto: TDto) => boolean) | boolean;
 	dropdownItems?: React.ReactNode[];
 	contextMenuItems?: React.ReactNode[];
 };
 
-export function CrudTableRowActionsMenu<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
+export function CrudTableRowActionsMenu<TDto extends Dto>(
 	{
-		entity,
+		dto,
 		onEditClicked,
 		onDeleteClicked,
 		type,
@@ -31,7 +31,7 @@ export function CrudTableRowActionsMenu<TEntity extends ChangeableEntity<TDto>, 
 		dropdownItems,
 		contextMenuItems
 	}:
-	CrudTableRowActionsMenuProps<TEntity, TDto>
+	CrudTableRowActionsMenuProps<TDto>
 )
 {
 	const {t, i18n} = useTranslation("common");
@@ -46,14 +46,14 @@ export function CrudTableRowActionsMenu<TEntity extends ChangeableEntity<TDto>, 
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="start">
-						{ (typeof hasUpdatePermission === "function" ? hasUpdatePermission(entity) : hasUpdatePermission) && (
+						{ (typeof hasUpdatePermission === "function" ? hasUpdatePermission(dto) : hasUpdatePermission) && (
 							<DropdownMenuItem className="text-amber-500 font-semibold" onSelect={ onEditClicked }>
 								<Edit className="me-2 h-4 w-4"/>
 								{ t("crudRow.edit") }
 							</DropdownMenuItem>
 						) }
 						{ dropdownItems }
-						{ (typeof hasDeletePermission === "function" ? hasDeletePermission(entity) : hasDeletePermission) && (
+						{ (typeof hasDeletePermission === "function" ? hasDeletePermission(dto) : hasDeletePermission) && (
 							<DropdownMenuItem className="text-destructive font-semibold" onSelect={ onDeleteClicked }>
 								<Trash className="me-2 h-4 w-4"/>
 								{ t("crudRow.delete") }
@@ -66,14 +66,14 @@ export function CrudTableRowActionsMenu<TEntity extends ChangeableEntity<TDto>, 
 			{ type === "context" && (
 				<ContextMenuContent>
 					<ContextMenuGroup dir={ i18n.dir() }>
-						{ (typeof hasUpdatePermission === "function" ? hasUpdatePermission(entity) : hasUpdatePermission) && (
+						{ (typeof hasUpdatePermission === "function" ? hasUpdatePermission(dto) : hasUpdatePermission) && (
 							<ContextMenuItem className="text-amber-500 font-semibold" onSelect={ onEditClicked }>
 								<Edit className="me-2 h-4 w-4"/>
 								{ t("crudRow.edit") }
 							</ContextMenuItem>
 						) }
 						{ contextMenuItems }
-						{ (typeof hasDeletePermission === "function" ? hasDeletePermission(entity) : hasDeletePermission) && (
+						{ (typeof hasDeletePermission === "function" ? hasDeletePermission(dto) : hasDeletePermission) && (
 							<ContextMenuItem className="text-destructive font-semibold" onSelect={ onDeleteClicked }>
 								<Trash className="me-2 h-4 w-4"/>
 								{ t("crudRow.delete") }

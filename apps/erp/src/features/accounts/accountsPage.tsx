@@ -20,7 +20,7 @@ import {
 	UnauthorizedPage,
 	YoutubeButton
 } from "yusr-ui";
-import { Account, type AccountDto, type AccountType } from "@/core/data/account.ts";
+import { type AccountDto, type AccountType } from "@/core/data/account.ts";
 import ReportConstants from "../../core/data/report/reportConstants";
 import { AccountStatementButton } from "../reports/accountStatementDialog";
 import ReportButton from "../reports/reportButton";
@@ -47,7 +47,7 @@ export default function AccountsPage(
 	}
 
 	return (
-		<CrudPage>
+		<CrudPage<AccountDto>>
 			<CrudPage.HeaderContainer>
 				<div className="flex flex-col sm:flex-row sm:items-center gap-3 ">
 					<h1>
@@ -102,18 +102,17 @@ export default function AccountsPage(
 				{
 					return (
 						<ChangeAccountDialog
-							entity={ dto
-								? Account.load(dto)
-								: Account.create({type: fixedType}) }
+							dto={ dto }
+							fixedType={ fixedType }
 							service={ Services.accountsApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									Cubits.accounts.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									Cubits.accounts.update(data);
 								}
@@ -173,7 +172,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<Account, AccountDto>
+				<CrudPage.TableBody<AccountDto>
 					data={ Cubits.accounts.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
@@ -195,7 +194,7 @@ function PageTable()
 						account
 					) =>
 					{
-						const balanceType = account.balance.value > 0 ? "debit" : account.balance.value < 0 ? "credit" : "zero";
+						const balanceType = account.balance > 0 ? "debit" : account.balance < 0 ? "credit" : "zero";
 						const balanceLabel = balanceLabels[balanceType];
 						const colorStyle = balanceType === "credit" ? "text-red-600" : "text-green-600";
 
@@ -206,7 +205,7 @@ function PageTable()
 								? [{
 									rowBody: (
 										<div className="flex items-center gap-1">
-											{ Math.abs(account.balance.value ?? 0).toLocaleString("en-US") }
+											{ Math.abs(account.balance ?? 0).toLocaleString("en-US") }
 											<ErpCurrencyIcon/>
 										</div>
 									),

@@ -46,34 +46,34 @@ export function ItemsListReportTable()
 				{
 					const isEven = idx % 2 === 0;
 					return (
-						<tr key={ item.id.value }>
+						<tr key={ item.id }>
 							<ReportTableTd
 								isEven={ isEven }>{ idx + 1 + ((Cubits.items.currentPage.value - 1) * Cubits.items.pageSize.value) }</ReportTableTd>
 							<ReportTableTd isEven={ isEven }
 							               className="p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!">
 								<Link
-									to={ `/items/${ item.id.value }` }
+									to={ `/items/${ item.id }` }
 									target="_blank"
 									rel="noopener noreferrer"
 									className="block w-full h-full"
 								>
-									{ item.id.value }
+									{ item.id }
 								</Link>
 							</ReportTableTd>
 							<ReportTableTd
 								isEven={ isEven }
-								className={ `print:font-medium font-bold! ${ item.type.value === ItemType.Product ? "text-sky-500!" : "text-emerald-600!" }` }
-								align="start">{ item.type.value === ItemType.Product ? t("items.product") : t("items.service") }
+								className={ `print:font-medium font-bold! ${ item.type === ItemType.Product ? "text-sky-500!" : "text-emerald-600!" }` }
+								align="start">{ item.type === ItemType.Product ? t("items.product") : t("items.service") }
 							</ReportTableTd>
 							<ReportTableTd isEven={ isEven }
 							               align="start">{ item.name }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.class }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.brand }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.sellUnitName }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity.value) }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(item.cost.value) }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity) }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>{ formatNumber(item.cost) }</ReportTableTd>
 							<ReportTableTd
-								isEven={ isEven }>{ formatNumber(item.quantity.value * item.cost.value) }</ReportTableTd>
+								isEven={ isEven }>{ formatNumber(item.quantity * item.cost) }</ReportTableTd>
 						</tr>
 					);
 				}) }

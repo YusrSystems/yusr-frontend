@@ -23,11 +23,11 @@ export abstract class AuthService
 		return this._isAuthenticatedSignal.value;
 	}
 
-	setLoggedInUser(user: User)
+	setLoggedInUser(user: UserDto)
 	{
-		if (user.id.value === this._loggedInUserSignal.value?.id.value)
+		if (user.id === this._loggedInUserSignal.value?.id.value)
 		{
-			this._loggedInUserSignal.value = user;
+			this._loggedInUserSignal.value = User.load(user);
 		}
 	}
 

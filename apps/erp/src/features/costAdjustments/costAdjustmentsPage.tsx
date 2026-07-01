@@ -1,6 +1,6 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
-import CostAdjustment, { type CostAdjustmentDto } from "@/core/data/costAdjustment";
+import { type CostAdjustmentDto } from "@/core/data/costAdjustment";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -31,7 +31,7 @@ export default function CostAdjustmentsPage()
 	}
 
 	return (
-		<CrudPage>
+		<CrudPage<CostAdjustmentDto>>
 			<CrudPage.Header
 				title={ t("costAdjustments.title") }
 				addButtonTitle={ t("costAdjustments.addNewTitle") }
@@ -49,18 +49,16 @@ export default function CostAdjustmentsPage()
 				{
 					return (
 						<ChangeCostAdjustmentDialog
-							entity={ dto
-								? CostAdjustment.load(dto)
-								: CostAdjustment.create() }
+							dto={ dto }
 							service={ Services.costAdjustmentsApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									Cubits.costAdjustments.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									Cubits.costAdjustments.update(data);
 								}
@@ -102,7 +100,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<CostAdjustment, CostAdjustmentDto>
+				<CrudPage.TableBody<CostAdjustmentDto>
 					hasDeletePermission={ false }
 					data={ Cubits.costAdjustments.entities.value }
 					headerRows={ [
@@ -118,14 +116,14 @@ function PageTable()
 					tableRowMapper={ (
 						adjustment
 					) => [
-						{rowBody: `#${ adjustment.id.value }`, rowStyles: ""},
-						{rowBody: adjustment.date.value, rowStyles: ""},
-						{rowBody: adjustment.itemName.value, rowStyles: "font-semibold"},
-						{rowBody: adjustment.quantity.value.toString(), rowStyles: "font-mono"},
+						{rowBody: `#${ adjustment.id }`, rowStyles: ""},
+						{rowBody: adjustment.date, rowStyles: ""},
+						{rowBody: adjustment.itemName, rowStyles: "font-semibold"},
+						{rowBody: adjustment.quantity.toString(), rowStyles: "font-mono"},
 						{
 							rowBody: (
 								<div className="flex items-center gap-1 text-muted-foreground line-through">
-									{ Number(adjustment.oldCost.value).toLocaleString("en-US") }
+									{ Number(adjustment.oldCost).toLocaleString("en-US") }
 									<ErpCurrencyIcon/>
 								</div>
 							),
@@ -134,13 +132,13 @@ function PageTable()
 						{
 							rowBody: (
 								<div className="flex items-center gap-1 font-bold text-blue-600">
-									{ Number(adjustment.newCost.value).toLocaleString("en-US") }
+									{ Number(adjustment.newCost).toLocaleString("en-US") }
 									<ErpCurrencyIcon/>
 								</div>
 							),
 							rowStyles: ""
 						},
-						{rowBody: adjustment.notes.value || "-", rowStyles: "text-sm text-gray-500"}
+						{rowBody: adjustment.notes || "-", rowStyles: "text-sm text-gray-500"}
 					] }
 					hasUpdatePermission={ Services.auth.hasAuth(
 						SystemPermissionsResources.CostAdjustments,

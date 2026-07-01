@@ -10,7 +10,7 @@ import {
 	DialogHeader,
 	DialogTitle
 } from "yusr-ui";
-import type { Account } from "../../core/data/account";
+import { AccountDto } from "../../core/data/account";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
 import { signal } from "@preact/signals-react";
@@ -18,7 +18,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { AccountStatementReportRequest } from "@/core/data/report/accountStatementReportRequest.ts";
 
 
-export function AccountStatementButton({account}: { account: Account; })
+export function AccountStatementButton({account}: { account: AccountDto; })
 {
 	useSignals();
 	const {t, i18n} = useTranslation("erpCommon");
@@ -36,7 +36,7 @@ export function AccountStatementButton({account}: { account: Account; })
 				<DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>{ t("accountStatement.title") }</DialogTitle>
-						<DialogDescription>{ account.name.value }</DialogDescription>
+						<DialogDescription>{ account.name }</DialogDescription>
 					</DialogHeader>
 
 					<div className="flex flex-col gap-4 py-2">
@@ -54,7 +54,7 @@ export function AccountStatementButton({account}: { account: Account; })
 						<ReportButton
 							reportName={ ReportConstants.AccountStatement }
 							request={ new AccountStatementReportRequest({
-								accountId: account.id.value,
+								accountId: account.id,
 								fromDate: fromDate.value || null,
 								toDate: toDate.value || null
 							}) }

@@ -1,5 +1,5 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import { Store, type StoreDto } from "@/core/data/store";
+import { type StoreDto } from "@/core/data/store";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Warehouse } from "lucide-react";
@@ -31,7 +31,7 @@ export default function StoresPage()
 	}
 
 	return (
-		<CrudPage>
+		<CrudPage<StoreDto>>
 			<CrudPage.Header
 				title={ t("stores.title") }
 				addButtonTitle={ t("stores.addNewTitle") }
@@ -49,18 +49,16 @@ export default function StoresPage()
 				{
 					return (
 						<ChangeStoreDialog
-							entity={ dto
-								? Store.load(dto)
-								: Store.create() }
+							dto={ dto }
 							service={ Services.storesApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									Cubits.stores.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									Cubits.stores.update(data);
 								}
@@ -108,7 +106,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<Store, StoreDto>
+				<CrudPage.TableBody<StoreDto>
 					data={ Cubits.stores.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},

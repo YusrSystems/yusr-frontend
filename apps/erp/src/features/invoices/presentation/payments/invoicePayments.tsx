@@ -75,8 +75,8 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 											label={ invoiceVoucher.paymentMethodName }
 											onSelect={ (pm) =>
 											{
-												invoiceVoucher.paymentMethodId.value = pm?.id.value;
-												invoiceVoucher.paymentMethodName.value = pm?.name.value;
+												invoiceVoucher.paymentMethodId.value = pm?.id;
+												invoiceVoucher.paymentMethodName.value = pm?.name;
 											} }
 										/>
 									</FormField>

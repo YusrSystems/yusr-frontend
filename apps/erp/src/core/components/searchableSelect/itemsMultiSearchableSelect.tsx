@@ -1,5 +1,5 @@
 import { MultiSearchableSelect, type MultiSearchableSelectProps, PageLoaded, PageLoading } from "yusr-ui";
-import Item, { ItemDto } from "@/core/data/item.ts";
+import { ItemDto } from "@/core/data/item.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useMemo } from "react";
@@ -7,7 +7,7 @@ import { signal } from "@preact/signals-react";
 
 
 export default function ItemsMultiSearchableSelect(
-	{...props}: Omit<MultiSearchableSelectProps<Item, ItemDto>, "ids" | "labels">
+	{...props}: Omit<MultiSearchableSelectProps<ItemDto>, "ids" | "labels">
 )
 {
 	useSignals();
@@ -15,7 +15,7 @@ export default function ItemsMultiSearchableSelect(
 	const labels = useMemo(() => signal<Record<number, string>>([]), []);
 	const ids = useMemo(() => signal<number[]>([]), []);
 
-	return (<MultiSearchableSelect<Item, ItemDto>>
+	return (<MultiSearchableSelect<ItemDto>>
 		<MultiSearchableSelect.Trigger
 			labels={ labels }
 			disabled={ props.disabled }
@@ -43,15 +43,15 @@ export default function ItemsMultiSearchableSelect(
 		if (Cubits.items.state.value instanceof PageLoaded && Cubits.items.entities.value.length > 0)
 		{
 			return Cubits.items.state.value instanceof PageLoaded && Cubits.items.entities.value.map((item) => (
-				<MultiSearchableSelect.Option<Item, ItemDto>
-					key={ item.id.value }
+				<MultiSearchableSelect.Option<ItemDto>
+					key={ item.id }
 					ids={ ids }
 					labels={ labels }
 					labelSelector="name"
 					item={ item }
 					{ ...props }
 				>
-					<MultiSearchableSelect.OptionBody label={ item.name.value }/>
+					<MultiSearchableSelect.OptionBody label={ item.name }/>
 				</MultiSearchableSelect.Option>
 			));
 		}

@@ -6,7 +6,7 @@ export class ItemUnitPricingMethodDto extends Dto
 {
 	public itemId?: number;
 	public unitId?: number;
-	public itemUnitPricingMethodName?: string;
+	public itemUnitPricingMethodName!: string;
 	public unitName?: string;
 	public pricingMethodId?: number;
 	public pricingMethodName?: string;
