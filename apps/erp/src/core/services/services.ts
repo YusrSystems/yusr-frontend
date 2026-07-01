@@ -9,12 +9,12 @@ import DashboardApiService from "@/core/networking/dashboardApiService.ts";
 import VouchersApiService from "@/core/networking/voucherApiService.ts";
 import InvoicesApiService from "@/core/networking/invoiceApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
-import CostAdjustmentsApiService from "@/core/networking/costAdjustmentsApiService.ts";
 import { TaxDto } from "@/core/data/tax.ts";
 import type { StoreDto } from "@/core/data/store.ts";
 import type { ErpRoleDto } from "@/core/data/erpRole.ts";
 import { type StocktakingDto } from "@/core/data/stocktaking.ts";
 import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
+import type { CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
 
 
 export class Services extends BaseServices
@@ -37,7 +37,7 @@ export class Services extends BaseServices
 	public static readonly voucherApi = new VouchersApiService();
 	public static readonly invoicesApi = new InvoicesApiService();
 	public static readonly settingApi = new SettingsApiService();
-	public static readonly costAdjustmentsApi = new CostAdjustmentsApiService();
+	public static readonly costAdjustmentsApi = new BaseApiService<CostAdjustmentDto>("CostAdjustments");
 
 	static
 	{

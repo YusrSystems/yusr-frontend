@@ -4,7 +4,7 @@ import CostAdjustment, { type CostAdjustmentDto } from "@/core/data/costAdjustme
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	ChangeableEntityMode,
@@ -17,16 +17,18 @@ import {
 	SystemPermissionsActions,
 	TextField
 } from "yusr-ui";
+import { signal } from "@preact/signals-react";
 
 
 export default function ChangeCostAdjustmentDialog({
-	entity,
+	dto,
 	service,
 	onSuccess
-}: CommonChangeDialogProps<CostAdjustment, CostAdjustmentDto>)
+}: CommonChangeDialogProps<CostAdjustmentDto>)
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
+	const entity = useMemo(() => signal<CostAdjustment>(dto ? CostAdjustment.load(dto) : CostAdjustment.create()), []);
 
 	useEffect(() =>
 	{
@@ -34,16 +36,16 @@ export default function ChangeCostAdjustmentDialog({
 	}, []);
 
 	if (
-		(entity.mode.value === ChangeableEntityMode.Create &&
+		(entity.value.mode.value === ChangeableEntityMode.Create &&
 			!Services.auth.hasAuth(SystemPermissionsResources.CostAdjustments, SystemPermissionsActions.Add)) ||
-		(entity.mode.value === ChangeableEntityMode.Update &&
+		(entity.value.mode.value === ChangeableEntityMode.Update &&
 			!Services.auth.hasAuth(SystemPermissionsResources.CostAdjustments, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.mode.value === ChangeableEntityMode.Create
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? t("costAdjustments.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("costAdjustments.entityName") }`;
 
@@ -57,31 +59,31 @@ export default function ChangeCostAdjustmentDialog({
 						label={ t("costAdjustments.date") }
 						type="date"
 						required
-						value={ entity.date }
-						error={ entity.getError("date") }
+						value={ entity.value.date }
+						error={ entity.value.getError("date") }
 						disabled
 					/>
 
 					<FormField
 						label={ t("costAdjustments.item") }
 						required
-						error={ entity.getError("itemId") }
+						error={ entity.value.getError("itemId") }
 					>
 						<ItemsSearchableSelect
-							id={ entity.itemId }
-							label={ entity.itemName }
-							disabled={ entity.mode.value === ChangeableEntityMode.Update }
+							id={ entity.value.itemId }
+							label={ entity.value.itemName }
+							disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
 							onSelect={ (item) =>
 							{
 								if (item)
 								{
-									entity.itemName.value = item.name.value;
-									entity.oldCost.value = item.cost.value;
-									entity.quantity.value = item.quantity.value;
+									entity.value.itemName.value = item.name;
+									entity.value.oldCost.value = item.cost;
+									entity.value.quantity.value = item.quantity;
 									// Optionally pre-fill new cost with old cost to make editing easier
-									if (entity.newCost.value === 0)
+									if (entity.value.newCost.value === 0)
 									{
-										entity.newCost.value = item.cost.value;
+										entity.value.newCost.value = item.cost;
 									}
 								}
 							} }
@@ -92,26 +94,27 @@ export default function ChangeCostAdjustmentDialog({
 				<FieldsSection columns={ 3 }>
 					<NumberField
 						label={ t("costAdjustments.quantity") }
-						value={ entity.quantity }
+						value={ entity.value.quantity }
 						disabled
 					/>
 					<NumberField
 						label={ t("costAdjustments.oldCost") }
-						value={ entity.oldCost }
+						value={ entity.value.oldCost }
 						disabled
 					/>
 					<NumberField
 						label={ t("costAdjustments.newCost") }
 						required
 						min={ 0 }
-						value={ entity.newCost }
-						error={ entity.getError("newCost") }
+						value={ entity.value.newCost }
+						error={ entity.value.getError("newCost") }
+						disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
 					/>
 				</FieldsSection>
 
 				<TextField
 					label={ t("costAdjustments.notes") }
-					value={ entity.notes }
+					value={ entity.value.notes }
 				/>
 			</FieldGroup>
 
@@ -121,7 +124,7 @@ export default function ChangeCostAdjustmentDialog({
 				<ChangeDialog.SaveButton<CostAdjustment, CostAdjustmentDto>
 					entity={ entity }
 					service={ service }
-					onSuccess={ (data) => onSuccess?.(data) }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>
