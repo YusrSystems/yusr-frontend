@@ -3,9 +3,8 @@ import { ItemsCubit } from "@/features/items/state/itemsCubit";
 import { BaseCubits, FilterFieldsCubit, PageCubit } from "yusr-ui";
 import { Account, AccountDto } from "../data/account";
 import { ErpRoleDto } from "../data/erpRole";
-import ItemTransfer, { ItemTransferDto } from "../data/itemTransfer";
 import { PricingMethodDto } from "../data/pricingMethod";
-import Stocktaking, { StocktakingDto } from "../data/stocktaking";
+import { StocktakingDto } from "../data/stocktaking";
 import { TaxDto } from "../data/tax";
 import { UnitDto } from "../data/unit";
 import { Services } from "./services";
@@ -14,6 +13,7 @@ import Invoice, { type InvoiceDto } from "@/core/data/invoices/invoice.ts";
 import type { StoreDto } from "@/core/data/store.ts";
 import { PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import CostAdjustment, { type CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
+import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
 
 
 export class Cubits extends BaseCubits
@@ -22,15 +22,15 @@ export class Cubits extends BaseCubits
 	public static readonly stores = new PageCubit<StoreDto>(Services.storesApi);
 	public static readonly units = new PageCubit<UnitDto>(Services.unitsApi);
 	public static readonly pricingMethods = new PageCubit<PricingMethodDto>(Services.pricingMethodsApi);
+	public static readonly stocktaking = new PageCubit<StocktakingDto>(Services.stocktakingApi);
+	public static readonly itemsSettlements = new PageCubit<StocktakingDto>(Services.itemsSettlementsApi);
+	public static readonly itemTransfers = new PageCubit<ItemTransferDto>(Services.itemTransfersApi);
 	public static readonly paymentMethods = new PageCubit<PaymentMethod, PaymentMethodDto>(Services.paymentMethodsApi);
 	public static readonly accounts = new PageCubit<Account, AccountDto>(Services.accountsApi);
 	public static readonly balanceTransfers = new PageCubit<BalanceTransfer, BalanceTransferDto>(
 		Services.balanceTransfersApi
 	);
 	public static readonly items = new ItemsCubit();
-	public static readonly stocktaking = new PageCubit<Stocktaking, StocktakingDto>(Services.stocktakingApi);
-	public static readonly itemTransfers = new PageCubit<ItemTransfer, ItemTransferDto>(Services.itemTransfersApi);
-	public static readonly itemsSettlements = new PageCubit<Stocktaking, StocktakingDto>(Services.itemsSettlementsApi);
 	public static override roles = new PageCubit<ErpRoleDto>(Services.rolesApi);
 	public static readonly vouchers = new PageCubit<Voucher, VoucherDto>(Services.voucherApi);
 	public static readonly invoices = new PageCubit<Invoice, InvoiceDto>(Services.invoicesApi);

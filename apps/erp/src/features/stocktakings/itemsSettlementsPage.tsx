@@ -1,5 +1,4 @@
 import type { StocktakingDto } from "@/core/data/stocktaking.ts";
-import Stocktaking from "@/core/data/stocktaking.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 import { Services } from "@/core/services/services.ts";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -33,7 +32,7 @@ export default function ItemsSettlementsPage()
 	}
 
 	return (
-		<CrudPage>
+		<CrudPage<StocktakingDto>>
 			<CrudPage.Header
 				title={ t("itemsSettlements.title") }
 				addButtonTitle={ t("itemsSettlements.addNewTitle") }
@@ -56,18 +55,16 @@ export default function ItemsSettlementsPage()
 						<ChangeStocktakingDialog
 							addDialogTitle={ t("itemsSettlements.addNewTitle") }
 							updateDialogTitle={ `${ t("common:crudRow.edit") } ${ t("itemsSettlements.entityName") }` }
-							entity={ dto
-								? Stocktaking.load(dto)
-								: Stocktaking.create() }
+							dto={ dto }
 							service={ Services.itemsSettlementsApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									Cubits.itemsSettlements.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									Cubits.itemsSettlements.update(data);
 								}
@@ -115,7 +112,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<Stocktaking, StocktakingDto>
+				<CrudPage.TableBody<StocktakingDto>
 					data={ Cubits.itemsSettlements.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
@@ -133,10 +130,10 @@ function PageTable()
 					tableRowMapper={ (
 						settlement
 					) => [
-						{rowBody: `#${ settlement.id.value }`, rowStyles: ""},
-						{rowBody: settlement.date.value, rowStyles: ""},
-						{rowBody: settlement.storeName.value, rowStyles: "font-semibold"},
-						{rowBody: settlement.description.value ?? "-", rowStyles: "text-sm text-gray-500"},
+						{rowBody: `#${ settlement.id }`, rowStyles: ""},
+						{rowBody: settlement.date, rowStyles: ""},
+						{rowBody: settlement.storeName, rowStyles: "font-semibold"},
+						{rowBody: settlement.description ?? "-", rowStyles: "text-sm text-gray-500"},
 						...(Services.auth.hasAuth(
 							SystemPermissionsResources.ReportItemSettlement,
 							SystemPermissionsActions.Get
@@ -145,7 +142,7 @@ function PageTable()
 								rowBody: (
 									<ReportButton
 										reportName={ ReportConstants.ItemSettlement }
-										request={ {itemSettlementId: settlement.id.value} }
+										request={ {itemSettlementId: settlement.id} }
 									/>
 								),
 								rowStyles: "w-32"

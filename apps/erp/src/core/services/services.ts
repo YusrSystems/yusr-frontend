@@ -2,10 +2,7 @@ import { BaseApiService, BaseServices, RolesApiService } from "yusr-ui";
 import AccountApiService from "../networking/accountApiService";
 import BalanceTransfersApiService from "../networking/balanceTransferApiService";
 import ItemsApiService from "../networking/itemApiService";
-import ItemsSettlementsApiService from "../networking/itemsSettlementsApiService";
-import ItemTransferApiService from "../networking/itemTransferApiService";
 import PaymentMethodsApiService from "../networking/paymentMethodApiService";
-import StocktakingsApiService from "../networking/stocktakingApiService";
 import UnitsApiService from "../networking/unitApiService";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
@@ -16,7 +13,8 @@ import CostAdjustmentsApiService from "@/core/networking/costAdjustmentsApiServi
 import { TaxDto } from "@/core/data/tax.ts";
 import type { StoreDto } from "@/core/data/store.ts";
 import type { ErpRoleDto } from "@/core/data/erpRole.ts";
-import type { PricingMethodDto } from "@/core/data/pricingMethod.ts";
+import { type StocktakingDto } from "@/core/data/stocktaking.ts";
+import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
 
 
 export class Services extends BaseServices
@@ -28,13 +26,13 @@ export class Services extends BaseServices
 	public static readonly storesApi = new BaseApiService<StoreDto>("Stores");
 	public static readonly unitsApi = new UnitsApiService("Units");
 	public static readonly pricingMethodsApi = new BaseApiService<PricingMethodDto>("PricingMethods");
+	public static readonly stocktakingApi = new BaseApiService<StocktakingDto>("Stocktakings");
+	public static readonly itemsSettlementsApi = new BaseApiService<StocktakingDto>("ItemSettlements");
+	public static readonly itemTransfersApi = new BaseApiService<ItemTransferDto>("ItemTransfers");
 	public static readonly itemsApi = new ItemsApiService();
 	public static readonly accountsApi = new AccountApiService();
 	public static readonly paymentMethodsApi = new PaymentMethodsApiService();
 	public static readonly balanceTransfersApi = new BalanceTransfersApiService();
-	public static readonly stocktakingApi = new StocktakingsApiService();
-	public static readonly itemTransfersApi = new ItemTransferApiService();
-	public static readonly itemsSettlementsApi = new ItemsSettlementsApiService();
 	public static readonly dashboardApi = new DashboardApiService();
 	public static readonly voucherApi = new VouchersApiService();
 	public static readonly invoicesApi = new InvoicesApiService();

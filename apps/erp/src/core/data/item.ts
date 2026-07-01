@@ -1,7 +1,7 @@
 import { type Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, type StorageFile, Validators } from "yusr-ui";
 import { ItemStore, type ItemStoreDto } from "./itemStore";
-import { ItemTax } from "./itemTax";
+import { ItemTax, ItemTaxDto } from "./itemTax";
 import { ItemUnitPricingMethod, ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
 import { Tax } from "@/core/data/tax.ts";
 
@@ -37,9 +37,9 @@ export class ItemDto extends Dto
 	public location?: string;
 	public notes?: string;
 	public totalTaxes!: number;
-	public itemUnitPricingMethods: ItemUnitPricingMethod[] = [];
-	public itemTaxes: ItemTax[] = [];
-	public itemStores: ItemStore[] = [];
+	public itemUnitPricingMethods: ItemUnitPricingMethodDto[] = [];
+	public itemTaxes: ItemTaxDto[] = [];
+	public itemStores: ItemStoreDto[] = [];
 	public itemImages: StorageFile[] = [];
 }
 
@@ -193,14 +193,8 @@ export default class Item extends ChangeableEntity<ItemDto>
 	}
 }
 
-export class BarcodeResultDto
+export class BarcodeResult
 {
 	public item!: ItemDto;
 	public selectedIupm!: ItemUnitPricingMethodDto;
-}
-
-export class BarcodeResult
-{
-	public item!: Item;
-	public selectedIupm!: ItemUnitPricingMethod;
 }

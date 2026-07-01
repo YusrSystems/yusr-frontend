@@ -1,5 +1,5 @@
 import { BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
-import type { BarcodeResultDto, ItemDto } from "../data/item";
+import type { BarcodeResult, ItemDto } from "../data/item";
 import Item from "../data/item";
 
 
@@ -15,7 +15,7 @@ export default class ItemsApiService extends BaseApiService<Item, ItemDto>
 	async GetByBarcode(
 		barcode: string,
 		storeId: number
-	): Promise<RequestResult<BarcodeResultDto>>
+	): Promise<RequestResult<BarcodeResult>>
 	{
 		return await YusrApiHelper.Get(`/api/${ this.routeName }/GetByBarcode/${ barcode }/${ storeId }`);
 	}

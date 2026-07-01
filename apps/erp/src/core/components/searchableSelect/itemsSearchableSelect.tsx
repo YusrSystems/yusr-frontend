@@ -1,20 +1,19 @@
-import type Item from "@/core/data/item";
 import { type ItemDto, ItemType } from "@/core/data/item";
 import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
 import {
-  cn,
-  PageLoaded,
-  PageLoading,
-  SearchableSelect,
-  type SearchableSelectOptionProps,
-  type SearchableSelectProps
+	cn,
+	PageLoaded,
+	PageLoading,
+	SearchableSelect,
+	type SearchableSelectOptionProps,
+	type SearchableSelectProps
 } from "yusr-ui";
 
 
 export default function ItemsSearchableSelect(
-	{...props}: SearchableSelectProps<Item, ItemDto>
+	{...props}: SearchableSelectProps<ItemDto>
 )
 {
 	useSignals();
@@ -48,7 +47,7 @@ export default function ItemsSearchableSelect(
 		if (Cubits.items.state.value instanceof PageLoaded && Cubits.items.entities.value.length > 0)
 		{
 			return Cubits.items.entities.value.map((entity) => (
-				<Option key={ entity.id.value } item={ entity } { ...props } />
+				<Option key={ entity.id } item={ entity } { ...props } />
 			));
 		}
 
@@ -58,12 +57,12 @@ export default function ItemsSearchableSelect(
 
 const Option = React.memo(
 	function Option(
-		{...props}: Omit<SearchableSelectOptionProps<Item, ItemDto>, "labelSelector">
+		{...props}: Omit<SearchableSelectOptionProps<ItemDto>, "labelSelector">
 	)
 	{
 		useSignals();
 		return (
-			<SearchableSelect.Option<Item, ItemDto>
+			<SearchableSelect.Option<ItemDto>
 				labelSelector="name"
 				{ ...props }
 			>
@@ -72,12 +71,12 @@ const Option = React.memo(
 						<span className="text-sm font-medium truncate">{ props.item.name }</span>
 					</div>
 
-					{ props.item.type.value === ItemType.Product && (
+					{ props.item.type === ItemType.Product && (
 						<div className="flex flex-col items-end gap-1 shrink-0">
               <span
 				  className={ cn(
 					  "text-xs font-medium px-1.5 py-0.5 rounded",
-					  props.item.storeQuantity.value <= 0
+					  props.item.storeQuantity <= 0
 						  ? "bg-destructive/10 text-destructive"
 						  : props.item.storeQuantity <= (props.item.minQuantity ?? 10)
 							  ? "bg-yellow-500/10 text-yellow-600"
