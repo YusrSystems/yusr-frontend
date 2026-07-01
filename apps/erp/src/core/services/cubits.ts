@@ -1,7 +1,7 @@
 import type { BalanceTransfer, BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import { ItemsCubit } from "@/features/items/state/itemsCubit";
 import { BaseCubits, FilterFieldsCubit, PageCubit } from "yusr-ui";
-import { Account, AccountDto } from "../data/account";
+import { AccountDto } from "../data/account";
 import { ErpRoleDto } from "../data/erpRole";
 import { PricingMethodDto } from "../data/pricingMethod";
 import { StocktakingDto } from "../data/stocktaking";
@@ -28,7 +28,7 @@ export class Cubits extends BaseCubits
 	public static readonly items = new ItemsCubit();
 	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(Services.costAdjustmentsApi);
 	public static readonly paymentMethods = new PageCubit<PaymentMethod, PaymentMethodDto>(Services.paymentMethodsApi);
-	public static readonly accounts = new PageCubit<Account, AccountDto>(Services.accountsApi);
+	public static readonly accounts = new PageCubit<AccountDto>(Services.accountsApi);
 	public static readonly balanceTransfers = new PageCubit<BalanceTransfer, BalanceTransferDto>(
 		Services.balanceTransfersApi
 	);

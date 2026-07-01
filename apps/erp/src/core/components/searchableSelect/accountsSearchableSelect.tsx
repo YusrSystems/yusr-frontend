@@ -1,4 +1,4 @@
-import { Account, type AccountDto } from "@/core/data/account";
+import { type AccountDto } from "@/core/data/account";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import ChangeAccountDialog from "@/features/accounts/changeAccountDialog";
@@ -16,7 +16,7 @@ import { AccountType } from "../../data/account";
 
 
 export default function AccountsSearchableSelect(
-	{types, showAddButton = true, ...props}: SearchableSelectProps<Account, AccountDto> & {
+	{types, showAddButton = true, ...props}: SearchableSelectProps<AccountDto> & {
 		types: AccountType[];
 		showAddButton?: boolean;
 	}
@@ -41,15 +41,15 @@ export default function AccountsSearchableSelect(
 
 			{ showAddButton && isAddAccountOpen.value && (
 				<ChangeAccountDialog
-					entity={ Account.create({type: types[0], name: newAccountSearchText.value}) }
+					dto={ {type: types[0], name: newAccountSearchText.value} as AccountDto }
 					selectTypes={ types }
 					service={ Services.accountsApi }
 					onSuccess={ (data) =>
 					{
-						props.id.value = data.id.value;
+						props.id.value = data.id;
 						if (props.label)
 						{
-							props.label.value = data.name.value;
+							props.label.value = data.name;
 						}
 						props.onSelect?.(data);
 						isAddAccountOpen.value = false;
@@ -70,7 +70,7 @@ export default function AccountsSearchableSelect(
 		if (Cubits.accounts.state.value instanceof PageLoaded && Cubits.accounts.entities.value.length > 0)
 		{
 			return Cubits.accounts.entities.value.map((entity) => (
-				<Option key={ entity.id.value } item={ entity } { ...props } />
+				<Option key={ entity.id } item={ entity } { ...props } />
 			));
 		}
 
@@ -93,15 +93,15 @@ export default function AccountsSearchableSelect(
 }
 
 const Option = React.memo(
-	function Option({...props}: Omit<SearchableSelectOptionProps<Account, AccountDto>, "labelSelector">)
+	function Option({...props}: Omit<SearchableSelectOptionProps<AccountDto>, "labelSelector">)
 	{
 		useSignals();
 		return (
-			<SearchableSelect.Option<Account, AccountDto>
+			<SearchableSelect.Option<AccountDto>
 				labelSelector="name"
 				{ ...props }
 			>
-				<SearchableSelect.OptionBody label={ props.item.name.value }/>
+				<SearchableSelect.OptionBody label={ props.item.name }/>
 			</SearchableSelect.Option>
 		);
 	}

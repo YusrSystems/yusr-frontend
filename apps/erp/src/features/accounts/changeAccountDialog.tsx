@@ -23,33 +23,34 @@ import {
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect";
 import { Plus, Trash2 } from "lucide-react";
-import { type Account, AccountContact, type AccountDto, AccountType } from "@/core/data/account.ts";
+import { Account, AccountContact, type AccountDto, AccountType } from "@/core/data/account.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { useMemo } from "react";
 import { type Signal, signal } from "@preact/signals-react";
 
 
 export default function ChangeAccountDialog(
-	{entity, service, onSuccess, selectTypes}: CommonChangeDialogProps<Account, AccountDto> & {
+	{dto, service, onSuccess, fixedType, selectTypes}: CommonChangeDialogProps<AccountDto> & {
+		fixedType: AccountType;
 		selectTypes?: AccountType[];
 	}
 )
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
-	const currentEntity = useMemo(() => signal<Account>(entity), []); // I left the deps array empty, it causes infinite rerenders if you put anything inside it
+	const entity = useMemo(() => signal<Account>(dto ? Account.load(dto) : Account.create({type: fixedType})), []);
 
 	if (
-		(currentEntity.value.mode.value === ChangeableEntityMode.Create
+		(entity.value.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Add))
-		|| (currentEntity.value.mode.value === ChangeableEntityMode.Update
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = currentEntity.value.mode.value === ChangeableEntityMode.Create
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? t("accounts.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("accounts.entityName") }`;
 
@@ -58,12 +59,12 @@ export default function ChangeAccountDialog(
 		SystemPermissionsActions.Get
 	);
 
-	const requiresTaxInfo = currentEntity.value?.type.value === AccountType.Client
-		|| currentEntity.value?.type.value === AccountType.Supplier
-		|| currentEntity.value?.type.value === AccountType.Employee;
+	const requiresTaxInfo = entity.value?.type.value === AccountType.Client
+		|| entity.value?.type.value === AccountType.Supplier
+		|| entity.value?.type.value === AccountType.Employee;
 
-	const isBox = currentEntity.value?.type.value === AccountType.Box;
-	const isBank = currentEntity.value?.type.value === AccountType.Bank;
+	const isBox = entity.value?.type.value === AccountType.Box;
+	const isBank = entity.value?.type.value === AccountType.Bank;
 	const requiresAddress = !isBank;
 	const requiresContacts = !isBank && !isBox;
 
@@ -86,8 +87,8 @@ export default function ChangeAccountDialog(
 								<SelectField
 									label={ t("accounts.accountType") }
 									required
-									value={ currentEntity.value.type }
-									error={ currentEntity.value.getError("type") }
+									value={ entity.value.type }
+									error={ entity.value.getError("type") }
 									options={ selectTypes.map((type) => ({
 										value: type,
 										label: accountTypeLabels[type]
@@ -98,17 +99,17 @@ export default function ChangeAccountDialog(
 						<TextField
 							label={ t("accounts.accountName") }
 							required
-							value={ currentEntity.value.name }
-							error={ currentEntity.value.getError("name") }
+							value={ entity.value.name }
+							error={ entity.value.getError("name") }
 						/>
 
-						{ (currentEntity.value.type.value === AccountType.Client || currentEntity.value.type.value === AccountType.Supplier) && (
+						{ (entity.value.type.value === AccountType.Client || entity.value.type.value === AccountType.Supplier) && (
 							<FormField label={ t("accounts.parentAccount") }>
 								<AccountsSearchableSelect
-									disabled={ currentEntity.value.mode.value === ChangeableEntityMode.Update }
-									types={ currentEntity.value.type.value === AccountType.Client ? [AccountType.Client] : [AccountType.Supplier] }
-									id={ currentEntity.value.parentId }
-									label={ currentEntity.value.parentName }
+									disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+									types={ entity.value.type.value === AccountType.Client ? [AccountType.Client] : [AccountType.Supplier] }
+									id={ entity.value.parentId }
+									label={ entity.value.parentName }
 									showAddButton={ false }
 								/>
 							</FormField>
@@ -117,7 +118,7 @@ export default function ChangeAccountDialog(
 						{ canShowBalance && (
 							<NumberField
 								label={ t("accounts.openingBalance") }
-								value={ currentEntity.value.initialBalance }
+								value={ entity.value.initialBalance }
 								currency={ <ErpCurrencyIcon/> }
 							/>
 						) }
@@ -126,15 +127,15 @@ export default function ChangeAccountDialog(
 							<NumberField
 								label={ t("accounts.balance") }
 								disabled
-								value={ currentEntity.value.balance }
+								value={ entity.value.balance }
 								currency={ <ErpCurrencyIcon/> }
 							/>
 						) }
 					</FieldsSection>
 
-					{ requiresTaxInfo && <TaxFields entity={ currentEntity }/> }
+					{ requiresTaxInfo && <TaxFields entity={ entity }/> }
 
-					{ isBank && <BankFields entity={ currentEntity }/> }
+					{ isBank && <BankFields entity={ entity }/> }
 
 					<div
 						className={ `grid gap-6 ${
@@ -143,14 +144,14 @@ export default function ChangeAccountDialog(
 								: "grid-cols-1"
 						}` }
 					>
-						{ requiresAddress && <AddressFields entity={ currentEntity }/> }
-						{ requiresContacts && <ContactsFields entity={ currentEntity }/> }
+						{ requiresAddress && <AddressFields entity={ entity }/> }
+						{ requiresContacts && <ContactsFields entity={ entity }/> }
 					</div>
 
 					<FieldsSection title={ t("accounts.additionalInfo") } columns={ 1 }>
 						<TextAreaField
 							label={ t("accounts.notes") }
-							value={ currentEntity.value.notes }
+							value={ entity.value.notes }
 							rows={ 3 }
 						/>
 					</FieldsSection>
@@ -162,9 +163,9 @@ export default function ChangeAccountDialog(
 					<div className="flex justify-end gap-3">
 						<ChangeDialog.Close/>
 						<ChangeDialog.SaveButton<Account, AccountDto>
-							entity={ currentEntity.value }
+							entity={ entity }
 							service={ service }
-							onSuccess={ (data) => onSuccess?.(data) }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 						/>
 					</div>
 				</div>
