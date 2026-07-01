@@ -15,6 +15,7 @@ import type { ErpRoleDto } from "@/core/data/erpRole.ts";
 import { type StocktakingDto } from "@/core/data/stocktaking.ts";
 import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
 import type { CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
+import type { PricingMethodDto } from "@/core/data/pricingMethod.ts";
 
 
 export class Services extends BaseServices
