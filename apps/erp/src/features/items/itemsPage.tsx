@@ -33,9 +33,8 @@ import { createPortal } from "react-dom";
 
 export default function ItemsPage()
 {
-
+	useSignals();
 	const {t} = useTranslation(["stocking", "erpCommon"]);
-
 	useEffect(() =>
 	{
 		Cubits.items.init();
@@ -90,6 +89,11 @@ export default function ItemsPage()
 				<PageTable/>
 
 				<CrudPage.ChangeDialog
+					fetchEntity={ async (id: number) =>
+					{
+						const result = await Services.itemsApi.Get(id);
+						return result.data;
+					} }
 					changeDialog={ (dto: ItemDto | undefined, closeDialog) =>
 					{
 						return (
@@ -160,6 +164,7 @@ function PageTable()
 		return (
 			<CrudPage.Table>
 				<CrudPage.TableBody<ItemDto>
+					isShareablePage={ true }
 					data={ Cubits.items.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},

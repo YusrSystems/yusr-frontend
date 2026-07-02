@@ -89,7 +89,7 @@ export const router = createBrowserRouter([{
 					{path: "/quotations", element: <QuotationInvoicesPage/>},
 					{path: "/quotations/:id", element: <QuotationInvoicesPage/>},
 					{path: "/vouchers", element: <VouchersPage/>},
-					{path: "/items", element: <ItemsPage/>},
+					{path: "/items/:id?", element: <ItemsPage/>},
 					{path: "/costAdjustments", element: <CostAdjustmentsPage/>},
 					{path: "/pricingMethods", element: <PricingMethodsPage/>},
 					{path: "/itemTransfers", element: <ItemTransfersPage/>},
