@@ -12,7 +12,7 @@ import {
 	DialogTitle
 } from "yusr-ui";
 import ReportConstants from "../../core/data/report/reportConstants";
-import { TaxReturnReportRequest } from "@/core/data/report/taxReturnReportRequest.ts";
+import { TaxReturnReportRequest } from "@/features/reports/taxReturn/taxReturnReportRequest.ts";
 import ReportButton from "./reportButton";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";

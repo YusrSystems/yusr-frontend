@@ -17,7 +17,6 @@ import BalanceSheetDialog from "./BalanceSheetDialog";
 import InvoicesListDialog from "./invoicesListDialog";
 import ItemsTaxStatementDialog from "./ItemsTaxStatementDialog";
 import ProfitAndLossDialog from "./ProfitAndLossDialog";
-import TaxReturnDialog from "./taxReturnDialog";
 import { Cubits } from "@/core/services/cubits.ts";
 import { AccountType } from "@/core/data/account.ts";
 import { Services } from "@/core/services/services.ts";
@@ -152,7 +151,8 @@ export default function ReportsPage()
 		icon: Percent,
 		iconColor: "text-amber-600",
 		reports: [{
-			comp: <TaxReturnDialog/>,
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/taxReturn") }>{ t("reports.create") }</Button>,
 			name: t("reports.taxReturn"),
 			description: t("reports.taxReturnDescription"),
 			icon: FileText,

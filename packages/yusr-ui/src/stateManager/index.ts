@@ -7,3 +7,4 @@ export * from "./changeableEntity.ts";
 export * from "./pageStates";
 export * from "./filterFieldsCubit.ts";
 export * from "./reportCubit.ts";
+export * from "./pageReportCubit.ts";
