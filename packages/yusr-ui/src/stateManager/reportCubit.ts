@@ -23,7 +23,7 @@ export type ReportState = ReportLoading | ReportLoaded | ReportError;
 
 export class ReportCubit<TRequest, TResult> extends Cubit<ReportInitial>
 {
-	public pageSize: Signal<number> = signal(10);
+	public pageSize: Signal<number> = signal(1000);
 	public currentPage: Signal<number> = signal(1);
 	public result: Signal<TResult | undefined> = signal();
 
