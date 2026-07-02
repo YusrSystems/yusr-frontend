@@ -49,8 +49,8 @@ ReportHeader.CompanySection = function CompanyCard({className, ...props}: Compon
 };
 
 ReportHeader.TitleSection = function Title({titleAr, titleEn, children}: {
-	titleAr: string,
-	titleEn: string
+	titleAr?: string,
+	titleEn?: string
 } & PropsWithChildren)
 {
 	return (

@@ -2,7 +2,7 @@ interface ReportFieldProps
 {
 	labelAr: string;
 	labelEn: string;
-	value: string;
+	value?: string;
 }
 
 export function ReportField({labelAr, labelEn, value}: ReportFieldProps)

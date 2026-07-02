@@ -15,7 +15,6 @@ import { Button, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import BalanceSheetDialog from "./BalanceSheetDialog";
 import InvoicesListDialog from "./invoicesListDialog";
-import ItemsMovementDialog from "./ItemsMovementDialog";
 import ItemsTaxStatementDialog from "./ItemsTaxStatementDialog";
 import ProfitAndLossDialog from "./ProfitAndLossDialog";
 import TaxReturnDialog from "./taxReturnDialog";
@@ -186,7 +185,8 @@ export default function ReportsPage()
 				SystemPermissionsActions.Get
 			)
 		}, {
-			comp: <ItemsMovementDialog/>,
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/itemsMovement") }>{ t("reports.create") }</Button>,
 			name: t("reports.itemsMovement"),
 			description: t("reports.itemsMovementDescription"),
 			icon: ArrowRightLeft,

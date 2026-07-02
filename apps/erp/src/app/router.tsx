@@ -41,6 +41,7 @@ import AuthGate from "@/app/authGate.tsx";
 import CostAdjustmentsPage from "@/features/costAdjustments/costAdjustmentsPage.tsx";
 import { TestReport } from "@/features/report/invoiceReport/testReport.tsx";
 import { ItemsListReportPage } from "@/features/reports/itemsList/itemsListReportPage.tsx";
+import { ItemsMovementReportPage } from "@/features/reports/itemsMovement/itemsMovementReportPage.tsx";
 // import ReportPage from "@/features/report/reportPage.tsx";
 
 const refreshPage = () =>
@@ -97,7 +98,8 @@ export const router = createBrowserRouter([{
 					{path: "/reports", element: <ReportsPage/>},
 
 					// reports
-					{path: "/reports/itemsList", element: <ItemsListReportPage/>}
+					{path: "/reports/itemsList", element: <ItemsListReportPage/>},
+					{path: "/reports/itemsMovement", element: <ItemsMovementReportPage/>}
 				]
 			}
 			]

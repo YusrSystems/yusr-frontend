@@ -4,7 +4,7 @@ import type { PropsWithChildren } from "react";
 export function SummaryRow({className, children}: { className?: string } & PropsWithChildren)
 {
 	return (
-		<div className={ `flex items-center px-1.5 py-0.5 ${ className }` }>
+		<div className={ `flex items-center px-1.5 py-1 ${ className }` }>
 			{ children }
 		</div>
 	);
@@ -13,7 +13,7 @@ export function SummaryRow({className, children}: { className?: string } & Props
 SummaryRow.Label = function ({label, className}: { label: string; className?: string })
 {
 	return (
-		<p className={ `text-sm font-bold ${ className }` }>{ label }</p>
+		<h4 className={ `text-sm font-bold max-w-50 w-50 ${ className }` }>{ label }</h4>
 	);
 };
 

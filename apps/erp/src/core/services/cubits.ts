@@ -1,6 +1,6 @@
 import type { BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import { ItemsCubit } from "@/features/items/state/itemsCubit";
-import { BaseCubits, FilterFieldsCubit, PageCubit } from "yusr-ui";
+import { BaseCubits, FilterFieldsCubit, PageCubit, ReportCubit } from "yusr-ui";
 import { AccountDto } from "../data/account";
 import { ErpRoleDto } from "../data/erpRole";
 import { PricingMethodDto } from "../data/pricingMethod";
@@ -14,6 +14,8 @@ import type { StoreDto } from "@/core/data/store.ts";
 import { type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { type CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
 import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
+import type { ItemsMovementReportRequest } from "@/core/data/report/itemsMovementReportRequest.ts";
+import type { ItemsMovementReportResult } from "@/features/reports/itemsMovement/itemsMovementReportResult.ts";
 
 
 export class Cubits extends BaseCubits
@@ -37,6 +39,8 @@ export class Cubits extends BaseCubits
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");
 	public static readonly itemFilterFields = new FilterFieldsCubit("Items");
 	public static readonly invoiceFilterFields = new FilterFieldsCubit("Invoices");
+
+	public static readonly ItemsMovementReport = new ReportCubit<ItemsMovementReportRequest, ItemsMovementReportResult>("ItemsMovement");
 
 	static
 	{
