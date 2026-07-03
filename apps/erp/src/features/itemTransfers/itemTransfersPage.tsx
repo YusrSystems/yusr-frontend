@@ -48,6 +48,11 @@ export default function ItemTransfersPage()
 			<PageTable/>
 
 			<CrudPage.ChangeDialog
+				fetchEntity={ async (id: number) =>
+				{
+					const result = await Services.itemTransfersApi.Get(id);
+					return result.data;
+				} }
 				changeDialog={ (dto: ItemTransferDto | undefined, closeDialog) =>
 				{
 					return (
@@ -110,6 +115,7 @@ function PageTable()
 		return (
 			<CrudPage.Table>
 				<CrudPage.TableBody<ItemTransferDto>
+					isShareablePage={ true }
 					data={ Cubits.itemTransfers.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "w-12"},

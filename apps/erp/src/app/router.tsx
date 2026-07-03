@@ -91,9 +91,9 @@ export const router = createBrowserRouter([{
 					{path: "/items/:id?", element: <ItemsPage/>},
 					{path: "/costAdjustments", element: <CostAdjustmentsPage/>},
 					{path: "/pricingMethods", element: <PricingMethodsPage/>},
-					{path: "/itemTransfers", element: <ItemTransfersPage/>},
+					{path: "/itemTransfers/:id?", element: <ItemTransfersPage/>},
 					{path: "/stocktakings", element: <StocktakingsPage/>},
-					{path: "/itemsSettlements", element: <ItemsSettlementsPage/>},
+					{path: "/itemsSettlements/:id?", element: <ItemsSettlementsPage/>},
 					{path: "/reports", element: <ReportsPage/>},
 
 					// reports
