@@ -13,6 +13,7 @@ import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus";
 import type { ImportExportType } from "@/core/types/importExportType.ts";
 import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
 import { PaymentStatus } from "@/core/types/paymentStatus.ts";
+import type { AccountType } from "@/core/data/account.ts";
 
 
 export class InvoiceMode
@@ -59,6 +60,7 @@ export class InvoiceDto extends Dto
 	public rowVer!: number;
 
 	public actionAccountName!: string;
+	public actionAccountType!: AccountType;
 	public storeName!: string;
 
 	public invoiceItems: InvoiceItemDto[] = [];

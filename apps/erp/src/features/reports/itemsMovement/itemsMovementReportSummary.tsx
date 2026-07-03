@@ -16,7 +16,7 @@ export function ItemsMovementReportSummary()
 
 	return (
 		<div
-			className="max-w-md  my-3 border border-border rounded-lg overflow-hidden ms-auto divide-y divide-border">
+			className="max-w-md my-3 border border-border rounded-lg overflow-hidden ms-auto divide-y divide-border">
 			<SummaryRow>
 				<div>
 					<SummaryRow.Label label="مجموع الكمية الواردة"/>

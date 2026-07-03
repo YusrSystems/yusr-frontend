@@ -14,7 +14,6 @@ import { useTranslation } from "react-i18next";
 import { Button, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import BalanceSheetDialog from "./BalanceSheetDialog";
-import InvoicesListDialog from "./invoicesListDialog";
 import ProfitAndLossDialog from "./ProfitAndLossDialog";
 import { Cubits } from "@/core/services/cubits.ts";
 import { AccountType } from "@/core/data/account.ts";
@@ -118,7 +117,8 @@ export default function ReportsPage()
 		icon: BarChart2,
 		iconColor: "text-blue-600",
 		reports: [{
-			comp: <InvoicesListDialog/>,
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/invoicesList") }>{ t("reports.create") }</Button>,
 			name: t("reports.InvoicesList"),
 			description: t("reports.InvoicesListDescription"),
 			icon: ReceiptText,

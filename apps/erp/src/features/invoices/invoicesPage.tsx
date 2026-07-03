@@ -1,7 +1,5 @@
 //TODO: must be tested
 import { InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice.ts";
-import type { InvoicesListReportRequest } from "@/core/data/report/invoicesListReportType.ts";
-import { InvoicesListReportType } from "@/core/data/report/invoicesListReportType.ts";
 import ReportConstants from "@/core/data/report/reportConstants.ts";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
@@ -10,7 +8,7 @@ import ReportButton from "@/features/reports/reportButton.tsx";
 import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import type { TFunction } from "i18next";
-import { Copy, FilePlusCorner, FileTextIcon, RotateCw, Undo2 } from "lucide-react";
+import { Copy, FilePlusCorner, FileTextIcon, Printer, RotateCw, Undo2 } from "lucide-react";
 import React, { type ReactNode, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -47,6 +45,8 @@ import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus.ts";
 import { PaymentStatus } from "@/core/types/paymentStatus.ts";
 import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect.tsx";
 import { AccountType } from "@/core/data/account.ts";
+import { createPortal } from "react-dom";
+import { InvoicesListReport } from "@/features/reports/invoicesList/invoicesListReport.tsx";
 
 
 export default function InvoicesPage({
@@ -69,7 +69,7 @@ export default function InvoicesPage({
 })
 {
 	useSignals();
-	const {t} = useTranslation("accounting");
+	const {t} = useTranslation(["accounting", "erpCommon"]);
 
 	useEffect(() =>
 	{
@@ -102,14 +102,22 @@ export default function InvoicesPage({
 						SystemPermissionsResources.Invoices,
 						SystemPermissionsActions.Add
 					) }
-					actionButtons={
-						Services.auth.hasAuth(
-							SystemPermissionsResources.ReportInvoiceList,
-							SystemPermissionsActions.Get
-						)
-							? [<InvoicesReportButton fixedType={ fixedType }/>]
-							: []
-					}
+					actionButtons={ [
+						<Button
+							key="print-list"
+							variant="outline"
+							onClick={ () =>
+							{
+								setTimeout(() =>
+								{
+									window.print();
+								}, 100);
+							} }
+						>
+							<Printer className="h-4 w-4"/>
+							{ t("erpCommon:reports.InvoicesList") }
+						</Button>
+					] }
 				/>
 
 				<Cards totalInvoicesTitle={ totalInvoicesTitle }/>
@@ -163,6 +171,13 @@ export default function InvoicesPage({
 					onSuccess={ (entity) => Cubits.invoices.delete(entity) }
 				/>
 			</CrudPage>
+
+			{ createPortal(
+				<div className="hidden print:block print:w-full print:static">
+					<InvoicesListReport isPortal={ true }/>
+				</div>,
+				document.body
+			) }
 		</VerifyAccountWrapper>
 	);
 }
@@ -561,27 +576,6 @@ function PageTable({fixedType, permissionResource}: {
 	}
 
 	return <TablePreview.Empty/>;
-}
-
-function InvoicesReportButton({fixedType}: { fixedType?: InvoiceType })
-{
-	useSignals();
-	return (
-		<ReportButton<InvoicesListReportRequest>
-			reportName={ ReportConstants.InvoicesList }
-			request={ {
-				// Sell page covers Sell + SellReturn + Quotation;
-				// Purchase page covers Purchase + PurchaseReturn.
-				types:
-					fixedType === InvoiceType.Sell
-						? [InvoiceType.Sell, InvoiceType.SellReturn, InvoiceType.Quotation]
-						: [InvoiceType.Purchase, InvoiceType.PurchaseReturn],
-				// Read the live search text from the cubit so the report is scoped
-				searchText: Cubits.invoices.searchText.value,
-				reportType: InvoicesListReportType.InvoicesList
-			} }
-		/>
-	);
 }
 
 const getInvoiceTypeName = (type: InvoiceType, t: TFunction<"accounting">) =>
