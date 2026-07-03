@@ -1,4 +1,5 @@
 import type { InvoiceType } from "@/core/types/invoiceType.ts";
+import type { AccountType } from "@/core/data/account.ts";
 
 
 export enum AccountOrStoreType
@@ -21,10 +22,12 @@ export interface ItemTaxStatementRow
 	from: string;
 	fromId: number;
 	fromType: AccountOrStoreType;
+	fromAccountType?: AccountType;
 
 	to: string;
 	toId: number;
 	toType: AccountOrStoreType;
+	toAccountType?: AccountType;
 
 	tax: number;
 	quantity: number;

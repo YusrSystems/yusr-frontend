@@ -10,6 +10,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { ReportLoaded, ReportLoading, TablePreview } from "yusr-ui";
 import { Link } from "react-router-dom";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
+import { AccountType } from "@/core/data/account.ts";
 
 
 function invoiceRoute(invoiceType: InvoiceType): string
@@ -27,9 +28,28 @@ function invoiceRoute(invoiceType: InvoiceType): string
 	}
 }
 
-function partyRoute(type: AccountOrStoreType): string
+function partyRoute(type: AccountOrStoreType, accountType?: AccountType): string
 {
-	return type === AccountOrStoreType.Account ? "accounts" : "stores";
+	if (type === AccountOrStoreType.Store)
+	{
+		return "stores";
+	}
+
+	switch (accountType)
+	{
+		case AccountType.Client:
+			return "clients";
+		case AccountType.Supplier:
+			return "suppliers";
+		case AccountType.Employee:
+			return "employees";
+		case AccountType.Bank:
+			return "banks";
+		case AccountType.Box:
+			return "boxes";
+		default:
+			return "clients";
+	}
 }
 
 const linkClassName = "p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!";
