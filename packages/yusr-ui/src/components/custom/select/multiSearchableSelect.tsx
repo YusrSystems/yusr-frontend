@@ -202,7 +202,7 @@ MultiSearchableSelect.Option = function <TDto extends Dto>(
 					const nextLabels = {...labels.value};
 					if (nextSelected)
 					{
-						nextLabels[itemId] = (item[labelSelector] as Signal<string>).value;
+						nextLabels[itemId] = item[labelSelector] as string;
 					}
 					else
 					{

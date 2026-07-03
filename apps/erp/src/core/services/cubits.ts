@@ -18,6 +18,10 @@ import type { ItemsMovementReportRequest } from "@/core/data/report/itemsMovemen
 import type { ItemsMovementReportResult } from "@/features/reports/itemsMovement/itemsMovementReportResult.ts";
 import type { TaxReturnReportRequest } from "@/features/reports/taxReturn/taxReturnReportRequest.ts";
 import type { TaxReturnReportResult } from "@/features/reports/taxReturn/taxReturnReportResult.ts";
+import type { ItemsTaxStatementReportRequest } from "@/core/data/report/itemsTaxStatementReportRequest.ts";
+import type {
+	ItemsTaxStatementReportResult
+} from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportResult.ts";
 
 
 export class Cubits extends BaseCubits
@@ -43,6 +47,7 @@ export class Cubits extends BaseCubits
 	public static readonly invoiceFilterFields = new FilterFieldsCubit("Invoices");
 
 	public static readonly ItemsMovementReport = new PageReportCubit<ItemsMovementReportRequest, ItemsMovementReportResult>("ItemsMovement");
+	public static readonly ItemsTaxStatementReport = new PageReportCubit<ItemsTaxStatementReportRequest, ItemsTaxStatementReportResult>("ItemsTaxStatement");
 	public static readonly TaxReturnReport = new ReportCubit<TaxReturnReportRequest, TaxReturnReportResult>("TaxReturn");
 
 	static

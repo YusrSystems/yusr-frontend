@@ -43,6 +43,7 @@ import { TestReport } from "@/features/report/invoiceReport/testReport.tsx";
 import { ItemsListReportPage } from "@/features/reports/itemsList/itemsListReportPage.tsx";
 import { ItemsMovementReportPage } from "@/features/reports/itemsMovement/itemsMovementReportPage.tsx";
 import { TaxReturnReportPage } from "@/features/reports/taxReturn/taxReturnReportPage.tsx";
+import { ItemsTaxStatementReportPage } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportPage.tsx";
 // import ReportPage from "@/features/report/reportPage.tsx";
 
 const refreshPage = () =>
@@ -101,7 +102,8 @@ export const router = createBrowserRouter([{
 					// reports
 					{path: "/reports/itemsList", element: <ItemsListReportPage/>},
 					{path: "/reports/itemsMovement", element: <ItemsMovementReportPage/>},
-					{path: "/reports/taxReturn", element: <TaxReturnReportPage/>}
+					{path: "/reports/taxReturn", element: <TaxReturnReportPage/>},
+					{path: "/reports/itemsTaxStatement", element: <ItemsTaxStatementReportPage/>}
 				]
 			}
 			]
