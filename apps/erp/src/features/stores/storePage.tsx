@@ -45,6 +45,11 @@ export default function StoresPage()
 			<PageTable/>
 
 			<CrudPage.ChangeDialog
+				fetchEntity={ async (id: number) =>
+				{
+					const result = await Services.storesApi.Get(id);
+					return result.data;
+				} }
 				changeDialog={ (dto: StoreDto | undefined, closeDialog) =>
 				{
 					return (
@@ -107,6 +112,7 @@ function PageTable()
 		return (
 			<CrudPage.Table>
 				<CrudPage.TableBody<StoreDto>
+					isShareablePage={ true }
 					data={ Cubits.stores.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},

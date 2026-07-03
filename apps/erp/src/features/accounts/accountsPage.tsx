@@ -98,6 +98,11 @@ export default function AccountsPage(
 			<PageTable/>
 
 			<CrudPage.ChangeDialog
+				fetchEntity={ async (id: number) =>
+				{
+					const result = await Services.accountsApi.Get(id);
+					return result.data;
+				} }
 				changeDialog={ (dto: AccountDto | undefined, closeDialog) =>
 				{
 					return (
@@ -173,6 +178,7 @@ function PageTable()
 		return (
 			<CrudPage.Table>
 				<CrudPage.TableBody<AccountDto>
+					isShareablePage={ true }
 					data={ Cubits.accounts.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
