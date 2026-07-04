@@ -100,6 +100,8 @@ export class PageCubit<TDto extends Dto> extends Cubit<PageState>
 	add(dto: TDto)
 	{
 		this.entities.value = [dto, ...this.entities.value];
+		this.count.value = this.entities.value.length;
+		this.emit(new PageLoaded());
 	}
 
 	update(dto: TDto)
@@ -112,7 +114,9 @@ export class PageCubit<TDto extends Dto> extends Cubit<PageState>
 		this.entities.value = this.entities.value.filter((e) => e.id !== dto.id);
 		if (this.entities.value.length === 0)
 		{
+			this.emit(new PageEmpty());
 			this.filter(1);
 		}
+		this.emit(new PageLoaded());
 	}
 }
