@@ -50,7 +50,7 @@ export default function PricingTab({entity}: { entity: Item; })
 				) }
 
 				<NumberField
-					label={ entity.type.value !== ItemType.Service ? t("items.averageCostWithoutTax") : t("items.costWithTax") }
+					label={ t("items.averageCostWithoutTax") }
 					disabled={ entity.type.value !== ItemType.Service }
 					value={ entity.cost }
 					currency={ <ErpCurrencyIcon/> }
