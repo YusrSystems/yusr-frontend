@@ -39,13 +39,12 @@ import PurchaseInvoicesPage from "@/features/invoices/purchaseInvoices.tsx";
 import QuotationInvoicesPage from "@/features/invoices/quotationInvoicesPage.tsx";
 import AuthGate from "@/app/authGate.tsx";
 import CostAdjustmentsPage from "@/features/costAdjustments/costAdjustmentsPage.tsx";
-import { TestReport } from "@/features/report/invoiceReport/testReport.tsx";
 import { ItemsListReportPage } from "@/features/reports/itemsList/itemsListReportPage.tsx";
 import { ItemsMovementReportPage } from "@/features/reports/itemsMovement/itemsMovementReportPage.tsx";
 import { TaxReturnReportPage } from "@/features/reports/taxReturn/taxReturnReportPage.tsx";
 import { ItemsTaxStatementReportPage } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportPage.tsx";
 import { InvoicesListReportPage } from "@/features/reports/invoicesList/invoicesListReportPage.tsx";
-// import ReportPage from "@/features/report/reportPage.tsx";
+
 
 const refreshPage = () =>
 {
@@ -59,7 +58,6 @@ export const router = createBrowserRouter([{
 	),
 	children: [
 		{path: "/", element: <LandingPage/>},
-		{path: "/report", element: <TestReport/>},
 		{path: "/login", element: <LoginPage/>},
 		{path: "/register", element: <RegisterPage/>},
 		{path: "/register", element: <MaintenanceFallback/>},
