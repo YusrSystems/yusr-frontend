@@ -1,8 +1,8 @@
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
-import { CurrencyDto } from "../../../entities";
-import { BaseCubits } from "../../../services";
-import { PageLoaded, PageLoading } from "../../../stateManager";
+import { CurrencyDto } from "#/entities";
+import { BaseCubits } from "#/services";
+import { PageLoaded, PageLoading } from "#/stateManager";
 import { SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "./searchableSelect";
 
 

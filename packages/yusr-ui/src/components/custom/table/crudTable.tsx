@@ -1,6 +1,6 @@
 import React, { type PropsWithChildren } from "react";
 import { Table } from "../../pure/table";
-import { CrudEmptyTablePreview } from "./crudEmptyTablePreview";
+import { CrudEmptyTablePreview } from "#/components/custom";
 
 
 export type CrudTableProps = {

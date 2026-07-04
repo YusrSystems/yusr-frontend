@@ -1,7 +1,7 @@
 import type { Signal } from "@preact/signals-react";
 import { i18n } from "../locales";
-import { ChangeableEntity, ChangeableEntityMode, Dto } from "../stateManager";
-import { Validators } from "../validation";
+import { ChangeableEntity, ChangeableEntityMode, Dto } from "#/stateManager";
+import { Validators } from "#/validation";
 
 
 export class RoleDto extends Dto

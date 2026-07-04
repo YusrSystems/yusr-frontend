@@ -3,14 +3,9 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { ChevronDown, ListFilter, Plus, Trash2, X } from "lucide-react";
 import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger } from "../components/pure";
-import { DateInput, NumberField, SelectField, TextField } from "../components/custom";
-import {
-	FilterFieldsCubit,
-	FilterFieldsError,
-	FilterFieldsLoaded,
-	FilterFieldsLoading
-} from "../stateManager/filterFieldsCubit.ts";
+import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger } from "#/components/pure";
+import { DateInput, NumberField, SelectField, TextField } from "#/components/custom";
+import { FilterFieldsCubit, FilterFieldsError, FilterFieldsLoaded, FilterFieldsLoading } from "#/stateManager";
 
 import { FilterFieldType } from "./filterFieldType.ts";
 import { FilterOperator } from "./filterOperator.ts";
@@ -46,7 +41,7 @@ export function FilterSection({fieldsCubit, onApply, onClear, renderCustomInput}
 
 	useEffect(() =>
 	{
-		fieldsCubit.load();
+		void fieldsCubit.load();
 	}, [fieldsCubit]);
 
 	const fields = fieldsCubit.fields;

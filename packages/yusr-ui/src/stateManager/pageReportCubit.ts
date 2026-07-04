@@ -1,6 +1,6 @@
 import { Cubit } from "./cubit.ts";
 import { signal, type Signal } from "@preact/signals-react";
-import { YusrApiHelper } from "../networking";
+import { YusrApiHelper } from "#/networking";
 import { ReportError, ReportInitial, ReportLoaded, ReportLoading } from "./reportCubit.ts";
 
 

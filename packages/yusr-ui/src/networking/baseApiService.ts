@@ -1,6 +1,6 @@
 import { type TFunction } from "i18next";
-import type { Dto } from "../stateManager";
-import type { RequestResult } from "../types/requestResult";
+import type { Dto } from "#/stateManager";
+import type { RequestResult } from "#/types";
 import { BaseFilterableApiService } from "./baseFilterableApiService";
 import { YusrApiHelper } from "./yusrApiHelper";
 

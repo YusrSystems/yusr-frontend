@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { cn } from "../../utils/cn";
+import { cn } from "#/utils/cn.ts";
 
 
 function InputOld({className, type, ...props}: React.ComponentProps<"input">)

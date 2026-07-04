@@ -1,9 +1,9 @@
 import { type Signal, signal } from "@preact/signals-react";
-import type { BaseFilterableApiService } from "../networking";
+import type { BaseFilterableApiService } from "#/networking";
 import { Cubit } from "./cubit";
 import type { Dto } from "./dto";
 import { PageEmpty, PageInitial, PageLoaded, PageLoading, type PageState } from "./pageStates";
-import type { FilterGroupDto } from "../filter/filterGroup.ts";
+import type { FilterGroupDto } from "#/filter";
 
 
 export class PageCubit<TDto extends Dto> extends Cubit<PageState>
@@ -74,27 +74,27 @@ export class PageCubit<TDto extends Dto> extends Cubit<PageState>
 
 	init(types?: number[], queryParams?: Record<string, string | number | boolean>, rowsPerPage: number = 100): void
 	{
-		this.filter(1, rowsPerPage, undefined, types, queryParams);
+		void this.filter(1, rowsPerPage, undefined, types, queryParams);
 	}
 
 	applyFilterGroups(groups: FilterGroupDto[]): void
 	{
-		this.filter(1, undefined, this.searchText.value, this.types.value, this.queryParams.value, groups);
+		void this.filter(1, undefined, this.searchText.value, this.types.value, this.queryParams.value, groups);
 	}
 
 	clearFilterGroups(): void
 	{
-		this.filter(1, undefined, this.searchText.value, this.types.value, this.queryParams.value, []);
+		void this.filter(1, undefined, this.searchText.value, this.types.value, this.queryParams.value, []);
 	}
 
 	changePage(pageNumber: number)
 	{
-		this.filter(pageNumber, undefined, undefined, this.types.value, undefined, this.groups.value);
+		void this.filter(pageNumber, undefined, undefined, this.types.value, undefined, this.groups.value);
 	}
 
 	search(searchText: string | undefined)
 	{
-		this.filter(1, undefined, searchText, this.types.value, undefined, this.groups.value);
+		void this.filter(1, undefined, searchText, this.types.value, undefined, this.groups.value);
 	}
 
 	add(dto: TDto)
@@ -115,7 +115,7 @@ export class PageCubit<TDto extends Dto> extends Cubit<PageState>
 		if (this.entities.value.length === 0)
 		{
 			this.emit(new PageEmpty());
-			this.filter(1);
+			void this.filter(1);
 		}
 		this.emit(new PageLoaded());
 	}

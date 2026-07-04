@@ -1,4 +1,4 @@
-import { Dto } from "../../../stateManager";
+import { Dto } from "#/stateManager";
 import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import React, { type PropsWithChildren, useMemo } from "react";
@@ -15,7 +15,7 @@ import {
 	PopoverContent,
 	PopoverTrigger
 } from "../../pure";
-import { cn } from "../../../utils/cn.ts";
+import { cn } from "#/utils/cn.ts";
 import { Check, ChevronsUpDown, Loader2, X } from "lucide-react";
 import { SearchInput, type SearchInputParams } from "../../custom";
 

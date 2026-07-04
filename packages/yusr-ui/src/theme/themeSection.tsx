@@ -12,13 +12,13 @@ import {
 	TabsContent,
 	TabsList,
 	TabsTrigger
-} from "../components/pure";
+} from "#/components/pure";
 import { ArrowDownRight, ArrowUpRight, Check, Moon, Palette, Pipette, SlidersHorizontal, Sun } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { themeSettings, type ThemeSettings } from "./theme.signals.ts";
-import { FieldsSection, SelectField, TextField } from "../components/custom";
+import { FieldsSection, SelectField, TextField } from "#/components/custom";
 
 
 type ThemeModeColors = NonNullable<ThemeSettings["light"]>;

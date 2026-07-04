@@ -1,6 +1,6 @@
 import { AlertTriangle, Home, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "../components/pure";
+import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "#/components/pure";
 
 
 interface ErrorFallbackProps

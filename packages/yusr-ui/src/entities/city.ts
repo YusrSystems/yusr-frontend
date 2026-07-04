@@ -1,5 +1,5 @@
 import type { Signal } from "@preact/signals-react";
-import { Dto, Entity } from "../stateManager";
+import { Dto, Entity } from "#/stateManager";
 import { Country, CountryDto } from "./country";
 
 

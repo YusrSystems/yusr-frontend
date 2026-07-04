@@ -1,7 +1,7 @@
 import type { Signal } from "@preact/signals-react";
 import { i18n } from "../locales/i18n";
-import { Dto, ValidatableEntity } from "../stateManager";
-import { Validators } from "../validation";
+import { Dto, ValidatableEntity } from "#/stateManager";
+import { Validators } from "#/validation";
 
 
 export class LoginRequestDto extends Dto

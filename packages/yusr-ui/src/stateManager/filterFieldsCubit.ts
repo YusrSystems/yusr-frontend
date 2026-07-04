@@ -1,7 +1,7 @@
 import { signal, type Signal } from "@preact/signals-react";
 import { Cubit } from "../stateManager/cubit.ts";
-import type { FilterFieldMetadataDto } from "../filter/filterFieldMetadataDto.ts";
-import { YusrApiHelper } from "../networking";
+import type { FilterFieldMetadataDto } from "#/filter";
+import { YusrApiHelper } from "#/networking";
 
 
 export class FilterFieldsInitial

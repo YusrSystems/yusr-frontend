@@ -3,7 +3,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { type LucideIcon, Pencil, Plus, Trash2 } from "lucide-react";
 import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
+import { SystemPermissionsActions, YusrSystemPermissionsResources } from "#/auth";
 import {
 	categorizePermissions,
 	ChangeDialog,
@@ -12,12 +12,12 @@ import {
 	Loading,
 	PermissionCard,
 	TextField
-} from "../../components/custom";
-import type { Role, RoleDto } from "../../entities";
-import { SystemApiService } from "../../networking";
-import { BaseServices } from "../../services";
-import type { RequestResult } from "../../types";
-import { ChangeableEntityMode } from "../../stateManager";
+} from "#/components/custom";
+import type { Role, RoleDto } from "#/entities";
+import { SystemApiService } from "#/networking";
+import { BaseServices } from "#/services";
+import type { RequestResult } from "#/types";
+import { ChangeableEntityMode } from "#/stateManager";
 
 
 export const ActionIcons: Record<string, React.ReactNode> = {
@@ -83,7 +83,7 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 			isLoading.value = false;
 		};
 
-		fetch();
+		void fetch();
 		onMount?.();
 	}, [entity.value?.id.value]);
 

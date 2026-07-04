@@ -1,14 +1,17 @@
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious
-} from "../../pure/pagination";
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+	Pagination,
+	PaginationContent,
+	PaginationItem,
+	PaginationNext,
+	PaginationPrevious,
+	SidebarMenuButton
+} from "#/components/pure";
 
 import { useTranslation } from "react-i18next";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../pure/dropdown-menu";
-import { SidebarMenuButton } from "../../pure/sidebar";
 
 
 export type CrudTablePaginationProps = {

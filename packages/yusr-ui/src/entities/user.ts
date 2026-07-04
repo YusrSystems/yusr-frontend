@@ -1,7 +1,7 @@
 import { signal, type Signal } from "@preact/signals-react";
 import { i18n } from "../locales";
-import { ChangeableEntity, ChangeableEntityMode, Dto } from "../stateManager";
-import { type ValidationRule, Validators } from "../validation";
+import { ChangeableEntity, ChangeableEntityMode, Dto } from "#/stateManager";
+import { type ValidationRule, Validators } from "#/validation";
 import { RoleDto } from "./role";
 
 

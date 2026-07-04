@@ -2,13 +2,12 @@ import { arSA, enUS } from "date-fns/locale";
 import { ChevronDownIcon } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { cn } from "../../../utils/cn";
+import { cn } from "#/utils/cn.ts";
 import { Button } from "../../pure/button";
-import { Calendar } from "../../pure/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "../../pure/popover";
+import { Calendar, Popover, PopoverContent, PopoverTrigger } from "#/components/pure";
 import { signal, type Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { DateService } from "../../../services";
+import { DateService } from "#/services";
 
 
 export interface DateInputProps

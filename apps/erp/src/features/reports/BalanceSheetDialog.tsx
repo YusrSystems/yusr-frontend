@@ -11,7 +11,7 @@ import {
 	DialogHeader,
 	DialogTitle
 } from "yusr-ui";
-import { BalanceSheetReportRequest } from "../../core/data/report/balanceSheetReportRequest";
+import { BalanceSheetReportRequest } from "@/core/data/report/balanceSheetReportRequest.ts";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
 import { signal } from "@preact/signals-react";

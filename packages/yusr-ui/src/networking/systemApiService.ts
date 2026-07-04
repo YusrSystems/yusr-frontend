@@ -1,4 +1,4 @@
-import type { RequestResult } from "../types";
+import type { RequestResult } from "#/types";
 import { YusrApiHelper } from "../networking/yusrApiHelper.ts";
 
 

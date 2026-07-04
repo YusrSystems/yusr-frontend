@@ -1,5 +1,5 @@
 import { SaudiRiyal } from "lucide-react";
-import { Currency } from "../../../entities";
+import { Currency } from "#/entities";
 import type { Signal } from "@preact/signals-react";
 
 

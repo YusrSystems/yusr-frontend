@@ -1,8 +1,7 @@
-import { Dto } from "../stateManager";
-import type { ApiFilterResult } from "../types";
-import type { FilterResult } from "../types/filterResult";
+import { Dto } from "#/stateManager";
+import type { ApiFilterResult, FilterResult } from "#/types";
 import { YusrApiHelper } from "./yusrApiHelper";
-import type { FilterGroupDto } from "../filter/filterGroup.ts";
+import type { FilterGroupDto } from "#/filter";
 
 
 export class BaseFilterableApiService<TDto extends Dto>

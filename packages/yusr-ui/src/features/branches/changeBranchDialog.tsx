@@ -1,7 +1,7 @@
 import { useSignals } from "@preact/signals-react/runtime";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
+import { SystemPermissionsActions, YusrSystemPermissionsResources } from "#/auth";
 import {
 	ChangeDialog,
 	CitiesSearchableSelect,
@@ -9,11 +9,11 @@ import {
 	FieldsSection,
 	FormField,
 	TextField
-} from "../../components/custom";
-import { FieldGroup } from "../../components/pure";
-import { Branch, BranchDto } from "../../entities";
-import { BaseCubits, BaseServices } from "../../services";
-import { ChangeableEntityMode } from "../../stateManager";
+} from "#/components/custom";
+import { FieldGroup } from "#/components/pure";
+import { Branch, BranchDto } from "#/entities";
+import { BaseCubits, BaseServices } from "#/services";
+import { ChangeableEntityMode } from "#/stateManager";
 import { signal } from "@preact/signals-react";
 
 

@@ -48,7 +48,7 @@ export default function ChangeItemTransferDialog(
 				}
 				isLoading.value = false;
 			};
-			fetch();
+			void fetch();
 		}
 		else
 		{

@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { StorageFile, StorageFileStatus, StorageType } from "../entities";
+import { StorageFile, StorageFileStatus, StorageType } from "#/entities";
 import { StorageApiService } from "../networking/storageApiService";
 
 

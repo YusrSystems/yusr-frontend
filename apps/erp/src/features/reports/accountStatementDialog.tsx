@@ -10,7 +10,7 @@ import {
 	DialogHeader,
 	DialogTitle
 } from "yusr-ui";
-import { AccountDto } from "../../core/data/account";
+import { AccountDto } from "@/core/data/account.ts";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
 import { signal } from "@preact/signals-react";

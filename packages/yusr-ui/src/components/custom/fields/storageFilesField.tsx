@@ -1,11 +1,11 @@
 import { Download, FileText, Maximize2, UploadCloud, X } from "lucide-react";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { StorageFile } from "../../../entities";
-import { cn } from "../../../utils/cn";
+import type { StorageFile } from "#/entities";
+import { cn } from "#/utils/cn.ts";
 import { Button } from "../../pure/button";
 import { Card, CardContent } from "../../pure/card";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../../pure/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "#/components/pure";
 import { Dialog, DialogContent, DialogTrigger } from "../../pure/dialog";
 import { InputOld } from "../../pure/input";
 

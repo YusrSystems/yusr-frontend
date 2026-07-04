@@ -1,5 +1,5 @@
 import { signal, type Signal } from "@preact/signals-react";
-import { YusrApiHelper } from "../networking";
+import { YusrApiHelper } from "#/networking";
 import { Cubit } from "./cubit.ts";
 
 
