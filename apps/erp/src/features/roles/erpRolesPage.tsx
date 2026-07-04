@@ -18,7 +18,7 @@ export function ErpRolesPage()
 			permissionSections={ getPermissionSections(t) }
 			rolesApiService={ Services.rolesApi }
 			cubit={ Cubits.roles }
-			toEntity={ (dto) =>
+			createEntity={ (dto) =>
 				dto
 					? ErpRole.load(dto)
 					: ErpRole.create() }
@@ -27,7 +27,7 @@ export function ErpRolesPage()
 			{
 				if (result.data != undefined)
 				{
-					entity.authorizedStores.value = result.data?.authorizedStores.value;
+					entity.authorizedStores.value = result.data?.authorizedStores;
 				}
 			} }
 			extraTabs={ (entity) => [{

@@ -2,16 +2,16 @@ import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
 import {
-  PageLoaded,
-  PageLoading,
-  SearchableSelect,
-  type SearchableSelectOptionProps,
-  type SearchableSelectProps
+	PageLoaded,
+	PageLoading,
+	SearchableSelect,
+	type SearchableSelectOptionProps,
+	type SearchableSelectProps
 } from "yusr-ui";
-import { Tax, TaxDto } from "../../data/tax";
+import { TaxDto } from "../../data/tax";
 
 
-export default function TaxesSearchableSelect({...props}: SearchableSelectProps<Tax, TaxDto>)
+export default function TaxesSearchableSelect({...props}: SearchableSelectProps<TaxDto>)
 {
 	useSignals();
 
@@ -39,7 +39,7 @@ export default function TaxesSearchableSelect({...props}: SearchableSelectProps<
 		if (Cubits.taxes.state.value instanceof PageLoaded && Cubits.taxes.entities.value.length > 0)
 		{
 			return Cubits.taxes.entities.value.map((entity) => (
-				<Option key={ entity.id.value } item={ entity } { ...props } />
+				<Option key={ entity.id } item={ entity } { ...props } />
 			));
 		}
 
@@ -48,15 +48,15 @@ export default function TaxesSearchableSelect({...props}: SearchableSelectProps<
 }
 
 const Option = React.memo(
-	function Option({...props}: Omit<SearchableSelectOptionProps<Tax, TaxDto>, "labelSelector">)
+	function Option({...props}: Omit<SearchableSelectOptionProps<TaxDto>, "labelSelector">)
 	{
 		useSignals();
 		return (
-			<SearchableSelect.Option<Tax, TaxDto>
+			<SearchableSelect.Option<TaxDto>
 				labelSelector="name"
 				{ ...props }
 			>
-				<SearchableSelect.OptionBody label={ props.item.name.value }/>
+				<SearchableSelect.OptionBody label={ props.item.name }/>
 			</SearchableSelect.Option>
 		);
 	}

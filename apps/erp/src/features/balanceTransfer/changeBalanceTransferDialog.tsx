@@ -11,7 +11,6 @@ import {
 	ChangeableEntityMode,
 	ChangeDialog,
 	type CommonChangeDialogProps,
-	DateField,
 	FieldGroup,
 	FieldsSection,
 	FormField,
@@ -21,18 +20,19 @@ import {
 	TextAreaField,
 	TextField
 } from "yusr-ui";
-import type { BalanceTransfer, BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
+import { BalanceTransfer, type BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { Cubits } from "@/core/services/cubits.ts";
 
 
 export default function ChangeBalanceTransferDialog(
-	{entity, service, onSuccess}: CommonChangeDialogProps<BalanceTransfer, BalanceTransferDto>
+	{dto, service, onSuccess}: CommonChangeDialogProps<BalanceTransferDto>
 )
 {
 	useSignals();
 
 	const {t} = useTranslation(["accounting", "common"]);
+	const entity = useMemo(() => signal<BalanceTransfer>(dto ? BalanceTransfer.load(dto) : BalanceTransfer.create()), []);
 	const amountToWords = useMemo(() => signal<string>(""), []);
 	const hasBankPerm = Services.auth.hasAuth(
 		SystemPermissionsResources.AccountBank,
@@ -59,31 +59,31 @@ export default function ChangeBalanceTransferDialog(
 	}, [types]);
 	useEffect(() =>
 	{
-		if (entity.amount.value !== undefined && Services.auth.setting?.currency?.value)
+		if (entity.value.amount.value !== undefined && Services.auth.setting?.currency?.value)
 		{
 			amountToWords.value = NumbertoWordsService.ConvertAmount(
-				entity.amount.value,
+				entity.value.amount.value,
 				Services.auth.setting.currency.value
 			);
 		}
-	}, [entity.amount.value, amountToWords]);
+	}, [entity.value.amount.value, amountToWords]);
 
 	if (
-		(entity.mode.value === ChangeableEntityMode.Create
+		(entity.value.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Add))
-		|| (entity.mode.value === ChangeableEntityMode.Update
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.mode.value === ChangeableEntityMode.Create
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? t("balanceTransfers.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("balanceTransfers.entityName") }`;
 
 	const hasSelectAccountPermission = hasBankPerm || hasBoxPerm;
-	const canChangeBankAccount = hasSelectAccountPermission && entity.mode.value === ChangeableEntityMode.Create;
+	const canChangeBankAccount = hasSelectAccountPermission && entity.value.mode.value === ChangeableEntityMode.Create;
 
 	if (!hasSelectAccountPermission)
 	{
@@ -99,18 +99,17 @@ export default function ChangeBalanceTransferDialog(
 			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
 				<FieldGroup>
 					<FieldsSection title={ t("balanceTransfers.transferDetails") } columns={ 2 }>
-						<DateField
+						<TextField
 							label={ t("balanceTransfers.transferDate") }
-							value={ entity.date }
-							required
+							value={ entity.value.date }
 							disabled
 						/>
 						<NumberField
 							label={ t("balanceTransfers.amount") }
 							required
 							min={ 0 }
-							value={ entity.amount }
-							error={ entity.getError("amount") }
+							value={ entity.value.amount }
+							error={ entity.value.getError("amount") }
 							currency={ <ErpCurrencyIcon/> }
 						/>
 						<div className="col-span-full">
@@ -126,11 +125,11 @@ export default function ChangeBalanceTransferDialog(
 						<FormField
 							label={ t("balanceTransfers.fromAccount") }
 							required
-							error={ entity.getError("fromAccountId") }
+							error={ entity.value.getError("fromAccountId") }
 						>
 							<AccountsSearchableSelect
-								label={ entity.fromAccountName }
-								id={ entity.fromAccountId }
+								label={ entity.value.fromAccountName }
+								id={ entity.value.fromAccountId }
 								types={ types }
 								disabled={ !canChangeBankAccount }
 							/>
@@ -139,11 +138,11 @@ export default function ChangeBalanceTransferDialog(
 						<FormField
 							label={ t("balanceTransfers.toAccount") }
 							required
-							error={ entity.getError("toAccountId") }
+							error={ entity.value.getError("toAccountId") }
 						>
 							<AccountsSearchableSelect
-								label={ entity.toAccountName }
-								id={ entity.toAccountId }
+								label={ entity.value.toAccountName }
+								id={ entity.value.toAccountId }
 								types={ types }
 								disabled={ !canChangeBankAccount }
 							/>
@@ -153,7 +152,7 @@ export default function ChangeBalanceTransferDialog(
 					<FieldsSection title={ t("balanceTransfers.additionalInfo") } columns={ 1 }>
 						<TextAreaField
 							label={ t("balanceTransfers.description") }
-							value={ entity.description }
+							value={ entity.value.description }
 							rows={ 3 }
 							placeholder={ ". . ." }
 						/>
@@ -166,7 +165,7 @@ export default function ChangeBalanceTransferDialog(
 				<ChangeDialog.SaveButton<BalanceTransfer, BalanceTransferDto>
 					entity={ entity }
 					service={ service }
-					onSuccess={ (data) => onSuccess?.(data) }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 
 				/>
 			</ChangeDialog.Footer>

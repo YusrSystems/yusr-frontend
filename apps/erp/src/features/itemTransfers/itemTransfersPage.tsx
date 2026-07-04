@@ -16,7 +16,7 @@ import {
 	UnauthorizedPage
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
-import ItemTransfer, { ItemTransferDto } from "../../core/data/itemTransfer";
+import { ItemTransferDto } from "../../core/data/itemTransfer";
 import ReportButton from "../reports/reportButton";
 import ChangeItemTransferDialog from "./changeItemTransferDialog";
 
@@ -31,7 +31,7 @@ export default function ItemTransfersPage()
 	}
 
 	return (
-		<CrudPage>
+		<CrudPage<ItemTransferDto>>
 			<CrudPage.Header
 				title={ t("itemTransfers.title") }
 				addButtonTitle={ t("itemTransfers.addNewTitle") }
@@ -48,22 +48,25 @@ export default function ItemTransfersPage()
 			<PageTable/>
 
 			<CrudPage.ChangeDialog
+				fetchEntity={ async (id: number) =>
+				{
+					const result = await Services.itemTransfersApi.Get(id);
+					return result.data;
+				} }
 				changeDialog={ (dto: ItemTransferDto | undefined, closeDialog) =>
 				{
 					return (
 						<ChangeItemTransferDialog
-							entity={ dto
-								? ItemTransfer.load(dto)
-								: ItemTransfer.create() }
+							dto={ dto }
 							service={ Services.itemTransfersApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									Cubits.itemTransfers.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									Cubits.itemTransfers.update(data);
 								}
@@ -111,7 +114,8 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<ItemTransfer, ItemTransferDto>
+				<CrudPage.TableBody<ItemTransferDto>
+					isShareablePage={ true }
 					data={ Cubits.itemTransfers.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "w-12"},
@@ -130,11 +134,11 @@ function PageTable()
 					tableRowMapper={ (
 						transfer
 					) => [
-						{rowBody: `#${ transfer.id.value }`},
-						{rowBody: transfer.date.value, rowStyles: ""},
-						{rowBody: transfer.fromStoreName.value, rowStyles: "font-semibold"},
-						{rowBody: transfer.toStoreName.value, rowStyles: "font-semibold"},
-						{rowBody: transfer.description.value || "-", rowStyles: "text-muted-foreground"},
+						{rowBody: `#${ transfer.id }`},
+						{rowBody: transfer.date, rowStyles: ""},
+						{rowBody: transfer.fromStoreName, rowStyles: "font-semibold"},
+						{rowBody: transfer.toStoreName, rowStyles: "font-semibold"},
+						{rowBody: transfer.description || "-", rowStyles: "text-muted-foreground"},
 						...(Services.auth.hasAuth(
 							SystemPermissionsResources.ReportItemTransfer,
 							SystemPermissionsActions.Get
@@ -143,7 +147,7 @@ function PageTable()
 								rowBody: (
 									<ReportButton
 										reportName={ ReportConstants.ItemTransfer }
-										request={ {itemTransferId: transfer.id.value} }
+										request={ {itemTransferId: transfer.id} }
 									/>
 								),
 								rowStyles: "w-32"

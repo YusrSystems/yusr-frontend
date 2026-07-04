@@ -1,8 +1,8 @@
-import { Signal, signal } from "@preact/signals-react";
+import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import React, { type PropsWithChildren, type ReactNode, useEffect } from "react";
+import React, { type PropsWithChildren, type ReactNode, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "../../..//stateManager";
+import { type Dto } from "../../..//stateManager";
 import { Button, type ButtonProps, ContextMenu, ContextMenuTrigger } from "../../../components/pure";
 import { Dialog, DialogContent } from "../../pure/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../pure/table";
@@ -17,24 +17,23 @@ import { CrudPageContext, useCrudPageContext } from "./crudPageContext";
 import { PlusIcon } from "lucide-react";
 
 
-const isChangeDialogOpen = signal<boolean>(false);
-const isDeleteDialogOpen = signal<boolean>(false);
-const selectedEntity = signal<ChangeableEntity<any> | undefined>(undefined);
-
-export type CrudPageTableRow<TEntity extends ChangeableEntity<TDto>, TDto extends Dto> = {
-	data: TEntity[];
+export type CrudPageTableRow<TDto extends Dto> = {
+	data: TDto[];
 	headerRows: { rowBody: ReactNode; rowStyles: string; }[];
-	tableRowMapper: (entity: TEntity) => { rowBody: ReactNode; rowStyles?: string; }[];
-	onDoubleClick?: (entity: TEntity) => void;
+	tableRowMapper: (dto: TDto) => { rowBody: ReactNode; rowStyles?: string; }[];
+	onDoubleClick?: (dto: TDto) => void;
 };
 
 export type CrudPageChangeDialogProps<TDto extends Dto> = {
-	changeDialog: (dto: TDto | undefined, closeDialog: () => void, mode: ChangeableEntityMode | undefined) => React.ReactNode;
+	changeDialog: (dto: TDto | undefined, closeDialog: () => void) => React.ReactNode;
 };
 
-export function CrudPage({children}: PropsWithChildren)
+export function CrudPage<TDto extends Dto>({children}: PropsWithChildren)
 {
 	useSignals();
+	const isChangeDialogOpen = useMemo(() => signal<boolean>(false), []);
+	const isDeleteDialogOpen = useMemo(() => signal<boolean>(false), []);
+	const selectedDto = useMemo(() => signal<TDto | undefined>(undefined), []);
 	const navigate = useNavigate();
 	const {pathname} = useLocation();
 	const params = useParams();
@@ -43,7 +42,7 @@ export function CrudPage({children}: PropsWithChildren)
 		? pathname.slice(0, pathname.lastIndexOf(`/${ params.id }`))
 		: pathname;
 	return (
-		<CrudPageContext.Provider value={ {navigate, basePath} }>
+		<CrudPageContext.Provider value={ {isChangeDialogOpen, isDeleteDialogOpen, selectedDto, navigate, basePath} }>
 			<div className="px-5 py-3 h-[calc(100vh-70px)] flex flex-col">
 				{ children }
 			</div>
@@ -55,11 +54,13 @@ export function CrudPage({children}: PropsWithChildren)
 CrudPage.Header = function ({...props}: Omit<CrudTableHeaderProps, "onAddButtonClicked">)
 {
 	useSignals();
+
+	const {selectedDto, isChangeDialogOpen} = useCrudPageContext();
 	return (
 		<CrudTableHeader
 			onAddButtonClicked={ () =>
 			{
-				selectedEntity.value = undefined;
+				selectedDto.value = undefined;
 				isChangeDialogOpen.value = true;
 			} }
 			{ ...props }
@@ -88,10 +89,12 @@ CrudPage.HeaderButtonsContainer = function ({className, children}: { className?:
 CrudPage.AddButton = function ({title, onClick}: { title: string } & ButtonProps)
 {
 	useSignals();
+
+	const {selectedDto, isChangeDialogOpen} = useCrudPageContext();
 	return (
 		<Button variant="default" onClick={ (e) =>
 		{
-			selectedEntity.value = undefined;
+			selectedDto.value = undefined;
 			isChangeDialogOpen.value = true;
 			onClick?.(e);
 		} }>
@@ -104,10 +107,12 @@ CrudPage.AddButton = function ({title, onClick}: { title: string } & ButtonProps
 CrudPage.AddButton = function ({title, onClick}: { title: string } & ButtonProps)
 {
 	useSignals();
+
+	const {selectedDto, isChangeDialogOpen} = useCrudPageContext();
 	return (
 		<Button variant="default" onClick={ (e) =>
 		{
-			selectedEntity.value = undefined;
+			selectedDto.value = undefined;
 			isChangeDialogOpen.value = true;
 			onClick?.(e);
 		} }>
@@ -140,7 +145,7 @@ CrudPage.Table = function ({children}: PropsWithChildren)
 	);
 };
 
-CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
+CrudPage.TableBody = function <TDto extends Dto>(
 	{
 		data,
 		headerRows,
@@ -150,25 +155,24 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 		isShareablePage,
 		onEditClicked,
 		...props
-	}: Omit<CrudPageTableRow<TEntity, TDto>, "onDoubleClick">
-		& Omit<CrudTableRowActionsMenuProps<TEntity, TDto>, "onEditClicked" | "onDeleteClicked" | "entity" | "dropdownItems" | "contextMenuItems">
+	}: Omit<CrudPageTableRow<TDto>, "onDoubleClick">
+		& Omit<CrudTableRowActionsMenuProps<TDto>, "onEditClicked" | "onDeleteClicked" | "dto" | "dropdownItems" | "contextMenuItems">
 		& {
-		onEditClicked?: (entity: TEntity) => void;
-		dropdownItems?: (entity: TEntity, openEditDialog: (entity: TEntity) => void) => React.ReactNode[];
-		contextMenuItems?: (entity: TEntity, openEditDialog: (entity: TEntity) => void) => React.ReactNode[];
+		onEditClicked?: (dto: TDto) => void;
+		dropdownItems?: (dto: TDto, openEditDialog: (dto: TDto) => void) => React.ReactNode[];
+		contextMenuItems?: (dto: TDto, openEditDialog: (dto: TDto) => void) => React.ReactNode[];
 		isShareablePage?: boolean;
 	}
 )
 {
 	useSignals();
 	const {i18n} = useTranslation();
-	const {navigate, basePath} = useCrudPageContext();
+	const {selectedDto, isChangeDialogOpen, isDeleteDialogOpen, navigate, basePath} = useCrudPageContext();
 
-	const openEditDialog = (entity: TEntity) =>
+	const openEditDialog = (dto: TDto) =>
 	{
-		selectedEntity.value = entity;
-		selectedEntity.value.mode.value = ChangeableEntityMode.Update;
-		isShareablePage && navigate(`${ basePath }/${ entity.id.value }`);
+		selectedDto.value = dto;
+		isShareablePage && navigate(`${ basePath }/${ dto.id }`);
 		isChangeDialogOpen.value = true;
 	};
 	return (
@@ -181,38 +185,38 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 			</TableHeader>
 
 			<TableBody>
-				{ data.map((entity, i: number) => (
+				{ data.map((dto, i: number) => (
 					<ContextMenu dir={ i18n.dir() } key={ i }>
 						<ContextMenuTrigger asChild>
 							<TableRow
 								onDoubleClick={ () =>
 								{
-									onEditClicked?.(entity);
-									openEditDialog(entity);
+									onEditClicked?.(dto);
+									openEditDialog(dto);
 								} }
 								className="hover:bg-secondary/50 transition-colors cursor-pointer"
 							>
 								<TableCell>
-									<CrudTableRowActionsMenu<TEntity, TDto>
+									<CrudTableRowActionsMenu<TDto>
 										{ ...props }
-										entity={ entity }
+										dto={ dto }
 										type="dropdown"
-										dropdownItems={ dropdownItems?.(entity, openEditDialog) }
-										contextMenuItems={ contextMenuItems?.(entity, openEditDialog) }
+										dropdownItems={ dropdownItems?.(dto, openEditDialog) }
+										contextMenuItems={ contextMenuItems?.(dto, openEditDialog) }
 										onEditClicked={ () =>
 										{
-											onEditClicked?.(entity);
-											openEditDialog(entity);
+											onEditClicked?.(dto);
+											openEditDialog(dto);
 										} }
 										onDeleteClicked={ () =>
 										{
-											selectedEntity.value = entity;
+											selectedDto.value = dto;
 											isDeleteDialogOpen.value = true;
 										} }
 									/>
 								</TableCell>
 
-								{ tableRowMapper(entity).map((row, i) => (
+								{ tableRowMapper(dto).map((row, i) => (
 									<TableCell key={ i }>
 										<div className={ row.rowStyles }>{ row.rowBody }</div>
 									</TableCell>
@@ -220,20 +224,20 @@ CrudPage.TableBody = function <TEntity extends ChangeableEntity<TDto>, TDto exte
 							</TableRow>
 						</ContextMenuTrigger>
 
-						<CrudTableRowActionsMenu<TEntity, TDto>
+						<CrudTableRowActionsMenu<TDto>
 							{ ...props }
-							entity={ entity }
+							dto={ dto }
 							type="context"
-							dropdownItems={ dropdownItems?.(entity, openEditDialog) }
-							contextMenuItems={ contextMenuItems?.(entity, openEditDialog) }
+							dropdownItems={ dropdownItems?.(dto, openEditDialog) }
+							contextMenuItems={ contextMenuItems?.(dto, openEditDialog) }
 							onEditClicked={ () =>
 							{
-								onEditClicked?.(entity);
-								openEditDialog(entity);
+								onEditClicked?.(dto);
+								openEditDialog(dto);
 							} }
 							onDeleteClicked={ () =>
 							{
-								selectedEntity.value = entity;
+								selectedDto.value = dto;
 								isDeleteDialogOpen.value = true;
 							} }
 						/>
@@ -250,14 +254,14 @@ CrudPage.TablePagination = function (props: CrudTablePaginationProps)
 	return <CrudTablePagination { ...props } />;
 };
 
-CrudPage.ChangeDialog = function <TDto extends Dto, TEntity extends ChangeableEntity<TDto>>(
+CrudPage.ChangeDialog = function <TDto extends Dto>(
 	{changeDialog, fetchEntity}: CrudPageChangeDialogProps<TDto> & {
-		fetchEntity?: (id: number) => Promise<TEntity | undefined>
+		fetchEntity?: (id: number) => Promise<TDto | undefined>
 	}
 )
 {
 	useSignals();
-	const {navigate, basePath} = useCrudPageContext();
+	const {selectedDto, isChangeDialogOpen, navigate, basePath} = useCrudPageContext();
 	const params = useParams();
 
 	useEffect(() =>
@@ -275,11 +279,11 @@ CrudPage.ChangeDialog = function <TDto extends Dto, TEntity extends ChangeableEn
 				navigate(basePath, {replace: true});
 				return;
 			}
-			selectedEntity.value = entity;
+			selectedDto.value = entity;
 			isChangeDialogOpen.value = true;
 		}
 
-		loadEntity();
+		void loadEntity();
 	}, []);
 
 	return (
@@ -297,12 +301,11 @@ CrudPage.ChangeDialog = function <TDto extends Dto, TEntity extends ChangeableEn
 					} }
 				>
 					{ changeDialog(
-						selectedEntity.value?.toJson() as TDto,
+						selectedDto.value as TDto,
 						() =>
 						{
 							isChangeDialogOpen.value = false;
-						},
-						selectedEntity.value?.mode.value
+						}
 					) }
 				</Dialog>
 			) }
@@ -310,25 +313,23 @@ CrudPage.ChangeDialog = function <TDto extends Dto, TEntity extends ChangeableEn
 	);
 };
 
-CrudPage.DeleteDialog = function <TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
+CrudPage.DeleteDialog = function <TDto extends Dto>(
 	{entityNameSelector, onSuccess, ...props}:
-	& Omit<DeleteDialogProps<TEntity, TDto>, "id" | "entityName" | "onSuccess">
+	& Omit<DeleteDialogProps<TDto>, "id" | "entityName" | "onSuccess">
 		& {
-		entityNameSelector: (entity: TEntity) => Signal<string | number> | string;
-		onSuccess?: (entity: TEntity) => void;
+		entityNameSelector: (dto: TDto) => string;
+		onSuccess?: (dto: TDto) => void;
 	}
 )
 {
 	useSignals();
 	const {i18n} = useTranslation();
+	const {selectedDto, isDeleteDialogOpen} = useCrudPageContext();
 
-	const entity: TEntity | undefined = selectedEntity.value as TEntity;
-	if (entity?.id === undefined)
+	if (selectedDto.value === undefined || selectedDto.value?.id === undefined)
 	{
 		return undefined;
 	}
-
-	const entityNameSelectorResult = entityNameSelector(entity);
 
 	return (
 		<Dialog
@@ -338,11 +339,11 @@ CrudPage.DeleteDialog = function <TEntity extends ChangeableEntity<TDto>, TDto e
 			<DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
 				<DeleteDialog
 					{ ...props }
-					id={ entity.id.value }
-					entityName={ (entityNameSelectorResult instanceof Signal ? entityNameSelectorResult?.value.toString() : entityNameSelectorResult) ?? "" }
+					id={ selectedDto.value.id }
+					entityName={ entityNameSelector(selectedDto.value as TDto) ?? "" }
 					onSuccess={ () =>
 					{
-						onSuccess?.(entity);
+						onSuccess?.(selectedDto.value as TDto);
 						isDeleteDialogOpen.value = false;
 					} }
 				/>

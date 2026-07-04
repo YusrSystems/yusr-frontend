@@ -1,24 +1,18 @@
-import { BaseApiService, ChangeableEntityMode, type RequestResult, YusrApiHelper } from "yusr-ui";
-import Invoice, { InvoiceDto } from "@/core/data/invoices/invoice.ts";
+import { BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
+import { InvoiceDto } from "@/core/data/invoices/invoice.ts";
 import type { EInvoiceStatus } from "@/core/types/eInvoiceStatus.ts";
 
 
-export default class InvoicesApiService extends BaseApiService<Invoice, InvoiceDto>
+export default class InvoicesApiService extends BaseApiService<InvoiceDto>
 {
-	routeName: string = "Invoices";
-
-	override createEntity(dto: InvoiceDto): Invoice
+	constructor()
 	{
-		return new Invoice(dto, ChangeableEntityMode.Create);
+		super("Invoices");
 	}
 
-	async GetReturnInvoiceInitialDetails(id: number): Promise<RequestResult<Invoice>>
+	async GetReturnInvoiceInitialDetails(id: number): Promise<RequestResult<InvoiceDto>>
 	{
-		const rawResult = await YusrApiHelper.Get<InvoiceDto>(`/api/${ this.routeName }/GetReturnInvoiceInitialDetails/${ id }`);
-		return {
-			...rawResult,
-			data: rawResult.data ? this.createEntity(rawResult.data) : undefined
-		};
+		return await YusrApiHelper.Get<InvoiceDto>(`/api/${ this.routeName }/GetReturnInvoiceInitialDetails/${ id }`);
 	}
 
 	async ResendEInvoice(invoiceId: number): Promise<RequestResult<EInvoiceStatus>>

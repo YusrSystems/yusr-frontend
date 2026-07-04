@@ -16,7 +16,7 @@ import { useEffect } from "react";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { FileText } from "lucide-react";
-import { Voucher, type VoucherDto, VoucherType } from "@/core/data/voucher.ts";
+import { type VoucherDto, VoucherType } from "@/core/data/voucher.ts";
 import ReportButton from "@/features/reports/reportButton.tsx";
 import ReportConstants from "@/core/data/report/reportConstants.ts";
 import ChangeVoucherDialog from "@/features/vouchers/changeVoucherDialog.tsx";
@@ -33,7 +33,7 @@ export default function VouchersPage()
 		return <UnauthorizedPage/>;
 	}
 
-	return <CrudPage>
+	return <CrudPage<VoucherDto>>
 		<CrudPage.Header
 			title={ t("vouchers.title") }
 			addButtonTitle={ t("vouchers.addNewTitle") }
@@ -51,18 +51,16 @@ export default function VouchersPage()
 			{
 				return (
 					<ChangeVoucherDialog
-						entity={ dto
-							? Voucher.load(dto)
-							: Voucher.create() }
+						dto={ dto }
 						service={ Services.voucherApi }
-						onSuccess={ (data) =>
+						onSuccess={ (data, mode) =>
 						{
-							if (data.mode.value === ChangeableEntityMode.Create)
+							if (mode === ChangeableEntityMode.Create)
 							{
 								Cubits.vouchers.add(data);
 								closeDialog();
 							}
-							else if (data.mode.value === ChangeableEntityMode.Update)
+							else if (mode === ChangeableEntityMode.Update)
 							{
 								Cubits.vouchers.update(data);
 							}
@@ -113,7 +111,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<Voucher, VoucherDto>
+				<CrudPage.TableBody<VoucherDto>
 					data={ Cubits.vouchers.entities.value }
 
 					headerRows={ [
@@ -134,27 +132,27 @@ function PageTable()
 
 
 					tableRowMapper={ (
-						voucher: Voucher
+						voucher: VoucherDto
 					) => [
-						{rowBody: `#${ voucher.id.value }`, rowStyles: ""},
+						{rowBody: `#${ voucher.id }`, rowStyles: ""},
 						{
-							rowBody: voucher.type.value === VoucherType.Payment ? t("vouchers.paymentVoucher") : t("vouchers.receiptVoucher"),
+							rowBody: voucher.type === VoucherType.Payment ? t("vouchers.paymentVoucher") : t("vouchers.receiptVoucher"),
 							rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-								voucher.type.value === VoucherType.Payment ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+								voucher.type === VoucherType.Payment ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
 							}`
 						},
-						{rowBody: voucher.date.value, rowStyles: ""},
+						{rowBody: voucher.date, rowStyles: ""},
 						{rowBody: voucher.accountName ?? "-", rowStyles: "font-semibold"},
 						{
 							rowBody: (
 								<div className="flex items-center gap-1">
-									{ (voucher.amount.value ?? 0).toLocaleString("en-US") }
+									{ (voucher.amount ?? 0).toLocaleString("en-US") }
 									<ErpCurrencyIcon/>
 								</div>
 							),
 							rowStyles: "font-mono font-bold"
 						},
-						{rowBody: voucher.paymentMethod.value.name ?? "-", rowStyles: "text-sm text-gray-600"},
+						{rowBody: voucher?.paymentMethod?.name ?? "-", rowStyles: "text-sm text-gray-600"},
 						...(Services.auth.hasAuth(
 							SystemPermissionsResources.ReportVoucher,
 							SystemPermissionsActions.Get
@@ -166,8 +164,8 @@ function PageTable()
 										request={ {
 											voucherId: voucher.id,
 											tafqit: Services?.auth?.setting?.currency
-												? NumbertoWordsService.ConvertAmount(voucher.amount.value, Services?.auth?.setting?.currency.value)
-												: NumbertoWordsService.Convert(voucher.amount.value)
+												? NumbertoWordsService.ConvertAmount(voucher.amount, Services?.auth?.setting?.currency.value)
+												: NumbertoWordsService.Convert(voucher.amount)
 										} }
 									/>
 								),

@@ -28,14 +28,13 @@ const BASIC_FIELDS = ["name", "type"] as const;
 const STORAGE_FIELDS = ["itemStores"] as const;
 const PRICING_FIELDS = ["sellUnitId", "initialCost", "itemUnitPricingMethods"] as const;
 
-export default function ChangeItemDialog({entity, service, onSuccess}: CommonChangeDialogProps<Item, ItemDto>)
+export default function ChangeItemDialog({dto, service, onSuccess}: CommonChangeDialogProps<ItemDto>)
 {
 	useSignals();
 
 	const {t} = useTranslation(["stocking", "common"]);
 	const servicesIds = useMemo(() => signal<ServiceIds>(), []);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const currentEntity = useMemo(() => signal<Item>(entity), []); // I left the deps array empty, it causes infinite rerenders if you put anything inside it
+	const entity = useMemo(() => signal<Item>(dto ? Item.load(dto) : Item.create()), []);
 	const isLoading = useMemo(() => signal<boolean>(false), []);
 
 	useEffect(() =>
@@ -53,12 +52,12 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 				servicesIds.value = result.data;
 			}
 
-			if (currentEntity.value.mode.value === ChangeableEntityMode.Update && currentEntity.value?.id)
+			if (entity.value.mode.value === ChangeableEntityMode.Update && entity.value?.id)
 			{
-				const res = await service.Get(currentEntity.value.id.value);
+				const res = await service.Get(entity.value.id.value);
 				if (res.data != undefined)
 				{
-					currentEntity.value = Item.load(res.data.toJson());
+					entity.value = Item.load(res.data);
 				}
 			}
 
@@ -71,47 +70,47 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 
 	useEffect(() =>
 	{
-		if (currentEntity.value.mode.value === ChangeableEntityMode.Create && !entity.isDirty.value && Cubits.taxes.entities.value.length > 0)
+		if (entity.value.mode.value === ChangeableEntityMode.Create && !entity.value.isDirty.value && Cubits.taxes.entities.value.length > 0)
 		{
-			entity.changeTaxable(true, Cubits.taxes.entities);
+			entity.value.changeTaxable(true, Cubits.taxes.entities);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [Cubits.taxes.entities.value]); // I left the deps array like this, it causes infinite rerenders if you put anything inside it
 
 	const {commitFiles} = useStorageFile(
-		() => currentEntity.value.itemImages.value,
-		(v) => (currentEntity.value.itemImages.value = v),
+		() => entity.value.itemImages.value,
+		(v) => (entity.value.itemImages.value = v),
 		StorageType.Public
 	);
 
 	if (
-		(currentEntity.value.mode.value === ChangeableEntityMode.Create
+		(entity.value.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Add))
-		|| (currentEntity.value.mode.value === ChangeableEntityMode.Update
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const basicHasError = BASIC_FIELDS.some((f) => currentEntity.value.getError(f).value)
-		|| currentEntity.value.itemTaxes.value.some((t) => t.hasErrors);
-	const storageHasError = STORAGE_FIELDS.some((f) => currentEntity.value.getError(f).value)
-		|| currentEntity.value.itemStores.value.some((t) => t.hasErrors);
-	const pricingHasError = PRICING_FIELDS.some((f) => currentEntity.value.getError(f).value)
-		|| currentEntity.value.itemUnitPricingMethods.value.some((t) => t.hasErrors);
+	const basicHasError = BASIC_FIELDS.some((f) => entity.value.getError(f).value)
+		|| entity.value.itemTaxes.value.some((t) => t.hasErrors);
+	const storageHasError = STORAGE_FIELDS.some((f) => entity.value.getError(f).value)
+		|| entity.value.itemStores.value.some((t) => t.hasErrors);
+	const pricingHasError = PRICING_FIELDS.some((f) => entity.value.getError(f).value)
+		|| entity.value.itemUnitPricingMethods.value.some((t) => t.hasErrors);
 
-	const transformDataBeforeSave = async (): Promise<Item> =>
+	const transformDataBeforeSave = async (): Promise<ItemDto> =>
 	{
-		currentEntity.value.itemImages.value = await commitFiles(
-			currentEntity.value.itemImages.value,
+		entity.value.itemImages.value = await commitFiles(
+			entity.value.itemImages.value,
 			`Items`
 		);
 
-		return currentEntity.value;
+		return entity.value.toJson();
 	};
 
-	const title = currentEntity.value.mode.value === ChangeableEntityMode.Create
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? t("items.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("items.entityName") }`;
 
@@ -135,15 +134,15 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 						icon: Box,
 						active: true,
 						hasError: basicHasError,
-						content: <BasicTab entity={ currentEntity.value } serviceIds={ servicesIds }/>
+						content: <BasicTab entity={ entity.value } serviceIds={ servicesIds }/>
 					},
-					...(currentEntity.value.type.value !== ItemType.Service
+					...(entity.value.type.value !== ItemType.Service
 						? [{
 							label: t("items.storage"),
 							icon: Database,
 							active: false,
 							hasError: storageHasError,
-							content: <StorageTab entity={ currentEntity.value }/>
+							content: <StorageTab entity={ entity.value }/>
 						}]
 						: []),
 					{
@@ -151,7 +150,7 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 						icon: DollarSign,
 						active: false,
 						hasError: pricingHasError,
-						content: <PricingTab entity={ currentEntity.value }/>
+						content: <PricingTab entity={ entity.value }/>
 					}
 				] }
 			/>
@@ -160,9 +159,9 @@ export default function ChangeItemDialog({entity, service, onSuccess}: CommonCha
 				<ChangeDialog.Close/>
 
 				<ChangeDialog.SaveButton<Item, ItemDto>
-					entity={ currentEntity.value }
+					entity={ entity }
 					service={ service }
-					onSuccess={ (data) => onSuccess?.(data) }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 					transformData={ transformDataBeforeSave }
 				/>
 			</ChangeDialog.Footer>

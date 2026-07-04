@@ -4,14 +4,14 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
 import { CrudPage, TablePreview, UnauthorizedPage } from "../../components/custom";
-import { Branch, type BranchDto } from "../../entities";
+import { type BranchDto } from "../../entities";
 import { BaseCubits } from "../../services";
 import { BaseServices } from "../../services/baseServices";
 import { ChangeableEntityMode, PageError, PageLoaded, PageLoading } from "../../stateManager";
 import { ChangeBranchDialog } from "./changeBranchDialog";
 
 
-export function BranchesPage({onUpdate}: { onUpdate?: (entity: Branch) => void; })
+export function BranchesPage({onUpdate}: { onUpdate?: (dto: BranchDto) => void; })
 {
 	const {t} = useTranslation("commonEntities");
 
@@ -26,7 +26,7 @@ export function BranchesPage({onUpdate}: { onUpdate?: (entity: Branch) => void; 
 	}, []);
 
 	return (
-		<CrudPage>
+		<CrudPage<BranchDto>>
 			<CrudPage.Header
 				title={ t("branches.title") }
 				addButtonTitle={ t("branches.addNewTitle") }
@@ -42,23 +42,21 @@ export function BranchesPage({onUpdate}: { onUpdate?: (entity: Branch) => void; 
 
 			<PageTable/>
 
-			<CrudPage.ChangeDialog
-				changeDialog={ (dto: BranchDto | undefined, closeDialog) =>
+			<CrudPage.ChangeDialog<BranchDto>
+				changeDialog={ (dto, closeDialog) =>
 				{
 					return (
 						<ChangeBranchDialog
-							entity={ dto
-								? Branch.load(dto)
-								: Branch.create() }
+							dto={ dto }
 							service={ BaseServices.branchesApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									BaseCubits.branches.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									BaseCubits.branches.update(data);
 									onUpdate?.(data);
@@ -107,7 +105,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<Branch, BranchDto>
+				<CrudPage.TableBody<BranchDto>
 					data={ BaseCubits.branches.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},

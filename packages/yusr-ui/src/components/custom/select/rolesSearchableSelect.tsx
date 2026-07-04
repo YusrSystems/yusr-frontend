@@ -1,12 +1,12 @@
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
-import { Role, RoleDto } from "../../../entities";
+import { RoleDto } from "../../../entities";
 import { BaseCubits } from "../../../services";
 import { PageLoaded, PageLoading } from "../../../stateManager";
 import { SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "./searchableSelect";
 
 
-export function RolesSearchableSelect({...props}: SearchableSelectProps<Role<RoleDto>, RoleDto>)
+export function RolesSearchableSelect({...props}: SearchableSelectProps<RoleDto>)
 {
 	useSignals();
 
@@ -34,7 +34,7 @@ export function RolesSearchableSelect({...props}: SearchableSelectProps<Role<Rol
 		if (BaseCubits.roles.state.value instanceof PageLoaded && BaseCubits.roles.entities.value.length > 0)
 		{
 			return BaseCubits.roles.entities.value.map((entity) => (
-				<Option key={ entity.id.value } item={ entity } { ...props } />
+				<Option key={ entity.id } item={ entity } { ...props } />
 			));
 		}
 
@@ -43,15 +43,15 @@ export function RolesSearchableSelect({...props}: SearchableSelectProps<Role<Rol
 }
 
 const Option = React.memo(
-	function Option({...props}: Omit<SearchableSelectOptionProps<Role<RoleDto>, RoleDto>, "labelSelector">)
+	function Option({...props}: Omit<SearchableSelectOptionProps<RoleDto>, "labelSelector">)
 	{
 		useSignals();
 		return (
-			<SearchableSelect.Option<Role<RoleDto>, RoleDto>
+			<SearchableSelect.Option<RoleDto>
 				labelSelector="name"
 				{ ...props }
 			>
-				<SearchableSelect.OptionBody label={ props.item.name.value }/>
+				<SearchableSelect.OptionBody label={ props.item.name }/>
 			</SearchableSelect.Option>
 		);
 	}

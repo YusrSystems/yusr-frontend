@@ -11,18 +11,14 @@ import {
 } from "lucide-react";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { SystemPermissionsActions } from "yusr-ui";
+import { Button, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import BalanceSheetDialog from "./BalanceSheetDialog";
-import InvoicesListDialog from "./invoicesListDialog";
-import ItemsListDialog from "./itemsListDialog";
-import ItemsMovementDialog from "./ItemsMovementDialog";
-import ItemsTaxStatementDialog from "./ItemsTaxStatementDialog";
 import ProfitAndLossDialog from "./ProfitAndLossDialog";
-import TaxReturnDialog from "./taxReturnDialog";
 import { Cubits } from "@/core/services/cubits.ts";
 import { AccountType } from "@/core/data/account.ts";
 import { Services } from "@/core/services/services.ts";
+import { AppNavigator } from "@/app/appNavigator.ts";
 
 
 interface Report
@@ -121,7 +117,8 @@ export default function ReportsPage()
 		icon: BarChart2,
 		iconColor: "text-blue-600",
 		reports: [{
-			comp: <InvoicesListDialog/>,
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/invoicesList") }>{ t("reports.create") }</Button>,
 			name: t("reports.InvoicesList"),
 			description: t("reports.InvoicesListDescription"),
 			icon: ReceiptText,
@@ -153,7 +150,8 @@ export default function ReportsPage()
 		icon: Percent,
 		iconColor: "text-amber-600",
 		reports: [{
-			comp: <TaxReturnDialog/>,
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/taxReturn") }>{ t("reports.create") }</Button>,
 			name: t("reports.taxReturn"),
 			description: t("reports.taxReturnDescription"),
 			icon: FileText,
@@ -162,7 +160,8 @@ export default function ReportsPage()
 				SystemPermissionsActions.Get
 			)
 		}, {
-			comp: <ItemsTaxStatementDialog/>,
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/itemsTaxStatement") }>{ t("reports.create") }</Button>,
 			name: t("reports.itemsTaxStatement"),
 			description: t("reports.itemsTaxStatementDescription"),
 			icon: Percent,
@@ -176,7 +175,8 @@ export default function ReportsPage()
 		icon: Package,
 		iconColor: "text-green-700",
 		reports: [{
-			comp: <ItemsListDialog/>,
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/itemsList") }>{ t("reports.create") }</Button>,
 			name: t("reports.itemsList"),
 			description: t("reports.itemsListDescription"),
 			icon: PackageSearch,
@@ -185,7 +185,8 @@ export default function ReportsPage()
 				SystemPermissionsActions.Get
 			)
 		}, {
-			comp: <ItemsMovementDialog/>,
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/itemsMovement") }>{ t("reports.create") }</Button>,
 			name: t("reports.itemsMovement"),
 			description: t("reports.itemsMovementDescription"),
 			icon: ArrowRightLeft,

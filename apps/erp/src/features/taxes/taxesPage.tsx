@@ -1,5 +1,5 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import { Tax, type TaxDto } from "@/core/data/tax";
+import { type TaxDto } from "@/core/data/tax";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -30,7 +30,7 @@ export default function TaxesPage()
 	}
 
 	return (
-		<CrudPage>
+		<CrudPage<TaxDto>>
 			<CrudPage.Header
 				title={ t("taxes.title") }
 				addButtonTitle={ t("taxes.addNewTitle") }
@@ -43,23 +43,21 @@ export default function TaxesPage()
 
 			<PageTable/>
 
-			<CrudPage.ChangeDialog
-				changeDialog={ (dto: TaxDto | undefined, closeDialog) =>
+			<CrudPage.ChangeDialog<TaxDto>
+				changeDialog={ (dto, closeDialog) =>
 				{
 					return (
 						<ChangeTaxDialog
-							entity={ dto
-								? Tax.load(dto)
-								: Tax.create() }
+							dto={ dto }
 							service={ Services.taxesApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									Cubits.taxes.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									Cubits.taxes.update(data);
 								}
@@ -69,10 +67,10 @@ export default function TaxesPage()
 				} }
 			/>
 
-			<CrudPage.DeleteDialog
+			<CrudPage.DeleteDialog<TaxDto>
 				entityNameSelector={ (tax) => tax.name }
 				service={ Services.taxesApi }
-				onSuccess={ (entity) => Cubits.taxes.delete(entity) }
+				onSuccess={ (dto) => Cubits.taxes.delete(dto) }
 			/>
 		</CrudPage>
 	);
@@ -107,7 +105,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<Tax, TaxDto>
+				<CrudPage.TableBody<TaxDto>
 					data={ Cubits.taxes.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
@@ -119,16 +117,16 @@ function PageTable()
 					tableRowMapper={ (
 						tax
 					) => [
-						{rowBody: `#${ tax.id.value }`, rowStyles: ""},
-						{rowBody: tax.name.value, rowStyles: "font-semibold"},
+						{rowBody: `#${ tax.id }`, rowStyles: ""},
+						{rowBody: tax.name, rowStyles: "font-semibold"},
 						{
-							rowBody: `%${ tax.percentage.value }`,
+							rowBody: `%${ tax.percentage }`,
 							rowStyles: ""
 						},
 						{
-							rowBody: tax.isPrimary.value ? t("common:yes") : t("common:no"),
+							rowBody: tax.isPrimary ? t("common:yes") : t("common:no"),
 							rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-								tax.isPrimary.value ? "bg-blue-300" : "bg-gray-200"
+								tax.isPrimary ? "bg-blue-300" : "bg-gray-200"
 							} text-slate-800`
 						}
 					] }

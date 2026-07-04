@@ -1,5 +1,4 @@
 import type { StocktakingDto } from "@/core/data/stocktaking";
-import Stocktaking from "@/core/data/stocktaking";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -33,7 +32,7 @@ export default function StocktakingsPage()
 	}
 
 	return (
-		<CrudPage>
+		<CrudPage<StocktakingDto>>
 			<CrudPage.Header
 				title={ t("stocktakings.title") }
 				addButtonTitle={ t("stocktakings.addNewTitle") }
@@ -56,18 +55,16 @@ export default function StocktakingsPage()
 						<ChangeStocktakingDialog
 							addDialogTitle={ t("stocktakings.addNewTitle") }
 							updateDialogTitle={ `${ t("common:crudRow.edit") } ${ t("stocktakings.entityName") }` }
-							entity={ dto
-								? Stocktaking.load(dto)
-								: Stocktaking.create() }
+							dto={ dto }
 							service={ Services.stocktakingApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									Cubits.stocktaking.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									Cubits.stocktaking.update(data);
 								}
@@ -115,7 +112,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<Stocktaking, StocktakingDto>
+				<CrudPage.TableBody<StocktakingDto>
 					data={ Cubits.stocktaking.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
@@ -134,7 +131,7 @@ function PageTable()
 						stocktaking
 					) => [
 						{rowBody: `#${ stocktaking.id }`, rowStyles: ""},
-						{rowBody: stocktaking.date.value, rowStyles: ""},
+						{rowBody: stocktaking.date, rowStyles: ""},
 						{rowBody: stocktaking.storeName, rowStyles: "font-semibold"},
 						{rowBody: stocktaking.description ?? "-", rowStyles: "text-sm text-gray-500"},
 						...(Services.auth.hasAuth(

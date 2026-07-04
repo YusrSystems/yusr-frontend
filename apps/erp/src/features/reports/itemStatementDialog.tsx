@@ -1,16 +1,16 @@
-import type Item from "@/core/data/item";
+import { ItemDto } from "@/core/data/item";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  FormField
+	Button,
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	FormField
 } from "yusr-ui";
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
@@ -19,7 +19,7 @@ import StoresSearchableSelect from "@/core/components/searchableSelect/storesSea
 import { ItemStatementReportRequest } from "@/core/data/report/itemStatementReportRequest.ts";
 
 
-export default function ItemStatementButton({item}: { item: Item; })
+export default function ItemStatementButton({item}: { item: ItemDto; })
 {
 	useSignals();
 	const {t, i18n} = useTranslation("erpCommon");
@@ -38,7 +38,7 @@ export default function ItemStatementButton({item}: { item: Item; })
 				<DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>{ t("itemStatement.title") }</DialogTitle>
-						<DialogDescription>{ item.name.value }</DialogDescription>
+						<DialogDescription>{ item.name }</DialogDescription>
 					</DialogHeader>
 
 					<div className="flex flex-col gap-4 py-2">
@@ -53,7 +53,7 @@ export default function ItemStatementButton({item}: { item: Item; })
 						<ReportButton
 							reportName={ ReportConstants.ItemStatement }
 							request={ new ItemStatementReportRequest({
-								itemId: item.id.value,
+								itemId: item.id,
 								storeId: storeId.value
 							}) }
 						/>

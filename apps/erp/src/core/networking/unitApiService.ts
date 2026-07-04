@@ -1,16 +1,14 @@
 import { BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
 import type ServiceIds from "../data/serviceIds";
 import type { UnitDto } from "../data/unit";
-import Unit from "../data/unit";
 
 
-export default class UnitsApiService extends BaseApiService<Unit, UnitDto>
+export default class UnitsApiService extends BaseApiService<UnitDto>
 {
-	routeName: string = "Units";
 
-	override createEntity(dto: UnitDto): Unit
+	constructor()
 	{
-		return new Unit(dto);
+		super("Units");
 	}
 
 	async GetServiceIds(): Promise<RequestResult<ServiceIds>>

@@ -10,6 +10,7 @@ import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
+	Branch,
 	BranchesSearchableSelect,
 	Button,
 	cn,
@@ -109,11 +110,11 @@ export default function BasicSection({formData}: { formData: Setting })
 		<div className="space-y-5 animate-in fade-in">
 			<ReferralCard/>
 
-			<div className="flex gap-6">
+			<div className="flex flex-col lg:flex-row gap-6">
 
 				{ /* LOGO SECTION */ }
 				<div
-					className="w-full flex flex-col justify-between items-center lg:items-start gap-6 p-4 rounded-lg border bg-muted/10 shadow-sm">
+					className="w-full min-w-60 flex flex-col justify-between items-center lg:items-start gap-6 p-4 rounded-lg border bg-muted/10 shadow-sm">
 					{ /* Logo Part */ }
 					<div className="flex flex-col items-center gap-6">
 						<h3 className="text-lg font-bold">{ t("settings.companyLogo") }</h3>
@@ -291,7 +292,7 @@ export default function BasicSection({formData}: { formData: Setting })
 							label={ formData.branch.value?.name }
 							onSelect={ (branch) =>
 							{
-								formData.branch.value = branch;
+								formData.branch.value = new Branch(branch);
 							} }
 						/>
 					</FormField>
@@ -356,7 +357,7 @@ function FieldNoticeablePing({isError, onClick}: { onClick?: () => void; isError
 		<span
 			onClick={ onClick }
 			className={ cn(
-				"relative cursor-pointer flex size-3 -inset-s-[3%]",
+				"relative cursor-pointer flex size-3 inset-s-[-3%]",
 				isError.value ? "top-[54%]" : "top-[70%]"
 			) }
 		>

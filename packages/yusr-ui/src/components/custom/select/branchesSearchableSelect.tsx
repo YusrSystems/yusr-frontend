@@ -1,12 +1,12 @@
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
-import { Branch, BranchDto } from "../../../entities";
+import { BranchDto } from "../../../entities";
 import { BaseCubits } from "../../../services";
 import { PageLoaded, PageLoading } from "../../../stateManager";
 import { SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "./searchableSelect";
 
 
-export function BranchesSearchableSelect({...props}: SearchableSelectProps<Branch, BranchDto>)
+export function BranchesSearchableSelect({...props}: SearchableSelectProps<BranchDto>)
 {
 	useSignals();
 
@@ -34,7 +34,7 @@ export function BranchesSearchableSelect({...props}: SearchableSelectProps<Branc
 		if (BaseCubits.branches.state.value instanceof PageLoaded && BaseCubits.branches.entities.value.length > 0)
 		{
 			return BaseCubits.branches.entities.value.map((entity) => (
-				<Option key={ entity.id.value } item={ entity } { ...props } />
+				<Option key={ entity.id } item={ entity } { ...props } />
 			));
 		}
 
@@ -43,15 +43,15 @@ export function BranchesSearchableSelect({...props}: SearchableSelectProps<Branc
 }
 
 const Option = React.memo(
-	function Option({...props}: Omit<SearchableSelectOptionProps<Branch, BranchDto>, "labelSelector">)
+	function Option({...props}: Omit<SearchableSelectOptionProps<BranchDto>, "labelSelector">)
 	{
 		useSignals();
 		return (
-			<SearchableSelect.Option<Branch, BranchDto>
+			<SearchableSelect.Option<BranchDto>
 				labelSelector="name"
 				{ ...props }
 			>
-				<SearchableSelect.OptionBody label={ props.item.name.value }/>
+				<SearchableSelect.OptionBody label={ props.item.name }/>
 			</SearchableSelect.Option>
 		);
 	}

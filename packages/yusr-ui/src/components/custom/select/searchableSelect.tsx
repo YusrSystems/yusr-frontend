@@ -4,7 +4,7 @@ import { Check, ChevronsUpDown, Loader2, Trash2 } from "lucide-react";
 import * as React from "react";
 import { type PropsWithChildren, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { Dto, Entity } from "../../../stateManager";
+import type { Dto } from "../../../stateManager";
 import { cn } from "../../../utils/cn";
 import { Button } from "../../pure/button";
 import { Command, CommandEmpty, CommandItem, CommandList } from "../../pure/command";
@@ -13,21 +13,21 @@ import { SearchInput, type SearchInputParams } from "../inputs/searchInput";
 import useSearchableSelectContext, { SearchableSelectContext } from "./useSearchableSelectContext";
 
 
-export type SearchableSelectOptionProps<TEntity extends Entity<TDto>, TDto extends Dto> = {
+export type SearchableSelectOptionProps<TDto extends Dto> = {
 	id: Signal<number | undefined>;
 	label?: Signal<string | undefined>;
-	labelSelector: keyof TEntity;
-	item: TEntity;
+	labelSelector: keyof TDto;
+	item: TDto;
 	disabled?: boolean;
-	onSelect?: (item?: TEntity) => void;
+	onSelect?: (item?: TDto) => void;
 };
 
-export type SearchableSelectProps<TEntity extends Entity<TDto>, TDto extends Dto> = Omit<
-	SearchableSelectOptionProps<TEntity, TDto>,
+export type SearchableSelectProps<TDto extends Dto> = Omit<
+	SearchableSelectOptionProps<TDto>,
 	"labelSelector" | "item"
 >;
 
-export function SearchableSelect<TEntity extends Entity<TDto>, TDto extends Dto>({children}: PropsWithChildren)
+export function SearchableSelect<TDto extends Dto>({children}: PropsWithChildren)
 {
 	useSignals();
 	const isOpen = useMemo(() => signal<boolean>(false), []);
@@ -141,21 +141,21 @@ SearchableSelect.OptionBody = function ({label}: { label: string; })
 	return <span className="flex-1 truncate">{ label }</span>;
 };
 
-SearchableSelect.Option = function <TEntity extends Entity<TDto>, TDto extends Dto>(
-	{id, label, labelSelector, item, onSelect, children}: SearchableSelectOptionProps<TEntity, TDto> & PropsWithChildren
+SearchableSelect.Option = function <TDto extends Dto>(
+	{id, label, labelSelector, item, onSelect, children}: SearchableSelectOptionProps<TDto> & PropsWithChildren
 )
 {
 	useSignals();
 	const data = useSearchableSelectContext();
 	return (
 		<CommandItem
-			value={ item.id.value.toString() }
+			value={ item.id.toString() }
 			onSelect={ () =>
 			{
-				id.value = item.id.value;
+				id.value = item.id;
 				if (label != undefined)
 				{
-					label.value = (item[labelSelector] as Signal).value;
+					label.value = (item[labelSelector])?.toString();
 				}
 				onSelect?.(item);
 				data.isOpen.value = false;
@@ -165,7 +165,7 @@ SearchableSelect.Option = function <TEntity extends Entity<TDto>, TDto extends D
 			<Check
 				className={ cn(
 					"h-4 w-4 ltr:mr-2 rtl:ml-2 shrink-0",
-					item.id.value === id.value ? "opacity-100" : "opacity-0"
+					item.id === id.value ? "opacity-100" : "opacity-0"
 				) }
 			/>
 			{ children }
@@ -174,7 +174,7 @@ SearchableSelect.Option = function <TEntity extends Entity<TDto>, TDto extends D
 };
 
 SearchableSelect.NullOption = function (
-	{id, label, onSelect}: Omit<SearchableSelectOptionProps<any, any>, "item" | "labelSelector">
+	{id, label, onSelect}: Omit<SearchableSelectOptionProps<any>, "item" | "labelSelector">
 )
 {
 	useSignals();

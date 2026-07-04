@@ -39,6 +39,12 @@ import PurchaseInvoicesPage from "@/features/invoices/purchaseInvoices.tsx";
 import QuotationInvoicesPage from "@/features/invoices/quotationInvoicesPage.tsx";
 import AuthGate from "@/app/authGate.tsx";
 import CostAdjustmentsPage from "@/features/costAdjustments/costAdjustmentsPage.tsx";
+import { TestReport } from "@/features/report/invoiceReport/testReport.tsx";
+import { ItemsListReportPage } from "@/features/reports/itemsList/itemsListReportPage.tsx";
+import { ItemsMovementReportPage } from "@/features/reports/itemsMovement/itemsMovementReportPage.tsx";
+import { TaxReturnReportPage } from "@/features/reports/taxReturn/taxReturnReportPage.tsx";
+import { ItemsTaxStatementReportPage } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportPage.tsx";
+import { InvoicesListReportPage } from "@/features/reports/invoicesList/invoicesListReportPage.tsx";
 // import ReportPage from "@/features/report/reportPage.tsx";
 
 const refreshPage = () =>
@@ -53,7 +59,7 @@ export const router = createBrowserRouter([{
 	),
 	children: [
 		{path: "/", element: <LandingPage/>},
-		// {path: "/report", element: <ReportPage/>},
+		{path: "/report", element: <TestReport/>},
 		{path: "/login", element: <LoginPage/>},
 		{path: "/register", element: <RegisterPage/>},
 		{path: "/register", element: <MaintenanceFallback/>},
@@ -70,31 +76,36 @@ export const router = createBrowserRouter([{
 					{path: "/taxes", element: <TaxesPage/>},
 					{path: "/branches", element: <BranchesPage onUpdate={ Services.auth.updateBranch }/>},
 					{path: "/roles", element: <ErpRolesPage/>},
-					{path: "/stores", element: <StoresPage/>},
+					{path: "/stores/:id?", element: <StoresPage/>},
 					{path: "/units", element: <UnitsPage/>},
-					{path: "/clients", element: <ClientsAccountsPage/>},
-					{path: "/suppliers", element: <SuppliersAccountsPage/>},
-					{path: "/employees", element: <EmployeesAccountsPage/>},
-					{path: "/banks", element: <BanksAccountsPage/>},
-					{path: "/boxes", element: <BoxesAccountsPage/>},
+					{path: "/clients/:id?", element: <ClientsAccountsPage/>},
+					{path: "/suppliers/:id?", element: <SuppliersAccountsPage/>},
+					{path: "/employees/:id?", element: <EmployeesAccountsPage/>},
+					{path: "/banks/:id?", element: <BanksAccountsPage/>},
+					{path: "/boxes/:id?", element: <BoxesAccountsPage/>},
 					{path: "/paymentMethods", element: <PaymentMethodsPage/>},
 					{path: "/balanceTransfer", element: <BalanceTransfersPage/>},
-					{path: "/sales", element: <SellInvoicesPage/>},
-					{path: "/sales/:id", element: <SellInvoicesPage/>},
-					{path: "/purchases", element: <PurchaseInvoicesPage/>},
-					{path: "/purchases/:id", element: <PurchaseInvoicesPage/>},
-					{path: "/quotations", element: <QuotationInvoicesPage/>},
-					{path: "/quotations/:id", element: <QuotationInvoicesPage/>},
+					{path: "/sales/:id?", element: <SellInvoicesPage/>},
+					{path: "/purchases/:id?", element: <PurchaseInvoicesPage/>},
+					{path: "/quotations/:id?", element: <QuotationInvoicesPage/>},
 					{path: "/vouchers", element: <VouchersPage/>},
-					{path: "/items", element: <ItemsPage/>},
+					{path: "/items/:id?", element: <ItemsPage/>},
 					{path: "/costAdjustments", element: <CostAdjustmentsPage/>},
 					{path: "/pricingMethods", element: <PricingMethodsPage/>},
-					{path: "/itemTransfers", element: <ItemTransfersPage/>},
+					{path: "/itemTransfers/:id?", element: <ItemTransfersPage/>},
 					{path: "/stocktakings", element: <StocktakingsPage/>},
-					{path: "/itemsSettlements", element: <ItemsSettlementsPage/>},
-					{path: "/reports", element: <ReportsPage/>}
+					{path: "/itemsSettlements/:id?", element: <ItemsSettlementsPage/>},
+					{path: "/reports", element: <ReportsPage/>},
+
+					// reports
+					{path: "/reports/itemsList", element: <ItemsListReportPage/>},
+					{path: "/reports/invoicesList", element: <InvoicesListReportPage/>},
+					{path: "/reports/itemsMovement", element: <ItemsMovementReportPage/>},
+					{path: "/reports/taxReturn", element: <TaxReturnReportPage/>},
+					{path: "/reports/itemsTaxStatement", element: <ItemsTaxStatementReportPage/>}
 				]
-			}]
+			}
+			]
 		},
 		{path: "*", element: <NotFoundPage/>}
 	]

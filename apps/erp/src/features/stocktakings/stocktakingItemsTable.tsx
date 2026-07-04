@@ -1,5 +1,4 @@
-import type Item from "@/core/data/item";
-import type { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
+import { ItemDto } from "@/core/data/item";
 import type Stocktaking from "@/core/data/stocktaking";
 import type { StocktakingItem } from "@/core/data/stocktakingItem";
 import { Cubits } from "@/core/services/cubits";
@@ -8,6 +7,7 @@ import { AlertCircle, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, ChangeableEntityMode, NumberField, SelectField } from "yusr-ui";
 import StoreItemSelector from "../items/storeItemSelector";
+import type { ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod";
 
 
 export interface StocktakingItemsTableProps
@@ -54,10 +54,10 @@ export default function StocktakingItemsTable(
 
 	const getAvailableUnits = (itemId: number | undefined) =>
 	{
-		const storeItem = Cubits.items.entities.value.find((si) => si.id.value === itemId);
+		const storeItem = Cubits.items.entities.value.find((si) => si.id === itemId);
 		const usedUnitIds =
 			entity.items?.value.filter((i) => i.itemId.value === itemId).map((i) => i.itemUnitPricingMethodId.value) || [];
-		return storeItem?.itemUnitPricingMethods?.value.filter((u) => !usedUnitIds.includes(u.id.value)) || [];
+		return storeItem?.itemUnitPricingMethods?.filter((u) => !usedUnitIds.includes(u.id)) || [];
 	};
 
 	const getCalculatedActual = (group: StocktakingItem[]) =>
@@ -109,8 +109,8 @@ export default function StocktakingItemsTable(
 
 	const addUnitToItem = (itemId: number, unitId: number | undefined) =>
 	{
-		const storeItem = Cubits.items.entities.value.find((si) => si.id.value === itemId);
-		const unitDetails = storeItem?.itemUnitPricingMethods?.value.find((u) => u.id.value === unitId);
+		const storeItem = Cubits.items.entities.value.find((si) => si.id === itemId);
+		const unitDetails = storeItem?.itemUnitPricingMethods?.find((u) => u.id === unitId);
 
 		if (!storeItem || !unitDetails)
 		{
@@ -120,11 +120,11 @@ export default function StocktakingItemsTable(
 		const systemQty = getSystemQuantity(itemId);
 
 		const newItem = createInstance();
-		newItem.itemId.value = storeItem.id.value;
-		newItem.itemName.value = storeItem.name.value;
-		newItem.itemUnitPricingMethodId.value = unitDetails.id.value;
-		newItem.itemUnitPricingMethodName.value = unitDetails.itemUnitPricingMethodName.value;
-		newItem.quantityMultiplier.value = unitDetails.quantityMultiplier.value;
+		newItem.itemId.value = storeItem.id;
+		newItem.itemName.value = storeItem.name;
+		newItem.itemUnitPricingMethodId.value = unitDetails.id;
+		newItem.itemUnitPricingMethodName.value = unitDetails.itemUnitPricingMethodName;
+		newItem.quantityMultiplier.value = unitDetails.quantityMultiplier;
 		newItem.systemQuantity.value = systemQty;
 		newItem.actualQuantity.value = 0;
 		newItem.variance.value = -systemQty;
@@ -132,38 +132,38 @@ export default function StocktakingItemsTable(
 		entity.items.value = [...entity.items.value, newItem];
 	};
 
-	const handleStoreItemSelect = (item: Item, selectedIupm?: ItemUnitPricingMethod) =>
+	const handleStoreItemSelect = (item: ItemDto, selectedIupm?: ItemUnitPricingMethodDto) =>
 	{
-		const unit = selectedIupm || item.itemUnitPricingMethods?.value[0];
+		const unit = selectedIupm || item.itemUnitPricingMethods[0];
 
 		const list = [...(entity.items.value || [])];
 		const existingIndex = list.findIndex(
-			(i) => i.itemId.value === item.id.value && i.itemUnitPricingMethodId.value === unit?.id.value
+			(i) => i.itemId.value === item.id && i.itemUnitPricingMethodId.value === unit?.id
 		);
 
 		if (existingIndex !== -1 && list[existingIndex])
 		{
 			const currentQty = list[existingIndex].actualQuantity.value || 0;
 			list[existingIndex].actualQuantity.value = currentQty + 1;
-			const group = list.filter((i) => i.itemId.value === item.id.value);
-			list[existingIndex].variance.value = getCalculatedActual(group) - getSystemQuantity(item.id.value);
+			const group = list.filter((i) => i.itemId.value === item.id);
+			list[existingIndex].variance.value = getCalculatedActual(group) - getSystemQuantity(item.id);
 			entity.items.value = list;
 		}
 		else
 		{
 			// Brand-new item — fall back to live store quantity
-			const systemQty = item.storeQuantity.value || 0;
+			const systemQty = item.storeQuantity || 0;
 			const initialActualQty = selectedIupm ? 1 : 0;
 
 			const newItem = createInstance();
-			newItem.itemId.value = item.id.value;
-			newItem.itemName.value = item.name.value;
-			newItem.itemUnitPricingMethodId.value = unit?.id.value;
-			newItem.itemUnitPricingMethodName.value = unit?.itemUnitPricingMethodName.value;
-			newItem.quantityMultiplier.value = unit?.quantityMultiplier.value ?? 1;
+			newItem.itemId.value = item.id;
+			newItem.itemName.value = item.name;
+			newItem.itemUnitPricingMethodId.value = unit?.id;
+			newItem.itemUnitPricingMethodName.value = unit?.itemUnitPricingMethodName;
+			newItem.quantityMultiplier.value = unit?.quantityMultiplier ?? 1;
 			newItem.systemQuantity.value = systemQty;
 			newItem.actualQuantity.value = initialActualQty;
-			newItem.variance.value = (initialActualQty * (unit?.quantityMultiplier.value ?? 1)) - systemQty;
+			newItem.variance.value = (initialActualQty * (unit?.quantityMultiplier ?? 1)) - systemQty;
 
 			entity.items.value = [...list, newItem];
 		}
@@ -272,8 +272,8 @@ export default function StocktakingItemsTable(
 													<div className="mt-1">
 														<SelectField<number>
 															options={ availableUnits.map((iupm) => ({
-																label: iupm.itemUnitPricingMethodName.value,
-																value: iupm.id.value
+																label: iupm.itemUnitPricingMethodName,
+																value: iupm.id
 															})) }
 															onValueChange={ (unitId) => addUnitToItem(itemId, unitId) }
 														/>

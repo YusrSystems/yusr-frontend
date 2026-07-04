@@ -79,7 +79,7 @@ export default function TaxesSection({entity}: { entity: Item; })
 														label={ tax.taxName }
 														onSelect={ (selectedTax) =>
 														{
-															tax.taxPercentage.value = selectedTax?.percentage.value;
+															tax.taxPercentage.value = selectedTax?.percentage;
 														} }
 													/>
 												</FormField>

@@ -36,18 +36,20 @@ export type PermissionSection = {
 export type ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto> = {
 	labels: Record<string, string>;
 	permissionSections: PermissionSection[];
+	createEntity: (dto?: TRoleDto) => TRole;
 	onMount?: () => void;
-	onGet?: (entity: TRole, result: RequestResult<TRole>) => void;
+	onGet?: (entity: TRole, result: RequestResult<TRoleDto>) => void;
 	extraTabs?(entity: TRole): ChangeDialogTabProps[];
 };
 
 export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto>(
-	{entity, service, onSuccess, labels, permissionSections, onGet, onMount, extraTabs}:
-	& CommonChangeDialogProps<TRole, TRoleDto>
+	{dto, service, onSuccess, labels, permissionSections, createEntity, onGet, onMount, extraTabs}:
+	& CommonChangeDialogProps<TRoleDto>
 		& ChangeRoleDialog<TRole, TRoleDto>
 )
 {
 	const {t} = useTranslation(["commonEntities", "common"]);
+	const entity = useMemo(() => signal<TRole>(createEntity(dto)), []);
 	const delimiter = ".";
 	const isLoading = useMemo(() => signal(false), []);
 
@@ -62,20 +64,20 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 				BaseServices.auth.systemPermissions.value = res.data ?? [];
 			}
 
-			if (entity.mode.value === ChangeableEntityMode.Create && BaseServices.auth.systemPermissions.value.length > 0)
+			if (entity.value.mode.value === ChangeableEntityMode.Create && BaseServices.auth.systemPermissions.value.length > 0)
 			{
-				entity.permissions.value = BaseServices.auth.systemPermissions.value;
+				entity.value.permissions.value = BaseServices.auth.systemPermissions.value;
 			}
 
-			if (entity.mode.value === ChangeableEntityMode.Update && entity?.id.value)
+			if (entity.value.mode.value === ChangeableEntityMode.Update && entity.value?.id.value)
 			{
-				const res = await service.Get(entity.id.value);
+				const res = await service.Get(entity.value.id.value);
 				if (res.data != undefined)
 				{
-					entity.id.value = res.data.id.value;
-					entity.name.value = res.data.name.value;
-					entity.permissions.value = res.data.permissions.value;
-					onGet?.(entity, res);
+					entity.value.id.value = res.data.id;
+					entity.value.name.value = res.data.name;
+					entity.value.permissions.value = res.data.permissions;
+					onGet?.(entity.value, res);
 				}
 			}
 			isLoading.value = false;
@@ -83,12 +85,12 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 
 		fetch();
 		onMount?.();
-	}, [entity?.id.value]);
+	}, [entity.value?.id.value]);
 
 	return (
 		<ChangeDialog className="sm:max-w-6xl">
 			<ChangeDialog.Header
-				title={ entity.mode.value === ChangeableEntityMode.Create
+				title={ entity.value.mode.value === ChangeableEntityMode.Create
 					? t("commonEntities:roles.addNewTitle")
 					: `${ t("common:crudRow.edit") } ${ t("commonEntities:roles.entityName") }` }
 			/>
@@ -98,7 +100,7 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 				<ChangeDialog.SaveButton<TRole, TRoleDto>
 					entity={ entity }
 					service={ service }
-					onSuccess={ (data) => onSuccess?.(data) }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>
@@ -112,15 +114,15 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 			active: index === 0,
 			icon: section.icon,
 			label: section.title,
-			hasError: index === 0 ? !!entity.getError("name").value : undefined,
+			hasError: index === 0 ? !!entity.value.getError("name").value : undefined,
 			content: (
 				<div className="space-y-4">
 					{ index === 0 && (
 						<TextField
 							label={ t("commonEntities:roles.roleName") }
 							required
-							value={ entity.name }
-							error={ entity.getError("name") }
+							value={ entity.value.name }
+							error={ entity.value.getError("name") }
 						/>
 					) }
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -133,7 +135,7 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 								label={ labels[item.resource] || item.resource }
 								masterPermission={ item.get }
 								isMasterRequired={ item.resource === YusrSystemPermissionsResources.Settings }
-								selectedPermissions={ entity.permissions }
+								selectedPermissions={ entity.value.permissions }
 								actions={ item.actions.flatMap((perm) =>
 								{
 									const action = perm.split(delimiter)[1];
@@ -156,7 +158,7 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 			return <Loading entityName={ t("commonEntities:roles.entityName") }/>;
 		}
 
-		const tabs = [...permissionTabs, ...(extraTabs?.(entity) ?? [])];
+		const tabs = [...permissionTabs, ...(extraTabs?.(entity.value) ?? [])];
 
 		return <ChangeDialog.Tabbed tabs={ tabs }/>;
 	}

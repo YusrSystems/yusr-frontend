@@ -2,29 +2,38 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { ChangeableEntityMode, type CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, SystemPermissionsActions, TextField } from "yusr-ui";
+import {
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	SystemPermissionsActions,
+	TextField
+} from "yusr-ui";
 import PricingMethod, { type PricingMethodDto } from "@/core/data/pricingMethod.ts";
+import { useMemo } from "react";
+import { signal } from "@preact/signals-react";
 
 
 export default function ChangePricingMethodDialog(
-	{entity, service, onSuccess}: CommonChangeDialogProps<PricingMethod, PricingMethodDto>
+	{dto, service, onSuccess}: CommonChangeDialogProps<PricingMethodDto>
 )
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
+	const entity = useMemo(() => signal<PricingMethod>(dto ? PricingMethod.load(dto) : PricingMethod.create()), []);
 
 	if (
-		(entity.mode.value === ChangeableEntityMode.Create
+		(entity.value.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.PricingMethods, SystemPermissionsActions.Add))
-		|| (entity.mode.value === ChangeableEntityMode.Update
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.PricingMethods, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.mode.value === ChangeableEntityMode.Create
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? t("pricingMethods.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("pricingMethods.entityName") }`;
 
@@ -35,8 +44,8 @@ export default function ChangePricingMethodDialog(
 				<TextField
 					label={ t("pricingMethods.methodName") }
 					required
-					value={ entity.name }
-					error={ entity.getError("name") }
+					value={ entity.value.name }
+					error={ entity.value.getError("name") }
 				/>
 			</FieldGroup>
 			<ChangeDialog.Footer>
@@ -45,7 +54,7 @@ export default function ChangePricingMethodDialog(
 				<ChangeDialog.SaveButton<PricingMethod, PricingMethodDto>
 					entity={ entity }
 					service={ service }
-					onSuccess={ (data) => onSuccess?.(data) }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>

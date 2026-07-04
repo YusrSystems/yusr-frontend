@@ -3,26 +3,35 @@ import Unit, { UnitDto } from "@/core/data/unit";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { ChangeableEntityMode, type CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, SystemPermissionsActions, TextField } from "yusr-ui";
+import {
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	SystemPermissionsActions,
+	TextField
+} from "yusr-ui";
+import { useMemo } from "react";
+import { signal } from "@preact/signals-react";
 
 
-export default function ChangeUnitDialog({entity, service, onSuccess}: CommonChangeDialogProps<Unit, UnitDto>)
+export default function ChangeUnitDialog({dto, service, onSuccess}: CommonChangeDialogProps<UnitDto>)
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
+	const entity = useMemo(() => signal<Unit>(dto ? Unit.load(dto) : Unit.create()), []);
 
 	if (
-		(entity.mode.value === ChangeableEntityMode.Create
+		(entity.value.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Add))
-		|| (entity.mode.value === ChangeableEntityMode.Update
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.mode.value === ChangeableEntityMode.Create
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? t("units.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("units.entityName") }`;
 
@@ -33,8 +42,8 @@ export default function ChangeUnitDialog({entity, service, onSuccess}: CommonCha
 				<TextField
 					label={ t("units.unitName") }
 					required
-					value={ entity.name }
-					error={ entity.getError("name") }
+					value={ entity.value.name }
+					error={ entity.value.getError("name") }
 				/>
 			</FieldGroup>
 			<ChangeDialog.Footer>
@@ -43,7 +52,7 @@ export default function ChangeUnitDialog({entity, service, onSuccess}: CommonCha
 				<ChangeDialog.SaveButton<Unit, UnitDto>
 					entity={ entity }
 					service={ service }
-					onSuccess={ (data) => onSuccess?.(data) }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>

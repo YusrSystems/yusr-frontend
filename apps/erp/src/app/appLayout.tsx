@@ -12,15 +12,17 @@ const AppLayout = () =>
 {
 	useSignals();
 	return (
-		<div>
+		<div
+			className="h-screen w-screen overflow-hidden print:h-auto print:w-auto print:overflow-visible flex flex-col">
 			{ (Services.auth.stepsToComplete > 0) && <CompleteAccountVerificationFixedItem/> }
 			<SidebarProvider>
 				<SideBar variant="inset"/>
-				<SidebarInset className="overflow-hidden">
-					<SidebarTrigger className=" m-3 shrink-0"/>
+				<SidebarInset className="overflow-hidden print:overflow-visible flex flex-col min-h-0">
+					<SidebarTrigger className="mx-3 mt-3 shrink-0 print:hidden"/>
 
-					<div className="flex flex-1 flex-col min-h-0">
-						<div className="@container/main flex flex-1 flex-col gap-2 overflow-y-auto">
+					<div className="flex flex-1 flex-col min-h-0 overflow-hidden print:overflow-visible">
+						<div
+							className="@container/main flex flex-1 flex-col gap-2 overflow-y-auto print:overflow-visible">
 							<Outlet/>
 						</div>
 					</div>

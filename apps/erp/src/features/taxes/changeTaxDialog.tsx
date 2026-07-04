@@ -2,35 +2,40 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { ChangeableEntityMode, type CommonChangeDialogProps } from "yusr-ui";
 import {
-  ChangeDialog,
-  FieldGroup,
-  FieldsSection,
-  NumberField,
-  SelectField,
-  SystemPermissionsActions,
-  TextField
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	FieldsSection,
+	NumberField,
+	SelectField,
+	SystemPermissionsActions,
+	TextField
 } from "yusr-ui";
 import { Tax, TaxDto } from "@/core/data/tax.ts";
+import { useMemo } from "react";
+import { signal } from "@preact/signals-react";
 
 
-export default function ChangeTaxDialog({entity, service, onSuccess}: CommonChangeDialogProps<Tax, TaxDto>)
+export default function ChangeTaxDialog({dto, service, onSuccess}: CommonChangeDialogProps<TaxDto>)
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
 
+	const entity = useMemo(() => signal<Tax>(dto ? Tax.load(dto) : Tax.create()), []);
+
 	if (
-		(entity.mode.value === ChangeableEntityMode.Create
+		(entity.value.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Add))
-		|| (entity.mode.value === ChangeableEntityMode.Update
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.mode.value === ChangeableEntityMode.Create
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? t("taxes.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("taxes.entityName") }`;
 
@@ -42,8 +47,8 @@ export default function ChangeTaxDialog({entity, service, onSuccess}: CommonChan
 				<TextField
 					label={ t("taxes.taxName") }
 					required
-					value={ entity.name }
-					error={ entity.getError("name") }
+					value={ entity.value.name }
+					error={ entity.value.getError("name") }
 				/>
 				<FieldsSection columns={ 2 }>
 					<NumberField
@@ -51,12 +56,12 @@ export default function ChangeTaxDialog({entity, service, onSuccess}: CommonChan
 						required
 						min={ 1 }
 						max={ 100 }
-						value={ entity.percentage }
-						error={ entity.getError("percentage") }
+						value={ entity.value.percentage }
+						error={ entity.value.getError("percentage") }
 					/>
 					<SelectField
 						label={ t("taxes.isPrimary") }
-						value={ entity.isPrimary }
+						value={ entity.value.isPrimary }
 						required
 						options={ [{label: t("common:yes"), value: true}, {label: t("common:no"), value: false}] }
 					/>
@@ -69,7 +74,10 @@ export default function ChangeTaxDialog({entity, service, onSuccess}: CommonChan
 				<ChangeDialog.SaveButton<Tax, TaxDto>
 					entity={ entity }
 					service={ service }
-					onSuccess={ (data) => onSuccess?.(data) }
+					onSuccess={ (data) =>
+					{
+						onSuccess?.(data, entity.value.mode.value);
+					} }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>

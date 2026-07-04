@@ -1,9 +1,8 @@
 import { Cubit } from "yusr-ui";
 import {
-    DashboardErrorState,
-    DashboardLoadedState,
-    DashboardLoadingState,
-    DashboardState
+	DashboardLoadedState,
+	DashboardLoadingState,
+	DashboardState
 } from "@/features/dashboard/logic/dashboardState.ts";
 import { DashboardData } from "@/core/data/dashboardData.ts";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
@@ -37,7 +36,6 @@ export default class DashboardCubit extends Cubit<DashboardState>
 		catch
 		{
 			throw Error("Could not get dashboard");
-			this.emit(new DashboardErrorState());
 		}
 	}
 }

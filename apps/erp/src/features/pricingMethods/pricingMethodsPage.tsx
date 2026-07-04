@@ -1,5 +1,4 @@
 import type { PricingMethodDto } from "@/core/data/pricingMethod";
-import PricingMethod from "@/core/data/pricingMethod";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -32,7 +31,7 @@ export default function PricingMethodsPage()
 	}
 
 	return (
-		<CrudPage>
+		<CrudPage<PricingMethodDto>>
 			<CrudPage.Header
 				title={ t("pricingMethods.title") }
 				addButtonTitle={ t("pricingMethods.addNewTitle") }
@@ -52,18 +51,16 @@ export default function PricingMethodsPage()
 				{
 					return (
 						<ChangePricingMethodDialog
-							entity={ dto
-								? PricingMethod.load(dto)
-								: PricingMethod.create() }
+							dto={ dto }
 							service={ Services.pricingMethodsApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									Cubits.pricingMethods.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									Cubits.pricingMethods.update(data);
 								}
@@ -73,7 +70,7 @@ export default function PricingMethodsPage()
 				} }
 			/>
 
-			<CrudPage.DeleteDialog<PricingMethod, PricingMethodDto>
+			<CrudPage.DeleteDialog<PricingMethodDto>
 				entityNameSelector={ (pricingMethod) => pricingMethod.name }
 				service={ Services.pricingMethodsApi }
 				onSuccess={ (entity) => Cubits.pricingMethods.delete(entity) }
@@ -111,7 +108,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<PricingMethod, PricingMethodDto>
+				<CrudPage.TableBody<PricingMethodDto>
 					data={ Cubits.pricingMethods.entities.value }
 					headerRows={ [{rowBody: "", rowStyles: "text-left w-12.5"}, {
 						rowBody: t("pricingMethods.methodId"),

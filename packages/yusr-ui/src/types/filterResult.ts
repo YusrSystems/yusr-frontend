@@ -1,6 +1,7 @@
-import { Dto, Entity } from "../stateManager";
+import { Dto } from "../stateManager";
 
-export type FilterResult<TEntity extends Entity<TDto>, TDto extends Dto> = {
-  data: TEntity[] | undefined;
-  count: number;
+
+export type FilterResult<TDto extends Dto> = {
+	data: TDto[] | undefined;
+	count: number;
 };

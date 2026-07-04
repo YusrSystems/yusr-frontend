@@ -17,7 +17,7 @@ import { InvoicesListReportRequest, InvoicesListReportType } from "@/core/data/r
 import ReportConstants from "../../core/data/report/reportConstants";
 import ReportButton from "./reportButton";
 import { signal } from "@preact/signals-react";
-import type Item from "@/core/data/item.ts";
+import { ItemDto } from "@/core/data/item.ts";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import { AccountType } from "@/core/data/account.ts";
@@ -44,7 +44,7 @@ export default function InvoicesListDialog()
 	const storeId = useMemo(() => signal<number>(), []);
 	const itemId = useMemo(() => signal<number>(), []);
 	const storeName = useMemo(() => signal<string>(), []);
-	const items = useMemo(() => signal<Item[]>([]), []);
+	const items = useMemo(() => signal<ItemDto[]>([]), []);
 
 	return (
 		<>
@@ -90,7 +90,7 @@ export default function InvoicesListDialog()
 								label={ undefined }
 								onSelect={ (item) =>
 								{
-									if (item && !items.value.some((i) => i.id.value === item.id.value))
+									if (item && !items.value.some((i) => i.id === item.id))
 									{
 										items.value = [...items.value, item];
 									}
@@ -100,14 +100,14 @@ export default function InvoicesListDialog()
 								<div className="mt-2 flex flex-wrap gap-1.5">
 									{ items.value.map((item) => (
 										<span
-											key={ item.id.value }
+											key={ item.id }
 											className="flex items-center gap-1 rounded-md border border-border bg-muted px-2 py-0.5 text-xs text-foreground"
 										>
                                             { item.name }
 											<button
 												type="button"
 												className="text-destructive text-sm font-semibold hover:text-foreground"
-												onClick={ () => items.value = items.value.filter((i) => i.id.value !== item.id.value) }
+												onClick={ () => items.value = items.value.filter((i) => i.id !== item.id) }
 											>
                                             ×
                                           </button>
@@ -128,7 +128,7 @@ export default function InvoicesListDialog()
 								types: [InvoiceType.Sell, InvoiceType.SellReturn, InvoiceType.Purchase, InvoiceType.PurchaseReturn],
 								actionAccountId: accountId.value,
 								storeId: storeId.value,
-								itemIds: items.value.map((i) => i.id.value)
+								itemIds: items.value.map((i) => i.id)
 							}) }
 						/>
 					</DialogFooter>

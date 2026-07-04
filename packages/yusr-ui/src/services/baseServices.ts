@@ -1,13 +1,14 @@
-import type { Role, RoleDto } from "../entities";
-import { BranchesApiService, CitiesApiService, CurrenciesApiService, RolesApiService, UsersApiService } from "../networking";
+import { type BranchDto, type CityDto, type CurrencyDto, type RoleDto, type UserDto } from "../entities";
+import { BaseApiService, BaseFilterableApiService, RolesApiService } from "../networking";
 import type { AuthService } from "./authService";
+
 
 export class BaseServices
 {
-  public static readonly citiesApi = new CitiesApiService();
-  public static readonly currenciesApi = new CurrenciesApiService();
-  public static readonly branchesApi = new BranchesApiService();
-  public static readonly usersApi = new UsersApiService();
-  public static rolesApi: RolesApiService<Role<RoleDto>, RoleDto>;
-  public static auth: AuthService;
+	public static readonly citiesApi = new BaseFilterableApiService<CityDto>("Cities");
+	public static readonly currenciesApi = new BaseFilterableApiService<CurrencyDto>("Currencies");
+	public static readonly branchesApi = new BaseApiService<BranchDto>("Branches");
+	public static readonly usersApi = new BaseApiService<UserDto>("Users");
+	public static rolesApi: RolesApiService<RoleDto>;
+	public static auth: AuthService;
 }

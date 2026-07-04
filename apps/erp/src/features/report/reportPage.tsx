@@ -1,44 +1,26 @@
-import ReportHeader from "@/features/report/reportHeader.tsx";
-import ReportFooter from "@/features/report/reportFooter.tsx";
-import ReportTable from "@/features/report/reportTable.tsx";
+import type { PropsWithChildren } from "react";
+import { Printer } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 
-export default function ReportPage()
+export default function ReportPage({children}: PropsWithChildren)
 {
+	const {t} = useTranslation("common");
 	return (
-		<div className="min-h-screen bg-muted/30 p-4 md:p-8 print:p-0 print:bg-white">
-
-			<style>{ `
-				@media print {
-					@page { margin: 15mm; }
-					body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-				}
-			` }</style>
+		<div className="flex flex-col h-[calc(100vh-70px)] print:h-auto max-w-5xl w-full mx-auto pb-6 px-4 print:p-0">
 
 			<div className="mb-6 flex justify-end print:hidden">
 				<button
 					onClick={ () => window.print() }
 					className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
 				>
-					Print Report
+					<Printer className="me-3"/>
+					{ t("printReport") }
 				</button>
 			</div>
 
-			<div
-				className="max-w-5xl mx-auto bg-card text-card-foreground shadow-sm border border-border rounded-lg p-6 md:p-10 print:shadow-none print:border-none print:p-0 print:max-w-full relative pb-20 print:bg-white print:text-black">
+			{ children }
 
-				<ReportHeader>
-					<ReportHeader.CompanyCard logoUrl="/path-to-your-logo.png"/>
-					<ReportHeader.Title/>
-					<ReportHeader.MetaData/>
-				</ReportHeader>
-
-				<div className="my-8 border-t border-border print:border-black/20"/>
-
-				<ReportTable/>
-
-				<ReportFooter/>
-			</div>
 		</div>
 	);
 }

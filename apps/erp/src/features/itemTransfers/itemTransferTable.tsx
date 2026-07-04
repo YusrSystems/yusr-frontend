@@ -1,7 +1,7 @@
-import type Item from "@/core/data/item";
+import { ItemDto } from "@/core/data/item";
 import type ItemTransfer from "@/core/data/itemTransfer";
 import { ItemTransfersItem } from "@/core/data/itemTransfer";
-import type { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
+import { ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod";
 import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
 import { AlertCircle, Trash2, X } from "lucide-react";
@@ -31,9 +31,9 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 
 	const getAvailableUnits = (itemId: number | undefined, group: ItemTransfersItem[]) =>
 	{
-		const storeItem = Cubits.items.entities.value.find((si) => si.id.value === itemId);
+		const storeItem = Cubits.items.entities.value.find((si) => si.id === itemId);
 		const usedUnitIds = group.map((i) => i.itemUnitPricingMethodId.value);
-		return storeItem?.itemUnitPricingMethods?.value.filter((u) => !usedUnitIds.includes(u.id.value)) || [];
+		return storeItem?.itemUnitPricingMethods?.filter((u) => !usedUnitIds.includes(u.id)) || [];
 	};
 
 	const getQuantities = (
@@ -85,25 +85,25 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 		};
 	};
 
-	const createTransferItem = (storeItem: Item, iupm: ItemUnitPricingMethod) =>
+	const createTransferItem = (storeItem: ItemDto, iupm: ItemUnitPricingMethodDto) =>
 	{
 		return ItemTransfersItem.create({
 			// eslint-disable-next-line react-hooks/purity
 			id: Math.floor(Math.random() * -1000000),
-			itemId: storeItem.id.value,
-			itemName: storeItem.name.value,
-			itemUnitPricingMethods: storeItem.itemUnitPricingMethods.value.map((m) => m.toJson()) || [],
-			itemUnitPricingMethodId: iupm.id.value,
-			itemUnitPricingMethodName: iupm.itemUnitPricingMethodName.value,
-			quantity: storeItem.storeQuantity.value >= 1 ? 1 : 0,
-			maxQuantity: storeItem.storeQuantity.value
+			itemId: storeItem.id,
+			itemName: storeItem.name,
+			itemUnitPricingMethods: storeItem.itemUnitPricingMethods || [],
+			itemUnitPricingMethodId: iupm.id,
+			itemUnitPricingMethodName: iupm.itemUnitPricingMethodName,
+			quantity: storeItem.storeQuantity >= 1 ? 1 : 0,
+			maxQuantity: storeItem.storeQuantity
 		});
 	};
 
 	const addUnitToItem = (itemId: number, unitId: number | undefined) =>
 	{
-		const storeItem = Cubits.items.entities.value.find((si) => si.id.value === itemId);
-		const unitDetails = storeItem?.itemUnitPricingMethods?.value.find((u) => u.id.value === unitId);
+		const storeItem = Cubits.items.entities.value.find((si) => si.id === itemId);
+		const unitDetails = storeItem?.itemUnitPricingMethods?.find((u) => u.id === unitId);
 
 		if (!storeItem || !unitDetails)
 		{
@@ -113,9 +113,9 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 		entity.itemTransfersItems.value = [...entity.itemTransfersItems.value, createTransferItem(storeItem, unitDetails)];
 	};
 
-	const handleStoreItemSelect = (storeItem: Item, selectedIupm?: ItemUnitPricingMethod) =>
+	const handleStoreItemSelect = (storeItem: ItemDto, selectedIupm?: ItemUnitPricingMethodDto) =>
 	{
-		const defaultMethod = selectedIupm ?? storeItem.itemUnitPricingMethods.value[0];
+		const defaultMethod = selectedIupm ?? storeItem.itemUnitPricingMethods[0];
 
 		if (!defaultMethod)
 		{
@@ -123,7 +123,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 		}
 
 		const list = [...(entity.itemTransfersItems.value || [])];
-		const existingIndex = list.findIndex((i) => i.itemId.value === storeItem.id.value && i.itemUnitPricingMethodId.value === defaultMethod.id.value);
+		const existingIndex = list.findIndex((i) => i.itemId.value === storeItem.id && i.itemUnitPricingMethodId.value === defaultMethod.id);
 
 		if (existingIndex !== -1 && list[existingIndex])
 		{
@@ -242,8 +242,8 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 													<div className="mt-1">
 														<SelectField<number>
 															options={ availableUnits.map((iupm) => ({
-																label: iupm.itemUnitPricingMethodName.value,
-																value: iupm.id.value
+																label: iupm.itemUnitPricingMethodName,
+																value: iupm.id
 															})) }
 															placeholder={ t("itemTransfers.selectPricingMethod") }
 															onValueChange={ (unitId) => addUnitToItem(itemId, unitId) }

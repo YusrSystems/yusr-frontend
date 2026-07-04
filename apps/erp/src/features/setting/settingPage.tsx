@@ -1,6 +1,6 @@
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
-import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
+import { Building2, Loader2, Receipt, Star, Zap } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -115,15 +115,15 @@ export default function SettingPage()
 					/>
 					<TabButton
 						active={ cubit.activeTab.value === "eInvoicing" }
-						icon={ Receipt }
+						icon={ Zap }
 						label={ t("settings.eInvoicing") }
 						onClick={ () => cubit.activeTab.value = "eInvoicing" }
 						content={ <></> }
 					/>
 					<TabButton
 						active={ cubit.activeTab.value === "accounts" }
-						icon={ Wallet }
-						label={ t("settings.defaultAccounts") }
+						icon={ Star }
+						label={ t("settings.defaultValues") }
 						onClick={ () => cubit.activeTab.value = "accounts" }
 						content={ <></> }
 					/>

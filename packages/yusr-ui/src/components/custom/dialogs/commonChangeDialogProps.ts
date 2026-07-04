@@ -1,9 +1,9 @@
 import type { BaseApiService } from "../../../networking";
-import type { Dto, ValidatableEntity } from "../../../stateManager";
+import { ChangeableEntityMode, type Dto } from "../../../stateManager";
 
 
-export type CommonChangeDialogProps<TEntity extends ValidatableEntity<TDto>, TDto extends Dto> = {
-	entity: TEntity;
-	service: BaseApiService<TEntity, TDto>;
-	onSuccess?: (newData: TEntity) => void;
+export type CommonChangeDialogProps<TDto extends Dto> = {
+	dto?: TDto;
+	service: BaseApiService<TDto>;
+	onSuccess?: (newData: TDto, mode: ChangeableEntityMode) => void;
 };

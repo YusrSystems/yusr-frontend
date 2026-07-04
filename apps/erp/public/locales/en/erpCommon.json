@@ -160,7 +160,6 @@
     "subtitle": "Manage company data, invoices, and default accounts",
     "basicData": "Basic Information",
     "invoicesAndTaxes": "Invoices & Taxes",
-    "defaultAccounts": "Default Accounts",
     "save": "Save Settings",
     "companyNameRequired": "Company name is required",
     "companyPhoneRequired": "Phone number is required",

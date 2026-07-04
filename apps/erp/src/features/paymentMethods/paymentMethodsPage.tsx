@@ -15,7 +15,7 @@ import {
 	UnauthorizedPage
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
-import { CommissionType, PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
+import { CommissionType, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import ChangePaymentMethodDialog from "./changePaymentMethodDialog";
 
 
@@ -31,7 +31,7 @@ export function PaymentMethodsPage()
 	}
 
 	return (
-		<CrudPage>
+		<CrudPage<PaymentMethodDto>>
 			<CrudPage.Header
 				title={ t("paymentMethods.title") }
 				addButtonTitle={ t("paymentMethods.addNewTitle") }
@@ -51,18 +51,16 @@ export function PaymentMethodsPage()
 				{
 					return (
 						<ChangePaymentMethodDialog
-							entity={ dto
-								? PaymentMethod.load(dto)
-								: PaymentMethod.create() }
+							dto={ dto }
 							service={ Services.paymentMethodsApi }
-							onSuccess={ (data) =>
+							onSuccess={ (data, mode) =>
 							{
-								if (data.mode.value === ChangeableEntityMode.Create)
+								if (mode === ChangeableEntityMode.Create)
 								{
 									Cubits.paymentMethods.add(data);
 									closeDialog();
 								}
-								else if (data.mode.value === ChangeableEntityMode.Update)
+								else if (mode === ChangeableEntityMode.Update)
 								{
 									Cubits.paymentMethods.update(data);
 								}
@@ -110,7 +108,7 @@ function PageTable()
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<PaymentMethod, PaymentMethodDto>
+				<CrudPage.TableBody<PaymentMethodDto>
 					data={ Cubits.paymentMethods.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
@@ -122,19 +120,19 @@ function PageTable()
 					] }
 					tableRowMapper={ (
 						paymentMethod
-					) => [{rowBody: `#${ paymentMethod.id.value }`, rowStyles: ""}, {
-						rowBody: paymentMethod.name.value,
+					) => [{rowBody: `#${ paymentMethod.id }`, rowStyles: ""}, {
+						rowBody: paymentMethod.name,
 						rowStyles: "font-semibold"
 					}, {
-						rowBody: paymentMethod.accountName.value,
+						rowBody: paymentMethod.accountName,
 						rowStyles: ""
 					}, {
-						rowBody: paymentMethod.commissionType.value === CommissionType.Percent
+						rowBody: paymentMethod.commissionType === CommissionType.Percent
 							? t("paymentMethods.percentage")
 							: t("paymentMethods.fixedAmount"),
 						rowStyles: "text-sm text-muted-foreground"
 					}, {
-						rowBody: paymentMethod.commissionAmount.value.toString(),
+						rowBody: paymentMethod.commissionAmount.toString(),
 						rowStyles: "font-medium text-blue-600"
 					}] }
 					hasUpdatePermission={ Services.auth.hasAuth(

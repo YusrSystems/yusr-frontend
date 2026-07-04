@@ -1,7 +1,5 @@
 //TODO: must be tested
-import Invoice, { InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice.ts";
-import type { InvoicesListReportRequest } from "@/core/data/report/invoicesListReportType.ts";
-import { InvoicesListReportType } from "@/core/data/report/invoicesListReportType.ts";
+import { InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import ReportConstants from "@/core/data/report/reportConstants.ts";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
@@ -10,7 +8,7 @@ import ReportButton from "@/features/reports/reportButton.tsx";
 import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import type { TFunction } from "i18next";
-import { Copy, FilePlusCorner, FileTextIcon, RotateCw, Undo2 } from "lucide-react";
+import { Copy, FilePlusCorner, FileTextIcon, Printer, RotateCw, Undo2 } from "lucide-react";
 import React, { type ReactNode, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -47,6 +45,8 @@ import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus.ts";
 import { PaymentStatus } from "@/core/types/paymentStatus.ts";
 import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect.tsx";
 import { AccountType } from "@/core/data/account.ts";
+import { createPortal } from "react-dom";
+import { InvoicesListReport } from "@/features/reports/invoicesList/invoicesListReport.tsx";
 
 
 export default function InvoicesPage({
@@ -69,7 +69,7 @@ export default function InvoicesPage({
 })
 {
 	useSignals();
-	const {t} = useTranslation("accounting");
+	const {t} = useTranslation(["accounting", "erpCommon"]);
 
 	useEffect(() =>
 	{
@@ -94,7 +94,7 @@ export default function InvoicesPage({
 
 	return (
 		<VerifyAccountWrapper>
-			<CrudPage>
+			<CrudPage<InvoiceDto>>
 				<CrudPage.Header
 					title={ title }
 					addButtonTitle={ fixedType === InvoiceType.Quotation ? t("invoices.addNewQuotationTitle") : t("invoices.addNewTitle") }
@@ -102,14 +102,22 @@ export default function InvoicesPage({
 						SystemPermissionsResources.Invoices,
 						SystemPermissionsActions.Add
 					) }
-					actionButtons={
-						Services.auth.hasAuth(
-							SystemPermissionsResources.ReportInvoiceList,
-							SystemPermissionsActions.Get
-						)
-							? [<InvoicesReportButton fixedType={ fixedType }/>]
-							: []
-					}
+					actionButtons={ [
+						<Button
+							key="print-list"
+							variant="outline"
+							onClick={ () =>
+							{
+								setTimeout(() =>
+								{
+									window.print();
+								}, 100);
+							} }
+						>
+							<Printer className="h-4 w-4"/>
+							{ t("erpCommon:reports.InvoicesList") }
+						</Button>
+					] }
 				/>
 
 				<Cards totalInvoicesTitle={ totalInvoicesTitle }/>
@@ -137,19 +145,17 @@ export default function InvoicesPage({
 					{
 						return (
 							<ChangeInvoiceDialog
-								entity={ dto
-									? Invoice.load(dto)
-									: Invoice.create({type: fixedType}) }
+								dto={ dto }
 								service={ Services.invoicesApi }
 								fixedType={ fixedType }
-								onSuccess={ (data: Invoice) =>
+								onSuccess={ (data, dto) =>
 								{
-									if (data.mode.value === ChangeableEntityMode.Create)
+									if (dto === ChangeableEntityMode.Create)
 									{
 										Cubits.invoices.add(data);
 										closeDialog();
 									}
-									else if (data.mode.value === ChangeableEntityMode.Update)
+									else if (dto === ChangeableEntityMode.Update)
 									{
 										Cubits.invoices.update(data);
 									}
@@ -165,6 +171,13 @@ export default function InvoicesPage({
 					onSuccess={ (entity) => Cubits.invoices.delete(entity) }
 				/>
 			</CrudPage>
+
+			{ createPortal(
+				<div className="hidden print:block print:w-full print:static">
+					<InvoicesListReport isPortal={ true }/>
+				</div>,
+				document.body
+			) }
 		</VerifyAccountWrapper>
 	);
 }
@@ -193,10 +206,10 @@ function PageTable({fixedType, permissionResource}: {
 	const resendingEInvoice = useMemo(() => signal(false), []);
 	const {t} = useTranslation(["accounting", "common"]);
 
-	const resendEInvoice = async (invoice: Invoice) =>
+	const resendEInvoice = async (invoice: InvoiceDto) =>
 	{
 		resendingEInvoice.value = true;
-		const res = await Services.invoicesApi.ResendEInvoice(invoice.id.value);
+		const res = await Services.invoicesApi.ResendEInvoice(invoice.id);
 		if (res.status === 200 && res.data != undefined)
 		{
 			if (res.data === EInvoiceStatus.NotSent)
@@ -207,7 +220,7 @@ function PageTable({fixedType, permissionResource}: {
 			{
 				toast.success(t("invoices.resendSuccess"));
 			}
-			invoice.eInvoiceStatus.value = res.data;
+			invoice.eInvoiceStatus = res.data;
 		}
 		resendingEInvoice.value = false;
 	};
@@ -270,40 +283,40 @@ function PageTable({fixedType, permissionResource}: {
 		return rows;
 	};
 
-	const getPaymentStatus = (invoice: Invoice): { message: string; styles: string; } =>
+	const getPaymentStatus = (invoice: InvoiceDto): { message: string; styles: string; } =>
 	{
-		if (invoice.paymentStatusId.value === PaymentStatus.NotPaid)
+		if (invoice.paymentStatusId === PaymentStatus.NotPaid)
 		{
 			return {message: t("invoices.notPaid"), styles: "bg-red-100 text-red-800"};
 		}
 
-		if (invoice.paymentStatusId.value === PaymentStatus.FullyPaid)
+		if (invoice.paymentStatusId === PaymentStatus.FullyPaid)
 		{
 			return {message: t("invoices.fullyPaid"), styles: "bg-green-100 text-green-800"};
 		}
 
-		if (invoice.paymentStatusId.value > PaymentStatus.Overpaid)
+		if (invoice.paymentStatusId > PaymentStatus.Overpaid)
 		{
 			return {message: t("invoices.overpaid"), styles: "bg-red-100 text-red-800"};
 		}
 
 		return {
 			message: t("invoices.partiallyPaid", {
-				amount: invoice.paidAmount.value,
+				amount: invoice.paidAmount,
 				currency: Services.auth.setting?.currency?.value.code.value
 			}),
 			styles: "bg-orange-100 text-orange-800"
 		};
 	};
 
-	const getReturnStatus = (invoice: Invoice): { message: string; styles: string; } =>
+	const getReturnStatus = (invoice: InvoiceDto): { message: string; styles: string; } =>
 	{
-		if (invoice.returnStatusId.value === InvoiceReturnStatus.NotReturned)
+		if (invoice.returnStatusId === InvoiceReturnStatus.NotReturned)
 		{
 			return {message: t("invoices.notReturned"), styles: "bg-green-100 text-green-800"};
 		}
 
-		if (invoice.returnStatusId.value === InvoiceReturnStatus.FullyReturned)
+		if (invoice.returnStatusId === InvoiceReturnStatus.FullyReturned)
 		{
 			return {message: t("invoices.fullyReturned"), styles: "bg-red-100 text-red-800"};
 		}
@@ -314,28 +327,28 @@ function PageTable({fixedType, permissionResource}: {
 		};
 	};
 
-	const getEInvoiceStatus = (invoice: Invoice): { message: string; styles: string; } =>
+	const getEInvoiceStatus = (invoice: InvoiceDto): { message: string; styles: string; } =>
 	{
 		if (
 			Services.auth.setting?.eInvoicingEnvironmentType.value === EInvoicingEnvironmentType.NotRegistered
-			|| invoice.statusId.value !== InvoiceStatus.Valid
-			|| (invoice.type.value !== InvoiceType.Sell && invoice.type.value !== InvoiceType.SellReturn)
+			|| invoice.statusId !== InvoiceStatus.Valid
+			|| (invoice.type !== InvoiceType.Sell && invoice.type !== InvoiceType.SellReturn)
 		)
 		{
 			return {message: "", styles: ""};
 		}
 
-		if (invoice.eInvoiceStatus.value === EInvoiceStatus.NotSent)
+		if (invoice.eInvoiceStatus === EInvoiceStatus.NotSent)
 		{
 			return {message: t("invoices.notSent"), styles: "bg-red-100 text-red-800"};
 		}
 
-		if (invoice.eInvoiceStatus.value === EInvoiceStatus.SentWithWarnings)
+		if (invoice.eInvoiceStatus === EInvoiceStatus.SentWithWarnings)
 		{
 			return {message: t("invoices.sentWithWarnings"), styles: "bg-orange-100 text-orange-800"};
 		}
 
-		if (invoice.eInvoiceStatus.value === EInvoiceStatus.SentCorrectly)
+		if (invoice.eInvoiceStatus === EInvoiceStatus.SentCorrectly)
 		{
 			return {message: t("invoices.sent"), styles: "bg-green-100 text-green-800"};
 		}
@@ -344,21 +357,21 @@ function PageTable({fixedType, permissionResource}: {
 	};
 
 	const getActions = (
-		entity: Invoice,
-		openEditDialog: (entity: Invoice) => void,
+		dto: InvoiceDto,
+		openEditDialog: (dto: InvoiceDto) => void,
 		ItemComponent: typeof DropdownMenuItem | typeof ContextMenuItem
 	) =>
 	{
 		const items: React.ReactNode[] = [];
-		if (entity.type.value === InvoiceType.Sell || entity.type.value === InvoiceType.Purchase)
+		if (dto.type === InvoiceType.Sell || dto.type === InvoiceType.Purchase)
 		{
 			items.push(
 				<ItemComponent
 					className="text-orange-700 font-semibold"
 					onSelect={ () =>
 					{
-						entity.invoiceMode.value = InvoiceMode.Return;
-						openEditDialog(entity);
+						dto.invoiceMode = InvoiceMode.Return;
+						openEditDialog(dto);
 					} }
 				>
 					<Undo2 className="h-4 w-4 me-2"/>
@@ -371,8 +384,8 @@ function PageTable({fixedType, permissionResource}: {
 					className="text-blue-600 font-semibold"
 					onSelect={ () =>
 					{
-						entity.invoiceMode.value = InvoiceMode.Copy;
-						openEditDialog(entity);
+						dto.invoiceMode = InvoiceMode.Copy;
+						openEditDialog(dto);
 					} }
 				>
 					<Copy className="h-4 w-4 me-2"/>
@@ -381,15 +394,15 @@ function PageTable({fixedType, permissionResource}: {
 			);
 		}
 
-		if (entity.type.value === InvoiceType.Quotation)
+		if (dto.type === InvoiceType.Quotation)
 		{
 			items.push(
 				<ItemComponent
 					className="text-green-600 font-semibold"
 					onSelect={ () =>
 					{
-						entity.invoiceMode.value = InvoiceMode.QuotationToSales;
-						openEditDialog(entity);
+						dto.invoiceMode = InvoiceMode.QuotationToSales;
+						openEditDialog(dto);
 					} }
 				>
 					<FilePlusCorner className="h-4 w-4 me-2"/>
@@ -400,7 +413,7 @@ function PageTable({fixedType, permissionResource}: {
 
 		return items;
 	};
-	const getTableRowMapper = (invoice: Invoice) =>
+	const getTableRowMapper = (invoice: InvoiceDto) =>
 	{
 		const cells: { rowBody: ReactNode, rowStyles: string }[] = [{rowBody: `#${ invoice.id }`, rowStyles: ""}];
 
@@ -410,11 +423,11 @@ function PageTable({fixedType, permissionResource}: {
 		}
 		else
 		{
-			cells.push({rowBody: getInvoiceTypeName(invoice.type.value, t), rowStyles: "font-semibold"});
+			cells.push({rowBody: getInvoiceTypeName(invoice.type, t), rowStyles: "font-semibold"});
 		}
 
 		cells.push(
-			{rowBody: invoice.date.value, rowStyles: ""},
+			{rowBody: invoice.date, rowStyles: ""},
 			{rowBody: invoice.actionAccountName || "-", rowStyles: ""},
 			{rowBody: invoice.storeName || "-", rowStyles: ""},
 			{
@@ -432,11 +445,11 @@ function PageTable({fixedType, permissionResource}: {
 		{
 			cells.push(
 				{
-					rowBody: invoice.statusId.value === InvoiceStatus.Valid
+					rowBody: invoice.statusId === InvoiceStatus.Valid
 						? t("invoices.valid")
 						: t("invoices.deleted"),
 					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-						invoice.statusId.value === InvoiceStatus.Valid
+						invoice.statusId === InvoiceStatus.Valid
 							? "bg-green-100 text-green-800"
 							: "bg-red-100 text-red-800"
 					}`
@@ -473,9 +486,9 @@ function PageTable({fixedType, permissionResource}: {
                 { getEInvoiceStatus(invoice).message }
               </span>
 						) }
-						{ invoice.eInvoiceStatus.value === EInvoiceStatus.NotSent
-							&& invoice.statusId.value === InvoiceStatus.Valid
-							&& (invoice.type.value === InvoiceType.Sell || invoice.type.value === InvoiceType.SellReturn) && (
+						{ invoice.eInvoiceStatus === EInvoiceStatus.NotSent
+							&& invoice.statusId === InvoiceStatus.Valid
+							&& (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.SellReturn) && (
 								<Tooltip>
 									<TooltipTrigger asChild>
 										<Button
@@ -503,7 +516,7 @@ function PageTable({fixedType, permissionResource}: {
 			Services.auth.hasAuth(
 				SystemPermissionsResources.ReportAccountStatement,
 				SystemPermissionsActions.Get
-			) && invoice.statusId.value === InvoiceStatus.Valid
+			) && invoice.statusId === InvoiceStatus.Valid
 		)
 		{
 			cells.push({
@@ -511,7 +524,7 @@ function PageTable({fixedType, permissionResource}: {
 					<ReportButton
 						reportName={ ReportConstants.Invoice }
 						request={ {invoiceId: invoice.id} }
-						fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type.value, t) }-${ invoice.actionAccountName }` }
+						fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type, t) }-${ invoice.actionAccountName }` }
 					/>
 				),
 				rowStyles: "w-32"
@@ -525,22 +538,22 @@ function PageTable({fixedType, permissionResource}: {
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<Invoice, InvoiceDto>
+				<CrudPage.TableBody<InvoiceDto>
 					data={ Cubits.invoices.entities.value }
 					headerRows={ getTableHeadRows() }
-					tableRowMapper={ (invoice: Invoice) => getTableRowMapper(invoice) }
+					tableRowMapper={ (invoice) => getTableRowMapper(invoice) }
 					hasUpdatePermission={ Services.auth.hasAuth(
 						permissionResource,
 						SystemPermissionsActions.Update
 					) }
-					hasDeletePermission={ (entity) => entity.type.value === InvoiceType.Quotation ?
+					hasDeletePermission={ (entity) => entity.type === InvoiceType.Quotation ?
 						Services.auth.hasAuth(
 							permissionResource,
 							SystemPermissionsActions.Delete
 						)
 						: false
 					}
-					onEditClicked={ (entity) => entity.invoiceMode.value = InvoiceMode.Normal }
+					onEditClicked={ (entity) => entity.invoiceMode = InvoiceMode.Normal }
 					dropdownItems={ (entity, openEditDialog) => getActions(entity, openEditDialog, DropdownMenuItem) }
 					contextMenuItems={ (entity, openEditDialog) => getActions(entity, openEditDialog, ContextMenuItem) }
 				/>
@@ -563,27 +576,6 @@ function PageTable({fixedType, permissionResource}: {
 	}
 
 	return <TablePreview.Empty/>;
-}
-
-function InvoicesReportButton({fixedType}: { fixedType?: InvoiceType })
-{
-	useSignals();
-	return (
-		<ReportButton<InvoicesListReportRequest>
-			reportName={ ReportConstants.InvoicesList }
-			request={ {
-				// Sell page covers Sell + SellReturn + Quotation;
-				// Purchase page covers Purchase + PurchaseReturn.
-				types:
-					fixedType === InvoiceType.Sell
-						? [InvoiceType.Sell, InvoiceType.SellReturn, InvoiceType.Quotation]
-						: [InvoiceType.Purchase, InvoiceType.PurchaseReturn],
-				// Read the live search text from the cubit so the report is scoped
-				searchText: Cubits.invoices.searchText.value,
-				reportType: InvoicesListReportType.InvoicesList
-			} }
-		/>
-	);
 }
 
 const getInvoiceTypeName = (type: InvoiceType, t: TFunction<"accounting">) =>
@@ -619,7 +611,7 @@ function RenderInvoiceFilterInput({rule, field, filterTypes}: FilterValueInputPr
 						id={ rule.value as unknown as Signal<number | undefined> }
 						label={ label }
 						onSelect={ entity =>
-							rule.value.value = entity ? entity.id.value : ""
+							rule.value.value = entity ? entity.id : ""
 						}
 						types={ filterTypes }
 					/>
@@ -636,7 +628,7 @@ function RenderInvoiceFilterInput({rule, field, filterTypes}: FilterValueInputPr
 					<StoresSearchableSelect
 						id={ rule.value as unknown as Signal<number | undefined> }
 						label={ label }
-						onSelect={ entity => rule.value.value = entity ? entity.id.value : "" }
+						onSelect={ entity => rule.value.value = entity ? entity.id : "" }
 					/>
 				) }
 			</FilterLabelWrapper>

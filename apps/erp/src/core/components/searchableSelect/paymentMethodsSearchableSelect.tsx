@@ -1,6 +1,5 @@
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services.ts";
-import type { PaymentMethod } from "@/core/data/paymentMethod.ts"; // paymentMethod
 import { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
@@ -14,7 +13,7 @@ import {
 
 
 export default function PaymentMethodsSearchableSelect(
-	{...props}: SearchableSelectProps<PaymentMethod, PaymentMethodDto>
+	{...props}: SearchableSelectProps<PaymentMethodDto>
 )
 {
 	useSignals();
@@ -48,7 +47,7 @@ export default function PaymentMethodsSearchableSelect(
 		if (Cubits.paymentMethods.state.value instanceof PageLoaded && Cubits.paymentMethods.entities.value.length > 0)
 		{
 			return Cubits.paymentMethods.entities.value.map((entity) => (
-				<Option key={ entity.id.value } item={ entity } { ...props } />
+				<Option key={ entity.id } item={ entity } { ...props } />
 			));
 		}
 
@@ -58,20 +57,20 @@ export default function PaymentMethodsSearchableSelect(
 
 const Option = React.memo(
 	function Option(
-		{...props}: Omit<SearchableSelectOptionProps<PaymentMethod, PaymentMethodDto>, "labelSelector">
+		{...props}: Omit<SearchableSelectOptionProps<PaymentMethodDto>, "labelSelector">
 	)
 	{
 		useSignals();
 		return (
-			<SearchableSelect.Option<PaymentMethod, PaymentMethodDto>
+			<SearchableSelect.Option<PaymentMethodDto>
 				labelSelector="name"
 				{ ...props }
 			>
-				<SearchableSelect.OptionBody label={ props.item.name.value }/>
+				<SearchableSelect.OptionBody label={ props.item.name }/>
 				<SearchableSelect.DeleteOptionButton
 					onDelete={ async () =>
 					{
-						const result = await Services.paymentMethodsApi.Delete(props.item.id.value);
+						const result = await Services.paymentMethodsApi.Delete(props.item.id);
 						if (result.status === 200)
 						{
 							Cubits.paymentMethods.delete(props.item);

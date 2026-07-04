@@ -1,45 +1,44 @@
-import { BaseServices } from "yusr-ui";
-import AccountApiService from "../networking/accountApiService";
-import BalanceTransfersApiService from "../networking/balanceTransferApiService";
-import { ErpRoleApiService } from "../networking/erpRoleApiService";
+import { BaseApiService, BaseServices, RolesApiService } from "yusr-ui";
 import ItemsApiService from "../networking/itemApiService";
-import ItemsSettlementsApiService from "../networking/itemsSettlementsApiService";
-import ItemTransferApiService from "../networking/itemTransferApiService";
-import PaymentMethodsApiService from "../networking/paymentMethodApiService";
-import PricingMethodsApiService from "../networking/pricingMethodsApiService";
-import StocktakingsApiService from "../networking/stocktakingApiService";
-import { StoresApiService } from "../networking/storeApiService";
-import TaxesApiService from "../networking/taxesApiService";
 import UnitsApiService from "../networking/unitApiService";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
-import VouchersApiService from "@/core/networking/voucherApiService.ts";
 import InvoicesApiService from "@/core/networking/invoiceApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
-import CostAdjustmentsApiService from "@/core/networking/costAdjustmentsApiService.ts";
+import { TaxDto } from "@/core/data/tax.ts";
+import type { StoreDto } from "@/core/data/store.ts";
+import type { ErpRoleDto } from "@/core/data/erpRole.ts";
+import { type StocktakingDto } from "@/core/data/stocktaking.ts";
+import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
+import type { CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
+import type { PricingMethodDto } from "@/core/data/pricingMethod.ts";
+import { type AccountDto } from "@/core/data/account.ts";
+import type { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
+import { type BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
+import type { VoucherDto } from "@/core/data/voucher.ts";
 
 
 export class Services extends BaseServices
 {
 	public static override auth: ErpAuthService = new ErpAuthService();
-	public static override rolesApi = new ErpRoleApiService();
+	public static override rolesApi = new RolesApiService<ErpRoleDto>;
 
-	public static readonly taxesApi = new TaxesApiService();
-	public static readonly storesApi = new StoresApiService();
+	public static readonly taxesApi = new BaseApiService<TaxDto>("Taxes");
+	public static readonly storesApi = new BaseApiService<StoreDto>("Stores");
 	public static readonly unitsApi = new UnitsApiService();
-	public static readonly pricingMethodsApi = new PricingMethodsApiService();
+	public static readonly pricingMethodsApi = new BaseApiService<PricingMethodDto>("PricingMethods");
+	public static readonly stocktakingApi = new BaseApiService<StocktakingDto>("Stocktakings");
+	public static readonly itemsSettlementsApi = new BaseApiService<StocktakingDto>("ItemSettlements");
+	public static readonly itemTransfersApi = new BaseApiService<ItemTransferDto>("ItemTransfers");
+	public static readonly costAdjustmentsApi = new BaseApiService<CostAdjustmentDto>("CostAdjustments");
 	public static readonly itemsApi = new ItemsApiService();
-	public static readonly accountsApi = new AccountApiService();
-	public static readonly paymentMethodsApi = new PaymentMethodsApiService();
-	public static readonly balanceTransfersApi = new BalanceTransfersApiService();
-	public static readonly stocktakingApi = new StocktakingsApiService();
-	public static readonly itemTransfersApi = new ItemTransferApiService();
-	public static readonly itemsSettlementsApi = new ItemsSettlementsApiService();
-	public static readonly dashboardApi = new DashboardApiService();
-	public static readonly voucherApi = new VouchersApiService();
+	public static readonly accountsApi = new BaseApiService<AccountDto>("Accounts");
+	public static readonly paymentMethodsApi = new BaseApiService<PaymentMethodDto>("PaymentMethods");
+	public static readonly balanceTransfersApi = new BaseApiService<BalanceTransferDto>("BalanceTransfers");
+	public static readonly voucherApi = new BaseApiService<VoucherDto>("Vouchers");
 	public static readonly invoicesApi = new InvoicesApiService();
 	public static readonly settingApi = new SettingsApiService();
-	public static readonly costAdjustmentsApi = new CostAdjustmentsApiService();
+	public static readonly dashboardApi = new DashboardApiService();
 
 	static
 	{

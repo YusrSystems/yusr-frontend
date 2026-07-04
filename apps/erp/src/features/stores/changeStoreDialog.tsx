@@ -2,27 +2,36 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { ChangeableEntityMode, type CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, SystemPermissionsActions, TextField } from "yusr-ui";
+import {
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	SystemPermissionsActions,
+	TextField
+} from "yusr-ui";
 import { Store, StoreDto } from "@/core/data/store.ts";
+import { useMemo } from "react";
+import { signal } from "@preact/signals-react";
 
 
-export default function ChangeStoreDialog({entity, service, onSuccess}: CommonChangeDialogProps<Store, StoreDto>)
+export default function ChangeStoreDialog({dto, service, onSuccess}: CommonChangeDialogProps<StoreDto>)
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
+	const entity = useMemo(() => signal<Store>(dto ? Store.load(dto) : Store.create()), []);
 
 	if (
-		(entity.mode.value === ChangeableEntityMode.Create
+		(entity.value.mode.value === ChangeableEntityMode.Create
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Stores, SystemPermissionsActions.Add))
-		|| (entity.mode.value === ChangeableEntityMode.Update
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
 			&& !Services.auth.hasAuth(SystemPermissionsResources.Stores, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.mode.value === ChangeableEntityMode.Create
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? t("stores.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("stores.entityName") }`;
 
@@ -33,8 +42,8 @@ export default function ChangeStoreDialog({entity, service, onSuccess}: CommonCh
 				<TextField
 					label={ t("stores.storeName") }
 					required
-					value={ entity.name }
-					error={ entity.getError("name") }
+					value={ entity.value.name }
+					error={ entity.value.getError("name") }
 				/>
 			</FieldGroup>
 
@@ -44,7 +53,7 @@ export default function ChangeStoreDialog({entity, service, onSuccess}: CommonCh
 				<ChangeDialog.SaveButton<Store, StoreDto>
 					entity={ entity }
 					service={ service }
-					onSuccess={ (data) => onSuccess?.(data) }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>

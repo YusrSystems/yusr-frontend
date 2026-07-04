@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { CheckboxField, DateField, FieldsSection, FormField, SelectField, TextField } from "yusr-ui";
 import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import { signal, useComputed } from "@preact/signals-react";
-import { type Account, AccountType } from "@/core/data/account.ts";
+import { AccountDto, AccountType } from "@/core/data/account.ts";
 import { Services } from "@/core/services/services.ts";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
@@ -16,11 +16,11 @@ export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
-	const selectedAccount = useMemo(() => signal<Account | undefined>(), []);
+	const selectedAccount = useMemo(() => signal<AccountDto | undefined>(), []);
 
 	const invoiceOrigin = useComputed(() =>
 	{
-		const accountCountryId = selectedAccount.value?.city.value?.countryId.value;
+		const accountCountryId = selectedAccount.value?.city?.countryId;
 		const settingsCountryId = Services.auth.setting?.branch?.value?.city.value?.countryId.value;
 
 		if (accountCountryId == undefined || settingsCountryId == undefined)

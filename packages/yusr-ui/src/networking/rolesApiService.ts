@@ -1,8 +1,11 @@
-import { Role, type RoleDto } from "../entities/role";
+import { type RoleDto } from "../entities/role";
 import { BaseApiService } from "./baseApiService";
 
-export abstract class RolesApiService<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto>
-  extends BaseApiService<TRole, TRoleDto>
+
+export class RolesApiService<TRoleDto extends RoleDto> extends BaseApiService<TRoleDto>
 {
-  routeName: string = "Roles";
+	constructor()
+	{
+		super("Roles");
+	}
 }
