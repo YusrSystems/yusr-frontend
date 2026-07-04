@@ -1,9 +1,7 @@
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { differenceInDays, format } from "date-fns";
-import { Camera, Check, Copy, Download, Trash2, Upload } from "lucide-react";
-import { QRCodeCanvas } from "qrcode.react";
-import { useRef, useState } from "react";
+import { Camera, Trash2, Upload } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
@@ -19,6 +17,7 @@ import {
 	FormField,
 	i18n,
 	Label,
+	LinkQrDownloadableCard,
 	StorageFileStatus,
 	StorageType,
 	TextField,
@@ -34,9 +33,6 @@ export default function BasicSection({formData}: { formData: Setting })
 	useSignals();
 
 	const {t} = useTranslation("erpCommon");
-	const [isCopied, setIsCopied] = useState(false);
-	const qrRef = useRef<HTMLDivElement>(null);
-
 	const {fileInputRef, handleFileChange, handleRemoveFile} = useStorageFile(
 		() => formData.logo.value ? [formData.logo?.value] : [],
 		(value) => (formData.logo.value = value[0]),
@@ -46,30 +42,6 @@ export default function BasicSection({formData}: { formData: Setting })
 
 	const shareUrl = `${ window.location.origin }/sharing/${ formData.registrationKey.value }`;
 	const registerUrl = `${ window.location.origin }/register/${ formData.registrationKey.value }`;
-
-	const handleCopyLink = async () =>
-	{
-		await navigator.clipboard.writeText(shareUrl);
-		setIsCopied(true);
-		setTimeout(() => setIsCopied(false), 2000);
-	};
-
-	const handleDownloadQR = () =>
-	{
-		const canvas = qrRef.current?.querySelector("canvas");
-		if (!canvas)
-		{
-			return;
-		}
-
-		const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-		const downloadLink = document.createElement("a");
-		downloadLink.href = pngUrl;
-		downloadLink.download = `QR-${ formData.companyName.value || "Company" }.png`;
-		document.body.appendChild(downloadLink);
-		downloadLink.click();
-		document.body.removeChild(downloadLink);
-	};
 
 	const getDaysLeftText = (daysLeft: number) =>
 	{
@@ -163,89 +135,23 @@ export default function BasicSection({formData}: { formData: Setting })
 					</div>
 				</div>
 
-				{ /* Sharing Part (Beside Logo) */ }
-				<div className="w-full flex flex-col items-center gap-3 bg-muted/20 p-3 rounded-lg border">
+				<LinkQrDownloadableCard
+					title={ t("settings.shareInfoCard") }
+					url={ shareUrl }
+					copyText={ t("settings.copyLink") }
+					copiedText={ t("settings.copied") }
+					downloadText={ t("settings.download", "تحميل الرمز") }
+					qrFileNameWhenDownload={ formData.companyName.value }
+				/>
 
-					<h3 className="text-lg font-bold">{ t("settings.shareInfoCard") }</h3>
-
-					<div ref={ qrRef } className="bg-white p-2 rounded border shadow-sm shrink-0">
-						<QRCodeCanvas
-							value={ shareUrl }
-							size={ 150 }
-							level="H"
-						/>
-					</div>
-
-					<Button
-						type="button"
-						className={ `w-full ${ isCopied ? "bg-green-600 hover:bg-green-700" : "" }` }
-						onClick={ handleCopyLink }
-					>
-						{ isCopied ? <Check className="h-4 w-4 me-2"/> : <Copy className="h-4 w-4 me-2"/> }
-						{ isCopied ? t("settings.copied") : t("settings.copyLink") }
-					</Button>
-
-					<Button
-						type="button"
-						variant="outline"
-						onClick={ handleDownloadQR }
-						className="w-full"
-					>
-						<Download className="h-4 w-4 me-2"/>
-						{ t("settings.download", "تحميل الرمز") }
-					</Button>
-
-					<a
-						href={ shareUrl }
-						target="_blank"
-						rel="noopener noreferrer"
-						className="text-xs text-blue-600 hover:text-primary text-center"
-					>
-						{ shareUrl }
-					</a>
-				</div>
-
-				<div className="w-full flex flex-col items-center gap-3 bg-muted/20 p-3 rounded-lg border">
-
-					<h3 className="text-lg font-bold">{ t("settings.referralLink") }</h3>
-
-					<div ref={ qrRef } className="bg-white p-2 rounded border shadow-sm shrink-0">
-						<QRCodeCanvas
-							value={ registerUrl }
-							size={ 150 }
-							level="H"
-						/>
-					</div>
-
-					<Button
-						type="button"
-						className={ `w-full ${ isCopied ? "bg-green-600 hover:bg-green-700" : "" }` }
-						onClick={ handleCopyLink }
-					>
-						{ isCopied ? <Check className="h-4 w-4 me-2"/> : <Copy className="h-4 w-4 me-2"/> }
-						{ isCopied ? t("settings.copied") : t("settings.copyLink") }
-					</Button>
-
-					<Button
-						type="button"
-						variant="outline"
-						onClick={ handleDownloadQR }
-						className="w-full"
-					>
-						<Download className="h-4 w-4 me-2"/>
-						{ t("settings.download", "تحميل الرمز") }
-					</Button>
-
-					<a
-						href={ registerUrl }
-						target="_blank"
-						rel="noopener noreferrer"
-						className="text-xs text-blue-600 hover:text-primary text-center"
-					>
-						{ registerUrl }
-					</a>
-				</div>
-
+				<LinkQrDownloadableCard
+					title={ t("settings.referralLink") }
+					url={ registerUrl }
+					copyText={ t("settings.copyLink") }
+					copiedText={ t("settings.copied") }
+					downloadText={ t("settings.download", "تحميل الرمز") }
+					qrFileNameWhenDownload={ formData.companyName.value }
+				/>
 
 			</div>
 
