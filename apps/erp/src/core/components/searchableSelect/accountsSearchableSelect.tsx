@@ -6,6 +6,7 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import React, { useMemo } from "react";
 import {
+	Dialog,
 	PageLoaded,
 	PageLoading,
 	SearchableSelect,
@@ -39,23 +40,30 @@ export default function AccountsSearchableSelect(
 				</SearchableSelect.Content>
 			</SearchableSelect>
 
-			{ showAddButton && isAddAccountOpen.value && (
-				<ChangeAccountDialog
-					initDto={ {type: types[0], name: newAccountSearchText.value} as AccountDto }
-					selectTypes={ types }
-					service={ Services.accountsApi }
-					onSuccess={ (data) =>
-					{
-						props.id.value = data.id;
-						if (props.label)
-						{
-							props.label.value = data.name;
-						}
-						props.onSelect?.(data);
-						isAddAccountOpen.value = false;
-						Cubits.accounts.init(types);
-					} }
-				/>
+			{ showAddButton && (
+				<Dialog
+					open={ isAddAccountOpen.value }
+					onOpenChange={ (open) => isAddAccountOpen.value = open }
+				>
+					{ isAddAccountOpen.value && (
+						<ChangeAccountDialog
+							initDto={ {type: types[0], name: newAccountSearchText.value} as AccountDto }
+							selectTypes={ types }
+							service={ Services.accountsApi }
+							onSuccess={ (data) =>
+							{
+								props.id.value = data.id;
+								if (props.label)
+								{
+									props.label.value = data.name;
+								}
+								props.onSelect?.(data);
+								isAddAccountOpen.value = false;
+								Cubits.accounts.init(types);
+							} }
+						/>
+					) }
+				</Dialog>
 			) }
 		</>
 	);
