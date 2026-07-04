@@ -22,9 +22,13 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 		hasAcceptedPolicies: false
 	});
 
-	constructor()
+	public joinedByKey?: string;
+
+	constructor(joinedByKey: string | undefined)
 	{
 		super(new RegistrationStateInitial());
+		this.joinedByKey = joinedByKey;
+		this.formData.joinedByKey.value = this.joinedByKey;
 	}
 
 	public async register()
@@ -66,7 +70,8 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 			`/api/Login/external-login`,
 			{
 				provider: "google",
-				token
+				token,
+				joinedByKey: this.joinedByKey
 			}
 		);
 
