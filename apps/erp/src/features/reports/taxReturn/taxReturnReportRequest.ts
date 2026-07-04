@@ -1,4 +1,4 @@
-import type { BaseReportRequest } from "../../../core/data/report/baseReportRequest.ts";
+import type { BaseReportRequest } from "@/core/data/report/baseReportRequest.ts";
 import { DateService } from "yusr-ui";
 
 

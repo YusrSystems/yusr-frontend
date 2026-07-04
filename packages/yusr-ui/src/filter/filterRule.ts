@@ -1,4 +1,4 @@
-import { type Dto, Entity } from "../stateManager";
+import { type Dto, Entity } from "#/stateManager";
 import { FilterOperator } from "./filterOperator.ts";
 import type { Signal } from "@preact/signals-react";
 

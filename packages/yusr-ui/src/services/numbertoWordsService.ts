@@ -1,6 +1,6 @@
 import { type TFunction } from "i18next";
 import * as numberToWords from "number-to-words";
-import { Currency } from "../entities";
+import { Currency } from "#/entities";
 
 
 export class NumbertoWordsService
@@ -24,6 +24,75 @@ export class NumbertoWordsService
 		{
 			this.initArabic(t);
 		}
+	}
+
+	static ConvertAmount(amount: number, currency: Currency): string
+	{
+		const integerPart = Math.floor(amount);
+		const fractionPart = Math.round((amount - integerPart) * 100);
+
+		if (this.currentLanguage === "en")
+		{
+			// Use library for English
+			let result = "";
+
+			if (integerPart > 0)
+			{
+				result += numberToWords.toWords(integerPart) + " " + this.getCurrencyWord(integerPart, currency, false);
+			}
+
+			if (fractionPart > 0)
+			{
+				if (result)
+				{
+					result += " and ";
+				}
+				result += numberToWords.toWords(fractionPart) + " " + this.getCurrencyWord(fractionPart, currency, true);
+			}
+
+			if (integerPart === 0 && fractionPart === 0)
+			{
+				result = `zero ${ currency.name.value }`;
+			}
+
+			return result;
+		}
+
+		// Arabic custom code
+		const t = this.getT();
+		let result = "";
+
+		if (integerPart > 0)
+		{
+			result += this.ConvertArabic(integerPart, currency.isFeminine.value) + " "
+				+ this.getCurrencyWord(integerPart, currency, false);
+		}
+
+		if (fractionPart > 0)
+		{
+			if (result)
+			{
+				result += " " + t("numberToWords.and") + " ";
+			}
+			result += this.ConvertArabic(fractionPart, currency.isFeminine.value) + " "
+				+ this.getCurrencyWord(fractionPart, currency, true);
+		}
+
+		if (integerPart === 0 && fractionPart === 0)
+		{
+			result = `${ t("numberToWords.zero") } ${ currency.name.value }`;
+		}
+
+		return result;
+	}
+
+	static Convert(num: number, isFeminine = false): string
+	{
+		if (this.currentLanguage === "en")
+		{
+			return numberToWords.toWords(num);
+		}
+		return this.ConvertArabic(num, isFeminine);
 	}
 
 	private static initArabic(t: TFunction)
@@ -112,75 +181,6 @@ export class NumbertoWordsService
 			throw new Error("NumbertoWordsService not initialized. Call NumbertoWordsService.init(t, language) first.");
 		}
 		return this.t;
-	}
-
-	static ConvertAmount(amount: number, currency: Currency): string
-	{
-		const integerPart = Math.floor(amount);
-		const fractionPart = Math.round((amount - integerPart) * 100);
-
-		if (this.currentLanguage === "en")
-		{
-			// Use library for English
-			let result = "";
-
-			if (integerPart > 0)
-			{
-				result += numberToWords.toWords(integerPart) + " " + this.getCurrencyWord(integerPart, currency, false);
-			}
-
-			if (fractionPart > 0)
-			{
-				if (result)
-				{
-					result += " and ";
-				}
-				result += numberToWords.toWords(fractionPart) + " " + this.getCurrencyWord(fractionPart, currency, true);
-			}
-
-			if (integerPart === 0 && fractionPart === 0)
-			{
-				result = `zero ${ currency.name.value }`;
-			}
-
-			return result;
-		}
-
-		// Arabic custom code
-		const t = this.getT();
-		let result = "";
-
-		if (integerPart > 0)
-		{
-			result += this.ConvertArabic(integerPart, currency.isFeminine.value) + " "
-				+ this.getCurrencyWord(integerPart, currency, false);
-		}
-
-		if (fractionPart > 0)
-		{
-			if (result)
-			{
-				result += " " + t("numberToWords.and") + " ";
-			}
-			result += this.ConvertArabic(fractionPart, currency.isFeminine.value) + " "
-				+ this.getCurrencyWord(fractionPart, currency, true);
-		}
-
-		if (integerPart === 0 && fractionPart === 0)
-		{
-			result = `${ t("numberToWords.zero") } ${ currency.name.value }`;
-		}
-
-		return result;
-	}
-
-	static Convert(num: number, isFeminine = false): string
-	{
-		if (this.currentLanguage === "en")
-		{
-			return numberToWords.toWords(num);
-		}
-		return this.ConvertArabic(num, isFeminine);
 	}
 
 	private static ConvertArabic(num: number, isFeminine = false): string

@@ -1,5 +1,5 @@
-import { cn } from "../../../utils/cn";
-import { TitleSeparator } from "../separators/titleSeparator";
+import { cn } from "#/utils/cn.ts";
+import { TitleSeparator } from "#/components/custom";
 import React from "react";
 
 

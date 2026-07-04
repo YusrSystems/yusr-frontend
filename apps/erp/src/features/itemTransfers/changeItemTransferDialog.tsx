@@ -28,6 +28,7 @@ export default function ChangeItemTransferDialog(
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<ItemTransfer>(dto ? ItemTransfer.load(dto) : ItemTransfer.create()), []);
 	const isLoading = useMemo(() => signal<boolean>(false), []);
 	const title = entity.value.mode.value === ChangeableEntityMode.Create
@@ -48,12 +49,13 @@ export default function ChangeItemTransferDialog(
 				}
 				isLoading.value = false;
 			};
-			fetch();
+			void fetch();
 		}
 		else
 		{
 			Cubits.stores.init();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	}, []);
 
 	useEffect(() =>

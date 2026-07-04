@@ -28,6 +28,7 @@ export default function ChangeCostAdjustmentDialog({
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<CostAdjustment>(dto ? CostAdjustment.load(dto) : CostAdjustment.create()), []);
 
 	useEffect(() =>

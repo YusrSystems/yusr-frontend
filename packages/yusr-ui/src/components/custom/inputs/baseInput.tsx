@@ -1,6 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import type React from "react";
-import { cn } from "../../../utils/cn";
+import { cn } from "#/utils/cn.ts";
 import { Input, InputOld } from "../../pure/input";
 import { useSignals } from "@preact/signals-react/runtime";
 

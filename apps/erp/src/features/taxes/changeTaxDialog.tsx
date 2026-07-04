@@ -23,6 +23,7 @@ export default function ChangeTaxDialog({dto, service, onSuccess}: CommonChangeD
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<Tax>(dto ? Tax.load(dto) : Tax.create()), []);
 
 	if (

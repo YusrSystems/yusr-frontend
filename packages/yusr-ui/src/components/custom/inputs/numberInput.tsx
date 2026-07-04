@@ -1,7 +1,7 @@
 import { type Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { useMemo } from "react";
-import { cn } from "../../../utils/cn";
+import React, { useMemo } from "react";
+import { cn } from "#/utils/cn.ts";
 import { BaseInput } from "./baseInput";
 
 

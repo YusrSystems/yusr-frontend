@@ -1,10 +1,17 @@
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "../../pure/button";
-import { ContextMenuContent, ContextMenuGroup, ContextMenuItem } from "../../pure/context-menu";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../pure/dropdown-menu";
+import {
+	ContextMenuContent,
+	ContextMenuGroup,
+	ContextMenuItem,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger
+} from "#/components/pure";
 import React from "react";
-import { type Dto } from "../../../stateManager";
+import { type Dto } from "#/stateManager";
 
 
 type ListType = "dropdown" | "context";

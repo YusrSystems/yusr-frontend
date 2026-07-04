@@ -1,11 +1,17 @@
 import { Loader2, OctagonAlert } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { BaseApiService } from "../../../networking";
-import type { Dto } from "../../../stateManager";
-import { Button } from "../../pure/button";
-import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure/dialog";
-import { Separator } from "../../pure/separator";
+import type { BaseApiService } from "#/networking";
+import type { Dto } from "#/stateManager";
+import {
+	Button,
+	DialogClose,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	Separator
+} from "#/components/pure";
 
 
 export type DeleteDialogProps<TDto extends Dto> = {

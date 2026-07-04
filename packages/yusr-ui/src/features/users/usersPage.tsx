@@ -2,12 +2,12 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { User2Icon } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
-import { CrudPage, TablePreview, UnauthorizedPage } from "../../components/custom";
-import { UserDto } from "../../entities";
-import { BaseCubits, BaseServices } from "../../services";
-import { ChangeableEntityMode, PageError, PageLoaded, PageLoading } from "../../stateManager";
-import { ChangeUserDialog } from "./changeUserDialog";
+import { SystemPermissionsActions, YusrSystemPermissionsResources } from "#/auth";
+import { CrudPage, TablePreview, UnauthorizedPage } from "#/components/custom";
+import { UserDto } from "#/entities";
+import { BaseCubits, BaseServices } from "#/services";
+import { ChangeableEntityMode, PageError, PageLoaded, PageLoading } from "#/stateManager";
+import { ChangeUserDialog } from "#/features";
 
 
 export function UsersPage()

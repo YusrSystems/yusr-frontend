@@ -1,4 +1,4 @@
-import { type Dto, Entity } from "../stateManager";
+import { type Dto, Entity } from "#/stateManager";
 import { FilterRule, type FilterRuleDto } from "../filter";
 import type { Signal } from "@preact/signals-react";
 

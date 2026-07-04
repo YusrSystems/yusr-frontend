@@ -42,6 +42,7 @@ export default function ChangeInvoiceDialog({
 	useSignals();
 	const {t} = useTranslation("accounting");
 	const navigate = useNavigate();
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal(dto ? Invoice.load(dto) : Invoice.create({type: fixedType})), []);
 	const isFullyReturned = useMemo(() => signal(false), []);
 	const isLoading = useMemo(() => signal(false), []);
@@ -109,7 +110,6 @@ export default function ChangeInvoiceDialog({
 							: InvoiceType.PurchaseReturn;
 						entity.value = Invoice.create(res.data);
 						entity.value.invoiceMode.value = InvoiceMode.Return;
-						entity.value.syncPaymentVouchers();
 					}
 					else if (entity.value.invoiceMode.value === InvoiceMode.Copy)
 					{
@@ -139,6 +139,7 @@ export default function ChangeInvoiceDialog({
 
 			void getInvoice();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	}, [entity.value.id.value, entity.value.mode.value]);
 
 	const transformDataBeforeSave = async (data: InvoiceDto): Promise<InvoiceDto> =>

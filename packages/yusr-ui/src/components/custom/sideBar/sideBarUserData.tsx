@@ -1,9 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../../pure/avatar";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../../pure/sidebar";
-import { User } from "../../../entities";
+import { Separator, SidebarMenu, SidebarMenuButton, SidebarMenuItem, Skeleton } from "#/components/pure";
+import { User } from "#/entities";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../pure/dialog";
-import { Separator } from "../../pure/separator";
-import { Skeleton } from "../../pure/skeleton";
 import { Button } from "../../pure/button.tsx";
 import { useSignals } from "@preact/signals-react/runtime";
 import type { Signal } from "@preact/signals-react";
@@ -12,8 +10,8 @@ import React, { useEffect, useMemo } from "react";
 import { Building2, ChevronRight, Loader2, ShieldCheck, Unlink, User as UserIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { GoogleLogin } from "@react-oauth/google";
-import { ContinueWithGoogleLoadingState } from "../../../stateManager/continueWithGoogleCubit.ts";
-import { BaseCubits, BaseServices } from "../../../services";
+import { ContinueWithGoogleLoadingState } from "#/stateManager/continueWithGoogleCubit.ts";
+import { BaseCubits, BaseServices } from "#/services";
 import { PasswordField } from "../index.ts";
 import { toast } from "sonner";
 

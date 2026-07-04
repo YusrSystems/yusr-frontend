@@ -1,5 +1,5 @@
 import { type Signal, signal } from "@preact/signals-react";
-import type { ValidationRule } from "../validation";
+import type { ValidationRule } from "#/validation";
 import type { Dto } from "./dto";
 import { Entity } from "./entity";
 
@@ -13,6 +13,11 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
 	>;
 	private _validationRules: ValidationRule<Partial<TDto>>[] = [];
 
+	get hasErrors(): boolean
+	{
+		return Object.values(this.errors).some((s) => (s as Signal<string | undefined>).value !== undefined);
+	}
+
 	protected constructor(dto: Partial<TDto> | undefined, validationRules: ValidationRule<Partial<TDto>>[])
 	{
 		super(dto);
@@ -21,11 +26,6 @@ export abstract class ValidatableEntity<TDto extends Dto> extends Entity<TDto>
 		{
 			this.errors[rule.field] = signal(undefined);
 		});
-	}
-
-	get hasErrors(): boolean
-	{
-		return Object.values(this.errors).some((s) => (s as Signal<string | undefined>).value !== undefined);
 	}
 
 	validate(dto?: Partial<TDto>): boolean

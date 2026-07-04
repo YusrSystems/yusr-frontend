@@ -4,12 +4,19 @@ import { Check, ChevronsUpDown, Loader2, Trash2 } from "lucide-react";
 import * as React from "react";
 import { type PropsWithChildren, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { Dto } from "../../../stateManager";
-import { cn } from "../../../utils/cn";
+import type { Dto } from "#/stateManager";
+import { cn } from "#/utils/cn.ts";
 import { Button } from "../../pure/button";
-import { Command, CommandEmpty, CommandItem, CommandList } from "../../pure/command";
-import { Popover, PopoverContent, PopoverTrigger } from "../../pure/popover";
-import { SearchInput, type SearchInputParams } from "../inputs/searchInput";
+import {
+	Command,
+	CommandEmpty,
+	CommandItem,
+	CommandList,
+	Popover,
+	PopoverContent,
+	PopoverTrigger
+} from "#/components/pure";
+import { SearchInput, type SearchInputParams } from "#/components/custom";
 import useSearchableSelectContext, { SearchableSelectContext } from "./useSearchableSelectContext";
 
 

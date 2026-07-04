@@ -36,6 +36,8 @@ export default function ChangeVoucherDialog({
 }: CommonChangeDialogProps<VoucherDto>)
 {
 	useSignals();
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<Voucher>(dto ? Voucher.load(dto) : Voucher.create()), []);
 
 	const {t} = useTranslation(["accounting", "common"]);

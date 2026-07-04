@@ -1,6 +1,6 @@
 import { Cubit } from "./cubit.ts";
-import { YusrApiHelper } from "../networking";
-import { UserMetadata, UserMetadataDto } from "../entities";
+import { YusrApiHelper } from "#/networking";
+import { UserMetadata, UserMetadataDto } from "#/entities";
 import { signal, type Signal } from "@preact/signals-react";
 
 

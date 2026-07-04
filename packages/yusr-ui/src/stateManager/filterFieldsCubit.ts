@@ -1,7 +1,7 @@
 import { signal, type Signal } from "@preact/signals-react";
 import { Cubit } from "../stateManager/cubit.ts";
-import type { FilterFieldMetadataDto } from "../filter/filterFieldMetadataDto.ts";
-import { YusrApiHelper } from "../networking";
+import type { FilterFieldMetadataDto } from "#/filter";
+import { YusrApiHelper } from "#/networking";
 
 
 export class FilterFieldsInitial
@@ -25,7 +25,7 @@ export type FilterFieldsState = FilterFieldsInitial | FilterFieldsLoading | Filt
 export class FilterFieldsCubit extends Cubit<FilterFieldsState>
 {
 	public fields: Signal<FilterFieldMetadataDto[]> = signal([]);
-	private _routeName: string;
+	private readonly _routeName: string;
 	private _loadedRouteName?: string;
 
 	constructor(routeName: string)

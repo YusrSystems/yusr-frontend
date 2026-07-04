@@ -1,7 +1,7 @@
 import type { Signal } from "@preact/signals-react";
 import { i18n } from "../locales";
-import { ChangeableEntity, ChangeableEntityMode, Dto } from "../stateManager";
-import { Validators } from "../validation";
+import { ChangeableEntity, ChangeableEntityMode, Dto } from "#/stateManager";
+import { Validators } from "#/validation";
 
 
 export class RoleDto extends Dto
@@ -15,7 +15,7 @@ export abstract class Role<TRoleDto extends RoleDto> extends ChangeableEntity<TR
 	public name: Signal<string>;
 	public permissions: Signal<string[]>;
 
-	constructor(
+	protected constructor(
 		dto: Partial<TRoleDto> | undefined,
 		mode: ChangeableEntityMode = ChangeableEntityMode.Create
 	)

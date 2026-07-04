@@ -1,7 +1,7 @@
 import { type TFunction } from "i18next";
 import { toast } from "sonner";
-import { AuthConstants } from "../auth";
-import { type RequestResult, ResultStatus } from "../types/requestResult";
+import { AuthConstants } from "#/auth";
+import { type RequestResult, ResultStatus } from "#/types";
 
 
 export class YusrApiHelper

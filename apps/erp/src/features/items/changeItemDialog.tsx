@@ -34,6 +34,7 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 
 	const {t} = useTranslation(["stocking", "common"]);
 	const servicesIds = useMemo(() => signal<ServiceIds>(), []);
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<Item>(dto ? Item.load(dto) : Item.create()), []);
 	const isLoading = useMemo(() => signal<boolean>(false), []);
 

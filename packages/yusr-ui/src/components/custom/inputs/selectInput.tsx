@@ -1,7 +1,7 @@
 import type { Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { cn } from "../../../utils/cn";
+import { cn } from "#/utils/cn.ts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../pure/select";
 
 

@@ -4,37 +4,42 @@ import Backend from "i18next-http-backend";
 import { initReactI18next } from "react-i18next";
 import { yusrNamespaces, yusrResources } from "./i18nResources";
 
+
 i18n
-  .use(Backend)
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    fallbackLng: "ar",
-    supportedLngs: ["ar", "en", "ur", "bn", "hi"],
-    ns: [...yusrNamespaces, "landing"],
-    defaultNS: "common",
+	.use(Backend)
+	.use(LanguageDetector)
+	.use(initReactI18next)
+	.init({
+		fallbackLng: "ar",
+		supportedLngs: ["ar", "en", "ur", "bn", "hi"],
+		ns: [...yusrNamespaces, "landing"],
+		defaultNS: "common",
 
-    partialBundledLanguages: true,
-    resources: yusrResources,
+		partialBundledLanguages: true,
+		resources: yusrResources,
 
-    backend: {
-      loadPath: "/locales/{{lng}}/{{ns}}.json"
-    },
+		backend: {
+			loadPath: "/locales/{{lng}}/{{ns}}.json"
+		},
 
-    detection: {
-      order: ["localStorage", "htmlTag", "cookie", "navigator"],
-      caches: ["localStorage", "cookie"]
-    },
+		detection: {
+			order: ["localStorage", "htmlTag", "cookie", "navigator"],
+			caches: ["localStorage", "cookie"]
+		},
 
-    interpolation: {
-      escapeValue: false
-    }
-  });
+		interpolation: {
+			escapeValue: false
+		}
+	})
+	.catch((error) =>
+	{
+		console.error("i18n initialization failed:", error);
+	});
 
 i18n.on("languageChanged", (lng) =>
 {
-  document.documentElement.setAttribute("lang", lng);
-  document.documentElement.setAttribute("dir", i18n.dir(lng));
+	document.documentElement.setAttribute("lang", lng);
+	document.documentElement.setAttribute("dir", i18n.dir(lng));
 });
 
 export { i18n };

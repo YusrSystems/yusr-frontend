@@ -2,15 +2,20 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import React, { type PropsWithChildren, type ReactNode, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { type Dto } from "../../..//stateManager";
-import { Button, type ButtonProps, ContextMenu, ContextMenuTrigger } from "../../../components/pure";
+import { type Dto } from "#/stateManager";
+import { Button, type ButtonProps, ContextMenu, ContextMenuTrigger } from "#/components/pure";
 import { Dialog, DialogContent } from "../../pure/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../pure/table";
 import { DeleteDialog, type DeleteDialogProps } from "../dialogs/deleteDialog";
-import { SearchInput, type SearchInputParams } from "../inputs/searchInput";
+import {
+	CrudTableHeader,
+	type CrudTableHeaderProps,
+	CrudTablePagination,
+	type CrudTablePaginationProps,
+	SearchInput,
+	type SearchInputParams
+} from "#/components/custom";
 import { CrudTableCard, type CrudTableCardProps } from "../table/crudTableCard";
-import { CrudTableHeader, type CrudTableHeaderProps } from "../table/crudTableHeader";
-import { CrudTablePagination, type CrudTablePaginationProps } from "../table/crudTablePagination";
 import { CrudTableRowActionsMenu, type CrudTableRowActionsMenuProps } from "../table/crudTableRowActionsMenu";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { CrudPageContext, useCrudPageContext } from "./crudPageContext";

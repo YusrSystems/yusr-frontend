@@ -33,6 +33,7 @@ export default function ChangeStocktakingDialog(
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
 	const isLoading = useMemo(() => signal<boolean>(false), []);
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<Stocktaking>(dto ? Stocktaking.load(dto) : Stocktaking.create()), []);
 
 	useEffect(() =>

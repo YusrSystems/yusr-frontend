@@ -1,6 +1,6 @@
 import { ChevronDown, HelpCircle, Info, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/pure";
+import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "#/components/pure";
 import type { PropsWithChildren } from "react";
 
 

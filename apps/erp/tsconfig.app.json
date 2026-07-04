@@ -5,14 +5,18 @@
     "noUncheckedIndexedAccess": true,
     "target": "ES2022",
     "useDefineForClassFields": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
-    "types": ["vite/client"],
+    "types": [
+      "vite/client"
+    ],
     "skipLibCheck": true,
-
     "resolveJsonModule": true,
     "esModuleInterop": true,
-
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -20,7 +24,6 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -29,8 +32,15 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "yusr-ui": ["../../packages/yusr-ui/src/index.ts"]
+      "@/*": [
+        "./src/*"
+      ],
+      "#/*": [
+        "../../packages/yusr-ui/src/*"
+      ],
+      "yusr-ui": [
+        "../../packages/yusr-ui/src/index.ts"
+      ]
     }
   }
 }

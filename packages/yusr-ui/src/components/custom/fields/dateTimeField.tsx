@@ -1,18 +1,19 @@
-import { DateTimeInput, type DateTimeInputProps } from "../inputs/dateTimeInput";
+import { DateTimeInput, type DateTimeInputProps } from "#/components/custom";
 import { FormFieldOld } from "./formField";
+
 
 interface DateTimeFieldProps extends DateTimeInputProps
 {
-  label: string;
-  error?: string;
-  required?: boolean;
+	label: string;
+	error?: string;
+	required?: boolean;
 }
 
-export function DateTimeField({ label, error, isInvalid, required, ...props }: DateTimeFieldProps)
+export function DateTimeField({label, error, isInvalid, required, ...props}: DateTimeFieldProps)
 {
-  return (
-    <FormFieldOld label={ label } error={ error } isInvalid={ isInvalid } required={ required }>
-      <DateTimeInput { ...props } isInvalid={ isInvalid } />
-    </FormFieldOld>
-  );
+	return (
+		<FormFieldOld label={ label } error={ error } isInvalid={ isInvalid } required={ required }>
+			<DateTimeInput { ...props } isInvalid={ isInvalid }/>
+		</FormFieldOld>
+	);
 }

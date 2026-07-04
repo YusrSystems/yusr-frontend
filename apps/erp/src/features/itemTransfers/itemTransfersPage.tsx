@@ -16,7 +16,7 @@ import {
 	UnauthorizedPage
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
-import { ItemTransferDto } from "../../core/data/itemTransfer";
+import { ItemTransferDto } from "@/core/data/itemTransfer.ts";
 import ReportButton from "../reports/reportButton";
 import ChangeItemTransferDialog from "./changeItemTransferDialog";
 

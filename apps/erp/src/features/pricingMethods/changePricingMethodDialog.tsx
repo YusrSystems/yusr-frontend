@@ -21,6 +21,8 @@ export default function ChangePricingMethodDialog(
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<PricingMethod>(dto ? PricingMethod.load(dto) : PricingMethod.create()), []);
 
 	if (

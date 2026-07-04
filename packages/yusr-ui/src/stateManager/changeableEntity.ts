@@ -1,5 +1,5 @@
 import { Signal, signal } from "@preact/signals-react";
-import type { ValidationRule } from "../validation";
+import type { ValidationRule } from "#/validation";
 import type { Dto } from "./dto";
 import { ValidatableEntity } from "./validatableEntity";
 import { Entity } from "./entity.ts";

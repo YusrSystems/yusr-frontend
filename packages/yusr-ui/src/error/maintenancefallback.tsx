@@ -1,6 +1,6 @@
 import { Cog, Home, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "../components/pure";
+import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "#/components/pure";
 import { i18n } from "../locales";
 
 

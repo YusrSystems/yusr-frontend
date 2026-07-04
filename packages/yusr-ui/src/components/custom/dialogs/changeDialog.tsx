@@ -1,20 +1,19 @@
-import { type PropsWithChildren, useState } from "react";
+import React, { type PropsWithChildren, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { ChangeableEntity, Dto } from "../../../stateManager";
-import { cn } from "../../../utils/cn";
+import type { ChangeableEntity, Dto } from "#/stateManager";
+import { cn } from "#/utils/cn.ts";
 import { Button } from "../../pure/button";
 import {
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle
 } from "../../pure/dialog";
-import { Separator } from "../../pure/separator";
+import { Separator } from "#/components/pure";
 import { SaveButton, type SaveButtonProps } from "../buttons/saveButton";
-import { TabButton } from "../buttons/tabButton";
-import { UnauthorizedPage } from "../unauthorized/unauthorizedPage";
+import { TabButton, UnauthorizedPage } from "#/components/custom";
 
 
 export type ChangeDialogProps =

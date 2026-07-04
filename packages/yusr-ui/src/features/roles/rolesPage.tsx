@@ -2,12 +2,12 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { Settings2 } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
-import { CrudPage, TablePreview, UnauthorizedPage } from "../../components/custom";
-import type { Role, RoleDto } from "../../entities";
-import type { RolesApiService } from "../../networking";
-import { BaseServices } from "../../services";
-import { ChangeableEntityMode, PageCubit, PageError, PageLoaded, PageLoading } from "../../stateManager";
+import { SystemPermissionsActions, YusrSystemPermissionsResources } from "#/auth";
+import { CrudPage, TablePreview, UnauthorizedPage } from "#/components/custom";
+import type { Role, RoleDto } from "#/entities";
+import type { RolesApiService } from "#/networking";
+import { BaseServices } from "#/services";
+import { ChangeableEntityMode, PageCubit, PageError, PageLoaded, PageLoading } from "#/stateManager";
 import { ChangeRoleDialog } from "./changeRoleDialog";
 
 

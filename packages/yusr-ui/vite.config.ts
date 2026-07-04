@@ -7,8 +7,7 @@ import dts from "vite-plugin-dts";
 export default defineConfig({
 	resolve: {
 		alias: {
-			"@": path.resolve(__dirname, "./src"),
-			"yusr-ui": resolve(__dirname, "../../packages/yusr-ui/src/index.ts")
+			"#": path.resolve(__dirname, "./src")
 		}
 	},
 	plugins: [

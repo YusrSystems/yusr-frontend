@@ -2,6 +2,7 @@ import { GripVertical, Trash2 } from "lucide-react";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	ChangeableEntityMode,
 	cn,
 	type ColumnDef,
 	ColumnVisibilityToggle,
@@ -284,7 +285,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 											<NumberField
 												min={ 0 }
 												value={ invoiceItem.cost }
-												disabled={ invoiceItem.itemType.value !== ItemType.Service }
+												disabled={ invoiceItem.itemType.value !== ItemType.Service || invoice.isDisabled }
 											/>
 										</td>
 									) }
@@ -388,20 +389,22 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 										</td>
 									) }
 
-									<td className="px-2 pt-2 text-center">
-										<button
-											type="button"
-											onClick={ () =>
-											{
-												invoice.removeItem(index);
-												invoice.syncPaymentVouchers();
-											} }
-											className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
-											aria-label={ t("invoices.deleteItem") }
-										>
-											<Trash2 className="h-5 w-5"/>
-										</button>
-									</td>
+									{ (invoice.mode.value !== ChangeableEntityMode.Update || invoice.type.value === InvoiceType.Quotation) && (
+										<td className="px-2 pt-2 text-center">
+											<button
+												type="button"
+												onClick={ () =>
+												{
+													invoice.removeItem(index);
+													invoice.syncPaymentVouchers();
+												} }
+												className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
+												aria-label={ t("invoices.deleteItem") }
+											>
+												<Trash2 className="h-5 w-5"/>
+											</button>
+										</td>
+									) }
 								</tr>
 
 								<tr

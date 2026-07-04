@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Progress as ProgressPrimitive } from "radix-ui";
-import { cn } from "../../utils/cn";
+import { cn } from "#/utils/cn.ts";
 
 
 interface ProgressProps extends React.ComponentProps<typeof ProgressPrimitive.Root>

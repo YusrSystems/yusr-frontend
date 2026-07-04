@@ -1,4 +1,4 @@
-import { Dto } from "../stateManager";
+import { Dto } from "#/stateManager";
 
 
 export type FilterResult<TDto extends Dto> = {

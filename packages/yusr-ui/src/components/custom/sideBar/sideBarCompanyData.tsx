@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../../pure/avatar";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../../pure/sidebar";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "#/components/pure";
 import { useSignals } from "@preact/signals-react/runtime";
 
 

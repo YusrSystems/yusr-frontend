@@ -1,5 +1,5 @@
-import { type BranchDto, type CityDto, type CurrencyDto, type RoleDto, type UserDto } from "../entities";
-import { BaseApiService, BaseFilterableApiService, RolesApiService } from "../networking";
+import { type BranchDto, type CityDto, type CurrencyDto, type RoleDto, type UserDto } from "#/entities";
+import { BaseApiService, BaseFilterableApiService, RolesApiService } from "#/networking";
 import type { AuthService } from "./authService";
 
 

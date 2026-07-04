@@ -102,7 +102,6 @@
     "brand": "Brand",
     "quantity": "Quantity",
     "averageCostWithoutTax": "Average Cost (Without Tax)",
-    "costWithTax": "Cost (Including Tax)",
     "product": "Product",
     "service": "Service",
     "itemImages": "Item Images",

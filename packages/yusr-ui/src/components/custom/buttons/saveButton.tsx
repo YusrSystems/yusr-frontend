@@ -3,9 +3,9 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { Loader2 } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { BaseApiService } from "../../../networking";
-import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "../../../stateManager";
-import { type RequestResult, ResultStatus } from "../../../types";
+import type { BaseApiService } from "#/networking";
+import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "#/stateManager";
+import { type RequestResult, ResultStatus } from "#/types";
 import {
 	Dialog,
 	DialogClose,

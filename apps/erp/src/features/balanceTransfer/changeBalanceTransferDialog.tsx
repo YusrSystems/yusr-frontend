@@ -32,6 +32,7 @@ export default function ChangeBalanceTransferDialog(
 	useSignals();
 
 	const {t} = useTranslation(["accounting", "common"]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<BalanceTransfer>(dto ? BalanceTransfer.load(dto) : BalanceTransfer.create()), []);
 	const amountToWords = useMemo(() => signal<string>(""), []);
 	const hasBankPerm = Services.auth.hasAuth(

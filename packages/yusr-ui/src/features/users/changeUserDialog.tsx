@@ -1,8 +1,9 @@
 import { useSignals } from "@preact/signals-react/runtime";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
+import { SystemPermissionsActions, YusrSystemPermissionsResources } from "#/auth";
 import {
+	BranchesSearchableSelect,
 	ChangeDialog,
 	type CommonChangeDialogProps,
 	FieldsSection,
@@ -10,11 +11,10 @@ import {
 	RolesSearchableSelect,
 	SelectField,
 	TextField
-} from "../../components/custom";
-import { BranchesSearchableSelect } from "../../components/custom/select/branchesSearchableSelect";
-import { User, UserDto } from "../../entities";
-import { BaseCubits, BaseServices } from "../../services";
-import { ChangeableEntityMode } from "../../stateManager";
+} from "#/components/custom";
+import { User, UserDto } from "#/entities";
+import { BaseCubits, BaseServices } from "#/services";
+import { ChangeableEntityMode } from "#/stateManager";
 import { signal } from "@preact/signals-react";
 
 

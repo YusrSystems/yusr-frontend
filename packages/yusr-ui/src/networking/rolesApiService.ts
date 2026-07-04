@@ -1,4 +1,4 @@
-import { type RoleDto } from "../entities/role";
+import { type RoleDto } from "#/entities";
 import { BaseApiService } from "./baseApiService";
 
 

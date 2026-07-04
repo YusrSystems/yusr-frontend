@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { createContext, useContext } from "react";
 import type { Signal } from "@preact/signals-react";
-import { Dto } from "../../../stateManager";
+import { Dto } from "#/stateManager";
 
 
 export type CrudPageContextType<TDto extends Dto> = {

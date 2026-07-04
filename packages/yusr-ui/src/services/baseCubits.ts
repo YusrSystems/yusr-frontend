@@ -1,5 +1,5 @@
-import { type BranchDto, type CityDto, CurrencyDto, type RoleDto, type UserDto } from "../entities";
-import { PageCubit } from "../stateManager";
+import { type BranchDto, type CityDto, CurrencyDto, type RoleDto, type UserDto } from "#/entities";
+import { PageCubit } from "#/stateManager";
 import { BaseServices } from "./baseServices";
 import { ContinueWithGoogleCubit } from "../stateManager/continueWithGoogleCubit";
 
