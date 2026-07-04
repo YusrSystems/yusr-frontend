@@ -109,7 +109,6 @@ export default function ChangeInvoiceDialog({
 							: InvoiceType.PurchaseReturn;
 						entity.value = Invoice.create(res.data);
 						entity.value.invoiceMode.value = InvoiceMode.Return;
-						entity.value.syncPaymentVouchers();
 					}
 					else if (entity.value.invoiceMode.value === InvoiceMode.Copy)
 					{
