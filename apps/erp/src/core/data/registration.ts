@@ -1,4 +1,4 @@
-import { type Signal, signal } from "@preact/signals-react";
+import { type Signal } from "@preact/signals-react";
 import { Dto, i18n, ValidatableEntity, type ValidationRule, Validators } from "yusr-ui";
 
 
@@ -10,6 +10,7 @@ class RegistrationDto extends Dto
 	public userPassword!: string;
 	public branchName!: string;
 	public hasAcceptedPolicies!: boolean;
+	public joinedByKey?: string;
 }
 
 class Registration extends ValidatableEntity<RegistrationDto>
@@ -20,6 +21,7 @@ class Registration extends ValidatableEntity<RegistrationDto>
 	public userPassword: Signal<string>;
 	public hasAcceptedPolicies: Signal<boolean>;
 	public branchName: Signal<string>;
+	public joinedByKey: Signal<string | undefined>;
 
 	constructor(dto?: Partial<RegistrationDto>)
 	{
@@ -51,8 +53,10 @@ class Registration extends ValidatableEntity<RegistrationDto>
 				field: "hasAcceptedPolicies",
 				selector: ((d) => d.hasAcceptedPolicies),
 				validators: [
-					Validators.required(i18n.t("loginRegister:register.accountInfo.acceptPoliciesError"))
-				]
+					Validators.custom(
+						(val) => val === true,
+						i18n.t("loginRegister:register.accountInfo.acceptPoliciesError")
+					)]
 			}];
 
 		super(dto, rules);
@@ -62,7 +66,8 @@ class Registration extends ValidatableEntity<RegistrationDto>
 		this.username = this.assign("username", dto?.username ?? "");
 		this.userPassword = this.assign("userPassword", dto?.userPassword ?? "");
 		this.branchName = this.assign("branchName", dto?.branchName ?? "");
-		this.hasAcceptedPolicies = signal(false);
+		this.hasAcceptedPolicies = this.assign("hasAcceptedPolicies", false);
+		this.joinedByKey = this.assign("joinedByKey", dto?.joinedByKey);
 	}
 }
 

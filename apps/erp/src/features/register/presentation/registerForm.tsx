@@ -3,7 +3,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
 	Button,
 	Card,
@@ -36,7 +36,9 @@ export function RegisterForm({
 {
 	useSignals();
 	const {t} = useTranslation("loginRegister");
-	const cubit = useMemo(() => new RegistrationCubit(), []);
+	const {joinedByKey} = useParams<{ joinedByKey?: string }>();
+	console.log("joinedByKey: ", joinedByKey);
+	const cubit = useMemo(() => new RegistrationCubit(joinedByKey), []);
 
 	const isLoading = cubit.state.value instanceof RegistrationStateLoading;
 

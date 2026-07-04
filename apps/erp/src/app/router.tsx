@@ -5,14 +5,7 @@ import { PaymentMethodsPage } from "@/features/paymentMethods/paymentMethodsPage
 import { ErpRolesPage } from "@/features/roles/erpRolesPage";
 import VouchersPage from "@/features/vouchers/vouchersPage.tsx";
 import { createBrowserRouter } from "react-router-dom";
-import {
-	BaseFilterableApiService,
-	BranchesPage,
-	ErrorFallback,
-	MaintenanceFallback,
-	NotFoundPage,
-	UsersPage
-} from "yusr-ui";
+import { BaseFilterableApiService, BranchesPage, ErrorFallback, NotFoundPage, UsersPage } from "yusr-ui";
 import BanksAccountsPage from "../features/accounts/banksAccountsPage";
 import BoxesAccountsPage from "../features/accounts/boxesAccountsPage";
 import ClientsAccountsPage from "../features/accounts/clientsAccountsPage";
@@ -59,8 +52,8 @@ export const router = createBrowserRouter([{
 	children: [
 		{path: "/", element: <LandingPage/>},
 		{path: "/login", element: <LoginPage/>},
-		{path: "/register", element: <RegisterPage/>},
-		{path: "/register", element: <MaintenanceFallback/>},
+		{path: "/register/:joinedByKey?", element: <RegisterPage/>},
+		// {path: "/register", element: <MaintenanceFallback/>},
 		{path: "/legal", element: <LegalDocViewer/>},
 		{path: "/sharing/:registrationKey", element: <TenantInfoSharingPage/>},
 		{
