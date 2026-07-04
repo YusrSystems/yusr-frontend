@@ -22,6 +22,8 @@ import type { ItemsTaxStatementReportRequest } from "@/core/data/report/itemsTax
 import type {
 	ItemsTaxStatementReportResult
 } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportResult.ts";
+import type { ProfitAndLossReportRequest } from "@/features/reports/profitAndLoss/profitAndLossReportRequest.ts";
+import type { ProfitAndLossReportResult } from "@/features/reports/profitAndLoss/profitAndLossReportResult.ts";
 
 
 export class Cubits extends BaseCubits
@@ -48,6 +50,7 @@ export class Cubits extends BaseCubits
 
 	public static readonly ItemsMovementReport = new PageReportCubit<ItemsMovementReportRequest, ItemsMovementReportResult>("ItemsMovement");
 	public static readonly ItemsTaxStatementReport = new PageReportCubit<ItemsTaxStatementReportRequest, ItemsTaxStatementReportResult>("ItemsTaxStatement");
+	public static readonly ProfitAndLossReport = new PageReportCubit<ProfitAndLossReportRequest, ProfitAndLossReportResult>("ProfitAndLoss");
 	public static readonly TaxReturnReport = new ReportCubit<TaxReturnReportRequest, TaxReturnReportResult>("TaxReturn");
 
 	static
