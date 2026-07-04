@@ -42,7 +42,7 @@ export function InvoicesListReportPage()
 			}
 
 			// Call filter while preserving search text, query params, and filter groups
-			Cubits.invoices.filter(
+			void Cubits.invoices.filter(
 				1,
 				undefined,
 				Cubits.invoices.searchText.value,
@@ -53,6 +53,7 @@ export function InvoicesListReportPage()
 		});
 
 		return () => dispose();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

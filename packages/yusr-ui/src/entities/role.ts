@@ -15,7 +15,7 @@ export abstract class Role<TRoleDto extends RoleDto> extends ChangeableEntity<TR
 	public name: Signal<string>;
 	public permissions: Signal<string[]>;
 
-	constructor(
+	protected constructor(
 		dto: Partial<TRoleDto> | undefined,
 		mode: ChangeableEntityMode = ChangeableEntityMode.Create
 	)

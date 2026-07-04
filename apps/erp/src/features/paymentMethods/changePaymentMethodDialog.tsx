@@ -31,6 +31,8 @@ export default function ChangePaymentMethodDialog(
 	{
 		Cubits.accounts.init([AccountType.Bank, AccountType.Box]);
 	}, []);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<PaymentMethod>(dto ? PaymentMethod.load(dto) : PaymentMethod.create()), []);
 
 	const {t} = useTranslation(["accounting", "common"]);

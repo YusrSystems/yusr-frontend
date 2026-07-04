@@ -14,8 +14,8 @@ export default function ItemsMultiSearchableSelect(
 {
 	useSignals();
 
-	const localIds = useMemo(() => ids ?? signal<number[]>([]), []);
-	const localLabels = useMemo(() => labels ?? signal<Record<number, string>>([]), []);
+	const localIds = useMemo(() => ids ?? signal<number[]>([]), [ids]);
+	const localLabels = useMemo(() => labels ?? signal<Record<number, string>>([]), [labels]);
 
 	return (<MultiSearchableSelect<ItemDto>>
 		<MultiSearchableSelect.Trigger

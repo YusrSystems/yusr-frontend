@@ -25,7 +25,7 @@ export type FilterFieldsState = FilterFieldsInitial | FilterFieldsLoading | Filt
 export class FilterFieldsCubit extends Cubit<FilterFieldsState>
 {
 	public fields: Signal<FilterFieldMetadataDto[]> = signal([]);
-	private _routeName: string;
+	private readonly _routeName: string;
 	private _loadedRouteName?: string;
 
 	constructor(routeName: string)

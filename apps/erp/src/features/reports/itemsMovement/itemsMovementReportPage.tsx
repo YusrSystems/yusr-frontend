@@ -21,6 +21,7 @@ export function ItemsMovementReportPage()
 	useEffect(() =>
 	{
 		void Cubits.ItemsMovementReport.getReportData(lastRequest.value, 1);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSubmit = (request: ItemsMovementReportRequest) =>

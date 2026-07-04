@@ -19,6 +19,8 @@ export default function ChangeStoreDialog({dto, service, onSuccess}: CommonChang
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<Store>(dto ? Store.load(dto) : Store.create()), []);
 
 	if (

@@ -1,6 +1,6 @@
 import { type Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import type { PropsWithChildren } from "react";
+import React, { type PropsWithChildren } from "react";
 import { Label } from "../../pure/label";
 
 

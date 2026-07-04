@@ -1,5 +1,6 @@
 import type { StorageFile } from "#/entities";
 import { Tooltip, TooltipContent, TooltipTrigger } from "#/components/pure";
+import React from "react";
 
 
 interface ImagePreviewProps

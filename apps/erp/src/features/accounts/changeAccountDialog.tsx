@@ -38,6 +38,8 @@ export default function ChangeAccountDialog(
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<Account>(dto ? Account.load(dto) : Account.create({type: fixedType})), []);
 
 	if (
