@@ -33,7 +33,6 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 
 	public async register()
 	{
-		console.log(this.formData);
 		if (!this.formData.validate() || !this.formData.hasAcceptedPolicies.value)
 		{
 			return;

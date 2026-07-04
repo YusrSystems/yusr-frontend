@@ -151,7 +151,6 @@ export class Validators
 	{
 		return (value, formData) =>
 		{
-			console.log(value);
 			return !fn(value, formData) ? message : null;
 		};
 	}

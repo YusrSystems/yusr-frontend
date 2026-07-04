@@ -37,8 +37,7 @@ export function RegisterForm({
 	useSignals();
 	const {t} = useTranslation("loginRegister");
 	const {joinedByKey} = useParams<{ joinedByKey?: string }>();
-	console.log("joinedByKey: ", joinedByKey);
-	const cubit = useMemo(() => new RegistrationCubit(joinedByKey), []);
+	const cubit = useMemo(() => new RegistrationCubit(joinedByKey), [joinedByKey]);
 
 	const isLoading = cubit.state.value instanceof RegistrationStateLoading;
 
