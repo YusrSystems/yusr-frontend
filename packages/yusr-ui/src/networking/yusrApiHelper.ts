@@ -186,7 +186,18 @@ export class YusrApiHelper
 			toast.error(t("api.tooManyRequests"));
 			return {data: undefined, status: ResultStatus.TooManyRequests, title: "Rejected", errors: [], warnings: []};
 		}
+		if (response.status >= 500)
+		{
+			toast.error(t("api.anErrorOccurred"));
+			return {
+				data: undefined,
+				status: ResultStatus.NotFound,
+				title: "",
+				errors: [""],
+				warnings: [""]
+			};
 
+		}
 		if (!response.ok)
 		{
 
