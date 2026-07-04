@@ -30,9 +30,10 @@ import { type Signal, signal } from "@preact/signals-react";
 
 
 export default function ChangeAccountDialog(
-	{dto, service, onSuccess, fixedType, selectTypes}: CommonChangeDialogProps<AccountDto> & {
+	{dto, service, onSuccess, fixedType, selectTypes, initDto}: CommonChangeDialogProps<AccountDto> & {
 		fixedType?: AccountType;
 		selectTypes?: AccountType[];
+		initDto?: AccountDto
 	}
 )
 {
@@ -40,7 +41,7 @@ export default function ChangeAccountDialog(
 	const {t} = useTranslation(["accounting", "common"]);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
-	const entity = useMemo(() => signal<Account>(dto ? Account.load(dto) : Account.create({type: fixedType})), []);
+	const entity = useMemo(() => signal<Account>(dto ? Account.load(dto) : Account.create({type: fixedType, ...initDto})), []);
 
 	if (
 		(entity.value.mode.value === ChangeableEntityMode.Create
