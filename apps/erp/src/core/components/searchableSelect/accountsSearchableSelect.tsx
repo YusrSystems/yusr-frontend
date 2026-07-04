@@ -41,7 +41,7 @@ export default function AccountsSearchableSelect(
 
 			{ showAddButton && isAddAccountOpen.value && (
 				<ChangeAccountDialog
-					dto={ {type: types[0], name: newAccountSearchText.value} as AccountDto }
+					initDto={ {type: types[0], name: newAccountSearchText.value} as AccountDto }
 					selectTypes={ types }
 					service={ Services.accountsApi }
 					onSuccess={ (data) =>
