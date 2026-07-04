@@ -284,7 +284,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 											<NumberField
 												min={ 0 }
 												value={ invoiceItem.cost }
-												disabled={ invoiceItem.itemType.value !== ItemType.Service }
+												disabled={ invoiceItem.itemType.value !== ItemType.Service || invoice.isDisabled }
 											/>
 										</td>
 									) }
