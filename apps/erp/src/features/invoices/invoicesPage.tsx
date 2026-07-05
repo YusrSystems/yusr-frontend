@@ -141,6 +141,11 @@ export default function InvoicesPage({
 				<PageTable fixedType={ fixedType } permissionResource={ permissionResource }/>
 
 				<CrudPage.ChangeDialog
+					fetchEntity={ async (id: number) =>
+					{
+						const result = await Services.invoicesApi.Get(id);
+						return result.data;
+					} }
 					changeDialog={ (dto: InvoiceDto | undefined, closeDialog) =>
 					{
 						return (
