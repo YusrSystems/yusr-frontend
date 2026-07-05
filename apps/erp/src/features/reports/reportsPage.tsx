@@ -13,6 +13,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import BalanceSheetDialog from "./BalanceSheetDialog";
 import { Cubits } from "@/core/services/cubits.ts";
 import { AccountType } from "@/core/data/account.ts";
 import { Services } from "@/core/services/services.ts";

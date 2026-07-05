@@ -24,6 +24,8 @@ import type {
 } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportResult.ts";
 import type { BalanceSheetReportResult } from "@/features/reports/balanceSheet/balanceSheetReportResult.ts";
 import type { BalanceSheetReportRequest } from "@/features/reports/balanceSheet/balanceSheetReportRequest.ts";
+import type { ProfitAndLossReportRequest } from "@/features/reports/profitAndLoss/profitAndLossReportRequest.ts";
+import type { ProfitAndLossReportResult } from "@/features/reports/profitAndLoss/profitAndLossReportResult.ts";
 
 
 export class Cubits extends BaseCubits
