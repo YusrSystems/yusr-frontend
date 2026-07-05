@@ -2,10 +2,11 @@ import type { StocktakingDto } from "@/core/data/stocktaking";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
-import { ClipboardCheck } from "lucide-react";
-import { useEffect } from "react";
+import { ClipboardCheck, Printer } from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	Button,
 	ChangeableEntityMode,
 	CrudPage,
 	PageError,
@@ -16,15 +17,19 @@ import {
 	UnauthorizedPage
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
-import ReportConstants from "../../core/data/report/reportConstants";
-import ReportButton from "../reports/reportButton";
 import ChangeStocktakingDialog from "./changeStocktakingDialog";
+import { createPortal } from "react-dom";
+import { StocktakingReport } from "@/features/reports/stocktaking/stocktakingReport.tsx";
+import { signal } from "@preact/signals-react";
 
 
 export default function StocktakingsPage()
 {
+	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
 	useEffect(() => Cubits.stocktaking.init(), []);
+
+	const printedStocktaking = useMemo(() => signal<StocktakingDto | undefined>(), []);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Stocktakings, SystemPermissionsActions.Get))
 	{
@@ -32,54 +37,73 @@ export default function StocktakingsPage()
 	}
 
 	return (
-		<CrudPage<StocktakingDto>>
-			<CrudPage.Header
-				title={ t("stocktakings.title") }
-				addButtonTitle={ t("stocktakings.addNewTitle") }
-				isAddButtonVisible={ Services.auth.hasAuth(
-					SystemPermissionsResources.Stocktakings,
-					SystemPermissionsActions.Add
-				) }
-			/>
+		<>
+			<CrudPage<StocktakingDto>>
+				<CrudPage.Header
+					title={ t("stocktakings.title") }
+					addButtonTitle={ t("stocktakings.addNewTitle") }
+					isAddButtonVisible={ Services.auth.hasAuth(
+						SystemPermissionsResources.Stocktakings,
+						SystemPermissionsActions.Add
+					) }
+				/>
 
-			<Cards/>
+				<Cards/>
 
-			<CrudPage.SearchInput onSearch={ (searchText) => Cubits.stocktaking.search(searchText) }/>
+				<CrudPage.SearchInput onSearch={ (searchText) => Cubits.stocktaking.search(searchText) }/>
 
-			<PageTable/>
-
-			<CrudPage.ChangeDialog
-				changeDialog={ (dto: StocktakingDto | undefined, closeDialog) =>
+				<PageTable onPrint={ (stocktaking) =>
 				{
-					return (
-						<ChangeStocktakingDialog
-							addDialogTitle={ t("stocktakings.addNewTitle") }
-							updateDialogTitle={ `${ t("common:crudRow.edit") } ${ t("stocktakings.entityName") }` }
-							dto={ dto }
-							service={ Services.stocktakingApi }
-							onSuccess={ (data, mode) =>
-							{
-								if (mode === ChangeableEntityMode.Create)
-								{
-									Cubits.stocktaking.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									Cubits.stocktaking.update(data);
-								}
-							} }
-						/>
-					);
-				} }
-			/>
+					printedStocktaking.value = stocktaking;
+					requestAnimationFrame(() =>
+					{
+						requestAnimationFrame(() =>
+						{
+							window.print();
+						});
+					});
+				} }/>
 
-			<CrudPage.DeleteDialog
-				entityNameSelector={ () => `"${ t("stocktakings.entityName") }"` }
-				service={ Services.stocktakingApi }
-				onSuccess={ (entity) => Cubits.stocktaking.delete(entity) }
-			/>
-		</CrudPage>
+				<CrudPage.ChangeDialog
+					changeDialog={ (dto: StocktakingDto | undefined, closeDialog) =>
+					{
+						return (
+							<ChangeStocktakingDialog
+								addDialogTitle={ t("stocktakings.addNewTitle") }
+								updateDialogTitle={ `${ t("common:crudRow.edit") } ${ t("stocktakings.entityName") }` }
+								dto={ dto }
+								service={ Services.stocktakingApi }
+								onSuccess={ (data, mode) =>
+								{
+									if (mode === ChangeableEntityMode.Create)
+									{
+										Cubits.stocktaking.add(data);
+										closeDialog();
+									}
+									else if (mode === ChangeableEntityMode.Update)
+									{
+										Cubits.stocktaking.update(data);
+									}
+								} }
+							/>
+						);
+					} }
+				/>
+
+				<CrudPage.DeleteDialog
+					entityNameSelector={ () => `"${ t("stocktakings.entityName") }"` }
+					service={ Services.stocktakingApi }
+					onSuccess={ (entity) => Cubits.stocktaking.delete(entity) }
+				/>
+			</CrudPage>
+
+			{ createPortal(
+				<div className="hidden print:block print:w-full print:static">
+					<StocktakingReport stocktaking={ printedStocktaking.value }/>
+				</div>,
+				document.body
+			) }
+		</>
 	);
 }
 
@@ -98,7 +122,7 @@ function Cards()
 	);
 }
 
-function PageTable()
+function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void })
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
@@ -140,10 +164,11 @@ function PageTable()
 						)
 							? [{
 								rowBody: (
-									<ReportButton
-										reportName={ ReportConstants.StockTaking }
-										request={ {stocktakingId: stocktaking.id} }
-									/>
+									<Button
+										onClick={ () => onPrint(stocktaking) }
+									>
+										<Printer className="h-4 w-4"/>
+									</Button>
 								),
 								rowStyles: "w-32"
 							}]
