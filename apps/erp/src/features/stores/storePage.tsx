@@ -15,7 +15,6 @@ import {
 	TablePreview,
 	UnauthorizedPage
 } from "yusr-ui";
-import ItemsListDialog from "../reports/itemsListDialog";
 import ChangeStoreDialog from "./changeStoreDialog";
 import { Cubits } from "@/core/services/cubits";
 
@@ -120,29 +119,13 @@ function PageTable()
 							rowBody: t("stores.storeId"),
 							rowStyles: "w-30"
 						},
-						{rowBody: t("stores.storeName"), rowStyles: "w-70"},
-						...(Services.auth.hasAuth(
-							SystemPermissionsResources.ReportItemList,
-							SystemPermissionsActions.Get
-						)
-							? [{rowBody: "", rowStyles: "w-32"}]
-							: [])
+						{rowBody: t("stores.storeName"), rowStyles: "w-70"}
 					] }
 					tableRowMapper={ (
 						store
 					) => [
 						{rowBody: `#${ store.id }`, rowStyles: ""},
-						{rowBody: store.name, rowStyles: "font-semibold"},
-						...(Services.auth.hasAuth(
-							SystemPermissionsResources.ReportItemList,
-							SystemPermissionsActions.Get
-						)
-							? [{
-								rowBody: <ItemsListDialog store={ store }
-								                          buttonLabel={ t("erpCommon:reports.itemsList") }/>,
-								rowStyles: "w-32"
-							}]
-							: [])
+						{rowBody: store.name, rowStyles: "font-semibold"}
 					] }
 					hasUpdatePermission={ Services.auth.hasAuth(
 						SystemPermissionsResources.Taxes,
