@@ -28,6 +28,10 @@ import type { ProfitAndLossReportRequest } from "@/features/reports/profitAndLos
 import type { ProfitAndLossReportResult } from "@/features/reports/profitAndLoss/profitAndLossReportResult.ts";
 import type { ItemStatementReportResult } from "@/features/reports/itemStatement/itemStatementReportResult.ts";
 import type { ItemStatementReportRequest } from "@/features/reports/itemStatement/itemStatementReportRequest.ts";
+import type {
+	AccountStatementReportRequest
+} from "@/features/reports/accountStatement/accountStatementReportRequest.ts";
+import type { AccountStatementReportResult } from "@/features/reports/accountStatement/accountStatementReportResult.ts";
 
 
 export class Cubits extends BaseCubits
@@ -55,6 +59,7 @@ export class Cubits extends BaseCubits
 
 	// reports
 	public static readonly ItemsMovementReport = new PageReportCubit<ItemsMovementReportRequest, ItemsMovementReportResult>("ItemsMovement");
+	public static readonly AccountStatementReport = new PageReportCubit<AccountStatementReportRequest, AccountStatementReportResult>("AccountStatement");
 	public static readonly ItemsTaxStatementReport = new PageReportCubit<ItemsTaxStatementReportRequest, ItemsTaxStatementReportResult>("ItemsTaxStatement");
 	public static readonly ProfitAndLossReport = new PageReportCubit<ProfitAndLossReportRequest, ProfitAndLossReportResult>("ProfitAndLoss");
 	public static readonly ItemStatementReport = new PageReportCubit<ItemStatementReportRequest, ItemStatementReportResult>("ItemStatement");

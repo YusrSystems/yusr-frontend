@@ -8,6 +8,7 @@ import { WalletIcon } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	Button,
 	ChangeableEntityMode,
 	CrudPage,
 	FilterSection,
@@ -22,10 +23,10 @@ import {
 } from "yusr-ui";
 import { type AccountDto, type AccountType } from "@/core/data/account.ts";
 import ReportConstants from "../../core/data/report/reportConstants";
-import { AccountStatementButton } from "../reports/accountStatementDialog";
 import ReportButton from "../reports/reportButton";
 import ChangeAccountDialog from "./changeAccountDialog";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { AppNavigator } from "@/app/appNavigator.ts";
 
 
 export default function AccountsPage(
@@ -155,7 +156,7 @@ function PageTable()
 {
 	useSignals();
 
-	const {t} = useTranslation(["accounting", "common"]);
+	const {t} = useTranslation(["accounting", "common", "erpCommon"]);
 
 	if (Cubits.accounts.state.value instanceof PageLoading)
 	{
@@ -226,7 +227,16 @@ function PageTable()
 								SystemPermissionsActions.Get
 							)
 								? [{
-									rowBody: <AccountStatementButton account={ account }/>,
+									rowBody: <Button
+										variant="outline"
+										size="sm"
+										onClick={ () =>
+											AppNavigator.openInNewTab(
+												`/reports/accountStatement/${ account.id }/${ encodeURIComponent(account.name) }`
+											)
+										}>
+										{ t("erpCommon:accountStatement.button") }
+									</Button>,
 									rowStyles: "w-32"
 								}]
 								: [])

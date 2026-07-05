@@ -146,6 +146,24 @@ export class Account extends ChangeableEntity<AccountDto>
 		this.accountContacts.value.forEach((t) => t.hasChanges.subscribe(checkChildren));
 	}
 
+	public static formatAddress(dto: AccountDto | undefined): string
+	{
+		if (!dto) return "_";
+
+		const nationalAddressParts = [dto.postalCode, dto.buildingNumber].filter(Boolean);
+		const nationalAddress = nationalAddressParts.length > 0 ? nationalAddressParts.join(" ").trim() : null;
+
+		const addressParts = [
+			dto.city?.country?.name,
+			dto.city?.name ?? dto.cityName,
+			dto.district,
+			dto.street,
+			nationalAddress
+		].filter(Boolean);
+
+		return addressParts.length > 0 ? addressParts.join(" - ") : "_";
+	}
+
 	override validate(dto?: Partial<AccountDto>): boolean
 	{
 		if (!super.validate(dto))
