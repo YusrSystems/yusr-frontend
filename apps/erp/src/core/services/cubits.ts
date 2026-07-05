@@ -22,6 +22,8 @@ import type { ItemsTaxStatementReportRequest } from "@/core/data/report/itemsTax
 import type {
 	ItemsTaxStatementReportResult
 } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportResult.ts";
+import type { BalanceSheetReportResult } from "@/features/reports/balanceSheet/balanceSheetReportResult.ts";
+import type { BalanceSheetReportRequest } from "@/features/reports/balanceSheet/balanceSheetReportRequest.ts";
 import type { ProfitAndLossReportRequest } from "@/features/reports/profitAndLoss/profitAndLossReportRequest.ts";
 import type { ProfitAndLossReportResult } from "@/features/reports/profitAndLoss/profitAndLossReportResult.ts";
 
@@ -44,14 +46,17 @@ export class Cubits extends BaseCubits
 	public static readonly vouchers = new PageCubit<VoucherDto>(Services.voucherApi);
 	public static readonly invoices = new PageCubit<InvoiceDto>(Services.invoicesApi);
 
+	// filter fields
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");
 	public static readonly itemFilterFields = new FilterFieldsCubit("Items");
 	public static readonly invoiceFilterFields = new FilterFieldsCubit("Invoices");
 
+	// reports
 	public static readonly ItemsMovementReport = new PageReportCubit<ItemsMovementReportRequest, ItemsMovementReportResult>("ItemsMovement");
 	public static readonly ItemsTaxStatementReport = new PageReportCubit<ItemsTaxStatementReportRequest, ItemsTaxStatementReportResult>("ItemsTaxStatement");
 	public static readonly ProfitAndLossReport = new PageReportCubit<ProfitAndLossReportRequest, ProfitAndLossReportResult>("ProfitAndLoss");
 	public static readonly TaxReturnReport = new ReportCubit<TaxReturnReportRequest, TaxReturnReportResult>("TaxReturn");
+	public static readonly BalanceSheetReport = new ReportCubit<BalanceSheetReportRequest, BalanceSheetReportResult>("BalanceSheet");
 
 	static
 	{

@@ -136,7 +136,8 @@ export default function ReportsPage()
 				SystemPermissionsActions.Get
 			)
 		}, {
-			comp: <BalanceSheetDialog/>,
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/balanceSheet") }>{ t("reports.create") }</Button>,
 			name: t("reports.balanceSheet"),
 			description: t("reports.balanceSheetDescription"),
 			icon: FileText,

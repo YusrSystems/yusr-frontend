@@ -25,11 +25,11 @@ export default defineConfig(({mode}) => ({
 			}
 		}
 		// proxy: {
-		//   "/api": {
-		//     target: "https://localhost:7142",
-		//     changeOrigin: true,
-		//     secure: false
-		//   }
+		// 	"/api": {
+		// 		target: "https://localhost:7142",
+		// 		changeOrigin: true,
+		// 		secure: false
+		// 	}
 		// }
 	}
 }));

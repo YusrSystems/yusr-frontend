@@ -38,6 +38,7 @@ import { TaxReturnReportPage } from "@/features/reports/taxReturn/taxReturnRepor
 import { ItemsTaxStatementReportPage } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportPage.tsx";
 import { InvoicesListReportPage } from "@/features/reports/invoicesList/invoicesListReportPage.tsx";
 import { ProfitAndLossReportPage } from "@/features/reports/profitAndLoss/profitAndLossReportPage.tsx";
+import { BalanceSheetReportPage } from "@/features/reports/balanceSheet/balanceSheetReportPage.tsx";
 
 
 const refreshPage = () =>
@@ -95,7 +96,8 @@ export const router = createBrowserRouter([{
 					{path: "/reports/itemsMovement", element: <ItemsMovementReportPage/>},
 					{path: "/reports/taxReturn", element: <TaxReturnReportPage/>},
 					{path: "/reports/itemsTaxStatement", element: <ItemsTaxStatementReportPage/>},
-					{path: "/reports/profitAndLoss", element: <ProfitAndLossReportPage/>}
+					{path: "/reports/profitAndLoss", element: <ProfitAndLossReportPage/>},
+					{path: "/reports/balanceSheet", element: <BalanceSheetReportPage/>}
 				]
 			}
 			]
