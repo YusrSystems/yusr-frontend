@@ -260,7 +260,9 @@
     "barcodeCount": "بارکوڈ کی تعداد",
     "pagesCount": "صفحات کی تعداد",
     "InvoicesList": "انوائسز کی فہرست",
-    "InvoicesListDescription": "جامع فلٹرنگ اختیارات کے ساتھ انوائسز دیکھیں"
+    "InvoicesListDescription": "جامع فلٹرنگ اختیارات کے ساتھ انوائسز دیکھیں",
+    "itemStatement": "آئٹم کا بیان",
+    "itemStatementDescription": "گوداموں اور مدت کے دوران آئٹم کی نقل و حرکت کی تفصیلات دیکھیں"
   },
   "accountStatement": {
     "button": "اکاؤنٹ سٹیٹمنٹ",

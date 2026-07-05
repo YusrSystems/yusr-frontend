@@ -260,7 +260,9 @@
     "barcodeCount": "Barcode Count",
     "pagesCount": "Pages Count",
     "InvoicesList": "Invoices List",
-    "InvoicesListDescription": "View invoices with comprehensive filtering options"
+    "InvoicesListDescription": "View invoices with comprehensive filtering options",
+    "itemStatement": "Item Statement",
+    "itemStatementDescription": "View item movement details across warehouses and time periods"
   },
   "accountStatement": {
     "button": "Account Statement",

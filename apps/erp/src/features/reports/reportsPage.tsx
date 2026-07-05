@@ -4,6 +4,7 @@ import {
 	FileText,
 	type LucideIcon,
 	Package,
+	PackageOpen,
 	PackageSearch,
 	Percent,
 	ReceiptText,
@@ -182,6 +183,16 @@ export default function ReportsPage()
 			icon: PackageSearch,
 			hasAuth: Services.auth.hasAuth(
 				SystemPermissionsResources.ReportItemList,
+				SystemPermissionsActions.Get
+			)
+		}, {
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/itemStatement") }>{ t("reports.create") }</Button>,
+			name: t("reports.itemStatement"),
+			description: t("reports.itemStatementDescription"),
+			icon: PackageOpen,
+			hasAuth: Services.auth.hasAuth(
+				SystemPermissionsResources.ReportItemMovement,
 				SystemPermissionsActions.Get
 			)
 		}, {

@@ -26,6 +26,8 @@ import type { BalanceSheetReportResult } from "@/features/reports/balanceSheet/b
 import type { BalanceSheetReportRequest } from "@/features/reports/balanceSheet/balanceSheetReportRequest.ts";
 import type { ProfitAndLossReportRequest } from "@/features/reports/profitAndLoss/profitAndLossReportRequest.ts";
 import type { ProfitAndLossReportResult } from "@/features/reports/profitAndLoss/profitAndLossReportResult.ts";
+import type { ItemStatementReportResult } from "@/features/reports/itemStatement/itemStatementReportResult.ts";
+import type { ItemStatementReportRequest } from "@/features/reports/itemStatement/itemStatementReportRequest.ts";
 
 
 export class Cubits extends BaseCubits
@@ -55,6 +57,7 @@ export class Cubits extends BaseCubits
 	public static readonly ItemsMovementReport = new PageReportCubit<ItemsMovementReportRequest, ItemsMovementReportResult>("ItemsMovement");
 	public static readonly ItemsTaxStatementReport = new PageReportCubit<ItemsTaxStatementReportRequest, ItemsTaxStatementReportResult>("ItemsTaxStatement");
 	public static readonly ProfitAndLossReport = new PageReportCubit<ProfitAndLossReportRequest, ProfitAndLossReportResult>("ProfitAndLoss");
+	public static readonly ItemStatementReport = new PageReportCubit<ItemStatementReportRequest, ItemStatementReportResult>("ItemStatement");
 	public static readonly TaxReturnReport = new ReportCubit<TaxReturnReportRequest, TaxReturnReportResult>("TaxReturn");
 	public static readonly BalanceSheetReport = new ReportCubit<BalanceSheetReportRequest, BalanceSheetReportResult>("BalanceSheet");
 
