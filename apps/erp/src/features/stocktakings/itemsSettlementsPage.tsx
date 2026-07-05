@@ -21,6 +21,7 @@ import ChangeStocktakingDialog from "./changeStocktakingDialog.tsx";
 import { signal } from "@preact/signals-react";
 import { createPortal } from "react-dom";
 import { StocktakingReport } from "@/features/reports/stocktaking/stocktakingReport.tsx";
+import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 
 
 export default function ItemsSettlementsPage()
@@ -103,13 +104,13 @@ export default function ItemsSettlementsPage()
 			</CrudPage>
 
 			{ createPortal(
-				<div className="hidden print:block print:w-full print:static">
+				<PortalReportContainer>
 					<StocktakingReport
 						stocktaking={ printedSettlement.value }
 						titleAr="تسوية مواد"
 						titleEn="ITEMS SETTLEMENT"
 					/>
-				</div>,
+				</PortalReportContainer>,
 				document.body
 			) }
 		</>

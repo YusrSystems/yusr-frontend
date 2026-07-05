@@ -40,6 +40,7 @@ import { InvoicesListReportPage } from "@/features/reports/invoicesList/invoices
 import { ProfitAndLossReportPage } from "@/features/reports/profitAndLoss/profitAndLossReportPage.tsx";
 import { BalanceSheetReportPage } from "@/features/reports/balanceSheet/balanceSheetReportPage.tsx";
 import { ItemStatementReportPage } from "@/features/reports/itemStatement/itemStatementReportPage.tsx";
+import { ItemBarcodeReportDebugPage } from "@/features/reports/itemBarcode/itemBarcodeReportDebugPage.tsx";
 
 
 const refreshPage = () =>
@@ -101,7 +102,9 @@ export const router = createBrowserRouter([{
 					{path: "/reports/itemsTaxStatement", element: <ItemsTaxStatementReportPage/>},
 					{path: "/reports/profitAndLoss", element: <ProfitAndLossReportPage/>},
 					{path: "/reports/balanceSheet", element: <BalanceSheetReportPage/>},
-					{path: "/reports/itemStatement/:itemId?/:itemName?", element: <ItemStatementReportPage/>}
+					{path: "/reports/itemStatement/:itemId?/:itemName?", element: <ItemStatementReportPage/>},
+					{path: "/debug/itemBarcode", element: <ItemBarcodeReportDebugPage/>}
+
 				]
 			}
 			]

@@ -21,6 +21,7 @@ import ChangeItemTransferDialog from "./changeItemTransferDialog";
 import { signal } from "@preact/signals-react";
 import { ItemTransferReport } from "@/features/reports/itemsTransfer/itemTransferReport.tsx";
 import { createPortal } from "react-dom";
+import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 
 
 export default function ItemTransfersPage()
@@ -100,9 +101,9 @@ export default function ItemTransfersPage()
 			</CrudPage>
 
 			{ createPortal(
-				<div className="hidden print:block print:w-full print:static">
+				<PortalReportContainer>
 					<ItemTransferReport itemTransfer={ printedTransfer.value }/>
-				</div>,
+				</PortalReportContainer>,
 				document.body
 			) }
 		</>

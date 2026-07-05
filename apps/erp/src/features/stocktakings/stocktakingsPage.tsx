@@ -21,6 +21,7 @@ import ChangeStocktakingDialog from "./changeStocktakingDialog";
 import { createPortal } from "react-dom";
 import { StocktakingReport } from "@/features/reports/stocktaking/stocktakingReport.tsx";
 import { signal } from "@preact/signals-react";
+import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 
 
 export default function StocktakingsPage()
@@ -98,9 +99,9 @@ export default function StocktakingsPage()
 			</CrudPage>
 
 			{ createPortal(
-				<div className="hidden print:block print:w-full print:static">
+				<PortalReportContainer>
 					<StocktakingReport stocktaking={ printedStocktaking.value }/>
-				</div>,
+				</PortalReportContainer>,
 				document.body
 			) }
 		</>

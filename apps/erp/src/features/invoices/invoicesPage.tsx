@@ -47,6 +47,7 @@ import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/items
 import { AccountType } from "@/core/data/account.ts";
 import { createPortal } from "react-dom";
 import { InvoicesListReport } from "@/features/reports/invoicesList/invoicesListReport.tsx";
+import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 
 
 export default function InvoicesPage({
@@ -178,9 +179,9 @@ export default function InvoicesPage({
 			</CrudPage>
 
 			{ createPortal(
-				<div className="hidden print:block print:w-full print:static">
+				<PortalReportContainer>
 					<InvoicesListReport isPortal={ true }/>
-				</div>,
+				</PortalReportContainer>,
 				document.body
 			) }
 		</VerifyAccountWrapper>

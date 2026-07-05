@@ -29,12 +29,17 @@ import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearc
 import { ItemsListReport } from "@/features/reports/itemsList/itemsListReport.tsx";
 import { createPortal } from "react-dom";
 import { AppNavigator } from "@/app/appNavigator.ts";
+import { ItemBarcodeReport } from "@/features/reports/itemBarcode/itemBarcodeReport.tsx";
+import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
+import { printBarcodesQtn, printItem, printIupm } from "@/features/reports/itemBarcodePrintState.ts";
 
 
 export default function ItemsPage()
 {
 	useSignals();
+
 	const {t} = useTranslation(["stocking", "erpCommon"]);
+
 	useEffect(() =>
 	{
 		Cubits.items.init();
@@ -124,10 +129,18 @@ export default function ItemsPage()
 				/>
 			</CrudPage>
 
-			{ createPortal(
-				<div className="hidden print:block print:w-full print:static">
+			{ (printItem.value == undefined || printIupm.value == undefined) && createPortal(
+				<PortalReportContainer>
 					<ItemsListReport isPortal={ true }/>
-				</div>,
+				</PortalReportContainer>,
+				document.body
+			) }
+
+			{ printItem.value && printIupm.value && createPortal(
+				<PortalReportContainer>
+					<ItemBarcodeReport item={ printItem.value } iupm={ printIupm.value }
+					                   barcodesQtn={ printBarcodesQtn.value }/>
+				</PortalReportContainer>,
 				document.body
 			) }
 		</>

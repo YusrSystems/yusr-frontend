@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { Button, FormField, NumberField, SystemPermissionsActions, TextField } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { ItemType } from "@/core/data/item.ts";
-import ItemBarcodeButton from "../../reports/itemBarcodeDialog";
+import ItemBarcodeButton from "../../reports/itemBarcode/itemBarcodeDialog.tsx";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 

@@ -1,6 +1,8 @@
 import type { PropsWithChildren } from "react";
 
 
+export const PRINT_PORTAL_CLASS = "report-print-root";
+
 interface ReportContainerProps extends PropsWithChildren
 {
 	isPortal?: boolean;
@@ -28,13 +30,24 @@ export function ReportContainer({children, isPortal = false}: ReportContainerPro
                 
                 /* ONLY hide the background layout if this instance is running via portal */
                 ${ isPortal ? `
-                   body > div:first-of-type {
-                      display: none !important;
-                   }
+                body > *:not(.report-print-root) {
+					display: none !important;
+				}
+				
+				body > .report-print-root {
+					display: block !important;
+				}
                 ` : "" }
              }
           ` }</style>
 			{ children }
 		</div>
 	);
+}
+
+export function PortalReportContainer({children}: PropsWithChildren)
+{
+	return <div className={ `hidden print:block print:w-full print:static ${ PRINT_PORTAL_CLASS }` }>
+		{ children }
+	</div>;
 }
