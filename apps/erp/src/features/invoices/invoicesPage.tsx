@@ -539,6 +539,7 @@ function PageTable({fixedType, permissionResource}: {
 		return (
 			<CrudPage.Table>
 				<CrudPage.TableBody<InvoiceDto>
+					isShareablePage={ true }
 					data={ Cubits.invoices.entities.value }
 					headerRows={ getTableHeadRows() }
 					tableRowMapper={ (invoice) => getTableRowMapper(invoice) }
