@@ -38,32 +38,18 @@ export default function ChangeStocktakingDialog(
 
 	useEffect(() =>
 	{
+		if (entity.value.mode.value !== ChangeableEntityMode.Create)
+		{
+			return;
+		}
+
 		Cubits.stores.init();
 
-		if (entity.value.mode.value === ChangeableEntityMode.Update && entity.value?.id.value)
-		{
-			isLoading.value = true;
-			const fetch = async () =>
-			{
-				const res = await service.Get(entity.value.id.value);
-				if (res.data != undefined)
-				{
-					res.data.date = new Date(res.data.date).toLocaleDateString("en-CA");
-					entity.value = Stocktaking.load(res.data);
-				}
-				isLoading.value = false;
-			};
-			void fetch();
-		}
-	}, [entity, isLoading, service]);
-
-	useEffect(() =>
-	{
 		if (entity.value?.storeId.value)
 		{
 			Cubits.items.init([ItemType.Product], {storeId: entity.value.storeId.value});
 		}
-	}, [entity.value.storeId.value]);
+	}, [entity.value.mode.value, entity.value.storeId.value]);
 
 	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? addDialogTitle

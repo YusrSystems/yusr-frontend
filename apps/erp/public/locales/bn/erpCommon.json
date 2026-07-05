@@ -260,7 +260,9 @@
     "barcodeCount": "বারকোডের সংখ্যা",
     "pagesCount": "পৃষ্ঠার সংখ্যা",
     "InvoicesList": "চালানের তালিকা",
-    "InvoicesListDescription": "বিস্তৃত ফিল্টারিং অপশন সহ চালান দেখুন"
+    "InvoicesListDescription": "বিস্তৃত ফিল্টারিং অপশন সহ চালান দেখুন",
+    "itemStatement": "আইটেম বিবরণী",
+    "itemStatementDescription": "গুদাম এবং সময়কাল জুড়ে আইটেম চলাচলের বিবরণ দেখুন"
   },
   "accountStatement": {
     "button": "অ্যাকাউন্ট স্টেটমেন্ট",

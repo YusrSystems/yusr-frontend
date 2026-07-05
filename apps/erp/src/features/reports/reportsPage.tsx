@@ -4,6 +4,7 @@ import {
 	FileText,
 	type LucideIcon,
 	Package,
+	PackageOpen,
 	PackageSearch,
 	Percent,
 	ReceiptText,
@@ -13,7 +14,6 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
-import BalanceSheetDialog from "./BalanceSheetDialog";
 import { Cubits } from "@/core/services/cubits.ts";
 import { AccountType } from "@/core/data/account.ts";
 import { Services } from "@/core/services/services.ts";
@@ -183,6 +183,16 @@ export default function ReportsPage()
 			icon: PackageSearch,
 			hasAuth: Services.auth.hasAuth(
 				SystemPermissionsResources.ReportItemList,
+				SystemPermissionsActions.Get
+			)
+		}, {
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/itemStatement") }>{ t("reports.create") }</Button>,
+			name: t("reports.itemStatement"),
+			description: t("reports.itemStatementDescription"),
+			icon: PackageOpen,
+			hasAuth: Services.auth.hasAuth(
+				SystemPermissionsResources.ReportItemMovement,
 				SystemPermissionsActions.Get
 			)
 		}, {

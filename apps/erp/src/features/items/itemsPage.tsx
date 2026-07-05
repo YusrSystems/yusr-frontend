@@ -22,13 +22,13 @@ import {
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { ItemType } from "@/core/data/item.ts";
-import ItemStatementButton from "../reports/itemStatementDialog";
 import ChangeItemDialog from "./changeItemDialog";
 import { type Signal } from "@preact/signals-react";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect.tsx";
 import { ItemsListReport } from "@/features/reports/itemsList/itemsListReport.tsx";
 import { createPortal } from "react-dom";
+import { AppNavigator } from "@/app/appNavigator.ts";
 
 
 export default function ItemsPage()
@@ -152,7 +152,7 @@ function Cards()
 function PageTable()
 {
 	useSignals();
-	const {t} = useTranslation(["stocking", "common"]);
+	const {t} = useTranslation(["stocking", "common", "erpCommon"]);
 
 	if (Cubits.items.state.value instanceof PageLoading)
 	{
@@ -216,7 +216,18 @@ function PageTable()
 							SystemPermissionsResources.ReportAccountStatement,
 							SystemPermissionsActions.Get
 						)
-							? [{rowBody: <ItemStatementButton item={ item }/>, rowStyles: "w-32"}]
+							? [{
+								rowBody: <Button
+									variant="outline"
+									size="sm"
+									onClick={ () =>
+										AppNavigator.openInNewTab(
+											`/reports/itemStatement/${ item.id }/${ encodeURIComponent(item.name) }`
+										)
+									}>
+									{ t("erpCommon:itemStatement.button") }
+								</Button>, rowStyles: "w-32"
+							}]
 							: [])
 					] }
 					hasUpdatePermission={ Services.auth.hasAuth(

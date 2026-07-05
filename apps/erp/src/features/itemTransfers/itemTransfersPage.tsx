@@ -1,11 +1,11 @@
-import ReportConstants from "@/core/data/report/reportConstants";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
-import { ArrowLeftRightIcon } from "lucide-react";
-import { useEffect } from "react";
+import { ArrowLeftRightIcon, Printer } from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	Button,
 	ChangeableEntityMode,
 	CrudPage,
 	PageError,
@@ -17,71 +17,95 @@ import {
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { ItemTransferDto } from "@/core/data/itemTransfer.ts";
-import ReportButton from "../reports/reportButton";
 import ChangeItemTransferDialog from "./changeItemTransferDialog";
+import { signal } from "@preact/signals-react";
+import { ItemTransferReport } from "@/features/reports/itemsTransfer/itemTransferReport.tsx";
+import { createPortal } from "react-dom";
 
 
 export default function ItemTransfersPage()
 {
+	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
 	useEffect(() => Cubits.itemTransfers.init(), []);
+	const printedTransfer = useMemo(() => signal<ItemTransferDto | undefined>(), []);
+
 	if (!Services.auth.hasAuth(SystemPermissionsResources.ItemTransfers, SystemPermissionsActions.Get))
 	{
 		return <UnauthorizedPage/>;
 	}
 
 	return (
-		<CrudPage<ItemTransferDto>>
-			<CrudPage.Header
-				title={ t("itemTransfers.title") }
-				addButtonTitle={ t("itemTransfers.addNewTitle") }
-				isAddButtonVisible={ Services.auth.hasAuth(
-					SystemPermissionsResources.ItemTransfers,
-					SystemPermissionsActions.Add
-				) }
-			/>
+		<>
+			<CrudPage<ItemTransferDto>>
+				<CrudPage.Header
+					title={ t("itemTransfers.title") }
+					addButtonTitle={ t("itemTransfers.addNewTitle") }
+					isAddButtonVisible={ Services.auth.hasAuth(
+						SystemPermissionsResources.ItemTransfers,
+						SystemPermissionsActions.Add
+					) }
+				/>
 
-			<Cards/>
+				<Cards/>
 
-			<CrudPage.SearchInput onSearch={ (searchText) => Cubits.itemTransfers.search(searchText) }/>
+				<CrudPage.SearchInput onSearch={ (searchText) => Cubits.itemTransfers.search(searchText) }/>
 
-			<PageTable/>
-
-			<CrudPage.ChangeDialog
-				fetchEntity={ async (id: number) =>
+				<PageTable onPrint={ (transfer) =>
 				{
-					const result = await Services.itemTransfersApi.Get(id);
-					return result.data;
-				} }
-				changeDialog={ (dto: ItemTransferDto | undefined, closeDialog) =>
-				{
-					return (
-						<ChangeItemTransferDialog
-							dto={ dto }
-							service={ Services.itemTransfersApi }
-							onSuccess={ (data, mode) =>
-							{
-								if (mode === ChangeableEntityMode.Create)
-								{
-									Cubits.itemTransfers.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									Cubits.itemTransfers.update(data);
-								}
-							} }
-						/>
-					);
-				} }
-			/>
+					printedTransfer.value = transfer;
+					requestAnimationFrame(() =>
+					{
+						requestAnimationFrame(() =>
+						{
+							window.print();
+						});
+					});
+				} }/>
 
-			<CrudPage.DeleteDialog
-				entityNameSelector={ () => `"${ t("itemTransfers.entityName") }"` }
-				service={ Services.itemTransfersApi }
-				onSuccess={ (entity) => Cubits.itemTransfers.delete(entity) }
-			/>
-		</CrudPage>
+				<CrudPage.ChangeDialog
+					fetchEntity={ async (id: number) =>
+					{
+						const result = await Services.itemTransfersApi.Get(id);
+						return result.data;
+					} }
+					changeDialog={ (dto: ItemTransferDto | undefined, closeDialog) =>
+					{
+						return (
+							<ChangeItemTransferDialog
+								dto={ dto }
+								service={ Services.itemTransfersApi }
+								onSuccess={ (data, mode) =>
+								{
+									if (mode === ChangeableEntityMode.Create)
+									{
+										Cubits.itemTransfers.add(data);
+										closeDialog();
+									}
+									else if (mode === ChangeableEntityMode.Update)
+									{
+										Cubits.itemTransfers.update(data);
+									}
+								} }
+							/>
+						);
+					} }
+				/>
+
+				<CrudPage.DeleteDialog
+					entityNameSelector={ () => `"${ t("itemTransfers.entityName") }"` }
+					service={ Services.itemTransfersApi }
+					onSuccess={ (entity) => Cubits.itemTransfers.delete(entity) }
+				/>
+			</CrudPage>
+
+			{ createPortal(
+				<div className="hidden print:block print:w-full print:static">
+					<ItemTransferReport itemTransfer={ printedTransfer.value }/>
+				</div>,
+				document.body
+			) }
+		</>
 	);
 }
 
@@ -100,7 +124,7 @@ function Cards()
 	);
 }
 
-function PageTable()
+function PageTable({onPrint}: { onPrint: (transfer: ItemTransferDto) => void })
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
@@ -145,10 +169,11 @@ function PageTable()
 						)
 							? [{
 								rowBody: (
-									<ReportButton
-										reportName={ ReportConstants.ItemTransfer }
-										request={ {itemTransferId: transfer.id} }
-									/>
+									<Button
+										onClick={ () => onPrint(transfer) }
+									>
+										<Printer className="h-4 w-4"/>
+									</Button>
 								),
 								rowStyles: "w-32"
 							}]

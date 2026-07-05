@@ -7,4 +7,9 @@ export class AppNavigator
 	{
 		await router.navigate(path, {replace});
 	}
+
+	static openInNewTab(path: string)
+	{
+		window.open(path, "_blank", "noopener,noreferrer");
+	}
 }

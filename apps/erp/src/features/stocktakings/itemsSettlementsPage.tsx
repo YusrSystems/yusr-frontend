@@ -2,10 +2,11 @@ import type { StocktakingDto } from "@/core/data/stocktaking.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 import { Services } from "@/core/services/services.ts";
 import { useSignals } from "@preact/signals-react/runtime";
-import { Scale } from "lucide-react";
-import { useEffect } from "react";
+import { Printer, Scale } from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	Button,
 	ChangeableEntityMode,
 	CrudPage,
 	PageError,
@@ -16,15 +17,19 @@ import {
 	UnauthorizedPage
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
-import ReportConstants from "../../core/data/report/reportConstants.ts";
-import ReportButton from "../reports/reportButton.tsx";
 import ChangeStocktakingDialog from "./changeStocktakingDialog.tsx";
+import { signal } from "@preact/signals-react";
+import { createPortal } from "react-dom";
+import { StocktakingReport } from "@/features/reports/stocktaking/stocktakingReport.tsx";
 
 
 export default function ItemsSettlementsPage()
 {
+	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
 	useEffect(() => Cubits.itemsSettlements.init(), []);
+
+	const printedSettlement = useMemo(() => signal<StocktakingDto | undefined>(), []);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.ItemsSettlements, SystemPermissionsActions.Get))
 	{
@@ -32,59 +37,82 @@ export default function ItemsSettlementsPage()
 	}
 
 	return (
-		<CrudPage<StocktakingDto>>
-			<CrudPage.Header
-				title={ t("itemsSettlements.title") }
-				addButtonTitle={ t("itemsSettlements.addNewTitle") }
-				isAddButtonVisible={ Services.auth.hasAuth(
-					SystemPermissionsResources.ItemsSettlements,
-					SystemPermissionsActions.Add
-				) }
-			/>
+		<>
+			<CrudPage<StocktakingDto>>
+				<CrudPage.Header
+					title={ t("itemsSettlements.title") }
+					addButtonTitle={ t("itemsSettlements.addNewTitle") }
+					isAddButtonVisible={ Services.auth.hasAuth(
+						SystemPermissionsResources.ItemsSettlements,
+						SystemPermissionsActions.Add
+					) }
+				/>
 
-			<Cards/>
+				<Cards/>
 
-			<CrudPage.SearchInput onSearch={ (searchText) => Cubits.itemsSettlements.search(searchText) }/>
+				<CrudPage.SearchInput onSearch={ (searchText) => Cubits.itemsSettlements.search(searchText) }/>
 
-			<PageTable/>
-
-			<CrudPage.ChangeDialog
-				fetchEntity={ async (id: number) =>
+				<PageTable onPrint={ (settlement) =>
 				{
-					const result = await Services.itemsSettlementsApi.Get(id);
-					return result.data;
-				} }
-				changeDialog={ (dto: StocktakingDto | undefined, closeDialog) =>
-				{
-					return (
-						<ChangeStocktakingDialog
-							addDialogTitle={ t("itemsSettlements.addNewTitle") }
-							updateDialogTitle={ `${ t("common:crudRow.edit") } ${ t("itemsSettlements.entityName") }` }
-							dto={ dto }
-							service={ Services.itemsSettlementsApi }
-							onSuccess={ (data, mode) =>
-							{
-								if (mode === ChangeableEntityMode.Create)
-								{
-									Cubits.itemsSettlements.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									Cubits.itemsSettlements.update(data);
-								}
-							} }
-						/>
-					);
-				} }
-			/>
+					printedSettlement.value = settlement;
+					requestAnimationFrame(() =>
+					{
+						requestAnimationFrame(() =>
+						{
+							window.print();
+						});
+					});
+				} }/>
 
-			<CrudPage.DeleteDialog
-				entityNameSelector={ () => `"${ t("itemsSettlements.entityName") }"` }
-				service={ Services.itemsSettlementsApi }
-				onSuccess={ (entity) => Cubits.itemsSettlements.delete(entity) }
-			/>
-		</CrudPage>
+				<CrudPage.ChangeDialog
+					fetchEntity={ async (id: number) =>
+					{
+						const result = await Services.itemsSettlementsApi.Get(id);
+						return result.data;
+					} }
+					changeDialog={ (dto: StocktakingDto | undefined, closeDialog) =>
+					{
+						return (
+							<ChangeStocktakingDialog
+								addDialogTitle={ t("itemsSettlements.addNewTitle") }
+								updateDialogTitle={ `${ t("common:crudRow.edit") } ${ t("itemsSettlements.entityName") }` }
+								dto={ dto }
+								service={ Services.itemsSettlementsApi }
+								onSuccess={ (data, mode) =>
+								{
+									if (mode === ChangeableEntityMode.Create)
+									{
+										Cubits.itemsSettlements.add(data);
+										closeDialog();
+									}
+									else if (mode === ChangeableEntityMode.Update)
+									{
+										Cubits.itemsSettlements.update(data);
+									}
+								} }
+							/>
+						);
+					} }
+				/>
+
+				<CrudPage.DeleteDialog
+					entityNameSelector={ () => `"${ t("itemsSettlements.entityName") }"` }
+					service={ Services.itemsSettlementsApi }
+					onSuccess={ (entity) => Cubits.itemsSettlements.delete(entity) }
+				/>
+			</CrudPage>
+
+			{ createPortal(
+				<div className="hidden print:block print:w-full print:static">
+					<StocktakingReport
+						stocktaking={ printedSettlement.value }
+						titleAr="تسوية مواد"
+						titleEn="ITEMS SETTLEMENT"
+					/>
+				</div>,
+				document.body
+			) }
+		</>
 	);
 }
 
@@ -103,7 +131,7 @@ function Cards()
 	);
 }
 
-function PageTable()
+function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void })
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
@@ -146,10 +174,11 @@ function PageTable()
 						)
 							? [{
 								rowBody: (
-									<ReportButton
-										reportName={ ReportConstants.ItemSettlement }
-										request={ {itemSettlementId: settlement.id} }
-									/>
+									<Button
+										onClick={ () => onPrint(settlement) }
+									>
+										<Printer className="h-4 w-4"/>
+									</Button>
 								),
 								rowStyles: "w-32"
 							}]

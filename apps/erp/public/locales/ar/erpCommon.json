@@ -260,7 +260,9 @@
     "barcodeCount": "عدد الباركودات",
     "pagesCount": "عدد الصفحات",
     "InvoicesList": "قائمة الفواتير",
-    "InvoicesListDescription": "استعراض الفواتير مع إمكانية التصفية والفلترة الشاملة"
+    "InvoicesListDescription": "استعراض الفواتير مع إمكانية التصفية والفلترة الشاملة",
+    "itemStatement": "كشف مادة",
+    "itemStatementDescription": "عرض تفاصيل حركة المادة عبر المستودعات والفترات الزمنية"
   },
   "accountStatement": {
     "button": "كشف حساب",
