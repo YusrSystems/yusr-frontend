@@ -5,7 +5,7 @@ import { CrudTablePagination, ReportLoading } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage.tsx";
 import { ItemsMovementReportFields } from "@/features/reports/itemsMovement/itemsMovementReportFields.tsx";
 import { ItemsMovementReport } from "@/features/reports/itemsMovement/itemsMovementReport.tsx";
-import { ItemsMovementReportRequest } from "@/core/data/report/itemsMovementReportRequest.ts";
+import { ItemsMovementReportRequest } from "@/features/reports/itemsMovement/itemsMovementReportRequest.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 
 
