@@ -28,6 +28,7 @@ import { AccountType } from "@/core/data/account.ts";
 import { InvoiceType } from "@/core/types/invoiceType";
 import { ItemType } from "@/core/data/item.ts";
 import { Services } from "@/core/services/services.ts";
+import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
 
 
 export default function ChangeInvoiceDialog({
@@ -108,6 +109,7 @@ export default function ChangeInvoiceDialog({
 						res.data.type = res.data.type === InvoiceType.Sell
 							? InvoiceType.SellReturn
 							: InvoiceType.PurchaseReturn;
+						res.data.invoiceVouchers = res.data.invoiceVouchers.filter(x => x.invoiceRelationType === InvoiceRelationType.Payment);
 						entity.value = Invoice.create(res.data);
 						entity.value.invoiceMode.value = InvoiceMode.Return;
 					}
