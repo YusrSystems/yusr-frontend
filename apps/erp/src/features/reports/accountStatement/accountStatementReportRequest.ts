@@ -5,6 +5,7 @@ export class AccountStatementReportRequest
 	toDate?: string | null;
 	pageNumber?: number;
 	rowsPerPage?: number;
+	groupByDocument: boolean = true;
 
 	constructor(init?: Partial<AccountStatementReportRequest>)
 	{

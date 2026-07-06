@@ -33,8 +33,10 @@ export function AccountStatementReportInfo({data}: AccountStatementReportInfoPro
 			</div>
 
 			<div className="grid grid-cols-2 gap-3 mt-2 pt-2">
-				<ReportField labelAr="رصيد الفترة" labelEn="Period Balance" value={ formatNumber(data.periodBalance) }/>
-				<ReportField labelAr="الرصيد الكلي" labelEn="Total Balance" value={ formatNumber(account.balance) }/>
+				<ReportField labelAr="رصيد الفترة" labelEn="Period Balance" valueClassName="font-bold!"
+				             value={ formatNumber(data.periodBalance) }/>
+				<ReportField labelAr="الرصيد الكلي" labelEn="Total Balance" valueClassName="font-bold!"
+				             value={ formatNumber(account.balance) }/>
 			</div>
 
 			<div className="grid grid-cols-2 gap-3">
