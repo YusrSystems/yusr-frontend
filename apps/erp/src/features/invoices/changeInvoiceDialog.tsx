@@ -9,7 +9,11 @@ import {
 	type CommonChangeDialogProps,
 	DateService,
 	DialogClose,
+	DialogContent,
+	DialogDescription,
 	DialogFooter,
+	DialogHeader,
+	DialogTitle,
 	Loading,
 	type RequestResult,
 	StorageType,
@@ -47,7 +51,7 @@ export default function ChangeInvoiceDialog({
 	const entity = useMemo(() => signal(dto ? Invoice.load(dto) : Invoice.create({type: fixedType})), []);
 	const isFullyReturned = useMemo(() => signal(false), []);
 	const isLoading = useMemo(() => signal(false), []);
-
+	const hasCostVouchers = useMemo(() => signal<boolean>(false), []);
 	const {commitFiles} = useStorageFile(
 		() => entity.value.invoiceFiles.value ?? [],
 		(files) => entity.value.invoiceFiles.value = files,
@@ -111,6 +115,7 @@ export default function ChangeInvoiceDialog({
 							: InvoiceType.PurchaseReturn;
 						res.data.invoiceVouchers = res.data.invoiceVouchers.filter(x => x.invoiceRelationType === InvoiceRelationType.Payment);
 						entity.value = Invoice.create(res.data);
+						hasCostVouchers.value = res.data.invoiceVouchers.some(e => e.invoiceRelationType === InvoiceRelationType.Cost) ?? false;
 						entity.value.invoiceMode.value = InvoiceMode.Return;
 					}
 					else if (entity.value.invoiceMode.value === InvoiceMode.Copy)
@@ -275,8 +280,98 @@ export default function ChangeInvoiceDialog({
 						onSuccess?.(data, entity.value.mode.value);
 					} }
 					transformData={ transformDataBeforeSave }
+					showConfirmationDialog={ () =>
+					{
+						return hasCostVouchers.value;
+					} }
+					confirmationDialog={ <ConfirmationDialog/> }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>
 	);
+}
+
+function ConfirmationDialog()
+{
+	const {i18n} = useTranslation("accounting");
+
+	async function keepCostsAndContinue()
+	{
+		// TODO
+	}
+
+	async function deleteCostsAndContinue()
+	{
+		// TODO
+	}
+
+	return <DialogContent dir={ i18n.dir() } className=" sm:max-w-xl ">
+		<DialogHeader>
+			<DialogTitle>
+				الفاتورة الأصلية تحتوي على سندات تكاليف
+			</DialogTitle>
+
+			<DialogDescription asChild>
+				<div className="mt-4 space-y-5 text-start text-[15px] leading-7 text-foreground">
+
+					<p>
+						تم العثور على <strong>سندات تكاليف</strong> مرتبطة بالفاتورة الأصلية.
+						لا يمكن إنشاء فاتورة المرتجع قبل تحديد كيفية التعامل مع هذه السندات.
+					</p>
+
+					<div className="rounded-lg border p-4 space-y-4">
+
+						<div>
+							<h4 className="font-semibold text-foreground">
+								إبقاء التكاليف وإنشاء المرتجع
+							</h4>
+							<p className="text-foreground/80">
+								سيتم الاحتفاظ بجميع سندات التكاليف كما هي، ثم إنشاء فاتورة المرتجع.
+							</p>
+						</div>
+
+						<div>
+							<h4 className="font-semibold text-destructive">
+								حذف التكاليف وإنشاء المرتجع
+							</h4>
+							<p className="text-foreground/80">
+								سيتم حذف جميع سندات التكاليف المرتبطة بالفاتورة الأصلية بشكل نهائي، ثم إنشاء فاتورة
+								المرتجع.
+							</p>
+						</div>
+
+						<div>
+							<h4 className="font-semibold text-foreground">
+								إلغاء
+							</h4>
+							<p className="text-foreground/80">
+								لن يتم إنشاء فاتورة المرتجع، ولن يتم إجراء أي تغييرات.
+							</p>
+						</div>
+
+					</div>
+
+				</div>
+			</DialogDescription>
+		</DialogHeader>
+
+		<DialogFooter>
+			<DialogClose asChild>
+				<Button variant="outline">
+					إلغاء
+				</Button>
+			</DialogClose>
+
+			<Button onClick={ keepCostsAndContinue }>
+				إبقاء التكاليف وإنشاء المرتجع
+			</Button>
+
+			<Button
+				variant="destructive"
+				onClick={ deleteCostsAndContinue }
+			>
+				حذف التكاليف وإنشاء المرتجع
+			</Button>
+		</DialogFooter>
+	</DialogContent>;
 }

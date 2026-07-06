@@ -52,6 +52,7 @@ export class InvoiceDto extends Dto
 	public notes?: string;
 	public policy?: string;
 	public importExportType?: ImportExportType;
+	public deleteOriginalInvoiceCostVouchers!: boolean;
 
 	public createdAt!: string | Date;
 	public createdBy!: number;
@@ -90,6 +91,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 	public notes: Signal<string | undefined>;
 	public policy: Signal<string | undefined>;
 	public importExportType: Signal<ImportExportType | undefined>;
+	public deleteOriginalInvoiceCostVouchers: Signal<boolean | undefined>;
 
 	public createdAt: Signal<string | Date>;
 	public createdBy: Signal<number>;
@@ -175,6 +177,8 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.policy = this.assign("policy", dto?.policy ?? Services.auth.setting?.getInvoicePolicy(this.type.value));
 
 		this.importExportType = this.assign("importExportType", dto?.importExportType);
+
+		this.deleteOriginalInvoiceCostVouchers = this.assign("deleteOriginalInvoiceCostVouchers", dto?.deleteOriginalInvoiceCostVouchers ?? false);
 
 		this.createdAt = this.assign("createdAt", dto?.createdAt);
 		this.createdBy = this.assign("createdBy", dto?.createdBy);

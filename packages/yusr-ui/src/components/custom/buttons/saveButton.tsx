@@ -1,7 +1,7 @@
 import { type Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Loader2 } from "lucide-react";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { BaseApiService } from "#/networking";
 import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "#/stateManager";
@@ -28,6 +28,9 @@ export interface SaveButtonProps<TEntity extends ChangeableEntity<TDto>, TDto ex
 	disabled?: boolean;
 	onSuccess?: (newData: TDto) => void;
 	transformData?: (data: TDto) => TDto | Promise<TDto>;
+	showConfirmationDialog?: (entity: TEntity) => boolean;
+	confirmationDialog?: React.ReactNode;
+
 }
 
 export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
@@ -39,7 +42,9 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 		className,
 		disabled,
 		onSuccess,
-		transformData
+		transformData,
+		showConfirmationDialog,
+		confirmationDialog
 	}: SaveButtonProps<TEntity, TDto>
 )
 {
@@ -51,11 +56,17 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 	const warnings = useMemo(() => signal<string[]>([]), []);
 	const showWarnings = useMemo(() => signal(false), []);
 	const pendingIgnore = useMemo(() => signal(false), []);
+	const showConfirmationDialogSignal = useMemo(() => signal(false), []);
 
 	async function Save()
 	{
 		if (!entity.value.validate())
 		{
+			return;
+		}
+		if (!showConfirmationDialog?.(entity.value))
+		{
+			showConfirmationDialogSignal.value = true;
 			return;
 		}
 
@@ -159,6 +170,15 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
+
+			{ showConfirmationDialogSignal.value &&
+                <Dialog
+
+                    open={ showConfirmationDialogSignal.value }
+                    onOpenChange={ (open) => showConfirmationDialogSignal.value = open }>
+					{ confirmationDialog }
+                </Dialog>
+			}
 		</>
 	);
 }
