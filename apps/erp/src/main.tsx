@@ -30,11 +30,13 @@ async function revealApp()
 }
 
 createRoot(document.getElementById("root")!).render(
-	<YusrApp
-		onReady={ revealApp }
-	>
-		<App/>
-		<Analytics/>
-		<SpeedInsights/>
-	</YusrApp>
+	<div className="app-root">
+		<YusrApp
+			onReady={ revealApp }
+		>
+			<App/>
+			<Analytics/>
+			<SpeedInsights/>
+		</YusrApp>
+	</div>
 );

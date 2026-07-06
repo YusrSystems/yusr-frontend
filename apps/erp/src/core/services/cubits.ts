@@ -14,11 +14,10 @@ import type { StoreDto } from "@/core/data/store.ts";
 import { type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { type CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
 import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
-import type { ItemsMovementReportRequest } from "@/core/data/report/itemsMovementReportRequest.ts";
+import type { ItemsMovementReportRequest } from "@/features/reports/itemsMovement/itemsMovementReportRequest.ts";
 import type { ItemsMovementReportResult } from "@/features/reports/itemsMovement/itemsMovementReportResult.ts";
 import type { TaxReturnReportRequest } from "@/features/reports/taxReturn/taxReturnReportRequest.ts";
 import type { TaxReturnReportResult } from "@/features/reports/taxReturn/taxReturnReportResult.ts";
-import type { ItemsTaxStatementReportRequest } from "@/core/data/report/itemsTaxStatementReportRequest.ts";
 import type {
 	ItemsTaxStatementReportResult
 } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportResult.ts";
@@ -28,6 +27,13 @@ import type { ProfitAndLossReportRequest } from "@/features/reports/profitAndLos
 import type { ProfitAndLossReportResult } from "@/features/reports/profitAndLoss/profitAndLossReportResult.ts";
 import type { ItemStatementReportResult } from "@/features/reports/itemStatement/itemStatementReportResult.ts";
 import type { ItemStatementReportRequest } from "@/features/reports/itemStatement/itemStatementReportRequest.ts";
+import type {
+	AccountStatementReportRequest
+} from "@/features/reports/accountStatement/accountStatementReportRequest.ts";
+import type { AccountStatementReportResult } from "@/features/reports/accountStatement/accountStatementReportResult.ts";
+import type {
+	ItemsTaxStatementReportRequest
+} from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportRequest";
 
 
 export class Cubits extends BaseCubits
@@ -55,6 +61,7 @@ export class Cubits extends BaseCubits
 
 	// reports
 	public static readonly ItemsMovementReport = new PageReportCubit<ItemsMovementReportRequest, ItemsMovementReportResult>("ItemsMovement");
+	public static readonly AccountStatementReport = new PageReportCubit<AccountStatementReportRequest, AccountStatementReportResult>("AccountStatement");
 	public static readonly ItemsTaxStatementReport = new PageReportCubit<ItemsTaxStatementReportRequest, ItemsTaxStatementReportResult>("ItemsTaxStatement");
 	public static readonly ProfitAndLossReport = new PageReportCubit<ProfitAndLossReportRequest, ProfitAndLossReportResult>("ProfitAndLoss");
 	public static readonly ItemStatementReport = new PageReportCubit<ItemStatementReportRequest, ItemStatementReportResult>("ItemStatement");

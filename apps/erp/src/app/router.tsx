@@ -40,6 +40,8 @@ import { InvoicesListReportPage } from "@/features/reports/invoicesList/invoices
 import { ProfitAndLossReportPage } from "@/features/reports/profitAndLoss/profitAndLossReportPage.tsx";
 import { BalanceSheetReportPage } from "@/features/reports/balanceSheet/balanceSheetReportPage.tsx";
 import { ItemStatementReportPage } from "@/features/reports/itemStatement/itemStatementReportPage.tsx";
+import { AccountStatementReportPage } from "@/features/reports/accountStatement/accountStatementReportPage.tsx";
+import { AccountsListReportPage } from "@/features/reports/accountsList/accountsListReportPage.tsx";
 
 
 const refreshPage = () =>
@@ -80,9 +82,6 @@ export const router = createBrowserRouter([{
 					{path: "/paymentMethods", element: <PaymentMethodsPage/>},
 					{path: "/balanceTransfer", element: <BalanceTransfersPage/>},
 					{path: "/sales/:id?", element: <SellInvoicesPage/>},
-					{path: "/purchases/:id?", element: <PurchaseInvoicesPage/>},
-					{path: "/quotations/:id?", element: <QuotationInvoicesPage/>},
-					{path: "/vouchers", element: <VouchersPage/>},
 					{path: "/items/:id?", element: <ItemsPage/>},
 					{path: "/costAdjustments", element: <CostAdjustmentsPage/>},
 					{path: "/pricingMethods", element: <PricingMethodsPage/>},
@@ -91,15 +90,26 @@ export const router = createBrowserRouter([{
 					{path: "/itemsSettlements/:id?", element: <ItemsSettlementsPage/>},
 					{path: "/reports", element: <ReportsPage/>},
 
+					// invoices
+					{path: "/purchases/:id?", element: <PurchaseInvoicesPage/>},
+					{path: "/quotations/:id?", element: <QuotationInvoicesPage/>},
+					{path: "/vouchers", element: <VouchersPage/>},
+
 					// reports
 					{path: "/reports/itemsList", element: <ItemsListReportPage/>},
+					{path: "/reports/accountsList", element: <AccountsListReportPage/>},
 					{path: "/reports/invoicesList", element: <InvoicesListReportPage/>},
 					{path: "/reports/itemsMovement", element: <ItemsMovementReportPage/>},
 					{path: "/reports/taxReturn", element: <TaxReturnReportPage/>},
 					{path: "/reports/itemsTaxStatement", element: <ItemsTaxStatementReportPage/>},
 					{path: "/reports/profitAndLoss", element: <ProfitAndLossReportPage/>},
 					{path: "/reports/balanceSheet", element: <BalanceSheetReportPage/>},
-					{path: "/reports/itemStatement/:itemId?/:itemName?", element: <ItemStatementReportPage/>}
+					{path: "/reports/itemStatement/:itemId?/:itemName?", element: <ItemStatementReportPage/>},
+					{
+						path: "/reports/accountStatement/:accountId?/:accountName?",
+						element: <AccountStatementReportPage/>
+					}
+
 				]
 			}
 			]

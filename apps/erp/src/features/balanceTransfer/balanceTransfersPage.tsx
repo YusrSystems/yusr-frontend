@@ -1,5 +1,4 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import ReportConstants from "@/core/data/report/reportConstants";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -9,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import {
 	ChangeableEntityMode,
 	CrudPage,
-	NumbertoWordsService,
 	PageError,
 	PageLoaded,
 	PageLoading,
@@ -17,7 +15,6 @@ import {
 	TablePreview,
 	UnauthorizedPage
 } from "yusr-ui";
-import ReportButton from "../reports/reportButton";
 import ChangeBalanceTransferDialog from "./changeBalanceTransferDialog";
 import { BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
@@ -121,13 +118,7 @@ function Table()
 						{rowBody: t("balanceTransfers.fromAccount"), rowStyles: "w-40"},
 						{rowBody: t("balanceTransfers.toAccount"), rowStyles: "w-40"},
 						{rowBody: t("balanceTransfers.amount"), rowStyles: "w-32"},
-						{rowBody: t("balanceTransfers.description"), rowStyles: "w-48"},
-						...(Services.auth.hasAuth(
-							SystemPermissionsResources.ReportBalanceTransfer,
-							SystemPermissionsActions.Get
-						)
-							? [{rowBody: "", rowStyles: "w-32"}]
-							: [])
+						{rowBody: t("balanceTransfers.description"), rowStyles: "w-48"}
 					] }
 					tableRowMapper={ (
 						transfer
@@ -148,29 +139,7 @@ function Table()
 						{
 							rowBody: transfer.description ?? "-",
 							rowStyles: "text-sm text-gray-500 truncate max-w-[200px]"
-						},
-						...(Services.auth.hasAuth(
-							SystemPermissionsResources.ReportBalanceTransfer,
-							SystemPermissionsActions.Get
-						)
-							? [{
-								rowBody: (
-									<ReportButton
-										reportName={ ReportConstants.BalanceTransfer }
-										request={ {
-											balanceTransferId: transfer.id,
-											tafqit: Services.auth.setting?.currency?.value
-												? NumbertoWordsService.ConvertAmount(
-													transfer.amount,
-													Services.auth.setting?.currency.value
-												)
-												: NumbertoWordsService.Convert(transfer.amount)
-										} }
-									/>
-								),
-								rowStyles: "w-32"
-							}]
-							: [])
+						}
 					] }
 					hasUpdatePermission={ Services.auth.hasAuth(
 						SystemPermissionsResources.BalanceTransfers,

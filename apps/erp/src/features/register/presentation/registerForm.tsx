@@ -45,7 +45,15 @@ export function RegisterForm({
 		<div className={ cn("flex flex-col gap-6", className) } { ...props }>
 			<Card className="overflow-hidden p-0">
 				<CardContent className="grid p-0 md:grid-cols-2">
-					<form className="p-6 md:p-8">
+					<form
+						className="p-6 md:p-8"
+						onSubmit={ async (e) =>
+						{
+							e.preventDefault();
+							if (isLoading) return;
+							await cubit.register();
+						} }
+					>
 						<FieldGroup>
 							<div className="flex flex-col items-center gap-2 text-center">
 								<div className="w-full flex justify-start mb-5">
@@ -197,7 +205,7 @@ function SubmitButton({isLoading, onSubmit}: { isLoading: boolean; onSubmit: () 
 		<div className={ "flex gap-2 justify-between" }>
 			<Field className="flex-1">
 				<Button
-					type="button"
+					type="submit"
 					disabled={ isLoading }
 					onClick={ onSubmit }
 				>

@@ -10,13 +10,10 @@ import {
 	FormField,
 	SelectField
 } from "yusr-ui";
-import {
-	ItemsTaxStatementReportRequest,
-	ItemsTaxStatementReportType
-} from "@/core/data/report/itemsTaxStatementReportRequest.ts";
 import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect.tsx";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
+import { ItemsTaxStatementReportRequest, ItemsTaxStatementReportType } from "./itemsTaxStatementReportRequest";
 
 
 interface ItemsTaxStatementReportFieldsProps

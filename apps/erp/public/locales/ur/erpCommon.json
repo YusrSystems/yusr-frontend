@@ -262,7 +262,11 @@
     "InvoicesList": "انوائسز کی فہرست",
     "InvoicesListDescription": "جامع فلٹرنگ اختیارات کے ساتھ انوائسز دیکھیں",
     "itemStatement": "آئٹم کا بیان",
-    "itemStatementDescription": "گوداموں اور مدت کے دوران آئٹم کی نقل و حرکت کی تفصیلات دیکھیں"
+    "itemStatementDescription": "گوداموں اور مدت کے دوران آئٹم کی نقل و حرکت کی تفصیلات دیکھیں",
+    "accountStatement": "اکاؤنٹ کا بیان",
+    "accountStatementDescription": "مخصوص اکاؤنٹ کی منتخب تاریخ کی حد کے دوران لین دین دیکھیں",
+    "accountsList": "اکاؤنٹس کی فہرست",
+    "accountsListDescription": "تمام اکاؤنٹس بیلنس اور تفصیلی معلومات کے ساتھ دیکھیں"
   },
   "accountStatement": {
     "button": "اکاؤنٹ سٹیٹمنٹ",

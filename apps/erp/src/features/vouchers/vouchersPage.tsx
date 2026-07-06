@@ -1,9 +1,9 @@
 import { Services } from "@/core/services/services.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import {
+	Button,
 	ChangeableEntityMode,
 	CrudPage,
-	NumbertoWordsService,
 	PageError,
 	PageLoaded,
 	PageLoading,
@@ -12,15 +12,17 @@ import {
 	UnauthorizedPage
 } from "yusr-ui";
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
-import { FileText } from "lucide-react";
+import { FileText, Printer } from "lucide-react";
 import { type VoucherDto, VoucherType } from "@/core/data/voucher.ts";
-import ReportButton from "@/features/reports/reportButton.tsx";
-import ReportConstants from "@/core/data/report/reportConstants.ts";
 import ChangeVoucherDialog from "@/features/vouchers/changeVoucherDialog.tsx";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { createPortal } from "react-dom";
+import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
+import { VoucherReport } from "@/features/reports/voucher/voucherReport.tsx";
+import { signal } from "@preact/signals-react";
 
 
 export default function VouchersPage()
@@ -28,57 +30,79 @@ export default function VouchersPage()
 	useSignals();
 	const {t} = useTranslation("accounting");
 	useEffect(() => Cubits.vouchers.init(), []);
+	const printedVoucher = useMemo(() => signal<VoucherDto | undefined>(), []);
+
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Get))
 	{
 		return <UnauthorizedPage/>;
 	}
 
-	return <CrudPage<VoucherDto>>
-		<CrudPage.Header
-			title={ t("vouchers.title") }
-			addButtonTitle={ t("vouchers.addNewTitle") }
-			isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Add) }
-		/>
+	return (
+		<>
+			<CrudPage<VoucherDto>>
+				<CrudPage.Header
+					title={ t("vouchers.title") }
+					addButtonTitle={ t("vouchers.addNewTitle") }
+					isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Add) }
+				/>
 
-		<Cards/>
+				<Cards/>
 
-		<CrudPage.SearchInput onSearch={ (searchText) => Cubits.vouchers.search(searchText) }/>
+				<CrudPage.SearchInput onSearch={ (searchText) => Cubits.vouchers.search(searchText) }/>
 
-		<PageTable/>
-
-		<CrudPage.ChangeDialog
-			changeDialog={ (dto: VoucherDto | undefined, closeDialog) =>
-			{
-				return (
-					<ChangeVoucherDialog
-						dto={ dto }
-						service={ Services.voucherApi }
-						onSuccess={ (data, mode) =>
+				<PageTable onPrint={ (voucher) =>
+				{
+					printedVoucher.value = voucher;
+					requestAnimationFrame(() =>
+					{
+						requestAnimationFrame(() =>
 						{
-							if (mode === ChangeableEntityMode.Create)
-							{
-								Cubits.vouchers.add(data);
-								closeDialog();
-							}
-							else if (mode === ChangeableEntityMode.Update)
-							{
-								Cubits.vouchers.update(data);
-							}
-						} }
-					/>
-				);
-			} }
-		/>
+							window.print();
+						});
+					});
+				} }/>
+
+				<CrudPage.ChangeDialog
+					changeDialog={ (dto: VoucherDto | undefined, closeDialog) =>
+					{
+						return (
+							<ChangeVoucherDialog
+								dto={ dto }
+								service={ Services.voucherApi }
+								onSuccess={ (data, mode) =>
+								{
+									if (mode === ChangeableEntityMode.Create)
+									{
+										Cubits.vouchers.add(data);
+										closeDialog();
+									}
+									else if (mode === ChangeableEntityMode.Update)
+									{
+										Cubits.vouchers.update(data);
+									}
+								} }
+							/>
+						);
+					} }
+				/>
 
 
-		<CrudPage.DeleteDialog
-			entityNameSelector={ () => `"${ t("vouchers.entityName") }"` }
-			service={ Services.voucherApi }
-			onSuccess={ (entity) => Cubits.vouchers.delete(entity) }
-		/>
+				<CrudPage.DeleteDialog
+					entityNameSelector={ () => `"${ t("vouchers.entityName") }"` }
+					service={ Services.voucherApi }
+					onSuccess={ (entity) => Cubits.vouchers.delete(entity) }
+				/>
 
 
-	</CrudPage>;
+			</CrudPage>
+
+			{ createPortal(
+				<PortalReportContainer>
+					<VoucherReport voucher={ printedVoucher.value }/>
+				</PortalReportContainer>,
+				document.body
+			) }
+		</>);
 
 }
 
@@ -97,7 +121,7 @@ function Cards()
 	);
 }
 
-function PageTable()
+function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
@@ -159,15 +183,11 @@ function PageTable()
 						)
 							? [{
 								rowBody: (
-									<ReportButton
-										reportName={ ReportConstants.Voucher }
-										request={ {
-											voucherId: voucher.id,
-											tafqit: Services?.auth?.setting?.currency
-												? NumbertoWordsService.ConvertAmount(voucher.amount, Services?.auth?.setting?.currency.value)
-												: NumbertoWordsService.Convert(voucher.amount)
-										} }
-									/>
+									<Button
+										onClick={ () => onPrint(voucher) }
+									>
+										<Printer className="h-4 w-4"/>
+									</Button>
 								),
 								rowStyles: "w-32"
 							}]

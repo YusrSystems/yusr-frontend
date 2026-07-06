@@ -47,6 +47,7 @@ import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/items
 import { AccountType } from "@/core/data/account.ts";
 import { createPortal } from "react-dom";
 import { InvoicesListReport } from "@/features/reports/invoicesList/invoicesListReport.tsx";
+import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 
 
 export default function InvoicesPage({
@@ -141,6 +142,11 @@ export default function InvoicesPage({
 				<PageTable fixedType={ fixedType } permissionResource={ permissionResource }/>
 
 				<CrudPage.ChangeDialog
+					fetchEntity={ async (id: number) =>
+					{
+						const result = await Services.invoicesApi.Get(id);
+						return result.data;
+					} }
 					changeDialog={ (dto: InvoiceDto | undefined, closeDialog) =>
 					{
 						return (
@@ -173,9 +179,9 @@ export default function InvoicesPage({
 			</CrudPage>
 
 			{ createPortal(
-				<div className="hidden print:block print:w-full print:static">
+				<PortalReportContainer>
 					<InvoicesListReport isPortal={ true }/>
-				</div>,
+				</PortalReportContainer>,
 				document.body
 			) }
 		</VerifyAccountWrapper>
@@ -539,6 +545,7 @@ function PageTable({fixedType, permissionResource}: {
 		return (
 			<CrudPage.Table>
 				<CrudPage.TableBody<InvoiceDto>
+					isShareablePage={ true }
 					data={ Cubits.invoices.entities.value }
 					headerRows={ getTableHeadRows() }
 					tableRowMapper={ (invoice) => getTableRowMapper(invoice) }

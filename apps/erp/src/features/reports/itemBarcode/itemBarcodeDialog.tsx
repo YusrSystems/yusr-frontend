@@ -1,33 +1,30 @@
-import type Item from "@/core/data/item";
-import { ScanBarcode } from "lucide-react";
-import { useMemo } from "react";
+import { Printer, ScanBarcode } from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Button,
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  NumberField
+	Button,
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	NumberField
 } from "yusr-ui";
-import ReportConstants from "../../core/data/report/reportConstants";
-import ReportButton from "./reportButton";
-import type { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { Services } from "@/core/services/services.ts";
-import { ItemBarcodeRequest } from "@/core/data/report/itemBarcodeRequest.ts";
+import type Item from "@/core/data/item.ts";
+import type { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod.ts";
+import { printBarcodesQtn, printItem, printIupm } from "@/features/reports/itemBarcode/itemBarcodePrintState.ts";
 
 
 export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: ItemUnitPricingMethod; })
 {
 	useSignals();
+
 	const {t, i18n} = useTranslation("erpCommon");
 	const {t: tStocking} = useTranslation("stocking");
-
 	const isOpen = useMemo(() => signal(false), []);
 	const isErrorOpen = useMemo(() => signal(false), []);
 	const pages = useMemo(() => signal(1), []);
@@ -45,10 +42,39 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 		}
 	};
 
+	const onPrint = () =>
+	{
+		isOpen.value = false;
+
+		printItem.value = item;
+		printIupm.value = iupm;
+		printBarcodesQtn.value = barcodesQtn.value;
+
+		requestAnimationFrame(() =>
+		{
+			requestAnimationFrame(() =>
+			{
+				window.print();
+			});
+		});
+	};
+
+	useEffect(() =>
+	{
+		const handleAfterPrint = () =>
+		{
+			printItem.value = undefined;
+			printIupm.value = undefined;
+		};
+		window.addEventListener("afterprint", handleAfterPrint);
+		return () => window.removeEventListener("afterprint", handleAfterPrint);
+	}, []);
+
 	return (
 		<>
-			<Button variant="ghost" size="sm" onClick={ onOpen }>
-				<ScanBarcode/>
+			<Button variant="outline" onClick={ onOpen }>
+				<Printer/>
+				{ t("reports.itemBarcode") }
 			</Button>
 
 			<Dialog open={ isErrorOpen.value } onOpenChange={ (open) => isErrorOpen.value = open }>
@@ -91,18 +117,10 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 						/>
 					</div>
 					<DialogFooter>
-						<ReportButton
-							reportName={ ReportConstants.ItemBarcode }
-							request={ new ItemBarcodeRequest({
-								barcode: iupm.barcode.value ?? "",
-								companyName: Services.auth.setting?.companyName.value,
-								itemName: item.name.value,
-								iupmName: iupm.itemUnitPricingMethodName.value,
-								price: iupm.price.value,
-								barcodesQtn: barcodesQtn.value,
-								currency: Services.auth.setting?.currency?.value?.name.value
-							}) }
-						/>
+						<Button onClick={ onPrint }>
+							<Printer className="h-4 w-4 me-2"/>
+							{ t("reports.create") }
+						</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>

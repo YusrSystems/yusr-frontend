@@ -5,7 +5,7 @@ import { CrudTablePagination, ReportLoading } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage.tsx";
 import { ItemsTaxStatementReportFields } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportFields.tsx";
 import { ItemsTaxStatementReport } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReport.tsx";
-import { ItemsTaxStatementReportRequest } from "@/core/data/report/itemsTaxStatementReportRequest.ts";
+import { ItemsTaxStatementReportRequest } from "./itemsTaxStatementReportRequest.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 
 

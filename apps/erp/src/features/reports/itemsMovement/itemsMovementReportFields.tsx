@@ -14,7 +14,7 @@ import {
 	ItemsMovementReportGroupOption,
 	ItemsMovementReportRequest,
 	ItemsMovementReportTransType
-} from "@/core/data/report/itemsMovementReportRequest.ts";
+} from "@/features/reports/itemsMovement/itemsMovementReportRequest.ts";
 import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect.tsx";
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";

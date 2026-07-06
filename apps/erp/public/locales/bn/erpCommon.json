@@ -262,7 +262,11 @@
     "InvoicesList": "চালানের তালিকা",
     "InvoicesListDescription": "বিস্তৃত ফিল্টারিং অপশন সহ চালান দেখুন",
     "itemStatement": "আইটেম বিবরণী",
-    "itemStatementDescription": "গুদাম এবং সময়কাল জুড়ে আইটেম চলাচলের বিবরণ দেখুন"
+    "itemStatementDescription": "গুদাম এবং সময়কাল জুড়ে আইটেম চলাচলের বিবরণ দেখুন",
+    "accountStatement": "অ্যাকাউন্ট বিবরণী",
+    "accountStatementDescription": "নির্বাচিত তারিখের মধ্যে একটি নির্দিষ্ট অ্যাকাউন্টের লেনদেন দেখুন",
+    "accountsList": "অ্যাকাউন্টের তালিকা",
+    "accountsListDescription": "ব্যালেন্স এবং বিস্তারিত তথ্য সহ সমস্ত অ্যাকাউন্ট দেখুন"
   },
   "accountStatement": {
     "button": "অ্যাকাউন্ট স্টেটমেন্ট",

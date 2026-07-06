@@ -1,13 +1,13 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import type { AccountsListReportRequest } from "@/core/data/report/accountsListReportRequest";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import type { Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { WalletIcon } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { Printer, WalletIcon } from "lucide-react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	Button,
 	ChangeableEntityMode,
 	CrudPage,
 	FilterSection,
@@ -21,11 +21,12 @@ import {
 	YoutubeButton
 } from "yusr-ui";
 import { type AccountDto, type AccountType } from "@/core/data/account.ts";
-import ReportConstants from "../../core/data/report/reportConstants";
-import { AccountStatementButton } from "../reports/accountStatementDialog";
-import ReportButton from "../reports/reportButton";
 import ChangeAccountDialog from "./changeAccountDialog";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { AppNavigator } from "@/app/appNavigator.ts";
+import { createPortal } from "react-dom";
+import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
+import { AccountsListReport } from "@/features/reports/accountsList/accountsListReport.tsx";
 
 
 export default function AccountsPage(
@@ -37,9 +38,8 @@ export default function AccountsPage(
 )
 {
 	useSignals();
-	const {t} = useTranslation("accounting");
+	const {t} = useTranslation(["accounting", "erpCommon"]);
 	useEffect(() => Cubits.accounts.init([fixedType]), [fixedType]);
-	const searchText = useMemo(() => Cubits.accounts.searchText, []);
 
 	if (!hasPagePermission)
 	{
@@ -47,92 +47,111 @@ export default function AccountsPage(
 	}
 
 	return (
-		<CrudPage<AccountDto>>
-			<CrudPage.HeaderContainer>
-				<div className="flex flex-col sm:flex-row sm:items-center gap-3 ">
-					<h1>
-						{ title }
-					</h1>
+		<>
+			<CrudPage<AccountDto>>
+				<CrudPage.HeaderContainer>
+					<div className="flex flex-col sm:flex-row sm:items-center gap-3 ">
+						<h1>
+							{ title }
+						</h1>
 
-					<YoutubeButton videoId="WNCe2c2kqCw"/>
+						<YoutubeButton videoId="WNCe2c2kqCw"/>
+					</div>
+
+					<CrudPage.HeaderButtonsContainer>
+						<TableHeaderActionButtons actionButtons={
+							Services.auth.hasAuth(
+								SystemPermissionsResources.ReportAccountList,
+								SystemPermissionsActions.Get
+							)
+								? [
+									<Button
+										key="print-list"
+										variant="outline"
+										onClick={ () =>
+										{
+											setTimeout(() =>
+											{
+												window.print();
+											}, 100);
+										} }
+									>
+										<Printer className="h-4 w-4"/>
+										{ t("erpCommon:reports.accountsList") }
+									</Button>
+								] : []
+						}/>
+
+
+						{ Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Add) && (
+							<CrudPage.AddButton title={ t("accounts.addNewTitle") }/>
+						) }
+					</CrudPage.HeaderButtonsContainer>
+				</CrudPage.HeaderContainer>
+
+				<Cards count={ Cubits.accounts.count }/>
+
+				<div className="mb-5">
+
 				</div>
 
-				<CrudPage.HeaderButtonsContainer>
-					<TableHeaderActionButtons actionButtons={
-						Services.auth.hasAuth(
-							SystemPermissionsResources.ReportAccountList,
-							SystemPermissionsActions.Get
-						)
-							? [
-								<ReportButton<AccountsListReportRequest>
-									reportName={ ReportConstants.AccountsList }
-									request={ {type: fixedType, searchText: searchText.value} }
-								/>
-							] : []
-					}/>
+				<FilterSection
+					fieldsCubit={ Cubits.accountFilterFields }
+					onApply={ (groups) => Cubits.accounts.applyFilterGroups(groups) }
+					onClear={ () => Cubits.accounts.clearFilterGroups() }
+				/>
 
+				<CrudPage.SearchInput
+					className="rounded-t-none!"
+					onSearch={ (searchText) => Cubits.accounts.search(searchText) }
+				/>
 
-					{ Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Add) && (
-						<CrudPage.AddButton title={ t("accounts.addNewTitle") }/>
-					) }
-				</CrudPage.HeaderButtonsContainer>
-			</CrudPage.HeaderContainer>
+				<PageTable/>
 
-			<Cards count={ Cubits.accounts.count }/>
-
-			<div className="mb-5">
-
-			</div>
-
-			<FilterSection
-				fieldsCubit={ Cubits.accountFilterFields }
-				onApply={ (groups) => Cubits.accounts.applyFilterGroups(groups) }
-				onClear={ () => Cubits.accounts.clearFilterGroups() }
-			/>
-
-			<CrudPage.SearchInput
-				className="rounded-t-none!"
-				onSearch={ (searchText) => Cubits.accounts.search(searchText) }
-			/>
-
-			<PageTable/>
-
-			<CrudPage.ChangeDialog
-				fetchEntity={ async (id: number) =>
-				{
-					const result = await Services.accountsApi.Get(id);
-					return result.data;
-				} }
-				changeDialog={ (dto: AccountDto | undefined, closeDialog) =>
-				{
-					return (
-						<ChangeAccountDialog
-							dto={ dto }
-							fixedType={ fixedType }
-							service={ Services.accountsApi }
-							onSuccess={ (data, mode) =>
-							{
-								if (mode === ChangeableEntityMode.Create)
+				<CrudPage.ChangeDialog
+					fetchEntity={ async (id: number) =>
+					{
+						const result = await Services.accountsApi.Get(id);
+						return result.data;
+					} }
+					changeDialog={ (dto: AccountDto | undefined, closeDialog) =>
+					{
+						return (
+							<ChangeAccountDialog
+								dto={ dto }
+								fixedType={ fixedType }
+								service={ Services.accountsApi }
+								onSuccess={ (data, mode) =>
 								{
-									Cubits.accounts.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									Cubits.accounts.update(data);
-								}
-							} }
-						/>
-					);
-				} }
-			/>
+									if (mode === ChangeableEntityMode.Create)
+									{
+										Cubits.accounts.add(data);
+										closeDialog();
+									}
+									else if (mode === ChangeableEntityMode.Update)
+									{
+										Cubits.accounts.update(data);
+									}
+								} }
+							/>
+						);
+					} }
+				/>
 
-			<CrudPage.DeleteDialog
-				entityNameSelector={ (account) => account.name }
-				service={ Services.accountsApi }
-				onSuccess={ (entity) => Cubits.accounts.delete(entity) }
-			/>
-		</CrudPage>
+				<CrudPage.DeleteDialog
+					entityNameSelector={ (account) => account.name }
+					service={ Services.accountsApi }
+					onSuccess={ (entity) => Cubits.accounts.delete(entity) }
+				/>
+			</CrudPage>
+
+			{ createPortal(
+				<PortalReportContainer>
+					<AccountsListReport isPortal={ true }/>
+				</PortalReportContainer>,
+				document.body
+			) }
+		</>
 	);
 }
 
@@ -155,7 +174,7 @@ function PageTable()
 {
 	useSignals();
 
-	const {t} = useTranslation(["accounting", "common"]);
+	const {t} = useTranslation(["accounting", "common", "erpCommon"]);
 
 	if (Cubits.accounts.state.value instanceof PageLoading)
 	{
@@ -226,7 +245,16 @@ function PageTable()
 								SystemPermissionsActions.Get
 							)
 								? [{
-									rowBody: <AccountStatementButton account={ account }/>,
+									rowBody: <Button
+										variant="outline"
+										size="sm"
+										onClick={ () =>
+											AppNavigator.openInNewTab(
+												`/reports/accountStatement/${ account.id }/${ encodeURIComponent(account.name) }`
+											)
+										}>
+										{ t("erpCommon:accountStatement.button") }
+									</Button>,
 									rowStyles: "w-32"
 								}]
 								: [])

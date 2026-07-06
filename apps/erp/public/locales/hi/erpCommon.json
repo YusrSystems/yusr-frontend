@@ -262,7 +262,11 @@
     "InvoicesList": "चालान सूची",
     "InvoicesListDescription": "व्यापक फ़िल्टरिंग विकल्पों के साथ चालान देखें",
     "itemStatement": "आइटम विवरण",
-    "itemStatementDescription": "गोदामों और समय अवधि में आइटम की आवाजाही का विवरण देखें"
+    "itemStatementDescription": "गोदामों और समय अवधि में आइटम की आवाजाही का विवरण देखें",
+    "accountStatement": "खाता विवरण",
+    "accountStatementDescription": "चयनित तिथि सीमा के दौरान किसी विशिष्ट खाते का लेन-देन देखें",
+    "accountsList": "खातों की सूची",
+    "accountsListDescription": "शेष राशि और विस्तृत जानकारी के साथ सभी खाते देखें"
   },
   "accountStatement": {
     "button": "खाता विवरण",
