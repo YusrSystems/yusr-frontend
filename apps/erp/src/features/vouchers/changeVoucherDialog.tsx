@@ -8,7 +8,7 @@ import {
 	FieldsSection,
 	FormField,
 	NumberField,
-	NumbertoWordsService,
+	NumberToWordsService,
 	SelectField,
 	SystemPermissionsActions,
 	TextAreaField,
@@ -55,7 +55,7 @@ export default function ChangeVoucherDialog({
 	{
 		if (entity.value.amount.value !== undefined && Services.auth.setting?.currency?.value)
 		{
-			amountToWords.value = NumbertoWordsService.ConvertAmount(
+			amountToWords.value = NumberToWordsService.ConvertAmount(
 				entity.value.amount.value,
 				Services.auth.setting.currency.value
 			);

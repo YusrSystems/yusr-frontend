@@ -5,7 +5,7 @@ import { ReportPageContainer } from "@/features/report/reportPageContainer.tsx";
 import { ReportPageBody } from "@/features/report/reportPageBody.tsx";
 import { formatNumber } from "@/features/report/utils/formating.ts";
 import { type VoucherDto, VoucherType } from "@/core/data/voucher.ts";
-import { NumbertoWordsService } from "yusr-ui";
+import { NumberToWordsService } from "yusr-ui";
 import { Services } from "@/core/services/services.ts";
 
 
@@ -71,7 +71,7 @@ export function VoucherReport({voucher, isPortal = true}: VoucherReportProps)
 								<ReportField
 									labelAr="تفقيطا"
 									labelEn="Amount in words"
-									value={ NumbertoWordsService.ConvertAmount(voucher.amount, Services.auth.setting?.currency.value) }
+									value={ NumberToWordsService.ConvertAmount(voucher.amount, Services.auth.setting?.currency.value) }
 									valueClassName="font-semibold"
 								/>
 							</div>

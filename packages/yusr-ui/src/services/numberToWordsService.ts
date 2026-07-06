@@ -3,7 +3,7 @@ import * as numberToWords from "number-to-words";
 import { Currency } from "#/entities";
 
 
-export class NumbertoWordsService
+export class NumberToWordsService
 {
 	private static t: TFunction | null = null;
 	private static currentLanguage: string = "ar";

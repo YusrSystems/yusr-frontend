@@ -15,7 +15,7 @@ import {
 	FieldsSection,
 	FormField,
 	NumberField,
-	NumbertoWordsService,
+	NumberToWordsService,
 	SystemPermissionsActions,
 	TextAreaField,
 	TextField
@@ -62,7 +62,7 @@ export default function ChangeBalanceTransferDialog(
 	{
 		if (entity.value.amount.value !== undefined && Services.auth.setting?.currency?.value)
 		{
-			amountToWords.value = NumbertoWordsService.ConvertAmount(
+			amountToWords.value = NumberToWordsService.ConvertAmount(
 				entity.value.amount.value,
 				Services.auth.setting.currency.value
 			);
