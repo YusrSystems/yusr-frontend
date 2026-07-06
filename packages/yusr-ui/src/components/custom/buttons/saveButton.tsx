@@ -30,7 +30,7 @@ export interface SaveButtonProps<TEntity extends ChangeableEntity<TDto>, TDto ex
 	transformData?: (data: TDto) => TDto | Promise<TDto>;
 	showConfirmationDialog?: (entity: TEntity) => boolean;
 	confirmationDialog?: React.ReactNode;
-
+	loadingSignal?: Signal<boolean>;
 }
 
 export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
@@ -44,13 +44,14 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 		onSuccess,
 		transformData,
 		showConfirmationDialog,
-		confirmationDialog
+		confirmationDialog,
+		loadingSignal
 	}: SaveButtonProps<TEntity, TDto>
 )
 {
 	useSignals();
 	const {t, i18n} = useTranslation("common");
-	const loading = useMemo(() => signal(false), []);
+	const internalLoading = useMemo(() => signal(false), []);
 	const errors = useMemo(() => signal<string[]>([]), []);
 	const showErrors = useMemo(() => signal(false), []);
 	const warnings = useMemo(() => signal<string[]>([]), []);
@@ -58,13 +59,16 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 	const pendingIgnore = useMemo(() => signal(false), []);
 	const showConfirmationDialogSignal = useMemo(() => signal(false), []);
 
+	const loading = loadingSignal ?? internalLoading;
+
 	async function Save()
 	{
 		if (!entity.value.validate())
 		{
 			return;
 		}
-		if (!showConfirmationDialog?.(entity.value))
+
+		if (showConfirmationDialog?.(entity.value))
 		{
 			showConfirmationDialogSignal.value = true;
 			return;
@@ -87,6 +91,8 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 		}
 
 		loading.value = false;
+
+		console.log(result);
 
 		if (result.status === ResultStatus.UnprocessableEntity)
 		{

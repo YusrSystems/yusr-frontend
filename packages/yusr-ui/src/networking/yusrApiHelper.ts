@@ -136,6 +136,7 @@ export class YusrApiHelper
 	private static async handleResponse<T>(response: Response, successMessage?: string): Promise<RequestResult<T>>
 	{
 		const t = this.getT();
+
 		if (response.status === ResultStatus.Unauthorized)
 		{
 			window.dispatchEvent(new Event(AuthConstants.UnauthorizedEventName));
@@ -151,9 +152,9 @@ export class YusrApiHelper
 
 		if (response.status === ResultStatus.NotFound)
 		{
+			const errorData = await response.json() as RequestResult<any>;
 			try
 			{
-				const errorData = await response.json() as RequestResult<any>;
 				toast.error(errorData.title || t("api.notFound"), {
 					description: errorData.errors?.join("\n") || errorData.warnings?.join("\n")
 				});
@@ -186,6 +187,31 @@ export class YusrApiHelper
 			toast.error(t("api.tooManyRequests"));
 			return {data: undefined, status: ResultStatus.TooManyRequests, title: "Rejected", errors: [], warnings: []};
 		}
+
+		if (response.status === ResultStatus.PreconditionFailed)
+		{
+			const errorData = await response.json() as RequestResult<any>;
+			return {
+				data: undefined,
+				status: ResultStatus.PreconditionFailed,
+				title: "Warnings",
+				errors: [],
+				warnings: errorData.warnings
+			};
+		}
+
+		if (response.status === ResultStatus.UnprocessableEntity)
+		{
+			const errorData = await response.json() as RequestResult<any>;
+			return {
+				data: undefined,
+				status: ResultStatus.UnprocessableEntity,
+				title: "Errors",
+				errors: errorData.errors,
+				warnings: []
+			};
+		}
+
 		if (response.status >= 500)
 		{
 			toast.error(t("api.anErrorOccurred"));
