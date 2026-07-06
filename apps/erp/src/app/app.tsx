@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { RouterProvider } from "react-router-dom";
 import {
 	BaseApiService,
-	NumbertoWordsService,
+	NumberToWordsService,
 	setupAuthListeners,
 	ThemeProvider,
 	Toaster,
@@ -92,7 +92,7 @@ function App()
 
 	useEffect(() =>
 	{
-		NumbertoWordsService.init(t, i18n.language);
+		NumberToWordsService.init(t, i18n.language);
 		YusrApiHelper.init(t, i18n.language);
 		BaseApiService.init(t);
 		Validators.init(t);

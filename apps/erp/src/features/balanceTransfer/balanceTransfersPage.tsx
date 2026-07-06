@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import {
 	ChangeableEntityMode,
 	CrudPage,
-	NumbertoWordsService,
+	NumberToWordsService,
 	PageError,
 	PageLoaded,
 	PageLoading,
@@ -160,11 +160,11 @@ function Table()
 										request={ {
 											balanceTransferId: transfer.id,
 											tafqit: Services.auth.setting?.currency?.value
-												? NumbertoWordsService.ConvertAmount(
+												? NumberToWordsService.ConvertAmount(
 													transfer.amount,
 													Services.auth.setting?.currency.value
 												)
-												: NumbertoWordsService.Convert(transfer.amount)
+												: NumberToWordsService.Convert(transfer.amount)
 										} }
 									/>
 								),
