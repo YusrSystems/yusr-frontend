@@ -145,6 +145,26 @@ export default function ReportsPage()
 				SystemPermissionsResources.ReportBalanceSheet,
 				SystemPermissionsActions.Get
 			)
+		}, {
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/accountsList") }>{ t("reports.create") }</Button>,
+			name: t("reports.accountsList"),
+			description: t("reports.accountsListDescription"),
+			icon: FileText,
+			hasAuth: Services.auth.hasAuth(
+				SystemPermissionsResources.ReportAccountList,
+				SystemPermissionsActions.Get
+			)
+		}, {
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/accountStatement") }>{ t("reports.create") }</Button>,
+			name: t("reports.accountStatement"),
+			description: t("reports.accountStatementDescription"),
+			icon: FileText,
+			hasAuth: Services.auth.hasAuth(
+				SystemPermissionsResources.ReportAccountStatement,
+				SystemPermissionsActions.Get
+			)
 		}]
 	}, {
 		label: t("reports.tax"),

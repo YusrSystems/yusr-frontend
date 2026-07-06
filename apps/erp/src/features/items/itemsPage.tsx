@@ -31,7 +31,7 @@ import { createPortal } from "react-dom";
 import { AppNavigator } from "@/app/appNavigator.ts";
 import { ItemBarcodeReport } from "@/features/reports/itemBarcode/itemBarcodeReport.tsx";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
-import { printBarcodesQtn, printItem, printIupm } from "@/features/reports/itemBarcodePrintState.ts";
+import { printBarcodesQtn, printItem, printIupm } from "@/features/reports/itemBarcode/itemBarcodePrintState.ts";
 
 
 export default function ItemsPage()

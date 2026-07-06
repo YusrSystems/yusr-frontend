@@ -262,7 +262,11 @@
     "InvoicesList": "Invoices List",
     "InvoicesListDescription": "View invoices with comprehensive filtering options",
     "itemStatement": "Item Statement",
-    "itemStatementDescription": "View item movement details across warehouses and time periods"
+    "itemStatementDescription": "View item movement details across warehouses and time periods",
+    "accountStatement": "Account Statement",
+    "accountStatementDescription": "View a specific account's transactions within a selected date range",
+    "accountsList": "Accounts List",
+    "accountsListDescription": "View all accounts with balances and detailed information"
   },
   "accountStatement": {
     "button": "Account Statement",

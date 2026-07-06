@@ -16,7 +16,7 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import type Item from "@/core/data/item.ts";
 import type { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod.ts";
-import { printBarcodesQtn, printItem, printIupm } from "@/features/reports/itemBarcodePrintState.ts";
+import { printBarcodesQtn, printItem, printIupm } from "@/features/reports/itemBarcode/itemBarcodePrintState.ts";
 
 
 export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: ItemUnitPricingMethod; })
