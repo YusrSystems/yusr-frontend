@@ -1,6 +1,3 @@
-import type { BaseReportRequest } from "@/core/data/report/baseReportRequest.ts";
-
-
 export const ItemsMovementReportTransType = {
 	Sell: 1,
 	Purchase: 2,
@@ -25,17 +22,21 @@ export const ItemsMovementReportGroupOption = {
 export type ItemsMovementReportGroupOption =
 	typeof ItemsMovementReportGroupOption[keyof typeof ItemsMovementReportGroupOption];
 
-export class ItemsMovementReportRequest implements BaseReportRequest
+export class ItemsMovementReportRequest
 {
-	transTypeId?: ItemsMovementReportTransType | null;
-	itemId?: number | null;
+	transTypeIds?: number[] | null;
+	itemIds?: number[] | null;
+	itemClasses?: string[] | null;
+	itemBrands?: string[] | null;
 	fromDate?: string | null;
 	toDate?: string | null;
 	fromAccountId?: number | null;
 	toAccountId?: number | null;
 	fromStoreId?: number | null;
 	toStoreId?: number | null;
-	groupOption?: ItemsMovementReportGroupOption | null;
+	groupOption?: number | null;
+	pageNumber?: number;
+	rowsPerPage?: number;
 
 	constructor(init?: Partial<ItemsMovementReportRequest>)
 	{
