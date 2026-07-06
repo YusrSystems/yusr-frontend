@@ -37,6 +37,7 @@ export * from "./fields/storageFilesField";
 export * from "./fields/textAreaField";
 export * from "./fields/textField";
 export * from "./fields/dateField.tsx";
+export * from "./fields/multiSelectField.tsx";
 
 // Images
 export * from "./images/imagePreview";
@@ -50,6 +51,7 @@ export * from "./inputs/otpInput";
 export * from "./inputs/searchInput";
 export * from "./inputs/selectInput";
 export * from "./inputs/dateInput.tsx";
+export * from "./inputs/multiSelectInput.tsx";
 
 // locale
 export * from "./locale/languageToggle";
