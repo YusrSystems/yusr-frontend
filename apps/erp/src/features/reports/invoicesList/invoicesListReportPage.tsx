@@ -7,6 +7,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { effect, useSignal } from "@preact/signals-react";
 import { useTranslation } from "react-i18next";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
+import { RenderInvoiceFilterInput } from "@/features/invoices/invoicesPage.tsx";
 
 
 export function InvoicesListReportPage()
@@ -90,6 +91,7 @@ export function InvoicesListReportPage()
 					fieldsCubit={ Cubits.invoiceFilterFields }
 					onApply={ (groups) => Cubits.invoices.applyFilterGroups(groups) }
 					onClear={ () => Cubits.invoices.clearFilterGroups() }
+					renderCustomInput={ RenderInvoiceFilterInput }
 				/>
 			</div>
 

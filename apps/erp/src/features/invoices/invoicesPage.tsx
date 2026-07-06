@@ -127,11 +127,7 @@ export default function InvoicesPage({
 					fieldsCubit={ Cubits.invoiceFilterFields }
 					onApply={ (groups) => Cubits.invoices.applyFilterGroups(groups) }
 					onClear={ () => Cubits.invoices.clearFilterGroups() }
-					renderCustomInput={ (props: FilterValueInputProps) => RenderInvoiceFilterInput({
-						rule: props.rule,
-						field: props.field,
-						filterTypes: filterTypes
-					}) }
+					renderCustomInput={ RenderInvoiceFilterInput }
 				/>
 
 				<CrudPage.SearchInput
@@ -604,7 +600,7 @@ const getInvoiceTypeName = (type: InvoiceType, t: TFunction<"accounting">) =>
 	}
 };
 
-function RenderInvoiceFilterInput({rule, field, filterTypes}: FilterValueInputProps & { filterTypes: InvoiceType[] })
+export function RenderInvoiceFilterInput({rule, field}: FilterValueInputProps)
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
@@ -620,7 +616,7 @@ function RenderInvoiceFilterInput({rule, field, filterTypes}: FilterValueInputPr
 						onSelect={ entity =>
 							rule.value.value = entity ? entity.id : ""
 						}
-						types={ filterTypes }
+						types={ [AccountType.Client, AccountType.Supplier, AccountType.Employee, AccountType.Box, AccountType.Bank] }
 					/>
 				) }
 			</FilterLabelWrapper>
