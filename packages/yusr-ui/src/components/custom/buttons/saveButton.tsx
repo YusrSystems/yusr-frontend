@@ -92,8 +92,6 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 
 		loading.value = false;
 
-		console.log(result);
-
 		if (result.status === ResultStatus.UnprocessableEntity)
 		{
 			errors.value = result.errors;
