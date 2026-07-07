@@ -7,6 +7,7 @@ import { ItemsTaxStatementReportFields } from "@/features/reports/itemsTaxStatem
 import { ItemsTaxStatementReport } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReport.tsx";
 import { ItemsTaxStatementReportRequest } from "./itemsTaxStatementReportRequest.ts";
 import { Cubits } from "@/core/services/cubits.ts";
+import type { ItemTaxStatementRow } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportResult.ts";
 
 
 export function ItemsTaxStatementReportPage()
@@ -37,6 +38,24 @@ export function ItemsTaxStatementReportPage()
 
 	return (
 		<ReportPage>
+			<ReportPage.ActionButtonsContainer>
+				<ReportPage.ExcelButton<ItemTaxStatementRow>
+					fileName="كشف_ضريبة_المواد"
+					getRows={ async () => Cubits.ItemsTaxStatementReport.result.value?.itemTaxStatementRows ?? [] }
+					columns={ [
+						{header: "الرقم", accessor: (r) => r.id.toString()},
+						{header: "التاريخ", accessor: (r) => r.date},
+						{header: "رقم الفاتورة", accessor: (r) => r.invoiceId.toString()},
+						{header: "اسم المادة", accessor: (r) => r.itemName},
+						{header: "من (المرسل)", accessor: (r) => r.from},
+						{header: "إلى (المستقبل)", accessor: (r) => r.to},
+						{header: "الكمية", accessor: (r) => r.quantity.toString()},
+						{header: "المبلغ الخاضع للضريبة", accessor: (r) => r.amount.toString()},
+						{header: "قيمة الضريبة", accessor: (r) => r.tax.toString()}
+					] }
+				/>
+				<ReportPage.PrintButton/>
+			</ReportPage.ActionButtonsContainer>
 			<div className="print:hidden w-full shrink-0">
 				<ItemsTaxStatementReportFields onSubmit={ handleSubmit } isLoading={ isLoading }/>
 			</div>

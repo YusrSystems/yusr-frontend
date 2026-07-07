@@ -5,7 +5,7 @@ import { Cubits } from "@/core/services/cubits.ts";
 import { ReportTableTh } from "@/features/report/components/reportTableTh.tsx";
 import { ReportTableTd } from "@/features/report/components/reportTableTd.tsx";
 import { formatNumber } from "@/features/report/utils/formating.ts";
-import { AccountType } from "@/core/data/account.ts";
+import { Account, AccountType } from "@/core/data/account.ts";
 
 
 export function AccountsListReportTable()
@@ -28,25 +28,6 @@ export function AccountsListReportTable()
 				return `/boxes/${ id }`;
 			default:
 				return "#";
-		}
-	};
-
-	const getAccountTypeName = (type: number) =>
-	{
-		switch (type)
-		{
-			case AccountType.Client:
-				return "عميل";
-			case AccountType.Supplier:
-				return "مورد";
-			case AccountType.Employee:
-				return "موظف";
-			case AccountType.Bank:
-				return "بنك";
-			case AccountType.Box:
-				return "صندوق";
-			default:
-				return "غير معروف";
 		}
 	};
 
@@ -109,7 +90,7 @@ export function AccountsListReportTable()
 							</ReportTableTd>
 
 							<ReportTableTd isEven={ isEven } align="start">
-								{ getAccountTypeName(account.type) }
+								{ Account.getAccountTypeName(account.type) }
 							</ReportTableTd>
 
 							<ReportTableTd isEven={ isEven }>

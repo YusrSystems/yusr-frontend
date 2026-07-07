@@ -14,6 +14,7 @@ import type { ImportExportType } from "@/core/types/importExportType.ts";
 import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
 import { PaymentStatus } from "@/core/types/paymentStatus.ts";
 import type { AccountType } from "@/core/data/account.ts";
+import type { TFunction } from "i18next";
 
 
 export class InvoiceMode
@@ -214,6 +215,25 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		};
 		this.invoiceVouchers.value.forEach((t) => t.hasChanges.subscribe(checkChildren));
 		this.invoiceItems.value.forEach((s) => s.hasChanges.subscribe(checkChildren));
+	}
+
+	public static getTypeName(type: InvoiceType, t: TFunction<"accounting">)
+	{
+		switch (type)
+		{
+			case InvoiceType.Sell:
+				return t("invoices.sellInvoice");
+			case InvoiceType.Purchase:
+				return t("invoices.purchaseInvoice");
+			case InvoiceType.SellReturn:
+				return t("invoices.sellReturn");
+			case InvoiceType.PurchaseReturn:
+				return t("invoices.purchaseReturn");
+			case InvoiceType.Quotation:
+				return t("invoices.quotation");
+			default:
+				return String(type);
+		}
 	}
 
 	override validate(dto?: Partial<InvoiceDto>): boolean

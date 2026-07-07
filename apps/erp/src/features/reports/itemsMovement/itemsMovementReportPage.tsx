@@ -7,6 +7,7 @@ import { ItemsMovementReportFields } from "@/features/reports/itemsMovement/item
 import { ItemsMovementReport } from "@/features/reports/itemsMovement/itemsMovementReport.tsx";
 import { ItemsMovementReportRequest } from "@/features/reports/itemsMovement/itemsMovementReportRequest.ts";
 import { Cubits } from "@/core/services/cubits.ts";
+import type { ItemsMovementReportRow } from "@/features/reports/itemsMovement/itemsMovementReportResult.ts";
 
 
 export function ItemsMovementReportPage()
@@ -39,6 +40,28 @@ export function ItemsMovementReportPage()
 
 	return (
 		<ReportPage>
+
+			<ReportPage.ActionButtonsContainer>
+				<ReportPage.ExcelButton<ItemsMovementReportRow>
+					fileName="تقرير_حركة_المواد"
+					getRows={ async () => Cubits.ItemsMovementReport.result.value?.itemsMovementRows ?? [] }
+					columns={ [
+						{header: "التاريخ", accessor: (r) => r.transDate},
+						{header: "نوع العملية", accessor: (r) => r.transType},
+						{header: "رقم العملية", accessor: (r) => r.transId},
+						{header: "اسم المادة", accessor: (r) => r.itemName},
+						{header: "الكمية", accessor: (r) => r.quantity},
+						{header: "التكلفة", accessor: (r) => r.cost},
+						{header: "السعر", accessor: (r) => r.price},
+						{header: "إجمالي السعر", accessor: (r) => r.totalPrice},
+						{header: "الربح", accessor: (r) => r.profit},
+						{header: "من", accessor: (r) => r.from},
+						{header: "إلى", accessor: (r) => r.to}
+					] }
+				/>
+				<ReportPage.PrintButton/>
+			</ReportPage.ActionButtonsContainer>
+
 			<div className="print:hidden w-full shrink-0">
 				<ItemsMovementReportFields onSubmit={ handleSubmit } isLoading={ isLoading }/>
 			</div>

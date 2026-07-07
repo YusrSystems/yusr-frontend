@@ -8,6 +8,7 @@ import { effect, useSignal } from "@preact/signals-react";
 import { useTranslation } from "react-i18next";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 import { RenderInvoiceFilterInput } from "@/features/invoices/invoicesPage.tsx";
+import Invoice, { type InvoiceDto } from "@/core/data/invoices/invoice.ts";
 
 
 export function InvoicesListReportPage()
@@ -59,6 +60,25 @@ export function InvoicesListReportPage()
 
 	return (
 		<ReportPage>
+
+			<ReportPage.ActionButtonsContainer>
+				<ReportPage.ExcelButton<InvoiceDto>
+					fileName="تقرير_المستندات_والفواتير"
+					getRows={ async () => Cubits.invoices.entities.value ?? [] }
+					columns={ [
+						{header: "التاريخ", accessor: (r) => r.date},
+						{header: "نوع الفاتورة", accessor: (r) => Invoice.getTypeName(r.type, t)},
+						{header: "الحساب المعني", accessor: (r) => r.actionAccountName},
+						{header: "المستودع", accessor: (r) => r.storeName},
+						{header: "المبلغ الإجمالي", accessor: (r) => r.fullAmount.toString()},
+						{header: "المبلغ المدفوع", accessor: (r) => r.paidAmount.toString()},
+						{header: "قيمة التسوية", accessor: (r) => r.settlementAmount.toString()},
+						{header: "ملاحظات", accessor: (r) => r.notes ?? ""}
+					] }
+				/>
+				<ReportPage.PrintButton/>
+			</ReportPage.ActionButtonsContainer>
+
 			<div className="print:hidden w-full shrink-0 flex flex-col gap-4">
 				<div className="w-full ">
 					<FormField

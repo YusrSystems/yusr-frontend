@@ -9,6 +9,7 @@ import { AccountStatementReportFields } from "@/features/reports/accountStatemen
 import { AccountStatementReport } from "@/features/reports/accountStatement/accountStatementReport.tsx";
 import { Cubits } from "@/core/services/cubits.ts";
 import { AccountStatementReportRequest } from "@/features/reports/accountStatement/accountStatementReportRequest.ts";
+import type { AccountStatementRow } from "@/features/reports/accountStatement/accountStatementReportResult.ts";
 
 
 export function AccountStatementReportPage()
@@ -69,6 +70,24 @@ export function AccountStatementReportPage()
 
 	return (
 		<ReportPage>
+
+			<ReportPage.ActionButtonsContainer>
+				<ReportPage.ExcelButton<AccountStatementRow>
+					fileName={ `كشف_حساب_${ accountName || "محدد" }` }
+					getRows={ async () => Cubits.AccountStatementReport.result.value?.accountStatementRows ?? [] }
+					columns={ [
+						{header: "التاريخ", accessor: (r) => r.date},
+						{header: "النوع", accessor: (r) => r.type},
+						{header: "رقم المستند", accessor: (r) => r.documentNumber.toString()},
+						{header: "الوارد / له", accessor: (r) => r.income.toString()},
+						{header: "الصادر / عليه", accessor: (r) => r.outcome.toString()},
+						{header: "الرصيد", accessor: (r) => r.balance.toString()},
+						{header: "الملاحظات", accessor: (r) => r.notes}
+					] }
+				/>
+				<ReportPage.PrintButton/>
+			</ReportPage.ActionButtonsContainer>
+
 			<div className="print:hidden w-full shrink-0 flex flex-col gap-3 mb-2">
 
 				<Tabs
