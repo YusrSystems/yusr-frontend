@@ -133,13 +133,27 @@ export class Validators
 		};
 	}
 
-	static arrayMinLength(min: number, message?: string): ValidatorFn
+	static arrayMinLength(n: number, message?: string): ValidatorFn
 	{
 		const t = this.getT();
-		const defaultMessage = message || t("validators.arrayMinLength", {min});
+		const defaultMessage = message || t("validators.arrayMinLength", {n});
 		return (value: any[]) =>
 		{
-			if (!Array.isArray(value) || value.length < min)
+			if (!Array.isArray(value) || value.length < n)
+			{
+				return defaultMessage;
+			}
+			return null;
+		};
+	}
+
+	static arrayMaxLength(n: number, message?: string): ValidatorFn
+	{
+		const t = this.getT();
+		const defaultMessage = message || t("validators.arrayMaxLength", {n});
+		return (value: any[]) =>
+		{
+			if (!Array.isArray(value) || value.length > n)
 			{
 				return defaultMessage;
 			}

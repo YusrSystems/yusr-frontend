@@ -1,4 +1,4 @@
-import { StorageFileField, StorageType, useStorageFile } from "yusr-ui";
+import { FormField, StorageFileField, StorageType, useStorageFile } from "yusr-ui";
 import type Invoice from "@/core/data/invoices/invoice.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 
@@ -14,16 +14,19 @@ export default function InvoiceFilesTab({invoice}: { invoice: Invoice })
 		);
 
 	return (
-		<div className="w-full flex items-center justify-center shrink-0 bg-muted/10 p-4 rounded-lg border">
-			<StorageFileField
-				file={ invoice.invoiceFiles.value ?? [] }
-				onFileChange={ handleFileChange }
-				onRemove={ handleRemoveFile }
-				onDownload={ handleDownload }
-				getFileSrc={ getFileSrc }
-				showPreview={ showFilePreview }
-				fileInputRef={ fileInputRef }
-			/>
-		</div>
+		<FormField error={ invoice.getError("invoiceFiles") }>
+
+			<div className="w-full flex items-center justify-center shrink-0 bg-muted/10 p-4 rounded-lg border">
+				<StorageFileField
+					file={ invoice.invoiceFiles.value ?? [] }
+					onFileChange={ handleFileChange }
+					onRemove={ handleRemoveFile }
+					onDownload={ handleDownload }
+					getFileSrc={ getFileSrc }
+					showPreview={ showFilePreview }
+					fileInputRef={ fileInputRef }
+				/>
+			</div>
+		</FormField>
 	);
 }

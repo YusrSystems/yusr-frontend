@@ -135,6 +135,10 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 			field: "invoiceItems",
 			selector: (d) => d.invoiceItems,
 			validators: [Validators.arrayMinLength(1, i18n.t("accounting:invoices.itemsRequired"))]
+		}, {
+			field: "invoiceFiles",
+			selector: (d) => d.invoiceFiles,
+			validators: [Validators.arrayMaxLength(3)]
 		}], mode);
 
 		this.invoiceMode = this.assign("invoiceMode", dto?.invoiceMode ?? InvoiceMode.Normal);

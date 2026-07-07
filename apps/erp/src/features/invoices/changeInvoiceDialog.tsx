@@ -232,6 +232,8 @@ export default function ChangeInvoiceDialog({
 
 	const costHasError = entity.value.costVouchers().some((t) => t.hasErrors);
 
+	const invoiceAttachmentsHasError = Boolean(entity.value.getError("invoiceFiles").value);
+
 	return (
 		<ChangeDialog className="sm:max-w-[100vw] sm:w-screen sm:h-screen">
 			<ChangeDialog.Header title={ getDialogTitle() }/>
@@ -264,6 +266,7 @@ export default function ChangeInvoiceDialog({
 						label: t("invoices.invoiceAttachments"),
 						icon: FolderKanban,
 						active: false,
+						hasError: invoiceAttachmentsHasError,
 						content: <InvoiceFilesTab invoice={ entity.value }/>
 					}
 				] }
