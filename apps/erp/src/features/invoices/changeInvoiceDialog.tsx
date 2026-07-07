@@ -9,7 +9,11 @@ import {
 	type CommonChangeDialogProps,
 	DateService,
 	DialogClose,
+	DialogContent,
+	DialogDescription,
 	DialogFooter,
+	DialogHeader,
+	DialogTitle,
 	Loading,
 	type RequestResult,
 	StorageType,
@@ -28,6 +32,8 @@ import { AccountType } from "@/core/data/account.ts";
 import { InvoiceType } from "@/core/types/invoiceType";
 import { ItemType } from "@/core/data/item.ts";
 import { Services } from "@/core/services/services.ts";
+import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
+import type { SaveButtonProps } from "#/components/custom/buttons/saveButton.tsx";
 
 
 export default function ChangeInvoiceDialog({
@@ -46,7 +52,8 @@ export default function ChangeInvoiceDialog({
 	const entity = useMemo(() => signal(dto ? Invoice.load(dto) : Invoice.create({type: fixedType})), []);
 	const isFullyReturned = useMemo(() => signal(false), []);
 	const isLoading = useMemo(() => signal(false), []);
-
+	const isSaving = useMemo(() => signal(false), []);
+	const hasCostVouchers = useMemo(() => signal<boolean>(false), []);
 	const {commitFiles} = useStorageFile(
 		() => entity.value.invoiceFiles.value ?? [],
 		(files) => entity.value.invoiceFiles.value = files,
@@ -108,6 +115,10 @@ export default function ChangeInvoiceDialog({
 						res.data.type = res.data.type === InvoiceType.Sell
 							? InvoiceType.SellReturn
 							: InvoiceType.PurchaseReturn;
+
+						hasCostVouchers.value = res.data.invoiceVouchers.some(e => e.invoiceRelationType === InvoiceRelationType.Cost) ?? false;
+						res.data.invoiceVouchers = res.data.invoiceVouchers.filter(x => x.invoiceRelationType === InvoiceRelationType.Payment);
+
 						entity.value = Invoice.create(res.data);
 						entity.value.invoiceMode.value = InvoiceMode.Return;
 					}
@@ -221,6 +232,8 @@ export default function ChangeInvoiceDialog({
 
 	const costHasError = entity.value.costVouchers().some((t) => t.hasErrors);
 
+	const invoiceAttachmentsHasError = Boolean(entity.value.getError("invoiceFiles").value);
+
 	return (
 		<ChangeDialog className="sm:max-w-[100vw] sm:w-screen sm:h-screen">
 			<ChangeDialog.Header title={ getDialogTitle() }/>
@@ -253,6 +266,7 @@ export default function ChangeInvoiceDialog({
 						label: t("invoices.invoiceAttachments"),
 						icon: FolderKanban,
 						active: false,
+						hasError: invoiceAttachmentsHasError,
 						content: <InvoiceFilesTab invoice={ entity.value }/>
 					}
 				] }
@@ -261,20 +275,127 @@ export default function ChangeInvoiceDialog({
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
 
-				<ChangeDialog.SaveButton<Invoice, InvoiceDto>
-					entity={ entity }
-					service={ service }
-					onSuccess={ (data) =>
+				<InvoiceSaveButton
+					showConfirmationDialog={ () =>
 					{
-						if (entity.value.invoiceMode.value === InvoiceMode.QuotationToSales)
-						{
-							navigate("/sales");
-						}
-						onSuccess?.(data, entity.value.mode.value);
+						return hasCostVouchers.value;
 					} }
-					transformData={ transformDataBeforeSave }
+					confirmationDialog={ <ConfirmationDialog/> }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>
 	);
+
+	function ConfirmationDialog()
+	{
+		const {i18n} = useTranslation("accounting");
+
+		return <DialogContent dir={ i18n.dir() } className=" sm:max-w-xl ">
+			<DialogHeader>
+				<DialogTitle>
+					الفاتورة الأصلية تحتوي على سندات تكاليف
+				</DialogTitle>
+
+				<DialogDescription asChild>
+					<div className="mt-4 space-y-5 text-start text-[15px] leading-7 text-foreground">
+
+						<p>
+							تم العثور على <strong>سندات تكاليف</strong> مرتبطة بالفاتورة الأصلية.
+							لا يمكن إنشاء فاتورة المرتجع قبل تحديد كيفية التعامل مع هذه السندات.
+						</p>
+
+						<div className="rounded-lg border p-4 space-y-4">
+
+							<div>
+								<h4 className="font-semibold text-foreground">
+									إبقاء التكاليف وإنشاء المرتجع
+								</h4>
+								<p className="text-foreground/80">
+									سيتم الاحتفاظ بجميع سندات التكاليف كما هي، ثم إنشاء فاتورة المرتجع.
+								</p>
+							</div>
+
+							<div>
+								<h4 className="font-semibold text-destructive">
+									حذف التكاليف وإنشاء المرتجع
+								</h4>
+								<p className="text-foreground/80">
+									سيتم حذف جميع سندات التكاليف المرتبطة بالفاتورة الأصلية بشكل نهائي، ثم إنشاء فاتورة
+									المرتجع.
+								</p>
+							</div>
+
+							<div>
+								<h4 className="font-semibold text-foreground">
+									إلغاء
+								</h4>
+								<p className="text-foreground/80">
+									لن يتم إنشاء فاتورة المرتجع، ولن يتم إجراء أي تغييرات.
+								</p>
+							</div>
+
+						</div>
+
+					</div>
+				</DialogDescription>
+			</DialogHeader>
+
+			<DialogFooter>
+				<DialogClose asChild>
+					<Button variant="outline">
+						إلغاء
+					</Button>
+				</DialogClose>
+
+				<InvoiceSaveButton
+					label="إبقاء التكاليف وإنشاء المرتجع"
+					transformData={ (data) =>
+					{
+						data.deleteOriginalInvoiceCostVouchers = false;
+						return data;
+					} }
+				/>
+
+
+				<InvoiceSaveButton
+					variant="destructive"
+					label="حذف التكاليف وإنشاء المرتجع"
+					transformData={ (data) =>
+					{
+						data.deleteOriginalInvoiceCostVouchers = true;
+						return data;
+					} }
+				/>
+
+			</DialogFooter>
+		</DialogContent>;
+	}
+
+	function InvoiceSaveButton({
+		transformData,
+		...props
+	}: Omit<SaveButtonProps<Invoice, InvoiceDto>, "entity" | "service" | "onSuccess">)
+	{
+		return (
+			<ChangeDialog.SaveButton<Invoice, InvoiceDto>
+				entity={ entity }
+				service={ service }
+				loadingSignal={ isSaving }
+				onSuccess={ (data) =>
+				{
+					if (entity.value.invoiceMode.value === InvoiceMode.QuotationToSales)
+					{
+						navigate("/sales");
+					}
+					onSuccess?.(data, entity.value.mode.value);
+				} }
+				transformData={ async (data) =>
+				{
+					const base = await transformDataBeforeSave(data);
+					return transformData ? transformData?.(base) : base;
+				} }
+				{ ...props }
+			/>
+		);
+	}
 }

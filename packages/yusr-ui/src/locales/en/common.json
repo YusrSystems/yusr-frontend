@@ -213,7 +213,8 @@
     "maxLength": "Text length must be less than {{max}}",
     "exactLength": "Text length must be exactly {{length}} characters",
     "numeric": "Field must contain only numbers",
-    "arrayMinLength": "Please select at least one item"
+    "arrayMaxLength": "The number of items must not exceed {{n}}",
+    "arrayMinLength": "The number of items must be greater than {{n}}"
   },
   "maintenance": {
     "title": "System Under Maintenance",

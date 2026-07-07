@@ -7,11 +7,16 @@ import { ProfitAndLossReportFields } from "@/features/reports/profitAndLoss/prof
 import { ProfitAndLossReport } from "@/features/reports/profitAndLoss/profitAndLossReport.tsx";
 import { Cubits } from "@/core/services/cubits.ts";
 import { ProfitAndLossReportRequest } from "@/features/reports/profitAndLoss/profitAndLossReportRequest.ts";
+import type { ProfitAndLossRow } from "@/features/reports/profitAndLoss/profitAndLossReportResult.ts";
+import Invoice from "@/core/data/invoices/invoice.ts";
+import { useTranslation } from "react-i18next";
+import { formatNumber } from "@/features/report/utils/formating.ts";
 
 
 export function ProfitAndLossReportPage()
 {
 	useSignals();
+	const {t} = useTranslation("accounting");
 
 	const lastRequest = useMemo(() => signal<ProfitAndLossReportRequest>(new ProfitAndLossReportRequest()), []);
 
@@ -37,6 +42,29 @@ export function ProfitAndLossReportPage()
 
 	return (
 		<ReportPage>
+			<ReportPage.ActionButtonsContainer>
+				<ReportPage.ExcelButton<ProfitAndLossRow>
+					fileName="تقرير_الأرباح_والخسائر_للفواتير"
+					getRows={ async () => Cubits.ProfitAndLossReport.result.value?.invoiceListRows ?? [] }
+					columns={ [
+						{header: "الرقم", accessor: (r) => r.id.toString()},
+						{header: "التاريخ", accessor: (r) => r.invoiceDate},
+						{header: "رقم الفاتورة", accessor: (r) => r.invoiceId.toString()},
+						{
+							header: "نوع الفاتورة",
+							accessor: (r) => Invoice.getTypeName(r.invoiceType, t)
+						},
+						{header: "من", accessor: (r) => r.fromName ?? ""},
+						{header: "إلى", accessor: (r) => r.toName ?? ""},
+						{header: "الكمية", accessor: (r) => r.quantity.toString()},
+						{header: "التكلفة الإجمالية", accessor: (r) => formatNumber(r.cost)},
+						{header: "مبلغ البيع (صافي)", accessor: (r) => formatNumber(r.amount)},
+						{header: "قيمة الضريبة", accessor: (r) => formatNumber(r.taxAmount)},
+						{header: "صافي الربح", accessor: (r) => formatNumber(r.profit)}
+					] }
+				/>
+				<ReportPage.PrintButton/>
+			</ReportPage.ActionButtonsContainer>
 			<div className="print:hidden w-full shrink-0">
 				<ProfitAndLossReportFields onSubmit={ handleSubmit } isLoading={ isLoading }/>
 			</div>

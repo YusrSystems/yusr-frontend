@@ -1,7 +1,7 @@
 import { type TFunction } from "i18next";
-import { toast } from "sonner";
 import { AuthConstants } from "#/auth";
 import { type RequestResult, ResultStatus } from "#/types";
+import { toast } from "sonner";
 
 
 export class YusrApiHelper
@@ -135,6 +135,7 @@ export class YusrApiHelper
 
 	private static async handleResponse<T>(response: Response, successMessage?: string): Promise<RequestResult<T>>
 	{
+
 		const t = this.getT();
 		if (response.status === ResultStatus.Unauthorized)
 		{
@@ -148,19 +149,23 @@ export class YusrApiHelper
 				warnings: []
 			};
 		}
-
-		if (response.status === ResultStatus.NotFound)
+		if (response.status === ResultStatus.TooManyRequests)
 		{
+			toast.error(t("api.tooManyRequests"));
+			return {data: undefined, status: ResultStatus.TooManyRequests, title: "Rejected", errors: [], warnings: []};
+		}
+
+		if (response.status >= 400 && response.status < 500)
+		{
+			const errorData = await response.json() as RequestResult<any>;
 			try
 			{
-				const errorData = await response.json() as RequestResult<any>;
 				toast.error(errorData.title || t("api.notFound"), {
 					description: errorData.errors?.join("\n") || errorData.warnings?.join("\n")
 				});
-
 				return {
 					data: undefined,
-					status: ResultStatus.NotFound,
+					status: response.status as ResultStatus,
 					title: errorData.title,
 					errors: errorData.errors,
 					warnings: errorData.warnings
@@ -171,7 +176,7 @@ export class YusrApiHelper
 				toast.error(t("api.notFound"));
 				return {
 					data: undefined,
-					status: ResultStatus.NotFound,
+					status: response.status as ResultStatus,
 					title: "",
 					errors: [""],
 					warnings: [""]
@@ -181,53 +186,17 @@ export class YusrApiHelper
 
 		}
 
-		if (response.status === ResultStatus.TooManyRequests)
-		{
-			toast.error(t("api.tooManyRequests"));
-			return {data: undefined, status: ResultStatus.TooManyRequests, title: "Rejected", errors: [], warnings: []};
-		}
 		if (response.status >= 500)
 		{
 			toast.error(t("api.anErrorOccurred"));
 			return {
 				data: undefined,
-				status: ResultStatus.NotFound,
+				status: ResultStatus.InternalServerError,
 				title: "",
 				errors: [""],
 				warnings: [""]
 			};
 
-		}
-		if (!response.ok)
-		{
-
-			try
-			{
-				const errorData = await response.json() as RequestResult<any>;
-				toast.error(errorData.title || t("api.anErrorOccurred"), {
-					description: errorData.errors?.join("\n") || errorData.warnings?.join("\n")
-				});
-
-				return {
-					data: undefined,
-					status: ResultStatus.NotFound,
-					title: errorData.title,
-					errors: errorData.errors,
-					warnings: errorData.warnings
-				};
-			}
-			catch
-			{
-				toast.error(t("api.anErrorOccurred"));
-				return {
-					data: undefined,
-					status: ResultStatus.NotFound,
-					title: "",
-					errors: [""],
-					warnings: [""]
-				};
-
-			}
 		}
 
 		const data = await response.json() as T;

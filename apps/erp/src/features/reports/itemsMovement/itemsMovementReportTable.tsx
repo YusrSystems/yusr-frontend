@@ -32,6 +32,7 @@ export function ItemsMovementReportTable()
 						<ReportTableTh ar="الكمية" en="Quantity"/>
 						<ReportTableTh ar="التكلفة" en="Cost"/>
 						<ReportTableTh ar="السعر" en="Price"/>
+						<ReportTableTh ar="إجمالي السعر" en="Total price"/>
 						<ReportTableTh ar="الربح" en="Profit"/>
 						<ReportTableTh ar="من" en="From"/>
 						<ReportTableTh ar="إلى" en="To"/>
@@ -43,7 +44,7 @@ export function ItemsMovementReportTable()
 						const isEven = idx % 2 === 0;
 						return (
 							<tr key={ row.id }>
-								<ReportTableTd isEven={ isEven }>{ row.transDate }</ReportTableTd>
+								<ReportTableTd className="min-w-20" isEven={ isEven }>{ row.transDate }</ReportTableTd>
 								<ReportTableTd isEven={ isEven }>{ row.transType }</ReportTableTd>
 								<ReportTableTd isEven={ isEven }
 								               className="p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!">
@@ -76,7 +77,9 @@ export function ItemsMovementReportTable()
 								<ReportTableTd isEven={ isEven }>{ formatNumber(row.quantity) }</ReportTableTd>
 								<ReportTableTd isEven={ isEven }>{ formatNumber(row.cost) }</ReportTableTd>
 								<ReportTableTd isEven={ isEven }>{ formatNumber(row.price) }</ReportTableTd>
-								<ReportTableTd isEven={ isEven }>{ formatNumber(row.profit) }</ReportTableTd>
+								<ReportTableTd isEven={ isEven }>{ formatNumber(row.totalPrice) }</ReportTableTd>
+								<ReportTableTd className={ row.profit < 0 ? "text-red-600" : "text-green-600" }
+								               isEven={ isEven }>{ formatNumber(row.profit) }</ReportTableTd>
 								<ReportTableTd isEven={ isEven } align="start">{ row.from }</ReportTableTd>
 								<ReportTableTd isEven={ isEven } align="start">{ row.to }</ReportTableTd>
 							</tr>

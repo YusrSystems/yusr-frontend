@@ -15,6 +15,7 @@ import {
 } from "yusr-ui";
 import { AppNavigator } from "./appNavigator";
 import { router } from "./router";
+import { createPortal } from "react-dom";
 
 // themeSettings.value = {
 // 	radius: "0.5rem",
@@ -107,8 +108,12 @@ function AppBody({i18n}: { i18n: i18n; })
 		<TooltipProvider>
 			<ThemeProvider defaultTheme="dark" storageKey="ui-theme">
 				<RouterProvider router={ router }/>
-				<Toaster richColors closeButton position="top-center" dir={ i18n.dir() }/>
+
 			</ThemeProvider>
+			{ createPortal(
+				<Toaster richColors closeButton position="top-center" dir={ i18n.dir() }/>,
+				document.body
+			) }
 		</TooltipProvider>
 	);
 }

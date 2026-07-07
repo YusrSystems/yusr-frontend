@@ -31,6 +31,9 @@ export function BalanceSheetReportPage()
 
 	return (
 		<ReportPage>
+			<ReportPage.ActionButtonsContainer>
+				<ReportPage.PrintButton/>
+			</ReportPage.ActionButtonsContainer>
 			<div className="print:hidden w-full shrink-0">
 				<BalanceSheetReportFields onSubmit={ handleSubmit } isLoading={ isLoading }/>
 			</div>

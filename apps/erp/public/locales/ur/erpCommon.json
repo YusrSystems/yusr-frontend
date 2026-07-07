@@ -266,7 +266,8 @@
     "accountStatement": "اکاؤنٹ کا بیان",
     "accountStatementDescription": "مخصوص اکاؤنٹ کی منتخب تاریخ کی حد کے دوران لین دین دیکھیں",
     "accountsList": "اکاؤنٹس کی فہرست",
-    "accountsListDescription": "تمام اکاؤنٹس بیلنس اور تفصیلی معلومات کے ساتھ دیکھیں"
+    "accountsListDescription": "تمام اکاؤنٹس بیلنس اور تفصیلی معلومات کے ساتھ دیکھیں",
+    "exportToExcel": "ایکسل میں ایکسپورٹ کریں"
   },
   "accountStatement": {
     "button": "اکاؤنٹ سٹیٹمنٹ",

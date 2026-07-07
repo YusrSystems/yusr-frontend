@@ -135,6 +135,8 @@ export default function BasicTab(
 							className: "bg-yellow-500 text-white",
 							onClick: (index) => handleSetPrimary(index)
 						}] }
+
+						error={ entity.getError("itemImages") }
 					/>
 				</div>
 			</div>

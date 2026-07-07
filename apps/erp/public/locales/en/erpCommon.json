@@ -266,7 +266,8 @@
     "accountStatement": "Account Statement",
     "accountStatementDescription": "View a specific account's transactions within a selected date range",
     "accountsList": "Accounts List",
-    "accountsListDescription": "View all accounts with balances and detailed information"
+    "accountsListDescription": "View all accounts with balances and detailed information",
+    "exportToExcel": "Export to Excel"
   },
   "accountStatement": {
     "button": "Account Statement",

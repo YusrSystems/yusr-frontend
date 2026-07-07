@@ -266,7 +266,8 @@
     "accountStatement": "كشف حساب",
     "accountStatementDescription": "عرض حركة حساب محدد خلال فترة زمنية معينة",
     "accountsList": "قائمة الحسابات",
-    "accountsListDescription": "عرض جميع الحسابات مع الأرصدة والبيانات التفصيلية"
+    "accountsListDescription": "عرض جميع الحسابات مع الأرصدة والبيانات التفصيلية",
+    "exportToExcel": "تصدير إلى Excel"
   },
   "accountStatement": {
     "button": "كشف حساب",

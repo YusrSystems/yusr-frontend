@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 import { AccountType } from "@/core/data/account.ts";
+import Invoice from "@/core/data/invoices/invoice.ts";
 
 
 export function InvoicesListReportTable()
@@ -65,28 +66,6 @@ export function InvoicesListReportTable()
 				{
 					const isEven = idx % 2 === 0;
 
-					let invoiceTypeLabel;
-					switch (invoice.type)
-					{
-						case InvoiceType.Sell:
-							invoiceTypeLabel = t("invoices.sellInvoice");
-							break;
-						case InvoiceType.Purchase:
-							invoiceTypeLabel = t("invoices.purchaseInvoice");
-							break;
-						case InvoiceType.SellReturn:
-							invoiceTypeLabel = t("invoices.sellReturn");
-							break;
-						case InvoiceType.PurchaseReturn:
-							invoiceTypeLabel = t("invoices.purchaseReturn");
-							break;
-						case InvoiceType.Quotation:
-							invoiceTypeLabel = t("invoices.quotation");
-							break;
-						default:
-							invoiceTypeLabel = String(invoice.type);
-					}
-
 					return (
 						<tr key={ invoice.id }>
 							<ReportTableTd isEven={ isEven }>
@@ -107,8 +86,10 @@ export function InvoicesListReportTable()
 								</Link>
 							</ReportTableTd>
 
-							<ReportTableTd isEven={ isEven } align="start">{ invoiceTypeLabel }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ String(invoice.date).split("T")[0] }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }
+							               align="start">{ Invoice.getTypeName(invoice.type, t) }</ReportTableTd>
+							<ReportTableTd
+								isEven={ isEven }>{ String(invoice.date).split("T")[0] }</ReportTableTd>
 							<ReportTableTd
 								isEven={ isEven }
 								align="start"

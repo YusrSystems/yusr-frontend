@@ -113,7 +113,13 @@ export default class Item extends ChangeableEntity<ItemDto>
 			field: "initialCost",
 			selector: (d) => d.initialCost,
 			validators: [Validators.required(i18n.t("stocking:items.initialCostRequired"))]
-		}], mode);
+		}, {
+			field: "itemImages",
+			selector: (d) => d.itemImages,
+			validators: [Validators.arrayMaxLength(5)]
+		}
+
+		], mode);
 
 		this.type = this.assign("type", dto?.type ?? 1);
 		this.name = this.assign("name", dto?.name ?? "");

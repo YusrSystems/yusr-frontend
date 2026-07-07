@@ -14,6 +14,7 @@ export default function InvoiceFilesTab({invoice}: { invoice: Invoice })
 		);
 
 	return (
+
 		<div className="w-full flex items-center justify-center shrink-0 bg-muted/10 p-4 rounded-lg border">
 			<StorageFileField
 				file={ invoice.invoiceFiles.value ?? [] }
@@ -23,6 +24,7 @@ export default function InvoiceFilesTab({invoice}: { invoice: Invoice })
 				getFileSrc={ getFileSrc }
 				showPreview={ showFilePreview }
 				fileInputRef={ fileInputRef }
+				error={ invoice.getError("invoiceFiles") }
 			/>
 		</div>
 	);

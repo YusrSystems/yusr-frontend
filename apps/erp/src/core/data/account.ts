@@ -164,6 +164,25 @@ export class Account extends ChangeableEntity<AccountDto>
 		return addressParts.length > 0 ? addressParts.join(" - ") : "_";
 	}
 
+	public static getAccountTypeName = (type: number) =>
+	{
+		switch (type)
+		{
+			case AccountType.Client:
+				return "عميل";
+			case AccountType.Supplier:
+				return "مورد";
+			case AccountType.Employee:
+				return "موظف";
+			case AccountType.Bank:
+				return "بنك";
+			case AccountType.Box:
+				return "صندوق";
+			default:
+				return "غير معروف";
+		}
+	};
+
 	override validate(dto?: Partial<AccountDto>): boolean
 	{
 		if (!super.validate(dto))
