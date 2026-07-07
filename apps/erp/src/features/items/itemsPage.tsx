@@ -32,6 +32,7 @@ import { AppNavigator } from "@/app/appNavigator.ts";
 import { ItemBarcodeReport } from "@/features/reports/itemBarcode/itemBarcodeReport.tsx";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { printBarcodesQtn, printItem, printIupm } from "@/features/reports/itemBarcode/itemBarcodePrintState.ts";
+import TaxesMultiSearchableSelect from "@/core/components/searchableSelect/taxesMultiSearchableSelect.tsx";
 
 
 export default function ItemsPage()
@@ -309,6 +310,11 @@ export function RenderItemFilterInput({rule, field}: FilterValueInputProps)
 				) }
 			</FilterLabelWrapper>
 		);
+	}
+
+	if (field.propertyName === "ItemTaxes")
+	{
+		return <TaxesMultiSearchableSelect onToggle={ (ids) => rule.value.value = ids }/>;
 	}
 	return undefined;
 }
