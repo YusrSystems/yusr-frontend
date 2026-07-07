@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Button, Card, CardContent, OtpInput } from "yusr-ui";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
+import { useMemo } from "react";
 
 
 interface EInvoicingRegisterProps
@@ -18,8 +19,8 @@ export function EInvoicingRegister({linkType, onFinish, formData}: EInvoicingReg
 {
 	useSignals();
 	const {t} = useTranslation("erpCommon");
-	const otp = signal<string>("");
-	const isLoading = signal<boolean>(false);
+	const otp = useMemo(() => signal<string>(""), []);
+	const isLoading = useMemo(() => signal<boolean>(false), []);
 
 	const handleLink = async () =>
 	{
@@ -62,7 +63,7 @@ export function EInvoicingRegister({linkType, onFinish, formData}: EInvoicingReg
 						disabled={ otp.value.length !== 6 || isLoading.value }
 						className="w-full rounded-xl h-11"
 					>
-						{ isLoading
+						{ isLoading.value
 							? (
 								<>
 									<Loader2 className="ml-2 h-4 w-4 animate-spin"/> { t("settings.linking") }
