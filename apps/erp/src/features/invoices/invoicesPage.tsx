@@ -254,15 +254,13 @@ function PageTable({fixedType, permissionResource}: {
 			{rowBody: t("invoices.total"), rowStyles: "w-32"}
 		);
 
-		if (fixedType === InvoiceType.Sell)
+		if (fixedType !== InvoiceType.Quotation)
 		{
 			rows.push(
-				{rowBody: t("invoices.status"), rowStyles: "w-32"},
+				{rowBody: "", rowStyles: "w-32"},
 				{rowBody: "", rowStyles: "w-32"}
 			);
 		}
-
-		rows.push({rowBody: "", rowStyles: "w-32"});
 
 		if (
 			Services.auth.setting?.eInvoicingEnvironmentType.value !== EInvoicingEnvironmentType.NotRegistered
@@ -443,32 +441,30 @@ function PageTable({fixedType, permissionResource}: {
 			}
 		);
 
-		if (fixedType === InvoiceType.Sell)
+		if (fixedType !== InvoiceType.Quotation)
 		{
 			cells.push(
-				{
-					rowBody: invoice.statusId === InvoiceStatus.Valid
-						? t("invoices.valid")
-						: t("invoices.deleted"),
-					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-						invoice.statusId === InvoiceStatus.Valid
-							? "bg-green-100 text-green-800"
-							: "bg-red-100 text-red-800"
-					}`
-				},
 				{
 					rowBody: getPaymentStatus(invoice).message,
 					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
 						getPaymentStatus(invoice).styles
 					}`
-				},
-				{
+				}
+			);
+
+			if (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.Purchase)
+			{
+				cells.push({
 					rowBody: getReturnStatus(invoice).message,
 					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
 						getReturnStatus(invoice).styles
 					}`
-				}
-			);
+				});
+			}
+			else
+			{
+				cells.push({rowBody: "", rowStyles: ""});
+			}
 		}
 
 		if (
