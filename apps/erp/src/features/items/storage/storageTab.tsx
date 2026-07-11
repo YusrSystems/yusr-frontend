@@ -91,7 +91,7 @@ export default function StorageTab({entity}: { entity: Item; })
 											id={ store.storeId }
 											label={ store.storeName }
 											onSelect={ () => entity.clearError("itemStores") }
-											disabled={ entity.mode.value === ChangeableEntityMode.Update }
+											disabled={ entity.mode.value === ChangeableEntityMode.Update && !!store.id?.value }
 										/>
 									</FormField>
 								</td>
