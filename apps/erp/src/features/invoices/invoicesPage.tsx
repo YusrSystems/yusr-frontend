@@ -519,11 +519,24 @@ function PageTable({fixedType, permissionResource}: {
 		{
 			cells.push({
 				rowBody: (
-					<ReportButton
-						reportName={ ReportConstants.Invoice }
-						request={ {invoiceId: invoice.id} }
-						fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type, t) }-${ invoice.actionAccountName }` }
-					/>
+					<Tooltip delayDuration={ 200 }>
+						<TooltipTrigger asChild>
+							<span className="inline-block layout-fix">
+								<ReportButton
+									reportName={ ReportConstants.Invoice }
+									request={ {invoiceId: invoice.id} }
+									fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type, t) }-${ invoice.actionAccountName }` }
+									disabled={ !invoice.canBePrinted }
+								/>
+							</span>
+						</TooltipTrigger>
+
+						{ !invoice.canBePrinted && (
+							<TooltipContent side="top" className="text-right custom-rtl-dir">
+								<p>{ t("invoices.invoiceMustBeSentBeforePrint") }</p>
+							</TooltipContent>
+						) }
+					</Tooltip>
 				),
 				rowStyles: "w-32"
 			});

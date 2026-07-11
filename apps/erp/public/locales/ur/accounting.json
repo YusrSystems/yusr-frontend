@@ -243,7 +243,8 @@
     "totalQuotations": "کل کوٹیشنز",
     "convertToSales": "سیلز انوائس میں تبدیل کریں",
     "settlementReason": "تصفیہ کی وجہ",
-    "quantityInStore": "گودام میں مقدار"
+    "quantityInStore": "گودام میں مقدار",
+    "invoiceMustBeSentBeforePrint": "براہ کرم پہلے انوائس بھیجیں تاکہ اسے پرنٹ کیا جا سکے۔"
   },
   "paymentMethods": {
     "title": "ادائیگی کے طریقوں کا نظم",

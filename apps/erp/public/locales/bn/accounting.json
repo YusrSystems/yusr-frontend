@@ -243,7 +243,8 @@
     "totalQuotations": "মোট কোটেশন",
     "convertToSales": "সেলস ইনভয়েসে রূপান্তর করুন",
     "settlementReason": "নিষ্পত্তির কারণ",
-    "quantityInStore": "গুদামে পরিমাণ"
+    "quantityInStore": "গুদামে পরিমাণ",
+    "invoiceMustBeSentBeforePrint": "এটি প্রিন্ট করতে সক্ষম হতে প্রথমে চালানটি পাঠান।"
   },
   "paymentMethods": {
     "title": "পেমেন্ট পদ্ধতি ব্যবস্থাপনা",

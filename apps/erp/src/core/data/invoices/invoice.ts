@@ -60,6 +60,7 @@ export class InvoiceDto extends Dto
 	public updatedAt!: string | Date;
 	public updatedBy!: number;
 	public rowVer!: number;
+	public canBePrinted!: boolean;
 
 	public actionAccountName!: string;
 	public actionAccountType!: AccountType;
