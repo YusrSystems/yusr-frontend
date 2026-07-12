@@ -243,7 +243,8 @@
     "totalQuotations": "Total Quotations",
     "convertToSales": "Convert to Sales Invoice",
     "settlementReason": "Settlement Reason",
-    "quantityInStore": "Quantity in Warehouse"
+    "quantityInStore": "Quantity in Warehouse",
+    "invoiceMustBeSentBeforePrint": "Please send the invoice first to be able to print it."
   },
   "paymentMethods": {
     "title": "Payment Methods Management",

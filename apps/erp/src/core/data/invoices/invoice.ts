@@ -60,6 +60,8 @@ export class InvoiceDto extends Dto
 	public updatedAt!: string | Date;
 	public updatedBy!: number;
 	public rowVer!: number;
+	public canBePrinted!: boolean;
+	public idempotencyKey?: string;
 
 	public actionAccountName!: string;
 	public actionAccountType!: AccountType;
@@ -99,6 +101,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 	public updatedAt: Signal<string | Date>;
 	public updatedBy: Signal<number>;
 	public rowVer: Signal<number>;
+	public idempotencyKey: Signal<string | undefined>;
 
 	public actionAccountName: Signal<string | undefined>;
 	public storeName: Signal<string | undefined>;
@@ -190,6 +193,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.updatedAt = this.assign("updatedAt", dto?.updatedAt);
 		this.updatedBy = this.assign("updatedBy", dto?.updatedBy);
 		this.rowVer = this.assign("rowVer", dto?.rowVer);
+		this.idempotencyKey = this.assign("idempotencyKey", dto?.idempotencyKey ?? crypto.randomUUID());
 
 		this.invoiceItems = this.assign("invoiceItems",
 			(dto?.invoiceItems ?? []).map(x =>

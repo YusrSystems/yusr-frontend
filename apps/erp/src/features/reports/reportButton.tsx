@@ -9,12 +9,14 @@ export type ReportButtonProps<T extends BaseReportRequest> = {
 	reportName: string;
 	request: T;
 	fileName?: string;
+	disabled?: boolean;
 };
 
 export default function ReportButton<T extends BaseReportRequest>({
 	reportName,
 	request,
-	fileName = "report"
+	fileName = "report",
+	disabled
 }: ReportButtonProps<T>)
 {
 	const service = new ReportApiService();
@@ -24,7 +26,7 @@ export default function ReportButton<T extends BaseReportRequest>({
 	const [isDownloading, setIsDownloading] = useState(false);
 	const [downloaded, setDownloaded] = useState(false);
 
-	const isDisabled = isPrinting || isSharing || isDownloading;
+	const isDisabled = isPrinting || isSharing || isDownloading || disabled;
 
 	return (
 		<div className="flex ">

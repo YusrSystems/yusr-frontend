@@ -423,7 +423,18 @@ function PageTable({fixedType, permissionResource}: {
 		}
 		else
 		{
-			cells.push({rowBody: getInvoiceTypeName(invoice.type, t), rowStyles: "font-semibold"});
+			const typeInfo = getInvoiceTypeInfo(invoice.type, t);
+			cells.push({
+				rowBody: (
+					<span
+						className={ `inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${ typeInfo.styles }` }
+					>
+				{ typeInfo.isReturn && <Undo2 className="h-3 w-3"/> }
+						{ typeInfo.message }
+			</span>
+				),
+				rowStyles: ""
+			});
 		}
 
 		cells.push(
@@ -519,11 +530,24 @@ function PageTable({fixedType, permissionResource}: {
 		{
 			cells.push({
 				rowBody: (
-					<ReportButton
-						reportName={ ReportConstants.Invoice }
-						request={ {invoiceId: invoice.id} }
-						fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type, t) }-${ invoice.actionAccountName }` }
-					/>
+					<Tooltip delayDuration={ 200 }>
+						<TooltipTrigger asChild>
+							<span className="inline-block layout-fix">
+								<ReportButton
+									reportName={ ReportConstants.Invoice }
+									request={ {invoiceId: invoice.id} }
+									fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type, t) }-${ invoice.actionAccountName }` }
+									disabled={ !invoice.canBePrinted }
+								/>
+							</span>
+						</TooltipTrigger>
+
+						{ !invoice.canBePrinted && (
+							<TooltipContent side="top" className="text-right custom-rtl-dir">
+								<p>{ t("invoices.invoiceMustBeSentBeforePrint") }</p>
+							</TooltipContent>
+						) }
+					</Tooltip>
 				),
 				rowStyles: "w-32"
 			});
@@ -593,6 +617,29 @@ const getInvoiceTypeName = (type: InvoiceType, t: TFunction<"accounting">) =>
 			return t("invoices.purchaseReturn");
 		default:
 			return t("invoices.unknown");
+	}
+};
+
+const getInvoiceTypeInfo = (type: InvoiceType, t: TFunction<"accounting">): {
+	message: string;
+	styles: string;
+	isReturn: boolean
+} =>
+{
+	switch (type)
+	{
+		case InvoiceType.Sell:
+			return {message: t("invoices.sellInvoice"), styles: "bg-blue-100 text-blue-800", isReturn: false};
+		case InvoiceType.Purchase:
+			return {message: t("invoices.purchaseInvoice"), styles: "bg-blue-100 text-blue-800", isReturn: false};
+		case InvoiceType.SellReturn:
+			return {message: t("invoices.sellReturn"), styles: "bg-red-100 text-red-800", isReturn: true};
+		case InvoiceType.PurchaseReturn:
+			return {message: t("invoices.purchaseReturn"), styles: "bg-red-100 text-red-800", isReturn: true};
+		case InvoiceType.Quotation:
+			return {message: t("invoices.quotation"), styles: "bg-gray-100 text-gray-800", isReturn: false};
+		default:
+			return {message: t("invoices.unknown"), styles: "bg-gray-100 text-gray-800", isReturn: false};
 	}
 };
 

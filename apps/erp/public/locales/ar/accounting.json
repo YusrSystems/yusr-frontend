@@ -244,7 +244,8 @@
     "invoiceSummary": "ملخص الفاتورة",
     "copyInvoice": "نسخ الفاتورة",
     "settlementReason": "سبب التسوية",
-    "quantityInStore": "الكمية في المستودع"
+    "quantityInStore": "الكمية في المستودع",
+    "invoiceMustBeSentBeforePrint": "يرجى إرسال الفاتورة أولاً لتتمكن من طباعتها."
   },
   "paymentMethods": {
     "title": "إدارة طرق الدفع",
