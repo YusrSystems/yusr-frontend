@@ -68,7 +68,7 @@ const Option = React.memo(
 	)
 	{
 		useSignals();
-		console.log("Option: ", props);
+
 		return (
 			<SearchableSelect.Option<VoucherCategoryDto>
 				labelSelector="name"
@@ -79,17 +79,13 @@ const Option = React.memo(
 
 					onSave={ async (newName) =>
 					{
-						props.item.name = newName;
-						const newItem = {...props.item} as VoucherCategoryDto;
-						const result = await Services.voucherCategoriesApi.Update(
-							newItem
-						);
+						const newItem = {...props.item, name: newName} as VoucherCategoryDto;
+						const result = await Services.voucherCategoriesApi.Update(newItem);
 
 						if (result.status === 200 && result.data != undefined)
 						{
-
 							Cubits.voucherCategories.update(result.data);
-
+							if (props.label) props.label.value = result.data.name;
 						}
 					} }
 				/>
