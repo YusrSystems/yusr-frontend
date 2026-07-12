@@ -22,6 +22,8 @@ export class VoucherDto extends Dto
 	public invoiceId?: number;
 	public giver?: string;
 	public recipient?: string;
+	public categoryId?: number;
+	public categoryName?: string;
 
 	public accountName?: string;
 	public paymentMethod?: PaymentMethodDto;
@@ -40,6 +42,9 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 	public invoiceId: Signal<number>;
 	public giver: Signal<string>;
 	public recipient: Signal<string>;
+
+	public categoryId: Signal<number>;
+	public categoryName: Signal<string>;
 
 	public accountName: Signal<string>;
 	public paymentMethod: Signal<PaymentMethod>;
@@ -81,5 +86,33 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 		this.recipient = this.assign("recipient", dto?.recipient);
 		this.accountName = this.assign("accountName", dto?.accountName);
 		this.paymentMethod = this.assign("paymentMethod", new PaymentMethod(dto?.paymentMethod));
+
+		this.categoryId = this.assign("categoryId", dto?.categoryId);
+		this.categoryName = this.assign("categoryName", dto?.categoryName);
+	}
+}
+
+//public class VoucherCategoryDto : BaseDto
+//     {
+//         public string Name { get; set; } = string.Empty;
+//     }
+
+export class VoucherCategoryDto extends Dto
+{
+	public name!: string;
+}
+
+export class VoucherCategory extends ChangeableEntity<VoucherCategoryDto>
+{
+	public name: Signal<string>;
+
+	constructor(dto?: Partial<VoucherCategoryDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
+	{
+		super(dto, [{
+			field: "name",
+			selector: (d) => d.name,
+			validators: [Validators.required(i18n.t("accounting:voucherCategories.nameRequired"))]
+		}], mode);
+		this.name = this.assign("name", dto?.name);
 	}
 }

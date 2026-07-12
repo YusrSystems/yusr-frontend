@@ -27,6 +27,8 @@ import { Cubits } from "@/core/services/cubits.ts";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
 import { CommissionType, PaymentMethod } from "@/core/data/paymentMethod.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import VoucherCategoriesSearchableSelect
+	from "@/core/components/searchableSelect/voucherCategoriesSearchableSelect.tsx";
 
 
 export default function ChangeVoucherDialog({
@@ -213,7 +215,15 @@ export default function ChangeVoucherDialog({
 						value={ amountToWords }
 						onChange={ () => undefined }
 					/>
+
+					<FormField label="التصنيف">
+						<VoucherCategoriesSearchableSelect
+							id={ entity.value.categoryId }
+							label={ entity.value.categoryName }
+						/>
+					</FormField>
 				</FieldsSection>
+
 
 				<FieldsSection title={ t("vouchers.partyInfo") } columns={ 2 }>
 					<TextField
