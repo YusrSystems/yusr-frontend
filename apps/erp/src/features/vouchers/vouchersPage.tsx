@@ -63,6 +63,11 @@ export default function VouchersPage()
 				} }/>
 
 				<CrudPage.ChangeDialog
+					fetchEntity={ async (id: number) =>
+					{
+						const result = await Services.voucherApi.Get(id);
+						return result.data;
+					} }
 					changeDialog={ (dto: VoucherDto | undefined, closeDialog) =>
 					{
 						return (
@@ -136,8 +141,8 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 		return (
 			<CrudPage.Table>
 				<CrudPage.TableBody<VoucherDto>
+					isShareablePage={ true }
 					data={ Cubits.vouchers.entities.value }
-
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("vouchers.voucherId"), rowStyles: "w-24"},

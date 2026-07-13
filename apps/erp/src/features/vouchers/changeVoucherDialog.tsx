@@ -134,6 +134,7 @@ export default function ChangeVoucherDialog({
 							}
 							reCalculateCommission();
 						} }
+						disabled={ entity.value.isDeleted.value }
 					/>
 
 					<DateField
@@ -141,6 +142,7 @@ export default function ChangeVoucherDialog({
 						required
 						value={ entity.value.date }
 						error={ entity.value.getError("date") }
+						disabled={ entity.value.isDeleted.value }
 					/>
 				</FieldsSection>
 
@@ -153,11 +155,11 @@ export default function ChangeVoucherDialog({
 
 
 						<AccountsSearchableSelect
-							disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
 							types={ [AccountType.Client, AccountType.Supplier] }
 							id={ entity.value.accountId }
 							label={ entity.value.accountName }
 							showAddButton={ false }
+							disabled={ entity.value.mode.value === ChangeableEntityMode.Update || entity.value.isDeleted.value }
 						/>
 
 
@@ -176,6 +178,7 @@ export default function ChangeVoucherDialog({
 								selectedPaymentMethod.value = new PaymentMethod(pm);
 								reCalculateCommission();
 							} }
+							disabled={ entity.value.isDeleted.value }
 						/>
 					</FormField>
 				</FieldsSection>
@@ -188,6 +191,7 @@ export default function ChangeVoucherDialog({
 						error={ entity.value.getError("amount") }
 						currency={ <ErpCurrencyIcon/> }
 						onChange={ () => reCalculateCommission() }
+						disabled={ entity.value.isDeleted.value }
 					/>
 
 					{ isReceipt && (
@@ -206,6 +210,7 @@ export default function ChangeVoucherDialog({
 							label={ t("vouchers.amountDue") }
 							error={ entity.value.getError("isAmountDue") }
 							checked={ entity.value.isAmountDue ?? false }
+							disabled={ entity.value.isDeleted.value }
 						/>
 					) }
 
@@ -220,6 +225,7 @@ export default function ChangeVoucherDialog({
 						<VoucherCategoriesSearchableSelect
 							id={ entity.value.categoryId }
 							label={ entity.value.categoryName }
+							disabled={ entity.value.isDeleted.value }
 						/>
 					</FormField>
 				</FieldsSection>
@@ -229,10 +235,12 @@ export default function ChangeVoucherDialog({
 					<TextField
 						label={ t("vouchers.giver") }
 						value={ entity.value.giver }
+						disabled={ entity.value.isDeleted.value }
 					/>
 					<TextField
 						label={ t("vouchers.recipient") }
 						value={ entity.value.recipient }
+						disabled={ entity.value.isDeleted.value }
 					/>
 				</FieldsSection>
 
@@ -252,6 +260,7 @@ export default function ChangeVoucherDialog({
 						label={ t("vouchers.description") }
 						value={ entity.value.description || "" }
 						rows={ 15 }
+						disabled={ entity.value.isDeleted.value }
 					/>
 				</FieldsSection>
 			</FieldGroup>
@@ -263,6 +272,7 @@ export default function ChangeVoucherDialog({
 				entity={ entity }
 				service={ service }
 				onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+				disabled={ entity.value.isDeleted.value }
 			/>
 		</ChangeDialog.Footer>
 	</ChangeDialog>;

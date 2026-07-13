@@ -11,6 +11,7 @@ export class BalanceTransferDto extends Dto
 	public toAccountId!: number;
 	public fromAccountName?: string;
 	public toAccountName?: string;
+	public isDeleted: boolean = false;
 }
 
 export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
@@ -22,6 +23,7 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 	public toAccountId: Signal<number>;
 	public fromAccountName: Signal<string>;
 	public toAccountName: Signal<string>;
+	public isDeleted: Signal<boolean>;
 
 	constructor(dto?: Partial<BalanceTransferDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
@@ -48,5 +50,6 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 		this.toAccountId = this.assign("toAccountId", dto?.toAccountId);
 		this.fromAccountName = this.assign("fromAccountName", dto?.fromAccountName);
 		this.toAccountName = this.assign("toAccountName", dto?.toAccountName);
+		this.isDeleted = this.assign("isDeleted", dto?.isDeleted);
 	}
 }

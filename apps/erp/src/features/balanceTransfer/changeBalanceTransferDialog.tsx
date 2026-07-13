@@ -54,10 +54,13 @@ export default function ChangeBalanceTransferDialog(
 	{
 		types.push(AccountType.Box);
 	}
+
 	useEffect(() =>
 	{
+		if (entity.value.isDeleted.value) return;
 		Cubits.accounts.init(types);
-	}, [types]);
+	}, [entity.value.isDeleted.value, types]);
+
 	useEffect(() =>
 	{
 		if (entity.value.amount.value !== undefined && Services.auth.setting?.currency?.value)
@@ -112,6 +115,7 @@ export default function ChangeBalanceTransferDialog(
 							value={ entity.value.amount }
 							error={ entity.value.getError("amount") }
 							currency={ <ErpCurrencyIcon/> }
+							disabled={ entity.value.isDeleted.value }
 						/>
 						<div className="col-span-full">
 							<TextField
@@ -132,7 +136,7 @@ export default function ChangeBalanceTransferDialog(
 								label={ entity.value.fromAccountName }
 								id={ entity.value.fromAccountId }
 								types={ types }
-								disabled={ !canChangeBankAccount }
+								disabled={ !canChangeBankAccount || entity.value.isDeleted.value }
 							/>
 						</FormField>
 
@@ -145,7 +149,7 @@ export default function ChangeBalanceTransferDialog(
 								label={ entity.value.toAccountName }
 								id={ entity.value.toAccountId }
 								types={ types }
-								disabled={ !canChangeBankAccount }
+								disabled={ !canChangeBankAccount || entity.value.isDeleted.value }
 							/>
 						</FormField>
 					</FieldsSection>
@@ -156,6 +160,7 @@ export default function ChangeBalanceTransferDialog(
 							value={ entity.value.description }
 							rows={ 3 }
 							placeholder={ ". . ." }
+							disabled={ entity.value.isDeleted.value }
 						/>
 					</FieldsSection>
 				</FieldGroup>
@@ -167,6 +172,7 @@ export default function ChangeBalanceTransferDialog(
 					entity={ entity }
 					service={ service }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+					disabled={ entity.value.isDeleted.value }
 
 				/>
 			</ChangeDialog.Footer>
