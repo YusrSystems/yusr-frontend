@@ -244,6 +244,23 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		}
 	}
 
+	public static getRouteName(type: InvoiceType)
+	{
+		switch (type)
+		{
+			case InvoiceType.Sell:
+			case InvoiceType.SellReturn:
+				return "sales";
+			case InvoiceType.Purchase:
+			case InvoiceType.PurchaseReturn:
+				return "purchases";
+			case InvoiceType.Quotation:
+				return "quotations";
+			default:
+				return "sales";
+		}
+	}
+
 	override validate(dto?: Partial<InvoiceDto>): boolean
 	{
 		const invoiceResult = super.validate(dto);

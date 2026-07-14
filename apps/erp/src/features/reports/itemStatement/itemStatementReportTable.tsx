@@ -2,6 +2,7 @@ import { ReportTableTh } from "@/features/report/components/reportTableTh.tsx";
 import { ReportTableTd } from "@/features/report/components/reportTableTd.tsx";
 import { formatNumber } from "@/features/report/utils/formating.ts";
 import {
+	AccountOrStoreType,
 	ItemStatementDocumentType,
 	type ItemStatementRow
 } from "@/features/reports/itemStatement/itemStatementReportResult.ts";
@@ -10,7 +11,6 @@ import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ReportLoaded, ReportLoading, TablePreview } from "yusr-ui";
 import { Link } from "react-router-dom";
-import { AccountOrStoreType } from "@/features/reports/profitAndLoss/profitAndLossReportResult.ts";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 
 

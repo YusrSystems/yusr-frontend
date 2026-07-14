@@ -1,32 +1,22 @@
-import { AccountType } from "@/core/data/account.ts";
-import type { InvoiceType } from "@/core/types/invoiceType.ts";
-
-
-export enum AccountOrStoreType
+export enum ProfitAndLossRowDocumentType
 {
-	Store = 0,
-	Account = 1
+	Sell,
+	SellReturn,
+	Payment,
 }
 
 export interface ProfitAndLossRow
 {
 	id: number;
-	invoiceId: number;
-	invoiceType: InvoiceType;
-	invoiceDate: string;
+	documentId: number;
+	documentType: ProfitAndLossRowDocumentType;
+	date: string;
+	description?: string;
 
-	fromId?: number;
 	fromName?: string;
-	fromType: AccountOrStoreType;
-	fromAccountType?: AccountType;
-
-	toId?: number;
 	toName?: string;
-	toType: AccountOrStoreType;
-	toAccountType?: AccountType;
 
 	taxAmount: number;
-	quantity: number;
 	cost: number;
 	amount: number;
 	profit: number;
@@ -37,7 +27,13 @@ export interface ProfitAndLossReportResult
 	invoiceListRows: ProfitAndLossRow[];
 	fromDate?: string;
 	toDate?: string;
-
+	fromAccountId?: number;
+	fromAccountName?: string;
+	toAccountId?: number;
+	toAccountName?: string;
+	voucherCategoryIds?: number[];
+	voucherCategoryNames?: string[];
+	documentTypes?: ProfitAndLossRowDocumentType[];
 	pageNumber: number;
 	rowsPerPage: number;
 	totalCount: number;

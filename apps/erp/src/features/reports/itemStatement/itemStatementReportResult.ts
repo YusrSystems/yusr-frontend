@@ -1,8 +1,13 @@
 import { AccountType } from "@/core/data/account.ts";
-import type { AccountOrStoreType } from "@/features/reports/profitAndLoss/profitAndLossReportResult.ts";
 import type { InvoiceType } from "@/core/types/invoiceType.ts";
 import type { StoreDto } from "@/core/data/store.ts";
 
+
+export enum AccountOrStoreType
+{
+	Store = 0,
+	Account = 1
+}
 
 export enum ItemStatementDocumentType
 {

@@ -47,7 +47,8 @@ export function ProfitAndLossReportSummary()
 					<SummaryRow.Label label="مجموع الربح"/>
 					<SummaryRow.Label label="Total Profit"/>
 				</div>
-				<SummaryRow.Value className="text-destructive!" value={ formatNumber(totalProfit) }/>
+				<SummaryRow.Value className={ totalProfit > 0 ? "text-emerald-600!" : "text-destructive!" }
+				                  value={ formatNumber(totalProfit) }/>
 			</SummaryRow>
 		</div>
 	);

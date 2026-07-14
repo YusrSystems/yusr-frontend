@@ -170,7 +170,6 @@ SearchableSelect.EditableOptionBody = function (
 {
 	useSignals();
 
-	const data = useSearchableSelectContext();
 	const isEditing = useMemo(() => signal(false), []);
 	const isSaving = useMemo(() => signal(false), []);
 	const hasError = useMemo(() => signal(false), []);
@@ -230,7 +229,7 @@ SearchableSelect.EditableOptionBody = function (
 				<TextField
 					value={ draftValue.value }
 					disabled={ isSaving.value }
-					aria-label={ data.t("searchableSelect.edit") }
+					aria-label={ "edit" }
 					onChange={ (e) =>
 					{
 						draftValue.value = e;
@@ -259,7 +258,7 @@ SearchableSelect.EditableOptionBody = function (
 								variant="default"
 								onClick={ () => void commitEditing() }
 								className="shrink-0 rounded-lg px-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
-								aria-label={ data.t("searchableSelect.save") }
+								aria-label={ "save" }
 							>
 								<Check className="h-3.5 w-3.5"/>
 							</Button>
@@ -268,7 +267,7 @@ SearchableSelect.EditableOptionBody = function (
 								variant="outline"
 								onClick={ cancelEditing }
 								className="shrink-0 rounded-lg px-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
-								aria-label={ data.t("searchableSelect.cancel") }
+								aria-label={ "cancel" }
 							>
 								<X className="h-3.5 w-3.5"/>
 							</Button>
@@ -288,7 +287,7 @@ SearchableSelect.EditableOptionBody = function (
 				onPointerDown={ (e) => e.stopPropagation() }
 				onPointerUp={ (e) => e.stopPropagation() }
 				className="shrink-0 rounded-lg px-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
-				aria-label={ data.t("searchableSelect.edit") }
+				aria-label={ "edit" }
 			>
 				<Pencil className="h-3.5 w-3.5"/>
 			</Button>
