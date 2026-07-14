@@ -80,20 +80,20 @@ export const router = createBrowserRouter([{
 					{path: "/banks/:id?", element: <BanksAccountsPage/>},
 					{path: "/boxes/:id?", element: <BoxesAccountsPage/>},
 					{path: "/paymentMethods", element: <PaymentMethodsPage/>},
-					{path: "/balanceTransfer", element: <BalanceTransfersPage/>},
-					{path: "/sales/:id?", element: <SellInvoicesPage/>},
+					{path: "/balanceTransfer/:id?", element: <BalanceTransfersPage/>},
 					{path: "/items/:id?", element: <ItemsPage/>},
 					{path: "/costAdjustments", element: <CostAdjustmentsPage/>},
 					{path: "/pricingMethods", element: <PricingMethodsPage/>},
 					{path: "/itemTransfers/:id?", element: <ItemTransfersPage/>},
 					{path: "/stocktakings", element: <StocktakingsPage/>},
 					{path: "/itemsSettlements/:id?", element: <ItemsSettlementsPage/>},
+					{path: "/vouchers/:id?", element: <VouchersPage/>},
 					{path: "/reports", element: <ReportsPage/>},
 
 					// invoices
+					{path: "/sales/:id?", element: <SellInvoicesPage/>},
 					{path: "/purchases/:id?", element: <PurchaseInvoicesPage/>},
 					{path: "/quotations/:id?", element: <QuotationInvoicesPage/>},
-					{path: "/vouchers", element: <VouchersPage/>},
 
 					// reports
 					{path: "/reports/itemsList", element: <ItemsListReportPage/>},
