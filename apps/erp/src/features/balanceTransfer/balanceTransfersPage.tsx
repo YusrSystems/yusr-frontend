@@ -48,6 +48,11 @@ export default function BalanceTransfersPage()
 			<Table/>
 
 			<CrudPage.ChangeDialog
+				fetchEntity={ async (id: number) =>
+				{
+					const result = await Services.balanceTransfersApi.Get(id);
+					return result.data;
+				} }
 				changeDialog={ (dto: BalanceTransferDto | undefined, closeDialog) =>
 				{
 					return (
@@ -110,6 +115,7 @@ function Table()
 		return (
 			<CrudPage.Table>
 				<CrudPage.TableBody<BalanceTransferDto>
+					isShareablePage={ true }
 					data={ Cubits.balanceTransfers.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},

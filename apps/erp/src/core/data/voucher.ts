@@ -1,6 +1,7 @@
 import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
 import { Signal } from "@preact/signals-react";
 import { PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
+import type { TFunction } from "i18next";
 
 
 export const VoucherType = {
@@ -22,6 +23,9 @@ export class VoucherDto extends Dto
 	public invoiceId?: number;
 	public giver?: string;
 	public recipient?: string;
+	public categoryId?: number;
+	public categoryName?: string;
+	public isDeleted: boolean = false;
 
 	public accountName?: string;
 	public paymentMethod?: PaymentMethodDto;
@@ -40,6 +44,9 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 	public invoiceId: Signal<number>;
 	public giver: Signal<string>;
 	public recipient: Signal<string>;
+	public categoryId: Signal<number>;
+	public categoryName: Signal<string>;
+	public isDeleted: Signal<boolean>;
 
 	public accountName: Signal<string>;
 	public paymentMethod: Signal<PaymentMethod>;
@@ -81,5 +88,26 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 		this.recipient = this.assign("recipient", dto?.recipient);
 		this.accountName = this.assign("accountName", dto?.accountName);
 		this.paymentMethod = this.assign("paymentMethod", new PaymentMethod(dto?.paymentMethod));
+		this.categoryId = this.assign("categoryId", dto?.categoryId);
+		this.categoryName = this.assign("categoryName", dto?.categoryName);
+		this.isDeleted = this.assign("isDeleted", dto?.isDeleted);
 	}
+
+	public static getTypeName(type: VoucherType, t: TFunction<"accounting">)
+	{
+		switch (type)
+		{
+			case VoucherType.Payment:
+				return t("vouchers.paymentVoucher");
+			case VoucherType.Receipt:
+				return t("vouchers.receiptVoucher");
+			default:
+				return String(type);
+		}
+	}
+}
+
+export class VoucherCategoryDto extends Dto
+{
+	public name!: string;
 }

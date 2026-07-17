@@ -1,6 +1,6 @@
 import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { Check, ChevronsUpDown, Loader2, Trash2 } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2, Pencil, Trash2, X } from "lucide-react";
 import * as React from "react";
 import { type PropsWithChildren, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,7 +16,7 @@ import {
 	PopoverContent,
 	PopoverTrigger
 } from "#/components/pure";
-import { SearchInput, type SearchInputParams } from "#/components/custom";
+import { SearchInput, type SearchInputParams, TextField } from "#/components/custom";
 import useSearchableSelectContext, { SearchableSelectContext } from "./useSearchableSelectContext";
 
 
@@ -146,6 +146,153 @@ SearchableSelect.Empty = function ()
 SearchableSelect.OptionBody = function ({label}: { label: string; })
 {
 	return <span className="flex-1 truncate">{ label }</span>;
+};
+
+/**
+ * Drop-in replacement for `OptionBody` that adds a hover-revealed pencil icon.
+ * Clicking it turns the row into an inline text input so the user can rename
+ * the entity in place, without closing the popover or navigating away.
+ *
+ * Pass `selectedId` / `selectedLabel` (the same signals given to the parent
+ * `Option`) if you want the trigger button's label to stay in sync when the
+ * currently-selected item is the one being renamed.
+ */
+SearchableSelect.EditableOptionBody = function (
+	{
+		label,
+		onSave
+	}: {
+		label: string;
+		onSave: (newLabel: string) => Promise<void>;
+
+	}
+)
+{
+	useSignals();
+
+	const isEditing = useMemo(() => signal(false), []);
+	const isSaving = useMemo(() => signal(false), []);
+	const hasError = useMemo(() => signal(false), []);
+	const draftValue = useMemo(() => signal(label), []);
+
+	const startEditing = (e: React.SyntheticEvent) =>
+	{
+		e.preventDefault();
+		e.stopPropagation();
+		hasError.value = false;
+		draftValue.value = label;
+		isEditing.value = true;
+	};
+
+	const cancelEditing = () =>
+	{
+		isEditing.value = false;
+		hasError.value = false;
+		draftValue.value = label;
+	};
+
+	const commitEditing = async () =>
+	{
+		const trimmed = draftValue.value?.trim();
+		if (!trimmed || trimmed === label)
+		{
+			cancelEditing();
+			return;
+		}
+		isSaving.value = true;
+		hasError.value = false;
+		try
+		{
+			await onSave(trimmed);
+			isEditing.value = false;
+		}
+		catch (error)
+		{
+			hasError.value = true;
+		}
+		finally
+		{
+			isSaving.value = false;
+		}
+	};
+
+	if (isEditing.value)
+	{
+		return (
+			<div
+				className="flex flex-1 items-center gap-1"
+				onClick={ (e) => e.stopPropagation() }
+				onPointerDown={ (e) => e.stopPropagation() }
+				onPointerUp={ (e) => e.stopPropagation() }
+				onKeyDown={ (e) => e.stopPropagation() }
+			>
+				<TextField
+					value={ draftValue.value }
+					disabled={ isSaving.value }
+					aria-label={ "edit" }
+					onChange={ (e) =>
+					{
+						draftValue.value = e;
+					} }
+					onKeyDown={ (e) =>
+					{
+						if (e.key === "Enter")
+						{
+							e.preventDefault();
+							void commitEditing();
+						}
+						if (e.key === "Escape")
+						{
+							e.preventDefault();
+							cancelEditing();
+						}
+					} }
+
+				/>
+				{ isSaving.value
+					? <Loader2 className="h-4 w-4 shrink-0 animate-spin text-muted-foreground"/>
+					: (
+						<>
+							<Button
+								type="button"
+								variant="default"
+								onClick={ () => void commitEditing() }
+								className="shrink-0 rounded-lg px-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+								aria-label={ "save" }
+							>
+								<Check className="h-3.5 w-3.5"/>
+							</Button>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={ cancelEditing }
+								className="shrink-0 rounded-lg px-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+								aria-label={ "cancel" }
+							>
+								<X className="h-3.5 w-3.5"/>
+							</Button>
+						</>
+					) }
+			</div>
+		);
+	}
+
+	return (
+		<>
+			<span className="flex-1 truncate">{ label }</span>
+			<Button
+				type="button"
+				onClick={ startEditing }
+				variant="outline"
+				onPointerDown={ (e) => e.stopPropagation() }
+				onPointerUp={ (e) => e.stopPropagation() }
+				className="shrink-0 rounded-lg px-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+				aria-label={ "edit" }
+			>
+				<Pencil className="h-3.5 w-3.5"/>
+			</Button>
+		</>
+	);
 };
 
 SearchableSelect.Option = function <TDto extends Dto>(

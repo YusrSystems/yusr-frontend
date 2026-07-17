@@ -483,42 +483,49 @@ function PageTable({fixedType, permissionResource}: {
 			&& fixedType === InvoiceType.Sell
 		)
 		{
-			cells.push({
-				rowBody: (
-					<div className="flex items-center gap-2">
-						{ getEInvoiceStatus(invoice).message && (
-							<span
-								className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-									getEInvoiceStatus(invoice).styles
-								}` }
-							>
-                { getEInvoiceStatus(invoice).message }
-              </span>
-						) }
-						{ invoice.eInvoiceStatus === EInvoiceStatus.NotSent
-							&& invoice.statusId === InvoiceStatus.Valid
-							&& (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.SellReturn) && (
-								<Tooltip>
-									<TooltipTrigger asChild>
-										<Button
-											variant="ghost"
-											size="icon"
-											className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-50"
-											onClick={ () => resendEInvoice(invoice) }
-											disabled={ resendingEInvoice.value }
-										>
-											<RotateCw className="h-3.5 w-3.5"/>
-										</Button>
-									</TooltipTrigger>
-									<TooltipContent side="top">
-										<p>{ t("invoices.resendTooltip") }</p>
-									</TooltipContent>
-								</Tooltip>
+			if (invoice.eInvoiceStatus === EInvoiceStatus.NotSent && invoice.canBePrinted)
+			{
+				cells.push({rowBody: "", rowStyles: ""});
+			}
+			else
+			{
+				cells.push({
+					rowBody: (
+						<div className="flex items-center gap-2">
+							{ getEInvoiceStatus(invoice).message && (
+								<span
+									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+										getEInvoiceStatus(invoice).styles
+									}` }
+								>
+								{ getEInvoiceStatus(invoice).message }
+							</span>
 							) }
-					</div>
-				),
-				rowStyles: ""
-			});
+							{ invoice.eInvoiceStatus === EInvoiceStatus.NotSent
+								&& invoice.statusId === InvoiceStatus.Valid
+								&& (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.SellReturn) && (
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<Button
+												variant="ghost"
+												size="icon"
+												className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-50"
+												onClick={ () => resendEInvoice(invoice) }
+												disabled={ resendingEInvoice.value }
+											>
+												<RotateCw className="h-3.5 w-3.5"/>
+											</Button>
+										</TooltipTrigger>
+										<TooltipContent side="top">
+											<p>{ t("invoices.resendTooltip") }</p>
+										</TooltipContent>
+									</Tooltip>
+								) }
+						</div>
+					),
+					rowStyles: ""
+				});
+			}
 		}
 
 		if (

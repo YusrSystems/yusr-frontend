@@ -8,7 +8,7 @@ import { ProfitAndLossReport } from "@/features/reports/profitAndLoss/profitAndL
 import { Cubits } from "@/core/services/cubits.ts";
 import { ProfitAndLossReportRequest } from "@/features/reports/profitAndLoss/profitAndLossReportRequest.ts";
 import type { ProfitAndLossRow } from "@/features/reports/profitAndLoss/profitAndLossReportResult.ts";
-import Invoice from "@/core/data/invoices/invoice.ts";
+import { ProfitAndLossRowDocumentType } from "@/features/reports/profitAndLoss/profitAndLossReportResult.ts";
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "@/features/report/utils/formating.ts";
 
@@ -16,7 +16,7 @@ import { formatNumber } from "@/features/report/utils/formating.ts";
 export function ProfitAndLossReportPage()
 {
 	useSignals();
-	const {t} = useTranslation("accounting");
+	const {t} = useTranslation(["accounting", "common"]);
 
 	const lastRequest = useMemo(() => signal<ProfitAndLossReportRequest>(new ProfitAndLossReportRequest()), []);
 
@@ -40,25 +40,37 @@ export function ProfitAndLossReportPage()
 	const isLoading = Cubits.ProfitAndLossReport.state.value instanceof ReportLoading;
 	const data = Cubits.ProfitAndLossReport.result.value;
 
+	const getDocTypeName = (type: ProfitAndLossRowDocumentType) =>
+	{
+		switch (type)
+		{
+			case ProfitAndLossRowDocumentType.Sell:
+				return t("invoices.sellInvoice");
+			case ProfitAndLossRowDocumentType.SellReturn:
+				return t("invoices.sellReturn");
+			case ProfitAndLossRowDocumentType.Payment:
+				return t("vouchers.paymentVoucher");
+			default:
+				return t("invoices.unknown");
+		}
+	};
+
 	return (
 		<ReportPage>
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.ExcelButton<ProfitAndLossRow>
-					fileName="تقرير_الأرباح_والخسائر_للفواتير"
+					fileName="تقرير_الأرباح_والخسائر_الشامل"
 					getRows={ async () => Cubits.ProfitAndLossReport.result.value?.invoiceListRows ?? [] }
 					columns={ [
 						{header: "الرقم", accessor: (r) => r.id.toString()},
-						{header: "التاريخ", accessor: (r) => r.invoiceDate},
-						{header: "رقم الفاتورة", accessor: (r) => r.invoiceId.toString()},
-						{
-							header: "نوع الفاتورة",
-							accessor: (r) => Invoice.getTypeName(r.invoiceType, t)
-						},
+						{header: "التاريخ", accessor: (r) => r.date},
+						{header: "رقم المستند", accessor: (r) => r.documentId.toString()},
+						{header: "نوع المستند", accessor: (r) => getDocTypeName(r.documentType)},
 						{header: "من", accessor: (r) => r.fromName ?? ""},
 						{header: "إلى", accessor: (r) => r.toName ?? ""},
-						{header: "الكمية", accessor: (r) => r.quantity.toString()},
+						{header: "البيان", accessor: (r) => r.description ?? ""},
 						{header: "التكلفة الإجمالية", accessor: (r) => formatNumber(r.cost)},
-						{header: "مبلغ البيع (صافي)", accessor: (r) => formatNumber(r.amount)},
+						{header: "المبلغ الاجمالي", accessor: (r) => formatNumber(r.amount)},
 						{header: "قيمة الضريبة", accessor: (r) => formatNumber(r.taxAmount)},
 						{header: "صافي الربح", accessor: (r) => formatNumber(r.profit)}
 					] }
