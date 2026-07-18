@@ -49,7 +49,8 @@ export default function ChangeAccountDialog(
 				{label: "ذمم مدينة (Accounts Receivable)", value: AccountType.AccountsReceivable},
 				{label: "النقد والبنوك (Cash and Bank)", value: AccountType.CashAndBank},
 				{label: "أصول غير متداولة (Non-Current Asset)", value: AccountType.NonCurrentAsset},
-				{label: "ضريبة مدخلات (Input Tax)", value: AccountType.InputTax}
+				{label: "ضريبة مدخلات (Input Tax)", value: AccountType.InputTax},
+				{label: "أصول المخزون (Inventory Asset)", value: AccountType.InventoryAsset}
 			]
 		},
 		{
@@ -64,7 +65,8 @@ export default function ChangeAccountDialog(
 		{
 			group: "حقوق الملكية (Equity)",
 			options: [
-				{label: "حقوق الملكية (Equity)", value: AccountType.Equity}
+				{label: "حقوق الملكية (Equity)", value: AccountType.Equity},
+				{label: "حقوق ملكية رصيد افتتاحي (Opening Balance Equity)", value: AccountType.OpeningBalanceEquity}
 			]
 		},
 		{

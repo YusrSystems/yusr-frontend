@@ -415,11 +415,16 @@ function buildHierarchicalTree(accounts: AccountDto[]): TreeNodeData[]
 		{type: AccountType.CashAndBank, label: "النقد والبنوك (Cash & Bank)"},
 		{type: AccountType.NonCurrentAsset, label: "أصول غير متداولة (Non-Current Assets)"},
 		{type: AccountType.InputTax, label: "ضريبة مدخلات (Input Tax)"},
+		{type: AccountType.InventoryAsset, label: "أصول المخزون (Inventory Assets)"},
+
 		{type: AccountType.CurrentLiability, label: "التزامات متداولة (Current Liabilities)"},
 		{type: AccountType.AccountsPayable, label: "ذمم دائنة (Accounts Payable)"},
 		{type: AccountType.NonCurrentLiability, label: "التزامات غير متداولة (Non-Current Liabilities)"},
 		{type: AccountType.OutputTax, label: "ضريبة مخرجات (Output Tax)"},
-		{type: AccountType.Equity, label: "رأس المال والأرباح المبقاة (Equity)"},
+
+		{type: AccountType.Equity, label: "حقوق الملكية (Equity)"},
+		{type: AccountType.OpeningBalanceEquity, label: "حقوق ملكية رصيد افتتاحي (Opening Balance Equity)"},
+
 		{type: AccountType.SalesRevenue, label: "إيرادات المبيعات (Sales Revenue)"},
 		{type: AccountType.CostOfGoodsSold, label: "تكلفة البضاعة المباعة (Cost of Goods Sold)"},
 		{type: AccountType.OperatingExpense, label: "مصاريف تشغيلية (Operating Expenses)"}

@@ -4,23 +4,32 @@ import { useSignals } from "@preact/signals-react/runtime";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
-import { AccountType } from "@/core/data/account.ts";
-import { type Setting } from "@/core/data/setting.ts";
+import PartnersSearchableSelect from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 import TaxesSearchableSelect from "@/core/components/searchableSelect/taxesSearchableSelect.tsx";
+import { PartnerType } from "@/core/data/partner.ts";
+import { type Setting } from "@/core/data/setting.ts";
+import { useEffect } from "react";
+import { Cubits } from "@/core/services/cubits.ts";
 
 
 export default function DefaultsSection({formData}: { formData: Setting })
 {
 	useSignals();
-	const {t} = useTranslation("erpCommon");
+	const {t} = useTranslation(["erpCommon", "accounting"]);
+
+	useEffect(() =>
+	{
+		Cubits.customers.init([PartnerType.Customer]);
+		Cubits.suppliers.init([PartnerType.Supplier]);
+	}, []);
 
 	return (
-		<div className="space-y-10 animate-in fade-in">
-			<FieldGroup>
-				<FieldsSection title={ t("settings.defaultValues") } columns={ 2 }>
+		<div className="space-y-8 animate-in fade-in">
+			<FieldGroup className="gap-8">
 
+				<FieldsSection title={ t("settings.operationalDefaults", "إعدادات التشغيل الافتراضية") } columns={ 2 }>
 					<FormField
-						label={ t("settings.defaultCurrency") }
+						label={ t("settings.defaultCurrency", "العملة الافتراضية") }
 						required
 						error={ formData.getError("currencyId") }
 					>
@@ -28,46 +37,115 @@ export default function DefaultsSection({formData}: { formData: Setting })
 							id={ formData.currencyId }
 							label={ formData.currency?.value?.name }
 						/>
-
 					</FormField>
 
-					<FormField label={ t("settings.defaultTax") }>
+					<FormField label={ t("settings.defaultTax", "الضريبة الافتراضية") }>
 						<TaxesSearchableSelect
 							id={ formData.mainTaxId }
 							label={ formData.mainTax?.value?.name }
 						/>
 					</FormField>
 
-					<FormField label={ t("settings.defaultWarehouse") }>
+					<FormField label={ t("settings.defaultWarehouse", "المستودع الافتراضي") }>
 						<StoresSearchableSelect
 							id={ formData.mainStoreId }
 							label={ formData.mainStoreName }
 						/>
 					</FormField>
 
-					<FormField label={ t("settings.defaultPaymentMethod") }>
+					<FormField label={ t("settings.defaultPaymentMethod", "طريقة الدفع الافتراضية") }>
 						<PaymentMethodsSearchableSelect
 							id={ formData.mainPaymentMethodId }
 							label={ formData.mainPaymentMethodName }
 						/>
 					</FormField>
 
-					<FormField label={ t("settings.defaultSalesAccount") }>
-						<AccountsSearchableSelect
-							id={ formData.sellAccountId }
-							label={ formData.sellAccountName }
-							types={ [AccountType.Client, AccountType.Supplier] }
+					<FormField label={ t("settings.defaultCustomerPartner", "العميل الافتراضي للمبيعات") }>
+						<PartnersSearchableSelect
+							id={ formData.defaultCustomerPartnerId }
+							label={ formData.defaultCustomerPartnerName }
+							typeFilter={ PartnerType.Customer }
+							cubit={ Cubits.customers }
 						/>
 					</FormField>
 
-					<FormField label={ t("settings.defaultPurchaseAccount") }>
-						<AccountsSearchableSelect
-							id={ formData.purchaseAccountId }
-							label={ formData.purchaseAccountName }
-							types={ [AccountType.Client, AccountType.Supplier] }
+					<FormField label={ t("settings.defaultSupplierPartner", "المورد الافتراضي للمشتريات") }>
+						<PartnersSearchableSelect
+							id={ formData.defaultSupplierPartnerId }
+							label={ formData.defaultSupplierPartnerName }
+							typeFilter={ PartnerType.Supplier }
+							cubit={ Cubits.suppliers }
 						/>
 					</FormField>
 				</FieldsSection>
+
+				<FieldsSection
+					title={ t("settings.systemAccounts", "الحسابات المحاسبية التلقائية للنظام") }
+					columns={ 3 }>
+					<FormField label={ t("settings.accountsReceivable", "حساب الذمم المدينة (Receivables)") }>
+						<AccountsSearchableSelect
+							id={ formData.receivablesAccountId }
+							label={ formData.receivablesAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.accountsPayable", "حساب الذمم الدائنة (Payables)") }>
+						<AccountsSearchableSelect
+							id={ formData.payablesAccountId }
+							label={ formData.payablesAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.salesRevenue", "حساب إيرادات المبيعات (Sales Revenue)") }>
+						<AccountsSearchableSelect
+							id={ formData.salesRevenueAccountId }
+							label={ formData.salesRevenueAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.cogs", "حساب تكلفة البضاعة المباعة (COGS)") }>
+						<AccountsSearchableSelect
+							id={ formData.cogsAccountId }
+							label={ formData.cogsAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.inventoryAsset", "حساب مخزون المستودع (Inventory Asset)") }>
+						<AccountsSearchableSelect
+							id={ formData.inventoryAssetAccountId }
+							label={ formData.inventoryAssetAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.outputTax", "حساب ضريبة المخرجات (Output Tax)") }>
+						<AccountsSearchableSelect
+							id={ formData.outputTaxAccountId }
+							label={ formData.outputTaxAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.inputTax", "حساب ضريبة المدخلات (Input Tax)") }>
+						<AccountsSearchableSelect
+							id={ formData.inputTaxAccountId }
+							label={ formData.inputTaxAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.paymentCommission", "حساب عمولات ورسوم الدفع الإلكتروني") }>
+						<AccountsSearchableSelect
+							id={ formData.paymentCommissionAccountId }
+							label={ formData.paymentCommissionAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.openingBalanceEquity", "حساب الأرصدة الافتتاحية (Equity)") }>
+						<AccountsSearchableSelect
+							id={ formData.openingBalanceEquityAccountId }
+							label={ formData.openingBalanceEquityAccountName }
+						/>
+					</FormField>
+				</FieldsSection>
+
 			</FieldGroup>
 		</div>
 	);

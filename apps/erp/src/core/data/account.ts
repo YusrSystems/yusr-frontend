@@ -19,6 +19,7 @@ export enum AccountType
 	CashAndBank = 3,         // النقد والبنوك
 	NonCurrentAsset = 4,     // أصول غير متداولة
 	InputTax = 5,            // ضريبة مدخلات
+	InventoryAsset = 14,     // أصول المخزون
 
 	// Liability Types
 	CurrentLiability = 6,    // التزامات متداولة
@@ -28,6 +29,7 @@ export enum AccountType
 
 	// Equity
 	Equity = 10,
+	OpeningBalanceEquity = 15, // رصيد افتتاحي - حقوق ملكية
 
 	// Revenue
 	SalesRevenue = 11,
@@ -46,6 +48,7 @@ export function getAccountClass(type: AccountType): AccountClass
 		case AccountType.CashAndBank:
 		case AccountType.NonCurrentAsset:
 		case AccountType.InputTax:
+		case AccountType.InventoryAsset:
 			return AccountClass.Asset;
 
 		case AccountType.CurrentLiability:
@@ -55,6 +58,7 @@ export function getAccountClass(type: AccountType): AccountClass
 			return AccountClass.Liability;
 
 		case AccountType.Equity:
+		case AccountType.OpeningBalanceEquity:
 			return AccountClass.Equity;
 
 		case AccountType.SalesRevenue:
