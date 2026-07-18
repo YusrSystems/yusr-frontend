@@ -38,6 +38,9 @@ import { ItemStatementReportPage } from "@/features/reports/itemStatement/itemSt
 import { AccountStatementReportPage } from "@/features/reports/accountStatement/accountStatementReportPage.tsx";
 import { AccountsListReportPage } from "@/features/reports/accountsList/accountsListReportPage.tsx";
 import AccountsPage from "@/features/accounts/accountsPage.tsx";
+import PartnersPage from "@/features/partners/partnersPage.tsx";
+import { PartnerType } from "@/core/data/partner.ts";
+import { Cubits } from "@/core/services/cubits.ts";
 
 
 const refreshPage = () =>
@@ -80,6 +83,14 @@ export const router = createBrowserRouter([{
 					{path: "/stocktakings", element: <StocktakingsPage/>},
 					{path: "/itemsSettlements/:id?", element: <ItemsSettlementsPage/>},
 					{path: "/vouchers/:id?", element: <VouchersPage/>},
+					{
+						path: "/clients/:id?",
+						element: <PartnersPage type={ PartnerType.Customer } cubit={ Cubits.customers }/>
+					},
+					{
+						path: "/suppliers/:id?",
+						element: <PartnersPage type={ PartnerType.Supplier } cubit={ Cubits.suppliers }/>
+					},
 					{path: "/reports", element: <ReportsPage/>},
 
 					// invoices

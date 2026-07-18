@@ -16,6 +16,7 @@ import { type AccountDto } from "@/core/data/account.ts";
 import type { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { type BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import { VoucherCategoryDto, type VoucherDto } from "@/core/data/voucher.ts";
+import type { PartnerDto } from "@/core/data/partner.ts";
 
 
 export class Services extends BaseServices
@@ -33,6 +34,7 @@ export class Services extends BaseServices
 	public static readonly costAdjustmentsApi = new BaseApiService<CostAdjustmentDto>("CostAdjustments");
 	public static readonly itemsApi = new ItemsApiService();
 	public static readonly accountsApi = new BaseApiService<AccountDto>("Accounts");
+	public static readonly partnersApi = new BaseApiService<PartnerDto>("Partners");
 	public static readonly paymentMethodsApi = new BaseApiService<PaymentMethodDto>("PaymentMethods");
 	public static readonly balanceTransfersApi = new BaseApiService<BalanceTransferDto>("BalanceTransfers");
 	public static readonly voucherApi = new BaseApiService<VoucherDto>("Vouchers");

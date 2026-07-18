@@ -34,6 +34,7 @@ import type { AccountStatementReportResult } from "@/features/reports/accountSta
 import type {
 	ItemsTaxStatementReportRequest
 } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportRequest";
+import type { PartnerDto } from "@/core/data/partner.ts";
 
 
 export class Cubits extends BaseCubits
@@ -55,11 +56,14 @@ export class Cubits extends BaseCubits
 	public static readonly vouchers = new PageCubit<VoucherDto>(Services.voucherApi);
 	public static readonly voucherCategories = new PageCubit<VoucherCategoryDto>(Services.voucherCategoriesApi);
 	public static readonly invoices = new PageCubit<InvoiceDto>(Services.invoicesApi);
+	public static readonly customers = new PageCubit<PartnerDto>(Services.partnersApi);
+	public static readonly suppliers = new PageCubit<PartnerDto>(Services.partnersApi);
 
 	// filter fields
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");
 	public static readonly itemFilterFields = new FilterFieldsCubit("Items");
 	public static readonly invoiceFilterFields = new FilterFieldsCubit("Invoices");
+	public static readonly partnerFilterFields = new FilterFieldsCubit("Partners");
 
 	// reports
 	public static readonly ItemsMovementReport = new PageReportCubit<ItemsMovementReportRequest, ItemsMovementReportResult>("ItemsMovement");

@@ -102,6 +102,28 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 				SystemPermissionsActions.Get
 			)
 		}, {
+			title: t("sidebar.clients"),
+			url: "/clients",
+			icon: <WalletCards/>,
+			hasAuth: Services.auth.hasAuth(
+				SystemPermissionsResources.AccountClient,
+				SystemPermissionsActions.Get
+			) && Services.auth.hasAuth(
+				SystemPermissionsResources.Accounts,
+				SystemPermissionsActions.Get
+			)
+		}, {
+			title: t("sidebar.suppliers"),
+			url: "/suppliers",
+			icon: <WalletCards/>,
+			hasAuth: Services.auth.hasAuth(
+				SystemPermissionsResources.AccountClient,
+				SystemPermissionsActions.Get
+			) && Services.auth.hasAuth(
+				SystemPermissionsResources.Accounts,
+				SystemPermissionsActions.Get
+			)
+		}, {
 			title: t("sidebar.accounts"),
 			url: "#",
 			icon: <WalletCards/>,
