@@ -108,51 +108,8 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 			hasAuth: true,
 			subItems: [{
 				title: t("sidebar.clients"),
-				url: "/clients",
+				url: "/accounts",
 				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.AccountClient,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
-					SystemPermissionsResources.Accounts,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.suppliers"),
-				url: "/suppliers",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.AccountSupplier,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
-					SystemPermissionsResources.Accounts,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.employees"),
-				url: "/employees",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.AccountEmployee,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
-					SystemPermissionsResources.Accounts,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.banks"),
-				url: "/banks",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.AccountBank,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
-					SystemPermissionsResources.Accounts,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.boxes"),
-				url: "/boxes",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.AccountBox,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
 					SystemPermissionsResources.Accounts,
 					SystemPermissionsActions.Get
 				)

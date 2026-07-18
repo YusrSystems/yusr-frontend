@@ -6,11 +6,6 @@ import { ErpRolesPage } from "@/features/roles/erpRolesPage";
 import VouchersPage from "@/features/vouchers/vouchersPage.tsx";
 import { createBrowserRouter } from "react-router-dom";
 import { BaseFilterableApiService, BranchesPage, ErrorFallback, NotFoundPage, UsersPage } from "yusr-ui";
-import BanksAccountsPage from "../features/accounts/banksAccountsPage";
-import BoxesAccountsPage from "../features/accounts/boxesAccountsPage";
-import ClientsAccountsPage from "../features/accounts/clientsAccountsPage";
-import { EmployeesAccountsPage } from "../features/accounts/employeesAccountsPage";
-import { SuppliersAccountsPage } from "../features/accounts/suppliersAccountsPage";
 import DashboardPage from "../features/dashboard/dashboardPage";
 import ItemsPage from "../features/items/itemsPage";
 import ItemsSettlementsPage from "../features/stocktakings/itemsSettlementsPage.tsx";
@@ -42,6 +37,7 @@ import { BalanceSheetReportPage } from "@/features/reports/balanceSheet/balanceS
 import { ItemStatementReportPage } from "@/features/reports/itemStatement/itemStatementReportPage.tsx";
 import { AccountStatementReportPage } from "@/features/reports/accountStatement/accountStatementReportPage.tsx";
 import { AccountsListReportPage } from "@/features/reports/accountsList/accountsListReportPage.tsx";
+import AccountsPage from "@/features/accounts/accountsPage.tsx";
 
 
 const refreshPage = () =>
@@ -74,11 +70,7 @@ export const router = createBrowserRouter([{
 					{path: "/roles", element: <ErpRolesPage/>},
 					{path: "/stores/:id?", element: <StoresPage/>},
 					{path: "/units", element: <UnitsPage/>},
-					{path: "/clients/:id?", element: <ClientsAccountsPage/>},
-					{path: "/suppliers/:id?", element: <SuppliersAccountsPage/>},
-					{path: "/employees/:id?", element: <EmployeesAccountsPage/>},
-					{path: "/banks/:id?", element: <BanksAccountsPage/>},
-					{path: "/boxes/:id?", element: <BoxesAccountsPage/>},
+					{path: "/accounts/:id?", element: <AccountsPage/>},
 					{path: "/paymentMethods", element: <PaymentMethodsPage/>},
 					{path: "/balanceTransfer/:id?", element: <BalanceTransfersPage/>},
 					{path: "/items/:id?", element: <ItemsPage/>},

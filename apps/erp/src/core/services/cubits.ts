@@ -49,6 +49,7 @@ export class Cubits extends BaseCubits
 	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(Services.costAdjustmentsApi);
 	public static readonly paymentMethods = new PageCubit<PaymentMethodDto>(Services.paymentMethodsApi);
 	public static readonly accounts = new PageCubit<AccountDto>(Services.accountsApi);
+	public static readonly parentAccounts = new PageCubit<AccountDto>(Services.accountsApi);
 	public static readonly balanceTransfers = new PageCubit<BalanceTransferDto>(Services.balanceTransfersApi);
 	public static override roles = new PageCubit<ErpRoleDto>(Services.rolesApi);
 	public static readonly vouchers = new PageCubit<VoucherDto>(Services.voucherApi);
