@@ -19,7 +19,8 @@ import {
 export default function AccountsSearchableSelect(
 	{showAddButton = true, accountsCubit = Cubits.accounts, ...props}: SearchableSelectProps<AccountDto> & {
 		showAddButton?: boolean;
-		accountsCubit?: PageCubit<AccountDto>
+		accountsCubit?: PageCubit<AccountDto>,
+		placeholder?: string
 	}
 )
 {
@@ -30,7 +31,8 @@ export default function AccountsSearchableSelect(
 	return (
 		<>
 			<SearchableSelect>
-				<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
+				<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }
+				                          placeholder={ props.placeholder }/>
 				<SearchableSelect.Content>
 					<SearchableSelect.SearchInput onSearch={ (searchInput) => accountsCubit.search(searchInput) }/>
 					<SearchableSelect.Command>

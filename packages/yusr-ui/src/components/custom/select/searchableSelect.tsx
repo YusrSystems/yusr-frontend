@@ -58,7 +58,10 @@ export function SearchableSelect<TDto extends Dto>({children}: PropsWithChildren
 }
 
 SearchableSelect.Trigger = function (
-	{className, label, ...props}: React.ComponentProps<"button"> & { label?: Signal<string | undefined>; }
+	{className, label, placeholder, ...props}: React.ComponentProps<"button"> & {
+		label?: Signal<string | undefined>;
+		placeholder?: string
+	}
 )
 {
 	useSignals();
@@ -79,7 +82,8 @@ SearchableSelect.Trigger = function (
 				) }
 				{ ...props }
 			>
-				<span className="truncate text-start">{ resolvedLabel || data.t("searchableSelect.placeholder") }</span>
+				<span
+					className="truncate text-start">{ resolvedLabel || (placeholder ?? data.t("searchableSelect.placeholder")) }</span>
 				<ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50 ltr:ml-2 rtl:mr-2"/>
 			</Button>
 		</PopoverTrigger>
