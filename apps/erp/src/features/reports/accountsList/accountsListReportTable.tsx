@@ -5,31 +5,11 @@ import { Cubits } from "@/core/services/cubits.ts";
 import { ReportTableTh } from "@/features/report/components/reportTableTh.tsx";
 import { ReportTableTd } from "@/features/report/components/reportTableTd.tsx";
 import { formatNumber } from "@/features/report/utils/formating.ts";
-import { Account, AccountType } from "@/core/data/account.ts";
 
 
 export function AccountsListReportTable()
 {
 	useSignals();
-
-	const getAccountPath = (type: number, id: number) =>
-	{
-		switch (type)
-		{
-			case AccountType.Client:
-				return `/clients/${ id }`;
-			case AccountType.Supplier:
-				return `/suppliers/${ id }`;
-			case AccountType.Employee:
-				return `/employees/${ id }`;
-			case AccountType.Bank:
-				return `/banks/${ id }`;
-			case AccountType.Box:
-				return `/boxes/${ id }`;
-			default:
-				return "#";
-		}
-	};
 
 	if (Cubits.accounts.state.value instanceof PageLoading)
 	{
@@ -59,7 +39,6 @@ export function AccountsListReportTable()
 				{ Cubits.accounts.entities.value.map((account, idx) =>
 				{
 					const isEven = idx % 2 === 0;
-					const linkPath = getAccountPath(account.type, account.id);
 
 					return (
 						<tr key={ account.id }>
@@ -71,18 +50,14 @@ export function AccountsListReportTable()
 								isEven={ isEven }
 								className="p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!"
 							>
-								{ linkPath !== "#" ? (
-									<Link
-										to={ linkPath }
-										target="_blank"
-										rel="noopener noreferrer"
-										className="block w-full h-full p-3"
-									>
-										{ account.id }
-									</Link>
-								) : (
-									<span className="block w-full h-full p-3">{ account.id }</span>
-								) }
+								<Link
+									to="/accounts"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="block w-full h-full p-3"
+								>
+									{ account.id }
+								</Link>
 							</ReportTableTd>
 
 							<ReportTableTd isEven={ isEven } align="start">
@@ -90,7 +65,7 @@ export function AccountsListReportTable()
 							</ReportTableTd>
 
 							<ReportTableTd isEven={ isEven } align="start">
-								{ Account.getAccountTypeName(account.type) }
+								{/*{ Account.getAccountTypeName(account.type) }*/ }
 							</ReportTableTd>
 
 							<ReportTableTd isEven={ isEven }>
