@@ -37,7 +37,7 @@ export default function ChangeBalanceTransferDialog(
 	useEffect(() =>
 	{
 		if (entity.value.isDeleted.value) return;
-		Cubits.accounts.init([AccountType.CashAndBank]);
+		Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true});
 	}, [entity.value.isDeleted.value]);
 
 	useEffect(() =>

@@ -28,7 +28,7 @@ export default function ChangePaymentMethodDialog(
 	useSignals();
 	useEffect(() =>
 	{
-		Cubits.accounts.init([AccountType.CashAndBank]);
+		Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true});
 	}, []);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props

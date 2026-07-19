@@ -39,11 +39,7 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 				field: "fromGlAccountId",
 				selector: (d) => d.fromGlAccountId,
 				validators: [
-					Validators.required(i18n.t("accounting:balanceTransfers.fromAccountRequired", "حساب الصادر مطلوب")),
-					Validators.custom((val, form) =>
-					{
-						return Number(val) !== Number(form.toGlAccountId);
-					}, i18n.t("accounting:balanceTransfers.sameAccountError", "يجب أن يكون حساب الصادر وحساب الوارد مختلفين"))
+					Validators.required(i18n.t("accounting:balanceTransfers.fromAccountRequired", "حساب الصادر مطلوب"))
 				]
 			},
 			{
