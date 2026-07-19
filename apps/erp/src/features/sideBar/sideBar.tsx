@@ -9,6 +9,8 @@ import {
 	ReceiptText,
 	ScrollText,
 	SettingsIcon,
+	ShoppingBag,
+	Truck,
 	UsersIcon,
 	WalletCards
 } from "lucide-react";
@@ -104,7 +106,7 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 		}, {
 			title: t("sidebar.clients"),
 			url: "/clients",
-			icon: <WalletCards/>,
+			icon: <ShoppingBag/>,
 			hasAuth: Services.auth.hasAuth(
 				SystemPermissionsResources.AccountClient,
 				SystemPermissionsActions.Get
@@ -115,7 +117,7 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 		}, {
 			title: t("sidebar.suppliers"),
 			url: "/suppliers",
-			icon: <WalletCards/>,
+			icon: <Truck/>,
 			hasAuth: Services.auth.hasAuth(
 				SystemPermissionsResources.AccountClient,
 				SystemPermissionsActions.Get
@@ -129,7 +131,7 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 			icon: <WalletCards/>,
 			hasAuth: true,
 			subItems: [{
-				title: t("sidebar.clients"),
+				title: t("sidebar.accounts"),
 				url: "/accounts",
 				hasAuth: Services.auth.hasAuth(
 					SystemPermissionsResources.Accounts,
