@@ -120,7 +120,7 @@ export function StorageFileField(
 			error={ error }
 		>
 
-			<div className="space-y-3">
+			<div className="space-y-3 flex flex-col items-center justify-center">
 				{ label && (
 					<label className="text-xs font-medium text-muted-foreground pb-10">{ label }</label>
 				) }
