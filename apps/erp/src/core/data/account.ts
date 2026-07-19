@@ -73,6 +73,59 @@ export function getAccountClass(type: AccountType): AccountClass
 	}
 }
 
+export function getAccountTypesByClasses(classes: AccountClass[]): AccountType[]
+{
+	const types: AccountType[] = [];
+
+	for (const cls of classes)
+	{
+		switch (cls)
+		{
+			case AccountClass.Asset:
+				types.push(
+					AccountType.CurrentAsset,
+					AccountType.AccountsReceivable,
+					AccountType.CashAndBank,
+					AccountType.NonCurrentAsset,
+					AccountType.InputTax,
+					AccountType.InventoryAsset
+				);
+				break;
+
+			case AccountClass.Liability:
+				types.push(
+					AccountType.CurrentLiability,
+					AccountType.AccountsPayable,
+					AccountType.NonCurrentLiability,
+					AccountType.OutputTax
+				);
+				break;
+
+			case AccountClass.Equity:
+				types.push(
+					AccountType.Equity,
+					AccountType.OpeningBalanceEquity
+				);
+				break;
+
+			case AccountClass.Revenue:
+				types.push(
+					AccountType.SalesRevenue
+				);
+				break;
+
+			case AccountClass.Expense:
+				types.push(
+					AccountType.CostOfGoodsSold,
+					AccountType.OperatingExpense
+				);
+				break;
+		}
+	}
+
+	return types;
+}
+
 export class AccountDto extends Dto
 {
 	public name: string = "";

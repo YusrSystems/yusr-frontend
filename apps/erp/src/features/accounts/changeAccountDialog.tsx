@@ -17,7 +17,14 @@ import {
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect";
-import { Account, AccountClass, type AccountDto, AccountType, getAccountClass } from "@/core/data/account.ts";
+import {
+	Account,
+	AccountClass,
+	type AccountDto,
+	AccountType,
+	getAccountClass,
+	getAccountTypesByClasses
+} from "@/core/data/account.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
@@ -99,9 +106,8 @@ export default function ChangeAccountDialog(
 
 	useEffect(() =>
 	{
-		Cubits.parentAccounts.init(undefined, {
-			"isParentOnly": true,
-			"filterClass": getAccountClass(entity.value.type.value ?? AccountType.CashAndBank)
+		Cubits.parentAccounts.init(getAccountTypesByClasses([getAccountClass(entity.value.type.value ?? AccountType.CashAndBank)]), {
+			"isParentOnly": true
 		});
 	}, [entity.value.type.value]);
 
@@ -120,7 +126,7 @@ export default function ChangeAccountDialog(
 			<ChangeDialog.Header title={ title }/>
 			<div className="max-h-[70vh] overflow-y-auto px-2 pb-2">
 				<FieldGroup>
-					<FieldsSection title={ t("accounts.basicInfo", "البيانات الأساسية") } columns={ 1 }>
+					<FieldsSection columns={ 1 }>
 						<TextField
 							label={ t("accounts.accountName", "اسم الحساب") }
 							required
