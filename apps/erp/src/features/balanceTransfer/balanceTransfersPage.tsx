@@ -131,8 +131,8 @@ function Table()
 					) => [
 						{rowBody: `#${ transfer.id }`, rowStyles: ""},
 						{rowBody: new Date(transfer.date).toLocaleDateString("en-CA"), rowStyles: ""},
-						{rowBody: transfer.fromAccountName ?? "-", rowStyles: "font-semibold text-red-600"},
-						{rowBody: transfer.toAccountName ?? "-", rowStyles: "font-semibold text-green-600"},
+						{rowBody: transfer.fromGlAccountName ?? "-", rowStyles: "font-semibold text-red-600"},
+						{rowBody: transfer.toGlAccountName ?? "-", rowStyles: "font-semibold text-green-600"},
 						{
 							rowBody: (
 								<div className="flex items-center gap-1">
