@@ -1,5 +1,5 @@
 import { type Signal } from "@preact/signals-react";
-import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { ChangeableEntity, ChangeableEntityMode, CityDto, Dto, i18n, Validators } from "yusr-ui";
 
 
 export enum PartnerType
@@ -27,6 +27,8 @@ export class PartnerDto extends Dto
 	public district?: string;
 	public buildingNumber?: string;
 	public postalCode?: string;
+
+	public city?: CityDto;
 }
 
 export class Partner extends ChangeableEntity<PartnerDto>
@@ -48,6 +50,8 @@ export class Partner extends ChangeableEntity<PartnerDto>
 	public district: Signal<string | undefined>;
 	public buildingNumber: Signal<string | undefined>;
 	public postalCode: Signal<string | undefined>;
+
+	public city: Signal<CityDto | undefined>;
 
 	constructor(dto: Partial<PartnerDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
@@ -138,5 +142,6 @@ export class Partner extends ChangeableEntity<PartnerDto>
 		this.district = this.assign("district", dto?.district);
 		this.buildingNumber = this.assign("buildingNumber", dto?.buildingNumber);
 		this.postalCode = this.assign("postalCode", dto?.postalCode);
+		this.city = this.assign("city", dto?.city);
 	}
 }
