@@ -10,7 +10,6 @@ import {
 	ChangeableEntityMode,
 	CrudPage,
 	FilterSection,
-	PageCubit,
 	PageError,
 	PageLoaded,
 	PageLoading,
@@ -25,15 +24,15 @@ import ChangePartnerDialog from "./changePartnerDialog";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
-export default function PartnersPage({type, cubit}: { type: PartnerType, cubit: PageCubit<PartnerDto> })
+export default function PartnersPage({type}: { type: PartnerType })
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "erpCommon"]);
 
 	useEffect(() =>
 	{
-		cubit.init([type]);
-	}, [cubit, type]);
+		Cubits.partners.init([type]);
+	}, [type]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Get))
 	{
@@ -84,7 +83,7 @@ export default function PartnersPage({type, cubit}: { type: PartnerType, cubit: 
 			<CrudPage.Cards
 				cards={ [{
 					title: totalCardTitle,
-					data: cubit.count.value.toString(),
+					data: Cubits.partners.count.value.toString(),
 					icon: <Users className="h-4 w-4 text-muted-foreground"/>
 				}] }
 			/>
@@ -92,17 +91,17 @@ export default function PartnersPage({type, cubit}: { type: PartnerType, cubit: 
 			<div className="print:hidden">
 				<FilterSection
 					fieldsCubit={ Cubits.partnerFilterFields }
-					onApply={ (groups) => cubit.applyFilterGroups(groups) }
-					onClear={ () => cubit.clearFilterGroups() }
+					onApply={ (groups) => Cubits.partners.applyFilterGroups(groups) }
+					onClear={ () => Cubits.partners.clearFilterGroups() }
 				/>
 			</div>
 
 			<CrudPage.SearchInput
 				className="rounded-t-none!"
-				onSearch={ (searchText) => cubit.search(searchText) }
+				onSearch={ (searchText) => Cubits.partners.search(searchText) }
 			/>
 
-			<PageTable cubit={ cubit }/>
+			<PageTable/>
 
 			<CrudPage.ChangeDialog
 				fetchEntity={ async (id: number) =>
@@ -119,14 +118,14 @@ export default function PartnersPage({type, cubit}: { type: PartnerType, cubit: 
 						{
 							if (mode === ChangeableEntityMode.Create)
 							{
-								cubit.add(data);
+								Cubits.partners.add(data);
 								closeDialog();
 							}
 							else if (mode === ChangeableEntityMode.Update)
 							{
-								cubit.update(data);
+								Cubits.partners.update(data);
 							}
-							cubit.init([type]);
+							Cubits.partners.init([type]);
 						} }
 					/>
 				) }
@@ -135,29 +134,29 @@ export default function PartnersPage({type, cubit}: { type: PartnerType, cubit: 
 			<CrudPage.DeleteDialog
 				entityNameSelector={ (partner) => partner.name }
 				service={ Services.partnersApi }
-				onSuccess={ (entity) => cubit.delete(entity) }
+				onSuccess={ (entity) => Cubits.partners.delete(entity) }
 			/>
 		</CrudPage>
 	);
 }
 
-function PageTable({cubit}: { cubit: PageCubit<PartnerDto> })
+function PageTable()
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common", "erpCommon"]);
 
-	if (cubit.state.value instanceof PageLoading)
+	if (Cubits.partners.state.value instanceof PageLoading)
 	{
 		return <TablePreview.Loading/>;
 	}
 
-	if (cubit.state.value instanceof PageLoaded)
+	if (Cubits.partners.state.value instanceof PageLoaded)
 	{
 		return (
 			<CrudPage.Table>
 				<CrudPage.TableBody<PartnerDto>
 					isShareablePage={ true }
-					data={ cubit.entities.value }
+					data={ Cubits.partners.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("partners.partnerId", "الرقم"), rowStyles: "w-24"},
@@ -189,16 +188,16 @@ function PageTable({cubit}: { cubit: PageCubit<PartnerDto> })
 					) }
 				/>
 				<CrudPage.TablePagination
-					pageSize={ cubit.pageSize.value }
-					totalNumber={ cubit.count.value }
-					currentPage={ cubit.currentPage.value }
-					onPageChanged={ (newPage) => cubit.changePage(newPage) }
+					pageSize={ Cubits.partners.pageSize.value }
+					totalNumber={ Cubits.partners.count.value }
+					currentPage={ Cubits.partners.currentPage.value }
+					onPageChanged={ (newPage) => Cubits.partners.changePage(newPage) }
 				/>
 			</CrudPage.Table>
 		);
 	}
 
-	if (cubit.state.value instanceof PageError)
+	if (Cubits.partners.state.value instanceof PageError)
 	{
 		return <TablePreview.Error/>;
 	}

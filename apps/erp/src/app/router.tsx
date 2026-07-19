@@ -40,7 +40,6 @@ import { AccountsListReportPage } from "@/features/reports/accountsList/accounts
 import AccountsPage from "@/features/accounts/accountsPage.tsx";
 import PartnersPage from "@/features/partners/partnersPage.tsx";
 import { PartnerType } from "@/core/data/partner.ts";
-import { Cubits } from "@/core/services/cubits.ts";
 
 
 const refreshPage = () =>
@@ -85,11 +84,11 @@ export const router = createBrowserRouter([{
 					{path: "/vouchers/:id?", element: <VouchersPage/>},
 					{
 						path: "/clients/:id?",
-						element: <PartnersPage type={ PartnerType.Customer } cubit={ Cubits.customers }/>
+						element: <PartnersPage type={ PartnerType.Customer }/>
 					},
 					{
 						path: "/suppliers/:id?",
-						element: <PartnersPage type={ PartnerType.Supplier } cubit={ Cubits.suppliers }/>
+						element: <PartnersPage type={ PartnerType.Supplier }/>
 					},
 					{path: "/reports", element: <ReportsPage/>},
 

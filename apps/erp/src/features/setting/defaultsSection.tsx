@@ -6,7 +6,6 @@ import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import PartnersSearchableSelect from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 import TaxesSearchableSelect from "@/core/components/searchableSelect/taxesSearchableSelect.tsx";
-import { PartnerType } from "@/core/data/partner.ts";
 import { type Setting } from "@/core/data/setting.ts";
 import { useEffect } from "react";
 import { Cubits } from "@/core/services/cubits.ts";
@@ -19,8 +18,7 @@ export default function DefaultsSection({formData}: { formData: Setting })
 
 	useEffect(() =>
 	{
-		Cubits.customers.init([PartnerType.Customer]);
-		Cubits.suppliers.init([PartnerType.Supplier]);
+		Cubits.partners.init();
 	}, []);
 
 	return (
@@ -64,8 +62,6 @@ export default function DefaultsSection({formData}: { formData: Setting })
 						<PartnersSearchableSelect
 							id={ formData.defaultCustomerPartnerId }
 							label={ formData.defaultCustomerPartnerName }
-							typeFilter={ PartnerType.Customer }
-							cubit={ Cubits.customers }
 						/>
 					</FormField>
 
@@ -73,8 +69,6 @@ export default function DefaultsSection({formData}: { formData: Setting })
 						<PartnersSearchableSelect
 							id={ formData.defaultSupplierPartnerId }
 							label={ formData.defaultSupplierPartnerName }
-							typeFilter={ PartnerType.Supplier }
-							cubit={ Cubits.suppliers }
 						/>
 					</FormField>
 				</FieldsSection>

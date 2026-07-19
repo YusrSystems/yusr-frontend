@@ -56,8 +56,7 @@ export class Cubits extends BaseCubits
 	public static readonly vouchers = new PageCubit<VoucherDto>(Services.voucherApi);
 	public static readonly voucherCategories = new PageCubit<VoucherCategoryDto>(Services.voucherCategoriesApi);
 	public static readonly invoices = new PageCubit<InvoiceDto>(Services.invoicesApi);
-	public static readonly customers = new PageCubit<PartnerDto>(Services.partnersApi);
-	public static readonly suppliers = new PageCubit<PartnerDto>(Services.partnersApi);
+	public static readonly partners = new PageCubit<PartnerDto>(Services.partnersApi);
 
 	// filter fields
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");

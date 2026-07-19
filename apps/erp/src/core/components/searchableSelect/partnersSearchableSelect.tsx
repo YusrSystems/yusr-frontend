@@ -1,26 +1,17 @@
-import { type PartnerDto, PartnerType } from "@/core/data/partner";
+import { type PartnerDto } from "@/core/data/partner";
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
 import {
-	PageCubit,
 	PageLoaded,
 	PageLoading,
 	SearchableSelect,
 	type SearchableSelectOptionProps,
 	type SearchableSelectProps
 } from "yusr-ui";
+import { Cubits } from "@/core/services/cubits.ts";
 
 
-export default function PartnersSearchableSelect(
-	{
-		typeFilter,
-		cubit,
-		...props
-	}: SearchableSelectProps<PartnerDto> & {
-		typeFilter?: PartnerType;
-		cubit: PageCubit<PartnerDto>
-	}
-)
+export default function PartnersSearchableSelect({...props}: SearchableSelectProps<PartnerDto>)
 {
 	useSignals();
 
@@ -28,7 +19,7 @@ export default function PartnersSearchableSelect(
 		<SearchableSelect>
 			<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
 			<SearchableSelect.Content>
-				<SearchableSelect.SearchInput onSearch={ (searchInput) => cubit.search(searchInput) }/>
+				<SearchableSelect.SearchInput onSearch={ (searchInput) => Cubits.partners.search(searchInput) }/>
 				<SearchableSelect.Command>
 					<SearchableSelect.NullOption { ...props } />
 					<CommandItems/>
@@ -40,25 +31,18 @@ export default function PartnersSearchableSelect(
 	function CommandItems()
 	{
 		useSignals();
-		if (cubit.state.value instanceof PageLoading)
+		if (Cubits.partners.state.value instanceof PageLoading)
 		{
 			return <SearchableSelect.Loading/>;
 		}
-		if (cubit.state.value instanceof PageLoaded)
+		if (Cubits.partners.state.value instanceof PageLoaded)
 		{
-			let list = cubit.entities.value;
-
-			if (typeFilter !== undefined)
-			{
-				list = list.filter((p) => p.type === typeFilter);
-			}
-
-			if (list.length === 0)
+			if (Cubits.partners.entities.value.length === 0)
 			{
 				return <SearchableSelect.Empty/>;
 			}
 
-			return list.map((entity) => (
+			return Cubits.partners.entities.value.map((entity) => (
 				<Option key={ entity.id } item={ entity } { ...props } />
 			));
 		}
