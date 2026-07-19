@@ -124,7 +124,7 @@ function PageTable()
 						rowBody: paymentMethod.name,
 						rowStyles: "font-semibold"
 					}, {
-						rowBody: paymentMethod.accountName,
+						rowBody: paymentMethod.glAccountName,
 						rowStyles: ""
 					}, {
 						rowBody: paymentMethod.commissionType === CommissionType.Percent

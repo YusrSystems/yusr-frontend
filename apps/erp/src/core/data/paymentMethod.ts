@@ -2,18 +2,17 @@ import type { Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 
 
-export const CommissionType = {
-	Percent: 1,
-	Amount: 2
-} as const;
-
-export type CommissionType = typeof CommissionType[keyof typeof CommissionType];
+export enum CommissionType
+{
+	Percent = 1,
+	Amount = 2
+}
 
 export class PaymentMethodDto extends Dto
 {
 	name!: string;
-	accountId!: number;
-	accountName!: string;
+	glAccountId!: number;
+	glAccountName!: string;
 	commissionType!: CommissionType;
 	commissionAmount!: number;
 }
@@ -21,8 +20,8 @@ export class PaymentMethodDto extends Dto
 export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
 {
 	public name: Signal<string>;
-	public accountId: Signal<number | undefined>;
-	public accountName: Signal<string | undefined>;
+	public glAccountId: Signal<number | undefined>;
+	public glAccountName: Signal<string | undefined>;
 	public commissionType: Signal<CommissionType>;
 	public commissionAmount: Signal<number>;
 
@@ -33,9 +32,9 @@ export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
 			selector: (d) => d.name,
 			validators: [Validators.required(i18n.t("accounting:paymentMethods.nameRequired"))]
 		}, {
-			field: "accountId",
-			selector: (d) => d.accountId,
-			validators: [Validators.required(i18n.t("accounting:paymentMethods.accountRequired"))]
+			field: "glAccountId",
+			selector: (d) => d.glAccountId,
+			validators: [Validators.required(i18n.t("accounting:paymentMethods.accountRequired", "الحساب مطلوب"))]
 		}, {
 			field: "commissionType",
 			selector: (d) => d.commissionType,
@@ -47,8 +46,8 @@ export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
 		}], mode);
 
 		this.name = this.assign("name", dto?.name ?? "");
-		this.accountId = this.assign("accountId", dto?.accountId);
-		this.accountName = this.assign("accountName", dto?.accountName);
+		this.glAccountId = this.assign("glAccountId", dto?.glAccountId);
+		this.glAccountName = this.assign("glAccountName", dto?.glAccountName);
 		this.commissionType = this.assign("commissionType", dto?.commissionType ?? CommissionType.Percent);
 		this.commissionAmount = this.assign("commissionAmount", dto?.commissionAmount ?? 0);
 	}
