@@ -148,30 +148,24 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 						{rowBody: t("vouchers.voucherId"), rowStyles: "w-24"},
 						{rowBody: t("vouchers.voucherType"), rowStyles: "w-24"},
 						{rowBody: t("vouchers.date"), rowStyles: "w-24"},
-						{rowBody: t("vouchers.account"), rowStyles: "w-40"},
+						{rowBody: t("vouchers.partyOrCategory", "المستفيد / البند"), rowStyles: "w-48"},
 						{rowBody: t("vouchers.amount"), rowStyles: "w-32"},
 						{rowBody: t("vouchers.paymentMethod"), rowStyles: "w-32"},
 						...(Services.auth.hasAuth(
 							SystemPermissionsResources.ReportVoucher,
 							SystemPermissionsActions.Get
-						)
-							? [{rowBody: "", rowStyles: "w-32"}]
-							: [])
+						) ? [{rowBody: "", rowStyles: "w-32"}] : [])
 					] }
-
-
-					tableRowMapper={ (
-						voucher: VoucherDto
-					) => [
+					tableRowMapper={ (voucher: VoucherDto) => [
 						{rowBody: `#${ voucher.id }`, rowStyles: ""},
 						{
 							rowBody: voucher.type === VoucherType.Payment ? t("vouchers.paymentVoucher") : t("vouchers.receiptVoucher"),
-							rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+							rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
 								voucher.type === VoucherType.Payment ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
 							}`
 						},
 						{rowBody: voucher.date, rowStyles: ""},
-						{rowBody: voucher.accountName ?? "-", rowStyles: "font-semibold"},
+						{rowBody: voucher.partnerName || voucher.glAccountName || "-", rowStyles: "font-semibold"},
 						{
 							rowBody: (
 								<div className="flex items-center gap-1">
@@ -181,25 +175,19 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 							),
 							rowStyles: "font-mono font-bold"
 						},
-						{rowBody: voucher?.paymentMethod?.name ?? "-", rowStyles: "text-sm text-gray-600"},
+						{rowBody: voucher.paymentMethod?.name ?? "-", rowStyles: "text-sm text-gray-600"},
 						...(Services.auth.hasAuth(
 							SystemPermissionsResources.ReportVoucher,
 							SystemPermissionsActions.Get
-						)
-							? [{
-								rowBody: (
-									<Button
-										onClick={ () => onPrint(voucher) }
-									>
-										<Printer className="h-4 w-4"/>
-									</Button>
-								),
-								rowStyles: "w-32"
-							}]
-							: [])
+						) ? [{
+							rowBody: (
+								<Button onClick={ () => onPrint(voucher) }>
+									<Printer className="h-4 w-4"/>
+								</Button>
+							),
+							rowStyles: "w-32"
+						}] : [])
 					] }
-
-
 					hasUpdatePermission={ Services.auth.hasAuth(
 						SystemPermissionsResources.Vouchers,
 						SystemPermissionsActions.Update
