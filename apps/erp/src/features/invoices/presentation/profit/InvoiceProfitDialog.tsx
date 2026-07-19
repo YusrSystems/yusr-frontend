@@ -41,9 +41,7 @@ export default function InvoiceProfitDialog({invoice}: { invoice: Invoice })
 	const {t, i18n} = useTranslation("accounting");
 	const [open, setOpen] = useState(false);
 
-	const costVouchers = invoice.costVouchers();
-
-	const profit: InvoiceProfitResult = InvoiceItemsMath.CalcInvoiceProfit(invoice.invoiceItems.value ?? [], costVouchers);
+	const profit: InvoiceProfitResult = InvoiceItemsMath.CalcInvoiceProfit(invoice.invoiceItems.value ?? [], invoice.costVouchers.value);
 
 	return (
 		<>

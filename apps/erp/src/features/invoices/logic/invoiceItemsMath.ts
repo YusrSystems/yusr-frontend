@@ -1,8 +1,7 @@
 import type { InvoiceItem } from "@/core/data/invoices/invoiceItem.ts";
 import type { InvoiceItemProfitResult } from "@/core/data/invoices/InvoiceItemProfitResult.ts";
 import type { InvoiceProfitResult } from "@/core/data/invoices/InvoiceProfitResult.ts";
-import type { InvoiceVoucher } from "@/core/data/invoices/invoiceVoucher.ts";
-import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
+import type { Voucher } from "@/core/data/voucher.ts";
 
 
 export default class InvoiceItemsMath
@@ -93,8 +92,7 @@ export default class InvoiceItemsMath
 	public static CalcInvoiceBaseTaxInclusivePrice(invoiceItems: InvoiceItem[])
 	{
 		const price = invoiceItems.reduce(
-			(sum, i) =>
-				sum + ((i.taxInclusivePrice.value ?? 0) * (i.quantity.value ?? 0)),
+			(sum, i) => sum + ((i.taxInclusivePrice.value ?? 0) * (i.quantity.value ?? 0)),
 			0
 		);
 		return Number(price.toFixed(2));
@@ -108,18 +106,18 @@ export default class InvoiceItemsMath
 		const profit = Number((taxInclusivePrice - itemTaxesAmount - (invoiceItem.cost.value ?? 0)).toFixed(2));
 		const qtn = invoiceItem.quantity.value ?? 0;
 		return {
-			taxInclusivePrice: taxInclusivePrice,
+			taxInclusivePrice,
 			cost: invoiceItem.cost.value ?? 0,
 			totalTaxesAmount: itemTaxesAmount,
 			quantity: qtn,
-			profit: profit,
+			profit,
 			totalProfit: Number((profit * qtn).toFixed(2))
 		};
 	}
 
-	public static CalcInvoiceProfit(invoiceItems: InvoiceItem[], invoiceCosts: InvoiceVoucher[]): InvoiceProfitResult
+	public static CalcInvoiceProfit(invoiceItems: InvoiceItem[], costVouchers: Voucher[]): InvoiceProfitResult
 	{
-		const invoiceCostsAmount = invoiceCosts.reduce((sum, i) => sum + (i.amount.value ?? 0), 0) ?? 0;
+		const invoiceCostsAmount = costVouchers.reduce((sum, i) => sum + (i.amount.value ?? 0), 0) ?? 0;
 
 		let taxInclusiveTotalPrice = 0;
 		let totalCost = 0;
@@ -136,23 +134,22 @@ export default class InvoiceItemsMath
 		});
 
 		return {
-			taxInclusiveTotalPrice: taxInclusiveTotalPrice,
-			totalCost: totalCost,
-			totalTaxesAmount: totalTaxesAmount,
+			taxInclusiveTotalPrice,
+			totalCost,
+			totalTaxesAmount,
 			invoiceCosts: invoiceCostsAmount,
 			profit: profit - invoiceCostsAmount
 		};
 	}
 
-	public static CalcInvoicePaidPrice(invoiceVouchers: InvoiceVoucher[])
+	public static CalcInvoicePaidPrice(paymentVouchers: Voucher[])
 	{
-		const paymentVouchers = invoiceVouchers?.filter((v) => v.invoiceRelationType.value == InvoiceRelationType.Payment) ?? [];
 		return paymentVouchers?.reduce((sum, i) => sum + (i.amount.value ?? 0), 0) ?? 0;
 	}
 
-	public static CalcInvoiceUnpaidPrice(invoiceItems: InvoiceItem[], invoiceVouchers: InvoiceVoucher[])
+	public static CalcInvoiceUnpaidPrice(invoiceItems: InvoiceItem[], paymentVouchers: Voucher[])
 	{
 		return InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(invoiceItems)
-			- InvoiceItemsMath.CalcInvoicePaidPrice(invoiceVouchers);
+			- InvoiceItemsMath.CalcInvoicePaidPrice(paymentVouchers);
 	}
 }

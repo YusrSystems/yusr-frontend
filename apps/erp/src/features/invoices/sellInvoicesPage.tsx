@@ -1,4 +1,3 @@
-//TODO: must be tested
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { Services } from "@/core/services/services.ts";
 import InvoicesPage from "@/features/invoices/invoicesPage.tsx";

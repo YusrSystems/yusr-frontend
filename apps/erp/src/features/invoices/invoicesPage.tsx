@@ -39,15 +39,14 @@ import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
 import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { toast } from "sonner";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
-import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
 import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus.ts";
 import { PaymentStatus } from "@/core/types/paymentStatus.ts";
 import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect.tsx";
-import { AccountType } from "@/core/data/account.ts";
 import { createPortal } from "react-dom";
 import { InvoicesListReport } from "@/features/reports/invoicesList/invoicesListReport.tsx";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
+import PartnersSearchableSelect from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 
 
 export default function InvoicesPage({
@@ -76,17 +75,6 @@ export default function InvoicesPage({
 	{
 		Cubits.invoices.init(filterTypes);
 	}, [filterTypes]);
-
-	useEffect(() =>
-	{
-		Cubits.accounts.init(fixedType == InvoiceType.Purchase || fixedType == InvoiceType.PurchaseReturn ? [AccountType.Supplier] : [AccountType.Client]);
-	}, [fixedType]);
-
-	useEffect(() =>
-	{
-		Cubits.items.init();
-		Cubits.stores.init();
-	}, []);
 
 	if (!hasPagePermission)
 	{
@@ -439,7 +427,7 @@ function PageTable({fixedType, permissionResource}: {
 
 		cells.push(
 			{rowBody: invoice.date, rowStyles: ""},
-			{rowBody: invoice.actionAccountName || "-", rowStyles: ""},
+			{rowBody: invoice.partnerName || "-", rowStyles: ""},
 			{rowBody: invoice.storeName || "-", rowStyles: ""},
 			{
 				rowBody: (
@@ -543,7 +531,7 @@ function PageTable({fixedType, permissionResource}: {
 								<ReportButton
 									reportName={ ReportConstants.Invoice }
 									request={ {invoiceId: invoice.id} }
-									fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type, t) }-${ invoice.actionAccountName }` }
+									fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type, t) }-${ invoice.partnerName }` }
 									disabled={ !invoice.canBePrinted }
 								/>
 							</span>
@@ -655,18 +643,17 @@ export function RenderInvoiceFilterInput({rule, field}: FilterValueInputProps)
 	useSignals();
 	const {t} = useTranslation("accounting");
 
-	if (field.propertyName === "ActionAccountId")
+	if (field.propertyName === "PartnerId")
 	{
 		return (
 			<FilterLabelWrapper rule={ rule }>
 				{ label => (
-					<AccountsSearchableSelect
+					<PartnersSearchableSelect
 						id={ rule.value as unknown as Signal<number | undefined> }
 						label={ label }
 						onSelect={ entity =>
 							rule.value.value = entity ? entity.id : ""
 						}
-						types={ [AccountType.Client, AccountType.Supplier, AccountType.Employee, AccountType.Box, AccountType.Bank] }
 					/>
 				) }
 			</FilterLabelWrapper>

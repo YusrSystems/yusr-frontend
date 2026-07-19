@@ -1,6 +1,4 @@
 import { InvoiceItem, type InvoiceItemDto } from "@/core/data/invoices/invoiceItem.ts";
-
-import { InvoiceVoucher, type InvoiceVoucherDto } from "@/core/data/invoices/invoiceVoucher.ts";
 import { Services } from "@/core/services/services.ts";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 import { type Signal } from "@preact/signals-react";
@@ -11,10 +9,10 @@ import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
 import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus";
 import type { ImportExportType } from "@/core/types/importExportType.ts";
-import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
 import { PaymentStatus } from "@/core/types/paymentStatus.ts";
 import type { AccountType } from "@/core/data/account.ts";
 import type { TFunction } from "i18next";
+import { Voucher, VoucherDto, VoucherType } from "@/core/data/voucher.ts";
 
 
 export class InvoiceMode
@@ -49,7 +47,7 @@ export class InvoiceDto extends Dto
 	public returnStatusId!: InvoiceReturnStatus;
 	public paymentStatusId!: PaymentStatus;
 	public storeId!: number;
-	public actionAccountId!: number;
+	public partnerId!: number;
 	public notes?: string;
 	public policy?: string;
 	public importExportType?: ImportExportType;
@@ -63,12 +61,13 @@ export class InvoiceDto extends Dto
 	public canBePrinted!: boolean;
 	public idempotencyKey?: string;
 
-	public actionAccountName!: string;
+	public partnerName!: string;
 	public actionAccountType!: AccountType;
 	public storeName!: string;
 
 	public invoiceItems: InvoiceItemDto[] = [];
-	public invoiceVouchers: InvoiceVoucherDto[] = [];
+	public costVouchers: VoucherDto[] = [];
+	public paymentVouchers: VoucherDto[] = [];
 	public invoiceFiles: StorageFile[] = [];
 	public ignoreWarnings: boolean = false;
 }
@@ -90,7 +89,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 	public returnStatusId: Signal<InvoiceReturnStatus>;
 	public paymentStatusId!: Signal<PaymentStatus>;
 	public storeId: Signal<number>;
-	public actionAccountId: Signal<number>;
+	public partnerId: Signal<number>;
 	public notes: Signal<string | undefined>;
 	public policy: Signal<string | undefined>;
 	public importExportType: Signal<ImportExportType | undefined>;
@@ -103,11 +102,12 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 	public rowVer: Signal<number>;
 	public idempotencyKey: Signal<string | undefined>;
 
-	public actionAccountName: Signal<string | undefined>;
+	public partnerName: Signal<string | undefined>;
 	public storeName: Signal<string | undefined>;
 
 	public invoiceItems: Signal<InvoiceItem[]>;
-	public invoiceVouchers: Signal<InvoiceVoucher[]>;
+	public costVouchers: Signal<Voucher[]>;
+	public paymentVouchers: Signal<Voucher[]>;
 	public invoiceFiles: Signal<StorageFile[]>;
 	public ignoreWarnings: Signal<boolean>;
 
@@ -131,9 +131,9 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 			selector: (d) => d.storeId,
 			validators: [Validators.required(i18n.t("accounting:invoices.storeRequired"))]
 		}, {
-			field: "actionAccountId",
-			selector: (d) => d.actionAccountId,
-			validators: [Validators.required(i18n.t("accounting:invoices.accountRequired"))]
+			field: "partnerId",
+			selector: (d) => d.partnerId,
+			validators: [Validators.required("الشريك مطلوب")]
 		}, {
 			field: "invoiceItems",
 			selector: (d) => d.invoiceItems,
@@ -162,21 +162,21 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.storeId = this.assign("storeId", dto?.storeId ?? Services.auth.setting?.mainStoreId.value);
 		this.storeName = this.assign("storeName", dto?.storeName ?? Services.auth.setting?.mainStoreName.value);
 
-		this.actionAccountId = this.assign("actionAccountId", dto?.actionAccountId ??
+		this.partnerId = this.assign("partnerId", dto?.partnerId ??
 			(
 				this.type.value === InvoiceType.Purchase
-					? Services.auth.setting?.purchaseAccountId.value
+					? Services.auth.setting?.defaultSupplierPartnerId.value
 					: (this.type.value === InvoiceType.Sell || this.type.value === InvoiceType.Quotation)
-						? Services.auth.setting?.sellAccountId.value
+						? Services.auth.setting?.defaultCustomerPartnerId.value
 						: undefined
 			)
 		);
-		this.actionAccountName = this.assign("actionAccountName", dto?.actionAccountName ??
+		this.partnerName = this.assign("partnerName", dto?.partnerName ??
 			(
 				this.type.value === InvoiceType.Purchase
-					? Services.auth.setting?.purchaseAccountName.value
+					? Services.auth.setting?.defaultSupplierPartnerName.value
 					: (this.type.value === InvoiceType.Sell || this.type.value === InvoiceType.Quotation)
-						? Services.auth.setting?.sellAccountName?.value
+						? Services.auth.setting?.defaultCustomerPartnerName.value
 						: undefined
 			));
 
@@ -205,11 +205,19 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 				return item;
 			})
 		);
-		this.invoiceVouchers = this.assign("invoiceVouchers",
-			(dto?.invoiceVouchers ?? []).map(x =>
+
+		this.costVouchers = this.assign("costVouchers",
+			(dto?.costVouchers ?? []).map(x =>
 				mode === ChangeableEntityMode.Update
-					? InvoiceVoucher.load(x)
-					: InvoiceVoucher.create(x)
+					? Voucher.load(x)
+					: Voucher.create(x)
+			)
+		);
+		this.paymentVouchers = this.assign("paymentVouchers",
+			(dto?.paymentVouchers ?? []).map(x =>
+				mode === ChangeableEntityMode.Update
+					? Voucher.load(x)
+					: Voucher.create(x)
 			)
 		);
 
@@ -218,10 +226,13 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 
 		const checkChildren = () =>
 		{
-			this.hasChanges.value = this.invoiceVouchers.value.some((m) => m.hasChanges.value)
+			this.hasChanges.value = this.costVouchers.value.some((v) => v.hasChanges.value)
+				|| this.paymentVouchers.value.some((v) => v.hasChanges.value)
 				|| this.invoiceItems.value.some((t) => t.hasChanges.value);
 		};
-		this.invoiceVouchers.value.forEach((t) => t.hasChanges.subscribe(checkChildren));
+
+		this.costVouchers.value.forEach((t) => t.hasChanges.subscribe(checkChildren));
+		this.paymentVouchers.value.forEach((t) => t.hasChanges.subscribe(checkChildren));
 		this.invoiceItems.value.forEach((s) => s.hasChanges.subscribe(checkChildren));
 	}
 
@@ -265,44 +276,31 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 	{
 		const invoiceResult = super.validate(dto);
 		const itemsResult = this.invoiceItems.value.every((t) => t.validate());
-		const vouchersResult = this.invoiceVouchers.value.every((m) => m.validate());
-		return invoiceResult && itemsResult && vouchersResult;
-	}
-
-	public paymentVouchers()
-	{
-		return this.invoiceVouchers.value?.filter((v) => v.invoiceRelationType.value == InvoiceRelationType.Payment) ?? [];
-	}
-
-	public costVouchers()
-	{
-		return this.invoiceVouchers.value?.filter((v) => v.invoiceRelationType.value == InvoiceRelationType.Cost) ?? [];
+		const costsResult = this.costVouchers.value.every((v) => v.validate());
+		const paymentsResult = this.paymentVouchers.value.every((v) => v.validate());
+		return invoiceResult && itemsResult && costsResult && paymentsResult;
 	}
 
 	public resetPaymentVouchers()
 	{
-		this.invoiceVouchers.value = this.invoiceVouchers.value?.filter((v) =>
-			v.invoiceRelationType.value !== InvoiceRelationType.Payment
-		);
+		this.paymentVouchers.value = [];
 	}
 
 	public createInitialPaymentVoucher(taxInclusivePrice: number)
 	{
-		return InvoiceVoucher.create({
+		return Voucher.create({
 			invoiceId: this.id.value,
 			paymentMethodId: Services.auth.setting?.mainPaymentMethodId?.value,
-			paymentMethodName: Services.auth.setting?.mainPaymentMethodName?.value,
-			accountId: this.actionAccountId.value,
-			accountName: this.actionAccountName.value,
-			invoiceRelationType: InvoiceRelationType.Payment,
-			amount: taxInclusivePrice,
-			amountReceived: taxInclusivePrice
+			partnerId: this.partnerId.value,
+			partnerName: this.partnerName.value,
+			type: (this.type.value === InvoiceType.Sell || this.type.value === InvoiceType.PurchaseReturn) ? VoucherType.Receipt : VoucherType.Payment,
+			amount: taxInclusivePrice
 		});
 	}
 
 	public updatePaidAmount()
 	{
-		this.paidAmount.value = InvoiceItemsMath.CalcInvoicePaidPrice(this.invoiceVouchers.value);
+		this.paidAmount.value = InvoiceItemsMath.CalcInvoicePaidPrice(this.paymentVouchers.value);
 	}
 
 	public syncPaymentVouchers()
@@ -314,7 +312,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		}
 
 		const taxInclusivePrice = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(this.invoiceItems.value ?? []);
-		const vouchers = this.paymentVouchers();
+		const vouchers = this.paymentVouchers.value;
 
 		if (this.type.value === InvoiceType.Quotation)
 		{
@@ -330,17 +328,16 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		else if (vouchers.length === 0)
 		{
 			this.resetPaymentVouchers();
-			this.invoiceVouchers.value = [this.createInitialPaymentVoucher(taxInclusivePrice)];
+			this.paymentVouchers.value = [this.createInitialPaymentVoucher(taxInclusivePrice)];
 		}
 		else if (vouchers.length === 1 && vouchers[0])
 		{
 			const voucher = vouchers[0];
 			voucher.amount.value = taxInclusivePrice;
-			voucher.amountReceived.value = taxInclusivePrice;
-			if (!voucher.accountId.value)
+			if (!voucher.partnerId.value)
 			{
-				voucher.accountId.value = this.actionAccountId.value;
-				voucher.accountName.value = this.actionAccountName.value;
+				voucher.partnerId.value = this.partnerId.value;
+				voucher.partnerName.value = this.partnerName.value;
 			}
 		}
 
@@ -387,11 +384,6 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		{
 			this.changeSettlementAmount(this.settlementAmount.value);
 		}
-	}
-
-	public removeVoucher(voucherId: Signal<number>): void
-	{
-		this.invoiceVouchers.value = this.invoiceVouchers.value?.filter((v) => v.voucherId.value !== voucherId.value);
 	}
 
 	public changeSettlementPercent(settlementPercent: number)
