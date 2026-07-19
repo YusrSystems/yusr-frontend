@@ -21,6 +21,7 @@ export class VoucherDto extends Dto
 	public partnerId?: number;
 	public partnerName?: string;
 	public paymentMethodId!: number;
+	public paymentMethodName!: string;
 	public description?: string;
 	public invoiceId?: number;
 	public categoryId?: number;
@@ -45,6 +46,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 	public partnerId: Signal<number | undefined>;
 	public partnerName: Signal<string | undefined>;
 	public paymentMethodId: Signal<number>;
+	public paymentMethodName: Signal<string>;
 	public description: Signal<string | undefined>;
 	public invoiceId: Signal<number | undefined>;
 	public categoryId: Signal<number | undefined>;
@@ -102,12 +104,13 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 		this.amount = this.assign("amount", dto?.amount ?? 0);
 		this.commissionAmount = this.assign("commissionAmount", dto?.commissionAmount ?? 0);
 
-		this.glAccountId = this.assign("glAccountId", dto?.glAccountId ?? 0);
+		this.glAccountId = this.assign("glAccountId", dto?.glAccountId);
 		this.glAccountName = this.assign("glAccountName", dto?.glAccountName ?? "");
 		this.partnerId = this.assign("partnerId", dto?.partnerId);
 		this.partnerName = this.assign("partnerName", dto?.partnerName);
 
-		this.paymentMethodId = this.assign("paymentMethodId", dto?.paymentMethodId ?? 0);
+		this.paymentMethodId = this.assign("paymentMethodId", dto?.paymentMethodId);
+		this.paymentMethodName = this.assign("paymentMethodName", dto?.paymentMethodName ?? "");
 		this.description = this.assign("description", dto?.description);
 		this.invoiceId = this.assign("invoiceId", dto?.invoiceId);
 		this.categoryId = this.assign("categoryId", dto?.categoryId);
