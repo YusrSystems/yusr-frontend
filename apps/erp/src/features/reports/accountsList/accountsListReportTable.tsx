@@ -69,7 +69,7 @@ export function AccountsListReportTable()
 							</ReportTableTd>
 
 							<ReportTableTd isEven={ isEven }>
-								{ formatNumber(account.initialBalance ?? 0) }
+								{ formatNumber(account.openingBalance ?? 0) }
 							</ReportTableTd>
 
 							<ReportTableTd isEven={ isEven } className="font-semibold text-foreground!">

@@ -139,7 +139,7 @@ export default function ChangeAccountDialog(
 							{
 								if (getAccountClass(type) === AccountClass.Revenue || getAccountClass(type) === AccountClass.Expense)
 								{
-									entity.value.initialBalance.value = 0;
+									entity.value.openingBalance.value = 0;
 								}
 							} }
 						/>
@@ -157,7 +157,7 @@ export default function ChangeAccountDialog(
 						<div className="grid grid-cols-2 gap-4">
 							<NumberField
 								label={ t("accounts.openingBalance", "الرصيد الافتتاحي") }
-								value={ entity.value.initialBalance }
+								value={ entity.value.openingBalance }
 								currency={ <ErpCurrencyIcon/> }
 								disabled={ entity.value.isParent.value || getAccountClass(entity.value.type.value) === AccountClass.Revenue || getAccountClass(entity.value.type.value) === AccountClass.Expense }
 							/>

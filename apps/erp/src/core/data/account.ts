@@ -76,7 +76,7 @@ export function getAccountClass(type: AccountType): AccountClass
 export class AccountDto extends Dto
 {
 	public name: string = "";
-	public initialBalance: number = 0;
+	public openingBalance: number = 0;
 	public balance: number = 0;
 	public notes?: string;
 	public class!: AccountClass;
@@ -89,7 +89,7 @@ export class AccountDto extends Dto
 export class Account extends ChangeableEntity<AccountDto>
 {
 	public name: Signal<string>;
-	public initialBalance: Signal<number>;
+	public openingBalance: Signal<number>;
 	public balance: Signal<number>;
 	public notes: Signal<string | undefined>;
 	public class: Signal<AccountClass>;
@@ -125,7 +125,7 @@ export class Account extends ChangeableEntity<AccountDto>
 		], mode);
 
 		this.name = this.assign("name", dto?.name ?? "");
-		this.initialBalance = this.assign("initialBalance", dto?.initialBalance ?? 0);
+		this.openingBalance = this.assign("openingBalance", dto?.openingBalance ?? 0);
 		this.balance = this.assign("balance", dto?.balance ?? 0);
 		this.notes = this.assign("notes", dto?.notes);
 		this.type = this.assign("type", dto?.type ?? AccountType.CurrentAsset);
