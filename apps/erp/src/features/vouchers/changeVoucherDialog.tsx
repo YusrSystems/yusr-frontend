@@ -27,7 +27,6 @@ import { Cubits } from "@/core/services/cubits.ts";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
 import { CommissionType, PaymentMethod } from "@/core/data/paymentMethod.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
-import { PartnerType } from "@/core/data/partner.ts";
 import { AccountClass, getAccountTypesByClasses } from "@/core/data/account.ts";
 
 
@@ -48,14 +47,14 @@ export default function ChangeVoucherDialog({
 	useEffect(() =>
 	{
 		Cubits.paymentMethods.init();
-
+		Cubits.partners.init();
 	}, []);
 
 	useEffect(() =>
 	{
+		if (isPartnerMode.value) return;
 		Cubits.accounts.init(getAccountTypesByClasses(entity.value.type.value === VoucherType.Payment ? [AccountClass.Expense] : [AccountClass.Revenue, AccountClass.Equity]));
-		Cubits.partners.init(entity.value.type.value === VoucherType.Payment ? [PartnerType.Supplier] : [PartnerType.Customer]);
-	}, [entity.value.type.value]);
+	}, [entity.value.type.value, isPartnerMode.value]);
 
 	useEffect(() =>
 	{
@@ -104,7 +103,6 @@ export default function ChangeVoucherDialog({
 	}
 
 	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
-	const isPayment = entity.value.type.value === VoucherType.Payment;
 	const isReceipt = entity.value.type.value === VoucherType.Receipt;
 
 	const title = !isUpdateMode
@@ -174,7 +172,7 @@ export default function ChangeVoucherDialog({
 						{ isPartnerMode.value && (
 							<>
 								<FormField
-									label={ isPayment ? t("vouchers.supplier", "المورد") : t("vouchers.customer", "العميل") }
+									label={ "الشريك" }
 									required
 									error={ entity.value.getError("partnerId") }
 								>

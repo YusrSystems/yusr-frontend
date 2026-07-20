@@ -148,7 +148,7 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 						{rowBody: t("vouchers.voucherId"), rowStyles: "w-24"},
 						{rowBody: t("vouchers.voucherType"), rowStyles: "w-24"},
 						{rowBody: t("vouchers.date"), rowStyles: "w-24"},
-						{rowBody: t("vouchers.partyOrCategory", "المستفيد / البند"), rowStyles: "w-48"},
+						{rowBody: t("vouchers.partyOrCategory", "الشريك / الحساب"), rowStyles: "w-48"},
 						{rowBody: t("vouchers.amount"), rowStyles: "w-32"},
 						{rowBody: t("vouchers.paymentMethod"), rowStyles: "w-32"},
 						...(Services.auth.hasAuth(
