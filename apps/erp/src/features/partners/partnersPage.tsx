@@ -164,20 +164,48 @@ function PageTable()
 						{rowBody: t("partners.mobile", "الجوال"), rowStyles: "w-32"},
 						{rowBody: t("partners.balance", "الرصيد الجاري"), rowStyles: "w-32"}
 					] }
-					tableRowMapper={ (partner) => [
-						{rowBody: `#${ partner.id }`, rowStyles: ""},
-						{rowBody: partner.name, rowStyles: "font-semibold"},
-						{rowBody: partner.mobile || partner.phone || "-", rowStyles: "font-mono text-muted-foreground"},
+					tableRowMapper={ (partner) =>
+					{
+						const isCustomer = partner.type === PartnerType.Customer;
+						const absBalance = Math.abs(partner.balance);
+
+						const isDebit = isCustomer ? partner.balance >= 0 : partner.balance < 0;
+
+						let balanceColor = "text-foreground";
+						if (partner.balance !== 0)
 						{
-							rowBody: (
-								<div className="flex items-center gap-1 font-mono">
-									{ partner.balance.toLocaleString("en-US", {minimumFractionDigits: 2}) }
-									<ErpCurrencyIcon/>
-								</div>
-							),
-							rowStyles: partner.balance < 0 ? "text-red-600 font-bold" : "text-green-600 font-bold"
+							if (isCustomer)
+							{
+								balanceColor = partner.balance > 0 ? "text-green-600" : "text-red-600";
+							}
+							else
+							{
+								balanceColor = partner.balance > 0 ? "text-foreground" : "text-green-600";
+							}
 						}
-					] }
+
+						return [
+							{rowBody: `#${ partner.id }`, rowStyles: ""},
+							{rowBody: partner.name, rowStyles: "font-semibold"},
+							{
+								rowBody: partner.mobile || partner.phone || "-",
+								rowStyles: "font-mono text-muted-foreground"
+							},
+							{
+								rowBody: (
+									<div className="flex items-center gap-2 font-mono">
+										<span>{ absBalance.toLocaleString("en-US", {minimumFractionDigits: 2}) }</span>
+										<ErpCurrencyIcon/>
+										<span
+											className="text-xs font-sans px-1.5 py-0.5 shrink-0">
+										   { isDebit ? t("erpCommon:accounting.debit", "مدين") : t("erpCommon:accounting.credit", "دائن") }
+										</span>
+									</div>
+								),
+								rowStyles: `${ balanceColor } font-bold`
+							}
+						];
+					} }
 					hasUpdatePermission={ Services.auth.hasAuth(
 						SystemPermissionsResources.Accounts,
 						SystemPermissionsActions.Update

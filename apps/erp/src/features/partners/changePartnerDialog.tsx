@@ -61,8 +61,6 @@ export default function ChangePartnerDialog(
 			? t("partners.editCustomer", "تعديل عميل")
 			: t("partners.editSupplier", "تعديل مورد");
 
-	const isOpeningBalanceLocked = isUpdateMode && entity.value.balance.value !== entity.value.openingBalance.value;
-
 	return (
 		<ChangeDialog className="sm:max-w-4xl">
 			<ChangeDialog.Header title={ title }/>
@@ -135,7 +133,6 @@ export default function ChangePartnerDialog(
 							value={ entity.value.openingBalance }
 							error={ entity.value.getError("openingBalance") }
 							currency={ <ErpCurrencyIcon/> }
-							disabled={ isOpeningBalanceLocked }
 						/>
 						<NumberField
 							label={ t("partners.balance", "الرصيد الحالي") }
