@@ -37,6 +37,7 @@ interface TreeNodeData
 	isParent: boolean;
 	children: TreeNodeData[];
 	account?: AccountDto;
+	accountClass: AccountClass;
 }
 
 export default function AccountsPage()
@@ -169,6 +170,22 @@ export default function AccountsPage()
 	);
 }
 
+function getBalanceColorClass(balance: number, accountClass: AccountClass): string
+{
+	// A negative balance is abnormal for every class — always flag it.
+	if (balance < 0) return "text-red-600";
+
+	// A normal (non-negative) balance is only "favorable" for Asset/Revenue growing.
+	// For Liability/Expense, growing is expected but not good news — keep it neutral, not green.
+	// Equity growing is generally favorable too (more capital/retained earnings).
+	const favorableWhenPositive =
+		accountClass === AccountClass.Asset ||
+		accountClass === AccountClass.Revenue ||
+		accountClass === AccountClass.Equity;
+
+	return favorableWhenPositive ? "text-green-600" : "text-red-600";
+}
+
 function Cards({count}: { count: Signal<number>; })
 {
 	useSignals();
@@ -217,7 +234,7 @@ function PageTable()
 									<ErpCurrencyIcon/>
 								</div>
 							),
-							rowStyles: account.balance < 0 ? "text-red-600" : "text-green-600"
+							rowStyles: getBalanceColorClass(account.balance, getAccountClass(account.type))
 						}
 					] }
 					hasUpdatePermission={ Services.auth.hasAuth(
@@ -337,7 +354,7 @@ function TreeNode({
 
 				<div className="flex items-center gap-4">
 					<span
-						className={ `text-sm font-mono font-semibold ${ node.balance < 0 ? "text-red-600" : "text-green-600" }` }>
+						className={ `text-sm font-mono font-semibold ${ getBalanceColorClass(node.balance, node.accountClass) }` }>
 						{ node.balance.toLocaleString("en-US", {minimumFractionDigits: 2}) }
 						<span className="text-[10px] font-sans mr-1">
 							<ErpCurrencyIcon className="inline h-3 w-3"/>
@@ -372,7 +389,8 @@ function buildHierarchicalTree(accounts: AccountDto[]): TreeNodeData[]
 			balance: 0,
 			isVirtual: true,
 			isParent: true,
-			children: []
+			children: [],
+			accountClass: AccountClass.Asset
 		},
 		[AccountClass.Liability]: {
 			id: "class-2",
@@ -380,7 +398,8 @@ function buildHierarchicalTree(accounts: AccountDto[]): TreeNodeData[]
 			balance: 0,
 			isVirtual: true,
 			isParent: true,
-			children: []
+			children: [],
+			accountClass: AccountClass.Liability
 		},
 		[AccountClass.Equity]: {
 			id: "class-3",
@@ -388,7 +407,8 @@ function buildHierarchicalTree(accounts: AccountDto[]): TreeNodeData[]
 			balance: 0,
 			isVirtual: true,
 			isParent: true,
-			children: []
+			children: [],
+			accountClass: AccountClass.Equity
 		},
 		[AccountClass.Revenue]: {
 			id: "class-4",
@@ -396,7 +416,8 @@ function buildHierarchicalTree(accounts: AccountDto[]): TreeNodeData[]
 			balance: 0,
 			isVirtual: true,
 			isParent: true,
-			children: []
+			children: [],
+			accountClass: AccountClass.Revenue
 		},
 		[AccountClass.Expense]: {
 			id: "class-5",
@@ -404,7 +425,8 @@ function buildHierarchicalTree(accounts: AccountDto[]): TreeNodeData[]
 			balance: 0,
 			isVirtual: true,
 			isParent: true,
-			children: []
+			children: [],
+			accountClass: AccountClass.Expense
 		}
 	};
 
@@ -439,7 +461,8 @@ function buildHierarchicalTree(accounts: AccountDto[]): TreeNodeData[]
 			balance: 0,
 			isVirtual: true,
 			isParent: true,
-			children: []
+			children: [],
+			accountClass: cls
 		};
 		typeMap.set(def.type, typeNode);
 		classMap[cls].children.push(typeNode);
@@ -455,7 +478,8 @@ function buildHierarchicalTree(accounts: AccountDto[]): TreeNodeData[]
 			isVirtual: false,
 			isParent: acc.isParent ?? false,
 			children: [],
-			account: acc
+			account: acc,
+			accountClass: getAccountClass(acc.type)
 		});
 	});
 
