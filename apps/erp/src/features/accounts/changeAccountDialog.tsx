@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import {
 	ChangeableEntityMode,
 	ChangeDialog,
+	cn,
 	type CommonChangeDialogProps,
 	FieldGroup,
 	FieldsSection,
@@ -26,7 +27,7 @@ import {
 	getAccountTypesByClasses
 } from "@/core/data/account.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
-import { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";
 
@@ -93,12 +94,16 @@ export default function ChangeAccountDialog(
 
 	const flatOptions = useMemo(() =>
 	{
-		const list: { label: string; value: AccountType | undefined; disabled?: boolean }[] = [];
+		const list: { label: React.ReactNode; value: AccountType | undefined; disabled?: boolean }[] = [];
 		groupedAccountTypes.forEach((section) =>
 		{
 			section.options.forEach((opt) =>
 			{
-				list.push({label: opt.label, value: opt.value});
+				list.push({
+					// Wrap the text in our new custom component to display the text + badge
+					label: <AccountTypeOptionItem type={ opt.value } label={ opt.label }/>,
+					value: opt.value
+				});
 			});
 		});
 		return list;
@@ -198,5 +203,72 @@ export default function ChangeAccountDialog(
 				</div>
 			</ChangeDialog.Footer>
 		</ChangeDialog>
+	);
+}
+
+// ----------------------------------------------------------------------------------
+// Custom Component (With temporary translations built directly in)
+// ----------------------------------------------------------------------------------
+
+interface AccountTypeOptionItemProps
+{
+	type: AccountType;
+	label: string;
+}
+
+function AccountTypeOptionItem({type, label}: AccountTypeOptionItemProps)
+{
+	const accountClass = getAccountClass(type);
+
+	const getClassBadgeDetails = (cls: AccountClass) =>
+	{
+		switch (cls)
+		{
+			case AccountClass.Asset:
+				return {
+					badgeText: "الأصول (Assets)",
+					color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+				};
+			case AccountClass.Liability:
+				return {
+					badgeText: "الالتزامات (Liabilities)",
+					color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+				};
+			case AccountClass.Equity:
+				return {
+					badgeText: "حقوق الملكية (Equity)",
+					color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400"
+				};
+			case AccountClass.Revenue:
+				return {
+					badgeText: "الإيرادات (Revenue)",
+					color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+				};
+			case AccountClass.Expense:
+				return {
+					badgeText: "المصروفات (Expense)",
+					color: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400"
+				};
+			default:
+				return {
+					badgeText: "غير معروف (Unknown)",
+					color: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+				};
+		}
+	};
+
+	const {badgeText, color} = getClassBadgeDetails(accountClass);
+
+	return (
+		<div className="flex items-center justify-between w-full py-0.5 gap-4">
+			<div className="flex flex-col min-w-0 flex-1 text-right">
+				<span className="text-sm font-medium truncate">{ label }</span>
+			</div>
+			<div className="shrink-0 flex items-center">
+				<span className={ cn("text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap", color) }>
+					{ badgeText }
+				</span>
+			</div>
+		</div>
 	);
 }
