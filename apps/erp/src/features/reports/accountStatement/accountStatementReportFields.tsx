@@ -6,7 +6,6 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import { AccountStatementReportRequest } from "@/features/reports/accountStatement/accountStatementReportRequest.ts";
-import { AccountType } from "@/core/data/account.ts";
 
 
 interface AccountStatementReportFieldsProps
@@ -30,15 +29,18 @@ export function AccountStatementReportFields({
 	const isOpen = useMemo(() => signal(true), []);
 	const accountId = useMemo(() => signal<number | undefined>(initialAccountId), [initialAccountId]);
 	const accountName = useMemo(() => signal<string | undefined>(initialAccountName), [initialAccountName]);
-	const fromDate = useMemo(() => signal<string>(""), []);
-	const toDate = useMemo(() => signal<string>(""), []);
+	const defaults = useMemo(() => new AccountStatementReportRequest(), []);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const fromDate = useMemo(() => signal<string>(defaults.fromDate), []);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const toDate = useMemo(() => signal<string>(defaults.toDate), []);
 
 	const handleClear = () =>
 	{
+		fromDate.value = defaults.fromDate;
+		toDate.value = defaults.toDate;
 		accountId.value = undefined;
 		accountName.value = undefined;
-		fromDate.value = "";
-		toDate.value = "";
 	};
 
 	return (
@@ -69,13 +71,13 @@ export function AccountStatementReportFields({
 							<AccountsSearchableSelect
 								id={ accountId }
 								label={ accountName }
-								types={ [AccountType.Client, AccountType.Supplier, AccountType.Employee, AccountType.Bank, AccountType.Box] }
 							/>
 						</FormField>
 
 						<DateField
 							label="من تاريخ"
 							value={ fromDate }
+
 						/>
 
 						<DateField
@@ -91,9 +93,9 @@ export function AccountStatementReportFields({
 						<Button
 							disabled={ isLoading || !accountId.value }
 							onClick={ () => onSubmit(new AccountStatementReportRequest({
-								accountId: accountId.value!,
-								fromDate: fromDate.value || null,
-								toDate: toDate.value || null
+								glAccountId: accountId.value!,
+								fromDate: fromDate.value,
+								toDate: toDate.value
 							})) }
 						>
 							{ t("common:filter.apply") }

@@ -1,7 +1,6 @@
 import { ReportField } from "@/features/report/components/reportField.tsx";
 import { formatNumber } from "@/features/report/utils/formating.ts";
 import type { AccountStatementReportResult } from "@/features/reports/accountStatement/accountStatementReportResult.ts";
-import { Account } from "@/core/data/account.ts";
 
 
 interface AccountStatementReportInfoProps
@@ -21,29 +20,27 @@ export function AccountStatementReportInfo({data}: AccountStatementReportInfoPro
 				<ReportField labelAr="اسم الحساب" labelEn="Account Name" value={ account.name }/>
 			</div>
 
-			<div className="grid grid-cols-2 gap-3">
-				{ account.vatNumber &&
-                    <ReportField labelAr="الرقم الضريبي" labelEn="Tax Number" value={ account.vatNumber ?? "" }/> }
-				{ account.accountContacts[0]?.number &&
-                    <ReportField labelAr="الهاتف" labelEn="Phone" value={ account.accountContacts[0]?.number ?? "" }/> }
+
+			<div className="grid grid-cols-2 gap-3 mt-2 pt-2">
+				<ReportField labelAr="الرصيد الافتتاحي (قبل الفترة)" labelEn="Opening Balance"
+				             valueClassName="font-bold!"
+				             value={ formatNumber(data.openingBalanceBeforePeriod) }/>
+				<ReportField labelAr="الرصيد الختامي (بعد الفترة)" labelEn="Closing Balance" valueClassName="font-bold!"
+				             value={ formatNumber(data.closingBalanceAfterPeriod) }/>
 			</div>
 
 			<div className="grid grid-cols-1 gap-3">
-				<ReportField labelAr="العنوان" labelEn="Address" value={ Account.formatAddress(account) }/>
-			</div>
+				<ReportField
+					labelAr="إجمالي المبالغ الداخل (إجمالي مدين)"
+					labelEn="Total Incoming Amount (Total Debits)"
+					value={ formatNumber(data.pageTotalDebits) }
+				/>
 
-			<div className="grid grid-cols-2 gap-3 mt-2 pt-2">
-				<ReportField labelAr="رصيد الفترة" labelEn="Period Balance" valueClassName="font-bold!"
-				             value={ formatNumber(data.periodBalance) }/>
-				<ReportField labelAr="الرصيد الكلي" labelEn="Total Balance" valueClassName="font-bold!"
-				             value={ formatNumber(account.balance) }/>
-			</div>
-
-			<div className="grid grid-cols-2 gap-3">
-				<ReportField labelAr="إجمالي الوارد / له" labelEn="Total Income"
-				             value={ formatNumber(data.totalIncome) }/>
-				<ReportField labelAr="إجمالي الصادر / عليه" labelEn="Total Outcome"
-				             value={ formatNumber(data.totalOutcome) }/>
+				<ReportField
+					labelAr="إجمالي المبالغ الخارجة (إجمالي دائن)"
+					labelEn="Total Outgoing Amount (Total Credits)"
+					value={ formatNumber(data.pageTotalCredits) }
+				/>
 			</div>
 
 			{ account.notes && (

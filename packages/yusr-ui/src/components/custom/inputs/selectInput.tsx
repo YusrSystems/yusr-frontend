@@ -3,6 +3,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
 import { cn } from "#/utils/cn.ts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../pure/select";
+import type { ReactNode } from "react";
 
 
 export interface SelectInputPropsOld
@@ -34,7 +35,7 @@ export interface SelectInputProps<T>
 {
 	value?: Signal<T | undefined>;
 	onValueChange?: (value: T) => void;
-	options: { label: string; value: T | undefined; }[];
+	options: { label: string | ReactNode; value: T | undefined; }[];
 	placeholder?: string;
 	disabled?: boolean;
 }

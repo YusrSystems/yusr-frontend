@@ -2,14 +2,14 @@ import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { CrudTablePagination, ReportLoading, Tabs, TabsList, TabsTrigger } from "yusr-ui";
-import { FileText, List } from "lucide-react";
+import { CrudTablePagination, ReportLoading } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage.tsx";
 import { AccountStatementReportFields } from "@/features/reports/accountStatement/accountStatementReportFields.tsx";
 import { AccountStatementReport } from "@/features/reports/accountStatement/accountStatementReport.tsx";
 import { Cubits } from "@/core/services/cubits.ts";
 import { AccountStatementReportRequest } from "@/features/reports/accountStatement/accountStatementReportRequest.ts";
-import type { AccountStatementRow } from "@/features/reports/accountStatement/accountStatementReportResult.ts";
+import { type AccountStatementLine } from "@/features/reports/accountStatement/accountStatementReportResult.ts";
+import { getDocumentTypeName } from "@/core/types/documentType.ts";
 
 
 export function AccountStatementReportPage()
@@ -19,7 +19,6 @@ export function AccountStatementReportPage()
 	const {accountId, accountName} = useParams<{ accountId?: string, accountName?: string }>();
 
 	const lastRequest = useMemo(() => signal<AccountStatementReportRequest | undefined>(undefined), []);
-	const isGrouped = useMemo(() => signal<boolean>(true), []);
 
 	useEffect(() =>
 	{
@@ -27,8 +26,7 @@ export function AccountStatementReportPage()
 		if (parsedAccountId && !Number.isNaN(parsedAccountId))
 		{
 			const request = new AccountStatementReportRequest({
-				accountId: parsedAccountId,
-				groupByDocument: isGrouped.value
+				glAccountId: parsedAccountId
 			});
 			lastRequest.value = request;
 			void Cubits.AccountStatementReport.getReportData(request, 1);
@@ -36,25 +34,8 @@ export function AccountStatementReportPage()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [accountId]);
 
-	const handleTabChange = (value: string) =>
-	{
-		const pressedValue = value === "grouped";
-		isGrouped.value = pressedValue;
-
-		if (lastRequest.value)
-		{
-			const updatedRequest = new AccountStatementReportRequest({
-				...lastRequest.value,
-				groupByDocument: pressedValue
-			});
-			lastRequest.value = updatedRequest;
-			void Cubits.AccountStatementReport.getReportData(updatedRequest, 1);
-		}
-	};
-
 	const handleSubmit = (request: AccountStatementReportRequest) =>
 	{
-		request.groupByDocument = isGrouped.value;
 		lastRequest.value = request;
 		void Cubits.AccountStatementReport.getReportData(request, 1);
 	};
@@ -72,41 +53,24 @@ export function AccountStatementReportPage()
 		<ReportPage>
 
 			<ReportPage.ActionButtonsContainer>
-				<ReportPage.ExcelButton<AccountStatementRow>
+				<ReportPage.ExcelButton<AccountStatementLine>
 					fileName={ `كشف_حساب_${ accountName || "محدد" }` }
-					getRows={ async () => Cubits.AccountStatementReport.result.value?.accountStatementRows ?? [] }
+					getRows={ async () => Cubits.AccountStatementReport.result.value?.lines ?? [] }
 					columns={ [
 						{header: "التاريخ", accessor: (r) => r.date},
-						{header: "النوع", accessor: (r) => r.type},
-						{header: "رقم المستند", accessor: (r) => r.documentNumber.toString()},
-						{header: "الوارد / له", accessor: (r) => r.income.toString()},
-						{header: "الصادر / عليه", accessor: (r) => r.outcome.toString()},
-						{header: "الرصيد", accessor: (r) => r.balance.toString()},
-						{header: "الملاحظات", accessor: (r) => r.notes}
+						{header: "نوع المستند", accessor: (r) => getDocumentTypeName(r.documentType)},
+						{header: "رقم المستند", accessor: (r) => r.documentId.toString()},
+						{header: "الشريك", accessor: (r) => r.partnerName},
+						{header: "البيان", accessor: (r) => r.description},
+						{header: "مدين", accessor: (r) => r.debit.toString()},
+						{header: "دائن", accessor: (r) => r.credit.toString()},
+						{header: "الرصيد", accessor: (r) => r.runningBalance.toString()}
 					] }
 				/>
 				<ReportPage.PrintButton/>
 			</ReportPage.ActionButtonsContainer>
 
-			<div className="print:hidden w-full shrink-0 flex flex-col gap-3 mb-2">
-
-				<Tabs
-					value={ isGrouped.value ? "grouped" : "itemized" }
-					onValueChange={ handleTabChange }
-					className="w-full max-w-md self-start"
-				>
-					<TabsList className="grid w-full grid-cols-2">
-						<TabsTrigger value="itemized" className="flex items-center gap-2">
-							<span>كشف تفصيلي (حركة بحركة)</span>
-							<List className="w-4 h-4"/>
-						</TabsTrigger>
-						<TabsTrigger value="grouped" className="flex items-center gap-2">
-							<span>تجميع حسب المستند</span>
-							<FileText className="w-4 h-4"/>
-						</TabsTrigger>
-					</TabsList>
-				</Tabs>
-
+			<div className="print:hidden w-full shrink-0 flex flex-col">
 				<AccountStatementReportFields
 					onSubmit={ handleSubmit }
 					isLoading={ isLoading }

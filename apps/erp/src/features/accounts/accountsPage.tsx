@@ -26,6 +26,7 @@ import { createPortal } from "react-dom";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { AccountsListReport } from "@/features/reports/accountsList/accountsListReport.tsx";
 import type { Signal } from "@preact/signals-react";
+import { AppNavigator } from "@/app/appNavigator.ts";
 
 
 interface TreeNodeData
@@ -205,7 +206,10 @@ function PageTable()
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common", "erpCommon"]);
-
+	const canShowBalance = Services.auth.hasAuth(
+		SystemPermissionsResources.AccountShowBalance,
+		SystemPermissionsActions.Get
+	);
 	if (Cubits.accounts.state.value instanceof PageLoading)
 	{
 		return <TablePreview.Loading/>;
@@ -222,20 +226,48 @@ function PageTable()
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("accounts.accountId"), rowStyles: "w-24"},
 						{rowBody: t("accounts.accountName"), rowStyles: "w-60"},
-						{rowBody: t("accounts.balance"), rowStyles: "w-32"}
+						...(canShowBalance ? [{rowBody: t("accounts.balance"), rowStyles: "w-32"}] : []),
+						...(Services.auth.hasAuth(
+							SystemPermissionsResources.ReportAccountStatement,
+							SystemPermissionsActions.Get
+						)
+							? [{rowBody: "", rowStyles: "w-32"}]
+							: [])
 					] }
 					tableRowMapper={ (account) => [
 						{rowBody: `#${ account.id }`, rowStyles: ""},
 						{rowBody: account.name, rowStyles: "font-semibold"},
-						{
-							rowBody: (
-								<div className="flex items-center gap-1 font-mono">
-									{ account.balance.toLocaleString("en-US", {minimumFractionDigits: 2}) }
-									<ErpCurrencyIcon/>
-								</div>
-							),
-							rowStyles: getBalanceColorClass(account.balance, getAccountClass(account.type))
-						}
+
+						...(canShowBalance
+							? [{
+								rowBody: (
+									<div className="flex items-center gap-1 font-mono">
+										{ account.balance.toLocaleString("en-US", {minimumFractionDigits: 2}) }
+										<ErpCurrencyIcon/>
+									</div>
+								),
+								rowStyles: getBalanceColorClass(account.balance, getAccountClass(account.type))
+							}]
+							: []),
+						...(Services.auth.hasAuth(
+							SystemPermissionsResources.ReportAccountStatement,
+							SystemPermissionsActions.Get
+						)
+							? [{
+								rowBody: <Button
+									variant="outline"
+									size="sm"
+									onClick={ () =>
+										AppNavigator.openInNewTab(
+											`/reports/accountStatement/${ account.id }/${ encodeURIComponent(account.name) }`
+										)
+									}>
+									{ t("erpCommon:accountStatement.button") }
+								</Button>,
+								rowStyles: "w-32"
+							}]
+							: [])
+
 					] }
 					hasUpdatePermission={ Services.auth.hasAuth(
 						SystemPermissionsResources.Accounts,
@@ -322,6 +354,18 @@ function TreeNode({
 	onToggle: (id: string | number) => void;
 })
 {
+
+	const canShowBalance = Services.auth.hasAuth(
+		SystemPermissionsResources.AccountShowBalance,
+		SystemPermissionsActions.Get
+	);
+
+	const canShowStatement = Services.auth.hasAuth(
+		SystemPermissionsResources.ReportAccountStatement,
+		SystemPermissionsActions.Get
+	);
+
+	const {t} = useTranslation("erpCommon");
 	const hasChildren = node.children.length > 0;
 	const isExpanded = !!expandedNodes[node.id];
 
@@ -352,14 +396,33 @@ function TreeNode({
 					) }
 				</div>
 
-				<div className="flex items-center gap-4">
-					<span
-						className={ `text-sm font-mono font-semibold ${ getBalanceColorClass(node.balance, node.accountClass) }` }>
-						{ node.balance.toLocaleString("en-US", {minimumFractionDigits: 2}) }
-						<span className="text-[10px] font-sans mr-1">
-							<ErpCurrencyIcon className="inline h-3 w-3"/>
+				<div className="flex items-center justify-between">
+					{ canShowStatement && !node.isVirtual && (
+						<Button
+							variant="outline"
+							size="sm"
+							className="h-7 text-xs"
+							onClick={ (e) =>
+							{
+								e.stopPropagation();
+								AppNavigator.openInNewTab(
+									`/reports/accountStatement/${ node.id }/${ encodeURIComponent(node.name) }`
+								);
+							} }
+						>
+							{ t("accountStatement.button") }
+						</Button>
+					) }
+
+					{ canShowBalance && (
+						<span
+							className={ `text-sm text-end font-mono font-semibold min-w-40 max-w-40 ${ getBalanceColorClass(node.balance, node.accountClass) }` }>
+							{ node.balance.toLocaleString("en-US", {minimumFractionDigits: 2}) }
+							<span className="text-[10px] font-sans mr-1">
+								<ErpCurrencyIcon className="inline h-4 w-4"/>
+							</span>
 						</span>
-					</span>
+					) }
 				</div>
 			</div>
 

@@ -1,20 +1,18 @@
 import type { AccountDto } from "@/core/data/account.ts";
-import type { FinancialLedgerDocumentType } from "@/core/data/financialLedger.ts";
-import type { InvoiceType } from "@/core/types/invoiceType.ts";
+import { DocumentType } from "@/core/types/documentType.ts";
 
 
-export interface AccountStatementRow
+export interface AccountStatementLine
 {
+	id: number;
 	date: string;
-	type: string;
-	documentNumber: number;
-	documentType?: FinancialLedgerDocumentType;
-	invoiceType?: InvoiceType;
-	income: number;
-	outcome: number;
-	balance: number;
-	notes: string;
-	editsCount?: number;
+	documentType?: DocumentType;
+	documentId: number;
+	partnerName: string;
+	description: string;
+	debit: number;
+	credit: number;
+	runningBalance: number;
 }
 
 export interface AccountStatementReportResult
@@ -22,13 +20,14 @@ export interface AccountStatementReportResult
 	fromDate?: string;
 	toDate?: string;
 	account: AccountDto;
-	periodBalance: number;
-	totalIncome: number;
-	totalOutcome: number;
-	accountStatementRows: AccountStatementRow[];
+	openingBalanceBeforePeriod: number;
+	closingBalanceAfterPeriod: number;
+	lines: AccountStatementLine[];
 
-	// Pagination fields (ensure your backend returns these)
+	// Pagination fields
 	pageNumber: number;
 	rowsPerPage: number;
 	totalCount: number;
+	pageTotalDebits: number;
+	pageTotalCredits: number;
 }
