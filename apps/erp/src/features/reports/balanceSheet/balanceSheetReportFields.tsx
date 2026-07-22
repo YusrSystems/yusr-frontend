@@ -21,12 +21,12 @@ export function BalanceSheetReportFields({onSubmit, isLoading = false}: BalanceS
 	const isOpen = useMemo(() => signal(true), []);
 	const defaults = useMemo(() => new BalanceSheetReportRequest(), []);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const toDate = useMemo(() => signal<string>(defaults.toDate), []);
+	const asOfDate = useMemo(() => signal<string>(defaults.asOfDate), []);
 
 	const handleClear = () =>
 	{
-		toDate.value = defaults.toDate;
-		onSubmit(new BalanceSheetReportRequest({toDate: defaults.toDate}));
+		asOfDate.value = defaults.asOfDate;
+		onSubmit(new BalanceSheetReportRequest({asOfDate: defaults.asOfDate}));
 	};
 
 	return (
@@ -52,7 +52,7 @@ export function BalanceSheetReportFields({onSubmit, isLoading = false}: BalanceS
 
 			<CollapsibleContent>
 				<div className="flex flex-col gap-4 p-4 border-t border-border">
-					<DateField label={ t("reports.toDate") } value={ toDate }/>
+					<DateField label={ t("reports.toDate") } value={ asOfDate }/>
 
 					<div className="flex justify-end gap-2">
 						<Button disabled={ isLoading } variant="outline" onClick={ handleClear }>
@@ -61,7 +61,7 @@ export function BalanceSheetReportFields({onSubmit, isLoading = false}: BalanceS
 						<Button
 							disabled={ isLoading }
 							onClick={ () => onSubmit(new BalanceSheetReportRequest({
-								toDate: toDate.value ?? defaults.toDate
+								asOfDate: asOfDate.value ?? defaults.asOfDate
 							})) }
 						>
 							{ t("common:filter.apply") }

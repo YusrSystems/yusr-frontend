@@ -39,7 +39,7 @@ export function BalanceSheetReportPage()
 			</div>
 
 			<div className="flex-1 min-h-0 flex flex-col print:block">
-				<BalanceSheetReport toDate={ lastRequest.value.toDate }/>
+				<BalanceSheetReport asOfDate={ lastRequest.value.asOfDate }/>
 			</div>
 		</ReportPage>
 	);

@@ -1,23 +1,22 @@
+export interface BalanceSheetNode
+{
+	glAccountId: number;
+	name: string;
+	balance: number;
+	isParent: boolean;
+	children: BalanceSheetNode[];
+}
+
 export interface BalanceSheetReportResult
 {
-	itemsCost: number;
-	banksBalance: number;
-	boxesBalance: number;
-	debtorsBalance: number;
-	creditorsBalance: number;
-}
-
-export function getTotalAssets(data: BalanceSheetReportResult): number
-{
-	return data.itemsCost + data.banksBalance + data.boxesBalance + data.debtorsBalance;
-}
-
-export function getTotalLiabilities(data: BalanceSheetReportResult): number
-{
-	return data.creditorsBalance;
-}
-
-export function getOwnerEquity(data: BalanceSheetReportResult): number
-{
-	return getTotalAssets(data) - getTotalLiabilities(data);
+	asOfDate: string;
+	assetTree: BalanceSheetNode[];
+	totalAssets: number;
+	liabilityTree: BalanceSheetNode[];
+	totalLiabilities: number;
+	equityTree: BalanceSheetNode[];
+	totalEquity: number;
+	totalPriorYearsRetainedEarnings: number;
+	totalCurrentYearEarnings: number;
+	totalLiabilitiesAndEquity: number;
 }

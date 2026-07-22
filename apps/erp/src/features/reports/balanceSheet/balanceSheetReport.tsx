@@ -8,11 +8,11 @@ import { useSignals } from "@preact/signals-react/runtime";
 
 interface BalanceSheetReportProps
 {
-	toDate: string;
+	asOfDate: string;
 	isPortal?: boolean;
 }
 
-export function BalanceSheetReport({toDate, isPortal = false}: BalanceSheetReportProps)
+export function BalanceSheetReport({asOfDate, isPortal = false}: BalanceSheetReportProps)
 {
 	useSignals();
 
@@ -28,7 +28,7 @@ export function BalanceSheetReport({toDate, isPortal = false}: BalanceSheetRepor
 
 			{ data && (
 				<div className="grid grid-cols-2 gap-3 my-4 print:break-inside-avoid">
-					<ReportField labelAr="إلى التاريخ" labelEn="To date" value={ toDate }/>
+					<ReportField labelAr="كما في تاريخ" labelEn="As of date" value={ asOfDate }/>
 				</div>
 			) }
 
