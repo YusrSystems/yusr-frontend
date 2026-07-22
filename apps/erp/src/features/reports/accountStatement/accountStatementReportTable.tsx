@@ -6,6 +6,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { ReportLoaded, ReportLoading, TablePreview } from "yusr-ui";
 import { Link } from "react-router-dom";
 import { getDocumentRoute, getDocumentTypeName } from "@/core/types/documentType.ts";
+import { AccountClass } from "@/core/data/account.ts";
 
 
 const linkClassName = "p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!";
@@ -23,6 +24,17 @@ export function AccountStatementReportTable()
 	{
 		const rows = Cubits.AccountStatementReport.result.value?.lines ?? [];
 
+		const accountClass = Cubits?.AccountStatementReport?.result.value?.account.class ?? AccountClass.Asset;
+		const isDebitNormal =
+			accountClass === AccountClass.Asset ||
+			accountClass === AccountClass.Expense;
+
+		const debitAr = isDebitNormal ? "المبالغ الداخلة (مدين)" : "المبالغ الخارجة (مدين)";
+		const debitEn = isDebitNormal ? "Incoming (Debit)" : "Outgoing (Debit)";
+
+		const creditAr = isDebitNormal ? "المبالغ الخارجة (دائن)" : "المبالغ الداخلة (دائن)";
+		const creditEn = isDebitNormal ? "Outgoing (Credit)" : "Incoming (Credit)";
+
 		return (
 			<table className="w-full mt-5 border-collapse rounded-lg overflow-hidden">
 				<thead>
@@ -32,8 +44,8 @@ export function AccountStatementReportTable()
 					<ReportTableTh ar="رقم المستند" en="Doc No."/>
 					<ReportTableTh ar="الشريك" en="Partner"/>
 					<ReportTableTh ar="البيان" en="Description" align="start"/>
-					<ReportTableTh ar="مدين" en="Debit"/>
-					<ReportTableTh ar="دائن" en="Credit"/>
+					<ReportTableTh ar={ debitAr } en={ debitEn }/>
+					<ReportTableTh ar={ creditAr } en={ creditEn }/>
 					<ReportTableTh ar="الرصيد" en="Balance"/>
 				</tr>
 				</thead>
@@ -42,6 +54,26 @@ export function AccountStatementReportTable()
 				{
 					const isEven = idx % 2 === 0;
 					const route = row.documentId > 0 ? getDocumentRoute(row.documentType) : undefined;
+
+					const favorableWhenPositive =
+						accountClass === AccountClass.Asset ||
+						accountClass === AccountClass.Revenue ||
+						accountClass === AccountClass.Equity;
+
+					const greenColorClass = "text-emerald-600! font-bold! print:font-medium print:text-foreground!";
+					const redColorClass = "text-destructive! font-bold! print:font-medium print:text-foreground!";
+					
+					const debitClassName = row.debit > 0
+						? (favorableWhenPositive && isDebitNormal ? greenColorClass : redColorClass)
+						: undefined;
+
+					const creditClassName = row.credit > 0
+						? (favorableWhenPositive && !isDebitNormal ? greenColorClass : redColorClass)
+						: undefined;
+
+					const runningBalanceClassName = row.runningBalance < 0
+						? redColorClass
+						: (favorableWhenPositive ? greenColorClass : redColorClass);
 
 					return (
 						<tr key={ `${ row.id }-${ idx }` }>
@@ -72,25 +104,19 @@ export function AccountStatementReportTable()
 
 							<ReportTableTd
 								isEven={ isEven }
-								className={ row.debit > 0
-									? "text-emerald-600! font-bold! print:font-medium print:text-foreground!"
-									: undefined }
+								className={ debitClassName }
 							>
-								{ row.debit > 0 ? formatNumber(row.debit) : "-" }
+								{ formatNumber(row.debit) }
 							</ReportTableTd>
 							<ReportTableTd
 								isEven={ isEven }
-								className={ row.credit > 0
-									? "text-destructive! font-bold! print:font-medium print:text-foreground!"
-									: undefined }
+								className={ creditClassName }
 							>
-								{ row.credit > 0 ? formatNumber(row.credit) : "-" }
+								{ formatNumber(row.credit) }
 							</ReportTableTd>
 							<ReportTableTd
 								isEven={ isEven }
-								className={ row.runningBalance >= 0
-									? "text-emerald-600! font-bold! print:font-medium print:text-foreground!"
-									: "text-destructive! font-bold! print:font-medium print:text-foreground!" }
+								className={ runningBalanceClassName }
 							>
 								{ formatNumber(row.runningBalance) }
 							</ReportTableTd>
