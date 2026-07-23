@@ -22,6 +22,7 @@ import {
 import { PartnerDto, PartnerType } from "@/core/data/partner.ts";
 import ChangePartnerDialog from "./changePartnerDialog";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { AppNavigator } from "@/app/appNavigator.ts";
 
 
 export default function PartnersPage({type}: { type: PartnerType })
@@ -162,7 +163,16 @@ function PageTable()
 						{rowBody: t("partners.partnerId", "الرقم"), rowStyles: "w-24"},
 						{rowBody: t("partners.partnerName", "الاسم"), rowStyles: "w-48"},
 						{rowBody: t("partners.mobile", "الجوال"), rowStyles: "w-32"},
-						{rowBody: t("partners.balance", "الرصيد الجاري"), rowStyles: "w-32"}
+						{rowBody: t("partners.balance", "الرصيد الجاري"), rowStyles: "w-32"},
+						...(Services.auth.hasAuth(
+							SystemPermissionsResources.ReportPartnerStatement,
+							SystemPermissionsActions.Get
+						)
+							?
+							[
+								{rowBody: "", rowStyles: "w-32"}
+							]
+							: [])
 					] }
 					tableRowMapper={ (partner) =>
 					{
@@ -203,7 +213,28 @@ function PageTable()
 									</div>
 								),
 								rowStyles: `${ balanceColor } font-bold`
-							}
+							},
+							...(Services.auth.hasAuth(
+								SystemPermissionsResources.ReportPartnerStatement,
+								SystemPermissionsActions.Get
+							)
+								?
+								[
+									{
+										rowBody: <Button
+											variant="outline"
+											size="sm"
+											onClick={ () =>
+												AppNavigator.openInNewTab(
+													`/reports/partnerStatement/${ partner.id }/${ encodeURIComponent(partner.name) }`
+												)
+											}>
+											{ t("erpCommon:partnerStatement.button", "كشف حساب شريك") }
+										</Button>,
+										rowStyles: "w-32"
+									}
+								]
+								: [])
 						];
 					} }
 					hasUpdatePermission={ Services.auth.hasAuth(

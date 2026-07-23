@@ -123,6 +123,7 @@
       "voucher": "Voucher Report",
       "voucherList": "Voucher List Report",
       "accountStatement": "Account Statement Report",
+      "partnerStatement": "Partner Statement Report",
       "accountList": "Account List Report",
       "balanceTransfer": "Balance Transfer Report",
       "itemStatement": "Item Statement Report",
@@ -265,6 +266,8 @@
     "itemStatementDescription": "View item movement details across warehouses and time periods",
     "accountStatement": "Account Statement",
     "accountStatementDescription": "View a specific account's transactions within a selected date range",
+    "partnerStatement": "Partner Statement",
+    "partnerStatementDescription": "View a specific partner's transactions within a selected date range",
     "accountsList": "Accounts List",
     "accountsListDescription": "View all accounts with balances and detailed information",
     "exportToExcel": "Export to Excel"
@@ -272,6 +275,10 @@
   "accountStatement": {
     "button": "Account Statement",
     "title": "Account Statement"
+  },
+  "partnerStatement": {
+    "button": "Partner Statement",
+    "title": "Partner Statement"
   },
   "itemStatement": {
     "button": "Item Statement",

@@ -56,6 +56,7 @@ export const SystemPermissionsResources = {
 	ReportVoucher: "ReportVoucher",
 	ReportVoucherList: "ReportVoucherList",
 	ReportAccountStatement: "ReportAccountStatement",
+	ReportPartnerStatement: "ReportPartnerStatement",
 	ReportAccountList: "ReportAccountList",
 	ReportBalanceTransfer: "ReportBalanceTransfer",
 	ReportItemStatement: "ReportItemStatement",

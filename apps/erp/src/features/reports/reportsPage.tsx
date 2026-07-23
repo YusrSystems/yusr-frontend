@@ -15,7 +15,6 @@ import { useTranslation } from "react-i18next";
 import { Button, SystemPermissionsActions } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { Cubits } from "@/core/services/cubits.ts";
-import { AccountType } from "@/core/data/account.ts";
 import { Services } from "@/core/services/services.ts";
 import { AppNavigator } from "@/app/appNavigator.ts";
 
@@ -108,7 +107,7 @@ export default function ReportsPage()
 	{
 		Cubits.items.init();
 		Cubits.stores.init();
-		Cubits.accounts.init([AccountType.Client, AccountType.Supplier]);
+		// Cubits.accounts.init([AccountType.Client, AccountType.Supplier]);
 	}, []);
 
 	const reportGroups: ReportGroup[] = [{
@@ -163,6 +162,16 @@ export default function ReportsPage()
 			icon: FileText,
 			hasAuth: Services.auth.hasAuth(
 				SystemPermissionsResources.ReportAccountStatement,
+				SystemPermissionsActions.Get
+			)
+		}, {
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/partnerStatement") }>{ t("reports.create") }</Button>,
+			name: t("reports.partnerStatement"),
+			description: t("reports.partnerStatementDescription"),
+			icon: FileText,
+			hasAuth: Services.auth.hasAuth(
+				SystemPermissionsResources.ReportPartnerStatement,
 				SystemPermissionsActions.Get
 			)
 		}]

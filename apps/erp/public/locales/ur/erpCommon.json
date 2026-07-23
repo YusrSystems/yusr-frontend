@@ -123,6 +123,7 @@
       "voucher": "واؤچر رپورٹ",
       "voucherList": "واؤچر لسٹ رپورٹ",
       "accountStatement": "اکاؤنٹ سٹیٹمنٹ رپورٹ",
+      "partnerStatement": "پارٹنر سٹیٹمنٹ رپورٹ",
       "accountList": "اکاؤنٹ لسٹ رپورٹ",
       "balanceTransfer": "بیلنس ٹرانسفر رپورٹ",
       "itemStatement": "آئٹم سٹیٹمنٹ رپورٹ",
@@ -265,6 +266,8 @@
     "itemStatementDescription": "گوداموں اور مدت کے دوران آئٹم کی نقل و حرکت کی تفصیلات دیکھیں",
     "accountStatement": "اکاؤنٹ کا بیان",
     "accountStatementDescription": "مخصوص اکاؤنٹ کی منتخب تاریخ کی حد کے دوران لین دین دیکھیں",
+    "partnerStatement": "پارٹنر کا بیان",
+    "partnerStatementDescription": "مخصوص پارٹنر کی منتخب تاریخ کی حد کے دوران لین دین دیکھیں",
     "accountsList": "اکاؤنٹس کی فہرست",
     "accountsListDescription": "تمام اکاؤنٹس بیلنس اور تفصیلی معلومات کے ساتھ دیکھیں",
     "exportToExcel": "ایکسل میں ایکسپورٹ کریں"
@@ -272,6 +275,10 @@
   "accountStatement": {
     "button": "اکاؤنٹ سٹیٹمنٹ",
     "title": "اکاؤنٹ سٹیٹمنٹ"
+  },
+  "partnerStatement": {
+    "button": "پارٹنر سٹیٹمنٹ",
+    "title": "پارٹنر سٹیٹمنٹ"
   },
   "itemStatement": {
     "button": "آئٹم سٹیٹمنٹ",
