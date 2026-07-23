@@ -65,7 +65,7 @@ export const SystemPermissionsResources = {
 	ReportItemTaxStatement: "ReportItemTaxStatement",
 	ReportItemTransfer: "ReportItemTransfer",
 	ReportBalanceSheet: "ReportBalanceSheet",
-	ReportTaxReturn: "ReportTaxReturn",
+	ReportVatReturn: "ReportVatReturn",
 	ReportProfitAndLoss: "ReportProfitAndLoss",
 	ReportStocktaking: "ReportStocktaking",
 	ReportItemSettlement: "ReportItemSettlement",

@@ -109,7 +109,6 @@ export default function ReportsPage()
 	{
 		Cubits.items.init();
 		Cubits.stores.init();
-		// Cubits.accounts.init([AccountType.Client, AccountType.Supplier]);
 	}, []);
 
 	const reportGroups: ReportGroup[] = [{
@@ -193,12 +192,12 @@ export default function ReportsPage()
 		iconColor: "text-amber-600",
 		reports: [{
 			comp: <Button variant="outline"
-			              onClick={ async () => await AppNavigator.navigate("/reports/taxReturn") }>{ t("reports.create") }</Button>,
-			name: t("reports.taxReturn"),
-			description: t("reports.taxReturnDescription"),
+			              onClick={ async () => await AppNavigator.navigate("/reports/vatReturn") }>{ t("reports.create") }</Button>,
+			name: "الإقرار الضريبي",
+			description: "تقرير ضريبة القيمة المضافة الدوري",
 			icon: FileText,
 			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.ReportTaxReturn,
+				SystemPermissionsResources.ReportVatReturn,
 				SystemPermissionsActions.Get
 			)
 		}, {

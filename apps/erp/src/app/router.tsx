@@ -29,7 +29,7 @@ import AuthGate from "@/app/authGate.tsx";
 import CostAdjustmentsPage from "@/features/costAdjustments/costAdjustmentsPage.tsx";
 import { ItemsListReportPage } from "@/features/reports/itemsList/itemsListReportPage.tsx";
 import { ItemsMovementReportPage } from "@/features/reports/itemsMovement/itemsMovementReportPage.tsx";
-import { TaxReturnReportPage } from "@/features/reports/taxReturn/taxReturnReportPage.tsx";
+import { VatReturnReportPage } from "@/features/reports/vatReturn/vatReturnReportPage.tsx";
 import { InvoicesListReportPage } from "@/features/reports/invoicesList/invoicesListReportPage.tsx";
 import { ProfitAndLossReportPage } from "@/features/reports/profitAndLoss/profitAndLossReportPage.tsx";
 import { BalanceSheetReportPage } from "@/features/reports/balanceSheet/balanceSheetReportPage.tsx";
@@ -103,7 +103,7 @@ export const router = createBrowserRouter([{
 					{path: "/reports/accountsList", element: <AccountsListReportPage/>},
 					{path: "/reports/invoicesList", element: <InvoicesListReportPage/>},
 					{path: "/reports/itemsMovement", element: <ItemsMovementReportPage/>},
-					{path: "/reports/taxReturn", element: <TaxReturnReportPage/>},
+					{path: "/reports/vatReturn", element: <VatReturnReportPage/>},
 					{path: "/reports/profitAndLoss", element: <ProfitAndLossReportPage/>},
 					{path: "/reports/balanceSheet", element: <BalanceSheetReportPage/>},
 					{path: "/reports/salesProfitability", element: <SalesProfitabilityReportPage/>},

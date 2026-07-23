@@ -16,8 +16,8 @@ import { type CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
 import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
 import type { ItemsMovementReportRequest } from "@/features/reports/itemsMovement/itemsMovementReportRequest.ts";
 import type { ItemsMovementReportResult } from "@/features/reports/itemsMovement/itemsMovementReportResult.ts";
-import type { TaxReturnReportRequest } from "@/features/reports/taxReturn/taxReturnReportRequest.ts";
-import type { TaxReturnReportResult } from "@/features/reports/taxReturn/taxReturnReportResult.ts";
+import type { VatReturnReportRequest } from "@/features/reports/vatReturn/vatReturnReportRequest.ts";
+import type { VatReturnReportResult } from "@/features/reports/vatReturn/vatReturnReportResult.ts";
 
 import type { BalanceSheetReportResult } from "@/features/reports/balanceSheet/balanceSheetReportResult.ts";
 import type { BalanceSheetReportRequest } from "@/features/reports/balanceSheet/balanceSheetReportRequest.ts";
@@ -76,7 +76,7 @@ export class Cubits extends BaseCubits
 	public static readonly AccountStatementReport = new PageReportCubit<AccountStatementReportRequest, AccountStatementReportResult>("AccountStatement");
 	public static readonly PartnerStatementReport = new PageReportCubit<PartnerStatementReportRequest, PartnerStatementReportResult>("PartnerStatement");
 	public static readonly ItemStatementReport = new PageReportCubit<ItemStatementReportRequest, ItemStatementReportResult>("ItemStatement");
-	public static readonly TaxReturnReport = new ReportCubit<TaxReturnReportRequest, TaxReturnReportResult>("TaxReturn");
+	public static readonly VatReturnReport = new ReportCubit<VatReturnReportRequest, VatReturnReportResult>("VatReturn");
 	public static readonly BalanceSheetReport = new ReportCubit<BalanceSheetReportRequest, BalanceSheetReportResult>("BalanceSheet");
 	public static readonly ProfitAndLossReport = new ReportCubit<ProfitAndLossReportRequest, ProfitAndLossReportResult>("ProfitAndLoss");
 	public static readonly SalesProfitabilityReport = new PageReportCubit<SalesProfitabilityReportRequest, SalesProfitabilityReportResult>("SalesProfitability");
