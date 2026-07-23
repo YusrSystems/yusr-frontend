@@ -41,6 +41,7 @@ import AccountsPage from "@/features/accounts/accountsPage.tsx";
 import PartnersPage from "@/features/partners/partnersPage.tsx";
 import { PartnerType } from "@/core/data/partner.ts";
 import { SalesProfitabilityReportPage } from "@/features/reports/salesProfitability/salesProfitabilityReportPage.tsx";
+import { TaxAuditReportPage } from "@/features/reports/taxAudit/taxAuditReportPage.tsx";
 
 
 const refreshPage = () =>
@@ -106,6 +107,7 @@ export const router = createBrowserRouter([{
 					{path: "/reports/profitAndLoss", element: <ProfitAndLossReportPage/>},
 					{path: "/reports/balanceSheet", element: <BalanceSheetReportPage/>},
 					{path: "/reports/salesProfitability", element: <SalesProfitabilityReportPage/>},
+					{path: "/reports/taxAudit", element: <TaxAuditReportPage/>},
 					{path: "/reports/itemStatement/:itemId?/:itemName?", element: <ItemStatementReportPage/>},
 					{
 						path: "/reports/accountStatement/:accountId?/:accountName?",

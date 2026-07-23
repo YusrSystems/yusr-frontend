@@ -19,4 +19,5 @@ export default class ReportConstants
 	public static ItemTaxStatement = "ItemTaxStatement";
 	public static ItemsMovement = "ItemsMovement";
 	public static SalesProfitability = "SalesProfitability";
+	public static TaxAudit = "TaxAudit";
 }

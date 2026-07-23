@@ -1,6 +1,7 @@
 import {
 	ArrowRightLeft,
 	BarChart2,
+	FileSearch,
 	FileText,
 	LineChart,
 	type LucideIcon,
@@ -198,6 +199,16 @@ export default function ReportsPage()
 			icon: FileText,
 			hasAuth: Services.auth.hasAuth(
 				SystemPermissionsResources.ReportTaxReturn,
+				SystemPermissionsActions.Get
+			)
+		}, {
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/taxAudit") }>{ t("reports.create") }</Button>,
+			name: "تقرير المراجعة الضريبية",
+			description: "تفاصيل الفواتير والضرائب للمراجعة",
+			icon: FileSearch,
+			hasAuth: Services.auth.hasAuth(
+				SystemPermissionsResources.ReportTaxAudit,
 				SystemPermissionsActions.Get
 			)
 		}, {
