@@ -134,6 +134,7 @@
       "balanceSheet": "ব্যালেন্স শীট রিপোর্ট",
       "taxReturn": "ট্যাক্স রিটার্ন রিপোর্ট",
       "profitAndLoss": "মুনাফা ও ক্ষতি রিপোর্ট",
+      "salesProfitability": "বিক্রয় লাভজনকতা রিপোর্ট",
       "stocktaking": "স্টক গ্রহণ রিপোর্ট",
       "itemSettlement": "স্টক সমন্বয় রিপোর্ট",
       "itemBarcode": "আইটেম বারকোড রিপোর্ট"
@@ -226,6 +227,8 @@
     "balanceSheetDescription": "সম্পদ, দায় ও মালিকানা স্বত্ব",
     "profitAndLoss": "মুনাফা ও ক্ষতি",
     "profitAndLossDescription": "আয়, ব্যয় ও নিট মুনাফা",
+    "salesProfitability": "বিক্রয় লাভজনকতা",
+    "salesProfitabilityDescription": "সরাসরি খরচের সাথে বিক্রয় লাভজনকতা দেখুন",
     "taxReturn": "ট্যাক্স রিটার্ন",
     "taxReturnDescription": "বার্ষিক ভ্যাট রিটার্ন রিপোর্ট",
     "itemsTaxStatement": "আইটেম ট্যাক্স স্টেটমেন্ট",

@@ -63,6 +63,7 @@ export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => 
 	[SystemPermissionsResources.ReportBalanceSheet]: t("permissions.report.balanceSheet"),
 	[SystemPermissionsResources.ReportTaxReturn]: t("permissions.report.taxReturn"),
 	[SystemPermissionsResources.ReportProfitAndLoss]: t("permissions.report.profitAndLoss"),
+	[SystemPermissionsResources.ReportSalesProfitability]: t("permissions.report.salesProfitability", "تقرير ربحية المبيعات"),
 	[SystemPermissionsResources.ReportStocktaking]: t("permissions.report.stocktaking"),
 	[SystemPermissionsResources.ReportItemSettlement]: t("permissions.report.itemSettlement"),
 	[SystemPermissionsResources.ReportItemBarcode]: t("permissions.report.itemBarcode"),
@@ -143,6 +144,7 @@ export const getPermissionSections = (t: TFunction<"erpCommon">) => [{
 		SystemPermissionsResources.ReportBalanceSheet,
 		SystemPermissionsResources.ReportTaxReturn,
 		SystemPermissionsResources.ReportProfitAndLoss,
+		SystemPermissionsResources.ReportSalesProfitability,
 		SystemPermissionsResources.ReportStocktaking,
 		SystemPermissionsResources.ReportItemSettlement,
 		SystemPermissionsResources.ReportItemBarcode

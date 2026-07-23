@@ -134,6 +134,7 @@
       "balanceSheet": "بیلنس شیٹ رپورٹ",
       "taxReturn": "ٹیکس ریٹرن رپورٹ",
       "profitAndLoss": "منافع اور نقصان کی رپورٹ",
+      "salesProfitability": "سیلز منافع کی رپورٹ",
       "stocktaking": "اسٹک لینے کی رپورٹ",
       "itemSettlement": "اسٹک ایڈجسٹمنٹ رپورٹ",
       "itemBarcode": "آئٹم بارکوڈ رپورٹ"
@@ -226,6 +227,8 @@
     "balanceSheetDescription": "اثاثے، ذمہ داریاں اور ایکویٹی",
     "profitAndLoss": "منافع اور نقصان",
     "profitAndLossDescription": "آمدنی، اخراجات اور خالص منافع",
+    "salesProfitability": "سیلز منافع",
+    "salesProfitabilityDescription": "براہ راست اخراجات کے ساتھ سیلز منافع دیکھیں",
     "taxReturn": "ٹیکس ریٹرن",
     "taxReturnDescription": "متواتر VAT ریٹرن رپورٹ",
     "itemsTaxStatement": "آئٹم ٹیکس سٹیٹمنٹ",

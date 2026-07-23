@@ -2,6 +2,7 @@ import {
 	ArrowRightLeft,
 	BarChart2,
 	FileText,
+	LineChart,
 	type LucideIcon,
 	Package,
 	PackageOpen,
@@ -132,6 +133,16 @@ export default function ReportsPage()
 			icon: TrendingUp,
 			hasAuth: Services.auth.hasAuth(
 				SystemPermissionsResources.ReportProfitAndLoss,
+				SystemPermissionsActions.Get
+			)
+		}, {
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/salesProfitability") }>{ t("reports.create") }</Button>,
+			name: t("reports.salesProfitability", "تقرير ربحية المبيعات"),
+			description: t("reports.salesProfitabilityDescription", "عرض ربحية المبيعات مع التكاليف المباشرة"),
+			icon: LineChart,
+			hasAuth: Services.auth.hasAuth(
+				SystemPermissionsResources.ReportSalesProfitability,
 				SystemPermissionsActions.Get
 			)
 		}, {

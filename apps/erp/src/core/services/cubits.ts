@@ -34,6 +34,12 @@ import type {
 } from "@/features/reports/partnerStatement/partnerStatementReportRequest.ts";
 import type { PartnerStatementReportResult } from "@/features/reports/partnerStatement/partnerStatementReportResult.ts";
 import type { PartnerDto } from "@/core/data/partner.ts";
+import type {
+	SalesProfitabilityReportRequest
+} from "@/features/reports/salesProfitability/salesProfitabilityReportRequest.ts";
+import type {
+	SalesProfitabilityReportResult
+} from "@/features/reports/salesProfitability/salesProfitabilityReportResult.ts";
 
 
 export class Cubits extends BaseCubits
@@ -70,9 +76,8 @@ export class Cubits extends BaseCubits
 	public static readonly ItemStatementReport = new PageReportCubit<ItemStatementReportRequest, ItemStatementReportResult>("ItemStatement");
 	public static readonly TaxReturnReport = new ReportCubit<TaxReturnReportRequest, TaxReturnReportResult>("TaxReturn");
 	public static readonly BalanceSheetReport = new ReportCubit<BalanceSheetReportRequest, BalanceSheetReportResult>("BalanceSheet");
-
-	// Updated to ReportCubit (no pagination)
 	public static readonly ProfitAndLossReport = new ReportCubit<ProfitAndLossReportRequest, ProfitAndLossReportResult>("ProfitAndLoss");
+	public static readonly SalesProfitabilityReport = new PageReportCubit<SalesProfitabilityReportRequest, SalesProfitabilityReportResult>("SalesProfitability");
 
 	static
 	{

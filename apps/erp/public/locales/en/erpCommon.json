@@ -134,6 +134,7 @@
       "balanceSheet": "Balance Sheet Report",
       "taxReturn": "Tax Return Report",
       "profitAndLoss": "Profit and Loss Report",
+      "salesProfitability": "Sales Profitability Report",
       "stocktaking": "Stocktaking Report",
       "itemSettlement": "Stock Adjustment Report",
       "itemBarcode": "Item Barcode Report"
@@ -226,6 +227,8 @@
     "balanceSheetDescription": "Assets, liabilities and equity",
     "profitAndLoss": "Profit and Loss",
     "profitAndLossDescription": "Revenue, expenses and net profit",
+    "salesProfitability": "Sales Profitability",
+    "salesProfitabilityDescription": "View sales profitability with direct costs",
     "taxReturn": "Tax Return",
     "taxReturnDescription": "Periodic VAT return report",
     "itemsTaxStatement": "Item Tax Statement",
