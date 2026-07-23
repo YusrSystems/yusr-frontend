@@ -8,13 +8,12 @@ import { ItemStatementReportFields } from "@/features/reports/itemStatement/item
 import { ItemStatementReport } from "@/features/reports/itemStatement/itemStatementReport.tsx";
 import { Cubits } from "@/core/services/cubits.ts";
 import { ItemStatementReportRequest } from "@/features/reports/itemStatement/itemStatementReportRequest.ts";
-import type { ItemStatementRow } from "@/features/reports/itemStatement/itemStatementReportResult.ts";
+import type { ItemStatementLine } from "@/features/reports/itemStatement/itemStatementReportResult.ts";
 
 
 export function ItemStatementReportPage()
 {
 	useSignals();
-
 	const {itemId, itemName} = useParams<{ itemId?: string, itemName?: string }>();
 	const lastRequest = useMemo(() => signal<ItemStatementReportRequest | undefined>(undefined), []);
 
@@ -48,19 +47,18 @@ export function ItemStatementReportPage()
 	return (
 		<ReportPage>
 			<ReportPage.ActionButtonsContainer>
-				<ReportPage.ExcelButton<ItemStatementRow>
+				<ReportPage.ExcelButton<ItemStatementLine>
 					fileName={ `كشف_مادة_${ itemName || "محددة" }` }
-					getRows={ async () => Cubits.ItemStatementReport.result.value?.itemStatementRows ?? [] }
+					getRows={ async () => Cubits.ItemStatementReport.result.value?.lines ?? [] }
 					columns={ [
-						{header: "التاريخ", accessor: (r) => r.transDate},
-						{header: "نوع العملية", accessor: (r) => r.transType},
-						{header: "رقم المستند", accessor: (r) => r.transId.toString()},
-						{header: "التكلفة", accessor: (r) => r.cost.toString()},
-						{header: "الكمية في العملية", accessor: (r) => r.transQtn.toString()},
-						{header: "الكمية في الوحدة الأساسية", accessor: (r) => r.mainUnitQtn.toString()},
-						{header: "كمية المادة", accessor: (r) => r.itemQtn.toString()},
-						{header: "المستودع", accessor: (r) => r.storeName ?? ""},
-						{header: "الطرف الثاني", accessor: (r) => r.secondPartyName ?? ""}
+						{header: "التاريخ", accessor: (r) => r.date},
+						{header: "رقم المستند", accessor: (r) => r.documentId.toString()},
+						{header: "المستودع", accessor: (r) => r.storeName},
+						{header: "الطرف الثاني", accessor: (r) => r.secondPartyName ?? ""},
+						{header: "الكمية الواردة", accessor: (r) => r.quantityIn.toString()},
+						{header: "الكمية الصادرة", accessor: (r) => r.quantityOut.toString()},
+						{header: "الرصيد الجاري", accessor: (r) => r.runningQuantity.toString()},
+						{header: "تكلفة الوحدة", accessor: (r) => r.unitCost.toString()}
 					] }
 				/>
 				<ReportPage.PrintButton/>

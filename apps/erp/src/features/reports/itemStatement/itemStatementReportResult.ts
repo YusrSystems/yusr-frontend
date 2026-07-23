@@ -1,55 +1,34 @@
-import { AccountType } from "@/core/data/account.ts";
-import type { InvoiceType } from "@/core/types/invoiceType.ts";
-import type { StoreDto } from "@/core/data/store.ts";
+import type { DocumentType } from "@/core/types/documentType.ts";
 
 
-export enum AccountOrStoreType
+export interface ItemStatementLine
 {
-	Store = 0,
-	Account = 1
-}
-
-export enum ItemStatementDocumentType
-{
-	Opening = 0,
-	Invoice = 1,
-	Transfer = 2,
-	Settlement = 3
-}
-
-export interface ItemStatementRow
-{
-	transDate: string;
-	transType: string;
-	transId: number;
-	transQtn: number;
-	mainUnitQtn: number;
-	cost: number;
-	itemQtn: number;
-
-	documentType: ItemStatementDocumentType;
-	invoiceType?: InvoiceType;
-
-	storeId?: number;
-	storeName?: string;
-
-	secondPartyId?: number;
-	secondPartyName?: string;
-	secondPartyType: AccountOrStoreType;
-	secondPartyAccountType?: AccountType;
+	id: number;
+	date: string;
+	documentType: DocumentType;
+	documentId: number;
+	storeName: string;
+	secondPartyName: string;
+	quantityIn: number;
+	quantityOut: number;
+	runningQuantity: number;
+	unitCost: number;
 }
 
 export interface ItemStatementReportResult
 {
-	itemStatementRows: ItemStatementRow[];
-	store?: StoreDto;
+	lines: ItemStatementLine[];
 	itemId: number;
 	itemName: string;
+	storeId: number;
+	storeName: string;
 	cost: number;
 	quantity: number;
 	minQuantity?: number;
 	maxQuantity?: number;
 	notes?: string;
+
+	// Historical Prices Cache
 	lastBuyPrice: number;
 	lastSellPrice: number;
 	minBuyPrice: number;
@@ -57,7 +36,11 @@ export interface ItemStatementReportResult
 	minSellPrice: number;
 	maxSellPrice: number;
 
+	totalCount: number;
 	pageNumber: number;
 	rowsPerPage: number;
-	totalCount: number;
+
+	// Page-level total summaries
+	pageTotalQuantityIn: number;
+	pageTotalQuantityOut: number;
 }

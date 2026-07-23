@@ -1,15 +1,19 @@
 export enum DocumentType
 {
-	Sales = 0,
-	SalesReturn = 1,
-	Purchase = 2,
-	PurchaseReturn = 3,
-	Payment = 4,
-	Receipt = 5,
-	BalanceTransfer = 6,
-	CostAdjustment = 7,
-	OpeningBalance = 8,
-	ManualAdjustment = 9,
+	None,
+	Sales,
+	SalesReturn,
+	Purchase,
+	PurchaseReturn,
+	Payment,
+	Receipt,
+	BalanceTransfer,
+	CostAdjustment,
+	OpeningBalance,
+	ManualAdjustment,
+	OpeningQuantity,
+	ItemTransfer,
+	ItemsSettlement
 }
 
 export function getDocumentTypeName(type?: DocumentType): string
@@ -34,8 +38,11 @@ export function getDocumentTypeName(type?: DocumentType): string
 			return "تسوية تكلفة";
 		case DocumentType.OpeningBalance:
 			return "رصيد افتتاحي";
+		case DocumentType.OpeningQuantity:
+			return "كمية افتتاحية";
 		case DocumentType.ManualAdjustment:
 			return "تسوية يدوية";
+		case DocumentType.None:
 		default:
 			return "غير معروف";
 	}
