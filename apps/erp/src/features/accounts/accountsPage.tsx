@@ -512,7 +512,8 @@ function buildHierarchicalTree(accounts: AccountDto[]): TreeNodeData[]
 
 		{type: AccountType.SalesRevenue, label: "إيرادات المبيعات (Sales Revenue)"},
 		{type: AccountType.CostOfGoodsSold, label: "تكلفة البضاعة المباعة (Cost of Goods Sold)"},
-		{type: AccountType.OperatingExpense, label: "مصاريف تشغيلية (Operating Expenses)"}
+		{type: AccountType.OperatingExpense, label: "مصاريف تشغيلية (Operating Expenses)"},
+		{type: AccountType.InventoryAdjustment, label: "تسوية قيمة المخزون (Inventory Adjustments)"}
 	];
 
 	typeDefinitions.forEach((def) =>

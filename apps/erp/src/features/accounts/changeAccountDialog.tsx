@@ -87,7 +87,8 @@ export default function ChangeAccountDialog(
 			group: "المصروفات (Expense)",
 			options: [
 				{label: "تكلفة البضاعة المباعة (Cost of Goods Sold)", value: AccountType.CostOfGoodsSold},
-				{label: "مصاريف تشغيلية (Operating Expense)", value: AccountType.OperatingExpense}
+				{label: "مصاريف تشغيلية (Operating Expense)", value: AccountType.OperatingExpense},
+				{label: "تسوية قيمة المخزون (Inventory Adjustments)", value: AccountType.InventoryAdjustment}
 			]
 		}
 	];

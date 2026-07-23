@@ -36,7 +36,8 @@ export enum AccountType
 
 	// Expense
 	CostOfGoodsSold = 12,
-	OperatingExpense = 13
+	OperatingExpense = 13,
+	InventoryAdjustment = 16
 }
 
 export function getAccountClass(type: AccountType): AccountClass
@@ -66,6 +67,7 @@ export function getAccountClass(type: AccountType): AccountClass
 
 		case AccountType.CostOfGoodsSold:
 		case AccountType.OperatingExpense:
+		case AccountType.InventoryAdjustment:
 			return AccountClass.Expense;
 
 		default:
@@ -117,7 +119,8 @@ export function getAccountTypesByClasses(classes: AccountClass[]): AccountType[]
 			case AccountClass.Expense:
 				types.push(
 					AccountType.CostOfGoodsSold,
-					AccountType.OperatingExpense
+					AccountType.OperatingExpense,
+					AccountType.InventoryAdjustment
 				);
 				break;
 		}

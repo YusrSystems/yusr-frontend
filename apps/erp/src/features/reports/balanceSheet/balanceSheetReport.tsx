@@ -27,7 +27,7 @@ export function BalanceSheetReport({asOfDate, isPortal = false}: BalanceSheetRep
 			</ReportHeader>
 
 			{ data && (
-				<div className="grid grid-cols-2 gap-3 my-4 print:break-inside-avoid">
+				<div className="my-4 print:break-inside-avoid">
 					<ReportField labelAr="كما في تاريخ" labelEn="As of date" value={ asOfDate }/>
 				</div>
 			) }

@@ -104,6 +104,14 @@ export default function DefaultsSection({formData}: { formData: Setting })
 						/>
 					</FormField>
 
+					<FormField
+						label={ t("settings.openingBalanceEquity", "حساب تسوية قيمة المخزون (Inventory Adjustment)") }>
+						<AccountsSearchableSelect
+							id={ formData.inventoryAdjustmentAccountId }
+							label={ formData.inventoryAdjustmentAccountName }
+						/>
+					</FormField>
+
 					<FormField label={ t("settings.inventoryAsset", "حساب مخزون المستودع (Inventory Asset)") }>
 						<AccountsSearchableSelect
 							id={ formData.inventoryAssetAccountId }
@@ -138,6 +146,7 @@ export default function DefaultsSection({formData}: { formData: Setting })
 							label={ formData.openingBalanceEquityAccountName }
 						/>
 					</FormField>
+
 				</FieldsSection>
 
 			</FieldGroup>
