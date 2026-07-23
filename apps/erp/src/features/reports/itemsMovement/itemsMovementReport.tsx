@@ -18,40 +18,27 @@ export function ItemsMovementReport({isPortal = false}: ItemsMovementReportProps
 {
 	useSignals();
 
+	const data = Cubits.ItemsMovementReport.result.value;
+
 	return (
 		<ReportContainer isPortal={ isPortal }>
 			<ReportHeader>
 				<ReportHeader.CompanySection/>
 				<ReportHeader.TitleSection
-					titleAr={ Cubits.ItemsMovementReport.result.value?.titleAr }
-					titleEn={ Cubits.ItemsMovementReport.result.value?.titleEn }
+					titleAr="حركة المواد"
+					titleEn="ITEMS MOVEMENT"
 				/>
 				<ReportHeader.MetaDataSection/>
 			</ReportHeader>
 
-			<div className="grid grid-cols-2 gap-3 my-4 print:break-inside-avoid">
-				{ Cubits.ItemsMovementReport.result.value?.itemName &&
-                    <ReportField labelAr="المادة" labelEn="Item"
-                                 value={ Cubits.ItemsMovementReport.result.value.itemName }/> }
-				{ Cubits.ItemsMovementReport.result.value?.fromDate &&
-                    <ReportField labelAr="من التاريخ" labelEn="From date"
-                                 value={ Cubits.ItemsMovementReport.result.value.fromDate }/> }
-				{ Cubits.ItemsMovementReport.result.value?.toDate &&
-                    <ReportField labelAr="إلى التاريخ" labelEn="To date"
-                                 value={ Cubits.ItemsMovementReport.result.value.toDate }/> }
-				{ Cubits.ItemsMovementReport.result.value?.fromAccount &&
-                    <ReportField labelAr="من الحساب" labelEn="From account"
-                                 value={ Cubits.ItemsMovementReport.result.value.fromAccount }/> }
-				{ Cubits.ItemsMovementReport.result.value?.toAccount &&
-                    <ReportField labelAr="إلى الحساب" labelEn="To account"
-                                 value={ Cubits.ItemsMovementReport.result.value.toAccount }/> }
-				{ Cubits.ItemsMovementReport.result.value?.fromStore &&
-                    <ReportField labelAr="من المستودع" labelEn="From store"
-                                 value={ Cubits.ItemsMovementReport.result.value.fromStore }/> }
-				{ Cubits.ItemsMovementReport.result.value?.toStore &&
-                    <ReportField labelAr="إلى المستودع" labelEn="To store"
-                                 value={ Cubits.ItemsMovementReport.result.value.toStore }/> }
-			</div>
+			{ data && (
+				<div className="grid grid-cols-2 gap-3 my-4 print:break-inside-avoid">
+					{ data.fromDate && <ReportField labelAr="من التاريخ" labelEn="From date" value={ data.fromDate }/> }
+					{ data.toDate && <ReportField labelAr="إلى التاريخ" labelEn="To date" value={ data.toDate }/> }
+					{ data.storeName && <ReportField labelAr="المستودع" labelEn="Store" value={ data.storeName }/> }
+					{ data.partnerName && <ReportField labelAr="الشريك" labelEn="Partner" value={ data.partnerName }/> }
+				</div>
+			) }
 
 			<ReportPageContainer>
 				<ReportPageBody>
