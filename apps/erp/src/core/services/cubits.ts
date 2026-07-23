@@ -67,10 +67,12 @@ export class Cubits extends BaseCubits
 	public static readonly ItemsMovementReport = new PageReportCubit<ItemsMovementReportRequest, ItemsMovementReportResult>("ItemsMovement");
 	public static readonly AccountStatementReport = new PageReportCubit<AccountStatementReportRequest, AccountStatementReportResult>("AccountStatement");
 	public static readonly PartnerStatementReport = new PageReportCubit<PartnerStatementReportRequest, PartnerStatementReportResult>("PartnerStatement");
-	public static readonly ProfitAndLossReport = new PageReportCubit<ProfitAndLossReportRequest, ProfitAndLossReportResult>("ProfitAndLoss");
 	public static readonly ItemStatementReport = new PageReportCubit<ItemStatementReportRequest, ItemStatementReportResult>("ItemStatement");
 	public static readonly TaxReturnReport = new ReportCubit<TaxReturnReportRequest, TaxReturnReportResult>("TaxReturn");
 	public static readonly BalanceSheetReport = new ReportCubit<BalanceSheetReportRequest, BalanceSheetReportResult>("BalanceSheet");
+
+	// Updated to ReportCubit (no pagination)
+	public static readonly ProfitAndLossReport = new ReportCubit<ProfitAndLossReportRequest, ProfitAndLossReportResult>("ProfitAndLoss");
 
 	static
 	{

@@ -1,40 +1,25 @@
-export enum ProfitAndLossRowDocumentType
+export interface PlReportNode
 {
-	Sell,
-	SellReturn,
-	Payment,
-}
-
-export interface ProfitAndLossRow
-{
-	id: number;
-	documentId: number;
-	documentType: ProfitAndLossRowDocumentType;
-	date: string;
-	description?: string;
-
-	fromName?: string;
-	toName?: string;
-
-	taxAmount: number;
-	cost: number;
-	amount: number;
-	profit: number;
+	glAccountId: number;
+	name: string;
+	netChange: number;
+	isParent: boolean;
+	children: PlReportNode[];
 }
 
 export interface ProfitAndLossReportResult
 {
-	invoiceListRows: ProfitAndLossRow[];
-	fromDate?: string;
-	toDate?: string;
-	fromAccountId?: number;
-	fromAccountName?: string;
-	toAccountId?: number;
-	toAccountName?: string;
-	voucherCategoryIds?: number[];
-	voucherCategoryNames?: string[];
-	documentTypes?: ProfitAndLossRowDocumentType[];
-	pageNumber: number;
-	rowsPerPage: number;
-	totalCount: number;
+	fromDate: string;
+	toDate: string;
+
+	revenueTree: PlReportNode[];
+	totalRevenue: number;
+
+	totalCogs: number;
+	grossProfit: number;
+
+	expenseTree: PlReportNode[];
+	totalExpense: number;
+
+	netProfit: number;
 }
