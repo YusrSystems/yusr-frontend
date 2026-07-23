@@ -43,6 +43,7 @@ export function AccountStatementReportTable()
 					<ReportTableTh ar="نوع المستند" en="Doc Type"/>
 					<ReportTableTh ar="رقم المستند" en="Doc No."/>
 					<ReportTableTh ar="الشريك" en="Partner"/>
+					<ReportTableTh ar="شرح القيد" en="Narration" align="start"/>
 					<ReportTableTh ar="البيان" en="Description" align="start"/>
 					<ReportTableTh ar={ debitAr } en={ debitEn }/>
 					<ReportTableTh ar={ creditAr } en={ creditEn }/>
@@ -62,7 +63,7 @@ export function AccountStatementReportTable()
 
 					const greenColorClass = "text-emerald-600! font-bold! print:font-medium print:text-foreground!";
 					const redColorClass = "text-destructive! font-bold! print:font-medium print:text-foreground!";
-					
+
 					const debitClassName = row.debit > 0
 						? (favorableWhenPositive && isDebitNormal ? greenColorClass : redColorClass)
 						: undefined;
@@ -100,6 +101,7 @@ export function AccountStatementReportTable()
 							) }
 
 							<ReportTableTd isEven={ isEven }>{ row.partnerName || "-" }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>{ row.narration || "-" }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ row.description || "-" }</ReportTableTd>
 
 							<ReportTableTd

@@ -9,7 +9,8 @@ export interface AccountStatementLine
 	documentType?: DocumentType;
 	documentId: number;
 	partnerName: string;
-	description: string;
+	narration: string;
+	description?: string;
 	debit: number;
 	credit: number;
 	runningBalance: number;
