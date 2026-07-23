@@ -122,11 +122,11 @@ export default function ChangeVoucherDialog({
 							onClick={ () =>
 							{
 								isPartnerMode.value = true;
-								entity.value.glAccountId.value = 0;
-								entity.value.glAccountName.value = "";
+								entity.value.glAccountId.value = undefined;
+								entity.value.glAccountName.value = undefined;
 							} }
 							className="flex-1 rounded-md text-xs font-semibold"
-							disabled={ entity.value.isDeleted.value || isUpdateMode }
+							disabled={ entity.value.isDeleted.value }
 						>
 							{ t("vouchers.partnerPaymentMode", "دفعة لحساب عميل / مورد") }
 						</Button>
@@ -141,7 +141,7 @@ export default function ChangeVoucherDialog({
 								entity.value.invoiceId.value = undefined;
 							} }
 							className="flex-1 rounded-md text-xs font-semibold"
-							disabled={ entity.value.isDeleted.value || isUpdateMode }
+							disabled={ entity.value.isDeleted.value }
 						>
 							{ t("vouchers.directExpenseMode", "مصروف عام / إيراد مباشر") }
 						</Button>
@@ -179,7 +179,7 @@ export default function ChangeVoucherDialog({
 									<PartnersSearchableSelect
 										id={ entity.value.partnerId }
 										label={ entity.value.partnerName }
-										disabled={ isUpdateMode || entity.value.isDeleted.value }
+										disabled={ entity.value.isDeleted.value }
 									/>
 								</FormField>
 							</>
@@ -194,7 +194,7 @@ export default function ChangeVoucherDialog({
 								<AccountsSearchableSelect
 									id={ entity.value.glAccountId }
 									label={ entity.value.glAccountName }
-									disabled={ isUpdateMode || entity.value.isDeleted.value }
+									disabled={ entity.value.isDeleted.value }
 								/>
 							</FormField>
 						) }

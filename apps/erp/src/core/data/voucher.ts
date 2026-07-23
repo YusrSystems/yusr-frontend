@@ -41,8 +41,8 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 	public date: Signal<string>;
 	public amount: Signal<number>;
 	public commissionAmount: Signal<number>;
-	public glAccountId: Signal<number>;
-	public glAccountName: Signal<string>;
+	public glAccountId: Signal<number | undefined>;
+	public glAccountName: Signal<string | undefined>;
 	public partnerId: Signal<number | undefined>;
 	public partnerName: Signal<string | undefined>;
 	public paymentMethodId: Signal<number>;
