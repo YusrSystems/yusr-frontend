@@ -190,7 +190,7 @@ function PageTable()
 							}
 							else
 							{
-								balanceColor = partner.balance > 0 ? "text-foreground" : "text-green-600";
+								balanceColor = partner.balance > 0 ? "text-red-600" : "text-green-600";
 							}
 						}
 
@@ -208,7 +208,7 @@ function PageTable()
 										<ErpCurrencyIcon/>
 										<span
 											className="text-xs font-sans px-1.5 py-0.5 shrink-0">
-										   { isDebit ? t("erpCommon:accounting.debit", "مدين") : t("erpCommon:accounting.credit", "دائن") }
+										   { partner.balance !== 0 && (isDebit ? t("erpCommon:accounting.debit", "مدين") : t("erpCommon:accounting.credit", "دائن")) }
 										</span>
 									</div>
 								),
