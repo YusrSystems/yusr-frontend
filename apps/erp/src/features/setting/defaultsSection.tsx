@@ -140,6 +140,13 @@ export default function DefaultsSection({formData}: { formData: Setting })
 						/>
 					</FormField>
 
+					<FormField label={ t("settings.purchaseExpense", "حساب مصروفات شراء الخدمات") }>
+						<AccountsSearchableSelect
+							id={ formData.purchaseExpenseAccountId }
+							label={ formData.purchaseExpenseAccountName }
+						/>
+					</FormField>
+
 					<FormField label={ t("settings.openingBalanceEquity", "حساب الأرصدة الافتتاحية (Equity)") }>
 						<AccountsSearchableSelect
 							id={ formData.openingBalanceEquityAccountId }
