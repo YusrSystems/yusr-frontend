@@ -79,7 +79,7 @@ export function PartnerStatementReportPage()
 		<ReportPage>
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.ExcelButton<PartnerStatementLine>
-					fileName={ `كشف_حساب_شريك_${ partnerName || "محدد" }` }
+					fileName={ `كشف_حساب_جهة_${ partnerName || "محدد" }` }
 					getRows={ async () => Cubits.PartnerStatementReport.result.value?.lines ?? [] }
 					columns={ [
 						{header: "التاريخ", accessor: (r) => r.date},

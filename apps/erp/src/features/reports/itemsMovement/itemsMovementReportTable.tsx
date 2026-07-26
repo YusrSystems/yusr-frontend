@@ -32,7 +32,7 @@ export function ItemsMovementReportTable()
 					<ReportTableTh ar="رقم المستند" en="Doc No."/>
 					<ReportTableTh ar="اسم المادة" en="Item Name" align="start"/>
 					<ReportTableTh ar="المستودع" en="Store" align="start"/>
-					<ReportTableTh ar="الشريك" en="Partner" align="start"/>
+					<ReportTableTh ar="الجهة" en="Partner" align="start"/>
 					<ReportTableTh ar="الوارد (+)" en="Qty In"/>
 					<ReportTableTh ar="الصادر (-)" en="Qty Out"/>
 					<ReportTableTh ar="التكلفة" en="Unit Cost"/>

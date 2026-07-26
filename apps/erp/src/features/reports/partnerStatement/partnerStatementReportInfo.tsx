@@ -32,8 +32,8 @@ export function PartnerStatementReportInfo({data}: PartnerStatementReportInfoPro
 	return (
 		<div className="flex flex-col gap-3 my-4 print:break-inside-avoid">
 			<div className="grid grid-cols-2 gap-3">
-				<ReportField labelAr="رقم الشريك" labelEn="Partner Id" value={ partner.id.toString() }/>
-				<ReportField labelAr="اسم الشريك" labelEn="Partner Name" value={ partner.name }/>
+				<ReportField labelAr="رقم الجهة" labelEn="Partner Id" value={ partner.id.toString() }/>
+				<ReportField labelAr="اسم الجهة" labelEn="Partner Name" value={ partner.name }/>
 			</div>
 
 			<div className="grid grid-cols-2 gap-3 mt-2 pt-2">

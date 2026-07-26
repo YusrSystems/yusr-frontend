@@ -79,7 +79,7 @@ export function InvoicesListReportPage()
 					columns={ [
 						{header: "التاريخ", accessor: (r) => r.date},
 						{header: "نوع الفاتورة", accessor: (r) => Invoice.getTypeName(r.type, t)},
-						{header: "الشريك", accessor: (r) => r.partnerName},
+						{header: "الجهة", accessor: (r) => r.partnerName},
 						{header: "المستودع", accessor: (r) => r.storeName},
 						{header: "المبلغ الإجمالي", accessor: (r) => r.fullAmount.toString()},
 						{header: "المبلغ المدفوع", accessor: (r) => r.paidAmount.toString()},

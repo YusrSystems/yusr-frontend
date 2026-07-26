@@ -67,7 +67,7 @@ export function ItemsMovementReportPage()
 						{header: "رقم المستند", accessor: (r) => r.documentId.toString()},
 						{header: "اسم المادة", accessor: (r) => r.itemName},
 						{header: "المستودع", accessor: (r) => r.storeName},
-						{header: "الشريك", accessor: (r) => r.partnerName ?? ""},
+						{header: "الجهة", accessor: (r) => r.partnerName ?? ""},
 						{header: "الكمية الواردة", accessor: (r) => r.quantityIn.toString()},
 						{header: "الكمية الصادرة", accessor: (r) => r.quantityOut.toString()},
 						{header: "تكلفة الوحدة", accessor: (r) => r.unitCost.toString()},

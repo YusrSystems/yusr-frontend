@@ -135,7 +135,7 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 					</div>
 
 					<div className="grid grid-cols-2 gap-3">
-						<FormField label={ t("reports.partner", "الشريك") }>
+						<FormField label={ t("reports.partner", "الجهة") }>
 							<PartnersSearchableSelect
 								id={ partnerId }
 								label={ partnerName }

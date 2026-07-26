@@ -61,7 +61,7 @@ export function SalesProfitabilityReportTable()
 					<ReportTableTh ar="التاريخ" en="Date"/>
 					<ReportTableTh ar="نوع المستند" en="Doc Type"/>
 					<ReportTableTh ar="رقم المستند" en="Doc No."/>
-					<ReportTableTh ar="الشريك" en="Partner" align="start"/>
+					<ReportTableTh ar="الجهة" en="Partner" align="start"/>
 					<ReportTableTh ar="الحساب" en="Account" align="start"/>
 					<ReportTableTh ar="البيان" en="Description" align="start"/>
 					<ReportTableTh ar="المبيعات" en="Sales"/>

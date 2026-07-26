@@ -133,7 +133,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		}, {
 			field: "partnerId",
 			selector: (d) => d.partnerId,
-			validators: [Validators.required("الشريك مطلوب")]
+			validators: [Validators.required("الجهة مطلوبة")]
 		}, {
 			field: "invoiceItems",
 			selector: (d) => d.invoiceItems,

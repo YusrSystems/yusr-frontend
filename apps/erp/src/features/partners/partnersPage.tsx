@@ -244,7 +244,7 @@ function PageTable()
 													`/reports/partnerStatement/${ partner.id }/${ encodeURIComponent(partner.name) }`
 												)
 											}>
-											{ t("erpCommon:partnerStatement.button", "كشف حساب شريك") }
+											{ t("erpCommon:partnerStatement.button", "كشف حساب") }
 										</Button>,
 										rowStyles: "w-32"
 									}

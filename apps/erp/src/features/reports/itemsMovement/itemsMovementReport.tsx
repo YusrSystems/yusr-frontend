@@ -36,7 +36,7 @@ export function ItemsMovementReport({isPortal = false}: ItemsMovementReportProps
 					{ data.fromDate && <ReportField labelAr="من التاريخ" labelEn="From date" value={ data.fromDate }/> }
 					{ data.toDate && <ReportField labelAr="إلى التاريخ" labelEn="To date" value={ data.toDate }/> }
 					{ data.storeName && <ReportField labelAr="المستودع" labelEn="Store" value={ data.storeName }/> }
-					{ data.partnerName && <ReportField labelAr="الشريك" labelEn="Partner" value={ data.partnerName }/> }
+					{ data.partnerName && <ReportField labelAr="الجهة" labelEn="Partner" value={ data.partnerName }/> }
 				</div>
 			) }
 

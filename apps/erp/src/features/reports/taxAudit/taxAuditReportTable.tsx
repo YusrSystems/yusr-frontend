@@ -66,7 +66,7 @@ export function TaxAuditReportTable()
 					<ReportTableTh ar="التاريخ" en="Date"/>
 					<ReportTableTh ar="نوع المستند" en="Doc Type"/>
 					<ReportTableTh ar="رقم المستند" en="Doc No."/>
-					<ReportTableTh ar="الشريك" en="Partner" align="start"/>
+					<ReportTableTh ar="الجهة" en="Partner" align="start"/>
 					<ReportTableTh ar="الرقم الضريبي" en="VAT No." align="start"/>
 					<ReportTableTh ar="المادة" en="Item" align="start"/>
 					<ReportTableTh ar="الكمية" en="Qty"/>

@@ -78,7 +78,7 @@ export function AccountStatementReportPage()
 						{header: "التاريخ", accessor: (r) => r.date},
 						{header: "نوع المستند", accessor: (r) => getDocumentTypeName(r.documentType)},
 						{header: "رقم المستند", accessor: (r) => r.documentId.toString()},
-						{header: "الشريك", accessor: (r) => r.partnerName},
+						{header: "الجهة", accessor: (r) => r.partnerName},
 						{header: "البيان", accessor: (r) => r.description},
 						{header: "مدين", accessor: (r) => r.debit.toString()},
 						{header: "دائن", accessor: (r) => r.credit.toString()},

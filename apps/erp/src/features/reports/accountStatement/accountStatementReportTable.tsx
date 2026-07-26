@@ -42,7 +42,7 @@ export function AccountStatementReportTable()
 					<ReportTableTh ar="التاريخ" en="Date"/>
 					<ReportTableTh ar="نوع المستند" en="Doc Type"/>
 					<ReportTableTh ar="رقم المستند" en="Doc No."/>
-					<ReportTableTh ar="الشريك" en="Partner"/>
+					<ReportTableTh ar="الجهة" en="Partner"/>
 					<ReportTableTh ar="شرح القيد" en="Narration" align="start"/>
 					<ReportTableTh ar="البيان" en="Description" align="start"/>
 					<ReportTableTh ar={ debitAr } en={ debitEn }/>

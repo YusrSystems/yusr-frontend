@@ -71,7 +71,7 @@ export function SalesProfitabilityReportPage()
 							accessor: (r) => getProfitAndLossRowDocumentTypeName(r.documentType, t)
 						},
 						{header: "رقم المستند", accessor: (r) => r.documentId.toString()},
-						{header: "الشريك", accessor: (r) => r.partnerName ?? ""},
+						{header: "الجهة", accessor: (r) => r.partnerName ?? ""},
 						{header: "الحساب", accessor: (r) => r.glAccountName ?? ""},
 						{header: "البيان", accessor: (r) => r.description ?? ""},
 						{header: "المبيعات", accessor: (r) => r.salesAmount.toString()},

@@ -123,7 +123,7 @@
       "voucher": "تقرير السند",
       "voucherList": "تقرير قائمة السندات",
       "accountStatement": "تقرير كشف حساب",
-      "partnerStatement": "تقرير كشف حساب شريك",
+      "partnerStatement": "تقرير كشف حساب جهة",
       "accountList": "تقرير قائمة الحسابات",
       "balanceTransfer": "تقرير نقل رصيد",
       "itemStatement": "تقرير كشف مادة",
@@ -269,8 +269,8 @@
     "itemStatementDescription": "عرض تفاصيل حركة المادة عبر المستودعات والفترات الزمنية",
     "accountStatement": "كشف حساب",
     "accountStatementDescription": "عرض حركة حساب محدد خلال فترة زمنية معينة",
-    "partnerStatement": "كشف حساب شريك",
-    "partnerStatementDescription": "عرض حركة شريك محدد خلال فترة زمنية معينة",
+    "partnerStatement": "كشف حساب جهة",
+    "partnerStatementDescription": "عرض حركة جهة محدد خلال فترة زمنية معينة",
     "accountsList": "قائمة الحسابات",
     "accountsListDescription": "عرض جميع الحسابات مع الأرصدة والبيانات التفصيلية",
     "exportToExcel": "تصدير إلى Excel"
@@ -280,8 +280,8 @@
     "title": "كشف حساب"
   },
   "partnerStatement": {
-    "button": "كشف حساب شريك",
-    "title": "كشف حساب شريك"
+    "button": "كشف حساب جهة",
+    "title": "كشف حساب جهة"
   },
   "itemStatement": {
     "button": "كشف المادة",

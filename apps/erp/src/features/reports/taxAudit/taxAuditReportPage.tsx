@@ -66,7 +66,7 @@ export function TaxAuditReportPage()
 						{header: "التاريخ", accessor: (r) => r.date},
 						{header: "نوع المستند", accessor: (r) => getInvoiceTypeNameAr(r.invoiceType)},
 						{header: "رقم المستند", accessor: (r) => r.invoiceId.toString()},
-						{header: "الشريك", accessor: (r) => r.partnerName ?? ""},
+						{header: "الجهة", accessor: (r) => r.partnerName ?? ""},
 						{header: "الرقم الضريبي", accessor: (r) => r.partnerVatNumber ?? ""},
 						{header: "المادة", accessor: (r) => r.itemName ?? ""},
 						{header: "الكمية", accessor: (r) => r.quantity.toString()},

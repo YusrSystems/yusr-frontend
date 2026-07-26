@@ -60,14 +60,14 @@ export class Partner extends ChangeableEntity<PartnerDto>
 				field: "name",
 				selector: (d) => d.name,
 				validators: [
-					Validators.required(i18n.t("accounting:partners.nameRequired", "اسم الشريك مطلوب")),
+					Validators.required(i18n.t("accounting:partners.nameRequired", "اسم الجهة مطلوب")),
 					Validators.maxLength(150, i18n.t("accounting:partners.nameMax", "يجب ألا يتجاوز الاسم 150 حرف"))
 				]
 			},
 			{
 				field: "type",
 				selector: (d) => d.type,
-				validators: [Validators.required(i18n.t("accounting:partners.typeRequired", "نوع الشريك مطلوب"))]
+				validators: [Validators.required(i18n.t("accounting:partners.typeRequired", "نوع الجهة مطلوب"))]
 			},
 			{
 				field: "vatNumber",

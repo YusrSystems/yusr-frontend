@@ -67,7 +67,7 @@ export function PartnerStatementReportFields({
 			<CollapsibleContent>
 				<div className="flex flex-col gap-4 p-4 border-t border-border">
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-						<FormField label={ t("reports.partner", "الشريك") }>
+						<FormField label={ t("reports.partner", "الجهة") }>
 							<PartnersSearchableSelect id={ partnerId } label={ partnerName }/>
 						</FormField>
 

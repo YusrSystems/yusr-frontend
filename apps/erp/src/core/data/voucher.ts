@@ -91,7 +91,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 				{
 					if (!form.partnerId && form.glAccountId) return true;
 					return val && Number(val) > 0;
-				}, i18n.t("accounting:vouchers.partnerRequired", "الشريك مطلوب"))
+				}, i18n.t("accounting:vouchers.partnerRequired", "الجهة مطلوبة"))
 			]
 		}, {
 			field: "paymentMethodId",

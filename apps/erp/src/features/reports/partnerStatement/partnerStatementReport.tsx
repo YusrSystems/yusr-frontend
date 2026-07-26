@@ -23,7 +23,7 @@ export function PartnerStatementReport({isPortal = false}: PartnerStatementRepor
 		<ReportContainer isPortal={ isPortal }>
 			<ReportHeader>
 				<ReportHeader.CompanySection/>
-				<ReportHeader.TitleSection titleAr="كشف حساب شريك" titleEn="PARTNER STATEMENT">
+				<ReportHeader.TitleSection titleAr="كشف حساب جهة" titleEn="PARTNER STATEMENT">
 					{ data && (data.fromDate || data.toDate) && (
 						<span className="text-destructive font-bold text-sm">
 							{ data.fromDate ? `من ${ data.fromDate } ` : "" }

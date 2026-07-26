@@ -172,7 +172,7 @@ export default function ChangeVoucherDialog({
 						{ isPartnerMode.value && (
 							<>
 								<FormField
-									label={ "الشريك" }
+									label={ "الجهة" }
 									required
 									error={ entity.value.getError("partnerId") }
 								>
