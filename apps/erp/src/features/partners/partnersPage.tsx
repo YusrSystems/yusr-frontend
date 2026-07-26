@@ -23,6 +23,7 @@ import { PartnerDto, PartnerType } from "@/core/data/partner.ts";
 import ChangePartnerDialog from "./changePartnerDialog";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { AppNavigator } from "@/app/appNavigator.ts";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function PartnersPage({type}: { type: PartnerType })
@@ -48,6 +49,20 @@ export default function PartnersPage({type}: { type: PartnerType })
 	const totalCardTitle = isCustomerMode
 		? t("partners.totalCustomers", "مجموع العملاء")
 		: t("partners.totalSuppliers", "مجموع الموردين");
+
+	useEffect(() =>
+	{
+		document.title = `${ pageTitle } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [pageTitle]);
+
+	if (!Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Get))
+	{
+		return <UnauthorizedPage/>;
+	}
 
 	return (
 		<CrudPage<PartnerDto>>

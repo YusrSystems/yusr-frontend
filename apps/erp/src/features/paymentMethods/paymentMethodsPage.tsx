@@ -17,6 +17,7 @@ import {
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { CommissionType, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import ChangePaymentMethodDialog from "./changePaymentMethodDialog";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export function PaymentMethodsPage()
@@ -24,6 +25,15 @@ export function PaymentMethodsPage()
 	useSignals();
 	const {t} = useTranslation("accounting");
 	useEffect(() => Cubits.paymentMethods.init(), []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("paymentMethods.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.PaymentMethods, SystemPermissionsActions.Get))
 	{

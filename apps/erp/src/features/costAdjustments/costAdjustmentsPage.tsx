@@ -18,12 +18,22 @@ import {
 	UnauthorizedPage
 } from "yusr-ui";
 import ChangeCostAdjustmentDialog from "./changeCostAdjustmentDialog";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function CostAdjustmentsPage()
 {
 	const {t} = useTranslation("stocking");
 	useEffect(() => Cubits.costAdjustments.init(), []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("costAdjustments.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.CostAdjustments, SystemPermissionsActions.Get))
 	{

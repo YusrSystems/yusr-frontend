@@ -5,42 +5,57 @@ import LandingHeader from "./landingHeader";
 import LandingHero from "./landingHero";
 import LandingPricing from "./landingPricing";
 import LandingWhyUs from "./landingWhyUs";
+import { APP_NAME } from "../../../appConfig.ts";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+
 
 const Landing = () =>
 {
-  const { lightbox, closeLightbox } = useLightBox();
+	const {lightbox, closeLightbox} = useLightBox();
 
-  return (
-    <div dir="rtl" className="relative min-h-svh text-foreground">
-      <YusrBackground />
+	const {t} = useTranslation("landing");
 
-      { lightbox && (
-        <Lightbox
-          srcLight={ lightbox.srcLight }
-          srcDark={ lightbox.srcDark }
-          alt={ lightbox.alt }
-          onClose={ closeLightbox }
-        />
-      ) }
+	useEffect(() =>
+	{
+		document.title = `${ t("hero.title") } - ${ t("hero.subtitle") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
-      <LandingHeader />
-      <LandingHero />
+	return (
+		<div dir="rtl" className="relative min-h-svh text-foreground">
+			<YusrBackground/>
 
-      <Separator className="mx-auto max-w-6xl" />
-      <LandingFeatures />
+			{ lightbox && (
+				<Lightbox
+					srcLight={ lightbox.srcLight }
+					srcDark={ lightbox.srcDark }
+					alt={ lightbox.alt }
+					onClose={ closeLightbox }
+				/>
+			) }
 
-      <Separator className="mx-auto max-w-6xl" />
-      { /* <LandingSystemPreview openLightbox={ openLightbox } features={ features } /> */ }
+			<LandingHeader/>
+			<LandingHero/>
 
-      <Separator className="mx-auto max-w-6xl" />
-      <LandingWhyUs />
+			<Separator className="mx-auto max-w-6xl"/>
+			<LandingFeatures/>
 
-      <Separator className="mx-auto max-w-6xl" />
-      <LandingPricing monthlyPrice={ 150 } yearlyPrice={ 125 } />
+			<Separator className="mx-auto max-w-6xl"/>
+			{ /* <LandingSystemPreview openLightbox={ openLightbox } features={ features } /> */ }
 
-      <LandingFooter />
-    </div>
-  );
+			<Separator className="mx-auto max-w-6xl"/>
+			<LandingWhyUs/>
+
+			<Separator className="mx-auto max-w-6xl"/>
+			<LandingPricing monthlyPrice={ 150 } yearlyPrice={ 125 }/>
+
+			<LandingFooter/>
+		</div>
+	);
 };
 
 export default Landing;

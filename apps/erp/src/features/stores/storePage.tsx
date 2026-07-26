@@ -17,12 +17,22 @@ import {
 } from "yusr-ui";
 import ChangeStoreDialog from "./changeStoreDialog";
 import { Cubits } from "@/core/services/cubits";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function StoresPage()
 {
 	const {t} = useTranslation("stocking");
 	useEffect(() => Cubits.stores.init(), []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("stores.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Stores, SystemPermissionsActions.Get))
 	{

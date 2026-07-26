@@ -2,11 +2,24 @@ import { useNavigate } from "react-router-dom";
 import { YusrApiHelper, YusrBackground } from "yusr-ui";
 import { RegisterForm } from "./registerForm";
 import { Services } from "@/core/services/services.ts";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
+import { APP_NAME } from "../../../../appConfig.ts";
 
 
 export default function RegisterPage()
 {
 	const navigate = useNavigate();
+
+	const {t} = useTranslation("loginRegister");
+	useEffect(() =>
+	{
+		document.title = `${ t("register.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	const Logout = async () =>
 	{

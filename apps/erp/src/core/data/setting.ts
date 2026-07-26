@@ -266,3 +266,23 @@ export class Setting extends ValidatableEntity<SettingDto>
 		return undefined;
 	}
 }
+
+export class SharingSetting
+{
+	public registrationKey!: string;
+	public companyName!: string;
+	public companyPhone!: string;
+	public crn?: string;
+	public vatNumber?: string;
+	public street!: string;
+	public district!: string;
+	public buildingNumber!: string;
+	public postalCode!: string;
+	public city!: CityDto;
+	public logo?: StorageFile;
+
+	constructor(init?: Partial<SharingSetting>)
+	{
+		Object.assign(this, init);
+	}
+}

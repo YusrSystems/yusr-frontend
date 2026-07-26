@@ -35,22 +35,12 @@ export default function StocktakingsPage()
 
 	useEffect(() =>
 	{
-		const stocktaking = printedStocktaking.value;
-
-		if (stocktaking)
-		{
-			document.title = `جرد مواد رقم #${ stocktaking.id }`;
-		}
-		else
-		{
-			document.title = t("stocktakings.title");
-		}
-
+		document.title = `${ t("stocktakings.title") } | ${ APP_NAME }`;
 		return () =>
 		{
 			document.title = APP_NAME;
 		};
-	}, [printedStocktaking.value, t]);
+	}, [t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Stocktakings, SystemPermissionsActions.Get))
 	{

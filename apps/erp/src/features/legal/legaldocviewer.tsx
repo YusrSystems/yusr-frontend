@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import privacyAr from "./privacy-policy-ar.md?raw";
 import privacyEn from "./privacy-policy-en.md?raw";
 import refundAr from "./refund-policy-ar.md?raw";
 import refundEn from "./refund-policy-en.md?raw";
 import tosAr from "./terms-of-service-ar.md?raw";
 import tosEn from "./terms-of-service-en.md?raw";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 const files = {
@@ -95,6 +96,16 @@ export default function LegalDocViewer()
 	const docs = files[lang];
 	const doc = docs[active];
 	const rtl = lang === "ar";
+
+	useEffect(() =>
+	{
+		const docTitle = lang === "ar" ? "الوثائق القانونية" : "Legal Documents";
+		document.title = `${ docTitle } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [lang]);
 
 	function switchLang(l: Lang)
 	{

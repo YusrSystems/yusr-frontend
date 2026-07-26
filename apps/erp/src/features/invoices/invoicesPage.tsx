@@ -79,8 +79,7 @@ export default function InvoicesPage({
 
 	useEffect(() =>
 	{
-		document.title = title;
-
+		document.title = `${ title } | ${ APP_NAME }`;
 		return () =>
 		{
 			document.title = APP_NAME;

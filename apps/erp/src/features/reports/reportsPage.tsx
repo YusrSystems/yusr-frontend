@@ -19,6 +19,7 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { Cubits } from "@/core/services/cubits.ts";
 import { Services } from "@/core/services/services.ts";
 import { AppNavigator } from "@/app/appNavigator.ts";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 interface Report
@@ -110,6 +111,15 @@ export default function ReportsPage()
 		Cubits.items.init();
 		Cubits.stores.init();
 	}, []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("reports.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	const reportGroups: ReportGroup[] = [{
 		label: t("reports.financial"),

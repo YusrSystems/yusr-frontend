@@ -22,6 +22,7 @@ import { SettingsLoading, SettingsSaving } from "@/features/setting/logic/settin
 import { Cubits } from "@/core/services/cubits.ts";
 import { signal } from "@preact/signals-react";
 import EInvoiceSection from "@/features/setting/eInvoicing/eInvoiceSection.tsx";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function SettingPage()
@@ -29,6 +30,15 @@ export default function SettingPage()
 	useSignals();
 	const {t} = useTranslation("erpCommon");
 	const draftTheme = signal<ThemeSettings | undefined>(undefined);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("settings.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	const {commitFiles} = useStorageFile(
 		() => Services.auth?.setting?.logo?.value ? [Services.auth?.setting?.logo.value] : [],

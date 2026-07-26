@@ -51,8 +51,7 @@ export default function AccountsPage()
 
 	useEffect(() =>
 	{
-		document.title = viewModeTitle;
-
+		document.title = `${ viewModeTitle } | ${ APP_NAME }`;
 		return () =>
 		{
 			document.title = APP_NAME;

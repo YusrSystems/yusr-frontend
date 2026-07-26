@@ -51,8 +51,7 @@ export default function ItemsPage()
 
 	useEffect(() =>
 	{
-		document.title = t("items.title");
-
+		document.title = `${ t("items.title") } | ${ APP_NAME }`;
 		return () =>
 		{
 			document.title = APP_NAME;

@@ -36,20 +36,17 @@ export default function VouchersPage()
 	useEffect(() =>
 	{
 		const voucher = printedVoucher.value;
-
 		if (voucher)
 		{
 			const voucherTypeName = voucher.type === VoucherType.Payment
 				? t("vouchers.paymentVoucher")
 				: t("vouchers.receiptVoucher");
-
-			document.title = `${ voucherTypeName } رقم #${ voucher.id }`;
+			document.title = `${ voucherTypeName } رقم #${ voucher.id } | ${ APP_NAME }`;
 		}
 		else
 		{
-			document.title = t("vouchers.title");
+			document.title = `${ t("vouchers.title") } | ${ APP_NAME }`;
 		}
-
 		return () =>
 		{
 			document.title = APP_NAME;

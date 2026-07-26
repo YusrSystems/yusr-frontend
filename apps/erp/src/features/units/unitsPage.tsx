@@ -17,12 +17,22 @@ import {
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import ChangeUnitDialog from "./changeUnitDialog";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function UnitsPage()
 {
 	const {t} = useTranslation("stocking");
 	useEffect(() => Cubits.units.init(), []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("units.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Get))
 	{

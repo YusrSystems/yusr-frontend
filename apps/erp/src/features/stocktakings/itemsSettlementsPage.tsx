@@ -31,6 +31,15 @@ export default function ItemsSettlementsPage()
 	const {t} = useTranslation(["stocking", "common"]);
 	useEffect(() => Cubits.itemsSettlements.init(), []);
 
+	useEffect(() =>
+	{
+		document.title = `${ t("itemsSettlements.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
+
 	const printedSettlement = useMemo(() => signal<StocktakingDto | undefined>(), []);
 
 	useEffect(() =>

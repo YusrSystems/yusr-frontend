@@ -18,6 +18,7 @@ import {
 import ChangeBalanceTransferDialog from "./changeBalanceTransferDialog";
 import { BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function BalanceTransfersPage()
@@ -25,6 +26,15 @@ export default function BalanceTransfersPage()
 	useSignals();
 	const {t} = useTranslation("accounting");
 	useEffect(() => Cubits.balanceTransfers.init(), []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("balanceTransfers.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Get))
 	{
