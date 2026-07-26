@@ -4,7 +4,7 @@ import { ChevronDown, Filter } from "lucide-react";
 import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger, DateField, FormField } from "yusr-ui";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import PartnersSearchableSelect from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 import { PartnerStatementReportRequest } from "@/features/reports/partnerStatement/partnerStatementReportRequest.ts";
 
 

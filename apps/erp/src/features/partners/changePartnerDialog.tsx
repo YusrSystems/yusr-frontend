@@ -10,6 +10,7 @@ import {
 	FieldsSection,
 	FormField,
 	NumberField,
+	SelectField,
 	SystemPermissionsActions,
 	TextAreaField,
 	TextField,
@@ -26,8 +27,9 @@ import { AccountType } from "@/core/data/account.ts";
 
 
 export default function ChangePartnerDialog(
-	{dto, service, onSuccess, initDto}: CommonChangeDialogProps<PartnerDto> & {
+	{dto, service, onSuccess, initDto, selectTypes}: CommonChangeDialogProps<PartnerDto> & {
 		initDto?: PartnerDto;
+		selectTypes?: PartnerType[];
 	}
 )
 {
@@ -61,6 +63,11 @@ export default function ChangePartnerDialog(
 			? t("partners.editCustomer", "تعديل عميل")
 			: t("partners.editSupplier", "تعديل مورد");
 
+	const partnerTypeLabels: Record<PartnerType, string> = {
+		[PartnerType.Customer]: "عميل",
+		[PartnerType.Supplier]: "مورد"
+	};
+
 	return (
 		<ChangeDialog className="sm:max-w-4xl">
 			<ChangeDialog.Header title={ title }/>
@@ -68,6 +75,24 @@ export default function ChangePartnerDialog(
 				<FieldGroup className="gap-8">
 
 					<FieldsSection columns={ 2 }>
+
+						{ (selectTypes && selectTypes.length > 1)
+							&& (
+								<div className="col-span-2">
+									<SelectField
+										label={ "نوع الجهة" }
+										required
+										value={ entity.value.type }
+										error={ entity.value.getError("type") }
+										options={ selectTypes.map((type) => ({
+											value: type,
+											label: partnerTypeLabels[type]
+										})) }
+									/>
+								</div>
+							) }
+
+
 						<div className="col-span-2">
 							<TextField
 								label={ t("partners.partnerName", "الاسم") }

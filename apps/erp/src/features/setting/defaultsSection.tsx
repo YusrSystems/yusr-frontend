@@ -4,7 +4,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
-import PartnersSearchableSelect from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 import TaxesSearchableSelect from "@/core/components/searchableSelect/taxesSearchableSelect.tsx";
 import { type Setting } from "@/core/data/setting.ts";
 import { useEffect } from "react";

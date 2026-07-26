@@ -10,11 +10,20 @@ import { Services } from "@/core/services/services.ts";
 import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import StoreItemSelector from "@/features/items/storeItemSelector.tsx";
 import { useSignals } from "@preact/signals-react/runtime";
+import { useEffect } from "react";
+import { Cubits } from "@/core/services/cubits.ts";
+import { PartnerType } from "@/core/data/partner.ts";
 
 
 export default function InvoiceBasicTab({invoice}: { invoice: Invoice })
 {
 	useSignals();
+
+	useEffect(() =>
+	{
+		Cubits.partners.init(invoice.type.value == InvoiceType.Purchase || invoice.type.value == InvoiceType.PurchaseReturn ? [PartnerType.Supplier] : [PartnerType.Customer]);
+	}, [invoice]);
+
 	return (
 		<div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
 			{ /* LEFT WORKSPACE */ }

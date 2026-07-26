@@ -20,7 +20,7 @@ import { Services } from "@/core/services/services.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { useTranslation } from "react-i18next";
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
-import PartnersSearchableSelect from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";

@@ -46,7 +46,7 @@ import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/items
 import { createPortal } from "react-dom";
 import { InvoicesListReport } from "@/features/reports/invoicesList/invoicesListReport.tsx";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
-import PartnersSearchableSelect from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
 
 

@@ -401,6 +401,34 @@ SearchableSelect.DeleteOptionButton = function ({onDelete}: { onDelete: () => Pr
 	);
 };
 
+SearchableSelect.EditOptionButton = function ({onEdit}: { onEdit: () => void; })
+{
+	return (
+		<div
+			className="flex items-center justify-center min-w-[32px]"
+			onClick={ (e) => e.stopPropagation() }
+			onPointerDown={ (e) => e.stopPropagation() }
+			onPointerUp={ (e) => e.stopPropagation() }
+		>
+			<Button
+				type="button"
+				onClick={ (e) =>
+				{
+					e.preventDefault();
+					e.stopPropagation();
+					onEdit();
+				} }
+				variant="outline"
+				size="sm"
+				className="shrink-0 rounded-lg px-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+				aria-label="edit"
+			>
+				<Pencil className="h-3.5 w-3.5"/>
+			</Button>
+		</div>
+	);
+};
+
 SearchableSelect.AddOptionButton = function (
 	{onCreate}: { onCreate: (searchText: string | undefined, closeCommand: () => void) => Promise<void>; }
 )

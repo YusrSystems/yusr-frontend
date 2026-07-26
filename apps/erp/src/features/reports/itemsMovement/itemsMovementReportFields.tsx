@@ -12,7 +12,7 @@ import {
 } from "yusr-ui";
 import { ItemsMovementReportRequest } from "@/features/reports/itemsMovement/itemsMovementReportRequest.ts";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
-import PartnersSearchableSelect from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect.tsx";

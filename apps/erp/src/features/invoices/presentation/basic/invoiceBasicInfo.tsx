@@ -8,8 +8,8 @@ import StoresSearchableSelect from "@/core/components/searchableSelect/storesSea
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 import { ImportExportType } from "@/core/types/importExportType.ts";
 import { useSignals } from "@preact/signals-react/runtime";
-import { type PartnerDto } from "@/core/data/partner.ts";
-import PartnersSearchableSelect from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import { type PartnerDto, PartnerType } from "@/core/data/partner.ts";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 
 
 export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
@@ -96,6 +96,7 @@ export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 					{
 						selectedPartner.value = account;
 					} }
+					types={ invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.PurchaseReturn ? [PartnerType.Supplier] : [PartnerType.Customer] }
 				/>
 			</FormField>
 

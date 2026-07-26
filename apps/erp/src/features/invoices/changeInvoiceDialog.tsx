@@ -32,7 +32,6 @@ import { InvoiceType } from "@/core/types/invoiceType";
 import { ItemType } from "@/core/data/item.ts";
 import { Services } from "@/core/services/services.ts";
 import type { SaveButtonProps } from "#/components/custom/buttons/saveButton.tsx";
-import { PartnerType } from "@/core/data/partner.ts";
 
 
 export default function ChangeInvoiceDialog({
@@ -61,7 +60,6 @@ export default function ChangeInvoiceDialog({
 
 	useEffect(() =>
 	{
-		Cubits.partners.init(fixedType == InvoiceType.Purchase || fixedType == InvoiceType.PurchaseReturn ? [PartnerType.Supplier] : [PartnerType.Customer]);
 		Cubits.paymentMethods.init();
 		Cubits.stores.init();
 	}, [fixedType]);

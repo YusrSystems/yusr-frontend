@@ -2,6 +2,7 @@ import type { Signal } from "@preact/signals-react";
 import {
 	Branch,
 	BranchDto,
+	CityDto,
 	Currency,
 	CurrencyDto,
 	Dto,

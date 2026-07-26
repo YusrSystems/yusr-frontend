@@ -7,13 +7,20 @@ import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
 import { Voucher, VoucherType } from "@/core/data/voucher.ts";
 import { Services } from "@/core/services/services.ts";
-import PartnersSearchableSelect from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import { useEffect } from "react";
+import { Cubits } from "@/core/services/cubits.ts";
 
 
 export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
+
+	useEffect(() =>
+	{
+		Cubits.partners.init();
+	}, []);
 
 	const costVouchers = invoice.costVouchers.value;
 
