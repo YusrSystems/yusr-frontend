@@ -15,6 +15,7 @@ export const SystemPermissionsResources = {
 	BalanceTransfers: "BalanceTransfers",
 	PaymentMethods: "PaymentMethods",
 	Vouchers: "Vouchers",
+	Partners: "Partners",
 
 	// Invoices
 	Invoices: "Invoices",
@@ -71,5 +72,6 @@ export const SystemPermissionsResources = {
 	ReportItemSettlement: "ReportItemSettlement",
 	ReportItemBarcode: "ReportItemBarcode",
 	ReportSalesProfitability: "ReportSalesProfitability",
-	ReportTaxAudit: "ReportTaxAudit"
+	ReportTaxAudit: "ReportTaxAudit",
+	ReportPl: "ReportPl"
 } as const;

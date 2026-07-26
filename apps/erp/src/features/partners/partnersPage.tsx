@@ -35,7 +35,7 @@ export default function PartnersPage({type}: { type: PartnerType })
 		Cubits.partners.init([type]);
 	}, [type]);
 
-	if (!Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Get))
+	if (!Services.auth.hasAuth(SystemPermissionsResources.Partners, SystemPermissionsActions.Get))
 	{
 		return <UnauthorizedPage/>;
 	}
@@ -74,7 +74,7 @@ export default function PartnersPage({type}: { type: PartnerType })
 						] : []
 					}/>
 
-					{ Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Add) && (
+					{ Services.auth.hasAuth(SystemPermissionsResources.Partners, SystemPermissionsActions.Add) && (
 						<CrudPage.AddButton
 							title={ isCustomerMode ? t("partners.addNewCustomer", "إضافة عميل") : t("partners.addNewSupplier", "إضافة مورد") }/>
 					) }
@@ -238,11 +238,11 @@ function PageTable()
 						];
 					} }
 					hasUpdatePermission={ Services.auth.hasAuth(
-						SystemPermissionsResources.Accounts,
+						SystemPermissionsResources.Partners,
 						SystemPermissionsActions.Update
 					) }
 					hasDeletePermission={ Services.auth.hasAuth(
-						SystemPermissionsResources.Accounts,
+						SystemPermissionsResources.Partners,
 						SystemPermissionsActions.Delete
 					) }
 				/>

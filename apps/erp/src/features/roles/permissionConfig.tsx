@@ -16,6 +16,7 @@ export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => 
 	[SystemPermissionsResources.Accounts]: t("permissions.resources.accounts"),
 	[SystemPermissionsResources.BalanceTransfers]: t("permissions.resources.balanceTransfers"),
 	[SystemPermissionsResources.PaymentMethods]: t("permissions.resources.paymentMethods"),
+	[SystemPermissionsResources.Partners]: t("permissions.resources.partners", "الشركاء"),
 	[SystemPermissionsResources.Items]: t("permissions.resources.items"),
 	[SystemPermissionsResources.ItemTransfers]: t("permissions.resources.itemTransfers"),
 	[SystemPermissionsResources.ItemsSettlements]: t("permissions.resources.itemsSettlements"),
@@ -68,6 +69,7 @@ export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => 
 	[SystemPermissionsResources.ReportStocktaking]: t("permissions.report.stocktaking"),
 	[SystemPermissionsResources.ReportItemSettlement]: t("permissions.report.itemSettlement"),
 	[SystemPermissionsResources.ReportItemBarcode]: t("permissions.report.itemBarcode"),
+	[SystemPermissionsResources.ReportPl]: t("permissions.report.reportPl", "تقرير الأرباح والخسائر (PL)"),
 
 	// Actions
 	[SystemPermissionsActions.Add]: t("permissions.actions.add"),
@@ -85,6 +87,7 @@ export const getPermissionSections = (t: TFunction<"erpCommon">) => [{
 		SystemPermissionsResources.Accounts,
 		SystemPermissionsResources.BalanceTransfers,
 		SystemPermissionsResources.PaymentMethods,
+		SystemPermissionsResources.Partners,
 		SystemPermissionsResources.Items,
 		SystemPermissionsResources.ItemTransfers,
 		SystemPermissionsResources.ItemsSettlements,
@@ -149,6 +152,7 @@ export const getPermissionSections = (t: TFunction<"erpCommon">) => [{
 		SystemPermissionsResources.ReportTaxAudit,
 		SystemPermissionsResources.ReportStocktaking,
 		SystemPermissionsResources.ReportItemSettlement,
-		SystemPermissionsResources.ReportItemBarcode
+		SystemPermissionsResources.ReportItemBarcode,
+		SystemPermissionsResources.ReportPl
 	]
 }];

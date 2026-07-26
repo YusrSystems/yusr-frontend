@@ -111,7 +111,7 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 				SystemPermissionsResources.AccountClient,
 				SystemPermissionsActions.Get
 			) && Services.auth.hasAuth(
-				SystemPermissionsResources.Accounts,
+				SystemPermissionsResources.Partners,
 				SystemPermissionsActions.Get
 			)
 		}, {
@@ -119,10 +119,10 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 			url: "/suppliers",
 			icon: <Truck/>,
 			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.AccountClient,
+				SystemPermissionsResources.AccountSupplier,
 				SystemPermissionsActions.Get
 			) && Services.auth.hasAuth(
-				SystemPermissionsResources.Accounts,
+				SystemPermissionsResources.Partners,
 				SystemPermissionsActions.Get
 			)
 		}, {

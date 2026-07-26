@@ -34,7 +34,7 @@ export default function ChangePartnerDialog(
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
 
-	const entity = useMemo(() => signal<Partner>(dto ? Partner.load(dto) : Partner.create(initDto)), []);
+	const entity = useMemo(() => signal<Partner>(dto ? Partner.load(dto) : Partner.create(initDto)), [dto, initDto]);
 	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
 
 	useEffect(() =>
@@ -45,9 +45,9 @@ export default function ChangePartnerDialog(
 
 	if (
 		(entity.value.mode.value === ChangeableEntityMode.Create
-			&& !Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Add))
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Partners, SystemPermissionsActions.Add))
 		|| (entity.value.mode.value === ChangeableEntityMode.Update
-			&& !Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Update))
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Partners, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
