@@ -23,6 +23,7 @@ import { createPortal } from "react-dom";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { VoucherReport } from "@/features/reports/voucher/voucherReport.tsx";
 import { signal } from "@preact/signals-react";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function VouchersPage()
@@ -31,6 +32,29 @@ export default function VouchersPage()
 	const {t} = useTranslation("accounting");
 	useEffect(() => Cubits.vouchers.init(), []);
 	const printedVoucher = useMemo(() => signal<VoucherDto | undefined>(), []);
+
+	useEffect(() =>
+	{
+		const voucher = printedVoucher.value;
+
+		if (voucher)
+		{
+			const voucherTypeName = voucher.type === VoucherType.Payment
+				? t("vouchers.paymentVoucher")
+				: t("vouchers.receiptVoucher");
+
+			document.title = `${ voucherTypeName } رقم #${ voucher.id }`;
+		}
+		else
+		{
+			document.title = t("vouchers.title");
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [printedVoucher.value, t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Get))
 	{
@@ -53,6 +77,13 @@ export default function VouchersPage()
 				<PageTable onPrint={ (voucher) =>
 				{
 					printedVoucher.value = voucher;
+					const handleAfterPrint = () =>
+					{
+						printedVoucher.value = undefined;
+						window.removeEventListener("afterprint", handleAfterPrint);
+					};
+					window.addEventListener("afterprint", handleAfterPrint);
+
 					requestAnimationFrame(() =>
 					{
 						requestAnimationFrame(() =>

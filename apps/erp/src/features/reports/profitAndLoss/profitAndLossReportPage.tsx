@@ -7,6 +7,7 @@ import { ProfitAndLossReportFields } from "@/features/reports/profitAndLoss/prof
 import { ProfitAndLossReport } from "@/features/reports/profitAndLoss/profitAndLossReport.tsx";
 import { Cubits } from "@/core/services/cubits.ts";
 import { ProfitAndLossReportRequest } from "@/features/reports/profitAndLoss/profitAndLossReportRequest.ts";
+import { APP_NAME } from "../../../../appConfig.ts";
 
 
 export function ProfitAndLossReportPage()
@@ -28,6 +29,25 @@ export function ProfitAndLossReportPage()
 	};
 
 	const isLoading = Cubits.ProfitAndLossReport.state.value instanceof ReportLoading;
+
+	const data = Cubits.ProfitAndLossReport.result.value;
+
+	useEffect(() =>
+	{
+		if (data && lastRequest.value.fromDate && lastRequest.value.toDate)
+		{
+			document.title = `تقرير الأرباح والخسائر - من ${ lastRequest.value.fromDate } إلى ${ lastRequest.value.toDate }`;
+		}
+		else
+		{
+			document.title = "تقرير الأرباح والخسائر";
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [data, lastRequest.value.fromDate, lastRequest.value.toDate]);
 
 	return (
 		<ReportPage>

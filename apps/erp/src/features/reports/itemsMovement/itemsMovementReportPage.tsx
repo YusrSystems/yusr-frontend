@@ -9,6 +9,7 @@ import { ItemsMovementReportRequest } from "@/features/reports/itemsMovement/ite
 import { Cubits } from "@/core/services/cubits.ts";
 import type { ItemsMovementLine } from "@/features/reports/itemsMovement/itemsMovementReportResult.ts";
 import { getDocumentTypeName } from "@/core/types/documentType.ts";
+import { APP_NAME } from "../../../../appConfig.ts";
 
 
 export function ItemsMovementReportPage()
@@ -35,6 +36,24 @@ export function ItemsMovementReportPage()
 	};
 
 	const isLoading = Cubits.ItemsMovementReport.state.value instanceof ReportLoading;
+	const data = Cubits.ItemsMovementReport.result.value;
+
+	useEffect(() =>
+	{
+		if (data && lastRequest.value.fromDate && lastRequest.value.toDate)
+		{
+			document.title = `تقرير حركة المواد - من ${ lastRequest.value.fromDate } إلى ${ lastRequest.value.toDate }`;
+		}
+		else
+		{
+			document.title = "تقرير حركة المواد";
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [data, lastRequest.value.fromDate, lastRequest.value.toDate]);
 
 	return (
 		<ReportPage>

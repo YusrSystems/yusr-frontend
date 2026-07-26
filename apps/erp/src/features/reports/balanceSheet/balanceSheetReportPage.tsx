@@ -7,6 +7,7 @@ import { BalanceSheetReportFields } from "@/features/reports/balanceSheet/balanc
 import { BalanceSheetReport } from "@/features/reports/balanceSheet/balanceSheetReport.tsx";
 import { Cubits } from "@/core/services/cubits.ts";
 import { BalanceSheetReportRequest } from "@/features/reports/balanceSheet/balanceSheetReportRequest.ts";
+import { APP_NAME } from "../../../../appConfig.ts";
 
 
 export function BalanceSheetReportPage()
@@ -26,6 +27,23 @@ export function BalanceSheetReportPage()
 		lastRequest.value = request;
 		void Cubits.BalanceSheetReport.getReportData(request);
 	};
+
+	useEffect(() =>
+	{
+		if (lastRequest.value.asOfDate)
+		{
+			document.title = `الميزانية العمومية - ${ lastRequest.value.asOfDate }`;
+		}
+		else
+		{
+			document.title = "الميزانية العمومية";
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [lastRequest.value.asOfDate]);
 
 	const isLoading = Cubits.BalanceSheetReport.state.value instanceof ReportLoading;
 

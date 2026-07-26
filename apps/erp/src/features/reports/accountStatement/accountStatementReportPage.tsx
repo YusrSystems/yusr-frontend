@@ -10,6 +10,7 @@ import { Cubits } from "@/core/services/cubits.ts";
 import { AccountStatementReportRequest } from "@/features/reports/accountStatement/accountStatementReportRequest.ts";
 import { type AccountStatementLine } from "@/features/reports/accountStatement/accountStatementReportResult.ts";
 import { getDocumentTypeName } from "@/core/types/documentType.ts";
+import { APP_NAME } from "../../../../appConfig.ts";
 
 
 export function AccountStatementReportPage()
@@ -48,6 +49,23 @@ export function AccountStatementReportPage()
 
 	const isLoading = Cubits.AccountStatementReport.state.value instanceof ReportLoading;
 	const data = Cubits.AccountStatementReport.result.value;
+
+	useEffect(() =>
+	{
+		if (data?.account?.name)
+		{
+			document.title = `كشف حساب - ${ data.account.name }`;
+		}
+		else
+		{
+			document.title = "كشف حساب";
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [data]);
 
 	return (
 		<ReportPage>

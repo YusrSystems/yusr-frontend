@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 import { RenderInvoiceFilterInput } from "@/features/invoices/invoicesPage.tsx";
 import Invoice, { type InvoiceDto } from "@/core/data/invoices/invoice.ts";
+import { APP_NAME } from "../../../../appConfig.ts";
 
 
 export function InvoicesListReportPage()
@@ -58,6 +59,16 @@ export function InvoicesListReportPage()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() =>
+	{
+		document.title = "قائمة الفواتير";
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, []);
+
 	return (
 		<ReportPage>
 
@@ -68,7 +79,7 @@ export function InvoicesListReportPage()
 					columns={ [
 						{header: "التاريخ", accessor: (r) => r.date},
 						{header: "نوع الفاتورة", accessor: (r) => Invoice.getTypeName(r.type, t)},
-						{header: "الحساب المعني", accessor: (r) => r.actionAccountName},
+						{header: "الشريك", accessor: (r) => r.partnerName},
 						{header: "المستودع", accessor: (r) => r.storeName},
 						{header: "المبلغ الإجمالي", accessor: (r) => r.fullAmount.toString()},
 						{header: "المبلغ المدفوع", accessor: (r) => r.paidAmount.toString()},

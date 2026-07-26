@@ -6,6 +6,7 @@ import { VatReturnReportFields } from "./vatReturnReportFields";
 import { VatReturnReport } from "./vatReturnReport";
 import { Cubits } from "@/core/services/cubits";
 import { VatReturnReportRequest } from "./vatReturnReportRequest";
+import { APP_NAME } from "../../../../appConfig.ts";
 
 
 export function VatReturnReportPage()
@@ -18,6 +19,25 @@ export function VatReturnReportPage()
 	}, []);
 
 	const isLoading = Cubits.VatReturnReport.state.value instanceof ReportLoading;
+
+	const data = Cubits.VatReturnReport.result.value;
+
+	useEffect(() =>
+	{
+		if (data && data.fromDate && data.toDate)
+		{
+			document.title = `إقرار ضريبة القيمة المضافة - من ${ data.fromDate } إلى ${ data.toDate }`;
+		}
+		else
+		{
+			document.title = "إقرار ضريبة القيمة المضافة";
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [data, data?.fromDate, data?.toDate]);
 
 	return (
 		<ReportPage>

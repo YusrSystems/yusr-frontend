@@ -5,6 +5,7 @@ import { Cubits } from "@/core/services/cubits.ts";
 import ReportPage from "@/features/report/reportPage.tsx";
 import { AccountsListReport } from "@/features/reports/accountsList/accountsListReport.tsx";
 import { type AccountDto } from "@/core/data/account.ts";
+import { APP_NAME } from "../../../../appConfig.ts";
 
 
 export function AccountsListReportPage()
@@ -14,6 +15,16 @@ export function AccountsListReportPage()
 	useEffect(() =>
 	{
 		Cubits.accounts.init(undefined, undefined, 1000); // Initialize your accounting Cubit
+	}, []);
+
+	useEffect(() =>
+	{
+		document.title = "قائمة الحسابات";
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
 	}, []);
 
 	return (

@@ -6,6 +6,7 @@ import { CrudTablePagination, FilterSection } from "yusr-ui";
 import { RenderItemFilterInput } from "@/features/items/itemsPage.tsx";
 import { useSignals } from "@preact/signals-react/runtime";
 import { type ItemDto, ItemType } from "@/core/data/item.ts";
+import { APP_NAME } from "../../../../appConfig.ts";
 
 
 export function ItemsListReportPage()
@@ -17,6 +18,16 @@ export function ItemsListReportPage()
 		Cubits.items.init(undefined, undefined, 1000);
 		Cubits.stores.init();
 		Cubits.units.init();
+	}, []);
+
+	useEffect(() =>
+	{
+		document.title = "قائمة المواد";
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
 	}, []);
 
 	return (

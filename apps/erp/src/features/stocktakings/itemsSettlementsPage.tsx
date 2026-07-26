@@ -22,6 +22,7 @@ import { signal } from "@preact/signals-react";
 import { createPortal } from "react-dom";
 import { StocktakingReport } from "@/features/reports/stocktaking/stocktakingReport.tsx";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function ItemsSettlementsPage()
@@ -31,6 +32,25 @@ export default function ItemsSettlementsPage()
 	useEffect(() => Cubits.itemsSettlements.init(), []);
 
 	const printedSettlement = useMemo(() => signal<StocktakingDto | undefined>(), []);
+
+	useEffect(() =>
+	{
+		const settlement = printedSettlement.value;
+
+		if (settlement)
+		{
+			document.title = `تسوية مواد رقم #${ settlement.id }`;
+		}
+		else
+		{
+			document.title = t("itemsSettlements.title");
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [printedSettlement.value, t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.ItemsSettlements, SystemPermissionsActions.Get))
 	{
@@ -56,6 +76,13 @@ export default function ItemsSettlementsPage()
 				<PageTable onPrint={ (settlement) =>
 				{
 					printedSettlement.value = settlement;
+					const handleAfterPrint = () =>
+					{
+						printedSettlement.value = undefined;
+						window.removeEventListener("afterprint", handleAfterPrint);
+					};
+					window.addEventListener("afterprint", handleAfterPrint);
+
 					requestAnimationFrame(() =>
 					{
 						requestAnimationFrame(() =>

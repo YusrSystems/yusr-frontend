@@ -33,6 +33,7 @@ import { ItemBarcodeReport } from "@/features/reports/itemBarcode/itemBarcodeRep
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { printBarcodesQtn, printItem, printIupm } from "@/features/reports/itemBarcode/itemBarcodePrintState.ts";
 import TaxesMultiSearchableSelect from "@/core/components/searchableSelect/taxesMultiSearchableSelect.tsx";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function ItemsPage()
@@ -47,6 +48,16 @@ export default function ItemsPage()
 		Cubits.stores.init();
 		Cubits.units.init();
 	}, []);
+
+	useEffect(() =>
+	{
+		document.title = t("items.title");
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Items, SystemPermissionsActions.Get))
 	{

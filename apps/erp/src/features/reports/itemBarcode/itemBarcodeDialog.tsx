@@ -29,6 +29,7 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 	const isErrorOpen = useMemo(() => signal(false), []);
 	const pages = useMemo(() => signal(1), []);
 	const barcodesQtn = useMemo(() => signal(40), []);
+	const originalTitle = document.title;
 
 	const onOpen = () =>
 	{
@@ -49,6 +50,7 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 		printItem.value = item;
 		printIupm.value = iupm;
 		printBarcodesQtn.value = barcodesQtn.value;
+		document.title = `باركود - ${ item.name.value } - ${ iupm.barcode.value }`;
 
 		requestAnimationFrame(() =>
 		{
@@ -65,6 +67,7 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 		{
 			printItem.value = undefined;
 			printIupm.value = undefined;
+			document.title = originalTitle;
 		};
 		window.addEventListener("afterprint", handleAfterPrint);
 		return () => window.removeEventListener("afterprint", handleAfterPrint);

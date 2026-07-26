@@ -10,6 +10,8 @@ import { Cubits } from "@/core/services/cubits.ts";
 import { PartnerStatementReportRequest } from "@/features/reports/partnerStatement/partnerStatementReportRequest.ts";
 import { type PartnerStatementLine } from "@/features/reports/partnerStatement/partnerStatementReportResult.ts";
 import { getDocumentTypeName } from "@/core/types/documentType.ts";
+import { APP_NAME } from "../../../../appConfig.ts";
+import { PartnerType } from "@/core/data/partner.ts";
 
 
 export function PartnerStatementReportPage()
@@ -48,6 +50,30 @@ export function PartnerStatementReportPage()
 
 	const isLoading = Cubits.PartnerStatementReport.state.value instanceof ReportLoading;
 	const data = Cubits.PartnerStatementReport.result.value;
+
+	useEffect(() =>
+	{
+		const baseTitle = data?.partner.type === PartnerType.Customer ? "كشف حساب عميل" : "كشف حساب مورد";
+		const currentPartnerName = data?.partner?.name || partnerName || "محدد";
+
+		if (data && lastRequest.value?.fromDate && lastRequest.value?.toDate)
+		{
+			document.title = `${ baseTitle } - ${ currentPartnerName } - من ${ lastRequest.value.fromDate } إلى ${ lastRequest.value.toDate }`;
+		}
+		else if (data)
+		{
+			document.title = `${ baseTitle } - ${ currentPartnerName }`;
+		}
+		else
+		{
+			document.title = `${ baseTitle }`;
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [data, partnerName, lastRequest.value?.fromDate, lastRequest.value?.toDate]);
 
 	return (
 		<ReportPage>

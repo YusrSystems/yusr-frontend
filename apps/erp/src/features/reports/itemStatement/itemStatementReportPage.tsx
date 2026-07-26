@@ -9,6 +9,7 @@ import { ItemStatementReport } from "@/features/reports/itemStatement/itemStatem
 import { Cubits } from "@/core/services/cubits.ts";
 import { ItemStatementReportRequest } from "@/features/reports/itemStatement/itemStatementReportRequest.ts";
 import type { ItemStatementLine } from "@/features/reports/itemStatement/itemStatementReportResult.ts";
+import { APP_NAME } from "../../../../appConfig.ts";
 
 
 export function ItemStatementReportPage()
@@ -43,6 +44,25 @@ export function ItemStatementReportPage()
 
 	const isLoading = Cubits.ItemStatementReport.state.value instanceof ReportLoading;
 	const data = Cubits.ItemStatementReport.result.value;
+
+	useEffect(() =>
+	{
+		const currentItemName = data?.itemName || itemName || "محددة";
+
+		if (data)
+		{
+			document.title = `كشف حركة مادة - ${ currentItemName }`;
+		}
+		else
+		{
+			document.title = "كشف حركة مادة";
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [data, itemName]);
 
 	return (
 		<ReportPage>

@@ -27,6 +27,7 @@ import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { AccountsListReport } from "@/features/reports/accountsList/accountsListReport.tsx";
 import type { Signal } from "@preact/signals-react";
 import { AppNavigator } from "@/app/appNavigator.ts";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 interface TreeNodeData
@@ -46,6 +47,17 @@ export default function AccountsPage()
 	useSignals();
 	const {t} = useTranslation(["accounting", "erpCommon"]);
 	const [viewMode, setViewMode] = useState<"table" | "tree">("table");
+	const viewModeTitle = viewMode === "table" ? t("accounts.title") : "شجرة الحسابات";
+
+	useEffect(() =>
+	{
+		document.title = viewModeTitle;
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [viewModeTitle]);
 
 	useEffect(() =>
 	{

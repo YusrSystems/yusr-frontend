@@ -15,21 +15,21 @@ export default defineConfig(({mode}) => ({
 		dedupe: ["react", "react-dom", "react/jsx-runtime"]
 	},
 	server: {
-		proxy: {
-			"/api": {
-				target: mode === "development"
-					? "https://yusrerpdev.runasp.net"
-					: "https://yusrerp.runasp.net",
-				changeOrigin: true,
-				secure: true
-			}
-		}
 		// proxy: {
 		// 	"/api": {
-		// 		target: "https://localhost:7142",
+		// 		target: mode === "development"
+		// 			? "https://yusrerpdev.runasp.net"
+		// 			: "https://yusrerp.runasp.net",
 		// 		changeOrigin: true,
-		// 		secure: false
+		// 		secure: true
 		// 	}
 		// }
+		proxy: {
+			"/api": {
+				target: "https://localhost:7142",
+				changeOrigin: true,
+				secure: false
+			}
+		}
 	}
 }));

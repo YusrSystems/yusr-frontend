@@ -9,6 +9,7 @@ import { TaxAuditReportRequest } from "./taxAuditReportRequest";
 import { Cubits } from "@/core/services/cubits";
 import type { TaxAuditReportLine } from "./taxAuditReportResult";
 import { getInvoiceTypeNameAr } from "./taxAuditReportTable";
+import { APP_NAME } from "../../../../appConfig.ts";
 
 
 export function TaxAuditReportPage()
@@ -35,6 +36,25 @@ export function TaxAuditReportPage()
 	};
 
 	const isLoading = Cubits.TaxAuditReport.state.value instanceof ReportLoading;
+
+	const data = Cubits.TaxAuditReport.result.value;
+
+	useEffect(() =>
+	{
+		if (data && lastRequest.value.fromDate && lastRequest.value.toDate)
+		{
+			document.title = `تقرير المراجعة الضريبية - من ${ lastRequest.value.fromDate } إلى ${ lastRequest.value.toDate }`;
+		}
+		else
+		{
+			document.title = "تقرير المراجعة الضريبية";
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [data, lastRequest.value.fromDate, lastRequest.value.toDate]);
 
 	return (
 		<ReportPage>
