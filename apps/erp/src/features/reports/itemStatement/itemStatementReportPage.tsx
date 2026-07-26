@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { CrudTablePagination, ReportLoading } from "yusr-ui";
+import { CrudTablePagination, ReportLoading, SystemPermissionsActions } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage.tsx";
 import { ItemStatementReportFields } from "@/features/reports/itemStatement/itemStatementReportFields.tsx";
 import { ItemStatementReport } from "@/features/reports/itemStatement/itemStatementReport.tsx";
@@ -10,6 +10,8 @@ import { Cubits } from "@/core/services/cubits.ts";
 import { ItemStatementReportRequest } from "@/features/reports/itemStatement/itemStatementReportRequest.ts";
 import type { ItemStatementLine } from "@/features/reports/itemStatement/itemStatementReportResult.ts";
 import { APP_NAME } from "../../../../appConfig.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
 
 
 export function ItemStatementReportPage()
@@ -20,6 +22,8 @@ export function ItemStatementReportPage()
 
 	useEffect(() =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemStatement, SystemPermissionsActions.Get)) return;
+
 		const parsedItemId = itemId ? Number(itemId) : undefined;
 		if (parsedItemId && !Number.isNaN(parsedItemId))
 		{
@@ -32,12 +36,14 @@ export function ItemStatementReportPage()
 
 	const handleSubmit = (request: ItemStatementReportRequest) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemStatement, SystemPermissionsActions.Get)) return;
 		lastRequest.value = request;
 		void Cubits.ItemStatementReport.getReportData(request, 1);
 	};
 
 	const handlePageChanged = (newPage: number) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemStatement, SystemPermissionsActions.Get)) return;
 		if (!lastRequest.value) return;
 		void Cubits.ItemStatementReport.getReportData(lastRequest.value, newPage);
 	};
@@ -65,7 +71,7 @@ export function ItemStatementReportPage()
 	}, [data, itemName]);
 
 	return (
-		<ReportPage>
+		<ReportPage permissionResource={ SystemPermissionsResources.ReportItemStatement }>
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.ExcelButton<ItemStatementLine>
 					fileName={ `كشف_مادة_${ itemName || "محددة" }` }

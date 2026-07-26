@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { CrudTablePagination, ReportLoading } from "yusr-ui";
+import { CrudTablePagination, ReportLoading, SystemPermissionsActions } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage.tsx";
 import { PartnerStatementReportFields } from "@/features/reports/partnerStatement/partnerStatementReportFields.tsx";
 import { PartnerStatementReport } from "@/features/reports/partnerStatement/partnerStatementReport.tsx";
@@ -12,6 +12,8 @@ import { type PartnerStatementLine } from "@/features/reports/partnerStatement/p
 import { getDocumentTypeName } from "@/core/types/documentType.ts";
 import { APP_NAME } from "../../../../appConfig.ts";
 import { PartnerType } from "@/core/data/partner.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
 
 
 export function PartnerStatementReportPage()
@@ -24,6 +26,8 @@ export function PartnerStatementReportPage()
 
 	useEffect(() =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportPartnerStatement, SystemPermissionsActions.Get)) return;
+
 		const parsedPartnerId = partnerId ? Number(partnerId) : undefined;
 		if (parsedPartnerId && !Number.isNaN(parsedPartnerId))
 		{
@@ -38,12 +42,14 @@ export function PartnerStatementReportPage()
 
 	const handleSubmit = (request: PartnerStatementReportRequest) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportPartnerStatement, SystemPermissionsActions.Get)) return;
 		lastRequest.value = request;
 		void Cubits.PartnerStatementReport.getReportData(request, 1);
 	};
 
 	const handlePageChanged = (newPage: number) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportPartnerStatement, SystemPermissionsActions.Get)) return;
 		if (!lastRequest.value) return;
 		void Cubits.PartnerStatementReport.getReportData(lastRequest.value, newPage);
 	};
@@ -76,7 +82,7 @@ export function PartnerStatementReportPage()
 	}, [data, partnerName, lastRequest.value?.fromDate, lastRequest.value?.toDate]);
 
 	return (
-		<ReportPage>
+		<ReportPage permissionResource={ SystemPermissionsResources.ReportPartnerStatement }>
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.ExcelButton<PartnerStatementLine>
 					fileName={ `كشف_حساب_جهة_${ partnerName || "محدد" }` }

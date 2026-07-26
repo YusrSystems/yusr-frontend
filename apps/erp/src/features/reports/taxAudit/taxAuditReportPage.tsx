@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { CrudTablePagination, ReportLoading } from "yusr-ui";
+import { CrudTablePagination, ReportLoading, SystemPermissionsActions } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage";
 import { TaxAuditReportFields } from "./taxAuditReportFields";
 import { TaxAuditReport } from "./taxAuditReport";
@@ -10,6 +10,8 @@ import { Cubits } from "@/core/services/cubits";
 import type { TaxAuditReportLine } from "./taxAuditReportResult";
 import { getInvoiceTypeNameAr } from "./taxAuditReportTable";
 import { APP_NAME } from "../../../../appConfig.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
 
 
 export function TaxAuditReportPage()
@@ -20,18 +22,21 @@ export function TaxAuditReportPage()
 
 	useEffect(() =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportTaxAudit, SystemPermissionsActions.Get)) return;
 		void Cubits.TaxAuditReport.getReportData(lastRequest.value, 1);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSubmit = (request: TaxAuditReportRequest) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportTaxAudit, SystemPermissionsActions.Get)) return;
 		lastRequest.value = request;
 		void Cubits.TaxAuditReport.getReportData(request, 1);
 	};
 
 	const handlePageChanged = (newPage: number) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportTaxAudit, SystemPermissionsActions.Get)) return;
 		void Cubits.TaxAuditReport.getReportData(lastRequest.value, newPage);
 	};
 
@@ -57,7 +62,7 @@ export function TaxAuditReportPage()
 	}, [data, lastRequest.value.fromDate, lastRequest.value.toDate]);
 
 	return (
-		<ReportPage>
+		<ReportPage permissionResource={ SystemPermissionsResources.ReportTaxAudit }>
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.ExcelButton<TaxAuditReportLine>
 					fileName="تقرير_المراجعة_الضريبية"

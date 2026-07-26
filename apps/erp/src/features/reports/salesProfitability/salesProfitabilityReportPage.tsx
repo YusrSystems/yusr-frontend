@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { CrudTablePagination, ReportLoading } from "yusr-ui";
+import { CrudTablePagination, ReportLoading, SystemPermissionsActions } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage";
 import { SalesProfitabilityReportFields } from "./salesProfitabilityReportFields";
 import { SalesProfitabilityReport } from "./salesProfitabilityReport";
@@ -11,6 +11,8 @@ import type { SalesProfitabilityLine } from "./salesProfitabilityReportResult";
 import { getProfitAndLossRowDocumentTypeName } from "./salesProfitabilityReportTable";
 import { useTranslation } from "react-i18next";
 import { APP_NAME } from "../../../../appConfig.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
 
 
 export function SalesProfitabilityReportPage()
@@ -22,18 +24,21 @@ export function SalesProfitabilityReportPage()
 
 	useEffect(() =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportSalesProfitability, SystemPermissionsActions.Get)) return;
 		void Cubits.SalesProfitabilityReport.getReportData(lastRequest.value, 1);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSubmit = (request: SalesProfitabilityReportRequest) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportSalesProfitability, SystemPermissionsActions.Get)) return;
 		lastRequest.value = request;
 		void Cubits.SalesProfitabilityReport.getReportData(request, 1);
 	};
 
 	const handlePageChanged = (newPage: number) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportSalesProfitability, SystemPermissionsActions.Get)) return;
 		void Cubits.SalesProfitabilityReport.getReportData(lastRequest.value, newPage);
 	};
 
@@ -59,7 +64,7 @@ export function SalesProfitabilityReportPage()
 	}, [data, lastRequest.value.fromDate, lastRequest.value.toDate]);
 
 	return (
-		<ReportPage>
+		<ReportPage permissionResource={ SystemPermissionsResources.ReportSalesProfitability }>
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.ExcelButton<SalesProfitabilityLine>
 					fileName="تقرير_ربحية_المبيعات"

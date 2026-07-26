@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { CrudTablePagination, ReportLoading } from "yusr-ui";
+import { CrudTablePagination, ReportLoading, SystemPermissionsActions } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage.tsx";
 import { ItemsMovementReportFields } from "@/features/reports/itemsMovement/itemsMovementReportFields.tsx";
 import { ItemsMovementReport } from "@/features/reports/itemsMovement/itemsMovementReport.tsx";
@@ -10,6 +10,8 @@ import { Cubits } from "@/core/services/cubits.ts";
 import type { ItemsMovementLine } from "@/features/reports/itemsMovement/itemsMovementReportResult.ts";
 import { getDocumentTypeName } from "@/core/types/documentType.ts";
 import { APP_NAME } from "../../../../appConfig.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
 
 
 export function ItemsMovementReportPage()
@@ -20,18 +22,21 @@ export function ItemsMovementReportPage()
 
 	useEffect(() =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemMovement, SystemPermissionsActions.Get)) return;
 		void Cubits.ItemsMovementReport.getReportData(lastRequest.value, 1);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSubmit = (request: ItemsMovementReportRequest) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemMovement, SystemPermissionsActions.Get)) return;
 		lastRequest.value = request;
 		void Cubits.ItemsMovementReport.getReportData(request, 1);
 	};
 
 	const handlePageChanged = (newPage: number) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemMovement, SystemPermissionsActions.Get)) return;
 		void Cubits.ItemsMovementReport.getReportData(lastRequest.value, newPage);
 	};
 
@@ -56,7 +61,7 @@ export function ItemsMovementReportPage()
 	}, [data, lastRequest.value.fromDate, lastRequest.value.toDate]);
 
 	return (
-		<ReportPage>
+		<ReportPage permissionResource={ SystemPermissionsResources.ReportItemMovement }>
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.ExcelButton<ItemsMovementLine>
 					fileName="تقرير_حركة_المواد"

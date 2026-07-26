@@ -2,7 +2,13 @@ import ReportPage from "@/features/report/reportPage.tsx";
 import { InvoicesListReport } from "@/features/reports/invoicesList/invoicesListReport.tsx";
 import { useEffect, useMemo } from "react";
 import { Cubits } from "@/core/services/cubits.ts";
-import { CrudTablePagination, FilterSection, FormField, MultiSearchableSelect } from "yusr-ui";
+import {
+	CrudTablePagination,
+	FilterSection,
+	FormField,
+	MultiSearchableSelect,
+	SystemPermissionsActions
+} from "yusr-ui";
 import { useSignals } from "@preact/signals-react/runtime";
 import { effect, useSignal } from "@preact/signals-react";
 import { useTranslation } from "react-i18next";
@@ -10,6 +16,8 @@ import { InvoiceType } from "@/core/types/invoiceType.ts";
 import { RenderInvoiceFilterInput } from "@/features/invoices/invoicesPage.tsx";
 import Invoice, { type InvoiceDto } from "@/core/data/invoices/invoice.ts";
 import { APP_NAME } from "../../../../appConfig.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
 
 
 export function InvoicesListReportPage()
@@ -30,6 +38,7 @@ export function InvoicesListReportPage()
 
 	useEffect(() =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportInvoiceList, SystemPermissionsActions.Get)) return;
 		// Initial Load
 		Cubits.invoices.init(selectedTypes.value, undefined, 1000);
 
@@ -43,6 +52,8 @@ export function InvoicesListReportPage()
 				isFirst = false;
 				return;
 			}
+
+			if (!Services.auth.hasAuth(SystemPermissionsResources.ReportInvoiceList, SystemPermissionsActions.Get)) return;
 
 			// Call filter while preserving search text, query params, and filter groups
 			void Cubits.invoices.filter(
@@ -70,7 +81,7 @@ export function InvoicesListReportPage()
 	}, []);
 
 	return (
-		<ReportPage>
+		<ReportPage permissionResource={ SystemPermissionsResources.ReportInvoiceList }>
 
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.ExcelButton<InvoiceDto>

@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { ReportLoading } from "yusr-ui";
+import { ReportLoading, SystemPermissionsActions } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage";
 import { VatReturnReportFields } from "./vatReturnReportFields";
 import { VatReturnReport } from "./vatReturnReport";
 import { Cubits } from "@/core/services/cubits";
 import { VatReturnReportRequest } from "./vatReturnReportRequest";
 import { APP_NAME } from "../../../../appConfig.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
 
 
 export function VatReturnReportPage()
@@ -15,6 +17,7 @@ export function VatReturnReportPage()
 
 	useEffect(() =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportVatReturn, SystemPermissionsActions.Get)) return;
 		void Cubits.VatReturnReport.getReportData(new VatReturnReportRequest());
 	}, []);
 
@@ -40,13 +43,17 @@ export function VatReturnReportPage()
 	}, [data, data?.fromDate, data?.toDate]);
 
 	return (
-		<ReportPage>
+		<ReportPage permissionResource={ SystemPermissionsResources.ReportVatReturn }>
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.PrintButton/>
 			</ReportPage.ActionButtonsContainer>
 			<div className="print:hidden w-full shrink-0">
 				<VatReturnReportFields
-					onSubmit={ (request) => void Cubits.VatReturnReport.getReportData(request) }
+					onSubmit={ (request) =>
+					{
+						if (!Services.auth.hasAuth(SystemPermissionsResources.ReportVatReturn, SystemPermissionsActions.Get)) return;
+						void Cubits.VatReturnReport.getReportData(request);
+					} }
 					isLoading={ isLoading }
 				/>
 			</div>

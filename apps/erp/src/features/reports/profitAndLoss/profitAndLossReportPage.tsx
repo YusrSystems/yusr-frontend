@@ -1,13 +1,15 @@
 import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { ReportLoading } from "yusr-ui";
+import { ReportLoading, SystemPermissionsActions } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage.tsx";
 import { ProfitAndLossReportFields } from "@/features/reports/profitAndLoss/profitAndLossReportFields.tsx";
 import { ProfitAndLossReport } from "@/features/reports/profitAndLoss/profitAndLossReport.tsx";
 import { Cubits } from "@/core/services/cubits.ts";
 import { ProfitAndLossReportRequest } from "@/features/reports/profitAndLoss/profitAndLossReportRequest.ts";
 import { APP_NAME } from "../../../../appConfig.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
 
 
 export function ProfitAndLossReportPage()
@@ -18,12 +20,14 @@ export function ProfitAndLossReportPage()
 
 	useEffect(() =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportPl, SystemPermissionsActions.Get)) return;
 		void Cubits.ProfitAndLossReport.getReportData(lastRequest.value);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSubmit = (request: ProfitAndLossReportRequest) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportPl, SystemPermissionsActions.Get)) return;
 		lastRequest.value = request;
 		void Cubits.ProfitAndLossReport.getReportData(request);
 	};
@@ -50,7 +54,7 @@ export function ProfitAndLossReportPage()
 	}, [data, lastRequest.value.fromDate, lastRequest.value.toDate]);
 
 	return (
-		<ReportPage>
+		<ReportPage permissionResource={ SystemPermissionsResources.ReportPl }>
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.PrintButton/>
 			</ReportPage.ActionButtonsContainer>

@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { CrudTablePagination, ReportLoading } from "yusr-ui";
+import { CrudTablePagination, ReportLoading, SystemPermissionsActions } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage.tsx";
 import { AccountStatementReportFields } from "@/features/reports/accountStatement/accountStatementReportFields.tsx";
 import { AccountStatementReport } from "@/features/reports/accountStatement/accountStatementReport.tsx";
@@ -11,6 +11,8 @@ import { AccountStatementReportRequest } from "@/features/reports/accountStateme
 import { type AccountStatementLine } from "@/features/reports/accountStatement/accountStatementReportResult.ts";
 import { getDocumentTypeName } from "@/core/types/documentType.ts";
 import { APP_NAME } from "../../../../appConfig.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
 
 
 export function AccountStatementReportPage()
@@ -23,6 +25,8 @@ export function AccountStatementReportPage()
 
 	useEffect(() =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportAccountStatement, SystemPermissionsActions.Get)) return;
+
 		const parsedAccountId = accountId ? Number(accountId) : undefined;
 		if (parsedAccountId && !Number.isNaN(parsedAccountId))
 		{
@@ -37,12 +41,14 @@ export function AccountStatementReportPage()
 
 	const handleSubmit = (request: AccountStatementReportRequest) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportAccountStatement, SystemPermissionsActions.Get)) return;
 		lastRequest.value = request;
 		void Cubits.AccountStatementReport.getReportData(request, 1);
 	};
 
 	const handlePageChanged = (newPage: number) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportAccountStatement, SystemPermissionsActions.Get)) return;
 		if (!lastRequest.value) return;
 		void Cubits.AccountStatementReport.getReportData(lastRequest.value, newPage);
 	};
@@ -68,7 +74,7 @@ export function AccountStatementReportPage()
 	}, [data]);
 
 	return (
-		<ReportPage>
+		<ReportPage permissionResource={ SystemPermissionsResources.ReportAccountStatement }>
 
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.ExcelButton<AccountStatementLine>
