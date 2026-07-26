@@ -24,8 +24,6 @@ export class VoucherDto extends Dto
 	public paymentMethodName!: string;
 	public description?: string;
 	public invoiceId?: number;
-	public categoryId?: number;
-	public categoryName?: string;
 	public giver?: string;
 	public recipient?: string;
 	public notes?: string;
@@ -49,8 +47,6 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 	public paymentMethodName: Signal<string>;
 	public description: Signal<string | undefined>;
 	public invoiceId: Signal<number | undefined>;
-	public categoryId: Signal<number | undefined>;
-	public categoryName: Signal<string | undefined>;
 	public giver: Signal<string | undefined>;
 	public recipient: Signal<string | undefined>;
 	public notes: Signal<string | undefined>;
@@ -113,8 +109,6 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 		this.paymentMethodName = this.assign("paymentMethodName", dto?.paymentMethodName ?? "");
 		this.description = this.assign("description", dto?.description);
 		this.invoiceId = this.assign("invoiceId", dto?.invoiceId);
-		this.categoryId = this.assign("categoryId", dto?.categoryId);
-		this.categoryName = this.assign("categoryName", dto?.categoryName);
 		this.giver = this.assign("giver", dto?.giver);
 		this.recipient = this.assign("recipient", dto?.recipient);
 		this.notes = this.assign("notes", dto?.notes);
@@ -136,9 +130,4 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 				return String(type);
 		}
 	}
-}
-
-export class VoucherCategoryDto extends Dto
-{
-	public name!: string;
 }
