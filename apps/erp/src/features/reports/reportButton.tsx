@@ -10,22 +10,27 @@ export type ReportButtonProps<T extends BaseReportRequest> = {
 	request: T;
 	fileName?: string;
 	disabled?: boolean;
+	onPrint?: () => void;
+	isPrinting?: boolean;
 };
 
 export default function ReportButton<T extends BaseReportRequest>({
 	reportName,
 	request,
 	fileName = "report",
-	disabled
+	disabled,
+	onPrint,
+	isPrinting: externalIsPrinting
 }: ReportButtonProps<T>)
 {
 	const service = new ReportApiService();
 
-	const [isPrinting, setIsPrinting] = useState(false);
+	const [internalIsPrinting, setInternalIsPrinting] = useState(false);
 	const [isSharing, setIsSharing] = useState(false);
 	const [isDownloading, setIsDownloading] = useState(false);
 	const [downloaded, setDownloaded] = useState(false);
 
+	const isPrinting = externalIsPrinting ?? internalIsPrinting;
 	const isDisabled = isPrinting || isSharing || isDownloading || disabled;
 
 	return (
@@ -69,9 +74,16 @@ export default function ReportButton<T extends BaseReportRequest>({
 				disabled={ isDisabled }
 				onClick={ async () =>
 				{
-					setIsPrinting(true);
-					await service.Get(reportName, "display", request, fileName);
-					setIsPrinting(false);
+					if (onPrint)
+					{
+						onPrint();
+					}
+					else
+					{
+						setInternalIsPrinting(true);
+						await service.Get(reportName, "display", request, fileName);
+						setInternalIsPrinting(false);
+					}
 				} }
 			>
 				{ isPrinting ? <Loader2 className="h-4 w-4 animate-spin"/> : <Printer className="h-4 w-4"/> }
