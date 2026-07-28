@@ -1,13 +1,17 @@
-import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
-import { AccountType } from "@/core/data/account.ts";
 import type Invoice from "@/core/data/invoices/invoice.ts";
-import { InvoiceVoucher } from "@/core/data/invoices/invoiceVoucher.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, FormField, NumberField, TextField } from "yusr-ui";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
+import { Voucher, VoucherType } from "@/core/data/voucher.ts";
+import { Services } from "@/core/services/services.ts";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import { useEffect } from "react";
+import { Cubits } from "@/core/services/cubits.ts";
+import { AccountClass, getAccountTypesByClasses } from "@/core/data/account.ts";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 
 
 export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
@@ -15,7 +19,13 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 	useSignals();
 	const {t} = useTranslation("accounting");
 
-	const costVouchers = invoice.costVouchers();
+	useEffect(() =>
+	{
+		Cubits.partners.init();
+		Cubits.accounts.init(getAccountTypesByClasses([AccountClass.Expense]));
+	}, []);
+
+	const costVouchers = invoice.costVouchers.value;
 
 	return (
 		<div className="flex flex-col gap-2 items-end">
@@ -23,7 +33,17 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 				type="button"
 				className="max-w-45"
 				size="lg"
-				onClick={ () => invoice.invoiceVouchers.value = [...invoice.invoiceVouchers.value, InvoiceVoucher.createCostVoucher(invoice)] }
+				onClick={ () =>
+				{
+					const newVoucher = Voucher.create({
+						invoiceId: invoice.id.value,
+						paymentMethodId: Services.auth.setting?.mainPaymentMethodId?.value,
+						type: VoucherType.Payment,
+						amount: 0,
+						isDirectMode: true
+					});
+					invoice.costVouchers.value = [...invoice.costVouchers.value, newVoucher];
+				} }
 			>
 				<Plus className="w-4 h-4 me-2"/> { t("invoices.addCostVoucher") }
 			</Button>
@@ -33,7 +53,8 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 					<thead className="bg-muted/40 border-b border-border">
 					<tr>
 						<th className="p-3 font-semibold w-16 text-center text-muted-foreground">{ t("invoices.number") }</th>
-						<th className="p-3 text-start font-semibold">{ t("invoices.account") }</th>
+						<th className="p-3 text-start font-semibold">{ t("invoices.account", "الحساب") }</th>
+						<th className="p-3 text-start font-semibold">{ t("invoices.partner", "الجهة (اختياري)") }</th>
 						<th className="p-3 text-start font-semibold">{ t("invoices.paymentMethod") }</th>
 						<th className="p-3 text-start font-semibold">{ t("invoices.amount") }</th>
 						<th className="p-3 text-start font-semibold">{ t("invoices.description") }</th>
@@ -41,38 +62,45 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 					</tr>
 					</thead>
 					<tbody>
-					{ costVouchers.map((invoiceVoucher, index) => (
+					{ costVouchers.map((voucher, index) => (
 						<tr
-							key={ invoiceVoucher.voucherId.value }
+							key={ voucher.id.value }
 							className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors"
 						>
 							<td className="p-2 text-center font-bold text-muted-foreground">{ index + 1 }</td>
 
-							<td className="p-2">
-								<FormField label="" error={ invoiceVoucher.getError("accountId") }>
+							<td className="p-2 min-w-30">
+								<FormField label="" error={ voucher.getError("glAccountId") }>
 									<AccountsSearchableSelect
-										label={ invoiceVoucher.accountName }
-										id={ invoiceVoucher.accountId }
-										types={ [AccountType.Client, AccountType.Supplier] }
-
+										id={ voucher.glAccountId }
+										label={ voucher.glAccountName }
 									/>
 								</FormField>
 							</td>
 
-							<td className="p-2">
-								<FormField label="" error={ invoiceVoucher.getError("paymentMethodId") }>
+							<td className="p-2 min-w-30">
+								<FormField label="" error={ voucher.getError("partnerId") }>
+									<PartnersSearchableSelect
+										label={ voucher.partnerName }
+										id={ voucher.partnerId }
+									/>
+								</FormField>
+							</td>
+
+							<td className="p-2 min-w-30">
+								<FormField label="" error={ voucher.getError("paymentMethodId") }>
 									<PaymentMethodsSearchableSelect
-										id={ invoiceVoucher.paymentMethodId }
-										label={ invoiceVoucher.paymentMethodName }
+										id={ voucher.paymentMethodId }
+										label={ voucher.paymentMethodName }
 									/>
 								</FormField>
 							</td>
 
-							<td className="p-2">
+							<td className="p-2 w-40">
 								<NumberField
 									label=""
-									value={ invoiceVoucher.amount }
-									error={ invoiceVoucher.getError("amount") }
+									value={ voucher.amount }
+									error={ voucher.getError("amount") }
 									currency={ <ErpCurrencyIcon/> }
 								/>
 							</td>
@@ -80,8 +108,8 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 							<td className="p-2">
 								<TextField
 									label=""
-									value={ invoiceVoucher.description }
-									error={ invoiceVoucher.getError("description") }
+									value={ voucher.description }
+									error={ voucher.getError("description") }
 								/>
 							</td>
 
@@ -90,7 +118,7 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 									type="button"
 									onClick={ () =>
 									{
-										invoice.removeVoucher(invoiceVoucher.voucherId);
+										invoice.costVouchers.value = invoice.costVouchers.value.filter((v) => v !== voucher);
 									} }
 									className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
 									aria-label={ t("invoices.deleteVoucher") }

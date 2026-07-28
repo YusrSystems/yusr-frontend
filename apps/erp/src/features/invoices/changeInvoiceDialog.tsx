@@ -28,11 +28,9 @@ import Invoice, { type InvoiceDto, InvoiceMode } from "@/core/data/invoices/invo
 import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
-import { AccountType } from "@/core/data/account.ts";
 import { InvoiceType } from "@/core/types/invoiceType";
 import { ItemType } from "@/core/data/item.ts";
 import { Services } from "@/core/services/services.ts";
-import { InvoiceRelationType } from "@/core/types/invoiceRelationType.ts";
 import type { SaveButtonProps } from "#/components/custom/buttons/saveButton.tsx";
 
 
@@ -62,7 +60,6 @@ export default function ChangeInvoiceDialog({
 
 	useEffect(() =>
 	{
-		Cubits.accounts.init(fixedType == InvoiceType.Purchase || fixedType == InvoiceType.PurchaseReturn ? [AccountType.Supplier] : [AccountType.Client]);
 		Cubits.paymentMethods.init();
 		Cubits.stores.init();
 	}, [fixedType]);
@@ -116,8 +113,8 @@ export default function ChangeInvoiceDialog({
 							? InvoiceType.SellReturn
 							: InvoiceType.PurchaseReturn;
 
-						hasCostVouchers.value = res.data.invoiceVouchers.some(e => e.invoiceRelationType === InvoiceRelationType.Cost) ?? false;
-						res.data.invoiceVouchers = res.data.invoiceVouchers.filter(x => x.invoiceRelationType === InvoiceRelationType.Payment);
+						hasCostVouchers.value = res.data.costVouchers.length > 0;
+						res.data.costVouchers = [];
 
 						entity.value = Invoice.create(res.data);
 						entity.value.invoiceMode.value = InvoiceMode.Return;
@@ -228,9 +225,9 @@ export default function ChangeInvoiceDialog({
 
 	const basicHasError = entity.value.hasErrors
 		|| entity.value.invoiceItems.value.some((t) => t.hasErrors)
-		|| entity.value.paymentVouchers().some((t) => t.hasErrors);
+		|| entity.value.paymentVouchers.value.some((t) => t.hasErrors);
 
-	const costHasError = entity.value.costVouchers().some((t) => t.hasErrors);
+	const costHasError = entity.value.costVouchers.value.some((t) => t.hasErrors);
 
 	const invoiceAttachmentsHasError = Boolean(entity.value.getError("invoiceFiles").value);
 

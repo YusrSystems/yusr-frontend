@@ -69,14 +69,14 @@ export default function InvoiceSummary({invoice}: { invoice: Invoice })
 
 	const paid = safe(
 		InvoiceItemsMath.CalcInvoicePaidPrice(
-			invoice.invoiceVouchers.value ?? []
+			invoice.paymentVouchers.value ?? []
 		)
 	);
 
 	const unpaid = safe(
 		InvoiceItemsMath.CalcInvoiceUnpaidPrice(
 			invoice.invoiceItems.value ?? [],
-			invoice.invoiceVouchers.value ?? []
+			invoice.paymentVouchers.value ?? []
 		)
 	);
 	return (

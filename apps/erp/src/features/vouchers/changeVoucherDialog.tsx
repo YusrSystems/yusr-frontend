@@ -1,7 +1,7 @@
 import {
+	Button,
 	ChangeableEntityMode,
 	ChangeDialog,
-	CheckboxField,
 	type CommonChangeDialogProps,
 	DateField,
 	FieldGroup,
@@ -20,15 +20,14 @@ import { Services } from "@/core/services/services.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { useTranslation } from "react-i18next";
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
-import { AccountType } from "@/core/data/account.ts";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
 import { CommissionType, PaymentMethod } from "@/core/data/paymentMethod.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
-import VoucherCategoriesSearchableSelect
-	from "@/core/components/searchableSelect/voucherCategoriesSearchableSelect.tsx";
+import { AccountClass, getAccountTypesByClasses } from "@/core/data/account.ts";
 
 
 export default function ChangeVoucherDialog({
@@ -39,19 +38,22 @@ export default function ChangeVoucherDialog({
 {
 	useSignals();
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<Voucher>(dto ? Voucher.load(dto) : Voucher.create()), []);
-
 	const {t} = useTranslation(["accounting", "common"]);
 	const amountToWords = useMemo(() => signal<string>(""), []);
-	const selectedPaymentMethod = useMemo(() =>
-		signal<PaymentMethod | undefined>(entity.value.paymentMethod.value), [entity.value.paymentMethod.value]);
+	const selectedPaymentMethod = useMemo(() => signal<PaymentMethod | undefined>(entity.value.paymentMethod.value), [entity.value.paymentMethod.value]);
 
 	useEffect(() =>
 	{
-		Cubits.accounts.init([AccountType.Client, AccountType.Supplier]);
 		Cubits.paymentMethods.init();
+		Cubits.partners.init();
 	}, []);
+
+	useEffect(() =>
+	{
+		if (!entity.value.isDirectMode.value) return;
+		Cubits.accounts.init(getAccountTypesByClasses(entity.value.type.value === VoucherType.Payment ? [AccountClass.Expense] : [AccountClass.Revenue]));
+	}, [entity.value.type.value, entity.value.isDirectMode.value]);
 
 	useEffect(() =>
 	{
@@ -78,15 +80,15 @@ export default function ChangeVoucherDialog({
 		if (selectedPaymentMethod.value?.commissionType.value === CommissionType.Percent)
 		{
 			entity.value.commissionAmount.value = (entity.value.amount.value * (selectedPaymentMethod.value.commissionAmount.value ?? 0)) / 100;
-			return;
 		}
 		else if (selectedPaymentMethod.value?.commissionType.value === CommissionType.Amount)
 		{
 			entity.value.commissionAmount.value = selectedPaymentMethod.value.commissionAmount.value ?? 0;
-			return;
 		}
-
-		entity.value.commissionAmount.value = 0;
+		else
+		{
+			entity.value.commissionAmount.value = 0;
+		}
 	};
 
 	if (
@@ -99,181 +101,204 @@ export default function ChangeVoucherDialog({
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const isPayment = entity.value.type.value === VoucherType.Payment;
+	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
 	const isReceipt = entity.value.type.value === VoucherType.Receipt;
-	const title = entity.value.mode.value === ChangeableEntityMode.Create
+
+	const title = !isUpdateMode
 		? t("vouchers.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("vouchers.entityName") }`;
 
-	return <ChangeDialog className="sm:max-w-4xl">
-		<ChangeDialog.Header title={ title }/>
-		<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
-			<FieldGroup className="gap-10">
-				<FieldsSection title={ t("vouchers.basicInfo") } columns={ 2 }>
-					<SelectField
-						label={ t("vouchers.voucherType") }
-						required
-						value={ entity.value.type }
-						error={ entity.value.getError("type") }
-						options={
-							[
-								{
-									label: t("vouchers.receiptVoucher"),
-									value: VoucherType.Receipt
-								},
-								{
-									label: t("vouchers.paymentVoucher"),
-									value: VoucherType.Payment
-								}
-							] }
-						onValueChange={ (newType) =>
-						{
-							if (newType === VoucherType.Receipt)
+	return (
+		<ChangeDialog className="sm:max-w-5xl">
+			<ChangeDialog.Header title={ title }/>
+			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
+				<FieldGroup className="gap-10">
+
+					<div className="flex bg-muted/40 rounded-lg p-1 border max-w-md mx-auto w-full">
+						<Button
+							type="button"
+							variant={ !entity.value.isDirectMode.value ? "default" : "ghost" }
+							onClick={ () =>
 							{
-								entity.value.isAmountDue.value = false;
-							}
-							reCalculateCommission();
-						} }
-						disabled={ entity.value.isDeleted.value }
-					/>
-
-					<DateField
-						label={ t("vouchers.date") }
-						required
-						value={ entity.value.date }
-						error={ entity.value.getError("date") }
-						disabled={ entity.value.isDeleted.value }
-					/>
-				</FieldsSection>
-
-				<FieldsSection columns={ 2 }>
-					<FormField
-						label={ t("vouchers.account") }
-						required
-						error={ entity.value.getError("accountId") }
-					>
-
-
-						<AccountsSearchableSelect
-							types={ [AccountType.Client, AccountType.Supplier] }
-							id={ entity.value.accountId }
-							label={ entity.value.accountName }
-							showAddButton={ false }
-							disabled={ entity.value.mode.value === ChangeableEntityMode.Update || entity.value.isDeleted.value }
-						/>
-
-
-					</FormField>
-
-					<FormField
-						label={ t("vouchers.paymentMethod") }
-						required
-						error={ entity.value.getError("paymentMethodId") }
-					>
-						<PaymentMethodsSearchableSelect
-							id={ entity.value.paymentMethodId }
-							label={ entity.value.paymentMethod.value?.name }
-							onSelect={ (pm) =>
-							{
-								selectedPaymentMethod.value = new PaymentMethod(pm);
-								reCalculateCommission();
+								entity.value.isDirectMode.value = false;
+								entity.value.glAccountId.value = undefined;
+								entity.value.glAccountName.value = undefined;
 							} }
+							className="flex-1 rounded-md text-xs font-semibold"
 							disabled={ entity.value.isDeleted.value }
-						/>
-					</FormField>
-				</FieldsSection>
+						>
+							{ t("vouchers.partnerPaymentMode", "دفعة لحساب عميل / مورد") }
+						</Button>
+						<Button
+							type="button"
+							variant={ entity.value.isDirectMode.value ? "default" : "ghost" }
+							onClick={ () =>
+							{
+								entity.value.isDirectMode.value = true;
+								entity.value.partnerId.value = undefined;
+								entity.value.partnerName.value = undefined;
+								entity.value.invoiceId.value = undefined;
+							} }
+							className="flex-1 rounded-md text-xs font-semibold"
+							disabled={ entity.value.isDeleted.value }
+						>
+							{ t("vouchers.directExpenseMode", "مصروف عام / إيراد مباشر") }
+						</Button>
+					</div>
 
-				<FieldsSection columns={ 3 }>
-					<NumberField
-						label={ t("vouchers.amount") }
-						required
-						value={ entity.value.amount }
-						error={ entity.value.getError("amount") }
-						currency={ <ErpCurrencyIcon/> }
-						onChange={ () => reCalculateCommission() }
-						disabled={ entity.value.isDeleted.value }
-					/>
-
-					{ isReceipt && (
-						<TextField
-							label={ t("vouchers.commissionAmount") }
-							value={ entity.value.commissionAmount }
-							disabled
-							className="bg-muted"
-						/>
-					) }
-
-					{ isPayment && (
-						<CheckboxField
+					<FieldsSection title={ t("vouchers.basicInfo") } columns={ 2 }>
+						<SelectField
+							label={ t("vouchers.voucherType") }
 							required
-							id="isAmountDue"
-							label={ t("vouchers.amountDue") }
-							error={ entity.value.getError("isAmountDue") }
-							checked={ entity.value.isAmountDue ?? false }
+							value={ entity.value.type }
+							error={ entity.value.getError("type") }
+							disabled={ isUpdateMode || entity.value.isDeleted.value }
+							options={ [
+								{label: t("vouchers.receiptVoucher"), value: VoucherType.Receipt},
+								{label: t("vouchers.paymentVoucher"), value: VoucherType.Payment}
+							] }
+							onValueChange={ () => reCalculateCommission() }
+						/>
+
+						<DateField
+							label={ t("vouchers.date") }
+							required
+							value={ entity.value.date }
+							error={ entity.value.getError("date") }
 							disabled={ entity.value.isDeleted.value }
 						/>
+
+						{ !entity.value.isDirectMode.value && (
+							<>
+								<FormField
+									label={ "الجهة" }
+									required
+									error={ entity.value.getError("partnerId") }
+								>
+									<PartnersSearchableSelect
+										id={ entity.value.partnerId }
+										label={ entity.value.partnerName }
+										disabled={ entity.value.isDeleted.value }
+									/>
+								</FormField>
+							</>
+						) }
+
+						{ entity.value.isDirectMode.value && (
+							<>
+								<FormField
+									label={ t("vouchers.category", "الحساب") }
+									required
+									error={ entity.value.getError("glAccountId") }
+								>
+									<AccountsSearchableSelect
+										id={ entity.value.glAccountId }
+										label={ entity.value.glAccountName }
+										disabled={ entity.value.isDeleted.value }
+									/>
+								</FormField>
+
+								<FormField
+									label={ "الجهة (اختياري)" }
+								>
+									<PartnersSearchableSelect
+										id={ entity.value.partnerId }
+										label={ entity.value.partnerName }
+										disabled={ entity.value.isDeleted.value }
+									/>
+								</FormField>
+							</>
+						) }
+
+						<FormField
+							label={ t("vouchers.paymentMethod") }
+							required
+							error={ entity.value.getError("paymentMethodId") }
+						>
+							<PaymentMethodsSearchableSelect
+								id={ entity.value.paymentMethodId }
+								label={ entity.value.paymentMethod.value?.name }
+								onSelect={ (pm) =>
+								{
+									selectedPaymentMethod.value = new PaymentMethod(pm);
+									reCalculateCommission();
+								} }
+								disabled={ entity.value.isDeleted.value }
+							/>
+						</FormField>
+
+						<NumberField
+							label={ t("vouchers.amount") }
+							required
+							value={ entity.value.amount }
+							error={ entity.value.getError("amount") }
+							currency={ <ErpCurrencyIcon/> }
+							onChange={ () => reCalculateCommission() }
+							disabled={ entity.value.isDeleted.value }
+						/>
+
+						{ isReceipt && (
+							<TextField
+								label={ t("vouchers.commissionAmount") }
+								value={ entity.value.commissionAmount }
+								disabled
+								className="bg-muted"
+							/>
+						) }
+
+						<div className="col-span-2">
+							<TextField
+								disabled
+								label={ t("vouchers.amountInWords") }
+								value={ amountToWords }
+							/>
+						</div>
+					</FieldsSection>
+
+					{ entity.value.invoiceId.value && (
+						<FieldsSection title={ t("vouchers.systemLinks") } columns={ 1 }>
+							<TextField
+								label={ t("vouchers.relatedInvoice") }
+								value={ signal(`#${ entity.value.invoiceId.value }`) }
+								disabled={ true }
+								className="bg-muted w-1/2"
+							/>
+						</FieldsSection>
 					) }
 
-					<TextField
-						disabled
-						label={ t("vouchers.amountInWords") }
-						value={ amountToWords }
-						onChange={ () => undefined }
-					/>
-
-					<FormField label="التصنيف">
-						<VoucherCategoriesSearchableSelect
-							id={ entity.value.categoryId }
-							label={ entity.value.categoryName }
+					<FieldsSection title={ t("vouchers.partyInfo") } columns={ 2 }>
+						<TextField
+							label={ t("vouchers.giver") }
+							value={ entity.value.giver }
 							disabled={ entity.value.isDeleted.value }
 						/>
-					</FormField>
-				</FieldsSection>
-
-
-				<FieldsSection title={ t("vouchers.partyInfo") } columns={ 2 }>
-					<TextField
-						label={ t("vouchers.giver") }
-						value={ entity.value.giver }
-						disabled={ entity.value.isDeleted.value }
-					/>
-					<TextField
-						label={ t("vouchers.recipient") }
-						value={ entity.value.recipient }
-						disabled={ entity.value.isDeleted.value }
-					/>
-				</FieldsSection>
-
-				{ entity.value.invoiceId.value && (
-					<FieldsSection title={ t("vouchers.systemLinks") } columns={ 1 }>
 						<TextField
-							label={ t("vouchers.relatedInvoice") }
-							value={ signal(`#${ entity.value.invoiceId.value }`) }
-							disabled={ true }
-							className="bg-muted w-1/2"
+							label={ t("vouchers.recipient") }
+							value={ entity.value.recipient }
+							disabled={ entity.value.isDeleted.value }
 						/>
 					</FieldsSection>
-				) }
 
-				<FieldsSection columns={ 1 }>
-					<TextAreaField
-						label={ t("vouchers.description") }
-						value={ entity.value.description || "" }
-						rows={ 15 }
-						disabled={ entity.value.isDeleted.value }
-					/>
-				</FieldsSection>
-			</FieldGroup>
-		</div>
+					<FieldsSection columns={ 1 }>
+						<TextAreaField
+							label={ t("vouchers.description") }
+							value={ entity.value.description ?? "" }
+							rows={ 4 }
+							disabled={ entity.value.isDeleted.value }
+						/>
+					</FieldsSection>
+				</FieldGroup>
+			</div>
 
-		<ChangeDialog.Footer>
-			<ChangeDialog.Close/>
-			<ChangeDialog.SaveButton<Voucher, VoucherDto>
-				entity={ entity }
-				service={ service }
-				onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
-				disabled={ entity.value.isDeleted.value }
-			/>
-		</ChangeDialog.Footer>
-	</ChangeDialog>;
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+				<ChangeDialog.SaveButton<Voucher, VoucherDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+					disabled={ entity.value.isDeleted.value }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

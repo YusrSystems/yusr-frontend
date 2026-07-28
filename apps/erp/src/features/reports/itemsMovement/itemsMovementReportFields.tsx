@@ -8,21 +8,16 @@ import {
 	CollapsibleTrigger,
 	DateField,
 	FormField,
-	MultiSelectField,
-	SelectField
+	MultiSelectField
 } from "yusr-ui";
-import {
-	ItemsMovementReportGroupOption,
-	ItemsMovementReportRequest,
-	ItemsMovementReportTransType
-} from "@/features/reports/itemsMovement/itemsMovementReportRequest.ts";
-import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
+import { ItemsMovementReportRequest } from "@/features/reports/itemsMovement/itemsMovementReportRequest.ts";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
-import { AccountType } from "@/core/data/account.ts";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect.tsx";
 import { ItemMetadataTempService } from "@/core/networking/itemMetadataTempService.ts";
+import { DocumentType } from "@/core/types/documentType.ts";
 
 
 interface ItemsMovementReportFieldsProps
@@ -34,24 +29,19 @@ interface ItemsMovementReportFieldsProps
 export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMovementReportFieldsProps)
 {
 	useSignals();
-	const {t} = useTranslation(["erpCommon", "common", "stocking"]);
+	const {t} = useTranslation(["erpCommon", "common", "stocking", "accounting"]);
 
 	const isOpen = useMemo(() => signal(true), []);
 
 	const fromDate = useMemo(() => signal<string>(), []);
 	const toDate = useMemo(() => signal<string>(), []);
-	const transTypeIds = useMemo(() => signal<ItemsMovementReportTransType[]>([]), []);
+	const documentTypes = useMemo(() => signal<DocumentType[]>([]), []);
 	const itemIds = useMemo(() => signal<number[]>([]), []);
 	const itemLabels = useMemo(() => signal<Record<number, string>>({}), []);
-	const fromAccountId = useMemo(() => signal<number>(), []);
-	const fromAccountName = useMemo(() => signal<string>(), []);
-	const toAccountId = useMemo(() => signal<number>(), []);
-	const toAccountName = useMemo(() => signal<string>(), []);
-	const fromStoreId = useMemo(() => signal<number>(), []);
-	const fromStoreName = useMemo(() => signal<string>(), []);
-	const toStoreId = useMemo(() => signal<number>(), []);
-	const toStoreName = useMemo(() => signal<string>(), []);
-	const groupOption = useMemo(() => signal<ItemsMovementReportGroupOption>(), []);
+	const partnerId = useMemo(() => signal<number>(), []);
+	const partnerName = useMemo(() => signal<string>(), []);
+	const storeId = useMemo(() => signal<number>(), []);
+	const storeName = useMemo(() => signal<string>(), []);
 
 	const itemClasses = useMemo(() => signal<string[]>([]), []);
 	const itemBrands = useMemo(() => signal<string[]>([]), []);
@@ -62,24 +52,21 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 	{
 		void ItemMetadataTempService.getDistinctClasses().then((classes) => availableClasses.value = classes);
 		void ItemMetadataTempService.getDistinctBrands().then((brands) => availableBrands.value = brands);
-	}, []);
+	}, [availableBrands, availableClasses]);
 
 	const handleClear = () =>
 	{
 		fromDate.value = undefined;
 		toDate.value = undefined;
-		transTypeIds.value = [];
+		documentTypes.value = [];
 		itemIds.value = [];
 		itemLabels.value = {};
-		fromAccountId.value = undefined;
-		fromAccountName.value = undefined;
-		toAccountId.value = undefined;
-		toAccountName.value = undefined;
-		fromStoreId.value = undefined;
-		fromStoreName.value = undefined;
-		toStoreId.value = undefined;
-		toStoreName.value = undefined;
-		groupOption.value = undefined;
+		partnerId.value = undefined;
+		partnerName.value = undefined;
+		storeId.value = undefined;
+		storeName.value = undefined;
+		itemClasses.value = [];
+		itemBrands.value = [];
 
 		// Trigger the callback with a clean, default request instance
 		onSubmit(new ItemsMovementReportRequest());
@@ -111,17 +98,15 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 					<div className="grid grid-cols-2 gap-3">
 						<MultiSelectField
 							label={ t("reports.movementType") }
-							value={ transTypeIds }
+							value={ documentTypes }
 							options={ [
-								{label: t("reports.sell"), value: ItemsMovementReportTransType.Sell},
-								{label: t("reports.purchase"), value: ItemsMovementReportTransType.Purchase},
-								{label: t("reports.sellReturn"), value: ItemsMovementReportTransType.SellReturn},
-								{
-									label: t("reports.purchaseReturn"),
-									value: ItemsMovementReportTransType.PurchaseReturn
-								},
-								{label: t("reports.transfer"), value: ItemsMovementReportTransType.Transfer},
-								{label: t("reports.settlement"), value: ItemsMovementReportTransType.Settlement}
+								{label: t("accounting:invoices.sellInvoice"), value: DocumentType.Sales},
+								{label: t("accounting:invoices.purchaseInvoice"), value: DocumentType.Purchase},
+								{label: t("accounting:invoices.sellReturn"), value: DocumentType.SalesReturn},
+								{label: t("accounting:invoices.purchaseReturn"), value: DocumentType.PurchaseReturn},
+								{label: t("sidebar.itemTransfers"), value: DocumentType.ItemTransfer},
+								{label: t("sidebar.itemsSettlements"), value: DocumentType.ItemsSettlement},
+								{label: t("sidebar.costAdjustments"), value: DocumentType.CostAdjustment}
 							] }
 						/>
 
@@ -150,44 +135,16 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 					</div>
 
 					<div className="grid grid-cols-2 gap-3">
-						<FormField label={ t("reports.fromAccount") }>
-							<AccountsSearchableSelect
-								id={ fromAccountId }
-								label={ fromAccountName }
-								types={ [AccountType.Client, AccountType.Supplier] }
+						<FormField label={ t("reports.partner", "الجهة") }>
+							<PartnersSearchableSelect
+								id={ partnerId }
+								label={ partnerName }
 							/>
 						</FormField>
-						<FormField label={ t("reports.toAccount") }>
-							<AccountsSearchableSelect
-								id={ toAccountId }
-								label={ toAccountName }
-								types={ [AccountType.Client, AccountType.Supplier] }
-							/>
+						<FormField label={ t("reports.store", "المستودع") }>
+							<StoresSearchableSelect id={ storeId } label={ storeName }/>
 						</FormField>
 					</div>
-
-					<div className="grid grid-cols-2 gap-3">
-						<FormField label={ t("reports.fromStore") }>
-							<StoresSearchableSelect id={ fromStoreId } label={ fromStoreName }/>
-						</FormField>
-						<FormField label={ t("reports.toStore") }>
-							<StoresSearchableSelect id={ toStoreId } label={ toStoreName }/>
-						</FormField>
-					</div>
-
-					<SelectField
-						label={ t("reports.groupBy") }
-						value={ groupOption }
-						options={ [
-							{label: t("common:searchableSelect.nullOption"), value: undefined},
-							{label: t("reports.item"), value: ItemsMovementReportGroupOption.Item},
-							{label: t("reports.from"), value: ItemsMovementReportGroupOption.From},
-							{label: t("reports.to"), value: ItemsMovementReportGroupOption.To},
-							{label: t("reports.day"), value: ItemsMovementReportGroupOption.Day},
-							{label: t("reports.month"), value: ItemsMovementReportGroupOption.Month},
-							{label: t("reports.year"), value: ItemsMovementReportGroupOption.Year}
-						] }
-					/>
 
 					<div className="flex justify-end gap-2">
 						<Button
@@ -202,17 +159,16 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 							className="self-end"
 							disabled={ isLoading }
 							onClick={ () => onSubmit(new ItemsMovementReportRequest({
-								transTypeIds: transTypeIds.value.length ? transTypeIds.value : null,
+								documentTypes: documentTypes.value.length ? documentTypes.value : null,
 								itemIds: itemIds.value.length ? itemIds.value : null,
 								itemClasses: itemClasses.value.length ? itemClasses.value : null,
 								itemBrands: itemBrands.value.length ? itemBrands.value : null,
 								fromDate: fromDate.value ?? null,
 								toDate: toDate.value ?? null,
-								fromAccountId: fromAccountId.value ?? null,
-								toAccountId: toAccountId.value ?? null,
-								fromStoreId: fromStoreId.value ?? null,
-								toStoreId: toStoreId.value ?? null,
-								groupOption: groupOption.value ?? null
+								partnerId: partnerId.value ?? null,
+								partnerName: partnerName.value ?? null,
+								storeId: storeId.value ?? null,
+								storeName: storeName.value ?? null
 							})) }
 						>
 							{ t("common:filter.apply") }

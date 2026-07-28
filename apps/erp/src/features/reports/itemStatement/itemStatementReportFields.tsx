@@ -81,7 +81,8 @@ export function ItemStatementReportFields({
 							disabled={ isLoading || !itemId.value }
 							onClick={ () => onSubmit(new ItemStatementReportRequest({
 								itemId: itemId.value!,
-								storeId: storeId.value ?? null
+								storeId: storeId.value,
+								storeName: storeName.value
 							})) }
 						>
 							{ t("common:filter.apply") }

@@ -28,7 +28,7 @@ export function ItemStatementReport({isPortal = false}: ItemStatementReportProps
 					titleEn="ITEM STATEMENT"
 				>
 					{ data &&
-                        <span className="text-destructive font-bold">{ data.store?.name ?? "كل المستودعات" }</span> }
+                        <span className="text-destructive font-bold">{ data.storeName ?? "كل المستودعات" }</span> }
 				</ReportHeader.TitleSection>
 				<ReportHeader.MetaDataSection/>
 			</ReportHeader>

@@ -1,7 +1,9 @@
 import {
 	ArrowRightLeft,
 	BarChart2,
+	FileSearch,
 	FileText,
+	LineChart,
 	type LucideIcon,
 	Package,
 	PackageOpen,
@@ -12,12 +14,10 @@ import {
 } from "lucide-react";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, SystemPermissionsActions } from "yusr-ui";
-import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Button } from "yusr-ui";
 import { Cubits } from "@/core/services/cubits.ts";
-import { AccountType } from "@/core/data/account.ts";
-import { Services } from "@/core/services/services.ts";
 import { AppNavigator } from "@/app/appNavigator.ts";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 interface Report
@@ -26,7 +26,6 @@ interface Report
 	name: string;
 	description: string;
 	icon: LucideIcon;
-	hasAuth: boolean;
 }
 
 interface ReportGroup
@@ -85,15 +84,11 @@ function ReportGroupSection({group}: ReportGroupSectionProps)
 
 			<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 				{ group.reports.map((report, i) => (
-					report.hasAuth
-						? (
-							<ReportCard
-								key={ i }
-								report={ report }
-								groupIconColor={ group.iconColor }
-							/>
-						)
-						: null
+					<ReportCard
+						key={ i }
+						report={ report }
+						groupIconColor={ group.iconColor }
+					/>
 				)) }
 			</div>
 		</section>
@@ -108,8 +103,16 @@ export default function ReportsPage()
 	{
 		Cubits.items.init();
 		Cubits.stores.init();
-		Cubits.accounts.init([AccountType.Client, AccountType.Supplier]);
 	}, []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("reports.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	const reportGroups: ReportGroup[] = [{
 		label: t("reports.financial"),
@@ -120,51 +123,43 @@ export default function ReportsPage()
 			              onClick={ async () => await AppNavigator.navigate("/reports/invoicesList") }>{ t("reports.create") }</Button>,
 			name: t("reports.InvoicesList"),
 			description: t("reports.InvoicesListDescription"),
-			icon: ReceiptText,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.ReportInvoiceList,
-				SystemPermissionsActions.Get
-			)
+			icon: ReceiptText
 		}, {
 			comp: <Button variant="outline"
 			              onClick={ async () => await AppNavigator.navigate("/reports/profitAndLoss") }>{ t("reports.create") }</Button>,
 			name: t("reports.profitAndLoss"),
 			description: t("reports.profitAndLossDescription"),
-			icon: TrendingUp,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.ReportProfitAndLoss,
-				SystemPermissionsActions.Get
-			)
+			icon: TrendingUp
+		}, {
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/salesProfitability") }>{ t("reports.create") }</Button>,
+			name: t("reports.salesProfitability", "تقرير ربحية المبيعات"),
+			description: t("reports.salesProfitabilityDescription", "عرض ربحية المبيعات مع التكاليف المباشرة"),
+			icon: LineChart
 		}, {
 			comp: <Button variant="outline"
 			              onClick={ async () => await AppNavigator.navigate("/reports/balanceSheet") }>{ t("reports.create") }</Button>,
 			name: t("reports.balanceSheet"),
 			description: t("reports.balanceSheetDescription"),
-			icon: FileText,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.ReportBalanceSheet,
-				SystemPermissionsActions.Get
-			)
+			icon: FileText
 		}, {
 			comp: <Button variant="outline"
 			              onClick={ async () => await AppNavigator.navigate("/reports/accountsList") }>{ t("reports.create") }</Button>,
 			name: t("reports.accountsList"),
 			description: t("reports.accountsListDescription"),
-			icon: FileText,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.ReportAccountList,
-				SystemPermissionsActions.Get
-			)
+			icon: FileText
 		}, {
 			comp: <Button variant="outline"
 			              onClick={ async () => await AppNavigator.navigate("/reports/accountStatement") }>{ t("reports.create") }</Button>,
 			name: t("reports.accountStatement"),
 			description: t("reports.accountStatementDescription"),
-			icon: FileText,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.ReportAccountStatement,
-				SystemPermissionsActions.Get
-			)
+			icon: FileText
+		}, {
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/partnerStatement") }>{ t("reports.create") }</Button>,
+			name: t("reports.partnerStatement"),
+			description: t("reports.partnerStatementDescription"),
+			icon: FileText
 		}]
 	}, {
 		label: t("reports.tax"),
@@ -172,24 +167,22 @@ export default function ReportsPage()
 		iconColor: "text-amber-600",
 		reports: [{
 			comp: <Button variant="outline"
-			              onClick={ async () => await AppNavigator.navigate("/reports/taxReturn") }>{ t("reports.create") }</Button>,
-			name: t("reports.taxReturn"),
-			description: t("reports.taxReturnDescription"),
-			icon: FileText,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.ReportTaxReturn,
-				SystemPermissionsActions.Get
-			)
+			              onClick={ async () => await AppNavigator.navigate("/reports/vatReturn") }>{ t("reports.create") }</Button>,
+			name: "الإقرار الضريبي",
+			description: "تقرير ضريبة القيمة المضافة الدوري",
+			icon: FileText
+		}, {
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/taxAudit") }>{ t("reports.create") }</Button>,
+			name: "تقرير المراجعة الضريبية",
+			description: "تفاصيل الفواتير والضرائب للمراجعة",
+			icon: FileSearch
 		}, {
 			comp: <Button variant="outline"
 			              onClick={ async () => await AppNavigator.navigate("/reports/itemsTaxStatement") }>{ t("reports.create") }</Button>,
 			name: t("reports.itemsTaxStatement"),
 			description: t("reports.itemsTaxStatementDescription"),
-			icon: Percent,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.ReportItemTaxStatement,
-				SystemPermissionsActions.Get
-			)
+			icon: Percent
 		}]
 	}, {
 		label: t("reports.inventory"),
@@ -200,31 +193,19 @@ export default function ReportsPage()
 			              onClick={ async () => await AppNavigator.navigate("/reports/itemsList") }>{ t("reports.create") }</Button>,
 			name: t("reports.itemsList"),
 			description: t("reports.itemsListDescription"),
-			icon: PackageSearch,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.ReportItemList,
-				SystemPermissionsActions.Get
-			)
+			icon: PackageSearch
 		}, {
 			comp: <Button variant="outline"
 			              onClick={ async () => await AppNavigator.navigate("/reports/itemStatement") }>{ t("reports.create") }</Button>,
 			name: t("reports.itemStatement"),
 			description: t("reports.itemStatementDescription"),
-			icon: PackageOpen,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.ReportItemMovement,
-				SystemPermissionsActions.Get
-			)
+			icon: PackageOpen
 		}, {
 			comp: <Button variant="outline"
 			              onClick={ async () => await AppNavigator.navigate("/reports/itemsMovement") }>{ t("reports.create") }</Button>,
 			name: t("reports.itemsMovement"),
 			description: t("reports.itemsMovementDescription"),
-			icon: ArrowRightLeft,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.ReportItemMovement,
-				SystemPermissionsActions.Get
-			)
+			icon: ArrowRightLeft
 		}]
 	}];
 

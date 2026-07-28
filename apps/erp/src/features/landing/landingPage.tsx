@@ -3,12 +3,27 @@ import LandingFeatures from "./landingFeatures";
 import LandingFooter from "./landingFooter";
 import LandingHeader from "./landingHeader";
 import LandingHero from "./landingHero";
+import LandingPricing from "./landingPricing";
 import LandingWhyUs from "./landingWhyUs";
+import { APP_NAME } from "../../../appConfig.ts";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 
 const Landing = () =>
 {
 	const {lightbox, closeLightbox} = useLightBox();
+
+	const {t} = useTranslation("landing");
+
+	useEffect(() =>
+	{
+		document.title = `${ t("hero.title") } - ${ t("hero.subtitle") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	return (
 		<div dir="rtl" className="relative min-h-svh text-foreground">
@@ -35,8 +50,8 @@ const Landing = () =>
 			<Separator className="mx-auto max-w-6xl"/>
 			<LandingWhyUs/>
 
-			{/*<Separator className="mx-auto max-w-6xl"/>*/ }
-			{/*<LandingPricing monthlyPrice={ 150 } yearlyPrice={ 125 } />*/ }
+			<Separator className="mx-auto max-w-6xl"/>
+			<LandingPricing monthlyPrice={ 150 } yearlyPrice={ 125 }/>
 
 			<LandingFooter/>
 		</div>

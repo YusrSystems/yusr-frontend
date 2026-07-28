@@ -12,7 +12,7 @@ export default function QuotationInvoicesPage()
 	const {t} = useTranslation("accounting");
 	return (
 		<InvoicesPage
-			permissionResource={ SystemPermissionsResources.Invoices } // TODO check this for security
+			permissionResource={ SystemPermissionsResources.Invoices }
 			entityName={ t("invoices.quotation") }
 			addNewItemTitle={ t("invoices.addNewQuotationTitle") }
 			totalInvoicesTitle={ t("invoices.totalQuotations") }

@@ -1,62 +1,82 @@
 import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { CrudTablePagination, ReportLoading } from "yusr-ui";
+import { CrudTablePagination, ReportLoading, SystemPermissionsActions } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage.tsx";
 import { ItemsMovementReportFields } from "@/features/reports/itemsMovement/itemsMovementReportFields.tsx";
 import { ItemsMovementReport } from "@/features/reports/itemsMovement/itemsMovementReport.tsx";
 import { ItemsMovementReportRequest } from "@/features/reports/itemsMovement/itemsMovementReportRequest.ts";
 import { Cubits } from "@/core/services/cubits.ts";
-import type { ItemsMovementReportRow } from "@/features/reports/itemsMovement/itemsMovementReportResult.ts";
+import type { ItemsMovementLine } from "@/features/reports/itemsMovement/itemsMovementReportResult.ts";
+import { getDocumentTypeName } from "@/core/types/documentType.ts";
+import { APP_NAME } from "../../../../appConfig.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
 
 
 export function ItemsMovementReportPage()
 {
 	useSignals();
 
-	// Remembers the last SUBMITTED filters so a page-change click can re-run
-	// the same query with just a different page number, without needing the
-	// form re-submitted.
 	const lastRequest = useMemo(() => signal<ItemsMovementReportRequest>(new ItemsMovementReportRequest()), []);
 
 	useEffect(() =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemMovement, SystemPermissionsActions.Get)) return;
 		void Cubits.ItemsMovementReport.getReportData(lastRequest.value, 1);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSubmit = (request: ItemsMovementReportRequest) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemMovement, SystemPermissionsActions.Get)) return;
 		lastRequest.value = request;
 		void Cubits.ItemsMovementReport.getReportData(request, 1);
 	};
 
 	const handlePageChanged = (newPage: number) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemMovement, SystemPermissionsActions.Get)) return;
 		void Cubits.ItemsMovementReport.getReportData(lastRequest.value, newPage);
 	};
 
 	const isLoading = Cubits.ItemsMovementReport.state.value instanceof ReportLoading;
+	const data = Cubits.ItemsMovementReport.result.value;
+
+	useEffect(() =>
+	{
+		if (data && lastRequest.value.fromDate && lastRequest.value.toDate)
+		{
+			document.title = `تقرير حركة المواد - من ${ lastRequest.value.fromDate } إلى ${ lastRequest.value.toDate }`;
+		}
+		else
+		{
+			document.title = "تقرير حركة المواد";
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [data, lastRequest.value.fromDate, lastRequest.value.toDate]);
 
 	return (
-		<ReportPage>
-
+		<ReportPage permissionResource={ SystemPermissionsResources.ReportItemMovement }>
 			<ReportPage.ActionButtonsContainer>
-				<ReportPage.ExcelButton<ItemsMovementReportRow>
+				<ReportPage.ExcelButton<ItemsMovementLine>
 					fileName="تقرير_حركة_المواد"
-					getRows={ async () => Cubits.ItemsMovementReport.result.value?.itemsMovementRows ?? [] }
+					getRows={ async () => Cubits.ItemsMovementReport.result.value?.lines ?? [] }
 					columns={ [
-						{header: "التاريخ", accessor: (r) => r.transDate},
-						{header: "نوع العملية", accessor: (r) => r.transType},
-						{header: "رقم العملية", accessor: (r) => r.transId},
+						{header: "التاريخ", accessor: (r) => r.date},
+						{header: "نوع المستند", accessor: (r) => getDocumentTypeName(r.documentType)},
+						{header: "رقم المستند", accessor: (r) => r.documentId.toString()},
 						{header: "اسم المادة", accessor: (r) => r.itemName},
-						{header: "الكمية", accessor: (r) => r.quantity},
-						{header: "التكلفة", accessor: (r) => r.cost},
-						{header: "السعر", accessor: (r) => r.price},
-						{header: "إجمالي السعر", accessor: (r) => r.totalPrice},
-						{header: "الربح", accessor: (r) => r.profit},
-						{header: "من", accessor: (r) => r.from},
-						{header: "إلى", accessor: (r) => r.to}
+						{header: "المستودع", accessor: (r) => r.storeName},
+						{header: "الجهة", accessor: (r) => r.partnerName ?? ""},
+						{header: "الكمية الواردة", accessor: (r) => r.quantityIn.toString()},
+						{header: "الكمية الصادرة", accessor: (r) => r.quantityOut.toString()},
+						{header: "تكلفة الوحدة", accessor: (r) => r.unitCost.toString()},
+						{header: "القيمة", accessor: (r) => r.value.toString()}
 					] }
 				/>
 				<ReportPage.PrintButton/>
@@ -70,7 +90,7 @@ export function ItemsMovementReportPage()
 				<ItemsMovementReport/>
 			</div>
 
-			{ Cubits.ItemsMovementReport.result.value && (
+			{ Cubits.ItemsMovementReport.result.value && Cubits.ItemsMovementReport.result.value.totalCount > 0 && (
 				<CrudTablePagination
 					className="print:hidden w-full bg-card text-card-foreground border border-t-0 p-4 shadow-sm rounded-b-xl shrink-0"
 					pageSize={ Cubits.ItemsMovementReport.result.value.rowsPerPage }

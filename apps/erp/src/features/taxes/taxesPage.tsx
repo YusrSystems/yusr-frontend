@@ -17,12 +17,22 @@ import {
 	UnauthorizedPage
 } from "yusr-ui";
 import ChangeTaxDialog from "./changeTaxDialog";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function TaxesPage()
 {
 	const {t} = useTranslation("accounting");
 	useEffect(() => Cubits.taxes.init(), []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("taxes.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Get))
 	{

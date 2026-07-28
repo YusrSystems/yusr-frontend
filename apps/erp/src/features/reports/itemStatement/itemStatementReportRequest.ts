@@ -1,7 +1,8 @@
 export class ItemStatementReportRequest
 {
 	itemId!: number;
-	storeId?: number | null;
+	storeId?: number;
+	storeName?: string;
 	pageNumber?: number;
 	rowsPerPage?: number;
 

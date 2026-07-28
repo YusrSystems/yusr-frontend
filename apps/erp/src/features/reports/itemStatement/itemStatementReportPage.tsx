@@ -2,24 +2,28 @@ import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { CrudTablePagination, ReportLoading } from "yusr-ui";
+import { CrudTablePagination, ReportLoading, SystemPermissionsActions } from "yusr-ui";
 import ReportPage from "@/features/report/reportPage.tsx";
 import { ItemStatementReportFields } from "@/features/reports/itemStatement/itemStatementReportFields.tsx";
 import { ItemStatementReport } from "@/features/reports/itemStatement/itemStatementReport.tsx";
 import { Cubits } from "@/core/services/cubits.ts";
 import { ItemStatementReportRequest } from "@/features/reports/itemStatement/itemStatementReportRequest.ts";
-import type { ItemStatementRow } from "@/features/reports/itemStatement/itemStatementReportResult.ts";
+import type { ItemStatementLine } from "@/features/reports/itemStatement/itemStatementReportResult.ts";
+import { APP_NAME } from "../../../../appConfig.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
 
 
 export function ItemStatementReportPage()
 {
 	useSignals();
-
 	const {itemId, itemName} = useParams<{ itemId?: string, itemName?: string }>();
 	const lastRequest = useMemo(() => signal<ItemStatementReportRequest | undefined>(undefined), []);
 
 	useEffect(() =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemStatement, SystemPermissionsActions.Get)) return;
+
 		const parsedItemId = itemId ? Number(itemId) : undefined;
 		if (parsedItemId && !Number.isNaN(parsedItemId))
 		{
@@ -32,12 +36,14 @@ export function ItemStatementReportPage()
 
 	const handleSubmit = (request: ItemStatementReportRequest) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemStatement, SystemPermissionsActions.Get)) return;
 		lastRequest.value = request;
 		void Cubits.ItemStatementReport.getReportData(request, 1);
 	};
 
 	const handlePageChanged = (newPage: number) =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemStatement, SystemPermissionsActions.Get)) return;
 		if (!lastRequest.value) return;
 		void Cubits.ItemStatementReport.getReportData(lastRequest.value, newPage);
 	};
@@ -45,22 +51,40 @@ export function ItemStatementReportPage()
 	const isLoading = Cubits.ItemStatementReport.state.value instanceof ReportLoading;
 	const data = Cubits.ItemStatementReport.result.value;
 
+	useEffect(() =>
+	{
+		const currentItemName = data?.itemName || itemName || "محددة";
+
+		if (data)
+		{
+			document.title = `كشف حركة مادة - ${ currentItemName }`;
+		}
+		else
+		{
+			document.title = "كشف حركة مادة";
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [data, itemName]);
+
 	return (
-		<ReportPage>
+		<ReportPage permissionResource={ SystemPermissionsResources.ReportItemStatement }>
 			<ReportPage.ActionButtonsContainer>
-				<ReportPage.ExcelButton<ItemStatementRow>
+				<ReportPage.ExcelButton<ItemStatementLine>
 					fileName={ `كشف_مادة_${ itemName || "محددة" }` }
-					getRows={ async () => Cubits.ItemStatementReport.result.value?.itemStatementRows ?? [] }
+					getRows={ async () => Cubits.ItemStatementReport.result.value?.lines ?? [] }
 					columns={ [
-						{header: "التاريخ", accessor: (r) => r.transDate},
-						{header: "نوع العملية", accessor: (r) => r.transType},
-						{header: "رقم المستند", accessor: (r) => r.transId.toString()},
-						{header: "التكلفة", accessor: (r) => r.cost.toString()},
-						{header: "الكمية في العملية", accessor: (r) => r.transQtn.toString()},
-						{header: "الكمية في الوحدة الأساسية", accessor: (r) => r.mainUnitQtn.toString()},
-						{header: "كمية المادة", accessor: (r) => r.itemQtn.toString()},
-						{header: "المستودع", accessor: (r) => r.storeName ?? ""},
-						{header: "الطرف الثاني", accessor: (r) => r.secondPartyName ?? ""}
+						{header: "التاريخ", accessor: (r) => r.date},
+						{header: "رقم المستند", accessor: (r) => r.documentId.toString()},
+						{header: "المستودع", accessor: (r) => r.storeName},
+						{header: "الطرف الثاني", accessor: (r) => r.secondPartyName ?? ""},
+						{header: "الكمية الواردة", accessor: (r) => r.quantityIn.toString()},
+						{header: "الكمية الصادرة", accessor: (r) => r.quantityOut.toString()},
+						{header: "الرصيد الجاري", accessor: (r) => r.runningQuantity.toString()},
+						{header: "تكلفة الوحدة", accessor: (r) => r.unitCost.toString()}
 					] }
 				/>
 				<ReportPage.PrintButton/>

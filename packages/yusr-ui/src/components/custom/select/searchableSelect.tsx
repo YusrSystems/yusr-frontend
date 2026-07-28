@@ -58,7 +58,10 @@ export function SearchableSelect<TDto extends Dto>({children}: PropsWithChildren
 }
 
 SearchableSelect.Trigger = function (
-	{className, label, ...props}: React.ComponentProps<"button"> & { label?: Signal<string | undefined>; }
+	{className, label, placeholder, ...props}: React.ComponentProps<"button"> & {
+		label?: Signal<string | undefined>;
+		placeholder?: string
+	}
 )
 {
 	useSignals();
@@ -79,7 +82,8 @@ SearchableSelect.Trigger = function (
 				) }
 				{ ...props }
 			>
-				<span className="truncate text-start">{ resolvedLabel || data.t("searchableSelect.placeholder") }</span>
+				<span
+					className="truncate text-start">{ resolvedLabel || (placeholder ?? data.t("searchableSelect.placeholder")) }</span>
 				<ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50 ltr:ml-2 rtl:mr-2"/>
 			</Button>
 		</PopoverTrigger>
@@ -393,6 +397,34 @@ SearchableSelect.DeleteOptionButton = function ({onDelete}: { onDelete: () => Pr
 						<Trash2 className="h-3.5 w-3.5"/>
 					</Button>
 				) }
+		</div>
+	);
+};
+
+SearchableSelect.EditOptionButton = function ({onEdit}: { onEdit: () => void; })
+{
+	return (
+		<div
+			className="flex items-center justify-center min-w-[32px]"
+			onClick={ (e) => e.stopPropagation() }
+			onPointerDown={ (e) => e.stopPropagation() }
+			onPointerUp={ (e) => e.stopPropagation() }
+		>
+			<Button
+				type="button"
+				onClick={ (e) =>
+				{
+					e.preventDefault();
+					e.stopPropagation();
+					onEdit();
+				} }
+				variant="outline"
+				size="sm"
+				className="shrink-0 rounded-lg px-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+				aria-label="edit"
+			>
+				<Pencil className="h-3.5 w-3.5"/>
+			</Button>
 		</div>
 	);
 };

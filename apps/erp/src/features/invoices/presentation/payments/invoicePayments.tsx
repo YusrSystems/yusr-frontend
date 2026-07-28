@@ -4,9 +4,11 @@ import { Button, CrudEmptyTablePreview, FormField, NumberField } from "yusr-ui";
 import InvoiceItemsMath from "../../logic/invoiceItemsMath";
 import type Invoice from "@/core/data/invoices/invoice.ts";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
-import { InvoiceVoucher } from "@/core/data/invoices/invoiceVoucher.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { useSignals } from "@preact/signals-react/runtime";
+import { Voucher, VoucherType } from "@/core/data/voucher.ts";
+import { Services } from "@/core/services/services.ts";
+import { InvoiceType } from "@/core/types/invoiceType.ts";
 
 
 export default function InvoicePayments({invoice}: { invoice: Invoice })
@@ -14,10 +16,10 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 	useSignals();
 	const {t} = useTranslation("accounting");
 
-	const paymentVouchers = invoice.paymentVouchers();
+	const paymentVouchers = invoice.paymentVouchers.value;
 	const unpaidPrice = InvoiceItemsMath.CalcInvoiceUnpaidPrice(
 		invoice.invoiceItems.value ?? [],
-		invoice.invoiceVouchers.value ?? []
+		invoice.paymentVouchers.value ?? []
 	);
 
 	return (
@@ -39,7 +41,15 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 						className="h-8 gap-1.5 text-xs"
 						onClick={ () =>
 						{
-							invoice.invoiceVouchers.value = [...invoice.invoiceVouchers.value, InvoiceVoucher.createPaymentVoucher(invoice)];
+							const newVoucher = Voucher.create({
+								invoiceId: invoice.id.value,
+								partnerId: invoice.partnerId.value,
+								partnerName: invoice.partnerName.value,
+								paymentMethodId: Services.auth.setting?.mainPaymentMethodId?.value,
+								type: invoice.type.value === InvoiceType.Sell || invoice.type.value === InvoiceType.PurchaseReturn ? VoucherType.Receipt : VoucherType.Payment,
+								amount: unpaidPrice
+							});
+							invoice.paymentVouchers.value = [...invoice.paymentVouchers.value, newVoucher];
 							invoice.updatePaidAmount();
 						} }
 					>
@@ -63,20 +73,21 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 			{ paymentVouchers.length > 0
 				? (
 					<div className="divide-y divide-border">
-						{ paymentVouchers.map((invoiceVoucher) => (
+						{ paymentVouchers.map((voucher) => (
 							<div
-								key={ invoiceVoucher.voucherId.value }
+								key={ voucher.id.value }
 								className="flex items-center gap-3 px-4 py-2"
 							>
 								<div className="flex-1 min-w-0">
-									<FormField label="" error={ invoiceVoucher.getError("paymentMethodId") }>
+									<FormField label="" error={ voucher.getError("paymentMethodId") }>
 										<PaymentMethodsSearchableSelect
-											id={ invoiceVoucher.paymentMethodId }
-											label={ invoiceVoucher.paymentMethodName }
+											id={ voucher.paymentMethodId }
+											label={ voucher.paymentMethodName }
 											onSelect={ (pm) =>
 											{
-												invoiceVoucher.paymentMethodId.value = pm?.id;
-												invoiceVoucher.paymentMethodName.value = pm?.name;
+												if (pm == undefined) return;
+												voucher.paymentMethodId.value = pm?.id;
+												voucher.paymentMethodName.value = pm?.name;
 											} }
 										/>
 									</FormField>
@@ -85,9 +96,9 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 								<div className="w-36 shrink-0">
 									<NumberField
 										min={ 0 }
-										max={ unpaidPrice + (invoiceVoucher.amount.value ?? 0) }
-										value={ invoiceVoucher.amount }
-										error={ invoiceVoucher.getError("amount") }
+										max={ unpaidPrice + (voucher.amount.value ?? 0) }
+										value={ voucher.amount }
+										error={ voucher.getError("amount") }
 										currency={ <ErpCurrencyIcon/> }
 										onChange={ () => invoice.updatePaidAmount() }
 									/>
@@ -100,7 +111,7 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 									className="w-8 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
 									onClick={ () =>
 									{
-										invoice.removeVoucher(invoiceVoucher.voucherId);
+										invoice.paymentVouchers.value = invoice.paymentVouchers.value.filter((v) => v !== voucher);
 										invoice.updatePaidAmount();
 									} }
 								>

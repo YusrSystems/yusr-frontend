@@ -6,7 +6,6 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import {
 	ChangeableEntityMode,
 	ChangeDialog,
@@ -32,34 +31,14 @@ export default function ChangeBalanceTransferDialog(
 	useSignals();
 
 	const {t} = useTranslation(["accounting", "common"]);
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	const entity = useMemo(() => signal<BalanceTransfer>(dto ? BalanceTransfer.load(dto) : BalanceTransfer.create()), []);
 	const amountToWords = useMemo(() => signal<string>(""), []);
-	const hasBankPerm = Services.auth.hasAuth(
-		SystemPermissionsResources.AccountBank,
-		SystemPermissionsActions.Get
-	);
-
-	const hasBoxPerm = Services.auth.hasAuth(
-		SystemPermissionsResources.AccountBox,
-		SystemPermissionsActions.Get
-	);
-	const types: AccountType[] = useMemo(() => [], []);
-	if (hasBankPerm)
-	{
-		types.push(AccountType.Bank);
-	}
-
-	if (hasBoxPerm)
-	{
-		types.push(AccountType.Box);
-	}
 
 	useEffect(() =>
 	{
 		if (entity.value.isDeleted.value) return;
-		Cubits.accounts.init(types);
-	}, [entity.value.isDeleted.value, types]);
+		Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true});
+	}, [entity.value.isDeleted.value]);
 
 	useEffect(() =>
 	{
@@ -82,23 +61,14 @@ export default function ChangeBalanceTransferDialog(
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.value.mode.value === ChangeableEntityMode.Create
+	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
+	const title = !isUpdateMode
 		? t("balanceTransfers.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("balanceTransfers.entityName") }`;
 
-	const hasSelectAccountPermission = hasBankPerm || hasBoxPerm;
-	const canChangeBankAccount = hasSelectAccountPermission && entity.value.mode.value === ChangeableEntityMode.Create;
-
-	if (!hasSelectAccountPermission)
-	{
-		toast.warning(t("paymentMethods.noPermissionToEditAdmin"));
-	}
-
 	return (
 		<ChangeDialog className="sm:max-w-lg">
-			<ChangeDialog.Header
-				title={ title }
-			/>
+			<ChangeDialog.Header title={ title }/>
 
 			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
 				<FieldGroup>
@@ -130,26 +100,24 @@ export default function ChangeBalanceTransferDialog(
 						<FormField
 							label={ t("balanceTransfers.fromAccount") }
 							required
-							error={ entity.value.getError("fromAccountId") }
+							error={ entity.value.getError("fromGlAccountId") }
 						>
 							<AccountsSearchableSelect
-								label={ entity.value.fromAccountName }
-								id={ entity.value.fromAccountId }
-								types={ types }
-								disabled={ !canChangeBankAccount || entity.value.isDeleted.value }
+								label={ entity.value.fromGlAccountName }
+								id={ entity.value.fromGlAccountId }
+								disabled={ entity.value.isDeleted.value }
 							/>
 						</FormField>
 
 						<FormField
 							label={ t("balanceTransfers.toAccount") }
 							required
-							error={ entity.value.getError("toAccountId") }
+							error={ entity.value.getError("toGlAccountId") }
 						>
 							<AccountsSearchableSelect
-								label={ entity.value.toAccountName }
-								id={ entity.value.toAccountId }
-								types={ types }
-								disabled={ !canChangeBankAccount || entity.value.isDeleted.value }
+								label={ entity.value.toGlAccountName }
+								id={ entity.value.toGlAccountId }
+								disabled={ entity.value.isDeleted.value }
 							/>
 						</FormField>
 					</FieldsSection>
@@ -157,9 +125,8 @@ export default function ChangeBalanceTransferDialog(
 					<FieldsSection title={ t("balanceTransfers.additionalInfo") } columns={ 1 }>
 						<TextAreaField
 							label={ t("balanceTransfers.description") }
-							value={ entity.value.description }
+							value={ entity.value.description ?? "" }
 							rows={ 3 }
-							placeholder={ ". . ." }
 							disabled={ entity.value.isDeleted.value }
 						/>
 					</FieldsSection>
@@ -173,7 +140,6 @@ export default function ChangeBalanceTransferDialog(
 					service={ service }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 					disabled={ entity.value.isDeleted.value }
-
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>

@@ -7,8 +7,8 @@ import { PageError, PageLoaded, PageLoading, TablePreview } from "yusr-ui";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
-import { AccountType } from "@/core/data/account.ts";
 import Invoice from "@/core/data/invoices/invoice.ts";
+import { Partner } from "@/core/data/partner.ts";
 
 
 export function InvoicesListReportTable()
@@ -24,25 +24,6 @@ export function InvoicesListReportTable()
 	if (Cubits.invoices.state.value instanceof PageError)
 	{
 		return <TablePreview.Error/>;
-	}
-
-	function accountRoute(accountType?: AccountType): string
-	{
-		switch (accountType)
-		{
-			case AccountType.Client:
-				return "clients";
-			case AccountType.Supplier:
-				return "suppliers";
-			case AccountType.Employee:
-				return "employees";
-			case AccountType.Bank:
-				return "banks";
-			case AccountType.Box:
-				return "boxes";
-			default:
-				return "clients";
-		}
 	}
 
 	if (Cubits.invoices.state.value instanceof PageLoaded)
@@ -110,12 +91,12 @@ export function InvoicesListReportTable()
 								className="text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!"
 							>
 								<Link
-									to={ `/${ accountRoute(invoice.actionAccountType) }/${ invoice.actionAccountId }` }
+									to={ `/${ Partner.Routes(invoice.partnerType) }/${ invoice.partnerId }` }
 									target="_blank"
 									rel="noopener noreferrer"
 									className="block w-full h-full"
 								>
-									{ invoice.actionAccountName }
+									{ invoice.partnerName }
 								</Link>
 							</ReportTableTd>
 							<ReportTableTd isEven={ isEven }>{ formatNumber(invoice.fullAmount) }</ReportTableTd>

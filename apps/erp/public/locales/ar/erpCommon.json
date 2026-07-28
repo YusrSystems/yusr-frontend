@@ -123,6 +123,7 @@
       "voucher": "تقرير السند",
       "voucherList": "تقرير قائمة السندات",
       "accountStatement": "تقرير كشف حساب",
+      "partnerStatement": "تقرير كشف حساب جهة",
       "accountList": "تقرير قائمة الحسابات",
       "balanceTransfer": "تقرير نقل رصيد",
       "itemStatement": "تقرير كشف مادة",
@@ -133,6 +134,7 @@
       "balanceSheet": "تقرير الميزانية العمومية",
       "taxReturn": "تقرير الإقرار الضريبي",
       "profitAndLoss": "تقرير الربح والخسارة",
+      "salesProfitability": "تقرير ربحية المبيعات",
       "stocktaking": "تقرير جرد المواد",
       "itemSettlement": "تقرير تسوية المواد",
       "itemBarcode": "تقرير باركود المواد"
@@ -225,6 +227,8 @@
     "balanceSheetDescription": "الأصول والخصوم وحقوق الملكية",
     "profitAndLoss": "الأرباح والخسائر",
     "profitAndLossDescription": "الإيرادات والمصروفات وصافي الربح",
+    "salesProfitability": "تقرير ربحية المبيعات",
+    "salesProfitabilityDescription": "عرض ربحية المبيعات مع التكاليف المباشرة",
     "taxReturn": "الإقرار الضريبي",
     "taxReturnDescription": "تقرير ضريبة القيمة المضافة الدوري",
     "itemsTaxStatement": "كشف ضريبة المواد",
@@ -265,6 +269,8 @@
     "itemStatementDescription": "عرض تفاصيل حركة المادة عبر المستودعات والفترات الزمنية",
     "accountStatement": "كشف حساب",
     "accountStatementDescription": "عرض حركة حساب محدد خلال فترة زمنية معينة",
+    "partnerStatement": "كشف حساب جهة",
+    "partnerStatementDescription": "عرض حركة جهة محدد خلال فترة زمنية معينة",
     "accountsList": "قائمة الحسابات",
     "accountsListDescription": "عرض جميع الحسابات مع الأرصدة والبيانات التفصيلية",
     "exportToExcel": "تصدير إلى Excel"
@@ -272,6 +278,10 @@
   "accountStatement": {
     "button": "كشف حساب",
     "title": "كشف حساب"
+  },
+  "partnerStatement": {
+    "button": "كشف حساب جهة",
+    "title": "كشف حساب جهة"
   },
   "itemStatement": {
     "button": "كشف المادة",

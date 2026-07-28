@@ -2,10 +2,13 @@ import ReportPage from "@/features/report/reportPage.tsx";
 import { ItemsListReport } from "@/features/reports/itemsList/itemsListReport.tsx";
 import { useEffect } from "react";
 import { Cubits } from "@/core/services/cubits.ts";
-import { CrudTablePagination, FilterSection } from "yusr-ui";
+import { CrudTablePagination, FilterSection, SystemPermissionsActions } from "yusr-ui";
 import { RenderItemFilterInput } from "@/features/items/itemsPage.tsx";
 import { useSignals } from "@preact/signals-react/runtime";
 import { type ItemDto, ItemType } from "@/core/data/item.ts";
+import { APP_NAME } from "../../../../appConfig.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Services } from "@/core/services/services.ts";
 
 
 export function ItemsListReportPage()
@@ -14,13 +17,24 @@ export function ItemsListReportPage()
 
 	useEffect(() =>
 	{
+		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemList, SystemPermissionsActions.Get)) return;
 		Cubits.items.init(undefined, undefined, 1000);
 		Cubits.stores.init();
 		Cubits.units.init();
 	}, []);
 
+	useEffect(() =>
+	{
+		document.title = "قائمة المواد";
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, []);
+
 	return (
-		<ReportPage>
+		<ReportPage permissionResource={ SystemPermissionsResources.ReportItemList }>
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.ExcelButton<ItemDto>
 					fileName="تقرير_قائمة_المواد"

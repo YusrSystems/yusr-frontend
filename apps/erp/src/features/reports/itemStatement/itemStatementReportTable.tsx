@@ -1,101 +1,14 @@
 import { ReportTableTh } from "@/features/report/components/reportTableTh.tsx";
 import { ReportTableTd } from "@/features/report/components/reportTableTd.tsx";
 import { formatNumber } from "@/features/report/utils/formating.ts";
-import {
-	AccountOrStoreType,
-	ItemStatementDocumentType,
-	type ItemStatementRow
-} from "@/features/reports/itemStatement/itemStatementReportResult.ts";
-import { AccountType } from "@/core/data/account.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ReportLoaded, ReportLoading, TablePreview } from "yusr-ui";
 import { Link } from "react-router-dom";
-import { InvoiceType } from "@/core/types/invoiceType.ts";
+import { getDocumentRoute, getDocumentTypeName } from "@/core/types/documentType.ts";
 
-
-function invoiceRoute(invoiceType?: InvoiceType): string
-{
-	switch (invoiceType)
-	{
-		case InvoiceType.Sell:
-		case InvoiceType.SellReturn:
-			return "sales";
-		case InvoiceType.Purchase:
-		case InvoiceType.PurchaseReturn:
-			return "purchases";
-		default:
-			return "sales";
-	}
-}
-
-function transRoute(row: ItemStatementRow): string | undefined
-{
-	switch (row.documentType)
-	{
-		case ItemStatementDocumentType.Invoice:
-			return invoiceRoute(row.invoiceType);
-		case ItemStatementDocumentType.Transfer:
-			return "itemTransfers";
-		case ItemStatementDocumentType.Settlement:
-			return "itemsSettlements";
-		default:
-			return undefined;
-	}
-}
-
-function partyRoute(type: AccountOrStoreType, accountType?: AccountType): string | undefined
-{
-	if (type === AccountOrStoreType.Store)
-	{
-		return "stores";
-	}
-
-	switch (accountType)
-	{
-		case AccountType.Client:
-			return "clients";
-		case AccountType.Supplier:
-			return "suppliers";
-		case AccountType.Employee:
-			return "employees";
-		case AccountType.Bank:
-			return "banks";
-		case AccountType.Box:
-			return "boxes";
-		default:
-			return undefined;
-	}
-}
 
 const linkClassName = "text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!";
-
-function LinkOrText({isEven, route, id, text, align}: {
-	isEven: boolean;
-	route?: string;
-	id?: number;
-	text?: string;
-	align?: "center" | "start";
-})
-{
-	if (!route || id == null)
-	{
-		return <ReportTableTd isEven={ isEven } align={ align }>{ text ?? "" }</ReportTableTd>;
-	}
-
-	return (
-		<ReportTableTd isEven={ isEven } className={ linkClassName } align={ align }>
-			<Link
-				to={ `/${ route }/${ id }` }
-				target="_blank"
-				rel="noopener noreferrer"
-				className="block w-full h-full"
-			>
-				{ text }
-			</Link>
-		</ReportTableTd>
-	);
-}
 
 export function ItemStatementReportTable()
 {
@@ -108,61 +21,86 @@ export function ItemStatementReportTable()
 
 	if (Cubits.ItemStatementReport.state.value instanceof ReportLoaded)
 	{
-		const rows = Cubits.ItemStatementReport.result.value?.itemStatementRows ?? [];
+		const result = Cubits.ItemStatementReport.result.value;
+		const lines = result?.lines ?? [];
 
 		return (
 			<table className="w-full mt-5 border-collapse rounded-lg overflow-hidden">
 				<thead>
 				<tr>
 					<ReportTableTh ar="التاريخ" en="Date"/>
-					<ReportTableTh ar="نوع العملية" en="Trans type"/>
-					<ReportTableTh ar="رقم العملية" en="Trans id"/>
-					<ReportTableTh ar="التكلفة" en="Cost"/>
-					<ReportTableTh ar="الكمية في العملية" en="Qtn in trans"/>
-					<ReportTableTh ar="الكمية في الوحدة الأساسية" en="Qtn in main unit"/>
-					<ReportTableTh ar="كمية المادة" en="Item qtn"/>
-					<ReportTableTh ar="المستودع" en="Store"/>
-					<ReportTableTh ar="الحساب / المستودع" en="Account / Store"/>
+					<ReportTableTh ar="نوع المستند" en="Document Type"/>
+					<ReportTableTh ar="رقم المستند" en="Doc No."/>
+					<ReportTableTh ar="المستودع" en="Store" align="start"/>
+					<ReportTableTh ar="الحساب / الطرف المقابل" en="Partner / Counterparty" align="start"/>
+					<ReportTableTh ar="الوارد (+)" en="Qty In"/>
+					<ReportTableTh ar="الصادر (-)" en="Qty Out"/>
+					<ReportTableTh ar="الرصيد الجاري" en="Running Qty"/>
+					<ReportTableTh ar="التكلفة للوحدة" en="Unit Cost"/>
 				</tr>
 				</thead>
 				<tbody>
-				{ rows.map((row, idx) =>
+				{ lines.map((line, idx) =>
 				{
 					const isEven = idx % 2 === 0;
-					const transRouteName = transRoute(row);
-					const partyRouteName = partyRoute(row.secondPartyType, row.secondPartyAccountType);
+					const routePath = getDocumentRoute(line.documentType);
 
 					return (
-						<tr key={ `${ row.transDate }-${ row.transId }-${ idx }` }>
-							<ReportTableTd isEven={ isEven }>{ row.transDate }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ row.transType }</ReportTableTd>
-							<LinkOrText
+						<tr key={ `${ line.id }-${ idx }` }>
+							<ReportTableTd isEven={ isEven }>{ line.date }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>
+								{ getDocumentTypeName(line.documentType) }
+							</ReportTableTd>
+
+							{ routePath ? (
+								<ReportTableTd isEven={ isEven } className={ linkClassName }>
+									<Link
+										to={ `/${ routePath }/${ line.documentId }` }
+										target="_blank"
+										rel="noopener noreferrer"
+										className="block w-full h-full"
+									>
+										{ line.documentId }
+									</Link>
+								</ReportTableTd>
+							) : (
+								<ReportTableTd isEven={ isEven }>{ line.documentId || "-" }</ReportTableTd>
+							) }
+
+							<ReportTableTd isEven={ isEven } align="start">{ line.storeName || "-" }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }
+							               align="start">{ line.secondPartyName || "-" }</ReportTableTd>
+
+							<ReportTableTd isEven={ isEven }
+							               className={ line.quantityIn > 0 ? "text-green-600! font-semibold!" : "text-muted-foreground!" }>
+								{ line.quantityIn > 0 ? formatNumber(line.quantityIn) : "-" }
+							</ReportTableTd>
+
+							<ReportTableTd isEven={ isEven }
+							               className={ line.quantityOut > 0 ? "text-red-600! font-semibold!" : "text-muted-foreground!" }>
+								{ line.quantityOut > 0 ? formatNumber(line.quantityOut) : "-" }
+							</ReportTableTd>
+
+							<ReportTableTd
 								isEven={ isEven }
-								route={ transRouteName }
-								id={ row.transId || undefined }
-								text={ row.transId.toString() }
-							/>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(row.cost) }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(row.transQtn) }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(row.mainUnitQtn) }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(row.itemQtn) }</ReportTableTd>
-							<LinkOrText
-								isEven={ isEven }
-								route="stores"
-								id={ row.storeId }
-								text={ row.storeName }
-								align="start"
-							/>
-							<LinkOrText
-								isEven={ isEven }
-								route={ partyRouteName }
-								id={ row.secondPartyId }
-								text={ row.secondPartyName }
-								align="start"
-							/>
+								className={ line.runningQuantity > 0 ? "text-green-600! font-semibold!" : "text-red-600!" }>
+								{ formatNumber(line.runningQuantity) }
+							</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>{ formatNumber(line.unitCost) }</ReportTableTd>
 						</tr>
 					);
 				}) }
+
+				{ result && lines.length > 0 && (
+					<tr className="border-t-2 border-border font-bold bg-muted/40">
+						<td colSpan={ 5 } className="p-3 text-start font-extrabold text-xs">
+							المجموع (Totals):
+						</td>
+						<td className="p-3 text-center text-green-600!">{ formatNumber(result.pageTotalQuantityIn) }</td>
+						<td className="p-3 text-center text-red-600!">{ formatNumber(result.pageTotalQuantityOut) }</td>
+						<td colSpan={ 2 } className="p-3"/>
+					</tr>
+				) }
 				</tbody>
 			</table>
 		);

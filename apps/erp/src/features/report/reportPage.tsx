@@ -2,17 +2,25 @@ import { type PropsWithChildren, useState } from "react";
 import { FileSpreadsheet, Loader2, Printer } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { type ExcelColumn, exportToExcel } from "@/features/report/excel/exportToExcel.ts";
-import { Button } from "yusr-ui";
+import { Button, SystemPermissionsActions, UnauthorizedPage } from "yusr-ui";
+import { Services } from "@/core/services/services.ts";
 
 
-export default function ReportPage({children}: PropsWithChildren)
+interface ReportPageProps extends PropsWithChildren
 {
+	permissionResource?: string;
+}
+
+export default function ReportPage({children, permissionResource}: ReportPageProps)
+{
+	if (permissionResource && !Services.auth.hasAuth(permissionResource, SystemPermissionsActions.Get))
+	{
+		return <UnauthorizedPage/>;
+	}
 
 	return (
 		<div className="flex flex-col h-[calc(100vh-70px)] print:h-auto max-w-5xl w-full mx-auto pb-6 px-4 print:p-0">
-
 			{ children }
-
 		</div>
 	);
 }

@@ -17,13 +17,22 @@ import {
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import ChangePricingMethodDialog from "./changePricingMethodDialog";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function PricingMethodsPage()
 {
-
 	const {t} = useTranslation("stocking");
 	useEffect(() => Cubits.pricingMethods.init(), []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("pricingMethods.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.PricingMethods, SystemPermissionsActions.Get))
 	{

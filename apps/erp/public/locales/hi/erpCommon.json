@@ -12,7 +12,7 @@
     "employees": "कर्मचारी",
     "banks": "बैंक",
     "boxes": "कैश बॉक्स",
-    "branches": "शाखाएँ",
+    "branches": "शाখাएँ",
     "users": "उपयोगकर्ता",
     "roles": "भूमिकाएँ",
     "invoices": "चालान",
@@ -77,7 +77,7 @@
   },
   "permissions": {
     "resources": {
-      "branches": "शाखाएँ",
+      "branches": "शाখাएँ",
       "settings": "सेटिंग्स",
       "users": "उपयोगकर्ता",
       "roles": "भूमिकाएँ",
@@ -123,6 +123,7 @@
       "voucher": "वाउचर रिपोर्ट",
       "voucherList": "वाउचर सूची रिपोर्ट",
       "accountStatement": "खाता विवरण रिपोर्ट",
+      "partnerStatement": "पार्टनर विवरण रिपोर्ट",
       "accountList": "खाता सूची रिपोर्ट",
       "balanceTransfer": "शेष राशि स्थानांतरण रिपोर्ट",
       "itemStatement": "वस्तु विवरण रिपोर्ट",
@@ -133,6 +134,7 @@
       "balanceSheet": "बैलेंस शीट रिपोर्ट",
       "taxReturn": "कर रिटर्न रिपोर्ट",
       "profitAndLoss": "लाभ और हानि रिपोर्ट",
+      "salesProfitability": "बिक्री लाभप्रदता रिपोर्ट",
       "stocktaking": "स्टॉक लेने की रिपोर्ट",
       "itemSettlement": "स्टॉक समायोजन रिपोर्ट",
       "itemBarcode": "वस्तु बारकोड रिपोर्ट"
@@ -225,6 +227,8 @@
     "balanceSheetDescription": "संपत्ति, देनदारियाँ और इक्विटी",
     "profitAndLoss": "लाभ और हानि",
     "profitAndLossDescription": "राजस्व, व्यय और शुद्ध लाभ",
+    "salesProfitability": "बिक्री लाभप्रदता",
+    "salesProfitabilityDescription": "प्रत्यक्ष लागत के साथ बिक्री लाभप्रदता देखें",
     "taxReturn": "कर रिटर्न",
     "taxReturnDescription": "आवधिक वैट रिटर्न रिपोर्ट",
     "itemsTaxStatement": "वस्तु कर विवरण",
@@ -265,6 +269,8 @@
     "itemStatementDescription": "गोदामों और समय अवधि में आइटम की आवाजाही का विवरण देखें",
     "accountStatement": "खाता विवरण",
     "accountStatementDescription": "चयनित तिथि सीमा के दौरान किसी विशिष्ट खाते का लेन-देन देखें",
+    "partnerStatement": "पार्टनर विवरण",
+    "partnerStatementDescription": "चयनित तिथि सीमा के दौरान किसी विशिष्ट पार्टनर का लेन-देन देखें",
     "accountsList": "खातों की सूची",
     "accountsListDescription": "शेष राशि और विस्तृत जानकारी के साथ सभी खाते देखें",
     "exportToExcel": "एक्सेल में निर्यात करें"
@@ -272,6 +278,10 @@
   "accountStatement": {
     "button": "खाता विवरण",
     "title": "खाता विवरण"
+  },
+  "partnerStatement": {
+    "button": "पार्टनर विवरण",
+    "title": "पार्टनर विवरण"
   },
   "itemStatement": {
     "button": "वस्तु विवरण",

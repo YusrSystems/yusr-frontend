@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Badge, CopyButton, LanguageToggle, Separator, ThemeToggle } from "yusr-ui";
+import { APP_NAME } from "../../../appConfig.ts";
 import type { SharingSetting } from "@/core/data/setting.ts";
 
 
@@ -84,6 +85,18 @@ export default function TenantInfoSharingPage()
 	const [initLoading, setInitLoading] = useState(true);
 	const [setting, setSetting] = useState<SharingSetting>();
 	const {t, i18n} = useTranslation("commonEntities");
+
+	useEffect(() =>
+	{
+		if (setting)
+		{
+			document.title = `${ setting.companyName } | ${ APP_NAME }`;
+		}
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [setting]);
 
 	useEffect(() =>
 	{

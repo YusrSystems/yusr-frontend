@@ -4,30 +4,33 @@ import { PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.
 import type { TFunction } from "i18next";
 
 
-export const VoucherType = {
-	Payment: 1,
-	Receipt: 2
-} as const;
-export type VoucherType = (typeof VoucherType)[keyof typeof VoucherType];
+export enum VoucherType
+{
+	Payment = 1,
+	Receipt = 2
+}
 
 export class VoucherDto extends Dto
 {
 	public type!: VoucherType;
 	public date!: string;
 	public amount!: number;
-	public isAmountDue!: boolean;
 	public commissionAmount!: number;
-	public accountId!: number;
+	public glAccountId!: number;
+	public glAccountName!: string;
+	public partnerId?: number;
+	public partnerName?: string;
 	public paymentMethodId!: number;
+	public paymentMethodName!: string;
 	public description?: string;
 	public invoiceId?: number;
 	public giver?: string;
 	public recipient?: string;
-	public categoryId?: number;
-	public categoryName?: string;
+	public notes?: string;
+	public rowVer!: number;
 	public isDeleted: boolean = false;
+	public isDirectMode!: boolean;
 
-	public accountName?: string;
 	public paymentMethod?: PaymentMethodDto;
 }
 
@@ -36,19 +39,22 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 	public type: Signal<VoucherType>;
 	public date: Signal<string>;
 	public amount: Signal<number>;
-	public isAmountDue: Signal<boolean>;
 	public commissionAmount: Signal<number>;
-	public accountId: Signal<number>;
+	public glAccountId: Signal<number | undefined>;
+	public glAccountName: Signal<string | undefined>;
+	public partnerId: Signal<number | undefined>;
+	public partnerName: Signal<string | undefined>;
 	public paymentMethodId: Signal<number>;
-	public description: Signal<string>;
-	public invoiceId: Signal<number>;
-	public giver: Signal<string>;
-	public recipient: Signal<string>;
-	public categoryId: Signal<number>;
-	public categoryName: Signal<string>;
+	public paymentMethodName: Signal<string>;
+	public description: Signal<string | undefined>;
+	public invoiceId: Signal<number | undefined>;
+	public giver: Signal<string | undefined>;
+	public recipient: Signal<string | undefined>;
+	public notes: Signal<string | undefined>;
+	public rowVer: Signal<number>;
 	public isDeleted: Signal<boolean>;
+	public isDirectMode: Signal<boolean>;
 
-	public accountName: Signal<string>;
 	public paymentMethod: Signal<PaymentMethod>;
 
 	constructor(dto?: Partial<VoucherDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
@@ -66,31 +72,53 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 			selector: (d) => d.amount,
 			validators: [Validators.required(i18n.t("accounting:vouchers.amountRequired"))]
 		}, {
-			field: "accountId",
-			selector: (d) => d.accountId,
-			validators: [Validators.required(i18n.t("accounting:vouchers.accountRequired"))]
+			field: "glAccountId",
+			selector: (d) => d.glAccountId,
+			validators: [
+				Validators.custom((val, form) =>
+				{
+					if (!form.isDirectMode) return true;
+					return val && Number(val) > 0;
+				}, i18n.t("accounting:vouchers.categoryRequired", "الحساب مطلوب"))
+			]
+		}, {
+			field: "partnerId",
+			selector: (d) => d.partnerId,
+			validators: [
+				Validators.custom((val, form) =>
+				{
+					if (form.isDirectMode) return true;
+					return val && Number(val) > 0;
+				}, i18n.t("accounting:vouchers.partnerRequired", "الجهة مطلوبة"))
+			]
 		}, {
 			field: "paymentMethodId",
 			selector: (d) => d.paymentMethodId,
 			validators: [Validators.required(i18n.t("accounting:vouchers.paymentMethodRequired"))]
 		}], mode);
 
-		this.type = this.assign("type", dto?.type ? dto.type : VoucherType.Payment);
+		this.type = this.assign("type", dto?.type ?? VoucherType.Payment);
 		this.date = this.assign("date", dto?.date ?? DateService.formatDateOnly(new Date()));
-		this.amount = this.assign("amount", dto?.amount);
-		this.isAmountDue = this.assign("isAmountDue", dto?.isAmountDue);
-		this.commissionAmount = this.assign("commissionAmount", dto?.commissionAmount);
-		this.accountId = this.assign("accountId", dto?.accountId);
+		this.amount = this.assign("amount", dto?.amount ?? 0);
+		this.commissionAmount = this.assign("commissionAmount", dto?.commissionAmount ?? 0);
+
+		this.glAccountId = this.assign("glAccountId", dto?.glAccountId);
+		this.glAccountName = this.assign("glAccountName", dto?.glAccountName ?? "");
+		this.partnerId = this.assign("partnerId", dto?.partnerId);
+		this.partnerName = this.assign("partnerName", dto?.partnerName);
+
 		this.paymentMethodId = this.assign("paymentMethodId", dto?.paymentMethodId);
+		this.paymentMethodName = this.assign("paymentMethodName", dto?.paymentMethodName ?? "");
 		this.description = this.assign("description", dto?.description);
 		this.invoiceId = this.assign("invoiceId", dto?.invoiceId);
 		this.giver = this.assign("giver", dto?.giver);
 		this.recipient = this.assign("recipient", dto?.recipient);
-		this.accountName = this.assign("accountName", dto?.accountName);
+		this.notes = this.assign("notes", dto?.notes);
+		this.rowVer = this.assign("rowVer", dto?.rowVer ?? 0);
+		this.isDeleted = this.assign("isDeleted", dto?.isDeleted ?? false);
+		this.isDirectMode = this.assign("isDirectMode", dto?.isDirectMode ?? false);
+
 		this.paymentMethod = this.assign("paymentMethod", new PaymentMethod(dto?.paymentMethod));
-		this.categoryId = this.assign("categoryId", dto?.categoryId);
-		this.categoryName = this.assign("categoryName", dto?.categoryName);
-		this.isDeleted = this.assign("isDeleted", dto?.isDeleted);
 	}
 
 	public static getTypeName(type: VoucherType, t: TFunction<"accounting">)
@@ -105,9 +133,4 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 				return String(type);
 		}
 	}
-}
-
-export class VoucherCategoryDto extends Dto
-{
-	public name!: string;
 }

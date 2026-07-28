@@ -22,6 +22,7 @@ import { signal } from "@preact/signals-react";
 import { ItemTransferReport } from "@/features/reports/itemsTransfer/itemTransferReport.tsx";
 import { createPortal } from "react-dom";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function ItemTransfersPage()
@@ -29,6 +30,16 @@ export default function ItemTransfersPage()
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
 	useEffect(() => Cubits.itemTransfers.init(), []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("itemTransfers.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
+
 	const printedTransfer = useMemo(() => signal<ItemTransferDto | undefined>(), []);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.ItemTransfers, SystemPermissionsActions.Get))

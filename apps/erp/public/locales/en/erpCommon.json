@@ -123,6 +123,7 @@
       "voucher": "Voucher Report",
       "voucherList": "Voucher List Report",
       "accountStatement": "Account Statement Report",
+      "partnerStatement": "Partner Statement Report",
       "accountList": "Account List Report",
       "balanceTransfer": "Balance Transfer Report",
       "itemStatement": "Item Statement Report",
@@ -133,6 +134,7 @@
       "balanceSheet": "Balance Sheet Report",
       "taxReturn": "Tax Return Report",
       "profitAndLoss": "Profit and Loss Report",
+      "salesProfitability": "Sales Profitability Report",
       "stocktaking": "Stocktaking Report",
       "itemSettlement": "Stock Adjustment Report",
       "itemBarcode": "Item Barcode Report"
@@ -225,6 +227,8 @@
     "balanceSheetDescription": "Assets, liabilities and equity",
     "profitAndLoss": "Profit and Loss",
     "profitAndLossDescription": "Revenue, expenses and net profit",
+    "salesProfitability": "Sales Profitability",
+    "salesProfitabilityDescription": "View sales profitability with direct costs",
     "taxReturn": "Tax Return",
     "taxReturnDescription": "Periodic VAT return report",
     "itemsTaxStatement": "Item Tax Statement",
@@ -265,6 +269,8 @@
     "itemStatementDescription": "View item movement details across warehouses and time periods",
     "accountStatement": "Account Statement",
     "accountStatementDescription": "View a specific account's transactions within a selected date range",
+    "partnerStatement": "Partner Statement",
+    "partnerStatementDescription": "View a specific partner's transactions within a selected date range",
     "accountsList": "Accounts List",
     "accountsListDescription": "View all accounts with balances and detailed information",
     "exportToExcel": "Export to Excel"
@@ -272,6 +278,10 @@
   "accountStatement": {
     "button": "Account Statement",
     "title": "Account Statement"
+  },
+  "partnerStatement": {
+    "button": "Partner Statement",
+    "title": "Partner Statement"
   },
   "itemStatement": {
     "button": "Item Statement",

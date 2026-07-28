@@ -1,4 +1,3 @@
-//TODO: must be tested
 import { InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import ReportConstants from "@/core/data/report/reportConstants.ts";
 import { Cubits } from "@/core/services/cubits";
@@ -29,7 +28,8 @@ import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-	UnauthorizedPage
+	UnauthorizedPage,
+	YusrApiHelper
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { InvoiceType } from "@/core/types/invoiceType";
@@ -39,15 +39,20 @@ import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
 import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { toast } from "sonner";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
-import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
 import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus.ts";
 import { PaymentStatus } from "@/core/types/paymentStatus.ts";
 import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect.tsx";
-import { AccountType } from "@/core/data/account.ts";
+import { PartnerType } from "@/core/data/partner.ts";
 import { createPortal } from "react-dom";
 import { InvoicesListReport } from "@/features/reports/invoicesList/invoicesListReport.tsx";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import { APP_NAME } from "../../../appConfig.ts";
+import { InvoiceReport } from "@/features/reports/invoice/invoiceReport";
+import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult";
+import { InvoiceReportRequest } from "@/core/data/report/invoiceReportRequest";
+import { Link } from "react-router-dom";
 
 
 export default function InvoicesPage({
@@ -72,6 +77,9 @@ export default function InvoicesPage({
 	useSignals();
 	const {t} = useTranslation(["accounting", "erpCommon"]);
 
+	const printedInvoice = useMemo(() => signal<InvoiceReportResult | undefined>(), []);
+	const isPrinting = useMemo(() => signal<number | undefined>(), []);
+
 	useEffect(() =>
 	{
 		Cubits.invoices.init(filterTypes);
@@ -79,7 +87,7 @@ export default function InvoicesPage({
 
 	useEffect(() =>
 	{
-		Cubits.accounts.init(fixedType == InvoiceType.Purchase || fixedType == InvoiceType.PurchaseReturn ? [AccountType.Supplier] : [AccountType.Client]);
+		Cubits.partners.init(fixedType == InvoiceType.Purchase || fixedType == InvoiceType.PurchaseReturn ? [PartnerType.Supplier] : [PartnerType.Customer]);
 	}, [fixedType]);
 
 	useEffect(() =>
@@ -87,6 +95,54 @@ export default function InvoicesPage({
 		Cubits.items.init();
 		Cubits.stores.init();
 	}, []);
+
+	useEffect(() =>
+	{
+		document.title = `${ title } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [title]);
+
+	useEffect(() =>
+	{
+		const handleAfterPrint = () =>
+		{
+			printedInvoice.value = undefined;
+		};
+		window.addEventListener("afterprint", handleAfterPrint);
+		return () => window.removeEventListener("afterprint", handleAfterPrint);
+	}, [printedInvoice]);
+
+	const handlePrint = async (invoice: InvoiceDto) =>
+	{
+		isPrinting.value = invoice.id;
+		try
+		{
+			const res = await YusrApiHelper.Post<InvoiceReportResult>(`/api/Reports/Invoice`, new InvoiceReportRequest({invoiceId: invoice.id}));
+			if (res.data)
+			{
+				printedInvoice.value = res.data;
+				requestAnimationFrame(() =>
+				{
+					requestAnimationFrame(() =>
+					{
+						window.print();
+						isPrinting.value = undefined;
+					});
+				});
+			}
+			else
+			{
+				isPrinting.value = undefined;
+			}
+		}
+		catch
+		{
+			isPrinting.value = undefined;
+		}
+	};
 
 	if (!hasPagePermission)
 	{
@@ -135,7 +191,8 @@ export default function InvoicesPage({
 					onSearch={ (searchText) => Cubits.invoices.search(searchText) }
 				/>
 
-				<PageTable fixedType={ fixedType } permissionResource={ permissionResource }/>
+				<PageTable fixedType={ fixedType } permissionResource={ permissionResource } onPrint={ handlePrint }
+				           isPrinting={ isPrinting }/>
 
 				<CrudPage.ChangeDialog
 					fetchEntity={ async (id: number) =>
@@ -174,9 +231,16 @@ export default function InvoicesPage({
 				/>
 			</CrudPage>
 
-			{ createPortal(
+			{ !printedInvoice.value && createPortal(
 				<PortalReportContainer>
 					<InvoicesListReport isPortal={ true }/>
+				</PortalReportContainer>,
+				document.body
+			) }
+
+			{ printedInvoice.value && createPortal(
+				<PortalReportContainer>
+					<InvoiceReport data={ printedInvoice.value } isPortal={ true }/>
 				</PortalReportContainer>,
 				document.body
 			) }
@@ -199,9 +263,11 @@ function Cards({totalInvoicesTitle}: { totalInvoicesTitle?: string })
 	);
 }
 
-function PageTable({fixedType, permissionResource}: {
+function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 	fixedType: InvoiceType,
 	permissionResource: string,
+	onPrint: (invoice: InvoiceDto) => void,
+	isPrinting: Signal<number | undefined>
 })
 {
 	useSignals();
@@ -249,7 +315,7 @@ function PageTable({fixedType, permissionResource}: {
 
 		rows.push(
 			{rowBody: t("invoices.date"), rowStyles: "w-32"},
-			{rowBody: t("invoices.account"), rowStyles: "w-48"},
+			{rowBody: t("invoices.partner", "الجهة"), rowStyles: "w-48"},
 			{rowBody: t("invoices.store"), rowStyles: "w-32"},
 			{rowBody: t("invoices.total"), rowStyles: "w-32"}
 		);
@@ -439,7 +505,19 @@ function PageTable({fixedType, permissionResource}: {
 
 		cells.push(
 			{rowBody: invoice.date, rowStyles: ""},
-			{rowBody: invoice.actionAccountName || "-", rowStyles: ""},
+			{
+				rowBody: (
+					<Link
+						to={ `/${ fixedType === InvoiceType.Purchase || fixedType === InvoiceType.PurchaseReturn ? "suppliers" : "clients" }/${ invoice.partnerId }` }
+						target="_blank"
+						rel="noopener noreferrer"
+						className="text-blue-600 hover:underline"
+					>
+						{ invoice.partnerName || "-" }
+					</Link>
+				),
+				rowStyles: ""
+			},
 			{rowBody: invoice.storeName || "-", rowStyles: ""},
 			{
 				rowBody: (
@@ -530,9 +608,9 @@ function PageTable({fixedType, permissionResource}: {
 
 		if (
 			Services.auth.hasAuth(
-				SystemPermissionsResources.ReportAccountStatement,
+				SystemPermissionsResources.ReportInvoice,
 				SystemPermissionsActions.Get
-			) && invoice.statusId === InvoiceStatus.Valid
+			)
 		)
 		{
 			cells.push({
@@ -542,9 +620,11 @@ function PageTable({fixedType, permissionResource}: {
 							<span className="inline-block layout-fix">
 								<ReportButton
 									reportName={ ReportConstants.Invoice }
-									request={ {invoiceId: invoice.id} }
-									fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type, t) }-${ invoice.actionAccountName }` }
+									request={ new InvoiceReportRequest({invoiceId: invoice.id}) }
+									fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type, t) }-${ invoice.partnerName }` }
 									disabled={ !invoice.canBePrinted }
+									onPrint={ () => onPrint(invoice) }
+									isPrinting={ isPrinting.value === invoice.id }
 								/>
 							</span>
 						</TooltipTrigger>
@@ -558,6 +638,7 @@ function PageTable({fixedType, permissionResource}: {
 				),
 				rowStyles: "w-32"
 			});
+
 		}
 
 		return cells;
@@ -655,18 +736,17 @@ export function RenderInvoiceFilterInput({rule, field}: FilterValueInputProps)
 	useSignals();
 	const {t} = useTranslation("accounting");
 
-	if (field.propertyName === "ActionAccountId")
+	if (field.propertyName === "PartnerId")
 	{
 		return (
 			<FilterLabelWrapper rule={ rule }>
 				{ label => (
-					<AccountsSearchableSelect
+					<PartnersSearchableSelect
 						id={ rule.value as unknown as Signal<number | undefined> }
 						label={ label }
 						onSelect={ entity =>
 							rule.value.value = entity ? entity.id : ""
 						}
-						types={ [AccountType.Client, AccountType.Supplier, AccountType.Employee, AccountType.Box, AccountType.Bank] }
 					/>
 				) }
 			</FilterLabelWrapper>

@@ -9,6 +9,8 @@ import {
 	ReceiptText,
 	ScrollText,
 	SettingsIcon,
+	ShoppingBag,
+	Truck,
 	UsersIcon,
 	WalletCards
 } from "lucide-react";
@@ -102,57 +104,36 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 				SystemPermissionsActions.Get
 			)
 		}, {
+			title: t("sidebar.clients"),
+			url: "/clients",
+			icon: <ShoppingBag/>,
+			hasAuth: Services.auth.hasAuth(
+				SystemPermissionsResources.AccountClient,
+				SystemPermissionsActions.Get
+			) && Services.auth.hasAuth(
+				SystemPermissionsResources.Partners,
+				SystemPermissionsActions.Get
+			)
+		}, {
+			title: t("sidebar.suppliers"),
+			url: "/suppliers",
+			icon: <Truck/>,
+			hasAuth: Services.auth.hasAuth(
+				SystemPermissionsResources.AccountSupplier,
+				SystemPermissionsActions.Get
+			) && Services.auth.hasAuth(
+				SystemPermissionsResources.Partners,
+				SystemPermissionsActions.Get
+			)
+		}, {
 			title: t("sidebar.accounts"),
 			url: "#",
 			icon: <WalletCards/>,
 			hasAuth: true,
 			subItems: [{
-				title: t("sidebar.clients"),
-				url: "/clients",
+				title: t("sidebar.accounts"),
+				url: "/accounts",
 				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.AccountClient,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
-					SystemPermissionsResources.Accounts,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.suppliers"),
-				url: "/suppliers",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.AccountSupplier,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
-					SystemPermissionsResources.Accounts,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.employees"),
-				url: "/employees",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.AccountEmployee,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
-					SystemPermissionsResources.Accounts,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.banks"),
-				url: "/banks",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.AccountBank,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
-					SystemPermissionsResources.Accounts,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.boxes"),
-				url: "/boxes",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.AccountBox,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
 					SystemPermissionsResources.Accounts,
 					SystemPermissionsActions.Get
 				)

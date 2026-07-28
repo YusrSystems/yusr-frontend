@@ -15,6 +15,7 @@ export const SystemPermissionsResources = {
 	BalanceTransfers: "BalanceTransfers",
 	PaymentMethods: "PaymentMethods",
 	Vouchers: "Vouchers",
+	Partners: "Partners",
 
 	// Invoices
 	Invoices: "Invoices",
@@ -56,6 +57,7 @@ export const SystemPermissionsResources = {
 	ReportVoucher: "ReportVoucher",
 	ReportVoucherList: "ReportVoucherList",
 	ReportAccountStatement: "ReportAccountStatement",
+	ReportPartnerStatement: "ReportPartnerStatement",
 	ReportAccountList: "ReportAccountList",
 	ReportBalanceTransfer: "ReportBalanceTransfer",
 	ReportItemStatement: "ReportItemStatement",
@@ -64,9 +66,11 @@ export const SystemPermissionsResources = {
 	ReportItemTaxStatement: "ReportItemTaxStatement",
 	ReportItemTransfer: "ReportItemTransfer",
 	ReportBalanceSheet: "ReportBalanceSheet",
-	ReportTaxReturn: "ReportTaxReturn",
-	ReportProfitAndLoss: "ReportProfitAndLoss",
+	ReportVatReturn: "ReportVatReturn",
+	ReportPl: "ReportPl",
 	ReportStocktaking: "ReportStocktaking",
 	ReportItemSettlement: "ReportItemSettlement",
-	ReportItemBarcode: "ReportItemBarcode"
+	ReportItemBarcode: "ReportItemBarcode",
+	ReportSalesProfitability: "ReportSalesProfitability",
+	ReportTaxAudit: "ReportTaxAudit"
 } as const;

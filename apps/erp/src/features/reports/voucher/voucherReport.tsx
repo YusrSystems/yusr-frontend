@@ -47,7 +47,7 @@ export function VoucherReport({voucher, isPortal = true}: VoucherReportProps)
 							<ReportField
 								labelAr={ recipientLabelAr }
 								labelEn={ recipientLabelEn }
-								value={ voucher.accountName }
+								value={ voucher.partnerName || voucher.glAccountName }
 								valueClassName="font-bold text-base"
 							/>
 						</div>

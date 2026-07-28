@@ -7,19 +7,20 @@ import { useSignals } from "@preact/signals-react/runtime";
 import React, { useMemo } from "react";
 import {
 	Dialog,
+	PageCubit,
 	PageLoaded,
 	PageLoading,
 	SearchableSelect,
 	type SearchableSelectOptionProps,
 	type SearchableSelectProps
 } from "yusr-ui";
-import { AccountType } from "../../data/account";
 
 
 export default function AccountsSearchableSelect(
-	{types, showAddButton = true, ...props}: SearchableSelectProps<AccountDto> & {
-		types: AccountType[];
+	{showAddButton = true, accountsCubit = Cubits.accounts, ...props}: SearchableSelectProps<AccountDto> & {
 		showAddButton?: boolean;
+		accountsCubit?: PageCubit<AccountDto>,
+		placeholder?: string
 	}
 )
 {
@@ -30,9 +31,10 @@ export default function AccountsSearchableSelect(
 	return (
 		<>
 			<SearchableSelect>
-				<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
+				<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }
+				                          placeholder={ props.placeholder }/>
 				<SearchableSelect.Content>
-					<SearchableSelect.SearchInput onSearch={ (searchInput) => Cubits.accounts.search(searchInput) }/>
+					<SearchableSelect.SearchInput onSearch={ (searchInput) => accountsCubit.search(searchInput) }/>
 					<SearchableSelect.Command>
 						<SearchableSelect.NullOption { ...props } />
 						<CommandItems/>
@@ -47,8 +49,7 @@ export default function AccountsSearchableSelect(
 				>
 					{ isAddAccountOpen.value && (
 						<ChangeAccountDialog
-							initDto={ {type: types[0], name: newAccountSearchText.value} as AccountDto }
-							selectTypes={ types }
+							initDto={ {name: newAccountSearchText.value} as AccountDto }
 							service={ Services.accountsApi }
 							onSuccess={ (data) =>
 							{
@@ -59,7 +60,7 @@ export default function AccountsSearchableSelect(
 								}
 								props.onSelect?.(data);
 								isAddAccountOpen.value = false;
-								Cubits.accounts.init(types);
+								accountsCubit.init();
 							} }
 						/>
 					) }
@@ -71,13 +72,13 @@ export default function AccountsSearchableSelect(
 	function CommandItems()
 	{
 		useSignals();
-		if (Cubits.accounts.state.value instanceof PageLoading)
+		if (accountsCubit.state.value instanceof PageLoading)
 		{
 			return <SearchableSelect.Loading/>;
 		}
-		if (Cubits.accounts.state.value instanceof PageLoaded && Cubits.accounts.entities.value.length > 0)
+		if (accountsCubit.state.value instanceof PageLoaded && accountsCubit.entities.value.length > 0)
 		{
-			return Cubits.accounts.entities.value.map((entity) => (
+			return accountsCubit.entities.value.map((entity) => (
 				<Option key={ entity.id } item={ entity } { ...props } />
 			));
 		}
@@ -104,12 +105,17 @@ const Option = React.memo(
 	function Option({...props}: Omit<SearchableSelectOptionProps<AccountDto>, "labelSelector">)
 	{
 		useSignals();
+
 		return (
 			<SearchableSelect.Option<AccountDto>
 				labelSelector="name"
 				{ ...props }
 			>
-				<SearchableSelect.OptionBody label={ props.item.name }/>
+				<div className="flex items-center justify-between w-full">
+					<span className="font-normal">
+						{ props.item.name }
+					</span>
+				</div>
 			</SearchableSelect.Option>
 		);
 	}

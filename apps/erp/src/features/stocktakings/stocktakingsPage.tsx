@@ -22,6 +22,7 @@ import { createPortal } from "react-dom";
 import { StocktakingReport } from "@/features/reports/stocktaking/stocktakingReport.tsx";
 import { signal } from "@preact/signals-react";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function StocktakingsPage()
@@ -31,6 +32,15 @@ export default function StocktakingsPage()
 	useEffect(() => Cubits.stocktaking.init(), []);
 
 	const printedStocktaking = useMemo(() => signal<StocktakingDto | undefined>(), []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("stocktakings.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Stocktakings, SystemPermissionsActions.Get))
 	{
@@ -56,6 +66,13 @@ export default function StocktakingsPage()
 				<PageTable onPrint={ (stocktaking) =>
 				{
 					printedStocktaking.value = stocktaking;
+					const handleAfterPrint = () =>
+					{
+						printedStocktaking.value = undefined;
+						window.removeEventListener("afterprint", handleAfterPrint);
+					};
+					window.addEventListener("afterprint", handleAfterPrint);
+
 					requestAnimationFrame(() =>
 					{
 						requestAnimationFrame(() =>

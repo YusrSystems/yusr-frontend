@@ -7,6 +7,8 @@ import DashboardCubit from "@/features/dashboard/logic/dashboardCubit.ts";
 import { DashboardLoadingState } from "@/features/dashboard/logic/dashboardState.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import ReferralCard from "@/features/dashboard/referralCard.tsx";
+import { useTranslation } from "react-i18next";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function DashboardPage()
@@ -18,6 +20,16 @@ export default function DashboardPage()
 	{
 		void cubit.init();
 	}, [cubit]);
+
+	const {t} = useTranslation("erpCommon");
+	useEffect(() =>
+	{
+		document.title = `${ t("sidebar.dashboard") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	if (cubit.state.value instanceof DashboardLoadingState)
 	{

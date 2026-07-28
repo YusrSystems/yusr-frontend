@@ -18,6 +18,7 @@ import {
 import ChangeBalanceTransferDialog from "./changeBalanceTransferDialog";
 import { BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function BalanceTransfersPage()
@@ -25,6 +26,15 @@ export default function BalanceTransfersPage()
 	useSignals();
 	const {t} = useTranslation("accounting");
 	useEffect(() => Cubits.balanceTransfers.init(), []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("balanceTransfers.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Get))
 	{
@@ -131,8 +141,8 @@ function Table()
 					) => [
 						{rowBody: `#${ transfer.id }`, rowStyles: ""},
 						{rowBody: new Date(transfer.date).toLocaleDateString("en-CA"), rowStyles: ""},
-						{rowBody: transfer.fromAccountName ?? "-", rowStyles: "font-semibold text-red-600"},
-						{rowBody: transfer.toAccountName ?? "-", rowStyles: "font-semibold text-green-600"},
+						{rowBody: transfer.fromGlAccountName ?? "-", rowStyles: "font-semibold text-red-600"},
+						{rowBody: transfer.toGlAccountName ?? "-", rowStyles: "font-semibold text-green-600"},
 						{
 							rowBody: (
 								<div className="flex items-center gap-1">

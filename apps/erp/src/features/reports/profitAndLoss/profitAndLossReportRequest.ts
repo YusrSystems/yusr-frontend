@@ -1,20 +1,10 @@
 import { DateService } from "yusr-ui";
-import { ProfitAndLossRowDocumentType } from "@/features/reports/profitAndLoss/profitAndLossReportResult.ts";
 
 
 export class ProfitAndLossReportRequest
 {
-	fromDate?: string | null;
-	toDate?: string | null;
-	fromAccountId?: number;
-	fromAccountName?: string;
-	toAccountId?: number;
-	toAccountName?: string;
-	voucherCategoryIds?: number[];
-	voucherCategoryNames?: string[];
-	documentTypes?: ProfitAndLossRowDocumentType[];
-	pageNumber?: number;
-	rowsPerPage?: number;
+	fromDate: string;
+	toDate: string;
 
 	constructor(init?: Partial<ProfitAndLossReportRequest>)
 	{

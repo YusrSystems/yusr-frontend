@@ -4,7 +4,6 @@ import { AccountType } from "@/core/data/account";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import {
 	ChangeableEntityMode,
 	ChangeDialog,
@@ -29,7 +28,7 @@ export default function ChangePaymentMethodDialog(
 	useSignals();
 	useEffect(() =>
 	{
-		Cubits.accounts.init([AccountType.Bank, AccountType.Box]);
+		Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true});
 	}, []);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
@@ -47,7 +46,9 @@ export default function ChangePaymentMethodDialog(
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.value.mode.value === ChangeableEntityMode.Create
+	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
+
+	const title = !isUpdateMode
 		? t("paymentMethods.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("paymentMethods.entityName") }`;
 
@@ -72,31 +73,6 @@ export default function ChangePaymentMethodDialog(
 		return t("paymentMethods.commissionHintPercent", {n: numerator, d: denominator});
 	}
 
-	const hasBankPerm = Services.auth.hasAuth(
-		SystemPermissionsResources.AccountBank,
-		SystemPermissionsActions.Get
-	);
-
-	const hasBoxPerm = Services.auth.hasAuth(
-		SystemPermissionsResources.AccountBox,
-		SystemPermissionsActions.Get
-	);
-	const types: AccountType[] = [];
-	if (hasBankPerm)
-	{
-		types.push(AccountType.Bank);
-	}
-
-	if (hasBoxPerm)
-	{
-		types.push(AccountType.Box);
-	}
-
-	if (!hasBankPerm && !hasBoxPerm)
-	{
-		toast.warning(t("paymentMethods.noPermissionToEditAdmin"));
-	}
-
 	return (
 		<ChangeDialog className="sm:max-w-lg">
 			<ChangeDialog.Header title={ title }/>
@@ -112,13 +88,11 @@ export default function ChangePaymentMethodDialog(
 					<FormField
 						label={ t("paymentMethods.responsibleAccount") }
 						required
-						error={ entity.value.getError("accountId") }
+						error={ entity.value.getError("glAccountId") }
 					>
 						<AccountsSearchableSelect
-							id={ entity.value.accountId }
-							label={ entity.value.accountName }
-							types={ types }
-							disabled={ !((hasBankPerm || hasBoxPerm) && entity.value.mode.value === ChangeableEntityMode.Create) }
+							id={ entity.value.glAccountId }
+							label={ entity.value.glAccountName }
 						/>
 					</FormField>
 				</div>

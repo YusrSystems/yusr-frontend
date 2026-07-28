@@ -3,32 +3,32 @@ import { useTranslation } from "react-i18next";
 import { CheckboxField, DateField, FieldsSection, FormField, SelectField, TextField } from "yusr-ui";
 import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
 import { signal, useComputed } from "@preact/signals-react";
-import { AccountDto, AccountType } from "@/core/data/account.ts";
 import { Services } from "@/core/services/services.ts";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
-import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 import { ImportExportType } from "@/core/types/importExportType.ts";
 import { useSignals } from "@preact/signals-react/runtime";
+import { type PartnerDto, PartnerType } from "@/core/data/partner.ts";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 
 
 export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
-	const selectedAccount = useMemo(() => signal<AccountDto | undefined>(), []);
+	const selectedPartner = useMemo(() => signal<PartnerDto | undefined>(), []);
 
 	const invoiceOrigin = useComputed(() =>
 	{
-		const accountCountryId = selectedAccount.value?.city?.countryId;
+		const partnerCountryId = selectedPartner.value?.city?.countryId;
 		const settingsCountryId = Services.auth.setting?.branch?.value?.city.value?.countryId.value;
 
-		if (accountCountryId == undefined || settingsCountryId == undefined)
+		if (partnerCountryId == undefined || settingsCountryId == undefined)
 		{
 			return {canBeExportInvoice: false, canBeImportInvoice: false};
 		}
 
-		const isCrossBorder = accountCountryId !== settingsCountryId;
+		const isCrossBorder = partnerCountryId !== settingsCountryId;
 
 		return {
 			canBeExportInvoice: isCrossBorder
@@ -55,9 +55,6 @@ export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 		}
 	}, [invoice.importExportType, invoiceOrigin.value]);
 
-	const isPurchaseInvoice = () =>
-		invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.PurchaseReturn;
-
 	return (
 		<FieldsSection columns={ {base: 1, md: 2, lg: 4} }>
 
@@ -81,25 +78,25 @@ export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 					onSelect={ () =>
 					{
 						invoice.invoiceItems.value = [];
-						invoice.invoiceVouchers.value = [];
+						invoice.paymentVouchers.value = [];
 					} }
 				/>
 			</FormField>
 
 			<FormField
-				label={ t("invoices.account") }
+				label={ (invoice.type.value === InvoiceType.Sell || invoice.type.value === InvoiceType.SellReturn) ? t("vouchers.customer", "العميل") : t("vouchers.supplier", "المورد") }
 				required
-				error={ invoice.getError("actionAccountId") }
+				error={ invoice.getError("partnerId") }
 			>
-				<AccountsSearchableSelect
-					id={ invoice.actionAccountId }
-					label={ invoice.actionAccountName }
+				<PartnersSearchableSelect
+					id={ invoice.partnerId }
+					label={ invoice.partnerName }
 					disabled={ invoice.isDisabled }
-					types={ isPurchaseInvoice() ? [AccountType.Supplier] : [AccountType.Client] }
 					onSelect={ (account) =>
 					{
-						selectedAccount.value = account;
+						selectedPartner.value = account;
 					} }
+					types={ invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.PurchaseReturn ? [PartnerType.Supplier] : [PartnerType.Customer] }
 				/>
 			</FormField>
 

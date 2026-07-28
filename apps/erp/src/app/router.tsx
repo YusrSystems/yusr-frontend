@@ -6,11 +6,6 @@ import { ErpRolesPage } from "@/features/roles/erpRolesPage";
 import VouchersPage from "@/features/vouchers/vouchersPage.tsx";
 import { createBrowserRouter } from "react-router-dom";
 import { BaseFilterableApiService, BranchesPage, ErrorFallback, NotFoundPage, UsersPage } from "yusr-ui";
-import BanksAccountsPage from "../features/accounts/banksAccountsPage";
-import BoxesAccountsPage from "../features/accounts/boxesAccountsPage";
-import ClientsAccountsPage from "../features/accounts/clientsAccountsPage";
-import { EmployeesAccountsPage } from "../features/accounts/employeesAccountsPage";
-import { SuppliersAccountsPage } from "../features/accounts/suppliersAccountsPage";
 import DashboardPage from "../features/dashboard/dashboardPage";
 import ItemsPage from "../features/items/itemsPage";
 import ItemsSettlementsPage from "../features/stocktakings/itemsSettlementsPage.tsx";
@@ -34,14 +29,19 @@ import AuthGate from "@/app/authGate.tsx";
 import CostAdjustmentsPage from "@/features/costAdjustments/costAdjustmentsPage.tsx";
 import { ItemsListReportPage } from "@/features/reports/itemsList/itemsListReportPage.tsx";
 import { ItemsMovementReportPage } from "@/features/reports/itemsMovement/itemsMovementReportPage.tsx";
-import { TaxReturnReportPage } from "@/features/reports/taxReturn/taxReturnReportPage.tsx";
-import { ItemsTaxStatementReportPage } from "@/features/reports/itemsTaxStatement/itemsTaxStatementReportPage.tsx";
+import { VatReturnReportPage } from "@/features/reports/vatReturn/vatReturnReportPage.tsx";
 import { InvoicesListReportPage } from "@/features/reports/invoicesList/invoicesListReportPage.tsx";
 import { ProfitAndLossReportPage } from "@/features/reports/profitAndLoss/profitAndLossReportPage.tsx";
 import { BalanceSheetReportPage } from "@/features/reports/balanceSheet/balanceSheetReportPage.tsx";
 import { ItemStatementReportPage } from "@/features/reports/itemStatement/itemStatementReportPage.tsx";
 import { AccountStatementReportPage } from "@/features/reports/accountStatement/accountStatementReportPage.tsx";
+import { PartnerStatementReportPage } from "@/features/reports/partnerStatement/partnerStatementReportPage.tsx";
 import { AccountsListReportPage } from "@/features/reports/accountsList/accountsListReportPage.tsx";
+import AccountsPage from "@/features/accounts/accountsPage.tsx";
+import PartnersPage from "@/features/partners/partnersPage.tsx";
+import { PartnerType } from "@/core/data/partner.ts";
+import { SalesProfitabilityReportPage } from "@/features/reports/salesProfitability/salesProfitabilityReportPage.tsx";
+import { TaxAuditReportPage } from "@/features/reports/taxAudit/taxAuditReportPage.tsx";
 
 
 const refreshPage = () =>
@@ -58,7 +58,6 @@ export const router = createBrowserRouter([{
 		{path: "/", element: <LandingPage/>},
 		{path: "/login", element: <LoginPage/>},
 		{path: "/register/:joinedByKey?", element: <RegisterPage/>},
-		// {path: "/register", element: <MaintenanceFallback/>},
 		{path: "/legal", element: <LegalDocViewer/>},
 		{path: "/sharing/:registrationKey", element: <TenantInfoSharingPage/>},
 		{
@@ -74,11 +73,7 @@ export const router = createBrowserRouter([{
 					{path: "/roles", element: <ErpRolesPage/>},
 					{path: "/stores/:id?", element: <StoresPage/>},
 					{path: "/units", element: <UnitsPage/>},
-					{path: "/clients/:id?", element: <ClientsAccountsPage/>},
-					{path: "/suppliers/:id?", element: <SuppliersAccountsPage/>},
-					{path: "/employees/:id?", element: <EmployeesAccountsPage/>},
-					{path: "/banks/:id?", element: <BanksAccountsPage/>},
-					{path: "/boxes/:id?", element: <BoxesAccountsPage/>},
+					{path: "/accounts/:id?", element: <AccountsPage/>},
 					{path: "/paymentMethods", element: <PaymentMethodsPage/>},
 					{path: "/balanceTransfer/:id?", element: <BalanceTransfersPage/>},
 					{path: "/items/:id?", element: <ItemsPage/>},
@@ -88,6 +83,14 @@ export const router = createBrowserRouter([{
 					{path: "/stocktakings", element: <StocktakingsPage/>},
 					{path: "/itemsSettlements/:id?", element: <ItemsSettlementsPage/>},
 					{path: "/vouchers/:id?", element: <VouchersPage/>},
+					{
+						path: "/clients/:id?",
+						element: <PartnersPage type={ PartnerType.Customer }/>
+					},
+					{
+						path: "/suppliers/:id?",
+						element: <PartnersPage type={ PartnerType.Supplier }/>
+					},
 					{path: "/reports", element: <ReportsPage/>},
 
 					// invoices
@@ -100,14 +103,19 @@ export const router = createBrowserRouter([{
 					{path: "/reports/accountsList", element: <AccountsListReportPage/>},
 					{path: "/reports/invoicesList", element: <InvoicesListReportPage/>},
 					{path: "/reports/itemsMovement", element: <ItemsMovementReportPage/>},
-					{path: "/reports/taxReturn", element: <TaxReturnReportPage/>},
-					{path: "/reports/itemsTaxStatement", element: <ItemsTaxStatementReportPage/>},
+					{path: "/reports/vatReturn", element: <VatReturnReportPage/>},
 					{path: "/reports/profitAndLoss", element: <ProfitAndLossReportPage/>},
 					{path: "/reports/balanceSheet", element: <BalanceSheetReportPage/>},
+					{path: "/reports/salesProfitability", element: <SalesProfitabilityReportPage/>},
+					{path: "/reports/taxAudit", element: <TaxAuditReportPage/>},
 					{path: "/reports/itemStatement/:itemId?/:itemName?", element: <ItemStatementReportPage/>},
 					{
 						path: "/reports/accountStatement/:accountId?/:accountName?",
 						element: <AccountStatementReportPage/>
+					},
+					{
+						path: "/reports/partnerStatement/:partnerId?/:partnerName?",
+						element: <PartnerStatementReportPage/>
 					}
 
 				]

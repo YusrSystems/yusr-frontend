@@ -1,4 +1,4 @@
-import type { Signal } from "@preact/signals-react";
+import { type Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
 
 
@@ -7,22 +7,22 @@ export class BalanceTransferDto extends Dto
 	public description?: string;
 	public date!: string;
 	public amount!: number;
-	public fromAccountId!: number;
-	public toAccountId!: number;
-	public fromAccountName?: string;
-	public toAccountName?: string;
+	public fromGlAccountId!: number;
+	public toGlAccountId!: number;
+	public fromGlAccountName?: string;
+	public toGlAccountName?: string;
 	public isDeleted: boolean = false;
 }
 
 export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 {
-	public description: Signal<string>;
+	public description: Signal<string | undefined>;
 	public date: Signal<string>;
 	public amount: Signal<number>;
-	public fromAccountId: Signal<number>;
-	public toAccountId: Signal<number>;
-	public fromAccountName: Signal<string>;
-	public toAccountName: Signal<string>;
+	public fromGlAccountId: Signal<number>;
+	public toGlAccountId: Signal<number>;
+	public fromGlAccountName: Signal<string | undefined>;
+	public toGlAccountName: Signal<string | undefined>;
 	public isDeleted: Signal<boolean>;
 
 	constructor(dto?: Partial<BalanceTransferDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
@@ -30,26 +30,41 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 		super(dto, [{
 			field: "amount",
 			selector: (d) => d.amount,
-			validators: [Validators.required(i18n.t("accounting:balanceTransfers.amountRequired")),
-				Validators.min(1, i18n.t("accounting:balanceTransfers.amountMin"))
+			validators: [
+				Validators.required(i18n.t("accounting:balanceTransfers.amountRequired", "المبلغ مطلوب")),
+				Validators.min(0.01, i18n.t("accounting:balanceTransfers.amountMin", "المبلغ يجب أن يكون أكبر من الصفر"))
 			]
-		}, {
-			field: "fromAccountId",
-			selector: (d) => d.fromAccountId,
-			validators: [Validators.required(i18n.t("accounting:balanceTransfers.fromAccountRequired"))]
-		}, {
-			field: "toAccountId",
-			selector: (d) => d.toAccountId,
-			validators: [Validators.required(i18n.t("accounting:balanceTransfers.toAccountRequired"))]
-		}], mode);
+		},
+			{
+				field: "fromGlAccountId",
+				selector: (d) => d.fromGlAccountId,
+				validators: [
+					Validators.required(i18n.t("accounting:balanceTransfers.fromAccountRequired", "حساب الصادر مطلوب"))
+				]
+			},
+			{
+				field: "toGlAccountId",
+				selector: (d) => d.toGlAccountId,
+				validators: [
+					Validators.required(i18n.t("accounting:balanceTransfers.toAccountRequired", "حساب الوارد مطلوب"))
+				]
+			},
+			{
+				field: "description",
+				selector: (d) => d.description,
+				validators: [
+					Validators.optional(Validators.maxLength(500, i18n.t("accounting:balanceTransfers.descMax", "يجب ألا يتجاوز البيان 500 حرف")))
+				]
+			}
+		], mode);
 
 		this.description = this.assign("description", dto?.description);
 		this.date = this.assign("date", dto?.date ?? DateService.formatDateOnly(new Date()));
-		this.amount = this.assign("amount", dto?.amount ?? 0.0);
-		this.fromAccountId = this.assign("fromAccountId", dto?.fromAccountId);
-		this.toAccountId = this.assign("toAccountId", dto?.toAccountId);
-		this.fromAccountName = this.assign("fromAccountName", dto?.fromAccountName);
-		this.toAccountName = this.assign("toAccountName", dto?.toAccountName);
-		this.isDeleted = this.assign("isDeleted", dto?.isDeleted);
+		this.amount = this.assign("amount", dto?.amount ?? 0);
+		this.fromGlAccountId = this.assign("fromGlAccountId", dto?.fromGlAccountId ?? 0);
+		this.toGlAccountId = this.assign("toGlAccountId", dto?.toGlAccountId ?? 0);
+		this.fromGlAccountName = this.assign("fromGlAccountName", dto?.fromGlAccountName);
+		this.toGlAccountName = this.assign("toGlAccountName", dto?.toGlAccountName);
+		this.isDeleted = this.assign("isDeleted", dto?.isDeleted ?? false);
 	}
 }
