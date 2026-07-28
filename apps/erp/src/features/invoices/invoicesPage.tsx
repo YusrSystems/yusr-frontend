@@ -605,7 +605,7 @@ function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 				});
 			}
 		}
-		console.log("invoice: ", invoice);
+
 		if (
 			Services.auth.hasAuth(
 				SystemPermissionsResources.ReportInvoice,
@@ -617,16 +617,16 @@ function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 				rowBody: (
 					<Tooltip delayDuration={ 200 }>
 						<TooltipTrigger asChild>
-								<span className="inline-block layout-fix">
-									<ReportButton
-										reportName={ ReportConstants.Invoice }
-										request={ new InvoiceReportRequest({invoiceId: invoice.id}) }
-										fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type, t) }-${ invoice.partnerName }` }
-										disabled={ !invoice.canBePrinted }
-										onPrint={ () => onPrint(invoice) }
-										isPrinting={ isPrinting.value === invoice.id }
-									/>
-								</span>
+							<span className="inline-block layout-fix">
+								<ReportButton
+									reportName={ ReportConstants.Invoice }
+									request={ new InvoiceReportRequest({invoiceId: invoice.id}) }
+									fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type, t) }-${ invoice.partnerName }` }
+									disabled={ !invoice.canBePrinted }
+									onPrint={ () => onPrint(invoice) }
+									isPrinting={ isPrinting.value === invoice.id }
+								/>
+							</span>
 						</TooltipTrigger>
 
 						{ !invoice.canBePrinted && (
