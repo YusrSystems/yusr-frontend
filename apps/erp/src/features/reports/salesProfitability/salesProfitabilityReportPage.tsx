@@ -7,8 +7,7 @@ import { SalesProfitabilityReportFields } from "./salesProfitabilityReportFields
 import { SalesProfitabilityReport } from "./salesProfitabilityReport";
 import { SalesProfitabilityReportRequest } from "./salesProfitabilityReportRequest";
 import { Cubits } from "@/core/services/cubits";
-import type { SalesProfitabilityLine } from "./salesProfitabilityReportResult";
-import { getProfitAndLossRowDocumentTypeName } from "./salesProfitabilityReportTable";
+import { getProfitAndLossRowDocumentTypeName, type SalesProfitabilityLine } from "./salesProfitabilityReportResult";
 import { useTranslation } from "react-i18next";
 import { APP_NAME } from "../../../../appConfig.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";

@@ -5,40 +5,14 @@ import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ReportLoaded, ReportLoading, TablePreview } from "yusr-ui";
 import { Link } from "react-router-dom";
-import { ProfitAndLossRowDocumentType } from "./salesProfitabilityReportResult";
 import { useTranslation } from "react-i18next";
+import {
+	getProfitAndLossRowDocumentRoute,
+	getProfitAndLossRowDocumentTypeName
+} from "@/features/reports/salesProfitability/salesProfitabilityReportResult.ts";
 
 
 const linkClassName = "p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!";
-
-export function getProfitAndLossRowDocumentTypeName(type: ProfitAndLossRowDocumentType, t: any): string
-{
-	switch (type)
-	{
-		case ProfitAndLossRowDocumentType.Sell:
-			return t("accounting:invoices.sellInvoice");
-		case ProfitAndLossRowDocumentType.SellReturn:
-			return t("accounting:invoices.sellReturn");
-		case ProfitAndLossRowDocumentType.Payment:
-			return t("accounting:vouchers.paymentVoucher");
-		default:
-			return "Unknown";
-	}
-}
-
-export function getProfitAndLossRowDocumentRoute(type: ProfitAndLossRowDocumentType): string | undefined
-{
-	switch (type)
-	{
-		case ProfitAndLossRowDocumentType.Sell:
-		case ProfitAndLossRowDocumentType.SellReturn:
-			return "sales";
-		case ProfitAndLossRowDocumentType.Payment:
-			return "vouchers";
-		default:
-			return undefined;
-	}
-}
 
 export function SalesProfitabilityReportTable()
 {

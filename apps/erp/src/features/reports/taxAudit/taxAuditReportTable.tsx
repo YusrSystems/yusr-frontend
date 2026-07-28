@@ -5,50 +5,17 @@ import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ReportLoaded, ReportLoading, TablePreview } from "yusr-ui";
 import { Link } from "react-router-dom";
-import { InvoiceType } from "@/core/types/invoiceType";
+import Invoice from "@/core/data/invoices/invoice.ts";
+import { useTranslation } from "react-i18next";
 
 
 const linkClassName = "p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!";
 
-export function getInvoiceTypeNameAr(type: InvoiceType): string
-{
-	switch (type)
-	{
-		case InvoiceType.Sell:
-			return "فاتورة مبيعات";
-		case InvoiceType.SellReturn:
-			return "مرتجع مبيعات";
-		case InvoiceType.Purchase:
-			return "فاتورة مشتريات";
-		case InvoiceType.PurchaseReturn:
-			return "مرتجع مشتريات";
-		case InvoiceType.Quotation:
-			return "عرض سعر";
-		default:
-			return "غير معروف";
-	}
-}
-
-export function getInvoiceRoute(type: InvoiceType): string | undefined
-{
-	switch (type)
-	{
-		case InvoiceType.Sell:
-		case InvoiceType.SellReturn:
-			return "sales";
-		case InvoiceType.Purchase:
-		case InvoiceType.PurchaseReturn:
-			return "purchases";
-		case InvoiceType.Quotation:
-			return "quotations";
-		default:
-			return undefined;
-	}
-}
-
 export function TaxAuditReportTable()
 {
 	useSignals();
+
+	const {t} = useTranslation("accounting");
 
 	if (Cubits.TaxAuditReport.state.value instanceof ReportLoading)
 	{
@@ -80,12 +47,12 @@ export function TaxAuditReportTable()
 				{ lines.map((row, idx) =>
 				{
 					const isEven = idx % 2 === 0;
-					const routePath = getInvoiceRoute(row.invoiceType);
+					const routePath = Invoice.getRouteName(row.invoiceType);
 
 					return (
 						<tr key={ `${ row.invoiceId }-${ idx }` }>
 							<ReportTableTd className="min-w-20" isEven={ isEven }>{ row.date }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ getInvoiceTypeNameAr(row.invoiceType) }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>{ Invoice.getTypeName(row.invoiceType, t) }</ReportTableTd>
 
 							{ routePath ? (
 								<ReportTableTd isEven={ isEven } className={ linkClassName }>
