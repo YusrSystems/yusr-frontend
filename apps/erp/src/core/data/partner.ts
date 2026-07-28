@@ -144,4 +144,17 @@ export class Partner extends ChangeableEntity<PartnerDto>
 		this.postalCode = this.assign("postalCode", dto?.postalCode);
 		this.city = this.assign("city", dto?.city);
 	}
+
+	static Routes(type: PartnerType): string
+	{
+		switch (type)
+		{
+			case PartnerType.Customer:
+				return "clients";
+			case PartnerType.Supplier:
+				return "suppliers";
+			default:
+				return "clients";
+		}
+	}
 }

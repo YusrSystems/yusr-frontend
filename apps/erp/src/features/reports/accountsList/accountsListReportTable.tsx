@@ -30,7 +30,6 @@ export function AccountsListReportTable()
 					<ReportTableTh ar="الرقم" en="No."/>
 					<ReportTableTh ar="رقم الحساب" en="Account Id"/>
 					<ReportTableTh ar="اسم الحساب" en="Account Name"/>
-					<ReportTableTh ar="نوع الحساب" en="Account Type"/>
 					<ReportTableTh ar="الرصيد الافتتاحي" en="Initial Balance"/>
 					<ReportTableTh ar="الرصيد" en="Balance"/>
 				</tr>
@@ -62,10 +61,6 @@ export function AccountsListReportTable()
 
 							<ReportTableTd isEven={ isEven } align="start">
 								{ account.name }
-							</ReportTableTd>
-
-							<ReportTableTd isEven={ isEven } align="start">
-								{/*{ Account.getAccountTypeName(account.type) }*/ }
 							</ReportTableTd>
 
 							<ReportTableTd isEven={ isEven }>

@@ -10,9 +10,9 @@ import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus";
 import type { ImportExportType } from "@/core/types/importExportType.ts";
 import { PaymentStatus } from "@/core/types/paymentStatus.ts";
-import type { AccountType } from "@/core/data/account.ts";
 import type { TFunction } from "i18next";
 import { Voucher, VoucherDto, VoucherType } from "@/core/data/voucher.ts";
+import type { PartnerType } from "@/core/data/partner.ts";
 
 
 export class InvoiceMode
@@ -62,7 +62,7 @@ export class InvoiceDto extends Dto
 	public idempotencyKey?: string;
 
 	public partnerName!: string;
-	public actionAccountType!: AccountType;
+	public partnerType!: PartnerType;
 	public storeName!: string;
 
 	public invoiceItems: InvoiceItemDto[] = [];

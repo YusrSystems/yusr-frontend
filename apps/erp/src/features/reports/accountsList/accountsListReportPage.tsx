@@ -38,7 +38,10 @@ export function AccountsListReportPage()
 					fileName="تقرير_قائمة_الحسابات"
 					getRows={ async () => Cubits.accounts.entities.value ?? [] }
 					columns={ [
-						{header: "اسم الحساب", accessor: (r) => r.name}
+						{header: "رقم الحساب", accessor: (r) => r.id},
+						{header: "اسم الحساب", accessor: (r) => r.name},
+						{header: "الرصيد الافتتاحي", accessor: (r) => r.openingBalance},
+						{header: "الرصيد", accessor: (r) => r.balance}
 					] }
 				/>
 				<ReportPage.PrintButton/>
