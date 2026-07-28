@@ -29,6 +29,7 @@ export class VoucherDto extends Dto
 	public notes?: string;
 	public rowVer!: number;
 	public isDeleted: boolean = false;
+	public isDirectMode!: boolean;
 
 	public paymentMethod?: PaymentMethodDto;
 }
@@ -52,6 +53,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 	public notes: Signal<string | undefined>;
 	public rowVer: Signal<number>;
 	public isDeleted: Signal<boolean>;
+	public isDirectMode: Signal<boolean>;
 
 	public paymentMethod: Signal<PaymentMethod>;
 
@@ -75,7 +77,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 			validators: [
 				Validators.custom((val, form) =>
 				{
-					if (form.partnerId) return true;
+					if (!form.isDirectMode) return true;
 					return val && Number(val) > 0;
 				}, i18n.t("accounting:vouchers.categoryRequired", "الحساب مطلوب"))
 			]
@@ -85,7 +87,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 			validators: [
 				Validators.custom((val, form) =>
 				{
-					if (!form.partnerId && form.glAccountId) return true;
+					if (form.isDirectMode) return true;
 					return val && Number(val) > 0;
 				}, i18n.t("accounting:vouchers.partnerRequired", "الجهة مطلوبة"))
 			]
@@ -114,6 +116,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 		this.notes = this.assign("notes", dto?.notes);
 		this.rowVer = this.assign("rowVer", dto?.rowVer ?? 0);
 		this.isDeleted = this.assign("isDeleted", dto?.isDeleted ?? false);
+		this.isDirectMode = this.assign("isDirectMode", dto?.isDirectMode ?? false);
 
 		this.paymentMethod = this.assign("paymentMethod", new PaymentMethod(dto?.paymentMethod));
 	}

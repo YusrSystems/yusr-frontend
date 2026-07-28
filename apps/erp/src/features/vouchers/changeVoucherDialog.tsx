@@ -42,7 +42,6 @@ export default function ChangeVoucherDialog({
 	const {t} = useTranslation(["accounting", "common"]);
 	const amountToWords = useMemo(() => signal<string>(""), []);
 	const selectedPaymentMethod = useMemo(() => signal<PaymentMethod | undefined>(entity.value.paymentMethod.value), [entity.value.paymentMethod.value]);
-	const isPartnerMode = useMemo(() => signal<boolean>(entity.value.partnerId.value !== null), []);
 
 	useEffect(() =>
 	{
@@ -52,9 +51,9 @@ export default function ChangeVoucherDialog({
 
 	useEffect(() =>
 	{
-		if (isPartnerMode.value) return;
-		Cubits.accounts.init(getAccountTypesByClasses(entity.value.type.value === VoucherType.Payment ? [AccountClass.Expense] : [AccountClass.Revenue, AccountClass.Equity]));
-	}, [entity.value.type.value, isPartnerMode.value]);
+		if (!entity.value.isDirectMode.value) return;
+		Cubits.accounts.init(getAccountTypesByClasses(entity.value.type.value === VoucherType.Payment ? [AccountClass.Expense] : [AccountClass.Revenue]));
+	}, [entity.value.type.value, entity.value.isDirectMode.value]);
 
 	useEffect(() =>
 	{
@@ -118,10 +117,10 @@ export default function ChangeVoucherDialog({
 					<div className="flex bg-muted/40 rounded-lg p-1 border max-w-md mx-auto w-full">
 						<Button
 							type="button"
-							variant={ isPartnerMode.value ? "default" : "ghost" }
+							variant={ !entity.value.isDirectMode.value ? "default" : "ghost" }
 							onClick={ () =>
 							{
-								isPartnerMode.value = true;
+								entity.value.isDirectMode.value = false;
 								entity.value.glAccountId.value = undefined;
 								entity.value.glAccountName.value = undefined;
 							} }
@@ -132,10 +131,10 @@ export default function ChangeVoucherDialog({
 						</Button>
 						<Button
 							type="button"
-							variant={ !isPartnerMode.value ? "default" : "ghost" }
+							variant={ entity.value.isDirectMode.value ? "default" : "ghost" }
 							onClick={ () =>
 							{
-								isPartnerMode.value = false;
+								entity.value.isDirectMode.value = true;
 								entity.value.partnerId.value = undefined;
 								entity.value.partnerName.value = undefined;
 								entity.value.invoiceId.value = undefined;
@@ -169,7 +168,7 @@ export default function ChangeVoucherDialog({
 							disabled={ entity.value.isDeleted.value }
 						/>
 
-						{ isPartnerMode.value && (
+						{ !entity.value.isDirectMode.value && (
 							<>
 								<FormField
 									label={ "الجهة" }
@@ -185,18 +184,30 @@ export default function ChangeVoucherDialog({
 							</>
 						) }
 
-						{ !isPartnerMode.value && (
-							<FormField
-								label={ t("vouchers.category", "الحساب") }
-								required
-								error={ entity.value.getError("glAccountId") }
-							>
-								<AccountsSearchableSelect
-									id={ entity.value.glAccountId }
-									label={ entity.value.glAccountName }
-									disabled={ entity.value.isDeleted.value }
-								/>
-							</FormField>
+						{ entity.value.isDirectMode.value && (
+							<>
+								<FormField
+									label={ t("vouchers.category", "الحساب") }
+									required
+									error={ entity.value.getError("glAccountId") }
+								>
+									<AccountsSearchableSelect
+										id={ entity.value.glAccountId }
+										label={ entity.value.glAccountName }
+										disabled={ entity.value.isDeleted.value }
+									/>
+								</FormField>
+
+								<FormField
+									label={ "الجهة (اختياري)" }
+								>
+									<PartnersSearchableSelect
+										id={ entity.value.partnerId }
+										label={ entity.value.partnerName }
+										disabled={ entity.value.isDeleted.value }
+									/>
+								</FormField>
+							</>
 						) }
 
 						<FormField

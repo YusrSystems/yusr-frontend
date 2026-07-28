@@ -10,6 +10,8 @@ import { Services } from "@/core/services/services.ts";
 import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 import { useEffect } from "react";
 import { Cubits } from "@/core/services/cubits.ts";
+import { AccountClass, getAccountTypesByClasses } from "@/core/data/account.ts";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 
 
 export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
@@ -20,6 +22,7 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 	useEffect(() =>
 	{
 		Cubits.partners.init();
+		Cubits.accounts.init(getAccountTypesByClasses([AccountClass.Expense]));
 	}, []);
 
 	const costVouchers = invoice.costVouchers.value;
@@ -36,7 +39,8 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 						invoiceId: invoice.id.value,
 						paymentMethodId: Services.auth.setting?.mainPaymentMethodId?.value,
 						type: VoucherType.Payment,
-						amount: 0
+						amount: 0,
+						isDirectMode: true
 					});
 					invoice.costVouchers.value = [...invoice.costVouchers.value, newVoucher];
 				} }
@@ -49,7 +53,8 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 					<thead className="bg-muted/40 border-b border-border">
 					<tr>
 						<th className="p-3 font-semibold w-16 text-center text-muted-foreground">{ t("invoices.number") }</th>
-						<th className="p-3 text-start font-semibold">{ t("invoices.account") }</th>
+						<th className="p-3 text-start font-semibold">{ t("invoices.account", "الحساب") }</th>
+						<th className="p-3 text-start font-semibold">{ t("invoices.partner", "الجهة (اختياري)") }</th>
 						<th className="p-3 text-start font-semibold">{ t("invoices.paymentMethod") }</th>
 						<th className="p-3 text-start font-semibold">{ t("invoices.amount") }</th>
 						<th className="p-3 text-start font-semibold">{ t("invoices.description") }</th>
@@ -64,7 +69,16 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 						>
 							<td className="p-2 text-center font-bold text-muted-foreground">{ index + 1 }</td>
 
-							<td className="p-2">
+							<td className="p-2 min-w-30">
+								<FormField label="" error={ voucher.getError("glAccountId") }>
+									<AccountsSearchableSelect
+										id={ voucher.glAccountId }
+										label={ voucher.glAccountName }
+									/>
+								</FormField>
+							</td>
+
+							<td className="p-2 min-w-30">
 								<FormField label="" error={ voucher.getError("partnerId") }>
 									<PartnersSearchableSelect
 										label={ voucher.partnerName }
@@ -73,7 +87,7 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 								</FormField>
 							</td>
 
-							<td className="p-2">
+							<td className="p-2 min-w-30">
 								<FormField label="" error={ voucher.getError("paymentMethodId") }>
 									<PaymentMethodsSearchableSelect
 										id={ voucher.paymentMethodId }
@@ -82,7 +96,7 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 								</FormField>
 							</td>
 
-							<td className="p-2">
+							<td className="p-2 w-40">
 								<NumberField
 									label=""
 									value={ voucher.amount }
