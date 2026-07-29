@@ -1,4 +1,4 @@
-import { Check, Download, Loader2, Printer, Share2 } from "lucide-react";
+import { Check, Download, Loader2, Printer } from "lucide-react";
 import { useState } from "react";
 import { Button } from "yusr-ui";
 import type { BaseReportRequest } from "@/core/data/report/baseReportRequest.ts";
@@ -26,12 +26,11 @@ export default function ReportButton<T extends BaseReportRequest>({
 	const service = new ReportApiService();
 
 	const [internalIsPrinting, setInternalIsPrinting] = useState(false);
-	const [isSharing, setIsSharing] = useState(false);
 	const [isDownloading, setIsDownloading] = useState(false);
 	const [downloaded, setDownloaded] = useState(false);
 
 	const isPrinting = externalIsPrinting ?? internalIsPrinting;
-	const isDisabled = isPrinting || isSharing || isDownloading || disabled;
+	const isDisabled = isPrinting || isDownloading || disabled;
 
 	return (
 		<div className="flex ">
@@ -56,18 +55,6 @@ export default function ReportButton<T extends BaseReportRequest>({
 					: downloaded
 						? <Check className="h-4 w-4 text-green-500"/>
 						: <Download className="h-4 w-4"/> }
-			</Button>
-			<Button
-				className="rounded-none! border-x-0 text-primary bg-secondary hover:bg-primary hover:text-secondary transition-colors duration-300"
-				disabled={ isDisabled }
-				onClick={ async () =>
-				{
-					setIsSharing(true);
-					await service.Get(reportName, "share", request, fileName);
-					setIsSharing(false);
-				} }
-			>
-				{ isSharing ? <Loader2 className="h-4 w-4 animate-spin"/> : <Share2 className="h-4 w-4"/> }
 			</Button>
 			<Button
 				className="rounded-s-none! text-primary bg-secondary hover:bg-primary hover:text-secondary transition-colors duration-300"
