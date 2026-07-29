@@ -5,7 +5,7 @@ import type { InvoiceReportResult } from "./invoiceReportResult";
 export function A4InvoiceSummary({data}: { data: InvoiceReportResult })
 {
 	return (
-		<div className="w-50 border border-border rounded-lg overflow-hidden flex flex-col shrink-0">
+		<div className="w-64 border border-border rounded-lg overflow-hidden flex flex-col shrink-0 h-fit">
 			{ data.settlementAmount > 0 && (
 				<SummaryRow labelAr="مبلغ التسوية" labelEn="Settlement Amount" value={ data.settlementAmount }/>
 			) }
@@ -16,10 +16,11 @@ export function A4InvoiceSummary({data}: { data: InvoiceReportResult })
 			) }
 
 			{ data.settlementReason && (
-				<div className="flex justify-between p-2 border-b border-border text-xs">
-					<div className="flex flex-col">
-						<span className="font-semibold">سبب التسوية</span>
-						<span className="text-[9px] text-muted-foreground" dir="ltr">Settlement Reason</span>
+				<div className="flex justify-between py-1 px-2 border-b border-border text-xs">
+					<div className="flex flex-col justify-center">
+						<span className="font-semibold leading-tight">سبب التسوية</span>
+						<span className="text-[9px] text-muted-foreground leading-tight"
+						      dir="ltr">Settlement Reason</span>
 					</div>
 					<span
 						className="font-bold self-center text-left max-w-[50%] text-sm">{ data.settlementReason }</span>
@@ -30,10 +31,10 @@ export function A4InvoiceSummary({data}: { data: InvoiceReportResult })
 
 			<SummaryRow labelAr="قيمة الضريبة" labelEn="Tax Amount" value={ data.totalTaxAmount }/>
 
-			<div className="flex justify-between p-2.5 bg-muted/50 border-b border-border">
-				<div className="flex flex-col">
-					<span className="font-bold text-primary text-xs">الإجمالي بعد الضريبة</span>
-					<span className="text-[9px] text-primary" dir="ltr">Total After Tax</span>
+			<div className="flex justify-between py-1.5 px-2 bg-muted/50 border-b border-border">
+				<div className="flex flex-col justify-center">
+					<span className="font-bold text-primary text-xs leading-tight">الإجمالي بعد الضريبة</span>
+					<span className="text-[9px] text-primary leading-tight" dir="ltr">Total After Tax</span>
 				</div>
 				<span
 					className="font-extrabold text-primary self-center text-lg">{ formatNumber(data.totalAfterTax) }</span>
@@ -65,10 +66,10 @@ function SummaryRow({
 })
 {
 	return (
-		<div className={ `flex justify-between p-2 ${ hideBorder ? "" : "border-b border-border" } text-xs` }>
-			<div className="flex flex-col">
-				<span className="font-semibold">{ labelAr }</span>
-				<span className="text-[9px] text-muted-foreground" dir="ltr">{ labelEn }</span>
+		<div className={ `flex justify-between py-1 px-2 ${ hideBorder ? "" : "border-b border-border" } text-xs` }>
+			<div className="flex flex-col justify-center">
+				<span className="font-semibold leading-tight">{ labelAr }</span>
+				<span className="text-[9px] text-muted-foreground leading-tight" dir="ltr">{ labelEn }</span>
 			</div>
 			<span className={ `font-bold self-center text-sm ${ valueClass || "" }` }>
 				{ formatNumber(value) }{ isPercent ? "%" : "" }
