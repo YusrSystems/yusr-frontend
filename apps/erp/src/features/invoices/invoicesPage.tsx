@@ -35,7 +35,6 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { InvoiceType } from "@/core/types/invoiceType";
 import VerifyAccountWrapper from "@/core/components/verifyAccountWrapper.tsx";
 import { EInvoicingEnvironmentType } from "@/core/data/setting.ts";
-import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
 import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { toast } from "sonner";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
@@ -397,7 +396,6 @@ function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 	{
 		if (
 			Services.auth.setting?.eInvoicingEnvironmentType.value === EInvoicingEnvironmentType.NotRegistered
-			|| invoice.statusId !== InvoiceStatus.Valid
 			|| (invoice.type !== InvoiceType.Sell && invoice.type !== InvoiceType.SellReturn)
 		)
 		{
@@ -580,7 +578,6 @@ function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 							</span>
 							) }
 							{ invoice.eInvoiceStatus === EInvoiceStatus.NotSent
-								&& invoice.statusId === InvoiceStatus.Valid
 								&& (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.SellReturn) && (
 									<Tooltip>
 										<TooltipTrigger asChild>

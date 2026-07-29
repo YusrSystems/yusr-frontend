@@ -5,7 +5,6 @@ import { type Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, StorageFile, Validators } from "yusr-ui";
 import { ItemDto } from "@/core/data/item.ts";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
-import { InvoiceStatus } from "@/core/types/invoiceStatus.ts";
 import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus";
 import type { ImportExportType } from "@/core/types/importExportType.ts";
@@ -37,7 +36,6 @@ export class InvoiceDto extends Dto
 	public originalInvoiceId?: number;
 	public date!: string;
 	public delegateEmp?: string;
-	public statusId!: InvoiceStatus;
 	public eInvoiceStatus!: EInvoiceStatus;
 	public fullAmount!: number;
 	public paidAmount!: number;
@@ -79,7 +77,6 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 	public originalInvoiceId: Signal<number | undefined>;
 	public date: Signal<string>;
 	public delegateEmp: Signal<string | undefined>;
-	public statusId: Signal<InvoiceStatus>;
 	public eInvoiceStatus: Signal<EInvoiceStatus>;
 	public fullAmount: Signal<number>;
 	public paidAmount: Signal<number>;
@@ -149,7 +146,6 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.originalInvoiceId = this.assign("originalInvoiceId", dto?.originalInvoiceId);
 		this.date = this.assign("date", dto?.date ?? DateService.formatDateOnly(new Date()));
 		this.delegateEmp = this.assign("delegateEmp", dto?.delegateEmp);
-		this.statusId = this.assign("statusId", dto?.statusId ?? InvoiceStatus.Valid);
 		this.eInvoiceStatus = this.assign("eInvoiceStatus", dto?.eInvoiceStatus ?? EInvoiceStatus.NotSent);
 		this.fullAmount = this.assign("fullAmount", dto?.fullAmount ?? 0);
 		this.paidAmount = this.assign("paidAmount", dto?.paidAmount ?? 0);
