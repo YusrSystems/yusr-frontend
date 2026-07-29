@@ -4,10 +4,12 @@ import { ReportPageContainer } from "@/features/report/reportPageContainer";
 import { ReportPageBody } from "@/features/report/reportPageBody";
 import { ReportTableTh } from "@/features/report/components/reportTableTh";
 import { ReportTableTd } from "@/features/report/components/reportTableTd";
+import { ReportField } from "@/features/report/components/reportField";
 import { formatNumber } from "@/features/report/utils/formating";
 import type { InvoiceReportResult } from "./invoiceReportResult";
 import { InvoicePrintSize } from "@/core/data/setting";
 import { Services } from "@/core/services/services";
+import { InvoiceType } from "@/core/types/invoiceType";
 
 
 export function InvoiceReport({data, isPortal = true}: { data?: InvoiceReportResult, isPortal?: boolean })
@@ -25,6 +27,11 @@ export function InvoiceReport({data, isPortal = true}: { data?: InvoiceReportRes
 function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, isPortal: boolean })
 {
 	const {invoice, partner} = data;
+	const isStandard = !!partner.vatNumber;
+
+	const isPurchase = invoice.type === InvoiceType.Purchase || invoice.type === InvoiceType.PurchaseReturn;
+	const partnerLabelAr = isPurchase ? "المورد" : "العميل";
+	const partnerLabelEn = isPurchase ? "Supplier" : "Customer";
 
 	return (
 		<ReportContainer isPortal={ isPortal }>
@@ -33,43 +40,41 @@ function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, isPortal
 				<ReportHeader.TitleSection titleAr={ data.titleAr } titleEn={ data.titleEn }>
 					<ReportHeader.Id id={ invoice.id }/>
 				</ReportHeader.TitleSection>
-				<ReportHeader.MetaDataSection/>
+				<ReportHeader.MetaDataSection>
+					<div className="flex justify-end w-full h-full pb-5">
+						{ data.qrBytes && <img src={ `data:image/png;base64,${ data.qrBytes }` } alt="QR Code"
+                                               className="h-16 w-16 object-contain"/> }
+					</div>
+				</ReportHeader.MetaDataSection>
 			</ReportHeader>
 
 			<div className="flex flex-col gap-4 mt-6 print:break-inside-avoid">
 				<div className="grid grid-cols-2 gap-8">
-					<div className="flex flex-col gap-2">
-						<h3 className="font-bold text-sm border-b pb-1">معلومات العميل / Customer Info</h3>
-						<div className="grid grid-cols-2 gap-2 text-sm">
-							<span className="text-muted-foreground">الاسم / Name:</span>
-							<span className="font-semibold">{ partner.name || "-" }</span>
+					<ReportField labelAr="المستودع" labelEn="Store" value={ invoice.storeName }/>
+					<ReportField labelAr="بتاريخ" labelEn="Date" value={ invoice.date }/>
+				</div>
 
-							<span className="text-muted-foreground">الرقم الضريبي / VAT No:</span>
-							<span className="font-semibold">{ partner.vatNumber || "-" }</span>
-
-							<span className="text-muted-foreground">العنوان / Address:</span>
-							<span className="font-semibold">
-		{ [partner.buildingNumber, partner.street, partner.district, partner.cityName].filter(Boolean).join(" - ") || "-" }
-	</span>
-						</div>
+				<div className="border border-border rounded-lg overflow-hidden print:break-inside-avoid">
+					<div className="bg-muted/50 px-4 py-2 border-b border-border flex justify-between items-center">
+						<span className="font-bold text-sm">{ partnerLabelAr }</span>
+						<span className="font-bold text-sm" dir="ltr">{ partnerLabelEn }</span>
 					</div>
-					<div className="flex flex-col gap-2">
-						<h3 className="font-bold text-sm border-b pb-1">معلومات الفاتورة / Invoice Info</h3>
-						<div className="grid grid-cols-2 gap-2 text-sm">
-							<span className="text-muted-foreground">التاريخ / Date:</span>
-							<span className="font-semibold">{ invoice.date }</span>
+					<div className="p-4 grid grid-cols-2 gap-4">
+						<ReportField labelAr="الاسم" labelEn="Name" value={ partner.name || "-" }/>
+						{ isStandard ? (
+							<ReportField labelAr="العنوان" labelEn="Address"
+							             value={ [partner.buildingNumber, partner.street, partner.district, partner.cityName].filter(Boolean).join(" - ") || "-" }/>
+						) : (
+							<ReportField labelAr="رقم الجوال" labelEn="Phone Number"
+							             value={ partner.phone || partner.mobile || "-" }/>
+						) }
 
-							<span className="text-muted-foreground">تاريخ الإصدار / Issue Date:</span>
-							<span
-								className="font-semibold">{ new Date(invoice.createdAt).toLocaleString("en-CA") }</span>
-
-							{ invoice.originalInvoiceId && (
-								<>
-									<span className="text-muted-foreground">الفاتورة الأصلية / Original Inv:</span>
-									<span className="font-semibold">#{ invoice.originalInvoiceId }</span>
-								</>
-							) }
-						</div>
+						{ isStandard && (
+							<div className="flex flex-col gap-3 border-r border-border pr-4">
+								<ReportField labelAr="السجل التجاري" labelEn="CRN" value={ partner.crn || "-" }/>
+								<ReportField labelAr="الرقم الضريبي" labelEn="VAT" value={ partner.vatNumber || "-" }/>
+							</div>
+						) }
 					</div>
 				</div>
 			</div>
@@ -80,36 +85,39 @@ function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, isPortal
 						<thead>
 						<tr>
 							<ReportTableTh ar="الرقم" en="No."/>
-							<ReportTableTh ar="الصنف" en="Item" align="start"/>
-							<ReportTableTh ar="الكمية" en="Qty"/>
-							<ReportTableTh ar="سعر الوحدة" en="Unit Price"/>
-							<ReportTableTh ar="الخصم" en="Discount"/>
-							<ReportTableTh ar="الإجمالي (غير شامل)" en="Total (Excl. VAT)"/>
-							<ReportTableTh ar="الضريبة" en="VAT"/>
-							<ReportTableTh ar="الإجمالي (شامل)" en="Total (Incl. VAT)"/>
+							<ReportTableTh ar="اسم المادة" en="Item Name" align="start"/>
+							<ReportTableTh ar="الوصف" en="Description" align="start"/>
+							<ReportTableTh ar="الكمية" en="Quantity"/>
+							<ReportTableTh ar="سعر الوحدة" en="Unit price"/>
+							<ReportTableTh ar="التسوية" en="Settlement"/>
+							<ReportTableTh ar="قيمة الضريبة" en="Tax Amount"/>
+							<ReportTableTh ar="الإجمالي بعد الضريبة" en="Total After Tax"/>
 						</tr>
 						</thead>
 						<tbody>
 						{ invoice.invoiceItems.map((item, idx) =>
 						{
 							const isEven = idx % 2 === 0;
+							const taxAmount = item.taxInclusiveTotalPrice - item.taxExclusiveTotalPrice;
 							return (
 								<tr key={ item.id }>
 									<ReportTableTd isEven={ isEven }>{ idx + 1 }</ReportTableTd>
 									<ReportTableTd isEven={ isEven } align="start">
 										<div className="flex flex-col">
-											<span>{ item.itemName }</span>
+											<span className="font-semibold">{ item.itemName }</span>
 											<span
 												className="text-[10px] text-muted-foreground">{ item.itemUnitPricingMethodName }</span>
 										</div>
 									</ReportTableTd>
+									<ReportTableTd isEven={ isEven } align="start">{ item.notes || "-" }</ReportTableTd>
 									<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity) }</ReportTableTd>
 									<ReportTableTd
 										isEven={ isEven }>{ formatNumber(item.taxExclusivePrice) }</ReportTableTd>
 									<ReportTableTd isEven={ isEven }>{ formatNumber(item.settlement) }</ReportTableTd>
-									<ReportTableTd
-										isEven={ isEven }>{ formatNumber(item.taxExclusiveTotalPrice) }</ReportTableTd>
-									<ReportTableTd isEven={ isEven }>{ item.totalTaxesPerc }%</ReportTableTd>
+									<ReportTableTd isEven={ isEven } className="whitespace-nowrap">
+										{ formatNumber(taxAmount) } <span
+										className="text-[10px] text-muted-foreground">({ item.totalTaxesPerc }%)</span>
+									</ReportTableTd>
 									<ReportTableTd isEven={ isEven }
 									               className="font-bold">{ formatNumber(item.taxInclusiveTotalPrice) }</ReportTableTd>
 								</tr>
@@ -118,43 +126,85 @@ function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, isPortal
 						</tbody>
 					</table>
 
-					<div className="flex justify-between mt-8 print:break-inside-avoid">
-						<div className="w-40 h-40">
-							{ data.qrBytes && <img src={ `data:image/png;base64,${ data.qrBytes }` } alt="QR Code"
-                                                   className="w-full h-full object-contain"/> }
-						</div>
-
-						<div className="w-80 flex flex-col gap-2">
-							<div className="flex justify-between text-sm">
-								<span className="text-muted-foreground">الإجمالي قبل الضريبة / Total (Excl. VAT):</span>
-								<span className="font-semibold">{ formatNumber(data.totalBeforeTax) }</span>
+					<div className="flex justify-end mt-8 print:break-inside-avoid">
+						<div className="w-80 border border-border rounded-lg overflow-hidden flex flex-col">
+							{ data.settlementAmount > 0 && (
+								<div className="flex justify-between p-2.5 border-b border-border text-sm">
+									<div className="flex flex-col">
+										<span className="font-semibold">مبلغ التسوية</span>
+										<span className="text-[10px] text-muted-foreground"
+										      dir="ltr">Settlement Amount</span>
+									</div>
+									<span
+										className="font-semibold self-center">{ formatNumber(data.settlementAmount) }</span>
+								</div>
+							) }
+							{ data.settlementPercent > 0 && (
+								<div className="flex justify-between p-2.5 border-b border-border text-sm">
+									<div className="flex flex-col">
+										<span className="font-semibold">نسبة التسوية</span>
+										<span className="text-[10px] text-muted-foreground"
+										      dir="ltr">Settlement Percent</span>
+									</div>
+									<span
+										className="font-semibold self-center">{ formatNumber(data.settlementPercent) }%</span>
+								</div>
+							) }
+							{ data.settlementReason && (
+								<div className="flex justify-between p-2.5 border-b border-border text-sm">
+									<div className="flex flex-col">
+										<span className="font-semibold">سبب التسوية</span>
+										<span className="text-[10px] text-muted-foreground"
+										      dir="ltr">Settlement Reason</span>
+									</div>
+									<span
+										className="font-semibold self-center text-left max-w-[50%]">{ data.settlementReason }</span>
+								</div>
+							) }
+							<div className="flex justify-between p-2.5 border-b border-border text-sm">
+								<div className="flex flex-col">
+									<span className="font-semibold">المبلغ المدفوع</span>
+									<span className="text-[10px] text-muted-foreground" dir="ltr">Paid Amount</span>
+								</div>
+								<span className="font-semibold self-center">{ formatNumber(data.paidAmount) }</span>
 							</div>
-							<div className="flex justify-between text-sm">
-								<span className="text-muted-foreground">إجمالي الخصم / Total Discount:</span>
-								<span className="font-semibold">{ formatNumber(data.settlementAmount) }</span>
+							<div className="flex justify-between p-2.5 border-b border-border text-sm">
+								<div className="flex flex-col">
+									<span className="font-semibold">المتبقي من الفاتورة</span>
+									<span className="text-[10px] text-muted-foreground" dir="ltr">Remain Amount</span>
+								</div>
+								<span
+									className="font-semibold self-center">{ formatNumber(data.remainingAmount) }</span>
 							</div>
-							<div className="flex justify-between text-sm">
-								<span className="text-muted-foreground">إجمالي الضريبة / Total VAT:</span>
-								<span className="font-semibold">{ formatNumber(data.totalTaxAmount) }</span>
+							<div className="flex justify-between p-2.5 border-b border-border text-sm">
+								<div className="flex flex-col">
+									<span className="font-semibold">الإجمالي قبل الضريبة</span>
+									<span className="text-[10px] text-muted-foreground"
+									      dir="ltr">Total Before Tax</span>
+								</div>
+								<span className="font-semibold self-center">{ formatNumber(data.totalBeforeTax) }</span>
 							</div>
-							<div className="flex justify-between text-base font-bold border-t border-border pt-2 mt-1">
-								<span>الإجمالي المستحق / Total Due:</span>
-								<span>{ formatNumber(data.totalAfterTax) }</span>
+							<div className="flex justify-between p-2.5 border-b border-border text-sm">
+								<div className="flex flex-col">
+									<span className="font-semibold">قيمة الضريبة</span>
+									<span className="text-[10px] text-muted-foreground" dir="ltr">Tax Amount</span>
+								</div>
+								<span className="font-semibold self-center">{ formatNumber(data.totalTaxAmount) }</span>
 							</div>
-							<div className="flex justify-between text-sm text-green-600 mt-2">
-								<span>المبلغ المدفوع / Paid Amount:</span>
-								<span className="font-semibold">{ formatNumber(data.paidAmount) }</span>
-							</div>
-							<div className="flex justify-between text-sm text-red-600">
-								<span>المبلغ المتبقي / Remaining Amount:</span>
-								<span className="font-semibold">{ formatNumber(data.remainingAmount) }</span>
+							<div className="flex justify-between p-2.5 bg-muted/50 text-base">
+								<div className="flex flex-col">
+									<span className="font-bold text-primary">الإجمالي بعد الضريبة</span>
+									<span className="text-[10px] text-primary" dir="ltr">Total After Tax</span>
+								</div>
+								<span
+									className="font-bold text-primary self-center">{ formatNumber(data.totalAfterTax) }</span>
 							</div>
 						</div>
 					</div>
 
 					{ invoice.policy && (
 						<div
-							className="mt-8 pt-4 border-t border-border text-xs text-muted-foreground whitespace-pre-wrap print:break-inside-avoid">
+							className="mt-8 pt-4 border-t border-border text-sm text-muted-foreground whitespace-pre-wrap print:break-inside-avoid">
 							{ invoice.policy }
 						</div>
 					) }
@@ -168,6 +218,10 @@ function ThermalInvoiceReport({data, isPortal}: { data: InvoiceReportResult, isP
 {
 	const {invoice, partner} = data;
 	const setting = Services.auth.setting;
+
+	const isPurchase = invoice.type === InvoiceType.Purchase || invoice.type === InvoiceType.PurchaseReturn;
+	const partnerLabelAr = isPurchase ? "المورد" : "العميل";
+	const defaultPartnerName = isPurchase ? "مورد نقدي" : "عميل نقدي";
 
 	return (
 		<div className="thermal-report mx-auto bg-white text-black p-4 text-[12px] leading-tight"
@@ -210,7 +264,8 @@ function ThermalInvoiceReport({data, isPortal}: { data: InvoiceReportResult, isP
 			</div>
 
 			<div className="mb-4 border-b border-dashed border-gray-400 pb-4">
-				<p><span className="font-bold">العميل:</span> { partner.name || "عميل نقدي" }</p>
+				<p><span className="font-bold">المستودع:</span> { invoice.storeName }</p>
+				<p><span className="font-bold">{ partnerLabelAr }:</span> { partner.name || defaultPartnerName }</p>
 				{ partner.vatNumber && <p><span className="font-bold">الرقم الضريبي:</span> { partner.vatNumber }</p> }
 			</div>
 
@@ -226,7 +281,10 @@ function ThermalInvoiceReport({data, isPortal}: { data: InvoiceReportResult, isP
 				<tbody>
 				{ invoice.invoiceItems.map((item) => (
 					<tr key={ item.id } className="border-b border-gray-200 border-dashed">
-						<td className="py-1">{ item.itemName }</td>
+						<td className="py-1">
+							<div>{ item.itemName }</div>
+							<div className="text-[10px] text-gray-500">{ item.itemUnitPricingMethodName }</div>
+						</td>
 						<td className="py-1 text-center">{ formatNumber(item.quantity) }</td>
 						<td className="py-1">{ formatNumber(item.taxInclusivePrice) }</td>
 						<td className="py-1">{ formatNumber(item.taxInclusiveTotalPrice) }</td>
@@ -236,20 +294,34 @@ function ThermalInvoiceReport({data, isPortal}: { data: InvoiceReportResult, isP
 			</table>
 
 			<div className="flex flex-col gap-1 mb-4 border-b border-dashed border-gray-400 pb-4">
+				{ data.settlementAmount > 0 && (
+					<div className="flex justify-between">
+						<span>مبلغ التسوية:</span>
+						<span>{ formatNumber(data.settlementAmount) }</span>
+					</div>
+				) }
+				{ data.settlementPercent > 0 && (
+					<div className="flex justify-between">
+						<span>نسبة التسوية:</span>
+						<span>{ formatNumber(data.settlementPercent) }%</span>
+					</div>
+				) }
+				{ data.settlementReason && (
+					<div className="flex justify-between">
+						<span>سبب التسوية:</span>
+						<span>{ data.settlementReason }</span>
+					</div>
+				) }
 				<div className="flex justify-between">
-					<span>الإجمالي (غير شامل):</span>
+					<span>الإجمالي قبل الضريبة:</span>
 					<span>{ formatNumber(data.totalBeforeTax) }</span>
 				</div>
 				<div className="flex justify-between">
-					<span>الخصم:</span>
-					<span>{ formatNumber(data.settlementAmount) }</span>
-				</div>
-				<div className="flex justify-between">
-					<span>ضريبة القيمة المضافة:</span>
+					<span>قيمة الضريبة:</span>
 					<span>{ formatNumber(data.totalTaxAmount) }</span>
 				</div>
 				<div className="flex justify-between font-bold text-sm mt-1 pt-1 border-t border-gray-400">
-					<span>الإجمالي المستحق:</span>
+					<span>الإجمالي بعد الضريبة:</span>
 					<span>{ formatNumber(data.totalAfterTax) }</span>
 				</div>
 			</div>
