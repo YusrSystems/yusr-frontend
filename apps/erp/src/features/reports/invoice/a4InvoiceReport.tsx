@@ -30,7 +30,7 @@ export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, i
 				<ReportHeader.MetaDataSection>
 					<div className="flex justify-end w-full h-full pb-6">
 						{ data.qrBytes && <img src={ `data:image/png;base64,${ data.qrBytes }` } alt="QR Code"
-                                               className="h-28 w-28 object-contain"/> }
+                                               className="h-35 w-35 object-contain"/> }
 					</div>
 				</ReportHeader.MetaDataSection>
 			</ReportHeader>
@@ -46,7 +46,7 @@ export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, i
 						<span className="font-bold text-sm">{ partnerLabelAr }</span>
 						<span className="font-bold text-sm" dir="ltr">{ partnerLabelEn }</span>
 					</div>
-					<div className="p-4 grid grid-cols-2 gap-4">
+					<div className="p-4 grid grid-cols-2 gap-3">
 						<ReportField labelAr="الاسم" labelEn="Name" value={ partner.name || "-" }/>
 						{ isStandard ? (
 							<ReportField labelAr="العنوان" labelEn="Address"
@@ -56,10 +56,10 @@ export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, i
 							             value={ partner.phone || partner.mobile || "-" }/>
 						) }
 						{ isStandard && (
-							<div className="flex flex-col gap-3 border-r border-border pr-4">
+							<>
 								<ReportField labelAr="السجل التجاري" labelEn="CRN" value={ partner.crn || "-" }/>
 								<ReportField labelAr="الرقم الضريبي" labelEn="VAT" value={ partner.vatNumber || "-" }/>
-							</div>
+							</>
 						) }
 					</div>
 				</div>
@@ -112,12 +112,12 @@ export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, i
 						</tbody>
 					</table>
 
-					<div className="flex justify-between mt-6 print:break-inside-avoid gap-6">
+					<div className="flex justify-between mt-6 print:break-inside-avoid gap-3 items-start">
 						<div className="flex-1 pt-2">
 							{ invoice.policy && (
 								<div
-									className="text-xs text-muted-foreground whitespace-pre-wrap bg-muted/10 p-3 rounded-lg border border-border/50">
-									<span className="font-bold text-foreground block mb-1">الشروط والأحكام / Terms & Conditions:</span>
+									className="text-[10px] text-muted-foreground whitespace-pre-wrap bg-muted/10 p-3 rounded-lg border border-border/50">
+									<span className="text-xs font-bold text-foreground block mb-1">الشروط والأحكام / Terms & Conditions:</span>
 									{ invoice.policy }
 								</div>
 							) }
