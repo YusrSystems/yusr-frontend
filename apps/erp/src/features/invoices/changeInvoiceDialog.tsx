@@ -244,7 +244,7 @@ export default function ChangeInvoiceDialog({
 						hasError: basicHasError,
 						content: <InvoiceBasicTab invoice={ entity.value }/>
 					},
-					...(entity.value.type.value !== InvoiceType.Quotation
+					...(entity.value.type.value == InvoiceType.Sell || entity.value.type.value == InvoiceType.SellReturn
 						? [{
 							label: t("invoices.invoiceCosts"),
 							icon: BanknoteArrowUp,
