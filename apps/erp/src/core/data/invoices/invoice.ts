@@ -287,6 +287,7 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		return Voucher.create({
 			invoiceId: this.id.value,
 			paymentMethodId: Services.auth.setting?.mainPaymentMethodId?.value,
+			paymentMethodName: Services.auth.setting?.mainPaymentMethodName?.value,
 			partnerId: this.partnerId.value,
 			partnerName: this.partnerName.value,
 			type: (this.type.value === InvoiceType.Sell || this.type.value === InvoiceType.PurchaseReturn) ? VoucherType.Receipt : VoucherType.Payment,

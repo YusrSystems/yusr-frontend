@@ -46,6 +46,7 @@ export default function InvoicePayments({invoice}: { invoice: Invoice })
 								partnerId: invoice.partnerId.value,
 								partnerName: invoice.partnerName.value,
 								paymentMethodId: Services.auth.setting?.mainPaymentMethodId?.value,
+								paymentMethodName: Services.auth.setting?.mainPaymentMethodName?.value,
 								type: invoice.type.value === InvoiceType.Sell || invoice.type.value === InvoiceType.PurchaseReturn ? VoucherType.Receipt : VoucherType.Payment,
 								amount: unpaidPrice
 							});
