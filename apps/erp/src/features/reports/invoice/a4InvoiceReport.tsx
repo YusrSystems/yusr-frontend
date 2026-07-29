@@ -8,6 +8,7 @@ import { ReportField } from "@/features/report/components/reportField";
 import { formatNumber } from "@/features/report/utils/formating";
 import type { InvoiceReportResult } from "./invoiceReportResult";
 import { InvoiceType } from "@/core/types/invoiceType";
+import { A4InvoiceSummary } from "./a4InvoiceSummary";
 
 
 export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, isPortal: boolean })
@@ -122,79 +123,7 @@ export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, i
 							) }
 						</div>
 
-						<div className="w-72 border border-border rounded-lg overflow-hidden flex flex-col shrink-0">
-							{ data.settlementAmount > 0 && (
-								<div className="flex justify-between p-2 border-b border-border text-xs">
-									<div className="flex flex-col">
-										<span className="font-semibold">مبلغ التسوية</span>
-										<span className="text-[9px] text-muted-foreground"
-										      dir="ltr">Settlement Amount</span>
-									</div>
-									<span
-										className="font-semibold self-center">{ formatNumber(data.settlementAmount) }</span>
-								</div>
-							) }
-							{ data.settlementPercent > 0 && (
-								<div className="flex justify-between p-2 border-b border-border text-xs">
-									<div className="flex flex-col">
-										<span className="font-semibold">نسبة التسوية</span>
-										<span className="text-[9px] text-muted-foreground"
-										      dir="ltr">Settlement Percent</span>
-									</div>
-									<span
-										className="font-semibold self-center">{ formatNumber(data.settlementPercent) }%</span>
-								</div>
-							) }
-							{ data.settlementReason && (
-								<div className="flex justify-between p-2 border-b border-border text-xs">
-									<div className="flex flex-col">
-										<span className="font-semibold">سبب التسوية</span>
-										<span className="text-[9px] text-muted-foreground"
-										      dir="ltr">Settlement Reason</span>
-									</div>
-									<span
-										className="font-semibold self-center text-left max-w-[50%]">{ data.settlementReason }</span>
-								</div>
-							) }
-							<div className="flex justify-between p-2 border-b border-border text-xs">
-								<div className="flex flex-col">
-									<span className="font-semibold">الإجمالي قبل الضريبة</span>
-									<span className="text-[9px] text-muted-foreground" dir="ltr">Total Before Tax</span>
-								</div>
-								<span className="font-semibold self-center">{ formatNumber(data.totalBeforeTax) }</span>
-							</div>
-							<div className="flex justify-between p-2 border-b border-border text-xs">
-								<div className="flex flex-col">
-									<span className="font-semibold">قيمة الضريبة</span>
-									<span className="text-[9px] text-muted-foreground" dir="ltr">Tax Amount</span>
-								</div>
-								<span className="font-semibold self-center">{ formatNumber(data.totalTaxAmount) }</span>
-							</div>
-							<div className="flex justify-between p-2.5 bg-muted/50 text-sm border-b border-border">
-								<div className="flex flex-col">
-									<span className="font-bold text-primary">الإجمالي بعد الضريبة</span>
-									<span className="text-[10px] text-primary" dir="ltr">Total After Tax</span>
-								</div>
-								<span
-									className="font-bold text-primary self-center">{ formatNumber(data.totalAfterTax) }</span>
-							</div>
-							<div className="flex justify-between p-2 border-b border-border text-xs">
-								<div className="flex flex-col">
-									<span className="font-semibold">المبلغ المدفوع</span>
-									<span className="text-[9px] text-muted-foreground" dir="ltr">Paid Amount</span>
-								</div>
-								<span
-									className="font-semibold self-center text-green-600">{ formatNumber(data.paidAmount) }</span>
-							</div>
-							<div className="flex justify-between p-2 text-xs">
-								<div className="flex flex-col">
-									<span className="font-semibold">المتبقي من الفاتورة</span>
-									<span className="text-[9px] text-muted-foreground" dir="ltr">Remain Amount</span>
-								</div>
-								<span
-									className="font-semibold self-center text-red-600">{ formatNumber(data.remainingAmount) }</span>
-							</div>
-						</div>
+						<A4InvoiceSummary data={ data }/>
 					</div>
 				</ReportPageBody>
 			</ReportPageContainer>
