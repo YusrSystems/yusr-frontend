@@ -1,0 +1,8 @@
+To generate SQL queries that creates the DB:
+
+- cd apps/erp
+- dotnet ef dbcontext script --project Yusr.Erp.Persistence --startup-project Yusr.Erp.Api --context YusrErpDbContext --output postgres_schema.sql
+
+
+
+npx repomix --compress --remove-comments --remove-empty-lines
