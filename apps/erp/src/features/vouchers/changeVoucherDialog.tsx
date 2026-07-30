@@ -103,6 +103,7 @@ export default function ChangeVoucherDialog({
 
 	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
 	const isReceipt = entity.value.type.value === VoucherType.Receipt;
+	const isLinkedToInvoice = !!entity.value.invoiceId.value;
 
 	const title = !isUpdateMode
 		? t("vouchers.addNewTitle")
@@ -125,7 +126,7 @@ export default function ChangeVoucherDialog({
 								entity.value.glAccountName.value = undefined;
 							} }
 							className="flex-1 rounded-md text-xs font-semibold"
-							disabled={ entity.value.isDeleted.value }
+							disabled={ entity.value.isDeleted.value || isLinkedToInvoice }
 						>
 							{ t("vouchers.partnerPaymentMode", "دفعة لحساب عميل / مورد") }
 						</Button>
@@ -140,7 +141,7 @@ export default function ChangeVoucherDialog({
 								entity.value.invoiceId.value = undefined;
 							} }
 							className="flex-1 rounded-md text-xs font-semibold"
-							disabled={ entity.value.isDeleted.value }
+							disabled={ entity.value.isDeleted.value || isLinkedToInvoice }
 						>
 							{ t("vouchers.directExpenseMode", "مصروف عام / إيراد مباشر") }
 						</Button>
@@ -152,7 +153,7 @@ export default function ChangeVoucherDialog({
 							required
 							value={ entity.value.type }
 							error={ entity.value.getError("type") }
-							disabled={ isUpdateMode || entity.value.isDeleted.value }
+							disabled={ isUpdateMode || entity.value.isDeleted.value || isLinkedToInvoice }
 							options={ [
 								{label: t("vouchers.receiptVoucher"), value: VoucherType.Receipt},
 								{label: t("vouchers.paymentVoucher"), value: VoucherType.Payment}
@@ -165,7 +166,7 @@ export default function ChangeVoucherDialog({
 							required
 							value={ entity.value.date }
 							error={ entity.value.getError("date") }
-							disabled={ entity.value.isDeleted.value }
+							disabled={ entity.value.isDeleted.value || isLinkedToInvoice }
 						/>
 
 						{ !entity.value.isDirectMode.value && (
@@ -178,7 +179,7 @@ export default function ChangeVoucherDialog({
 									<PartnersSearchableSelect
 										id={ entity.value.partnerId }
 										label={ entity.value.partnerName }
-										disabled={ entity.value.isDeleted.value }
+										disabled={ entity.value.isDeleted.value || isLinkedToInvoice }
 									/>
 								</FormField>
 							</>
@@ -194,7 +195,7 @@ export default function ChangeVoucherDialog({
 									<AccountsSearchableSelect
 										id={ entity.value.glAccountId }
 										label={ entity.value.glAccountName }
-										disabled={ entity.value.isDeleted.value }
+										disabled={ entity.value.isDeleted.value || isLinkedToInvoice }
 									/>
 								</FormField>
 
@@ -204,7 +205,7 @@ export default function ChangeVoucherDialog({
 									<PartnersSearchableSelect
 										id={ entity.value.partnerId }
 										label={ entity.value.partnerName }
-										disabled={ entity.value.isDeleted.value }
+										disabled={ entity.value.isDeleted.value || isLinkedToInvoice }
 									/>
 								</FormField>
 							</>

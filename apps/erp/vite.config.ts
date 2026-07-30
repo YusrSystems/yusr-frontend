@@ -17,9 +17,7 @@ export default defineConfig(({mode}) => ({
 	server: {
 		proxy: {
 			"/api": {
-				target: mode === "development"
-					? "https://yusrerpdev.runasp.net"
-					: "https://yusrerp.runasp.net",
+				target: "https://yusrerp.runasp.net",
 				changeOrigin: true,
 				secure: true
 			}
