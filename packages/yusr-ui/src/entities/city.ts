@@ -1,30 +1,27 @@
-import { CitiesApiService } from "../networking";
-import { createGenericEntitySlice } from "../state";
-import type { ColumnName } from "../types";
-import { BaseEntity } from "./baseEntity";
-import type { Country } from "./country";
+import type { Signal } from "@preact/signals-react";
+import { Dto, Entity } from "#/stateManager";
+import { Country, CountryDto } from "./country";
 
-export class City extends BaseEntity
+
+export class CityDto extends Dto
 {
-  public name!: string;
-  public countryId!: number;
-  public country!: Country;
-
-  constructor(init?: Partial<City>)
-  {
-    super();
-    Object.assign(this, init);
-  }
+	public name!: string;
+	public countryId!: number;
+	public country!: CountryDto;
 }
 
-export class CityFilterColumns
+export class City extends Entity<CityDto>
 {
-  public static columnsNames: ColumnName<City>[] = [{ label: "", value: "name" }];
-}
+	public name: Signal<string>;
+	public countryId: Signal<number>;
+	public country: Signal<Country>;
 
-export class CitySlice
-{
-  private static entitySliceInstance = createGenericEntitySlice<City>("city", new CitiesApiService());
-  public static entityActions = CitySlice.entitySliceInstance.actions;
-  public static entityReducer = CitySlice.entitySliceInstance.reducer;
+	constructor(dto: Partial<CityDto>)
+	{
+		super(dto);
+
+		this.name = this.assign("name", dto?.name ?? "");
+		this.countryId = this.assign("countryId", dto?.countryId ?? 0);
+		this.country = this.assign("country", new Country(dto.country));
+	}
 }

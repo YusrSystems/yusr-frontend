@@ -1,264 +1,304 @@
-import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
-import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
-import { useEffect, useMemo, useState } from "react";
+import {
+	Button,
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	DateField,
+	FieldGroup,
+	FieldsSection,
+	FormField,
+	NumberField,
+	NumberToWordsService,
+	SelectField,
+	SystemPermissionsActions,
+	TextAreaField,
+	TextField
+} from "yusr-ui";
+import { Voucher, VoucherDto, VoucherType } from "@/core/data/voucher.ts";
+import { useSignals } from "@preact/signals-react/runtime";
+import { Services } from "@/core/services/services.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, CurrencyIcon, DateField, FieldGroup, FieldsSection, FormField, NumberField, NumbertoWordsService, SelectField, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { ClientsAndSuppliersSlice } from "../../core/data/account";
-import PaymentMethod, { CommissionType, PaymentMethodSlice } from "../../core/data/paymentMethod";
-import Voucher, { VoucherSlice, VoucherType, VoucherValidationRules } from "../../core/data/voucher";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import { useEffect, useMemo } from "react";
+import { signal } from "@preact/signals-react";
+import { Cubits } from "@/core/services/cubits.ts";
+import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
+import { CommissionType, PaymentMethod } from "@/core/data/paymentMethod.ts";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { AccountClass, getAccountTypesByClasses } from "@/core/data/account.ts";
 
-export default function ChangeVoucherDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Voucher>)
+
+export default function ChangeVoucherDialog({
+	dto,
+	service,
+	onSuccess
+}: CommonChangeDialogProps<VoucherDto>)
 {
-  const { t } = useTranslation(["accounting", "common"]);
-  const dispatch = useAppDispatch();
-  const accountState = useAppSelector((state) => state.clientsAndSuppliers);
-  const paymentMethodState = useAppSelector((state) => state.paymentMethod);
-  const authState = useAppSelector((state) => state.auth);
-  const [amountToWords, setAmountToWords] = useState("");
+	useSignals();
 
-  const initialValues = useMemo(() => ({
-    type: entity?.type || VoucherType.Receipt,
-    ...entity,
-    date: entity?.date ? new Date(entity.date).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
-    amount: entity?.amount || 0,
-    commissionAmount: entity?.commissionAmount || 0
-  }), [entity]);
+	const entity = useMemo(() => signal<Voucher>(dto ? Voucher.load(dto) : Voucher.create()), []);
+	const {t} = useTranslation(["accounting", "common"]);
+	const amountToWords = useMemo(() => signal<string>(""), []);
+	const selectedPaymentMethod = useMemo(() => signal<PaymentMethod | undefined>(entity.value.paymentMethod.value), [entity.value.paymentMethod.value]);
 
-  const { formData, errors } = useAppSelector((state) => state.voucherForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    VoucherValidationRules.validationRules(t),
-    (errors) => dispatch(VoucherSlice.formActions.setErrors(errors))
-  );
-  useFormInit(VoucherSlice.formActions.setInitialData, initialValues);
+	useEffect(() =>
+	{
+		Cubits.paymentMethods.init();
+		Cubits.partners.init();
+	}, []);
 
-  useEffect(() =>
-  {
-    dispatch(ClientsAndSuppliersSlice.entityActions.filter());
-    dispatch(PaymentMethodSlice.entityActions.filter());
-  }, [dispatch]);
+	useEffect(() =>
+	{
+		if (!entity.value.isDirectMode.value) return;
+		Cubits.accounts.init(getAccountTypesByClasses(entity.value.type.value === VoucherType.Payment ? [AccountClass.Expense] : [AccountClass.Revenue]));
+	}, [entity.value.type.value, entity.value.isDirectMode.value]);
 
-  useEffect(() =>
-  {
-    if (formData.amount !== undefined && authState.setting?.currency)
-    {
-      setAmountToWords(NumbertoWordsService.ConvertAmount(formData.amount, authState.setting.currency));
-    }
-  }, [formData.amount, authState.setting?.currency]);
+	useEffect(() =>
+	{
+		if (entity.value.amount.value !== undefined && Services.auth.setting?.currency?.value)
+		{
+			amountToWords.value = NumberToWordsService.ConvertAmount(
+				entity.value.amount.value,
+				Services.auth.setting.currency.value
+			);
+		}
+	}, [entity.value.amount.value, amountToWords]);
 
-  const calculateCommission = (type?: VoucherType, amount?: number, method?: PaymentMethod): number =>
-  {
-    if (type == undefined || amount == undefined || method == undefined || type === VoucherType.Payment)
-    {
-      return 0;
-    }
+	const reCalculateCommission = () =>
+	{
+		if (entity.value.type.value == undefined ||
+			entity.value.amount.value == undefined ||
+			selectedPaymentMethod.value == undefined ||
+			entity.value.type.value === VoucherType.Payment)
+		{
+			entity.value.commissionAmount.value = 0;
+			return;
+		}
 
-    if (method.commissionType === CommissionType.Percent)
-    {
-      return (amount * (method.commissionAmount || 0)) / 100;
-    }
-    else if (method.commissionType === CommissionType.Amount)
-    {
-      return method.commissionAmount || 0;
-    }
+		if (selectedPaymentMethod.value?.commissionType.value === CommissionType.Percent)
+		{
+			entity.value.commissionAmount.value = (entity.value.amount.value * (selectedPaymentMethod.value.commissionAmount.value ?? 0)) / 100;
+		}
+		else if (selectedPaymentMethod.value?.commissionType.value === CommissionType.Amount)
+		{
+			entity.value.commissionAmount.value = selectedPaymentMethod.value.commissionAmount.value ?? 0;
+		}
+		else
+		{
+			entity.value.commissionAmount.value = 0;
+		}
+	};
 
-    return 0;
-  };
+	if (
+		(entity.value.mode.value === ChangeableEntityMode.Create
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Add))
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-  const getPaymentMethod = (paymentMethodId?: number): PaymentMethod | undefined =>
-  {
-    return paymentMethodState.entities.data?.find((pm) => pm.id === paymentMethodId);
-  };
+	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
+	const isReceipt = entity.value.type.value === VoucherType.Receipt;
 
-  const handleTypeChange = (val: string) =>
-  {
-    const newType = Number(val) as VoucherType;
-    dispatch(VoucherSlice.formActions.updateFormData({
-      type: newType,
-      amountDue: newType === VoucherType.Payment ? formData.amountDue : undefined,
-      commissionAmount: calculateCommission(newType, formData.amount, getPaymentMethod(formData.paymentMethodId))
-    }));
-  };
+	const title = !isUpdateMode
+		? t("vouchers.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("vouchers.entityName") }`;
 
-  const handleAmountChange = (val: number | undefined) =>
-  {
-    dispatch(VoucherSlice.formActions.updateFormData({
-      amount: val,
-      commissionAmount: calculateCommission(formData.type, val, getPaymentMethod(formData.paymentMethodId))
-    }));
-  };
+	return (
+		<ChangeDialog className="sm:max-w-5xl">
+			<ChangeDialog.Header title={ title }/>
+			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
+				<FieldGroup className="gap-10">
 
-  const handlePaymentMethodChange = (paymentMethod: PaymentMethod) =>
-  {
-    dispatch(VoucherSlice.formActions.updateFormData({
-      paymentMethodId: paymentMethod.id,
-      paymentMethod: paymentMethod,
-      commissionAmount: calculateCommission(formData.type, formData.amount, paymentMethod)
-    }));
-  };
+					<div className="flex bg-muted/40 rounded-lg p-1 border max-w-md mx-auto w-full">
+						<Button
+							type="button"
+							variant={ !entity.value.isDirectMode.value ? "default" : "ghost" }
+							onClick={ () =>
+							{
+								entity.value.isDirectMode.value = false;
+								entity.value.glAccountId.value = undefined;
+								entity.value.glAccountName.value = undefined;
+							} }
+							className="flex-1 rounded-md text-xs font-semibold"
+							disabled={ entity.value.isDeleted.value }
+						>
+							{ t("vouchers.partnerPaymentMode", "دفعة لحساب عميل / مورد") }
+						</Button>
+						<Button
+							type="button"
+							variant={ entity.value.isDirectMode.value ? "default" : "ghost" }
+							onClick={ () =>
+							{
+								entity.value.isDirectMode.value = true;
+								entity.value.partnerId.value = undefined;
+								entity.value.partnerName.value = undefined;
+								entity.value.invoiceId.value = undefined;
+							} }
+							className="flex-1 rounded-md text-xs font-semibold"
+							disabled={ entity.value.isDeleted.value }
+						>
+							{ t("vouchers.directExpenseMode", "مصروف عام / إيراد مباشر") }
+						</Button>
+					</div>
 
-  const isPayment = formData.type === VoucherType.Payment;
-  const isReceipt = formData.type === VoucherType.Receipt;
+					<FieldsSection title={ t("vouchers.basicInfo") } columns={ 2 }>
+						<SelectField
+							label={ t("vouchers.voucherType") }
+							required
+							value={ entity.value.type }
+							error={ entity.value.getError("type") }
+							disabled={ isUpdateMode || entity.value.isDeleted.value }
+							options={ [
+								{label: t("vouchers.receiptVoucher"), value: VoucherType.Receipt},
+								{label: t("vouchers.paymentVoucher"), value: VoucherType.Payment}
+							] }
+							onValueChange={ () => reCalculateCommission() }
+						/>
 
-  return (
-    <ChangeDialog<Voucher>
-      title={ mode === "create"
-        ? t("vouchers.addNewTitle")
-        : `${t("common:crudRow.edit")} ${t("vouchers.entityName")}` }
-      className="sm:max-w-4xl"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => accountState.isLoading || paymentMethodState.isLoading }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-    >
-      <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
-        <FieldGroup className="gap-10">
-          <FieldsSection title={ t("vouchers.basicInfo") } columns={ 3 }>
-            <SelectField
-              label={ t("vouchers.voucherType") }
-              required
-              value={ formData.type?.toString() || "" }
-              onValueChange={ handleTypeChange }
-              isInvalid={ isInvalid("type") }
-              error={ getError("type") }
-              options={ [{ label: t("vouchers.receiptVoucher"), value: VoucherType.Receipt.toString() }, {
-                label: t("vouchers.paymentVoucher"),
-                value: VoucherType.Payment.toString()
-              }] }
-            />
+						<DateField
+							label={ t("vouchers.date") }
+							required
+							value={ entity.value.date }
+							error={ entity.value.getError("date") }
+							disabled={ entity.value.isDeleted.value }
+						/>
 
-            <DateField
-              label={ t("vouchers.date") }
-              required
-              value={ formData.date ? new Date(formData.date) : undefined }
-              onChange={ (date) => dispatch(VoucherSlice.formActions.updateFormData({ date: date })) }
-              isInvalid={ isInvalid("date") }
-              error={ getError("date") }
-            />
+						{ !entity.value.isDirectMode.value && (
+							<>
+								<FormField
+									label={ "الجهة" }
+									required
+									error={ entity.value.getError("partnerId") }
+								>
+									<PartnersSearchableSelect
+										id={ entity.value.partnerId }
+										label={ entity.value.partnerName }
+										disabled={ entity.value.isDeleted.value }
+									/>
+								</FormField>
+							</>
+						) }
 
-            <NumberField
-              label={ t("vouchers.amount") }
-              required
-              value={ formData.amount || 0 }
-              onChange={ handleAmountChange }
-              isInvalid={ isInvalid("amount") }
-              error={ getError("amount") }
-              currency={ <CurrencyIcon /> }
-            />
+						{ entity.value.isDirectMode.value && (
+							<>
+								<FormField
+									label={ t("vouchers.category", "الحساب") }
+									required
+									error={ entity.value.getError("glAccountId") }
+								>
+									<AccountsSearchableSelect
+										id={ entity.value.glAccountId }
+										label={ entity.value.glAccountName }
+										disabled={ entity.value.isDeleted.value }
+									/>
+								</FormField>
 
-            <div className="col-span-full">
-              <TextField
-                label={ t("vouchers.amountInWords") }
-                value={ amountToWords }
-                onChange={ () => undefined }
-              />
-            </div>
-          </FieldsSection>
+								<FormField
+									label={ "الجهة (اختياري)" }
+								>
+									<PartnersSearchableSelect
+										id={ entity.value.partnerId }
+										label={ entity.value.partnerName }
+										disabled={ entity.value.isDeleted.value }
+									/>
+								</FormField>
+							</>
+						) }
 
-          <FieldsSection title={ t("vouchers.accountAndPayment") } columns={ 2 }>
-            <FormField
-              label={ t("vouchers.account") }
-              required
-              isInvalid={ isInvalid("accountId") }
-              error={ getError("accountId") }
-            >
-              <ClientsAndSuppliersSearchableSelect
-                id={ formData.accountId }
-                isInvalid={ isInvalid("accountId") }
-                onValueChange={ (account) =>
-                {
-                  dispatch(
-                    VoucherSlice.formActions.updateFormData({ accountId: account?.id, accountName: account?.name })
-                  );
-                } }
-              />
-            </FormField>
+						<FormField
+							label={ t("vouchers.paymentMethod") }
+							required
+							error={ entity.value.getError("paymentMethodId") }
+						>
+							<PaymentMethodsSearchableSelect
+								id={ entity.value.paymentMethodId }
+								label={ entity.value.paymentMethod.value?.name }
+								onSelect={ (pm) =>
+								{
+									selectedPaymentMethod.value = new PaymentMethod(pm);
+									reCalculateCommission();
+								} }
+								disabled={ entity.value.isDeleted.value }
+							/>
+						</FormField>
 
-            <FormField
-              label={ t("vouchers.paymentMethod") }
-              required
-              isInvalid={ isInvalid("paymentMethodId") }
-              error={ getError("paymentMethodId") }
-            >
-              <PaymentMethodsSearchableSelect
-                id={ formData.paymentMethodId }
-                isInvalid={ isInvalid("paymentMethodId") }
-                onValueChange={ handlePaymentMethodChange }
-              />
-            </FormField>
-          </FieldsSection>
+						<NumberField
+							label={ t("vouchers.amount") }
+							required
+							value={ entity.value.amount }
+							error={ entity.value.getError("amount") }
+							currency={ <ErpCurrencyIcon/> }
+							onChange={ () => reCalculateCommission() }
+							disabled={ entity.value.isDeleted.value }
+						/>
 
-          <FieldsSection title={ t("vouchers.financialDetails") } columns={ 2 }>
-            { isPayment && (
-              <NumberField
-                label={ t("vouchers.amountDue") }
-                value={ formData.amountDue || 0 }
-                onChange={ (val) => dispatch(VoucherSlice.formActions.updateFormData({ amountDue: val })) }
-              />
-            ) }
+						{ isReceipt && (
+							<TextField
+								label={ t("vouchers.commissionAmount") }
+								value={ entity.value.commissionAmount }
+								disabled
+								className="bg-muted"
+							/>
+						) }
 
-            { isReceipt && (
-              <NumberField
-                label={ t("vouchers.commissionAmount") }
-                value={ formData.commissionAmount || 0 }
-                disabled={ true }
-                className="bg-muted"
-              />
-            ) }
-          </FieldsSection>
+						<div className="col-span-2">
+							<TextField
+								disabled
+								label={ t("vouchers.amountInWords") }
+								value={ amountToWords }
+							/>
+						</div>
+					</FieldsSection>
 
-          <FieldsSection title={ t("vouchers.partyInfo") } columns={ 2 }>
-            <TextField
-              label={ t("vouchers.giver") }
-              value={ formData.giver || "" }
-              onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ giver: e.target.value })) }
-            />
-            <TextField
-              label={ t("vouchers.recipient") }
-              value={ formData.recipient || "" }
-              onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ recipient: e.target.value })) }
-            />
-            <TextField
-              label={ t("vouchers.paymentReason") }
-              value={ formData.paymentReason || "" }
-              onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ paymentReason: e.target.value })) }
-            />
-          </FieldsSection>
+					{ entity.value.invoiceId.value && (
+						<FieldsSection title={ t("vouchers.systemLinks") } columns={ 1 }>
+							<TextField
+								label={ t("vouchers.relatedInvoice") }
+								value={ signal(`#${ entity.value.invoiceId.value }`) }
+								disabled={ true }
+								className="bg-muted w-1/2"
+							/>
+						</FieldsSection>
+					) }
 
-          { formData.invoiceId && (
-            <FieldsSection title={ t("vouchers.systemLinks") } columns={ 1 }>
-              <TextField
-                label={ t("vouchers.relatedInvoice") }
-                value={ `#${formData.invoiceId}` }
-                disabled={ true }
-                className="bg-muted w-1/2"
-              />
-            </FieldsSection>
-          ) }
+					<FieldsSection title={ t("vouchers.partyInfo") } columns={ 2 }>
+						<TextField
+							label={ t("vouchers.giver") }
+							value={ entity.value.giver }
+							disabled={ entity.value.isDeleted.value }
+						/>
+						<TextField
+							label={ t("vouchers.recipient") }
+							value={ entity.value.recipient }
+							disabled={ entity.value.isDeleted.value }
+						/>
+					</FieldsSection>
 
-          <FieldsSection title={ t("vouchers.descriptionAndNotes") } columns={ 1 }>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <TextAreaField
-                label={ t("vouchers.description") }
-                value={ formData.description || "" }
-                onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ description: e.target.value })) }
-                rows={ 3 }
-              />
-              <TextAreaField
-                label={ t("vouchers.additionalNotes") }
-                value={ formData.notes || "" }
-                onChange={ (e) => dispatch(VoucherSlice.formActions.updateFormData({ notes: e.target.value })) }
-                rows={ 3 }
-              />
-            </div>
-          </FieldsSection>
-        </FieldGroup>
-      </div>
-    </ChangeDialog>
-  );
+					<FieldsSection columns={ 1 }>
+						<TextAreaField
+							label={ t("vouchers.description") }
+							value={ entity.value.description ?? "" }
+							rows={ 4 }
+							disabled={ entity.value.isDeleted.value }
+						/>
+					</FieldsSection>
+				</FieldGroup>
+			</div>
+
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+				<ChangeDialog.SaveButton<Voucher, VoucherDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+					disabled={ entity.value.isDeleted.value }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

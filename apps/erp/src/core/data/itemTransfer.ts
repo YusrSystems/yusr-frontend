@@ -1,100 +1,105 @@
-import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
-import ItemTransferApiService from "../networking/itemTransferApiService";
-import type { ItemUnitPricingMethod } from "./item";
+import type { Signal } from "@preact/signals-react";
+import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
+import { ItemUnitPricingMethod, type ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
 
-export class ItemTransfersItem extends BaseEntity
+
+export class ItemTransfersItemDto extends Dto
 {
-  public itemTransferId!: number;
-  public itemId!: number;
-  public itemName!: string;
-  public itemUnitPricingMethodId!: number;
-  public itemUnitPricingMethodName!: string;
-  public quantity!: number;
-  public itemUnitPricingMethods: ItemUnitPricingMethod[] = [];
-
-  constructor(init?: Partial<ItemTransfersItem>)
-  {
-    super();
-    Object.assign(this, init);
-  }
+	public itemTransferId!: number;
+	public itemId!: number;
+	public itemName!: string;
+	public itemUnitPricingMethodId!: number;
+	public itemUnitPricingMethodName!: string;
+	public quantity!: number;
+	public maxQuantity!: number;
+	public itemUnitPricingMethods: ItemUnitPricingMethodDto[] = [];
 }
 
-export default class ItemTransfer extends BaseEntity
+export class ItemTransfersItem extends ChangeableEntity<ItemTransfersItemDto>
 {
-  public description?: string;
-  public transferDate!: string | Date;
-  public fromStoreId!: number;
-  public fromStoreName: string = "";
-  public toStoreId!: number;
-  public toStoreName: string = "";
-  public itemTransfersItems: ItemTransfersItem[] = [];
+	public itemTransferId: Signal<number>;
+	public itemId: Signal<number>;
+	public itemName: Signal<string>;
+	public itemUnitPricingMethodId: Signal<number>;
+	public itemUnitPricingMethodName: Signal<string>;
+	public quantity: Signal<number>;
+	public maxQuantity: Signal<number>;
+	public itemUnitPricingMethods: Signal<ItemUnitPricingMethod[]>;
 
-  constructor(init?: Partial<ItemTransfer>)
-  {
-    super();
-    Object.assign(this, init);
-    if (init?.transferDate)
-    {
-      this.transferDate = new Date(init.transferDate);
-    }
-    if (init?.itemTransfersItems)
-    {
-      this.itemTransfersItems = init.itemTransfersItems.map((i) => new ItemTransfersItem(i));
-    }
-  }
+	constructor(dto?: Partial<ItemTransfersItemDto> | undefined)
+	{
+		super(dto, [], ChangeableEntityMode.Create);
+
+		this.itemTransferId = this.assign("itemTransferId", dto?.itemTransferId ?? 0);
+		this.itemId = this.assign("itemId", dto?.itemId ?? 0);
+		this.itemName = this.assign("itemName", dto?.itemName ?? "");
+		this.itemUnitPricingMethodId = this.assign("itemUnitPricingMethodId", dto?.itemUnitPricingMethodId ?? 0);
+		this.itemUnitPricingMethodName = this.assign("itemUnitPricingMethodName", dto?.itemUnitPricingMethodName ?? "");
+		this.quantity = this.assign("quantity", dto?.quantity ?? 0);
+		this.maxQuantity = this.assign("maxQuantity", dto?.maxQuantity ?? 0);
+		this.itemUnitPricingMethods = this.assign(
+			"itemUnitPricingMethods",
+			(dto?.itemUnitPricingMethods ?? []).map((m) =>
+				m instanceof ItemUnitPricingMethod ? m : new ItemUnitPricingMethod(m)
+			)
+		);
+	}
 }
 
-export class ItemTransferFilterColumns
+export class ItemTransferDto extends Dto
 {
-  public static columnsNames = (
-    t: TFunction<"stocking">
-  ): ColumnName<ItemTransfer>[] => [
-    { label: t("itemTransfers.transferId"), value: "id" },
-    { label: t("itemTransfers.fromStore"), value: "fromStoreName" },
-    { label: t("itemTransfers.toStore"), value: "toStoreName" },
-    { label: t("itemTransfers.description"), value: "description" }
-  ];
+	public description?: string;
+	public date!: string;
+	public fromStoreId!: number;
+	public fromStoreName?: string;
+	public toStoreId!: number;
+	public toStoreName?: string;
+	public itemTransfersItems!: ItemTransfersItemDto[];
 }
 
-export class ItemTransferValidationRules
+export default class ItemTransfer extends ChangeableEntity<ItemTransferDto>
 {
-  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<ItemTransfer>>[] => [{
-    field: "transferDate",
-    selector: (d) => d.transferDate,
-    validators: [Validators.required(t("itemTransfers.transferDateRequired"))]
-  }, {
-    field: "fromStoreId",
-    selector: (d) => d.fromStoreId,
-    validators: [Validators.required(t("itemTransfers.fromStoreRequired"))]
-  }, {
-    field: "toStoreId",
-    selector: (d) => d.toStoreId,
-    validators: [
-      Validators.required(t("itemTransfers.toStoreRequired")),
-      Validators.custom(
-        (val, formData) => val !== formData.fromStoreId,
-        t("itemTransfers.sameStoreError")
-      )
-    ]
-  }, {
-    field: "itemTransfersItems",
-    selector: (d) => d.itemTransfersItems,
-    validators: [Validators.arrayMinLength(1, t("itemTransfers.itemsRequired"))]
-  }];
-}
+	public description: Signal<string | undefined>;
+	public date: Signal<string>;
+	public fromStoreId: Signal<number | undefined>;
+	public fromStoreName: Signal<string | undefined>;
+	public toStoreId: Signal<number | undefined>;
+	public toStoreName: Signal<string | undefined>;
+	public itemTransfersItems: Signal<ItemTransfersItem[]>;
 
-export class ItemTransferSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("itemTransfer", new ItemTransferApiService());
-  public static entityActions = ItemTransferSlice.entitySliceInstance.actions;
-  public static entityReducer = ItemTransferSlice.entitySliceInstance.reducer;
+	constructor(dto?: Partial<ItemTransferDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
+	{
+		super(dto, [{
+			field: "date",
+			selector: (d) => d.date,
+			validators: [Validators.required(i18n.t("stocking:itemTransfers.transferDateRequired"))]
+		}, {
+			field: "fromStoreId",
+			selector: (d) => d.fromStoreId,
+			validators: [Validators.required(i18n.t("stocking:itemTransfers.fromStoreRequired"))]
+		}, {
+			field: "toStoreId",
+			selector: (d) => d.toStoreId,
+			validators: [
+				Validators.required(i18n.t("stocking:itemTransfers.toStoreRequired")),
+				Validators.custom(
+					(val, formData) => val !== formData.fromStoreId,
+					i18n.t("stocking:itemTransfers.sameStoreError")
+				)
+			]
+		}, {
+			field: "itemTransfersItems",
+			selector: (d) => d.itemTransfersItems,
+			validators: [Validators.arrayMinLength(1, i18n.t("stocking:itemTransfers.itemsRequired"))]
+		}], mode);
 
-  private static dialogSliceInstance = createGenericDialogSlice<ItemTransfer>("itemTransferDialog");
-  public static dialogActions = ItemTransferSlice.dialogSliceInstance.actions;
-  public static dialogReducer = ItemTransferSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<ItemTransfer>("itemTransferForm");
-  public static formActions = ItemTransferSlice.formSliceInstance.actions;
-  public static formReducer = ItemTransferSlice.formSliceInstance.reducer;
+		this.description = this.assign("description", dto?.description ?? undefined);
+		this.date = this.assign("date", dto?.date ?? DateService.formatDateOnly(new Date()));
+		this.fromStoreId = this.assign("fromStoreId", dto?.fromStoreId ?? undefined);
+		this.fromStoreName = this.assign("fromStoreName", dto?.fromStoreName ?? undefined);
+		this.toStoreId = this.assign("toStoreId", dto?.toStoreId ?? undefined);
+		this.toStoreName = this.assign("toStoreName", dto?.toStoreName ?? undefined);
+		const itemsList = (dto?.itemTransfersItems ?? []).map((s) => new ItemTransfersItem(s));
+		this.itemTransfersItems = this.assign("itemTransfersItems", itemsList);
+	}
 }

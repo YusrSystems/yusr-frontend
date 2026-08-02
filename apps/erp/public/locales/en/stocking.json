@@ -8,7 +8,6 @@
     "storeName": "Store Name",
     "nameRequired": "Please enter store name"
   },
-
   "units": {
     "title": "Units Management",
     "entityName": "Unit",
@@ -18,7 +17,6 @@
     "unitName": "Unit Name",
     "nameRequired": "Please enter unit name"
   },
-
   "pricingMethods": {
     "title": "Pricing Methods Management",
     "entityName": "Pricing Method",
@@ -28,7 +26,6 @@
     "methodName": "Pricing Method Name",
     "nameRequired": "Please enter pricing method name"
   },
-
   "stocktakings": {
     "title": "Stocktaking",
     "entityName": "Stocktaking",
@@ -49,7 +46,6 @@
     "dateRequired": "Please select the date",
     "itemsRequired": "Please add at least one item to the stocktaking"
   },
-
   "itemsSettlements": {
     "title": "Stock Settlements",
     "entityName": "Settlement",
@@ -64,7 +60,6 @@
     "dateRequired": "Please select the date",
     "itemsRequired": "Please add at least one item to the settlement"
   },
-
   "itemTransfers": {
     "title": "Item Transfers",
     "entityName": "Item Transfer",
@@ -95,7 +90,6 @@
     "toStoreRequired": "Please select the destination store",
     "sameStoreError": "Cannot transfer to the same store"
   },
-
   "items": {
     "title": "Items Management",
     "entityName": "Item",
@@ -105,13 +99,14 @@
     "itemName": "Item Name",
     "itemType": "Type",
     "class": "Class",
+    "brand": "Brand",
     "quantity": "Quantity",
-    "cost": "Cost",
+    "averageCostWithoutTax": "Average Cost (Without Tax)",
     "product": "Product",
     "service": "Service",
     "itemImages": "Item Images",
-    "description": "Description",
-    "notes": "Notes",
+    "description": "Description (External)",
+    "notes": "Notes (Internal)",
     "status": "Status",
     "active": "Active",
     "inactive": "Inactive",
@@ -130,12 +125,13 @@
     "unit": "Unit",
     "pricingMethod": "Pricing Method",
     "quantityInUnit": "Quantity in Unit",
-    "sellingPrice": "Selling Price",
+    "sellingPrice": "Selling price per {{ unit }}",
     "barcode": "Barcode",
     "name": "Name",
     "noPricingMethods": "No pricing methods added",
     "baseUnit": "Base Unit",
-    "initialCost": "Initial Cost",
+    "initialCost": "Initial Cost (Excluding Tax)",
+    "lastBuyPrice": "Last Purchase Price",
     "priceIncludesTax": "Selling price includes tax",
     "storage": "Storage",
     "basicInfo": "Basic Information",
@@ -158,6 +154,32 @@
     "storesRequired": "Please add at least one store",
     "storesValidationError": "Please fill all required fields in the table (Store, Initial Quantity)",
     "baseUnitRequired": "Please select the base unit for the item",
-    "initialCostRequired": "Please enter the initial cost"
+    "initialCostRequired": "Please enter the initial cost",
+    "noBarcodeAssigned": "No barcode has been assigned to this unit pricing method",
+    "storeRequired": "Warehouse is required",
+    "initialQuantityMin": "Initial quantity must be 0 or greater",
+    "taxRequired": "Tax is required",
+    "unitRequired": "Unit is required",
+    "pricingMethodRequired": "Pricing method is required",
+    "quantityMultiplierMin": "Quantity multiplier must be 1 or greater",
+    "unitPriceMin": "Unit price must be 0 or greater",
+    "itemUnitPricingMethodNameRequired": "Pricing method name is required"
+  },
+  "costAdjustments": {
+    "title": "Items Cost Adjustment",
+    "addNewTitle": "Add New Cost Adjustment",
+    "entityName": "Cost Adjustment",
+    "totalAdjustments": "Total Adjustments",
+    "date": "Date",
+    "item": "Item",
+    "oldCost": "Old Cost",
+    "newCost": "New Cost",
+    "quantity": "Quantity",
+    "notes": "Notes",
+    "dateRequired": "Date is required",
+    "itemRequired": "Item is required",
+    "newCostRequired": "New cost is required",
+    "newCostMin": "New cost must be 0 or greater",
+    "adjustmentId": "Adjustment ID"
   }
 }

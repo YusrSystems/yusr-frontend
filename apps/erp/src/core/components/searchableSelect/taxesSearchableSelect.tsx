@@ -1,37 +1,63 @@
-import ChangeTaxDialog from "@/features/taxes/changeTaxDialog";
-import { ChangableSearchableSelect, type EntitySearchableSelectParams } from "yusr-ui";
-import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
-import { Tax, TaxFilterColumns, TaxSlice } from "../../data/tax";
-import TaxesApiService from "../../networking/taxesApiService";
-import { useAppSelector } from "../../state/store";
-import { useTranslation } from "react-i18next";
+import { Cubits } from "@/core/services/cubits";
+import { useSignals } from "@preact/signals-react/runtime";
+import React from "react";
+import {
+	PageLoaded,
+	PageLoading,
+	SearchableSelect,
+	type SearchableSelectOptionProps,
+	type SearchableSelectProps
+} from "yusr-ui";
+import { TaxDto } from "../../data/tax";
 
-export default function TaxesSearchableSelect(
-  { id, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<Tax>
-)
+
+export default function TaxesSearchableSelect({...props}: SearchableSelectProps<TaxDto>)
 {
-  const taxState = useAppSelector((state) => state.tax);
-  const authState = useAppSelector((state) => state.auth);
-  const { t } = useTranslation("accounting");
+	useSignals();
 
-  return (
-    <ChangableSearchableSelect<Tax>
-      id={ id }
-      itemLabelKey="name"
-      itemValueKey="id"
-      state={ taxState }
-      apiService={ new TaxesApiService() }
-      columnsNames={ TaxFilterColumns.columnsNames(t) }
-      disabled={ disabled }
-      isInvalid={ isInvalid }
-      systemPermissionsResources={ SystemPermissionsResources.Taxes }
-      onValueChange={ onValueChange }
-      entityActions={ {
-        filter: TaxSlice.entityActions.filter,
-        refresh: TaxSlice.entityActions.refresh
-      } }
-      changeDialog={ ChangeTaxDialog }
-      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
-    />
-  );
+	return (
+		<SearchableSelect>
+			<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
+			<SearchableSelect.Content>
+				<SearchableSelect.SearchInput onSearch={ (searchInput) => Cubits.taxes.search(searchInput) }/>
+				<SearchableSelect.Command>
+					<SearchableSelect.NullOption { ...props } />
+					<CommandItems/>
+				</SearchableSelect.Command>
+			</SearchableSelect.Content>
+		</SearchableSelect>
+	);
+
+	function CommandItems()
+	{
+		useSignals();
+		if (Cubits.taxes.state.value instanceof PageLoading)
+		{
+			return <SearchableSelect.Loading/>;
+		}
+
+		if (Cubits.taxes.state.value instanceof PageLoaded && Cubits.taxes.entities.value.length > 0)
+		{
+			return Cubits.taxes.entities.value.map((entity) => (
+				<Option key={ entity.id } item={ entity } { ...props } />
+			));
+		}
+
+		return <SearchableSelect.Empty/>;
+	}
 }
+
+const Option = React.memo(
+	function Option({...props}: Omit<SearchableSelectOptionProps<TaxDto>, "labelSelector">)
+	{
+		useSignals();
+		return (
+			<SearchableSelect.Option<TaxDto>
+				labelSelector="name"
+				{ ...props }
+			>
+				<SearchableSelect.OptionBody label={ props.item.name }/>
+			</SearchableSelect.Option>
+		);
+	}
+);

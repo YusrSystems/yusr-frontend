@@ -1,182 +1,188 @@
+import { type Signal, signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { BaseEntity } from "../../../entities";
-import type { BaseApiService } from "../../../networking";
-import { type RequestResult, ResultStatus } from "../../../types";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../pure";
+import type { BaseApiService } from "#/networking";
+import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "#/stateManager";
+import { type RequestResult, ResultStatus } from "#/types";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle
+} from "../../pure";
 import { Button } from "../../pure/button";
-import type { DialogMode } from "../dialogs/dialogType";
 
-export interface SaveButtonProps<T extends BaseEntity>
+
+export interface SaveButtonProps<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>
 {
-  formData: T | Partial<T>;
-  dialogMode?: DialogMode;
-  service?: BaseApiService<T>;
-  label?: string;
-  variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
-  className?: string;
-  disable?: () => boolean;
-  onSuccess?: (newData: T) => void;
-  validate?: () => boolean;
-  onBeforeSave?: () => Promise<{ handled: boolean; data?: T; }>;
-  onExecute?: (
-    formData: T | Partial<T>,
-    ignoreWarnings: boolean
-  ) => Promise<RequestResult<T>>;
+	entity: Signal<TEntity>;
+	service: BaseApiService<TDto>;
+	label?: string;
+	variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
+	className?: string;
+	disabled?: boolean;
+	onSuccess?: (newData: TDto) => void;
+	transformData?: (data: TDto) => TDto | Promise<TDto>;
+	showConfirmationDialog?: (entity: TEntity) => boolean;
+	confirmationDialog?: React.ReactNode;
+	loadingSignal?: Signal<boolean>;
 }
 
-export function SaveButton<T extends BaseEntity>(
-  {
-    formData,
-    dialogMode,
-    service,
-    label,
-    variant = "default",
-    className,
-    disable,
-    onSuccess,
-    validate = () => true,
-    onBeforeSave,
-    onExecute
-  }: SaveButtonProps<T>
+export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
+	{
+		entity,
+		service,
+		label,
+		variant = "default",
+		className,
+		disabled,
+		onSuccess,
+		transformData,
+		showConfirmationDialog,
+		confirmationDialog,
+		loadingSignal
+	}: SaveButtonProps<TEntity, TDto>
 )
 {
-  const { t, i18n } = useTranslation("common");
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<string[]>([]);
-  const [showErrors, setShowErrors] = useState(false);
-  const [warnings, setWarnings] = useState<string[]>([]);
-  const [showWarnings, setShowWarnings] = useState(false);
-  const [pendingIgnore, setPendingIgnore] = useState(false);
+	useSignals();
+	const {t, i18n} = useTranslation("common");
+	const internalLoading = useMemo(() => signal(false), []);
+	const errors = useMemo(() => signal<string[]>([]), []);
+	const showErrors = useMemo(() => signal(false), []);
+	const warnings = useMemo(() => signal<string[]>([]), []);
+	const showWarnings = useMemo(() => signal(false), []);
+	const pendingIgnore = useMemo(() => signal(false), []);
+	const showConfirmationDialogSignal = useMemo(() => signal(false), []);
 
-  async function Save(ignoreWarnings = false)
-  {
-    if (!validate())
-    {
-      return;
-    }
+	const loading = loadingSignal ?? internalLoading;
 
-    if (onBeforeSave)
-    {
-      setLoading(true);
-      const { handled, data } = await onBeforeSave();
-      setLoading(false);
-      if (handled)
-      {
-        if (data)
-        {
-          onSuccess?.(data);
-        }
-        return;
-      }
-    }
+	async function Save()
+	{
+		if (!entity.value.validate())
+		{
+			return;
+		}
 
-    setLoading(true);
+		if (showConfirmationDialog?.(entity.value))
+		{
+			showConfirmationDialogSignal.value = true;
+			return;
+		}
 
-    let result: RequestResult<T>;
+		loading.value = true;
 
-    if (onExecute)
-    {
-      result = await onExecute(formData, ignoreWarnings);
-    }
-    else if (service)
-    {
-      const payload = ignoreWarnings ? { ...formData, ignoreWarnings: true } : formData;
-      result = dialogMode === "create"
-        ? await service.Add(payload as T)
-        : await service.Update(payload as T);
-    }
-    else
-    {
-      onSuccess?.(formData as T);
-      setLoading(false);
-      return;
-    }
+		let result: RequestResult<TDto>;
+		const dto = entity.value.toJson();
+		const payload = transformData ? await transformData(dto) : dto;
 
-    setLoading(false);
+		result = entity.value.mode.value === ChangeableEntityMode.Create
+			? await service.Add(payload)
+			: await service.Update(payload);
 
-    if (result.status === ResultStatus.UnprocessableEntity)
-    {
-      setErrors(result.errors);
-      setShowErrors(true);
-      return;
-    }
+		if (result?.data)
+		{
+			entity.value.resetChanged();
+			entity.value.resetDirty();
+		}
 
-    if (result.status === ResultStatus.PreconditionFailed)
-    {
-      setWarnings(result.warnings);
-      setShowWarnings(true);
-      return;
-    }
+		loading.value = false;
 
-    if (result.status === ResultStatus.Ok)
-    {
-      onSuccess?.(result.data as T);
-    }
-  }
+		if (result.status === ResultStatus.UnprocessableEntity)
+		{
+			errors.value = result.errors;
+			showErrors.value = true;
+			return;
+		}
 
-  async function handleIgnoreWarnings()
-  {
-    setShowWarnings(false);
-    setPendingIgnore(true);
-    await Save(true);
-    setPendingIgnore(false);
-  }
+		if (result.status === ResultStatus.PreconditionFailed)
+		{
+			warnings.value = result.warnings;
+			showWarnings.value = true;
+			return;
+		}
 
-  const defaultLabel = service ? t("saveButton.saveChanges") : t("saveButton.save");
-  const buttonLabel = label ?? defaultLabel;
+		if (result.status === ResultStatus.Ok && result.data != undefined)
+		{
+			onSuccess?.(result.data);
+		}
+	}
 
-  return (
-    <>
-      <Button
-        disabled={ loading || pendingIgnore || disable?.() }
-        onClick={ () => Save() }
-        variant={ variant }
-        className={ className }
-      >
-        { (loading || pendingIgnore) && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
-        { buttonLabel }
-      </Button>
+	async function handleIgnoreWarnings()
+	{
+		showWarnings.value = false;
+		pendingIgnore.value = true;
+		entity.value.ignoreWarnings.value = true;
+		await Save();
+		pendingIgnore.value = false;
+	}
 
-      <Dialog open={ showWarnings } onOpenChange={ setShowWarnings }>
-        <DialogContent dir={ i18n.dir() }>
-          <DialogHeader>
-            <DialogTitle>{ t("saveButton.warnings") }</DialogTitle>
-            <DialogDescription asChild>
-              <ul className="mt-2 space-y-1 text-sm text-start">
-                { warnings.map((w, i) => <li key={ i } className="text-orange-600">• { w }</li>) }
-              </ul>
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">{ t("saveButton.cancel") }</Button>
-            </DialogClose>
-            <Button onClick={ handleIgnoreWarnings }>
-              { t("saveButton.ignoreWarnings") }
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+	const defaultLabel = service ? t("saveButton.saveChanges") : t("saveButton.save");
+	const buttonLabel = label ?? defaultLabel;
 
-      <Dialog open={ showErrors } onOpenChange={ setShowErrors }>
-        <DialogContent dir={ i18n.dir() }>
-          <DialogHeader>
-            <DialogTitle>{ t("saveButton.errors") }</DialogTitle>
-            <DialogDescription asChild>
-              <ul className="mt-2 space-y-1 text-sm text-start">
-                { errors.map((w, i) => <li key={ i } className="text-red-600">• { w }</li>) }
-              </ul>
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">{ t("saveButton.cancel") }</Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
-  );
+	return (
+		<>
+			<Button
+				disabled={ loading.value || pendingIgnore.value || !entity.value.hasChanges.value || disabled }
+				onClick={ () => Save() }
+				variant={ variant }
+				className={ className }
+			>
+				{ (loading.value || pendingIgnore.value) && <Loader2 className="ml-2 h-4 w-4 animate-spin"/> }
+				{ buttonLabel }
+			</Button>
+
+			<Dialog open={ showWarnings.value } onOpenChange={ (open) => showWarnings.value = open }>
+				<DialogContent dir={ i18n.dir() }>
+					<DialogHeader>
+						<DialogTitle>{ t("saveButton.warnings") }</DialogTitle>
+						<DialogDescription asChild>
+							<ul className="mt-2 space-y-1 text-sm text-start">
+								{ warnings.value.map((w, i) => <li key={ i } className="text-orange-600">• { w }</li>) }
+							</ul>
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<DialogClose asChild>
+							<Button variant="outline">{ t("saveButton.cancel") }</Button>
+						</DialogClose>
+						<Button onClick={ handleIgnoreWarnings }>
+							{ t("saveButton.ignoreWarnings") }
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
+			<Dialog open={ showErrors.value } onOpenChange={ (open) => showErrors.value = open }>
+				<DialogContent dir={ i18n.dir() }>
+					<DialogHeader>
+						<DialogTitle>{ t("saveButton.errors") }</DialogTitle>
+						<DialogDescription asChild>
+							<ul className="mt-2 space-y-1 text-sm text-start">
+								{ errors.value.map((w, i) => <li key={ i } className="text-red-600">• { w }</li>) }
+							</ul>
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<DialogClose asChild>
+							<Button variant="outline">{ t("saveButton.cancel") }</Button>
+						</DialogClose>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
+			{ showConfirmationDialogSignal.value &&
+                <Dialog
+
+                    open={ showConfirmationDialogSignal.value }
+                    onOpenChange={ (open) => showConfirmationDialogSignal.value = open }>
+					{ confirmationDialog }
+                </Dialog>
+			}
+		</>
+	);
 }

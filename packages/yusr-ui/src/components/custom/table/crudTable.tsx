@@ -1,23 +1,18 @@
-import type { IEntityState } from "../../../state/interfaces/iEntityState";
+import React, { type PropsWithChildren } from "react";
 import { Table } from "../../pure/table";
-import { CrudEmptyTablePreview } from "./crudEmptyTablePreview";
+import { CrudEmptyTablePreview } from "#/components/custom";
 
-export function CrudTable({ state, children }: { state: IEntityState<any>; children: React.ReactNode; })
+
+export type CrudTableProps = {
+	loadingState: "loading" | "empty" | "error" | "loaded";
+	children?: React.ReactNode;
+};
+
+export function CrudTable({loadingState, children}: CrudTableProps & PropsWithChildren)
 {
-  if (state.isLoading)
-  {
-    return <CrudEmptyTablePreview mode="loading" />;
-  }
-
-  if (state.entities?.count == 0)
-  {
-    return <CrudEmptyTablePreview mode="empty" />;
-  }
-
-  if (state.entities == undefined)
-  {
-    return <CrudEmptyTablePreview mode="loading" />;
-  }
-
-  return <Table>{ children }</Table>;
+	if (loadingState !== "loaded")
+	{
+		return <CrudEmptyTablePreview mode={ loadingState }/>;
+	}
+	return <Table>{ children }</Table>;
 }

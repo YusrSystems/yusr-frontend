@@ -1,104 +1,99 @@
-import { useEffect } from "react";
+import { useSignals } from "@preact/signals-react/runtime";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import { ChangeDialog, type CommonChangeDialogProps, FieldsSection, FormField, SearchableSelect, TextField } from "../../components/custom";
-import { FieldGroup } from "../../components/pure";
-import { Branch, BranchSlice, BranchValidationRules, CityFilterColumns, CitySlice } from "../../entities";
-import { useFormErrors, useFormInit, useValidate } from "../../hooks";
-import { useAppDispatch, type YusrRootState } from "../../state";
+import { SystemPermissionsActions, YusrSystemPermissionsResources } from "#/auth";
+import {
+	ChangeDialog,
+	CitiesSearchableSelect,
+	type CommonChangeDialogProps,
+	FieldsSection,
+	FormField,
+	TextField
+} from "#/components/custom";
+import { FieldGroup } from "#/components/pure";
+import { Branch, BranchDto } from "#/entities";
+import { BaseCubits, BaseServices } from "#/services";
+import { ChangeableEntityMode } from "#/stateManager";
+import { signal } from "@preact/signals-react";
 
-export function ChangeBranchDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Branch>)
+
+export function ChangeBranchDialog({dto, service, onSuccess}: CommonChangeDialogProps<BranchDto>)
 {
-  const { t } = useTranslation(["commonEntities", "common"]);
-  const cityState = useSelector((state: YusrRootState) => state.city);
-  const dispatch = useAppDispatch();
+	useSignals();
 
-  useEffect(() =>
-  {
-    dispatch(CitySlice.entityActions.filter());
-  }, [dispatch]);
+	const entity = useMemo(() => signal<Branch>(dto ? Branch.load(dto) : Branch.create()), []);
 
-  const { formData, errors } = useSelector((state: YusrRootState) => state.branchForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    BranchValidationRules.validationRules(t),
-    (errors) => dispatch(BranchSlice.formActions.setErrors(errors))
-  );
-  useFormInit(BranchSlice.formActions.setInitialData, entity ?? {});
+	if (
+		(entity.value.mode.value === ChangeableEntityMode.Create
+			&& !BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Branches, SystemPermissionsActions.Add))
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
+			&& !BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Branches, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-  const title = mode === "create"
-    ? t("branches.addNewTitle")
-    : `${t("common:crudRow.edit")} ${t("branches.entityName")}`;
+	useEffect(() => BaseCubits.cities.init(), []);
 
-  return (
-    <ChangeDialog<Branch>
-      title={ title }
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => cityState.isLoading }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-    >
-      <FieldGroup className="py-2">
-        <TextField
-          label={ t("branches.branchName") }
-          value={ formData.name || "" }
-          onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ name: e.target.value })) }
-          isInvalid={ isInvalid("name") }
-          error={ getError("name") }
-          required={ true }
-        />
+	const {t} = useTranslation(["commonEntities", "common"]);
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
+		? t("branches.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("branches.entityName") }`;
 
-        <FormField
-          label={ t("branches.city") }
-          required={ true }
-          isInvalid={ isInvalid("cityId") }
-          error={ getError("cityId") }
-        >
-          <SearchableSelect
-            items={ cityState.entities.data ?? [] }
-            itemLabelKey="name"
-            itemValueKey="id"
-            placeholder={ t("common:searchableSelect.placeholder") }
-            value={ formData.cityId?.toString() || "" }
-            onValueChange={ (val) => dispatch(BranchSlice.formActions.updateFormData({ cityId: Number(val) })) }
-            columnsNames={ CityFilterColumns.columnsNames }
-            onSearch={ (condition) => dispatch(CitySlice.entityActions.filter(condition)) }
-            isLoading={ cityState.isLoading }
-            isInvalid={ isInvalid("cityId") }
-            disabled={ cityState.isLoading }
-          />
-        </FormField>
+	return (
+		<ChangeDialog>
+			<ChangeDialog.Header title={ title }/>
 
-        <FieldsSection title="" columns={ 2 }>
-          <TextField
-            label={ t("branches.street") }
-            value={ formData.street || "" }
-            onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ street: e.target.value })) }
-          />
-          <TextField
-            label={ t("branches.district") }
-            value={ formData.district || "" }
-            onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ district: e.target.value })) }
-          />
-          <TextField
-            label={ t("branches.buildingNumber") }
-            value={ formData.buildingNumber || "" }
-            onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ buildingNumber: e.target.value })) }
-            isInvalid={ isInvalid("buildingNumber") }
-            error={ getError("buildingNumber") }
-          />
-          <TextField
-            label={ t("branches.postalCode") }
-            value={ formData.postalCode || "" }
-            onChange={ (e) => dispatch(BranchSlice.formActions.updateFormData({ postalCode: e.target.value })) }
-            isInvalid={ isInvalid("postalCode") }
-            error={ getError("postalCode") }
-          />
-        </FieldsSection>
-      </FieldGroup>
-    </ChangeDialog>
-  );
+			<FieldGroup className="py-2">
+				<TextField
+					label={ t("branches.branchName") }
+					required
+					value={ entity.value.name }
+					error={ entity.value.getError("name") }
+				/>
+
+				<FormField
+					label={ t("branches.city") }
+					required
+					error={ entity.value.getError("cityId") }
+				>
+					<CitiesSearchableSelect
+						id={ entity.value.cityId }
+						label={ entity.value.cityName }
+					/>
+				</FormField>
+
+				<FieldsSection title="" columns={ 2 }>
+					<TextField
+						label={ t("branches.street") }
+						value={ entity.value.street }
+					/>
+					<TextField
+						label={ t("branches.district") }
+						value={ entity.value.district }
+					/>
+					<TextField
+						label={ t("branches.buildingNumber") }
+						value={ entity.value.buildingNumber }
+						error={ entity.value.getError("buildingNumber") }
+					/>
+					<TextField
+						label={ t("branches.postalCode") }
+						value={ entity.value.postalCode }
+						error={ entity.value.getError("postalCode") }
+					/>
+				</FieldsSection>
+			</FieldGroup>
+
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+
+				<ChangeDialog.SaveButton<Branch, BranchDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

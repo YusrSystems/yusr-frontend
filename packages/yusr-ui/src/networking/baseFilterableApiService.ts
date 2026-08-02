@@ -1,22 +1,62 @@
-import type { BaseEntity, FilterCondition } from "../entities";
-import type { FilterResult } from "../types/filterResult";
-import type { RequestResult } from "../types/requestResult";
-import { ApiConstants } from "./apiConstants";
+import { Dto } from "#/stateManager";
+import type { ApiFilterResult, FilterResult } from "#/types";
 import { YusrApiHelper } from "./yusrApiHelper";
+import type { FilterGroupDto } from "#/filter";
 
-export abstract class BaseFilterableApiService<T extends BaseEntity>
+
+export class BaseFilterableApiService<TDto extends Dto>
 {
-  abstract routeName: string;
+	private static _pendingRequests = new Set<AbortController>();
+	protected routeName: string;
 
-  async Filter(
-    pageNumber: number,
-    rowsPerPage: number,
-    condition?: FilterCondition<T>
-  ): Promise<RequestResult<FilterResult<T>>>
-  {
-    return await YusrApiHelper.Post(
-      `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
-      condition
-    );
-  }
+	constructor(routeName: string)
+	{
+		this.routeName = routeName;
+	}
+
+	public static abortAll()
+	{
+		this._pendingRequests.forEach((request: AbortController) => request.abort());
+		this._pendingRequests.clear();
+	}
+
+	async Filter(
+		pageNumber: number,
+		rowsPerPage: number,
+		searchText?: string,
+		types?: number[],
+		queryParams?: Record<string, string | number | boolean>,
+		groups?: FilterGroupDto[]
+	): Promise<FilterResult<TDto>>
+	{
+		const params = new URLSearchParams();
+		params.set("pageNumber", pageNumber.toString());
+		params.set("rowsPerPage", rowsPerPage.toString());
+		if (searchText)
+		{
+			params.set("searchText", searchText);
+		}
+		if (queryParams)
+		{
+			Object.entries(queryParams).forEach(([k, v]) => params.set(k, String(v)));
+		}
+
+		const controller = new AbortController();
+		const {signal} = controller;
+
+		const body = {types, groups: groups ?? []};
+		BaseFilterableApiService._pendingRequests.add(controller);
+
+		const rawResult = await YusrApiHelper.Post<ApiFilterResult<TDto>>(
+			`/api/${ this.routeName }/Filter?${ params.toString() }`,
+			body,
+			{signal}
+		);
+		BaseFilterableApiService._pendingRequests.delete(controller);
+
+		return {
+			data: rawResult?.data?.data ?? [],
+			count: rawResult?.data?.count ?? 0
+		};
+	}
 }

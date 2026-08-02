@@ -1,48 +1,32 @@
-import { type TFunction } from "i18next";
-import { RolesApiService } from "../networking";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "../state";
-import type { ColumnName } from "../types";
-import { type ValidationRule, Validators } from "../validation";
-import { BaseEntity } from "./baseEntity";
+import type { Signal } from "@preact/signals-react";
+import { i18n } from "../locales";
+import { ChangeableEntity, ChangeableEntityMode, Dto } from "#/stateManager";
+import { Validators } from "#/validation";
 
-export class Role extends BaseEntity
+
+export class RoleDto extends Dto
 {
-  public name!: string;
-  public permissions!: string[];
-  public authorizedStores!: number[];
-
-  constructor(init?: Partial<Role>)
-  {
-    super();
-    Object.assign(this, init);
-  }
+	public name!: string;
+	public permissions!: string[];
 }
 
-export class RoleFilterColumns
+export abstract class Role<TRoleDto extends RoleDto> extends ChangeableEntity<TRoleDto>
 {
-  public static columnsNames: ColumnName<Role>[] = [{ label: "", value: "name" }];
-}
+	public name: Signal<string>;
+	public permissions: Signal<string[]>;
 
-export class RoleValidationRules
-{
-  public static validationRules = (t: TFunction<"commonEntities", undefined>): ValidationRule<Partial<Role>>[] => [{
-    field: "name",
-    selector: (d) => d.name,
-    validators: [Validators.required(t("roles.nameRequired"))]
-  }];
-}
+	protected constructor(
+		dto: Partial<TRoleDto> | undefined,
+		mode: ChangeableEntityMode = ChangeableEntityMode.Create
+	)
+	{
+		super(dto, [{
+			field: "name",
+			selector: (d) => d.name,
+			validators: [Validators.required(i18n.t("commonEntities:roles.nameRequired"))]
+		}], mode);
 
-export class RoleSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("role", new RolesApiService());
-  public static entityActions = RoleSlice.entitySliceInstance.actions;
-  public static entityReducer = RoleSlice.entitySliceInstance.reducer;
-
-  private static dialogSliceInstance = createGenericDialogSlice<Role>("roleDialog");
-  public static dialogActions = RoleSlice.dialogSliceInstance.actions;
-  public static dialogReducer = RoleSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<Role>("roleForm");
-  public static formActions = RoleSlice.formSliceInstance.actions;
-  public static formReducer = RoleSlice.formSliceInstance.reducer;
+		this.name = this.assign("name", dto?.name ?? "");
+		this.permissions = this.assign("permissions", dto?.permissions ?? []);
+	}
 }

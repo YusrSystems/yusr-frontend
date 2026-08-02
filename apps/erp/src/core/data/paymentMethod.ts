@@ -1,69 +1,54 @@
-import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
-import PaymentMethodsApiService from "../networking/paymentMethodApiService";
+import type { Signal } from "@preact/signals-react";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 
-export const CommissionType = {
-  Percent: 1,
-  Amount: 2
-} as const;
-export type CommissionType = (typeof CommissionType)[keyof typeof CommissionType];
 
-export default class PaymentMethod extends BaseEntity
+export enum CommissionType
 {
-  public name!: string;
-  public accountId!: number;
-  public accountName!: string;
-  public commissionType!: CommissionType;
-  public commissionAmount!: number;
-
-  constructor(init?: Partial<PaymentMethod>)
-  {
-    super();
-    Object.assign(this, init);
-  }
+	Percent = 1,
+	Amount = 2
 }
 
-export class PaymentMethodFilterColumns
+export class PaymentMethodDto extends Dto
 {
-  public static columnsNames = (t: TFunction<"accounting">): ColumnName<PaymentMethod>[] => [{
-    label: t("paymentMethods.name"),
-    value: "name"
-  }];
+	name!: string;
+	glAccountId!: number;
+	glAccountName!: string;
+	commissionType!: CommissionType;
+	commissionAmount!: number;
 }
 
-export class PaymentMethodValidationRules
+export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
 {
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<PaymentMethod>>[] => [{
-    field: "name",
-    selector: (d) => d.name,
-    validators: [Validators.required(t("paymentMethods.nameRequired"))]
-  }, {
-    field: "accountId",
-    selector: (d) => d.accountId,
-    validators: [Validators.required(t("paymentMethods.accountRequired"))]
-  }, {
-    field: "commissionType",
-    selector: (d) => d.commissionType,
-    validators: [Validators.required(t("paymentMethods.commissionTypeRequired"))]
-  }, {
-    field: "commissionAmount",
-    selector: (d) => d.commissionAmount,
-    validators: [Validators.required(t("paymentMethods.commissionValueRequired"))]
-  }];
-}
+	public name: Signal<string>;
+	public glAccountId: Signal<number | undefined>;
+	public glAccountName: Signal<string | undefined>;
+	public commissionType: Signal<CommissionType>;
+	public commissionAmount: Signal<number>;
 
-export class PaymentMethodSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("paymentMethod", new PaymentMethodsApiService());
-  public static entityActions = PaymentMethodSlice.entitySliceInstance.actions;
-  public static entityReducer = PaymentMethodSlice.entitySliceInstance.reducer;
+	constructor(dto: Partial<PaymentMethodDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
+	{
+		super(dto, [{
+			field: "name",
+			selector: (d) => d.name,
+			validators: [Validators.required(i18n.t("accounting:paymentMethods.nameRequired"))]
+		}, {
+			field: "glAccountId",
+			selector: (d) => d.glAccountId,
+			validators: [Validators.required(i18n.t("accounting:paymentMethods.accountRequired", "الحساب مطلوب"))]
+		}, {
+			field: "commissionType",
+			selector: (d) => d.commissionType,
+			validators: [Validators.required(i18n.t("accounting:paymentMethods.commissionTypeRequired"))]
+		}, {
+			field: "commissionAmount",
+			selector: (d) => d.commissionAmount,
+			validators: [Validators.required(i18n.t("accounting:paymentMethods.commissionValueRequired"))]
+		}], mode);
 
-  private static dialogSliceInstance = createGenericDialogSlice<PaymentMethod>("paymentMethodDialog");
-  public static dialogActions = PaymentMethodSlice.dialogSliceInstance.actions;
-  public static dialogReducer = PaymentMethodSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<PaymentMethod>("paymentMethodForm");
-  public static formActions = PaymentMethodSlice.formSliceInstance.actions;
-  public static formReducer = PaymentMethodSlice.formSliceInstance.reducer;
+		this.name = this.assign("name", dto?.name ?? "");
+		this.glAccountId = this.assign("glAccountId", dto?.glAccountId);
+		this.glAccountName = this.assign("glAccountName", dto?.glAccountName);
+		this.commissionType = this.assign("commissionType", dto?.commissionType ?? CommissionType.Percent);
+		this.commissionAmount = this.assign("commissionAmount", dto?.commissionAmount ?? 0);
+	}
 }

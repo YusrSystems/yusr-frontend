@@ -1,42 +1,89 @@
-import StoresApiService from "@/core/networking/storeApiService";
-import ChangeStoreDialog from "@/features/stores/changeStoreDialog";
-import { useTranslation } from "react-i18next";
-import { ChangableSearchableSelect, type EntitySearchableSelectParams } from "yusr-ui";
-import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
-import type Store from "../../data/store";
-import { StoreFilterColumns, StoreSlice } from "../../data/store";
-import { useAppSelector } from "../../state/store";
+import { Cubits } from "@/core/services/cubits";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
+import React from "react";
+import {
+	PageLoaded,
+	PageLoading,
+	SearchableSelect,
+	type SearchableSelectOptionProps,
+	type SearchableSelectProps
+} from "yusr-ui";
+import { StoreDto } from "../../data/store";
 
-export default function StoresSearchableSelect(
-  { id, items, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<Store> & { items?: Store[]; }
-)
+
+export default function StoresSearchableSelect({...props}: SearchableSelectProps<StoreDto>)
 {
-  const storeState = useAppSelector((state) => state.store);
-  const authState = useAppSelector((state) => state.auth);
-  const { t } = useTranslation("stocking");
+	useSignals();
 
-  return (
-    <ChangableSearchableSelect<Store>
-      mode="inline"
-      id={ id }
-      items={ items }
-      itemLabelKey="name"
-      itemValueKey="id"
-      state={ storeState }
-      apiService={ new StoresApiService() }
-      columnsNames={ StoreFilterColumns.columnsNames(t) }
-      disabled={ disabled }
-      isInvalid={ isInvalid }
-      systemPermissionsResources={ SystemPermissionsResources.Stores }
-      allowAdd={ false }
-      allowUpdate={ false }
-      onValueChange={ onValueChange }
-      entityActions={ {
-        filter: StoreSlice.entityActions.filter,
-        refresh: StoreSlice.entityActions.refresh
-      } }
-      changeDialog={ ChangeStoreDialog }
-      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
-    />
-  );
+	return (
+		<SearchableSelect>
+			<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
+			<SearchableSelect.Content>
+				<SearchableSelect.SearchInput
+					onSearch={ (searchInput) =>
+					{
+						Cubits.stores.search(searchInput);
+					} }
+				/>
+				<SearchableSelect.Command>
+					<SearchableSelect.NullOption { ...props } />
+					<CommandItems/>
+				</SearchableSelect.Command>
+			</SearchableSelect.Content>
+		</SearchableSelect>
+	);
+
+	function CommandItems()
+	{
+		useSignals();
+		if (Cubits.stores.state.value instanceof PageLoading)
+		{
+			return <SearchableSelect.Loading/>;
+		}
+
+		if (Cubits.stores.state.value instanceof PageLoaded && Cubits.stores.entities.value.length > 0)
+		{
+			return Cubits.stores.entities.value.map((entity) => (
+				<Option key={ entity.id } item={ entity } { ...props } />
+			));
+		}
+
+		return (
+			<SearchableSelect.AddOptionButton
+				onCreate={ async (searchText) =>
+				{
+					await Services.storesApi.Add({name: searchText} as StoreDto);
+					Cubits.stores.init();
+				} }
+			/>
+		);
+	}
 }
+
+const Option = React.memo(
+	function Option(
+		{...props}: Omit<SearchableSelectOptionProps<StoreDto>, "labelSelector">
+	)
+	{
+		useSignals();
+		return (
+			<SearchableSelect.Option<StoreDto>
+				labelSelector="name"
+				{ ...props }
+			>
+				<SearchableSelect.OptionBody label={ props.item.name }/>
+				<SearchableSelect.DeleteOptionButton
+					onDelete={ async () =>
+					{
+						const result = await Services.storesApi.Delete(props.item.id);
+						if (result.status === 200)
+						{
+							Cubits.stores.delete(props.item);
+						}
+					} }
+				/>
+			</SearchableSelect.Option>
+		);
+	}
+);

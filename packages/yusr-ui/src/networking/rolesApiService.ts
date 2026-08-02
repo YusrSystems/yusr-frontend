@@ -1,7 +1,11 @@
-import type { Role } from "../entities";
+import { type RoleDto } from "#/entities";
 import { BaseApiService } from "./baseApiService";
 
-export class RolesApiService extends BaseApiService<Role>
+
+export class RolesApiService<TRoleDto extends RoleDto> extends BaseApiService<TRoleDto>
 {
-  routeName: string = "Roles";
+	constructor()
+	{
+		super("Roles");
+	}
 }

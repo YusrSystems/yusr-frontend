@@ -18,6 +18,7 @@
     "invoices": "الفواتير",
     "sellInvoices": "فواتير البيع",
     "purchaseInvoices": "فواتير الشراء",
+    "quotationInvoices": "عروض الأسعار",
     "vouchers": "السندات",
     "paymentMethods": "طرق الدفع",
     "balanceTransfer": "تحويلات الأرصدة",
@@ -26,9 +27,9 @@
     "stocktakings": "جرد المواد",
     "itemsSettlements": "تسوية المواد",
     "settings": "الإعدادات",
-    "account": "الحساب"
+    "account": "الحساب",
+    "costAdjustments": "ضبط تكلفة المواد"
   },
-
   "dashborad": {
     "income": "مجموع الدخل",
     "totalPassengers": "مجموع الركاب",
@@ -74,7 +75,6 @@
       "december": "ديسمبر"
     }
   },
-
   "permissions": {
     "resources": {
       "branches": "الفروع",
@@ -97,7 +97,8 @@
       "taxes": "الضرائب",
       "obligations": "الالتزامات",
       "posTerminals": "نقاط البيع",
-      "authorizedStores": "المستودعات المسموح بها"
+      "authorizedStores": "المستودعات المسموح بها",
+      "costAdjustments": "ضبط تكلفة المواد"
     },
     "invoice": {
       "addSettlement": "إضافة تسوية للفاتورة",
@@ -122,6 +123,7 @@
       "voucher": "تقرير السند",
       "voucherList": "تقرير قائمة السندات",
       "accountStatement": "تقرير كشف حساب",
+      "partnerStatement": "تقرير كشف حساب جهة",
       "accountList": "تقرير قائمة الحسابات",
       "balanceTransfer": "تقرير نقل رصيد",
       "itemStatement": "تقرير كشف مادة",
@@ -132,6 +134,7 @@
       "balanceSheet": "تقرير الميزانية العمومية",
       "taxReturn": "تقرير الإقرار الضريبي",
       "profitAndLoss": "تقرير الربح والخسارة",
+      "salesProfitability": "تقرير ربحية المبيعات",
       "stocktaking": "تقرير جرد المواد",
       "itemSettlement": "تقرير تسوية المواد",
       "itemBarcode": "تقرير باركود المواد"
@@ -148,20 +151,17 @@
       "reports": "تقارير النظام"
     }
   },
-
   "storeItemSelector": {
     "addItems": "إضافة مواد:",
     "scanBarcode": "اقرأ الباركود...",
     "selectItem": "اختر مادة..."
   },
-
   "settings": {
     "loading": "جاري تحميل الإعدادات...",
     "title": "إعدادات النظام",
     "subtitle": "إدارة بيانات الشركة، الفواتير، والحسابات الافتراضية",
     "basicData": "البيانات الأساسية",
     "invoicesAndTaxes": "الفواتير والضرائب",
-    "defaultAccounts": "الحسابات الافتراضية",
     "save": "حفظ الإعدادات",
     "companyNameRequired": "اسم الشركة مطلوب",
     "companyPhoneRequired": "رقم الهاتف مطلوب",
@@ -174,11 +174,12 @@
     "invoicePrintSize": "حجم طباعة الفاتورة",
     "a4Paper": "ورق A4",
     "thermalPrinter": "طابعة حرارية (Thermal)",
-    "invoicePolicy": "سياسة الفواتير (تظهر أسفل الفاتورة)",
+    "salesInvoicePolicy": "سياسة فواتير البيع (تظهر أسفل الفاتورة)",
+    "quotationInvoicePolicy": "سياسة عروض الأسعار (تظهر أسفل عرض السعر)",
     "invoicePolicyPlaceholder": "مثال: البضاعة المباعة لا ترد ولا تستبدل بعد 3 أيام...",
     "simulationSubtitle": "تجربة الربط مع الهيئة",
     "productionSubtitle": "الربط مع الهيئة وإرسال المستندات بشكل رسمي",
-    "defaultAccountsAndWarehouses": "الحسابات والمستودعات الافتراضية",
+    "defaultValues": "القيم الافتراضية",
     "defaultWarehouse": "المستودع الافتراضي",
     "defaultPaymentMethod": "طريقة الدفع الافتراضية",
     "defaultSalesAccount": "حساب المبيعات الافتراضي",
@@ -207,9 +208,14 @@
     "linking": "جاري الربط...",
     "startLinking": "ابدأ الربط",
     "noCode": "لم تحصل على رمز التحقق؟",
-    "visitZatca": "زُر موقع الهيئة للحصول على رمز التحقق"
+    "visitZatca": "زُر موقع الهيئة للحصول على رمز التحقق",
+    "shareInfoCard": "بطاقة تعريف المؤسسة",
+    "referralLink": "رابط التوصية",
+    "copied": "تم النسخ",
+    "copyLink": "نسخ الرابط",
+    "theme": "المظهر والسمة",
+    "eInvoicing": "الفوترة الإلكترونية"
   },
-
   "reports": {
     "title": "التقارير",
     "subtitle": "إنشاء وتصدير تقارير الأعمال",
@@ -221,12 +227,16 @@
     "balanceSheetDescription": "الأصول والخصوم وحقوق الملكية",
     "profitAndLoss": "الأرباح والخسائر",
     "profitAndLossDescription": "الإيرادات والمصروفات وصافي الربح",
+    "salesProfitability": "تقرير ربحية المبيعات",
+    "salesProfitabilityDescription": "عرض ربحية المبيعات مع التكاليف المباشرة",
     "taxReturn": "الإقرار الضريبي",
     "taxReturnDescription": "تقرير ضريبة القيمة المضافة الدوري",
     "itemsTaxStatement": "كشف ضريبة المواد",
     "itemsTaxStatementDescription": "تفاصيل الضريبة لكل مادة",
     "itemsMovement": "حركة المواد",
     "itemsMovementDescription": "حركات المخزون للمواد",
+    "itemsList": "قائمة المواد",
+    "itemsListDescription": "تقرير بجميع المواد مع التفاصيل والكميات",
     "fromDate": "من تاريخ",
     "toDate": "إلى تاريخ",
     "movementType": "نوع الحركة",
@@ -252,14 +262,27 @@
     "purchasesTaxReport": "تقرير ضرائب المشتريات",
     "itemBarcode": "باركود المادة",
     "barcodeCount": "عدد الباركودات",
-    "pagesCount": "عدد الصفحات"
+    "pagesCount": "عدد الصفحات",
+    "InvoicesList": "قائمة الفواتير",
+    "InvoicesListDescription": "استعراض الفواتير مع إمكانية التصفية والفلترة الشاملة",
+    "itemStatement": "كشف مادة",
+    "itemStatementDescription": "عرض تفاصيل حركة المادة عبر المستودعات والفترات الزمنية",
+    "accountStatement": "كشف حساب",
+    "accountStatementDescription": "عرض حركة حساب محدد خلال فترة زمنية معينة",
+    "partnerStatement": "كشف حساب جهة",
+    "partnerStatementDescription": "عرض حركة جهة محدد خلال فترة زمنية معينة",
+    "accountsList": "قائمة الحسابات",
+    "accountsListDescription": "عرض جميع الحسابات مع الأرصدة والبيانات التفصيلية",
+    "exportToExcel": "تصدير إلى Excel"
   },
-
   "accountStatement": {
     "button": "كشف حساب",
     "title": "كشف حساب"
   },
-
+  "partnerStatement": {
+    "button": "كشف حساب جهة",
+    "title": "كشف حساب جهة"
+  },
   "itemStatement": {
     "button": "كشف المادة",
     "title": "كشف مادة",

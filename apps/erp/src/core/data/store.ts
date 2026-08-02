@@ -1,88 +1,29 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, FilterCondition, type IEntityState, type ValidationRule, Validators } from "yusr-ui";
-import StoresApiService from "../networking/storeApiService";
+import type { Signal } from "@preact/signals-react";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, type ValidationRule, Validators } from "yusr-ui";
 
-export default class Store extends BaseEntity
+
+export class StoreDto extends Dto
 {
-  public name!: string;
-  public createdBy!: number;
-  public authorized!: boolean;
-
-  constructor(init?: Partial<Store>)
-  {
-    super();
-    Object.assign(this, init);
-  }
+	public name!: string;
+	public authorized!: boolean;
 }
 
-export class StoreFilterColumns
+export class Store extends ChangeableEntity<StoreDto>
 {
-  public static columnsNames = (t: TFunction<"stocking">): ColumnName<Store>[] => [{
-    label: t("stores.storeName"),
-    value: "name"
-  }];
-}
+	public name: Signal<string>;
+	public authorized: Signal<boolean>;
 
-export class StoreValidationRules
-{
-  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<Store>>[] => [{
-    field: "name",
-    selector: (d) => d.name,
-    validators: [Validators.required(t("stores.nameRequired"))]
-  }];
-}
+	constructor(dto?: Partial<StoreDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
+	{
+		const rules: ValidationRule<Partial<StoreDto>>[] = [{
+			field: "name",
+			selector: (d) => d.name,
+			validators: [Validators.required(i18n.t("stocking:stores.nameRequired"))]
+		}];
 
-const storeService = new StoresApiService();
+		super(dto, rules, mode);
 
-const filterAll = createAsyncThunk(
-  "store/filterAll",
-  async (condition: FilterCondition<Store> | undefined, { getState }) =>
-  {
-    const state = (getState() as never)["store"] as IEntityState<Store>;
-    const result = await storeService.FilterAll(state.currentPage, state.rowsPerPage, condition);
-    return result?.data;
-  }
-);
-
-export class StoreSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice(
-    "store",
-    storeService,
-    undefined, // filterMethod
-    {}, // customReducers
-    // extraActions
-    (builder) =>
-    {
-      builder
-        .addCase(filterAll.pending, (state) =>
-        {
-          state.isLoading = true;
-        })
-        .addCase(filterAll.fulfilled, (state, action) =>
-        {
-          state.isLoading = false;
-          state.isLoaded = true;
-          if (action.payload)
-          {
-            state.entities = action.payload as never;
-          }
-        })
-        .addCase(filterAll.rejected, (state) =>
-        {
-          state.isLoading = false;
-        });
-    }
-  );
-  public static entityActions = { ...StoreSlice.entitySliceInstance.actions, filterAll };
-  public static entityReducer = StoreSlice.entitySliceInstance.reducer;
-
-  private static dialogSliceInstance = createGenericDialogSlice<Store>("storeDialog");
-  public static dialogActions = StoreSlice.dialogSliceInstance.actions;
-  public static dialogReducer = StoreSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<Store>("storeForm");
-  public static formActions = StoreSlice.formSliceInstance.actions;
-  public static formReducer = StoreSlice.formSliceInstance.reducer;
+		this.name = this.assign("name", dto?.name ?? "");
+		this.authorized = this.assign("authorized", dto?.authorized ?? false);
+	}
 }

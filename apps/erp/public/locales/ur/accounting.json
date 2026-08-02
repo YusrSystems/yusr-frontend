@@ -10,10 +10,9 @@
     "isPrimary": "بنیادی ٹیکس",
     "nameRequired": "براہ کرم ٹیکس کا نام درج کریں",
     "percentageRequired": "براہ کرم ٹیکس کا فیصد درج کریں",
-    "percentageMin": "کم از کم قیمت 0% ہے",
+    "percentageMin": "کم از کم قیمت 1% ہے",
     "percentageMax": "زیادہ سے زیادہ قیمت 100% ہے"
   },
-
   "accounts": {
     "title": "اکاؤنٹس کا نظم",
     "entityName": "اکاؤنٹ",
@@ -53,29 +52,24 @@
     "buildingNumberLength": "عمارت نمبر چار ہندسوں پر مشتمل ہونا چاہیے",
     "buildingNumberNumeric": "عمارت نمبر صرف عددی ہونا چاہیے",
     "postalCodeLength": "پوسٹل کوڈ پانچ ہندسوں پر مشتمل ہونا چاہیے",
-    "postalCodeNumeric": "پوسٹل کوڈ صرف عددی ہونا چاہیے"
+    "postalCodeNumeric": "پوسٹل کوڈ صرف عددی ہونا چاہیے",
+    "contactNumberLength": "نمبر میں 10 ہندسے ہونے چاہئیں"
   },
-
   "clients": {
     "title": "گاہک اکاؤنٹس کا نظم"
   },
-
   "suppliers": {
     "title": "سپلائر اکاؤنٹس کا نظم"
   },
-
   "employees": {
     "title": "ملازم اکاؤنٹس کا نظم"
   },
-
   "banks": {
     "title": "بینک اکاؤنٹس کا نظم"
   },
-
   "boxes": {
     "title": "کیش باکس اکاؤنٹس کا نظم"
   },
-
   "balanceTransfers": {
     "title": "بیلنس ٹرانسفرز",
     "entityName": "ٹرانسفر",
@@ -96,9 +90,9 @@
     "amountRequired": "براہ کرم رقم درج کریں",
     "dateRequired": "براہ کرم تاریخ منتخب کریں",
     "fromAccountRequired": "براہ کرم وہ اکاؤنٹ منتخب کریں جس سے ٹرانسفر کرنا ہے",
-    "toAccountRequired": "براہ کرم وہ اکاؤنٹ منتخب کریں جس میں ٹرانسفر کرنا ہے"
+    "toAccountRequired": "براہ کرم وہ اکاؤنٹ منتخب کریں جس میں ٹرانسفر کرنا ہے",
+    "amountMin": "رقم 0 سے زیادہ ہونی چاہیے"
   },
-
   "vouchers": {
     "title": "مالی واؤچرز",
     "entityName": "واؤچر",
@@ -119,10 +113,8 @@
     "partyInfo": "فریقین کی معلومات",
     "giver": "دینے والا",
     "recipient": "لینے والا",
-    "paymentReason": "ادائیگی / وصولی کی وجہ",
     "systemLinks": "سسٹم لنکس",
     "relatedInvoice": "متعلقہ انوائس نمبر",
-    "descriptionAndNotes": "بیان اور نوٹس",
     "description": "بیان",
     "additionalNotes": "اضافی نوٹس",
     "amountDue": "بقایا رقم",
@@ -133,7 +125,6 @@
     "accountRequired": "براہ کرم اکاؤنٹ منتخب کریں",
     "paymentMethodRequired": "براہ کرم ادائیگی کا طریقہ منتخب کریں"
   },
-
   "invoices": {
     "entityName": "انوائس",
     "addNewTitle": "نیا انوائس بنائیں",
@@ -165,7 +156,10 @@
     "addReturnInvoice": "انوائس واپسی شامل کریں",
     "addInvoice": "انوائس شامل کریں",
     "editInvoice": "انوائس ترمیم کریں",
+    "editQuotation": "کوٹیشن ترمیم کریں",
     "editReturnInvoice": "واپسی انوائس ترمیم کریں",
+    "notReturned": "واپس نہیں کیا گیا",
+    "partialReturned": "جزوی طور پر واپس کیا گیا",
     "fullyReturned": "مکمل طور پر واپس کیا گیا",
     "fullyReturnedMessage": "اس انوائس کی تمام اشیاء پہلے ہی واپس کر دی گئی ہیں",
     "close": "بند کریں",
@@ -197,7 +191,7 @@
     "importCustomsPaid": "کسٹمز ادا شدہ ٹیکس قابل درآمد",
     "exportInvoice": "ایکسپورٹ انوائس",
     "notes": "نوٹس",
-    "globalSettlement":"ٹیکس سمیت عالمی تصفیہ کی رقم",
+    "globalSettlement": "ٹیکس سمیت عالمی تصفیہ کی رقم",
     "totalBeforeTax": "ٹیکس سے پہلے کل",
     "totalTaxes": "کل ٹیکسز",
     "totalAfterTax": "ٹیکس کے بعد کل",
@@ -215,7 +209,7 @@
     "finalCost": "حتمی لاگت",
     "finalPriceWithoutTax": "ٹیکس کے بغیر حتمی قیمت",
     "finalPriceWithTax": "ٹیکس کے ساتھ حتمی قیمت",
-    "addNotes": "نوٹس شامل کریں...",
+    "addDiscription": "تفصیل شامل کریں...",
     "addCostVoucher": "لاگت واؤچر شامل کریں",
     "addPaymentVoucher": "ادائیگی واؤچر شامل کریں",
     "paymentMethod": "ادائیگی کا طریقہ",
@@ -235,7 +229,6 @@
     "profitPerUnit": "فی یونٹ منافع",
     "totalProfit": "کل منافع",
     "viewItemProfit": "آئٹم منافع دیکھیں",
-    "convertToSell": "سیلز انوائس میں تبدیل کریں",
     "confirmConversion": "تبدیلی کی تصدیق کریں",
     "conversionWarning": "کیا آپ اس کوٹیشن کو سیلز انوائس میں تبدیل کرنا چاہتے ہیں؟ یہ عمل واپس نہیں لیا جا سکتا۔",
     "cancel": "منسوخ کریں",
@@ -243,9 +236,16 @@
     "without": "بغیر",
     "selectPricingMethod": "قیمت کا طریقہ منتخب کریں",
     "deleteItem": "آئٹم حذف کریں",
-    "deleteVoucher": "واؤچر حذف کریں"
+    "deleteVoucher": "واؤچر حذف کریں",
+    "invoiceSummary": "انوائس کا خلاصہ",
+    "copyInvoice": "انوائس کاپی کریں",
+    "addNewQuotationTitle": "کوٹیشن بنائیں",
+    "totalQuotations": "کل کوٹیشنز",
+    "convertToSales": "سیلز انوائس میں تبدیل کریں",
+    "settlementReason": "تصفیہ کی وجہ",
+    "quantityInStore": "گودام میں مقدار",
+    "invoiceMustBeSentBeforePrint": "براہ کرم پہلے انوائس بھیجیں تاکہ اسے پرنٹ کیا جا سکے۔"
   },
-
   "paymentMethods": {
     "title": "ادائیگی کے طریقوں کا نظم",
     "entityName": "ادائیگی کا طریقہ",
@@ -263,6 +263,9 @@
     "nameRequired": "براہ کرم ادائیگی کے طریقہ کا نام درج کریں",
     "accountRequired": "براہ کرم اکاؤنٹ منتخب کریں",
     "commissionTypeRequired": "براہ کرم کمیشن کی قسم منتخب کریں",
-    "commissionValueRequired": "براہ کرم کمیشن کی رقم درج کریں"
+    "commissionValueRequired": "براہ کرم کمیشن کی رقم درج کریں",
+    "commissionHintPercent": "ہر {{d}} میں سے {{n}}",
+    "commissionHintAmount": "{{amount}} فی لین دین مقررہ",
+    "noPermissionToEditAdmin": "آپ ایڈمن اکاؤنٹ میں ترمیم نہیں کر سکتے کیونکہ آپ کے پاس مطلوبہ اجازتیں نہیں ہیں"
   }
 }

@@ -1,70 +1,94 @@
-import { MoreHorizontal } from "lucide-react";
+import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { ResourcePermissions } from "../../../auth";
 import { Button } from "../../pure/button";
-import { ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuLabel, ContextMenuSeparator } from "../../pure/context-menu";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../../pure/dropdown-menu";
+import {
+	ContextMenuContent,
+	ContextMenuGroup,
+	ContextMenuItem,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger
+} from "#/components/pure";
+import React from "react";
+import { type Dto } from "#/stateManager";
+
 
 type ListType = "dropdown" | "context";
 
-export interface CrudTableRowActionsMenuProps
-{
-  onEditClicked: () => void;
-  onDeleteClicked: () => void;
-  type: ListType;
-  permissions: ResourcePermissions;
-  dorpdownItems?: React.ReactNode[];
-  contextMenuItems?: React.ReactNode[];
-}
+export type CrudTableRowActionsMenuProps<TDto extends Dto> = {
+	dto: TDto,
+	type?: ListType;
+	onEditClicked?: () => void;
+	onDeleteClicked?: () => void;
+	hasUpdatePermission: ((dto: TDto) => boolean) | boolean;
+	hasDeletePermission: ((dto: TDto) => boolean) | boolean;
+	dropdownItems?: React.ReactNode[];
+	contextMenuItems?: React.ReactNode[];
+};
 
-export function CrudTableRowActionsMenu(
-  { onEditClicked, onDeleteClicked, type, permissions, dorpdownItems, contextMenuItems }: CrudTableRowActionsMenuProps
+export function CrudTableRowActionsMenu<TDto extends Dto>(
+	{
+		dto,
+		onEditClicked,
+		onDeleteClicked,
+		type,
+		hasUpdatePermission,
+		hasDeletePermission,
+		dropdownItems,
+		contextMenuItems
+	}:
+	CrudTableRowActionsMenuProps<TDto>
 )
 {
-  const { t, i18n } = useTranslation("common");
+	const {t, i18n} = useTranslation("common");
 
-  return (
-    <>
-      { type === "dropdown" && (
-        <DropdownMenu dir={ i18n.dir() }>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            <DropdownMenuLabel>{ t("crudRow.actions") }</DropdownMenuLabel>
-            <DropdownMenuSeparator></DropdownMenuSeparator>
-            { permissions.updatePermission && (
-              <DropdownMenuItem onSelect={ onEditClicked }>{ t("crudRow.edit") }</DropdownMenuItem>
-            ) }
-            { dorpdownItems }
-            { permissions.deletePermission && (
-              <DropdownMenuItem className="text-destructive" onSelect={ onDeleteClicked }>
-                { t("crudRow.delete") }
-              </DropdownMenuItem>
-            ) }
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) }
+	return (
+		<>
+			{ type === "dropdown" && (
+				<DropdownMenu dir={ i18n.dir() }>
+					<DropdownMenuTrigger asChild>
+						<Button variant="ghost" className="h-8 w-8 p-0 cursor-pointer">
+							<MoreHorizontal className="h-4 w-4"/>
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="start">
+						{ (typeof hasUpdatePermission === "function" ? hasUpdatePermission(dto) : hasUpdatePermission) && (
+							<DropdownMenuItem className="text-amber-500 font-semibold" onSelect={ onEditClicked }>
+								<Edit className="me-2 h-4 w-4"/>
+								{ t("crudRow.edit") }
+							</DropdownMenuItem>
+						) }
+						{ dropdownItems }
+						{ (typeof hasDeletePermission === "function" ? hasDeletePermission(dto) : hasDeletePermission) && (
+							<DropdownMenuItem className="text-destructive font-semibold" onSelect={ onDeleteClicked }>
+								<Trash className="me-2 h-4 w-4"/>
+								{ t("crudRow.delete") }
+							</DropdownMenuItem>
+						) }
+					</DropdownMenuContent>
+				</DropdownMenu>
+			) }
 
-      { type === "context" && (
-        <ContextMenuContent>
-          <ContextMenuGroup>
-            <ContextMenuLabel>{ t("crudRow.actions") }</ContextMenuLabel>
-            <ContextMenuSeparator></ContextMenuSeparator>
-            { permissions.updatePermission && (
-              <ContextMenuItem onSelect={ onEditClicked }>{ t("crudRow.edit") }</ContextMenuItem>
-            ) }
-            { contextMenuItems }
-            { permissions.deletePermission && (
-              <ContextMenuItem className="text-destructive" onSelect={ onDeleteClicked }>
-                { t("crudRow.delete") }
-              </ContextMenuItem>
-            ) }
-          </ContextMenuGroup>
-        </ContextMenuContent>
-      ) }
-    </>
-  );
+			{ type === "context" && (
+				<ContextMenuContent>
+					<ContextMenuGroup dir={ i18n.dir() }>
+						{ (typeof hasUpdatePermission === "function" ? hasUpdatePermission(dto) : hasUpdatePermission) && (
+							<ContextMenuItem className="text-amber-500 font-semibold" onSelect={ onEditClicked }>
+								<Edit className="me-2 h-4 w-4"/>
+								{ t("crudRow.edit") }
+							</ContextMenuItem>
+						) }
+						{ contextMenuItems }
+						{ (typeof hasDeletePermission === "function" ? hasDeletePermission(dto) : hasDeletePermission) && (
+							<ContextMenuItem className="text-destructive font-semibold" onSelect={ onDeleteClicked }>
+								<Trash className="me-2 h-4 w-4"/>
+								{ t("crudRow.delete") }
+							</ContextMenuItem>
+						) }
+					</ContextMenuGroup>
+				</ContextMenuContent>
+			) }
+		</>
+	);
 }

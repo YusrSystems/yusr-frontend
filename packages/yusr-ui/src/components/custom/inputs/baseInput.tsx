@@ -1,17 +1,39 @@
-import { cn } from "../../../utils/cn";
-import { Input } from "../../pure/input";
+import type { Signal } from "@preact/signals-react";
+import type React from "react";
+import { cn } from "#/utils/cn.ts";
+import { Input, InputOld } from "../../pure/input";
+import { useSignals } from "@preact/signals-react/runtime";
 
-export interface BaseInputProps extends React.InputHTMLAttributes<HTMLInputElement>
+
+export interface BaseInputPropsOld extends React.InputHTMLAttributes<HTMLInputElement>
 {
-  isInvalid?: boolean;
+	isInvalid?: boolean;
 }
 
-export function BaseInput({ isInvalid, className, ...props }: BaseInputProps)
+export interface BaseInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">
 {
-  return (
-    <Input
-      { ...props }
-      className={ cn(className, isInvalid && "border-red-500 ring-red-500 text-red-900 focus-visible:ring-red-500") }
-    />
-  );
+	error?: Signal<string | undefined>;
+	value?: Signal<string | number | undefined> | string;
+	onChange?: (value: string) => void;
+}
+
+export function BaseInputOld({isInvalid, className, ...props}: BaseInputPropsOld)
+{
+	return (
+		<InputOld
+			{ ...props }
+			className={ cn(className, isInvalid && "border-red-500 ring-red-500 text-red-900 focus-visible:ring-red-500") }
+		/>
+	);
+}
+
+export function BaseInput({className, error, ...props}: BaseInputProps)
+{
+	useSignals();
+	return (
+		<Input
+			{ ...props }
+			className={ cn(className, error?.value && "border border-red-500 ring-red-500 text-red-900 focus-visible:ring-red-500") }
+		/>
+	);
 }

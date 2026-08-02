@@ -1,254 +1,206 @@
-import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type StorageFile, type ValidationRule, Validators } from "yusr-ui";
-import ItemsApiService from "../networking/itemApiService";
+import { type Signal } from "@preact/signals-react";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, type StorageFile, Validators } from "yusr-ui";
+import { ItemStore, type ItemStoreDto } from "./itemStore";
+import { ItemTax, ItemTaxDto } from "./itemTax";
+import { ItemUnitPricingMethod, ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
+import { TaxDto } from "@/core/data/tax.ts";
+
 
 export const ItemType = {
-  Product: 1,
-  Service: 2
+	Product: 1,
+	Service: 2
 };
 export type ItemType = (typeof ItemType)[keyof typeof ItemType];
 
-export class ItemUnitPricingMethod extends BaseEntity
+export class ItemDto extends Dto
 {
-  public itemId!: number;
-  public unitId!: number;
-  public itemUnitPricingMethodName!: string;
-  public unitName?: string;
-  public pricingMethodId!: number;
-  public pricingMethodName?: string;
-  public quantityMultiplier!: number;
-  public price!: number;
-  public barcode?: string;
-
-  constructor(init?: Partial<ItemUnitPricingMethod>)
-  {
-    super();
-    Object.assign(this, init);
-  }
+	public type!: ItemType;
+	public name!: string;
+	public description?: string;
+	public class?: string;
+	public brand?: string;
+	public sellUnitId!: number;
+	public sellUnitName?: string;
+	public minQuantity?: number;
+	public maxQuantity?: number;
+	public initialQuantity!: number;
+	public quantity!: number;
+	public storeQuantity!: number;
+	public lastBuyPrice!: number;
+	public initialCost!: number;
+	public cost!: number;
+	public taxIncluded!: boolean;
+	public taxable!: boolean;
+	public exemptionReasonCode?: string;
+	public exemptionReason?: string;
+	public statusId!: number;
+	public location?: string;
+	public notes?: string;
+	public totalTaxes!: number;
+	public itemUnitPricingMethods: ItemUnitPricingMethodDto[] = [];
+	public itemTaxes: ItemTaxDto[] = [];
+	public itemStores: ItemStoreDto[] = [];
+	public itemImages: StorageFile[] = [];
 }
 
-export class ItemTax extends BaseEntity
+export default class Item extends ChangeableEntity<ItemDto>
 {
-  public itemId!: number;
-  public taxId!: number;
-  public taxName?: string;
-  public taxPercentage!: number;
+	public type: Signal<ItemType>;
+	public name: Signal<string>;
+	public description: Signal<string | undefined>;
+	public class: Signal<string | undefined>;
+	public brand: Signal<string | undefined>;
+	public sellUnitId: Signal<number | undefined>;
+	public sellUnitName: Signal<string | undefined>;
+	public minQuantity: Signal<number | undefined>;
+	public maxQuantity: Signal<number | undefined>;
+	public initialQuantity: Signal<number>;
+	public quantity: Signal<number>;
+	public storeQuantity: Signal<number>;
+	public lastBuyPrice: Signal<number>;
+	public initialCost: Signal<number>;
+	public cost: Signal<number>;
+	public taxIncluded: Signal<boolean>;
+	public taxable: Signal<boolean>;
+	public exemptionReasonCode: Signal<string | undefined>;
+	public exemptionReason: Signal<string | undefined>;
+	public statusId: Signal<number>;
+	public location: Signal<string | undefined>;
+	public notes: Signal<string | undefined>;
+	public totalTaxes: Signal<number>;
+	public itemUnitPricingMethods: Signal<ItemUnitPricingMethod[]>;
+	public itemTaxes: Signal<ItemTax[]>;
+	public itemStores: Signal<ItemStore[]>;
+	public itemImages: Signal<StorageFile[]>;
 
-  constructor(init?: Partial<ItemTax>)
-  {
-    super();
-    Object.assign(this, init);
-  }
-}
+	constructor(dto: Partial<ItemDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
+	{
+		super(dto, [{
+			field: "name",
+			selector: (d) => d.name,
+			validators: [Validators.required(i18n.t("stocking:items.nameRequired"))]
+		}, {
+			field: "type",
+			selector: (d) => d.type,
+			validators: [Validators.required(i18n.t("stocking:items.typeRequired"))]
+		}, {
+			field: "itemUnitPricingMethods",
+			selector: (d) => d.itemUnitPricingMethods,
+			validators: [Validators.arrayMinLength(1, i18n.t("stocking:items.pricingMethodsRequired"))]
+		}, {
+			field: "itemStores",
+			selector: (d) => d.itemStores,
+			validators: [Validators.custom(
+				(stores: ItemStoreDto[], form: ItemDto) =>
+				{
+					if (form.type === ItemType.Service)
+					{
+						return true;
+					}
 
-export class ItemStore extends BaseEntity
-{
-  public itemId!: number;
-  public storeId!: number;
-  public storeName?: string;
-  public initialQuantity!: number;
-  public quantity!: number;
+					return stores.length > 0;
+				},
+				i18n.t("stocking:items.storesValidationError")
+			)]
+		}, {
+			field: "sellUnitId",
+			selector: (d) => d.sellUnitId,
+			validators: [Validators.custom(
+				(val, form) => form.type === ItemType.Service || !!val,
+				i18n.t("stocking:items.baseUnitRequired")
+			)]
+		}, {
+			field: "initialCost",
+			selector: (d) => d.initialCost,
+			validators: [Validators.required(i18n.t("stocking:items.initialCostRequired"))]
+		}, {
+			field: "itemImages",
+			selector: (d) => d.itemImages,
+			validators: [Validators.arrayMaxLength(5)]
+		}
 
-  constructor(init?: Partial<ItemStore>)
-  {
-    super();
-    Object.assign(this, init);
-  }
-}
+		], mode);
 
-export default class Item extends BaseEntity
-{
-  public type!: ItemType;
-  public name!: string;
-  public description?: string;
-  public class?: string;
-  public sellUnitId!: number;
-  public sellUnitName?: string;
-  public minQuantity?: number;
-  public maxQuantity?: number;
-  public initialQuantity!: number;
-  public quantity!: number;
-  public initialCost!: number;
-  public cost!: number;
-  public taxIncluded!: boolean;
-  public taxable!: boolean;
-  public exemptionReasonCode?: string;
-  public exemptionReason?: string;
-  public statusId!: number;
-  public location?: string;
-  public notes?: string;
-  public totalTaxes!: number;
+		this.type = this.assign("type", dto?.type ?? 1);
+		this.name = this.assign("name", dto?.name ?? "");
+		this.description = this.assign("description", dto?.description ?? "");
+		this.class = this.assign("class", dto?.class ?? "");
+		this.brand = this.assign("brand", dto?.brand ?? "");
+		this.sellUnitId = this.assign("sellUnitId", dto?.sellUnitId ?? 0);
+		this.sellUnitName = this.assign("sellUnitName", dto?.sellUnitName ?? "");
+		this.minQuantity = this.assign("minQuantity", dto?.minQuantity ?? 0);
+		this.maxQuantity = this.assign("maxQuantity", dto?.maxQuantity ?? 0);
+		this.initialQuantity = this.assign("initialQuantity", dto?.initialQuantity ?? 0);
+		this.quantity = this.assign("quantity", dto?.quantity ?? 0);
+		this.storeQuantity = this.assign("storeQuantity", dto?.storeQuantity ?? 0);
+		this.lastBuyPrice = this.assign("lastBuyPrice", dto?.lastBuyPrice ?? 0);
+		this.initialCost = this.assign("initialCost", dto?.initialCost ?? 0);
+		this.cost = this.assign("cost", dto?.cost ?? 0);
+		this.taxIncluded = this.assign("taxIncluded", dto?.taxIncluded ?? false);
+		this.taxable = this.assign("taxable", dto?.taxable ?? true);
+		this.exemptionReasonCode = this.assign("exemptionReasonCode", dto?.exemptionReasonCode ?? "");
+		this.exemptionReason = this.assign("exemptionReason", dto?.exemptionReason ?? "");
+		this.statusId = this.assign("statusId", dto?.statusId ?? 1);
+		this.location = this.assign("location", dto?.location ?? "");
+		this.notes = this.assign("notes", dto?.notes ?? "");
+		this.totalTaxes = this.assign("totalTaxes", dto?.totalTaxes ?? 0);
+		const itemUnitPricingMethodsSignalArray = (dto?.itemUnitPricingMethods ?? []).map((m) =>
+			m instanceof ItemUnitPricingMethod ? m : new ItemUnitPricingMethod(m)
+		);
+		this.itemUnitPricingMethods = this.assign("itemUnitPricingMethods", itemUnitPricingMethodsSignalArray);
+		const itemTaxesSignalArray = (dto?.itemTaxes ?? []).map((t) => t instanceof ItemTax ? t : new ItemTax(t));
+		this.itemTaxes = this.assign("itemTaxes", itemTaxesSignalArray);
+		const itemStoresSignalArray = (dto?.itemStores ?? []).map((s) => s instanceof ItemStore ? s : new ItemStore(s));
+		this.itemStores = this.assign("itemStores", itemStoresSignalArray);
+		this.itemImages = this.assign("itemImages", dto?.itemImages ?? []);
 
-  public itemUnitPricingMethods: ItemUnitPricingMethod[] = [];
-  public itemTaxes: ItemTax[] = [];
-  public itemStores: ItemStore[] = [];
-  public itemImages: StorageFile[] = [];
+		const checkChildren = () =>
+		{
+			this.hasChanges.value = this.itemUnitPricingMethods.value.some((m) => m.hasChanges.value)
+				|| this.itemTaxes.value.some((t) => t.hasChanges.value)
+				|| this.itemStores.value.some((s) => s.hasChanges.value);
+		};
+		this.itemTaxes.value.forEach((t) => t.hasChanges.subscribe(checkChildren));
+		this.itemStores.value.forEach((s) => s.hasChanges.subscribe(checkChildren));
+		this.itemUnitPricingMethods.value.forEach((m) => m.hasChanges.subscribe(checkChildren));
+	}
 
-  constructor(init?: Partial<Item>)
-  {
-    super();
-    Object.assign(this, init);
-    if (init?.itemUnitPricingMethods)
-    {
-      this.itemUnitPricingMethods = init.itemUnitPricingMethods.map((x) => new ItemUnitPricingMethod(x));
-    }
-    if (init?.itemTaxes)
-    {
-      this.itemTaxes = init.itemTaxes.map((x) => new ItemTax(x));
-    }
-    if (init?.itemStores)
-    {
-      this.itemStores = init.itemStores.map((x) => new ItemStore(x));
-    }
-    if (init?.itemImages)
-    {
-      this.itemImages = init.itemImages;
-    }
-  }
-}
+	override validate(dto?: Partial<ItemDto>): boolean
+	{
+		const itemResult = super.validate(dto);
+		const taxesResult = this.itemTaxes.value.every((t) => t.validate());
+		const iupmResult = this.itemUnitPricingMethods.value.every((m) => m.validate());
+		const storesResult = this.type.value === ItemType.Service ? true : this.itemStores.value.every((s) => s.validate());
+		return itemResult && taxesResult && iupmResult && storesResult;
+	}
 
-export class StoreItem
-{
-  public item!: Item;
-  public itemUnitPricingMethods!: ItemUnitPricingMethod[];
-  public storeQuantity!: number;
+	public changeTaxable(isTaxable: boolean, taxes: Signal<TaxDto[]>)
+	{
+		if (isTaxable)
+		{
+			this.itemTaxes.value = taxes.value.filter((t) => t.isPrimary)
+				.map((t) =>
+					new ItemTax({
+						id: 0,
+						itemId: this.id.value,
+						taxId: t.id,
+						taxName: t.name,
+						taxPercentage: t.percentage
+					})
+				);
 
-  constructor(init?: Partial<StoreItem>)
-  {
-    Object.assign(this, init);
-  }
+			this.exemptionReason.value = "";
+			this.exemptionReasonCode.value = "";
+		}
+		else
+		{
+			this.itemTaxes.value = [];
+		}
+	}
 }
 
 export class BarcodeResult
 {
-  public storeItem!: StoreItem;
-  public selectedIupm!: ItemUnitPricingMethod;
-
-  constructor(init?: Partial<BarcodeResult>)
-  {
-    Object.assign(this, init);
-  }
-}
-
-export class ItemFilterColumns
-{
-  public static columnsNames = (
-    t: TFunction<"stocking">
-  ): ColumnName<Item>[] => [{ label: t("items.itemId"), value: "id" }, { label: t("items.itemName"), value: "name" }, {
-    label: t("items.class"),
-    value: "class"
-  }];
-}
-
-export class ItemValidationRules
-{
-  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<Item>>[] => [{
-    field: "name",
-    selector: (d) => d.name,
-    validators: [Validators.required(t("items.nameRequired"))]
-  }, {
-    field: "type",
-    selector: (d) => d.type,
-    validators: [Validators.required(t("items.typeRequired"))]
-  }, {
-    field: "itemUnitPricingMethods",
-    selector: (d) => d.itemUnitPricingMethods,
-    validators: [
-      Validators.arrayMinLength(1, t("items.pricingMethodsRequired")),
-      Validators.custom(
-        (methods: any[], form) =>
-        {
-          if (!methods || methods.length === 0)
-          {
-            return true;
-          }
-
-          const isService = form.type === ItemType.Service;
-
-          for (let i = 0; i < methods.length; i++)
-          {
-            const m = methods[i];
-            if (!isService && !m.unitId)
-            {
-              return false;
-            }
-            if (!isService && !m.pricingMethodId)
-            {
-              return false;
-            }
-
-            if (m.quantityMultiplier === undefined || m.quantityMultiplier === null || m.quantityMultiplier <= 0)
-            {
-              return false;
-            }
-            if (m.price === undefined || m.price === null || m.price < 0)
-            {
-              return false;
-            }
-          }
-          return true;
-        },
-        t("items.pricingMethodsValidationError")
-      )
-    ]
-  }, {
-    field: "itemStores",
-    selector: (d) => d.itemStores,
-    validators: [
-      Validators.arrayMinLength(1, t("items.storesRequired")),
-      Validators.custom(
-        (stores: any[], form) =>
-        {
-          if (form.type === ItemType.Service || (!stores || stores.length === 0))
-          {
-            return true;
-          }
-
-          const isService = form.type === ItemType.Service;
-
-          for (let i = 0; i < stores.length; i++)
-          {
-            const s = stores[i];
-            if (!isService && !s.storeId)
-            {
-              return false;
-            }
-            if (!isService && !s.initialQuantity)
-            {
-              return false;
-            }
-          }
-
-          return true;
-        },
-        t("items.storesValidationError")
-      )
-    ]
-  }, {
-    field: "sellUnitId",
-    selector: (d) => d.sellUnitId,
-    validators: [Validators.custom(
-      (val, form) => form.type === ItemType.Service || (val !== null && val !== undefined && val !== ""),
-      t("items.baseUnitRequired")
-    )]
-  }, {
-    field: "initialCost",
-    selector: (d) => d.initialCost,
-    validators: [Validators.required(t("items.initialCostRequired"))]
-  }];
-}
-
-export class ItemSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("item", new ItemsApiService());
-  public static entityActions = ItemSlice.entitySliceInstance.actions;
-  public static entityReducer = ItemSlice.entitySliceInstance.reducer;
-
-  private static dialogSliceInstance = createGenericDialogSlice<Item>("itemDialog");
-  public static dialogActions = ItemSlice.dialogSliceInstance.actions;
-  public static dialogReducer = ItemSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<Item>("itemForm");
-  public static formActions = ItemSlice.formSliceInstance.actions;
-  public static formReducer = ItemSlice.formSliceInstance.reducer;
+	public item!: ItemDto;
+	public selectedIupm!: ItemUnitPricingMethodDto;
 }

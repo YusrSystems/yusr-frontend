@@ -1,60 +1,63 @@
-import { useMemo } from "react";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import type Store from "../../core/data/store";
-import { StoreSlice, StoreValidationRules } from "../../core/data/store";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import {
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	SystemPermissionsActions,
+	TextField
+} from "yusr-ui";
+import { Store, StoreDto } from "@/core/data/store.ts";
+import { useMemo } from "react";
+import { signal } from "@preact/signals-react";
 
-export default function ChangeStoreDialog({
-  entity,
-  mode,
-  service,
-  onSuccess
-}: CommonChangeDialogProps<Store>)
+
+export default function ChangeStoreDialog({dto, service, onSuccess}: CommonChangeDialogProps<StoreDto>)
 {
-  const { t } = useTranslation(["stocking", "common"]);
-  const dispatch = useAppDispatch();
-  const initialValues = useMemo(
-    () => ({
-      ...entity,
-      storeName: entity?.name || ""
-    }),
-    [entity]
-  );
+	useSignals();
+	const {t} = useTranslation(["stocking", "common"]);
 
-  const { formData, errors } = useAppSelector((state) => state.unitForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    StoreValidationRules.validationRules(t),
-    (errors) => dispatch(StoreSlice.formActions.setErrors(errors))
-  );
-  useFormInit(StoreSlice.formActions.setInitialData, initialValues);
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
+	const entity = useMemo(() => signal<Store>(dto ? Store.load(dto) : Store.create()), []);
 
-  const title = mode === "create" ? t("stores.addNewTitle") : `${t("common:crudRow.edit")} ${t("stores.entityName")}`;
+	if (
+		(entity.value.mode.value === ChangeableEntityMode.Create
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Stores, SystemPermissionsActions.Add))
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Stores, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-  return (
-    <ChangeDialog<Store>
-      title={ title }
-      className="sm:max-w-md"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => false }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-    >
-      <FieldGroup>
-        <TextField
-          label={ t("stores.storeName") }
-          required
-          value={ formData.name || "" }
-          onChange={ (e) => dispatch(StoreSlice.formActions.updateFormData({ name: e.target.value })) }
-          isInvalid={ isInvalid("name") }
-          error={ getError("name") }
-        />
-      </FieldGroup>
-    </ChangeDialog>
-  );
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
+		? t("stores.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("stores.entityName") }`;
+
+	return (
+		<ChangeDialog className="sm:max-w-lg">
+			<ChangeDialog.Header title={ title }/>
+			<FieldGroup>
+				<TextField
+					label={ t("stores.storeName") }
+					required
+					value={ entity.value.name }
+					error={ entity.value.getError("name") }
+				/>
+			</FieldGroup>
+
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+
+				<ChangeDialog.SaveButton<Store, StoreDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

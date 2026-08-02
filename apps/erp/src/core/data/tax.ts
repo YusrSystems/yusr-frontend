@@ -1,56 +1,40 @@
-import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, type ValidationRule, Validators } from "yusr-ui";
-import { createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice } from "yusr-ui";
-import TaxesApiService from "../networking/taxesApiService";
+import type { Signal } from "@preact/signals-react";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, type ValidationRule, Validators } from "yusr-ui";
 
-export class Tax extends BaseEntity
+
+export class TaxDto extends Dto
 {
-  public name!: string;
-  public percentage!: number;
-  public isPrimary!: boolean;
-
-  constructor(init?: Partial<Tax>)
-  {
-    super();
-    Object.assign(this, init);
-  }
+	public name!: string;
+	public percentage!: number;
+	public isPrimary!: boolean;
 }
 
-export class TaxFilterColumns
+export class Tax extends ChangeableEntity<TaxDto>
 {
-  public static columnsNames = (t: TFunction<"accounting">): ColumnName<Tax>[] => [
-    { label: t("taxes.taxName"), value: "name" }
-  ];
-}
+	public name: Signal<string>;
+	public percentage: Signal<number>;
+	public isPrimary: Signal<boolean>;
 
-export class TaxValidationRules
-{
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<Tax>>[] => [{
-    field: "name",
-    selector: (d) => d.name,
-    validators: [Validators.required(t("taxes.nameRequired"))]
-  }, {
-    field: "percentage",
-    selector: (d) => d.percentage,
-    validators: [
-      Validators.required(t("taxes.percentageRequired")),
-      Validators.min(0, t("taxes.percentageMin")),
-      Validators.max(100, t("taxes.percentageMax"))
-    ]
-  }];
-}
+	constructor(dto?: Partial<TaxDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
+	{
+		const rules: ValidationRule<Partial<TaxDto>>[] = [{
+			field: "name",
+			selector: (d) => d.name,
+			validators: [Validators.required(i18n.t("accounting:taxes.nameRequired"))]
+		}, {
+			field: "percentage",
+			selector: (d) => d.percentage,
+			validators: [
+				Validators.required(i18n.t("accounting:taxes.percentageRequired")),
+				Validators.min(1, i18n.t("accounting:taxes.percentageMin")),
+				Validators.max(100, i18n.t("accounting:taxes.percentageMax"))
+			]
+		}];
 
-export class TaxSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("tax", new TaxesApiService());
-  public static entityActions = TaxSlice.entitySliceInstance.actions;
-  public static entityReducer = TaxSlice.entitySliceInstance.reducer;
+		super(dto, rules, mode);
 
-  private static dialogSliceInstance = createGenericDialogSlice<Tax>("taxDialog");
-  public static dialogActions = TaxSlice.dialogSliceInstance.actions;
-  public static dialogReducer = TaxSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<Tax>("taxForm");
-  public static formActions = TaxSlice.formSliceInstance.actions;
-  public static formReducer = TaxSlice.formSliceInstance.reducer;
+		this.name = this.assign("name", dto?.name ?? "");
+		this.percentage = this.assign("percentage", dto?.percentage ?? 0);
+		this.isPrimary = this.assign("isPrimary", dto?.isPrimary ?? true);
+	}
 }

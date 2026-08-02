@@ -1,346 +1,398 @@
-import { BanknoteArrowDown, BanknoteArrowUp, Box, CheckCircle2, FolderKanban, Siren } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { BanknoteArrowUp, Box, CheckCircle2, FolderKanban, Siren } from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps, DialogMode, IEntityState } from "yusr-ui";
-import { Button, ChangeDialogTabbed, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, FilterByTypeRequest, Loading, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import Account, { type AccountSliceType } from "../../core/data/account";
-import type Invoice from "../../core/data/invoice";
-import { InvoiceRelationType, InvoiceSlice, InvoiceStatus, InvoiceType, InvoiceValidationRules, InvoiceVoucher } from "../../core/data/invoice";
-import { ItemType } from "../../core/data/item";
-import { PaymentMethodSlice } from "../../core/data/paymentMethod";
-import { StoreSlice } from "../../core/data/store";
-import InvoicesApiService from "../../core/networking/invoiceApiService";
-import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
-import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
-import { InvoiceContext } from "./logic/invoiceContext";
+import { useNavigate } from "react-router-dom";
+import {
+	Button,
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	DateService,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	Loading,
+	type RequestResult,
+	StorageType,
+	useStorageFile
+} from "yusr-ui";
 import InvoiceItemsMath from "./logic/invoiceItemsMath";
 import InvoiceBasicTab from "./presentation/basic/invoiceBasicTab";
 import InvoiceCostsTab from "./presentation/costs/invoiceCostsTab";
-import AlertConvertDialog from "./presentation/dialogs/alertConvertDialog";
 import InvoiceFilesTab from "./presentation/files/invoiceFilesTab";
-import InvoicePaymentsTab from "./presentation/payments/invoicePaymentsTab";
 import InvoicePolicyTab from "./presentation/policy/invoicePolicyTab";
+import Invoice, { type InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice.ts";
+import { signal } from "@preact/signals-react";
+import { Cubits } from "@/core/services/cubits.ts";
+import { useSignals } from "@preact/signals-react/runtime";
+import { InvoiceType } from "@/core/types/invoiceType";
+import { ItemType } from "@/core/data/item.ts";
+import { Services } from "@/core/services/services.ts";
+import type { SaveButtonProps } from "#/components/custom/buttons/saveButton.tsx";
 
-export type InvoiceSliceType = ReturnType<typeof InvoiceSlice.create>;
-export type InvoiceDialogMode = DialogMode | "return";
 
 export default function ChangeInvoiceDialog({
-  entity,
-  mode,
-  service,
-  onSuccess,
-  slice,
-  fixedType,
-  selectFormState,
-  accountSlice,
-  accountState
-}: Omit<CommonChangeDialogProps<Invoice>, "mode" | "onSuccess"> & {
-  mode: InvoiceDialogMode;
-  onSuccess?: (data: Invoice, mode: InvoiceDialogMode) => void;
-  slice: InvoiceSliceType;
-  stateKey: keyof RootState;
-  fixedType?: InvoiceType;
-  selectFormState: (state: any) => { formData: Partial<Invoice>; errors: Record<string, string>; };
-  accountSlice: AccountSliceType;
-  accountState: IEntityState<Account>;
+	dto,
+	service,
+	onSuccess,
+	fixedType
+}: CommonChangeDialogProps<InvoiceDto> & {
+	fixedType?: InvoiceType;
 })
 {
-  const { t, i18n } = useTranslation("accounting");
-  const [initLoading, setInitLoading] = useState(false);
-  const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const invoiceTaxInclusivePrice = () => InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(formData?.invoiceItems ?? []);
+	useSignals();
+	const {t} = useTranslation("accounting");
+	const navigate = useNavigate();
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
+	const entity = useMemo(() => signal(dto ? Invoice.load(dto) : Invoice.create({type: fixedType})), []);
+	const isFullyReturned = useMemo(() => signal(false), []);
+	const isLoading = useMemo(() => signal(false), []);
+	const isSaving = useMemo(() => signal(false), []);
+	const hasCostVouchers = useMemo(() => signal<boolean>(false), []);
+	const {commitFiles} = useStorageFile(
+		() => entity.value.invoiceFiles.value ?? [],
+		(files) => entity.value.invoiceFiles.value = files,
+		StorageType.Private
+	);
 
-  const initialValues = useMemo(
-    () => ({
-      ...entity,
-      type: entity?.type ?? fixedType,
-      actionAccountId: entity?.actionAccountId
-        ?? ((entity?.type ?? fixedType) === InvoiceType.Purchase
-          ? authState.setting?.purchaseAccountId
-          : authState.setting?.sellAccountId),
-      actionAccountName: entity?.actionAccountName
-        ?? ((entity?.type ?? fixedType) === InvoiceType.Purchase
-          ? authState.setting?.purchaseAccountName
-          : authState.setting?.sellAccountName),
-      storeId: entity?.storeId ?? authState.setting?.mainStoreId,
-      storeName: entity?.storeName ?? authState.setting?.mainStoreName,
-      statusId: entity?.statusId ?? InvoiceStatus.Valid,
-      date: entity?.date
-        ? new Date(entity.date).toLocaleDateString("en-CA")
-        : new Date().toLocaleDateString("en-CA"),
-      settlementAmount: entity?.settlementAmount ?? 0,
-      settlementPercent: entity?.settlementPercent ?? 0,
-      paidAmount: entity?.paidAmount ?? 0,
-      fullAmount: entity?.fullAmount ?? 0,
-      invoiceItems: entity?.invoiceItems ?? [],
-      invoiceVouchers: entity?.invoiceVouchers ?? []
-    }),
-    [entity]
-  );
+	useEffect(() =>
+	{
+		Cubits.paymentMethods.init();
+		Cubits.stores.init();
+	}, [fixedType]);
 
-  const { formData, errors } = useAppSelector(selectFormState);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const [fullyReturned, setFullyReturned] = useState(false);
+	useEffect(() =>
+	{
+		if ((fixedType === InvoiceType.Sell || fixedType === InvoiceType.Quotation) && entity.value.storeId.value)
+		{
+			Cubits.items.init([ItemType.Product, ItemType.Service], {storeId: entity.value.storeId.value});
+		}
+		else
+		{
+			Cubits.items.init([ItemType.Product, ItemType.Service]);
+		}
+	}, [fixedType, entity.value.storeId.value]);
 
-  const paymentVouchers = () =>
-    formData.invoiceVouchers?.filter((v) => v.invoiceRelationType == InvoiceRelationType.Payment) ?? [];
-  const { validate } = useValidate(
-    formData,
-    InvoiceValidationRules.validationRules(t),
-    (errors) => dispatch(slice.formActions.setErrors(errors))
-  );
-  useFormInit(slice.formActions.setInitialData, initialValues);
+	useEffect(() =>
+	{
+		if (entity.value.mode.value === ChangeableEntityMode.Create)
+		{
+			return;
+		}
 
-  useEffect(() =>
-  {
-    dispatch(accountSlice.entityActions.filter());
-    dispatch(PaymentMethodSlice.entityActions.filter());
-    dispatch(StoreSlice.entityActions.filter());
-  }, [dispatch]);
+		if (entity.value.id.value != undefined)
+		{
+			isLoading.value = true;
 
-  useEffect(() =>
-  {
-    if (formData.storeId)
-    {
-      dispatch(fetchStoreItems({
-        pageNumber: 1,
-        rowsPerPage: 100,
-        storeId: formData.type === InvoiceType.Purchase ? undefined : formData.storeId ?? 0,
-        request: new FilterByTypeRequest({ condition: undefined, types: [ItemType.Product, ItemType.Service] })
-      }));
-    }
-  }, [dispatch, formData.storeId]);
+			const getInvoice = async () =>
+			{
+				let res: RequestResult<InvoiceDto>;
+				if (entity.value.invoiceMode.value !== InvoiceMode.Return)
+				{
+					res = await Services.invoicesApi.Get(entity.value.id.value);
+				}
+				else
+				{
+					res = await Services.invoicesApi.GetReturnInvoiceInitialDetails(entity.value.id.value);
+				}
 
-  useEffect(() =>
-  {
-    if (paymentVouchers().length > 1 && mode === "update")
-    {
-      return;
-    }
+				if (res?.data != undefined)
+				{
+					if (entity.value.invoiceMode.value === InvoiceMode.Normal)
+					{
+						entity.value = Invoice.load(res.data);
+					}
+					else if (entity.value.invoiceMode.value === InvoiceMode.Return)
+					{
+						res.data.date = DateService.formatDateOnly(new Date());
+						res.data.originalInvoiceId = entity.value.id.value;
+						res.data.type = res.data.type === InvoiceType.Sell
+							? InvoiceType.SellReturn
+							: InvoiceType.PurchaseReturn;
 
-    if (paymentVouchers().length === 0)
-    {
-      dispatch(slice.formActions.resetPaymentVouchers({}));
-      dispatch(slice.formActions.addVoucher(createInitialPaymentVoucher()));
-    }
-    else if (paymentVouchers().length === 1)
-    {
-      const voucher = paymentVouchers()[0];
-      const updatedVoucher = {
-        ...voucher,
-        amount: invoiceTaxInclusivePrice(),
-        amountReceived: invoiceTaxInclusivePrice(),
-        accountId: voucher.accountId === 0 ? formData.actionAccountId : voucher.accountId,
-        accountName: voucher.accountId === 0 ? formData.actionAccountName : voucher.accountName
-      };
-      dispatch(slice.formActions.updateVoucher(updatedVoucher));
-    }
+						hasCostVouchers.value = res.data.costVouchers.length > 0;
+						res.data.costVouchers = [];
 
-    dispatch(
-      slice.formActions.updateFormData({
-        fullAmount: invoiceTaxInclusivePrice(),
-        paidAmount: invoiceTaxInclusivePrice()
-      })
-    );
-  }, [formData.invoiceItems, formData.actionAccountId, accountState.entities.data?.length]);
+						entity.value = Invoice.create(res.data);
+						entity.value.invoiceMode.value = InvoiceMode.Return;
+					}
+					else if (entity.value.invoiceMode.value === InvoiceMode.Copy)
+					{
+						res.data.id = 0;
+						res.data.date = DateService.formatDateOnly(new Date());
+						entity.value = Invoice.create(res.data);
+						entity.value.invoiceMode.value = InvoiceMode.Copy;
+						entity.value.syncPaymentVouchers();
+					}
+					else if (entity.value.invoiceMode.value === InvoiceMode.QuotationToSales)
+					{
+						res.data.id = 0;
+						res.data.type = InvoiceType.Sell;
+						res.data.date = DateService.formatDateOnly(new Date());
+						res.data.notes = undefined;
+						res.data.policy = Services.auth.setting?.getInvoicePolicy(res.data.type);
+						entity.value = Invoice.create(res.data);
+						entity.value.invoiceMode.value = InvoiceMode.QuotationToSales;
+						entity.value.syncPaymentVouchers();
+					}
 
-  useEffect(() =>
-  {
-    if ((mode === "update" || mode === "return") && entity?.id != undefined)
-    {
-      setInitLoading(true);
+					isFullyReturned.value = res.data.invoiceItems.length === 0;
+				}
 
-      const getInvoice = async () =>
-      {
-        let res = undefined;
+				isLoading.value = false;
+			};
 
-        if (mode === "update")
-        {
-          res = await service.Get(entity.id);
-        }
-        else if (mode === "return")
-        {
-          res = await new InvoicesApiService().GetReturnInvoiceInitialDetails(entity.id);
-        }
+			void getInvoice();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
+	}, [entity.value.id.value, entity.value.mode.value]);
 
-        if (res?.data != undefined)
-        {
-          dispatch(slice.formActions.updateFormData(res.data));
-          setFullyReturned(res.data.invoiceItems.length === 0);
-        }
-        setInitLoading(false);
-      };
+	const transformDataBeforeSave = async (data: InvoiceDto): Promise<InvoiceDto> =>
+	{
+		data.fullAmount = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(entity.value.invoiceItems.value ?? []);
+		data.invoiceItems.forEach((ii, index) => ii.index = index);
 
-      getInvoice();
-    }
-  }, [dispatch, entity?.id]);
+		data.invoiceFiles = await commitFiles(
+			entity.value.invoiceFiles.value,
+			`Invoices`
+		);
 
-  const createInitialPaymentVoucher = (): InvoiceVoucher =>
-  {
-    return {
-      voucherId: 0,
-      invoiceId: formData.id ?? 0,
-      paymentMethodId: authState.setting?.mainPaymentMethodId ?? 0,
-      paymentMethodName: authState.setting?.mainPaymentMethodName ?? "",
-      accountId: formData.actionAccountId ?? 0,
-      accountName: formData.actionAccountName ?? "",
-      invoiceRelationType: InvoiceRelationType.Payment,
-      amount: invoiceTaxInclusivePrice(),
-      amountReceived: invoiceTaxInclusivePrice(),
-      description: undefined
-    } as InvoiceVoucher;
-  };
+		return data;
+	};
 
-  const onBeforeSave = async (): Promise<{ handled: boolean; data?: Invoice; }> =>
-  {
-    if (mode === "return")
-    {
-      const res = await new InvoicesApiService().Add({
-        ...formData,
-        type: formData.type === InvoiceType.Sell ? InvoiceType.SellReturn : InvoiceType.PurchaseReturn,
-        originalInvoiceId: formData.id,
-        id: 0
-      } as Invoice);
-      return { handled: true, data: res.data as Invoice ?? undefined };
-    }
+	const isReturn = entity.value.type.value === InvoiceType.SellReturn || entity.value.type.value === InvoiceType.PurchaseReturn;
 
-    return { handled: false };
-  };
+	const getDialogTitle = () =>
+	{
+		if (entity.value.invoiceMode.value === InvoiceMode.Return)
+		{
+			return t("invoices.addReturnInvoice");
+		}
+		if (entity.value.invoiceMode.value === InvoiceMode.QuotationToSales)
+		{
+			return t("invoices.convertToSales");
+		}
+		if (entity.value.invoiceMode.value === InvoiceMode.Copy || entity.value.mode.value == ChangeableEntityMode.Create)
+		{
+			return isReturn
+				? t("invoices.addReturnInvoice")
+				: fixedType === InvoiceType.Quotation
+					? t("invoices.addNewQuotationTitle")
+					: t("invoices.addInvoice");
+		}
+		return isReturn
+			? t("invoices.editReturnInvoice")
+			: fixedType === InvoiceType.Quotation
+				? t("invoices.editQuotation")
+				: t("invoices.editInvoice");
+	};
 
-  const isReturn = formData.type === InvoiceType.SellReturn || formData.type === InvoiceType.PurchaseReturn;
+	if (isLoading.value)
+	{
+		return (
+			<ChangeDialog>
+				<ChangeDialog.Header title={ getDialogTitle() }/>
+				<Loading entityName={ t("invoices.entityName") }/>
+			</ChangeDialog>
+		);
+	}
 
-  const getDialogTitle = () =>
-  {
-    if (mode === "return")
-    {
-      return t("invoices.addReturnInvoice");
-    }
-    if (mode === "create")
-    {
-      return isReturn ? t("invoices.addReturnInvoice") : t("invoices.addInvoice");
-    }
-    return isReturn ? t("invoices.editReturnInvoice") : t("invoices.editInvoice");
-  };
+	if (isFullyReturned.value)
+	{
+		return (
+			<ChangeDialog>
+				<ChangeDialog.Header title={ getDialogTitle() }/>
 
-  if (initLoading)
-  {
-    return (
-      <DialogContent dir={ i18n.dir() }>
-        <DialogHeader>
-          <DialogTitle>{ getDialogTitle() }</DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
-        <Loading entityName={ t("invoices.entityName") } />
-      </DialogContent>
-    );
-  }
+				<div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
+					<div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+						<CheckCircle2 className="h-8 w-8 text-green-600"/>
+					</div>
+					<h3 className="text-lg font-semibold">{ t("invoices.fullyReturned") }</h3>
+					<p className="text-sm text-muted-foreground">{ t("invoices.fullyReturnedMessage") }</p>
+				</div>
 
-  if (fullyReturned)
-  {
-    return (
-      <DialogContent dir={ i18n.dir() }>
-        <DialogHeader>
-          <DialogTitle>{ getDialogTitle() }</DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
+				<DialogFooter>
+					<DialogClose asChild>
+						<Button variant="outline">{ t("invoices.close") }</Button>
+					</DialogClose>
+				</DialogFooter>
+			</ChangeDialog>
+		);
+	}
 
-        <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <CheckCircle2 className="h-8 w-8 text-green-600" />
-          </div>
-          <h3 className="text-lg font-semibold">{ t("invoices.fullyReturned") }</h3>
-          <p className="text-sm text-muted-foreground">{ t("invoices.fullyReturnedMessage") }</p>
-        </div>
+	const basicHasError = entity.value.hasErrors
+		|| entity.value.invoiceItems.value.some((t) => t.hasErrors)
+		|| entity.value.paymentVouchers.value.some((t) => t.hasErrors);
 
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">{ t("invoices.close") }</Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    );
-  }
+	const costHasError = entity.value.costVouchers.value.some((t) => t.hasErrors);
 
-  const disabled = mode === "update" && formData.type !== InvoiceType.Quotation;
+	const invoiceAttachmentsHasError = Boolean(entity.value.getError("invoiceFiles").value);
 
-  return (
-    <InvoiceContext.Provider
-      value={ {
-        formData,
-        errors,
-        getError,
-        isInvalid,
-        slice,
-        mode,
-        authState,
-        dispatch,
-        disabled,
-        accountSlice,
-        accountState
-      } }
-    >
-      <ChangeDialogTabbed<Invoice>
-        changeDialogProps={ {
-          title: getDialogTitle(),
-          className: "sm:max-w-[100vw] sm:w-screen sm:h-screen",
-          formData,
-          dialogMode: mode as DialogMode,
-          service,
-          onSuccess: (data) => onSuccess?.(data, mode),
-          validate,
-          onBeforeSave: onBeforeSave,
-          actionButtons: formData.type === InvoiceType.Quotation && mode === "update" && formData?.id != undefined
-            ? (
-              <AlertConvertDialog
-                invoiceId={ formData.id }
-                createInitialPaymentVoucher={ createInitialPaymentVoucher }
-                onSuccess={ (data) =>
-                {
-                  dispatch(slice.formActions.updateFormData(data));
-                  onSuccess?.(data, mode);
-                } }
-              />
-            )
-            : undefined
-        } }
-        tabs={ [
-          {
-            label: t("invoices.basicInfo"),
-            icon: Box,
-            active: true,
-            content: <InvoiceBasicTab />
-          },
-          ...(formData.type !== InvoiceType.Quotation
-            ? [{
-              label: t("invoices.paymentVouchers"),
-              icon: BanknoteArrowDown,
-              active: false,
-              content: <InvoicePaymentsTab />
-            }]
-            : []),
-          ...(formData.type !== InvoiceType.Quotation
-            ? [{
-              label: t("invoices.invoiceCosts"),
-              icon: BanknoteArrowUp,
-              active: false,
-              content: <InvoiceCostsTab />
-            }]
-            : []),
-          {
-            label: t("invoices.invoicePolicy"),
-            icon: Siren,
-            active: false,
-            content: <InvoicePolicyTab />
-          },
-          {
-            label: t("invoices.invoiceAttachments"),
-            icon: FolderKanban,
-            active: false,
-            content: <InvoiceFilesTab />
-          }
-        ] }
-      />
-    </InvoiceContext.Provider>
-  );
+	return (
+		<ChangeDialog className="sm:max-w-[100vw] sm:w-screen sm:h-screen">
+			<ChangeDialog.Header title={ getDialogTitle() }/>
+
+			<ChangeDialog.Tabbed
+				tabs={ [
+					{
+						label: t("invoices.basicInfo"),
+						icon: Box,
+						active: true,
+						hasError: basicHasError,
+						content: <InvoiceBasicTab invoice={ entity.value }/>
+					},
+					...(entity.value.type.value == InvoiceType.Sell || entity.value.type.value == InvoiceType.SellReturn
+						? [{
+							label: t("invoices.invoiceCosts"),
+							icon: BanknoteArrowUp,
+							active: false,
+							hasError: costHasError,
+							content: <InvoiceCostsTab invoice={ entity.value }/>
+						}]
+						: []),
+					{
+						label: t("invoices.invoicePolicy"),
+						icon: Siren,
+						active: false,
+						content: <InvoicePolicyTab invoice={ entity.value }/>
+					},
+					{
+						label: t("invoices.invoiceAttachments"),
+						icon: FolderKanban,
+						active: false,
+						hasError: invoiceAttachmentsHasError,
+						content: <InvoiceFilesTab invoice={ entity.value }/>
+					}
+				] }
+			/>
+
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+
+				<InvoiceSaveButton
+					showConfirmationDialog={ () =>
+					{
+						return hasCostVouchers.value;
+					} }
+					confirmationDialog={ <ConfirmationDialog/> }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
+
+	function ConfirmationDialog()
+	{
+		const {i18n} = useTranslation("accounting");
+
+		return <DialogContent dir={ i18n.dir() } className=" sm:max-w-xl ">
+			<DialogHeader>
+				<DialogTitle>
+					الفاتورة الأصلية تحتوي على سندات تكاليف
+				</DialogTitle>
+
+				<DialogDescription asChild>
+					<div className="mt-4 space-y-5 text-start text-[15px] leading-7 text-foreground">
+
+						<p>
+							تم العثور على <strong>سندات تكاليف</strong> مرتبطة بالفاتورة الأصلية.
+							لا يمكن إنشاء فاتورة المرتجع قبل تحديد كيفية التعامل مع هذه السندات.
+						</p>
+
+						<div className="rounded-lg border p-4 space-y-4">
+
+							<div>
+								<h4 className="font-semibold text-foreground">
+									إبقاء التكاليف وإنشاء المرتجع
+								</h4>
+								<p className="text-foreground/80">
+									سيتم الاحتفاظ بجميع سندات التكاليف كما هي، ثم إنشاء فاتورة المرتجع.
+								</p>
+							</div>
+
+							<div>
+								<h4 className="font-semibold text-destructive">
+									حذف التكاليف وإنشاء المرتجع
+								</h4>
+								<p className="text-foreground/80">
+									سيتم حذف جميع سندات التكاليف المرتبطة بالفاتورة الأصلية بشكل نهائي، ثم إنشاء فاتورة
+									المرتجع.
+								</p>
+							</div>
+
+							<div>
+								<h4 className="font-semibold text-foreground">
+									إلغاء
+								</h4>
+								<p className="text-foreground/80">
+									لن يتم إنشاء فاتورة المرتجع، ولن يتم إجراء أي تغييرات.
+								</p>
+							</div>
+
+						</div>
+
+					</div>
+				</DialogDescription>
+			</DialogHeader>
+
+			<DialogFooter>
+				<DialogClose asChild>
+					<Button variant="outline">
+						إلغاء
+					</Button>
+				</DialogClose>
+
+				<InvoiceSaveButton
+					label="إبقاء التكاليف وإنشاء المرتجع"
+					transformData={ (data) =>
+					{
+						data.deleteOriginalInvoiceCostVouchers = false;
+						return data;
+					} }
+				/>
+
+
+				<InvoiceSaveButton
+					variant="destructive"
+					label="حذف التكاليف وإنشاء المرتجع"
+					transformData={ (data) =>
+					{
+						data.deleteOriginalInvoiceCostVouchers = true;
+						return data;
+					} }
+				/>
+
+			</DialogFooter>
+		</DialogContent>;
+	}
+
+	function InvoiceSaveButton({
+		transformData,
+		...props
+	}: Omit<SaveButtonProps<Invoice, InvoiceDto>, "entity" | "service" | "onSuccess">)
+	{
+		return (
+			<ChangeDialog.SaveButton<Invoice, InvoiceDto>
+				entity={ entity }
+				service={ service }
+				loadingSignal={ isSaving }
+				onSuccess={ (data) =>
+				{
+					if (entity.value.invoiceMode.value === InvoiceMode.QuotationToSales)
+					{
+						navigate("/sales");
+					}
+					onSuccess?.(data, entity.value.mode.value);
+				} }
+				transformData={ async (data) =>
+				{
+					const base = await transformDataBeforeSave(data);
+					return transformData ? transformData?.(base) : base;
+				} }
+				{ ...props }
+			/>
+		);
+	}
 }

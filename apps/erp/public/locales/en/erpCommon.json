@@ -26,9 +26,10 @@
     "stocktakings": "Stocktaking",
     "itemsSettlements": "Stock Settlements",
     "settings": "Settings",
-    "account": "Account"
+    "account": "Account",
+    "quotationInvoices": "Quotations",
+    "costAdjustments": "Items Cost Adjustment"
   },
-
   "dashborad": {
     "income": "Total Income",
     "totalPassengers": "Total Passengers",
@@ -74,7 +75,6 @@
       "december": "December"
     }
   },
-
   "permissions": {
     "resources": {
       "branches": "Branches",
@@ -97,7 +97,8 @@
       "taxes": "Taxes",
       "obligations": "Obligations",
       "posTerminals": "POS Terminals",
-      "authorizedStores": "Authorized Stores"
+      "authorizedStores": "Authorized Stores",
+      "costAdjustments": "Items Cost Adjustment"
     },
     "invoice": {
       "addSettlement": "Add settlement to invoice",
@@ -122,6 +123,7 @@
       "voucher": "Voucher Report",
       "voucherList": "Voucher List Report",
       "accountStatement": "Account Statement Report",
+      "partnerStatement": "Partner Statement Report",
       "accountList": "Account List Report",
       "balanceTransfer": "Balance Transfer Report",
       "itemStatement": "Item Statement Report",
@@ -132,6 +134,7 @@
       "balanceSheet": "Balance Sheet Report",
       "taxReturn": "Tax Return Report",
       "profitAndLoss": "Profit and Loss Report",
+      "salesProfitability": "Sales Profitability Report",
       "stocktaking": "Stocktaking Report",
       "itemSettlement": "Stock Adjustment Report",
       "itemBarcode": "Item Barcode Report"
@@ -148,20 +151,17 @@
       "reports": "System Reports"
     }
   },
-
   "storeItemSelector": {
     "addItems": "Add Items:",
     "scanBarcode": "Scan barcode...",
     "selectItem": "Select item..."
   },
-
   "settings": {
     "loading": "Loading settings...",
     "title": "System Settings",
     "subtitle": "Manage company data, invoices, and default accounts",
     "basicData": "Basic Information",
     "invoicesAndTaxes": "Invoices & Taxes",
-    "defaultAccounts": "Default Accounts",
     "save": "Save Settings",
     "companyNameRequired": "Company name is required",
     "companyPhoneRequired": "Phone number is required",
@@ -174,11 +174,12 @@
     "invoicePrintSize": "Invoice Print Size",
     "a4Paper": "A4 Paper",
     "thermalPrinter": "Thermal Printer",
-    "invoicePolicy": "Invoice Policy (appears at the bottom of the invoice)",
+    "salesInvoicePolicy": "Sales Invoice Policy (appears at the bottom of the invoice)",
+    "quotationInvoicePolicy": "Quotation Policy (appears at the bottom of the quotation)",
     "invoicePolicyPlaceholder": "Example: Sold goods cannot be returned or exchanged after 3 days...",
     "simulationSubtitle": "Test connection with the authority",
     "productionSubtitle": "Connect with the authority and send documents officially",
-    "defaultAccountsAndWarehouses": "Default Accounts & Stores",
+    "defaultValues": "Default Values",
     "defaultWarehouse": "Default Store",
     "defaultPaymentMethod": "Default Payment Method",
     "defaultSalesAccount": "Default Sales Account",
@@ -207,9 +208,14 @@
     "linking": "Linking...",
     "startLinking": "Start Linking",
     "noCode": "Didn't receive a verification code?",
-    "visitZatca": "Visit the authority's website to get a verification code"
+    "visitZatca": "Visit the authority's website to get a verification code",
+    "shareInfoCard": "Organization Information Card",
+    "referralLink": "Referral Link",
+    "copied": "Copied",
+    "copyLink": "Copy Link",
+    "theme": "Theme & Appearance",
+    "eInvoicing": "E-Invoicing"
   },
-
   "reports": {
     "title": "Reports",
     "subtitle": "Create and export business reports",
@@ -221,12 +227,16 @@
     "balanceSheetDescription": "Assets, liabilities and equity",
     "profitAndLoss": "Profit and Loss",
     "profitAndLossDescription": "Revenue, expenses and net profit",
+    "salesProfitability": "Sales Profitability",
+    "salesProfitabilityDescription": "View sales profitability with direct costs",
     "taxReturn": "Tax Return",
     "taxReturnDescription": "Periodic VAT return report",
     "itemsTaxStatement": "Item Tax Statement",
     "itemsTaxStatementDescription": "Tax details per item",
     "itemsMovement": "Items Movement",
     "itemsMovementDescription": "Inventory movements for items",
+    "itemsList": "Items List",
+    "itemsListDescription": "Report of all items with details and quantities",
     "toDate": "To Date",
     "fromDate": "From Date",
     "movementType": "Movement Type",
@@ -252,14 +262,27 @@
     "purchasesTaxReport": "Purchases Tax Report",
     "itemBarcode": "Item Barcode",
     "barcodeCount": "Barcode Count",
-    "pagesCount": "Pages Count"
+    "pagesCount": "Pages Count",
+    "InvoicesList": "Invoices List",
+    "InvoicesListDescription": "View invoices with comprehensive filtering options",
+    "itemStatement": "Item Statement",
+    "itemStatementDescription": "View item movement details across warehouses and time periods",
+    "accountStatement": "Account Statement",
+    "accountStatementDescription": "View a specific account's transactions within a selected date range",
+    "partnerStatement": "Partner Statement",
+    "partnerStatementDescription": "View a specific partner's transactions within a selected date range",
+    "accountsList": "Accounts List",
+    "accountsListDescription": "View all accounts with balances and detailed information",
+    "exportToExcel": "Export to Excel"
   },
-
   "accountStatement": {
     "button": "Account Statement",
     "title": "Account Statement"
   },
-
+  "partnerStatement": {
+    "button": "Partner Statement",
+    "title": "Partner Statement"
+  },
   "itemStatement": {
     "button": "Item Statement",
     "title": "Item Statement",

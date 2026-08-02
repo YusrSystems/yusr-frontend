@@ -1,17 +1,14 @@
 import { TextAreaInput, type TextAreaInputProps } from "../inputs/textAreaInput";
-import { FormField } from "./formField";
+import { FormField, type FormFieldProps } from "./formField";
+
 
 export function TextAreaField(
-  { label, error, isInvalid, required, ...props }: TextAreaInputProps & {
-    label: string;
-    error?: string;
-    required?: boolean;
-  }
+	{label, error, required, ...props}: TextAreaInputProps & FormFieldProps
 )
 {
-  return (
-    <FormField label={ label } error={ error } isInvalid={ isInvalid } required={ required }>
-      <TextAreaInput { ...props } isInvalid={ isInvalid } />
-    </FormField>
-  );
+	return (
+		<FormField label={ label } error={ error } required={ required }>
+			<TextAreaInput { ...props } error={ error }/>
+		</FormField>
+	);
 }

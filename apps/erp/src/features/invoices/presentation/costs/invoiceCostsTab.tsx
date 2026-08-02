@@ -1,143 +1,136 @@
-import ClientsAndSuppliersSearchableSelect from "@/core/components/searchableSelect/clientsAndSuppliersSearchableSelect";
-import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
+import type Invoice from "@/core/data/invoices/invoice.ts";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, CurrencyIcon, FormField, NumberField, TextField } from "yusr-ui";
-import { InvoiceRelationType } from "../../../../core/data/invoice";
-import { useInvoiceContext } from "../../logic/invoiceContext";
+import { Button, FormField, NumberField, TextField } from "yusr-ui";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
+import { Voucher, VoucherType } from "@/core/data/voucher.ts";
+import { Services } from "@/core/services/services.ts";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import { useEffect } from "react";
+import { Cubits } from "@/core/services/cubits.ts";
+import { AccountClass, getAccountTypesByClasses } from "@/core/data/account.ts";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 
-export default function InvoiceCostsTab()
+
+export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 {
-  const { t } = useTranslation("accounting");
-  const {
-    formData,
-    authState,
-    slice,
-    dispatch
-  } = useInvoiceContext();
+	useSignals();
+	const {t} = useTranslation("accounting");
 
-  const costVouchers = () =>
-    formData.invoiceVouchers?.filter((v) => v.invoiceRelationType == InvoiceRelationType.Cost) ?? [];
+	useEffect(() =>
+	{
+		Cubits.partners.init();
+		Cubits.accounts.init(getAccountTypesByClasses([AccountClass.Expense]));
+	}, []);
 
-  return (
-    <div className="flex flex-col gap-2 items-end">
-      <Button
-        type="button"
-        className="max-w-45"
-        size="lg"
-        onClick={ () =>
-          dispatch(slice.formActions.addVoucher(
-            {
-              voucherId: 0,
-              invoiceId: formData.id ?? 0,
-              paymentMethodId: authState.setting?.mainPaymentMethodId ?? 0,
-              paymentMethodName: authState.setting?.mainPaymentMethodName ?? "",
-              accountId: formData.actionAccountId ?? 0,
-              accountName: formData.actionAccountName ?? "",
-              invoiceRelationType: InvoiceRelationType.Cost,
-              amount: 0,
-              amountReceived: 0,
-              description: undefined
-            }
-          )) }
-      >
-        <Plus className="w-4 h-4 me-2" /> { t("invoices.addCostVoucher") }
-      </Button>
+	const costVouchers = invoice.costVouchers.value;
 
-      <div className="w-full overflow-x-auto border border-border rounded-lg shadow-sm bg-background">
-        <table className="w-full text-sm text-right">
-          <thead className="bg-muted/40 border-b border-border">
-            <tr>
-              <th className="p-3 font-semibold w-16 text-center text-muted-foreground">{ t("invoices.number") }</th>
-              <th className="p-3 text-start font-semibold">{ t("invoices.account") }</th>
-              <th className="p-3 text-start font-semibold">{ t("invoices.paymentMethod") }</th>
-              <th className="p-3 text-start font-semibold">{ t("invoices.amount") }</th>
-              <th className="p-3 text-start font-semibold">{ t("invoices.description") }</th>
-              <th className="p-4 text-start font-semibold w-16"></th>
-            </tr>
-          </thead>
-          <tbody>
-            { costVouchers().map((row, index) => (
-              <tr
-                key={ row.voucherId }
-                className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors"
-              >
-                <td className="p-2 text-center font-bold text-muted-foreground">{ index + 1 }</td>
+	return (
+		<div className="flex flex-col gap-2 items-end">
+			<Button
+				type="button"
+				className="max-w-45"
+				size="lg"
+				onClick={ () =>
+				{
+					const newVoucher = Voucher.create({
+						invoiceId: invoice.id.value,
+						paymentMethodId: Services.auth.setting?.mainPaymentMethodId?.value,
+						type: VoucherType.Payment,
+						amount: 0,
+						isDirectMode: true
+					});
+					invoice.costVouchers.value = [...invoice.costVouchers.value, newVoucher];
+				} }
+			>
+				<Plus className="w-4 h-4 me-2"/> { t("invoices.addCostVoucher") }
+			</Button>
 
-                <td className="p-2">
-                  <FormField label="">
-                    <ClientsAndSuppliersSearchableSelect
-                      id={ row.accountId }
-                      onValueChange={ (account) =>
-                      {
-                        dispatch(slice.formActions.updateVoucher({
-                          ...row,
-                          accountId: account?.id,
-                          accountName: account?.name
-                        }));
-                      } }
-                    />
-                  </FormField>
-                </td>
+			<div className="w-full overflow-x-auto border border-border rounded-lg shadow-sm bg-background">
+				<table className="w-full text-sm text-right">
+					<thead className="bg-muted/40 border-b border-border">
+					<tr>
+						<th className="p-3 font-semibold w-16 text-center text-muted-foreground">{ t("invoices.number") }</th>
+						<th className="p-3 text-start font-semibold">{ t("invoices.account", "الحساب") }</th>
+						<th className="p-3 text-start font-semibold">{ t("invoices.partner", "الجهة (اختياري)") }</th>
+						<th className="p-3 text-start font-semibold">{ t("invoices.paymentMethod") }</th>
+						<th className="p-3 text-start font-semibold">{ t("invoices.amount") }</th>
+						<th className="p-3 text-start font-semibold">{ t("invoices.description") }</th>
+						<th className="p-4 text-start font-semibold w-16"></th>
+					</tr>
+					</thead>
+					<tbody>
+					{ costVouchers.map((voucher, index) => (
+						<tr
+							key={ voucher.id.value }
+							className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors"
+						>
+							<td className="p-2 text-center font-bold text-muted-foreground">{ index + 1 }</td>
 
-                <td className="p-2">
-                  <FormField label="">
-                    <PaymentMethodsSearchableSelect
-                      id={ row.paymentMethodId }
-                      onValueChange={ (pm) =>
-                      {
-                        dispatch(slice.formActions.updateVoucher({
-                          ...row,
-                          paymentMethodId: pm?.id,
-                          paymentMethodName: pm?.name
-                        }));
-                      } }
-                    />
-                  </FormField>
-                </td>
+							<td className="p-2 min-w-30">
+								<FormField label="" error={ voucher.getError("glAccountId") }>
+									<AccountsSearchableSelect
+										id={ voucher.glAccountId }
+										label={ voucher.glAccountName }
+									/>
+								</FormField>
+							</td>
 
-                <td className="p-2">
-                  <NumberField
-                    label=""
-                    value={ row.amount || "0" }
-                    onChange={ (val) =>
-                    {
-                      if (val != undefined)
-                      {
-                        dispatch(slice.formActions.updateVoucher({ ...row, amount: val }));
-                      }
-                    } }
-                    currency={ <CurrencyIcon /> }
-                  />
-                </td>
+							<td className="p-2 min-w-30">
+								<FormField label="" error={ voucher.getError("partnerId") }>
+									<PartnersSearchableSelect
+										label={ voucher.partnerName }
+										id={ voucher.partnerId }
+									/>
+								</FormField>
+							</td>
 
-                <td className="p-2">
-                  <TextField
-                    label=""
-                    value={ row.description || "" }
-                    onChange={ (e) =>
-                      dispatch(slice.formActions.updateVoucher({ ...row, description: e.target.value })) }
-                  />
-                </td>
+							<td className="p-2 min-w-30">
+								<FormField label="" error={ voucher.getError("paymentMethodId") }>
+									<PaymentMethodsSearchableSelect
+										id={ voucher.paymentMethodId }
+										label={ voucher.paymentMethodName }
+									/>
+								</FormField>
+							</td>
 
-                <td className="p-4 text-center align-top pt-5">
-                  <button
-                    type="button"
-                    onClick={ () =>
-                    {
-                      dispatch(slice.formActions.removeVoucher(row.voucherId));
-                    } }
-                    className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
-                    aria-label={ t("invoices.deleteVoucher") }
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </button>
-                </td>
-              </tr>
-            )) }
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+							<td className="p-2 w-40">
+								<NumberField
+									label=""
+									value={ voucher.amount }
+									error={ voucher.getError("amount") }
+									currency={ <ErpCurrencyIcon/> }
+								/>
+							</td>
+
+							<td className="p-2">
+								<TextField
+									label=""
+									value={ voucher.description }
+									error={ voucher.getError("description") }
+								/>
+							</td>
+
+							<td className="p-4 text-center align-top pt-5">
+								<button
+									type="button"
+									onClick={ () =>
+									{
+										invoice.costVouchers.value = invoice.costVouchers.value.filter((v) => v !== voucher);
+									} }
+									className="p-2 text-red-500 hover:text-red-700 hover:bg-red-500/10 rounded-md transition-colors"
+									aria-label={ t("invoices.deleteVoucher") }
+								>
+									<Trash2 className="h-5 w-5"/>
+								</button>
+							</td>
+						</tr>
+					)) }
+					</tbody>
+				</table>
+			</div>
+		</div>
+	);
 }

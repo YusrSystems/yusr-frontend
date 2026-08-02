@@ -1,32 +1,52 @@
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import { useEffect, useMemo } from "react";
 import CurrencyBadge from "./currencyBadge";
 import { DashboardChartAreaInteractive } from "./dashboardChartAreaInteractive";
 import { DashboardSectionCards } from "./dashboardSectionCards";
 import DashboardSkeleton from "./dashboardSkeleton";
-import { fetchDashboardData } from "./logic/dashboardSlice";
+import DashboardCubit from "@/features/dashboard/logic/dashboardCubit.ts";
+import { DashboardLoadingState } from "@/features/dashboard/logic/dashboardState.ts";
+import { useSignals } from "@preact/signals-react/runtime";
+import ReferralCard from "@/features/dashboard/referralCard.tsx";
+import { useTranslation } from "react-i18next";
+import { APP_NAME } from "../../../appConfig.ts";
+
 
 export default function DashboardPage()
 {
-  const dispatch = useAppDispatch();
-  const { data } = useAppSelector((state) => state.dashboard);
+	// TODO: we should fix the the months issue, it maybe from backend
+	useSignals();
+	const cubit = useMemo(() => new DashboardCubit(), []);
+	useEffect(() =>
+	{
+		void cubit.init();
+	}, [cubit]);
 
-  useEffect(() =>
-  {
-    dispatch(fetchDashboardData());
-  }, [dispatch]);
+	const {t} = useTranslation("erpCommon");
+	useEffect(() =>
+	{
+		document.title = `${ t("sidebar.dashboard") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
-  if (!data)
-  {
-    return <DashboardSkeleton />;
-  }
+	if (cubit.state.value instanceof DashboardLoadingState)
+	{
+		return <DashboardSkeleton/>;
+	}
 
-  return (
-    <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-      <CurrencyBadge />
+	const data = cubit.data;
+	return (
+		<div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+			<CurrencyBadge/>
 
-      <DashboardSectionCards data={ data } />
-      <DashboardChartAreaInteractive data={ data } />
-    </div>
-  );
+			<div className="px-4 lg:px-6">
+				<ReferralCard/>
+			</div>
+
+			<DashboardSectionCards data={ data! }/>
+			<DashboardChartAreaInteractive data={ data! }/>
+		</div>
+	);
 }

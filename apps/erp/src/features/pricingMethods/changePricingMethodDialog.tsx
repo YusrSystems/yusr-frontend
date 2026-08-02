@@ -1,62 +1,64 @@
-import { useMemo } from "react";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import type PricingMethod from "../../core/data/pricingMethod";
-import { PricingMethodSlice, PricingMethodValidationRules } from "../../core/data/pricingMethod";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import {
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	SystemPermissionsActions,
+	TextField
+} from "yusr-ui";
+import PricingMethod, { type PricingMethodDto } from "@/core/data/pricingMethod.ts";
+import { useMemo } from "react";
+import { signal } from "@preact/signals-react";
 
-export default function ChangePricingMethodDialog({
-  entity,
-  mode,
-  service,
-  onSuccess
-}: CommonChangeDialogProps<PricingMethod>)
+
+export default function ChangePricingMethodDialog(
+	{dto, service, onSuccess}: CommonChangeDialogProps<PricingMethodDto>
+)
 {
-  const { t } = useTranslation(["stocking", "common"]);
-  const initialValues = useMemo(
-    () => ({
-      ...entity,
-      pricingMethodName: entity?.name || ""
-    }),
-    [entity]
-  );
+	useSignals();
+	const {t} = useTranslation(["stocking", "common"]);
 
-  const dispatch = useAppDispatch();
-  const { formData, errors } = useAppSelector((state) => state.pricingMethodForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    PricingMethodValidationRules.validationRules(t),
-    (errors) => dispatch(PricingMethodSlice.formActions.setErrors(errors))
-  );
-  useFormInit(PricingMethodSlice.formActions.setInitialData, initialValues);
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
+	const entity = useMemo(() => signal<PricingMethod>(dto ? PricingMethod.load(dto) : PricingMethod.create()), []);
 
-  const title = mode === "create"
-    ? t("pricingMethods.addNewTitle")
-    : `${t("common:crudRow.edit")} ${t("pricingMethods.entityName")}`;
+	if (
+		(entity.value.mode.value === ChangeableEntityMode.Create
+			&& !Services.auth.hasAuth(SystemPermissionsResources.PricingMethods, SystemPermissionsActions.Add))
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
+			&& !Services.auth.hasAuth(SystemPermissionsResources.PricingMethods, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-  return (
-    <ChangeDialog<PricingMethod>
-      title={ title }
-      className="sm:max-w-md"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => false }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-    >
-      <FieldGroup>
-        <TextField
-          label={ t("pricingMethods.methodName") }
-          required
-          value={ formData.name || "" }
-          onChange={ (e) => dispatch(PricingMethodSlice.formActions.updateFormData({ name: e.target.value })) }
-          isInvalid={ isInvalid("name") }
-          error={ getError("name") }
-        />
-      </FieldGroup>
-    </ChangeDialog>
-  );
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
+		? t("pricingMethods.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("pricingMethods.entityName") }`;
+
+	return (
+		<ChangeDialog className="sm:max-w-lg">
+			<ChangeDialog.Header title={ title }/>
+			<FieldGroup>
+				<TextField
+					label={ t("pricingMethods.methodName") }
+					required
+					value={ entity.value.name }
+					error={ entity.value.getError("name") }
+				/>
+			</FieldGroup>
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+
+				<ChangeDialog.SaveButton<PricingMethod, PricingMethodDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

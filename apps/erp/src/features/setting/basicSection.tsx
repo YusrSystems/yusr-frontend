@@ -1,220 +1,275 @@
-import { useAppDispatch, useAppSelector } from "@/core/state/store";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { differenceInDays, format } from "date-fns";
 import { Camera, Trash2, Upload } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { BranchFilterColumns, BranchSlice, StorageFileStatus } from "yusr-ui";
-import { Avatar, AvatarFallback, AvatarImage, Button, FieldGroup, FieldsSection, FormField, Label, SearchableSelect, TextField, useStorageFile } from "yusr-ui";
-import type { Setting } from "../../core/data/setting";
-import { useSettingContext } from "./settingContext";
+import { toast } from "sonner";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+	Branch,
+	BranchesSearchableSelect,
+	Button,
+	cn,
+	FieldGroup,
+	FieldsSection,
+	FormField,
+	i18n,
+	Label,
+	LinkQrDownloadableCard,
+	StorageFileStatus,
+	StorageType,
+	TextField,
+	useStorageFile
+} from "yusr-ui";
+import type { Setting } from "@/core/data/setting.ts";
+import type { Signal } from "@preact/signals-react";
+import ReferralCard from "@/features/dashboard/referralCard.tsx";
 
-export default function BasicSection()
+
+export default function BasicSection({formData}: { formData: Setting })
 {
-  const { t } = useTranslation("erpCommon");
-  const {
-    formData,
-    handleChange,
-    isInvalid,
-    getError,
-    clearError
-  } = useSettingContext();
+	useSignals();
 
-  const { fileInputRef, handleFileChange, handleRemoveFile } = useStorageFile<Partial<Setting>>(handleChange, "logo");
-  const branchState = useAppSelector((state) => state.branch);
-  const dispatch = useAppDispatch();
+	const {t} = useTranslation("erpCommon");
+	const {fileInputRef, handleFileChange, handleRemoveFile} = useStorageFile(
+		() => formData.logo.value ? [formData.logo?.value] : [],
+		(value) => (formData.logo.value = value[0]),
+		StorageType.Public,
+		false
+	);
 
-  const getDaysLeftText = (daysLeft: number) =>
-  {
-    if (daysLeft > 0)
-    {
-      return t("settings.daysLeft", { days: daysLeft });
-    }
-    return t("settings.expired");
-  };
+	const shareUrl = `${ window.location.origin }/sharing/${ formData.registrationKey.value }`;
+	const registerUrl = `${ window.location.origin }/register/${ formData.registrationKey.value }`;
 
-  const getDaysStatusColor = (daysLeft: number) =>
-  {
-    if (daysLeft > 10) return "text-green-600 dark:text-green-400";
-    if (daysLeft > 0) return "text-yellow-600 dark:text-yellow-400";
-    return "text-red-600 dark:text-red-400";
-  };
+	const getDaysLeftText = (daysLeft: number) =>
+	{
+		if (daysLeft > 0)
+		{
+			return t("settings.daysLeft", {days: daysLeft});
+		}
+		return t("settings.expired");
+	};
 
-  const getDaysBgColor = (daysLeft: number) =>
-  {
-    if (daysLeft > 10) return "bg-green-50 dark:bg-green-950/30";
-    if (daysLeft > 0) return "bg-yellow-50 dark:bg-yellow-950/30";
-    return "bg-red-50 dark:bg-red-950/30";
-  };
+	const getDaysStatusColor = (daysLeft: number) =>
+	{
+		if (daysLeft > 10)
+		{
+			return "text-green-600 dark:text-green-400";
+		}
+		if (daysLeft > 0)
+		{
+			return "text-yellow-600 dark:text-yellow-400";
+		}
+		return "text-red-600 dark:text-red-400";
+	};
 
-  return (
-    <div className="space-y-5 animate-in fade-in">
-      {/* LOGO SECTION */}
-      <div className="flex flex-col md:flex-row items-center gap-6 p-3 rounded-xl border bg-muted/10">
-        <Avatar className="h-32 w-32 border-4 border-background shadow-md">
-          <AvatarImage
-            src={ formData.logo?.status !== StorageFileStatus.Delete ? formData.logo?.url || "" : "" }
-            className="object-cover bg-white"
-          />
-          <AvatarFallback className="bg-secondary">
-            <Camera className="h-10 w-10 text-muted-foreground" />
-          </AvatarFallback>
-        </Avatar>
+	const getDaysBgColor = (daysLeft: number) =>
+	{
+		if (daysLeft > 10)
+		{
+			return "bg-green-50 dark:bg-green-950/30";
+		}
+		if (daysLeft > 0)
+		{
+			return "bg-yellow-50 dark:bg-yellow-950/30";
+		}
+		return "bg-red-50 dark:bg-red-950/30";
+	};
 
-        <div className="flex flex-col gap-3 text-center md:text-right">
-          <h3 className="text-lg font-bold text-start">{t("settings.companyLogo")}</h3>
-          <p className="text-sm text-muted-foreground">{t("settings.companyLogoDescription")}</p>
+	return (
+		<div className="space-y-5 animate-in fade-in">
+			<ReferralCard/>
 
-          <div className="flex flex-wrap gap-2 justify-center md:justify-start mt-2">
-            { (formData.logo?.url == undefined || formData.logo.status === StorageFileStatus.Delete) && (
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={ () => fileInputRef.current?.click() }
-              >
-                <Upload className="h-4 w-4 ml-2" /> {t("settings.uploadImage")}
-              </Button>
-            ) }
+			<div className="flex flex-col lg:flex-row gap-6">
 
-            { formData.logo?.url && formData.logo.status !== StorageFileStatus.Delete && (
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                onClick={ () => handleRemoveFile(0) }
-              >
-                <Trash2 className="h-4 w-4 ml-2" /> {t("settings.delete")}
-              </Button>
-            ) }
-          </div>
-          <p className="text-xs text-muted-foreground">{t("settings.logoHint")}</p>
-          <input
-            type="file"
-            ref={ fileInputRef }
-            className="hidden"
-            aria-label={t("settings.uploadCompanyLogo")}
-            accept="image/*"
-            onChange={ handleFileChange }
-          />
-        </div>
-      </div>
+				{ /* LOGO SECTION */ }
+				<div
+					className="w-full min-w-60 flex flex-col justify-between items-center lg:items-start gap-6 p-4 rounded-lg border bg-muted/10 shadow-sm">
+					{ /* Logo Part */ }
+					<div className="flex flex-col items-center gap-6">
+						<h3 className="text-lg font-bold">{ t("settings.companyLogo") }</h3>
+						<p className="text-sm text-muted-foreground">{ t("settings.companyLogoDescription") }</p>
+						<Avatar className="h-32 w-32 border-4 border-background shadow-md">
+							<AvatarImage
+								src={ formData.logo.value?.status !== StorageFileStatus.Delete ? formData.logo.value?.url || "" : "" }
+								className="object-cover bg-white"
+							/>
+							<AvatarFallback className="bg-secondary">
+								<Camera className="h-10 w-10 text-muted-foreground"/>
+							</AvatarFallback>
+						</Avatar>
+						<div className="flex flex-wrap gap-2 justify-center md:justify-start mt-2">
+							{ (!formData.logo.value?.url || formData.logo.value.status === StorageFileStatus.Delete) && (
+								<Button
+									type="button"
+									variant="secondary"
+									size="sm"
+									onClick={ () => fileInputRef.current?.click() }
+								>
+									<Upload className="h-4 w-4 ms-2"/> { t("settings.uploadImage") }
+								</Button>
+							) }
 
-      {/* BASIC INFO */}
-      <FieldGroup>
-        <FieldsSection title={t("settings.basicData")} columns={ 2 }>
-          <TextField
-            label={t("settings.companyName")}
-            required
-            value={ formData.companyName || "" }
-            isInvalid={ isInvalid("companyName") }
-            error={ getError("companyName") }
-            onChange={ (e) =>
-            {
-              handleChange({ companyName: e.target.value });
-              clearError("companyName");
-            } }
-          />
-          <TextField
-            label={t("settings.businessActivity")}
-            value={ formData.companyBusinessCategory || "" }
-            onChange={ (e) => handleChange({ companyBusinessCategory: e.target.value }) }
-          />
-          <TextField
-            label={t("settings.companyPhone")}
-            required
-            value={ formData.companyPhone || "" }
-            isInvalid={ isInvalid("companyPhone") }
-            error={ getError("companyPhone") }
-            onChange={ (e) =>
-            {
-              handleChange({ companyPhone: e.target.value });
-              clearError("companyPhone");
-            } }
-          />
-          <TextField
-            label={t("settings.email")}
-            required
-            type="email"
-            value={ formData.email || "" }
-            isInvalid={ isInvalid("email") }
-            error={ getError("email") }
-            onChange={ (e) =>
-            {
-              handleChange({ email: e.target.value });
-              clearError("email");
-            } }
-          />
-          <FormField label={t("settings.mainBranch")} required>
-            <SearchableSelect
-              items={ branchState.entities.data ?? [] }
-              itemLabelKey="name"
-              itemValueKey="id"
-              value={ formData.branchId?.toString() || "" }
-              onValueChange={ (val) =>
-              {
-                const selected = branchState.entities.data?.find(
-                  (s) => s.id.toString() === val
-                );
-                handleChange({
-                  branchId: selected?.id,
-                  branch: selected
-                });
-              } }
-              columnsNames={ BranchFilterColumns.columnsNames }
-              onSearch={ (condition) => dispatch(BranchSlice.entityActions.filter(condition)) }
-              isLoading={ branchState.isLoading }
-              disabled={ branchState.isLoading }
-            />
-          </FormField>
+							{ formData.logo.value?.url && formData.logo.value.status !== StorageFileStatus.Delete && (
+								<Button
+									type="button"
+									variant="destructive"
+									size="sm"
+									onClick={ () => handleRemoveFile(0) }
+								>
+									<Trash2 className="h-4 w-4 ms-2"/> { t("settings.delete") }
+								</Button>
+							) }
+						</div>
+						<p className="text-xs text-muted-foreground">{ t("settings.logoHint") }</p>
+						<input
+							type="file"
+							ref={ fileInputRef }
+							className="hidden"
+							aria-label={ t("settings.uploadCompanyLogo") }
+							accept="image/*"
+							onChange={ handleFileChange }
+						/>
+					</div>
+				</div>
 
-          <TextField
-            label={t("settings.commercialRegistration")}
-            value={ formData.crn || "" }
-            onChange={ (e) => handleChange({ crn: e.target.value }) }
-          />
-          <TextField
-            label={t("settings.taxNumber")}
-            value={ formData.vatNumber || "" }
-            onChange={ (e) => handleChange({ vatNumber: e.target.value }) }
-          />
-        </FieldsSection>
-      </FieldGroup>
+				<LinkQrDownloadableCard
+					title={ t("settings.shareInfoCard") }
+					url={ shareUrl }
+					copyText={ t("settings.copyLink") }
+					copiedText={ t("settings.copied") }
+					downloadText={ t("settings.download", "تحميل الرمز") }
+					qrFileNameWhenDownload={ formData.companyName.value }
+				/>
 
-      {/* SUBSCRIPTION */}
-      <div className="space-y-4 animate-in fade-in">
-        <h3 className="text-lg font-semibold">{t("settings.subscriptionDetails")}</h3>
-        <div className="grid md:grid-cols-3 gap-4 p-5 rounded-xl border bg-linear-to-br from-muted/40 to-muted/20 shadow-sm">
-          <div className="flex flex-col gap-1 rounded-lg bg-background/60 p-4 border">
-            <Label className="text-xs text-muted-foreground">{t("settings.startDate")}</Label>
-            <p className="text-lg font-semibold tracking-wide text-primary">
-              { formData.startDate ? format(new Date(formData.startDate), "dd/MM/yyyy") : "-" }
-            </p>
-          </div>
+				<LinkQrDownloadableCard
+					title={ t("settings.referralLink") }
+					url={ registerUrl }
+					copyText={ t("settings.copyLink") }
+					copiedText={ t("settings.copied") }
+					downloadText={ t("settings.download", "تحميل الرمز") }
+					qrFileNameWhenDownload={ formData.companyName.value }
+				/>
 
-          <div className="flex flex-col gap-1 rounded-lg bg-background/60 p-4 border">
-            <Label className="text-xs text-muted-foreground">{t("settings.endDate")}</Label>
-            <p className="text-lg font-semibold tracking-wide text-primary">
-              { formData.endDate ? format(new Date(formData.endDate), "dd/MM/yyyy") : "-" }
-            </p>
-          </div>
+			</div>
 
-          <div className="flex flex-col gap-1 rounded-lg bg-background/60 p-4 border">
-            <Label className="text-xs text-muted-foreground">{t("settings.remainingPeriod")}</Label>
-            { formData.endDate
-              ? (() =>
-              {
-                const daysLeft = differenceInDays(new Date(formData.endDate), new Date());
-                return (
-                  <p
-                    className={ `text-lg font-bold px-2 py-1 rounded-md inline-block w-fit ${getDaysStatusColor(daysLeft)} ${getDaysBgColor(daysLeft)}` }
-                  >
-                    { getDaysLeftText(daysLeft) }
-                  </p>
-                );
-              })()
-              : "-" }
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+			{ /* BASIC INFO */ }
+			<FieldGroup>
+				<FieldsSection title={ t("settings.basicData") } columns={ 2 }>
+					<TextField
+						label={ t("settings.companyName") }
+						required
+						value={ formData.companyName }
+						error={ formData.getError("companyName") }
+					/>
+					<TextField
+						label={ t("settings.businessActivity") }
+						value={ formData.companyBusinessCategory }
+					/>
+					<div>
+						{ !Services.auth.setting?.companyPhone?.value && (
+							<FieldNoticeablePing
+								isError={ formData.getError("companyPhone") }
+								onClick={ () =>
+								{
+									toast.info(i18n.t("common:accountVerification.enterPhoneToVerify"));
+								} }
+							/>
+						) }
+						<TextField
+							label={ t("settings.companyPhone") }
+							required
+							value={ formData.companyPhone }
+							error={ formData.getError("companyPhone") }
+						/>
+					</div>
+					<TextField
+						label={ t("settings.email") }
+						required
+						type="email"
+						value={ formData.email }
+						error={ formData.getError("email") }
+					/>
+					<FormField label={ t("settings.mainBranch") } required>
+						<BranchesSearchableSelect
+							id={ formData.branchId }
+							label={ formData.branch.value?.name }
+							onSelect={ (branch) =>
+							{
+								formData.branch.value = new Branch(branch);
+							} }
+						/>
+					</FormField>
+
+					<TextField
+						label={ t("settings.commercialRegistration") }
+						value={ formData.crn }
+					/>
+					<TextField
+						label={ t("settings.taxNumber") }
+						value={ formData.vatNumber }
+					/>
+				</FieldsSection>
+			</FieldGroup>
+
+			{ /* SUBSCRIPTION */ }
+			<div className="space-y-4 animate-in fade-in">
+				<h3 className="text-lg font-semibold">{ t("settings.subscriptionDetails") }</h3>
+				<div
+					className="grid md:grid-cols-3 gap-4 p-5 rounded-xl border bg-linear-to-br from-muted/40 to-muted/20 shadow-sm">
+					<div className="flex flex-col gap-1 rounded-lg bg-background/60 p-4 border">
+						<Label className="text-xs text-muted-foreground">{ t("settings.startDate") }</Label>
+						<p className="text-lg font-semibold tracking-wide text-primary">
+							{ formData.startDate.value ? format(new Date(formData.startDate.value), "dd/MM/yyyy") : "-" }
+						</p>
+					</div>
+
+					<div className="flex flex-col gap-1 rounded-lg bg-background/60 p-4 border">
+						<Label className="text-xs text-muted-foreground">{ t("settings.endDate") }</Label>
+						<p className="text-lg font-semibold tracking-wide text-primary">
+							{ formData.endDate.value ? format(new Date(formData.endDate.value), "dd/MM/yyyy") : "-" }
+						</p>
+					</div>
+
+					<div className="flex flex-col gap-1 rounded-lg bg-background/60 p-4 border">
+						<Label className="text-xs text-muted-foreground">{ t("settings.remainingPeriod") }</Label>
+						{ formData.endDate.value
+							? (() =>
+							{
+								const daysLeft = differenceInDays(new Date(formData.endDate.value), new Date());
+								return (
+									<p
+										className={ `text-lg font-bold px-2 py-1 rounded-md inline-block w-fit ${
+											getDaysStatusColor(daysLeft)
+										} ${ getDaysBgColor(daysLeft) }` }
+									>
+										{ getDaysLeftText(daysLeft) }
+									</p>
+								);
+							})()
+							: "-" }
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function FieldNoticeablePing({isError, onClick}: { onClick?: () => void; isError: Signal<string | undefined>; })
+{
+	return (
+		<span
+			onClick={ onClick }
+			className={ cn(
+				"relative cursor-pointer flex size-3 inset-s-[-3%]",
+				isError.value ? "top-[54%]" : "top-[70%]"
+			) }
+		>
+      <span className="absolute h-full w-full animate-ping rounded-full bg-sky-400 opacity-75">
+      </span>
+      <span className="relative inline-flex size-3 rounded-full bg-sky-500"></span>
+    </span>
+	);
 }

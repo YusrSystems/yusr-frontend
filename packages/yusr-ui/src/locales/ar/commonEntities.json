@@ -1,0 +1,69 @@
+{
+  "users": {
+    "title": "إدارة المستخدمين",
+    "entityName": "المستخدم",
+    "addNewTitle": "إضافة مستخدم جديد",
+    "totalUsers": "إجمالي المستخدمين",
+    "userId": "رقم المستخدم",
+    "username": "اسم المستخدم",
+    "isActive": "هل المستخدم نشط",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "password": "كلمة المرور",
+    "role": "الدور",
+    "branch": "الفرع",
+    "userStatus": "حالة المستخدم",
+    "usernameRequired": "يرجى إدخال اسم المستخدم",
+    "passwordRequired": "يرجى إدخال كلمة مرور",
+    "roleRequired": "يرجى اختيار دور",
+    "branchRequired": "يرجى اختيار فرع"
+  },
+
+  "roles": {
+    "title": "إدارة الأدوار",
+    "entityName": "الدور",
+    "addNewTitle": "إضافة دور جديد",
+    "totalRoles": "إجمالي الادوار",
+    "roleId": "رقم الدور",
+    "roleName": "اسم الدور",
+    "nameRequired": "يرجى اختيار اسم للدور"
+  },
+
+  "branches": {
+    "title": "إدارة الفروع",
+    "entityName": "الفرع",
+    "addNewTitle": "إضافة فرع جديد",
+    "totalBranches": "إجمالي الفروع",
+    "branchId": "رقم الفرع",
+    "branchName": "اسم الفرع",
+    "city": "المدينة",
+    "street": "الشارع",
+    "district": "الحي",
+    "buildingNumber": "رقم المبنى",
+    "postalCode": "الرمز البريدي",
+    "nameRequired": "اسم الفرع مطلوب",
+    "cityRequired": "يرجى اختيار المدينة",
+    "buildingNumberLength": "رقم المبنى يجب أن يتكون من أربع أرقام",
+    "buildingNumberNumeric": "رقم المبنى يجب أن يكون أرقاماً فقط",
+    "postalCodeLength": "الرمز البريدي يجب أن يتكون من خمس أرقام",
+    "postalCodeNumeric": "الرمز البريدي يجب أن يكون أرقاماً فقط"
+  },
+
+  "sharing": {
+    "companyName": "الاسم",
+    "companyPhone": "رقم الهاتف",
+    "crn": "رقم السجل التجاري",
+    "vatNumber": " الرقم الضريبي",
+    "country": "الدولة",
+    "city": "المدينة",
+    "district": "الحي",
+    "street": "الشارع",
+    "postalCode": "الرمز البريدي",
+    "buildingNumber": "رقم المبنى",
+    "companyInfo": "معلومات الشركة",
+    "addressInfo": "معلومات العنوان",
+    "card": "بطاقة مشاركة المعلومات",
+    "tenantNotFound": "لم يتم العثور على الشركة",
+    "promotionText": "هل تبحث عن برنامج محاسبي سهل وذكي، ومتوافق مع هيئة الزكاة والضريبة؟ جرب يُسْر"
+  }
+}

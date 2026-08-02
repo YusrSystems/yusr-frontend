@@ -1,58 +1,63 @@
-import { Minus, Percent } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { NumberInput } from "yusr-ui";
-import { useInvoiceContext } from "../../logic/invoiceContext";
+import { FieldsSection, NumberField, TextAreaField } from "yusr-ui";
+import Invoice from "@/core/data/invoices/invoice.ts";
+import { useSignals } from "@preact/signals-react/runtime";
+import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 
-export default function InvoiceGlobalSettlements()
+
+export default function InvoiceGlobalSettlements({invoice}: { invoice: Invoice })
 {
-  const { t } = useTranslation("accounting");
-  const {
-    mode,
-    formData,
-    dispatch,
-    slice,
-    disabled
-  } = useInvoiceContext();
+	useSignals();
+	const {t} = useTranslation("accounting");
 
-  return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-4 py-2.5 border border-border rounded-lg bg-background shrink-0">
-      <span className="text-xs text-muted-foreground whitespace-nowrap">
-        { t("invoices.globalSettlement") }
-      </span>
+	const basePrice = InvoiceItemsMath.CalcInvoiceBaseTaxInclusivePrice(invoice.invoiceItems.value ?? []);
 
-      <div className="hidden sm:block w-px h-7 bg-border shrink-0" />
+	return (
+		<div className="border border-border rounded-xl bg-background overflow-hidden">
+			<div className="px-4 py-3 border-b border-border bg-muted/30">
+				<h3 className="font-semibold">
+					{ t("invoices.globalSettlement") }
+				</h3>
+			</div>
 
-      <div className="flex items-center gap-2">
-        <div className="relative">
-          <Minus
-            size={ 13 }
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none z-10"
-          />
-          <NumberInput
-            className="w-28 pr-8"
-            value={ formData.settlementAmount ?? 0 }
-            onChange={ (newValue) =>
-              dispatch(slice.formActions.onInvoiceSettlementAmountChange(Number(newValue) ?? 0)) }
-            disabled={ disabled || mode === "return" }
-          />
-        </div>
+			<div className="p-4 flex flex-col gap-3">
+				<FieldsSection columns={ 2 }>
+					<NumberField
+						label={ t("paymentMethods.fixedAmount") }
+						className="mt-1"
+						value={ invoice.settlementAmount }
+						min={ -basePrice }
+						onChange={ (newValue) =>
+						{
+							if (newValue == undefined) return;
+							invoice.changeSettlementAmount(newValue);
+							invoice.syncPaymentVouchers();
+						} }
+						disabled={ invoice.isDisabled || invoice.invoiceItems.value?.length === 0 }
+					/>
+					<NumberField
+						label={ t("paymentMethods.percentage") }
+						min={ -100 }
+						className="mt-1"
+						value={ invoice.settlementPercent }
+						onChange={ (newValue) =>
+						{
+							if (newValue == undefined) return;
+							invoice.changeSettlementPercent(newValue);
+							invoice.syncPaymentVouchers();
+						} }
+						disabled={ invoice.isDisabled || invoice.invoiceItems.value?.length === 0 }
+					/>
+				</FieldsSection>
 
-        <div className="relative">
-          <Percent
-            size={ 13 }
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-          />
-          <NumberInput
-            min={ -100 }
-            max={ 100 }
-            className="w-28 pr-8"
-            value={ formData.settlementPercent ?? 0 }
-            onChange={ (newValue) =>
-              dispatch(slice.formActions.onInvoiceSettlementPercentChange(Number(newValue) ?? 0)) }
-            disabled={ disabled || mode === "return" }
-          />
-        </div>
-      </div>
-    </div>
-  );
+				<TextAreaField
+					label={ t("invoices.settlementReason") }
+					value={ invoice.settlementReason }
+					disabled={ invoice.isDisabled || invoice.invoiceItems.value?.length === 0
+						|| (invoice.settlementPercent.value === 0 && invoice.settlementAmount.value === 0) }
+					collapsible
+				/>
+			</div>
+		</div>
+	);
 }

@@ -10,10 +10,9 @@
     "isPrimary": "Primary Tax",
     "nameRequired": "Please enter tax name",
     "percentageRequired": "Please enter tax percentage",
-    "percentageMin": "Minimum value is 0%",
+    "percentageMin": "Minimum value is 1%",
     "percentageMax": "Maximum value is 100%"
   },
-
   "accounts": {
     "title": "Account Management",
     "entityName": "Account",
@@ -53,29 +52,24 @@
     "buildingNumberLength": "Building number must consist of 4 digits",
     "buildingNumberNumeric": "Building number must be numeric only",
     "postalCodeLength": "Postal code must consist of 5 digits",
-    "postalCodeNumeric": "Postal code must be numeric only"
+    "postalCodeNumeric": "Postal code must be numeric only",
+    "contactNumberLength": "The number must contain 10 digits"
   },
-
   "clients": {
     "title": "Customer Accounts Management"
   },
-
   "suppliers": {
     "title": "Supplier Accounts Management"
   },
-
   "employees": {
     "title": "Employee Accounts Management"
   },
-
   "banks": {
     "title": "Bank Accounts Management"
   },
-
   "boxes": {
     "title": "Cash Box Accounts Management"
   },
-
   "balanceTransfers": {
     "title": "Balance Transfers",
     "entityName": "Transfer",
@@ -96,9 +90,9 @@
     "amountRequired": "Please enter the amount",
     "dateRequired": "Please select the date",
     "fromAccountRequired": "Please select the account to transfer from",
-    "toAccountRequired": "Please select the account to transfer to"
+    "toAccountRequired": "Please select the account to transfer to",
+    "amountMin": "The amount must be greater than 0"
   },
-
   "vouchers": {
     "title": "Financial Vouchers",
     "entityName": "Voucher",
@@ -119,10 +113,8 @@
     "partyInfo": "Party Information",
     "giver": "Giver",
     "recipient": "Recipient",
-    "paymentReason": "Payment Reason",
     "systemLinks": "System Links",
     "relatedInvoice": "Related Invoice Number",
-    "descriptionAndNotes": "Description & Notes",
     "description": "Description",
     "additionalNotes": "Additional Notes",
     "amountDue": "Amount Due",
@@ -133,7 +125,6 @@
     "accountRequired": "Please select the account",
     "paymentMethodRequired": "Please select the payment method"
   },
-
   "invoices": {
     "entityName": "Invoice",
     "addNewTitle": "Create New Invoice",
@@ -165,7 +156,10 @@
     "addReturnInvoice": "Add Invoice Return",
     "addInvoice": "Add Invoice",
     "editInvoice": "Edit Invoice",
+    "editQuotation": "Edit Quotation",
     "editReturnInvoice": "Edit Return Invoice",
+    "notReturned": "Not Returned",
+    "partialReturned": "Partially Returned",
     "fullyReturned": "Fully Returned",
     "fullyReturnedMessage": "All items of this invoice have been returned previously",
     "close": "Close",
@@ -215,7 +209,7 @@
     "finalCost": "Final Cost",
     "finalPriceWithoutTax": "Final Price Without Tax",
     "finalPriceWithTax": "Final Price With Tax",
-    "addNotes": "Add notes...",
+    "addDiscription": "Add a description...",
     "addCostVoucher": "Add Cost Voucher",
     "addPaymentVoucher": "Add Payment Voucher",
     "paymentMethod": "Payment Method",
@@ -235,7 +229,6 @@
     "profitPerUnit": "Profit Per Unit",
     "totalProfit": "Total Profit",
     "viewItemProfit": "View item profit",
-    "convertToSell": "Convert to Sales Invoice",
     "confirmConversion": "Confirm Conversion",
     "conversionWarning": "Are you sure you want to convert this quotation to a sales invoice? This action cannot be undone.",
     "cancel": "Cancel",
@@ -243,9 +236,16 @@
     "without": "Without",
     "selectPricingMethod": "Select pricing method",
     "deleteItem": "Delete item",
-    "deleteVoucher": "Delete voucher"
+    "deleteVoucher": "Delete voucher",
+    "invoiceSummary": "Invoice Summary",
+    "copyInvoice": "Copy Invoice",
+    "addNewQuotationTitle": "Create Quotation",
+    "totalQuotations": "Total Quotations",
+    "convertToSales": "Convert to Sales Invoice",
+    "settlementReason": "Settlement Reason",
+    "quantityInStore": "Quantity in Warehouse",
+    "invoiceMustBeSentBeforePrint": "Please send the invoice first to be able to print it."
   },
-
   "paymentMethods": {
     "title": "Payment Methods Management",
     "entityName": "Payment Method",
@@ -263,6 +263,9 @@
     "nameRequired": "Please enter payment method name",
     "accountRequired": "Please select the account",
     "commissionTypeRequired": "Please select commission type",
-    "commissionValueRequired": "Please enter commission value"
+    "commissionValueRequired": "Please enter commission value",
+    "commissionHintPercent": "{{n}} of every {{d}}",
+    "commissionHintAmount": "flat {{amount}} per transaction",
+    "noPermissionToEditAdmin": "You cannot edit the admin account because you do not have the required permissions"
   }
 }

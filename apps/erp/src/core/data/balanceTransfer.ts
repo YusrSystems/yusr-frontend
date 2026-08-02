@@ -1,66 +1,70 @@
-import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
-import BalanceTransfersApiService from "../networking/balanceTransferApiService";
+import { type Signal } from "@preact/signals-react";
+import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
 
-export default class BalanceTransfer extends BaseEntity
+
+export class BalanceTransferDto extends Dto
 {
-  public description?: string;
-  public date!: string | Date;
-  public amount!: number;
-  public fromAccountId!: number;
-  public toAccountId!: number;
-  public fromAccountName?: string;
-  public toAccountName?: string;
-
-  constructor(init?: Partial<BalanceTransfer>)
-  {
-    super();
-    Object.assign(this, init);
-  }
+	public description?: string;
+	public date!: string;
+	public amount!: number;
+	public fromGlAccountId!: number;
+	public toGlAccountId!: number;
+	public fromGlAccountName?: string;
+	public toGlAccountName?: string;
+	public isDeleted: boolean = false;
 }
 
-export class BalanceTransferFilterColumns
+export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 {
-  public static columnsNames = (
-    t: TFunction<"accounting">
-  ): ColumnName<BalanceTransfer>[] => [{ label: t("balanceTransfers.transferId"), value: "id" }, {
-    label: t("balanceTransfers.description"),
-    value: "description"
-  }];
-}
+	public description: Signal<string | undefined>;
+	public date: Signal<string>;
+	public amount: Signal<number>;
+	public fromGlAccountId: Signal<number>;
+	public toGlAccountId: Signal<number>;
+	public fromGlAccountName: Signal<string | undefined>;
+	public toGlAccountName: Signal<string | undefined>;
+	public isDeleted: Signal<boolean>;
 
-export class BalanceTransferValidationRules
-{
-  public static validationRules = (t: TFunction<"accounting">): ValidationRule<Partial<BalanceTransfer>>[] => [{
-    field: "amount",
-    selector: (d) => d.amount,
-    validators: [Validators.required(t("balanceTransfers.amountRequired"))]
-  }, {
-    field: "date",
-    selector: (d) => d.date,
-    validators: [Validators.required(t("balanceTransfers.dateRequired"))]
-  }, {
-    field: "fromAccountId",
-    selector: (d) => d.fromAccountId,
-    validators: [Validators.required(t("balanceTransfers.fromAccountRequired"))]
-  }, {
-    field: "toAccountId",
-    selector: (d) => d.toAccountId,
-    validators: [Validators.required(t("balanceTransfers.toAccountRequired"))]
-  }];
-}
+	constructor(dto?: Partial<BalanceTransferDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
+	{
+		super(dto, [{
+			field: "amount",
+			selector: (d) => d.amount,
+			validators: [
+				Validators.required(i18n.t("accounting:balanceTransfers.amountRequired", "المبلغ مطلوب")),
+				Validators.min(0.01, i18n.t("accounting:balanceTransfers.amountMin", "المبلغ يجب أن يكون أكبر من الصفر"))
+			]
+		},
+			{
+				field: "fromGlAccountId",
+				selector: (d) => d.fromGlAccountId,
+				validators: [
+					Validators.required(i18n.t("accounting:balanceTransfers.fromAccountRequired", "حساب الصادر مطلوب"))
+				]
+			},
+			{
+				field: "toGlAccountId",
+				selector: (d) => d.toGlAccountId,
+				validators: [
+					Validators.required(i18n.t("accounting:balanceTransfers.toAccountRequired", "حساب الوارد مطلوب"))
+				]
+			},
+			{
+				field: "description",
+				selector: (d) => d.description,
+				validators: [
+					Validators.optional(Validators.maxLength(500, i18n.t("accounting:balanceTransfers.descMax", "يجب ألا يتجاوز البيان 500 حرف")))
+				]
+			}
+		], mode);
 
-export class BalanceTransferSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("balanceTransfer", new BalanceTransfersApiService());
-  public static entityActions = BalanceTransferSlice.entitySliceInstance.actions;
-  public static entityReducer = BalanceTransferSlice.entitySliceInstance.reducer;
-
-  private static dialogSliceInstance = createGenericDialogSlice<BalanceTransfer>("balanceTransferDialog");
-  public static dialogActions = BalanceTransferSlice.dialogSliceInstance.actions;
-  public static dialogReducer = BalanceTransferSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<BalanceTransfer>("balanceTransferForm");
-  public static formActions = BalanceTransferSlice.formSliceInstance.actions;
-  public static formReducer = BalanceTransferSlice.formSliceInstance.reducer;
+		this.description = this.assign("description", dto?.description);
+		this.date = this.assign("date", dto?.date ?? DateService.formatDateOnly(new Date()));
+		this.amount = this.assign("amount", dto?.amount ?? 0);
+		this.fromGlAccountId = this.assign("fromGlAccountId", dto?.fromGlAccountId ?? 0);
+		this.toGlAccountId = this.assign("toGlAccountId", dto?.toGlAccountId ?? 0);
+		this.fromGlAccountName = this.assign("fromGlAccountName", dto?.fromGlAccountName);
+		this.toGlAccountName = this.assign("toGlAccountName", dto?.toGlAccountName);
+		this.isDeleted = this.assign("isDeleted", dto?.isDeleted ?? false);
+	}
 }

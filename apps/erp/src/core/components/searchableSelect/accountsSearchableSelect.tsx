@@ -1,86 +1,122 @@
-import AccountsApiService from "@/core/networking/accountApiService";
-import { type RootState, useAppSelector } from "@/core/state/store";
+import { type AccountDto } from "@/core/data/account";
+import { Cubits } from "@/core/services/cubits";
+import { Services } from "@/core/services/services";
 import ChangeAccountDialog from "@/features/accounts/changeAccountDialog";
-import { useTranslation } from "react-i18next";
-import { ChangableSearchableSelect, type EntitySearchableSelectParams, type IEntityState, type IFormState } from "yusr-ui";
-import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
-import type Account from "../../data/account";
-import { AccountFilterColumns, type AccountSliceType, AccountType } from "../../data/account";
+import { signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
+import React, { useMemo } from "react";
+import {
+	Dialog,
+	PageCubit,
+	PageLoaded,
+	PageLoading,
+	SearchableSelect,
+	type SearchableSelectOptionProps,
+	type SearchableSelectProps
+} from "yusr-ui";
+
 
 export default function AccountsSearchableSelect(
-  {
-    id,
-    slice,
-    selectEntityState,
-    selectFormState,
-    selectTypes,
-    fixedType,
-    disabled,
-    isInvalid,
-    onValueChange,
-    allowAdd = true,
-    allowUpdate = true,
-    items = undefined
-  }:
-    & EntitySearchableSelectParams<Account>
-    & {
-      slice: AccountSliceType;
-      selectEntityState: (state: RootState) => IEntityState<Account>;
-      selectFormState: (state: RootState) => IFormState<Account>;
-      selectTypes?: {
-        label: string;
-        value: string;
-      }[];
-      fixedType?: AccountType;
-      allowAdd?: boolean;
-      allowUpdate?: boolean;
-      items?: Account[];
-    }
+	{showAddButton = true, accountsCubit = Cubits.accounts, ...props}: SearchableSelectProps<AccountDto> & {
+		showAddButton?: boolean;
+		accountsCubit?: PageCubit<AccountDto>,
+		placeholder?: string
+	}
 )
 {
-  const accountState = useAppSelector(selectEntityState) as IEntityState<Account>;
-  const authState = useAppSelector((state) => state.auth);
-  const { t } = useTranslation("accounting");
+	useSignals();
+	const newAccountSearchText = useMemo(() => signal<string | undefined>(""), []);
+	const isAddAccountOpen = useMemo(() => signal<boolean>(false), []);
 
-  return (
-    <ChangableSearchableSelect<Account, {
-      slice: AccountSliceType;
-      selectEntityState: (state: RootState) => IEntityState<Account>;
-      selectFormState: (state: any) => IFormState<Account>;
-      selectTypes?: {
-        label: string;
-        value: string;
-      }[];
-      fixedType?: AccountType;
-      filterDataOutside?: boolean;
-    }>
-      id={ id }
-      items={ items }
-      itemLabelKey="name"
-      itemValueKey="id"
-      state={ accountState }
-      apiService={ new AccountsApiService() }
-      columnsNames={ AccountFilterColumns.columnsNames(t) }
-      disabled={ disabled }
-      isInvalid={ isInvalid }
-      systemPermissionsResources={ SystemPermissionsResources.Accounts }
-      allowAdd={ allowAdd }
-      allowUpdate={ allowUpdate }
-      onValueChange={ onValueChange }
-      entityActions={ {
-        filter: slice.entityActions.filter,
-        refresh: slice.entityActions.refresh
-      } }
-      changeDialog={ ChangeAccountDialog }
-      changeDialogProps={ {
-        slice: slice,
-        selectEntityState: selectEntityState,
-        selectFormState: selectFormState,
-        selectTypes: selectTypes,
-        fixedType: fixedType,
-        filterDataOutside: true
-      } }
-      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
-    />
-  );
+	return (
+		<>
+			<SearchableSelect>
+				<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }
+				                          placeholder={ props.placeholder }/>
+				<SearchableSelect.Content>
+					<SearchableSelect.SearchInput onSearch={ (searchInput) => accountsCubit.search(searchInput) }/>
+					<SearchableSelect.Command>
+						<SearchableSelect.NullOption { ...props } />
+						<CommandItems/>
+					</SearchableSelect.Command>
+				</SearchableSelect.Content>
+			</SearchableSelect>
+
+			{ showAddButton && (
+				<Dialog
+					open={ isAddAccountOpen.value }
+					onOpenChange={ (open) => isAddAccountOpen.value = open }
+				>
+					{ isAddAccountOpen.value && (
+						<ChangeAccountDialog
+							initDto={ {name: newAccountSearchText.value} as AccountDto }
+							service={ Services.accountsApi }
+							onSuccess={ (data) =>
+							{
+								props.id.value = data.id;
+								if (props.label)
+								{
+									props.label.value = data.name;
+								}
+								props.onSelect?.(data);
+								isAddAccountOpen.value = false;
+								accountsCubit.init();
+							} }
+						/>
+					) }
+				</Dialog>
+			) }
+		</>
+	);
+
+	function CommandItems()
+	{
+		useSignals();
+		if (accountsCubit.state.value instanceof PageLoading)
+		{
+			return <SearchableSelect.Loading/>;
+		}
+		if (accountsCubit.state.value instanceof PageLoaded && accountsCubit.entities.value.length > 0)
+		{
+			return accountsCubit.entities.value.map((entity) => (
+				<Option key={ entity.id } item={ entity } { ...props } />
+			));
+		}
+
+		if (showAddButton)
+		{
+			return (
+				<SearchableSelect.AddOptionButton
+					onCreate={ async (searchText, closeCommand) =>
+					{
+						newAccountSearchText.value = searchText;
+						isAddAccountOpen.value = true;
+						closeCommand();
+					} }
+				/>
+			);
+		}
+
+		return <SearchableSelect.Empty/>;
+	}
 }
+
+const Option = React.memo(
+	function Option({...props}: Omit<SearchableSelectOptionProps<AccountDto>, "labelSelector">)
+	{
+		useSignals();
+
+		return (
+			<SearchableSelect.Option<AccountDto>
+				labelSelector="name"
+				{ ...props }
+			>
+				<div className="flex items-center justify-between w-full">
+					<span className="font-normal">
+						{ props.item.name }
+					</span>
+				</div>
+			</SearchableSelect.Option>
+		);
+	}
+);

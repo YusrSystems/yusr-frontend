@@ -1,15 +1,16 @@
-import { ApiConstants, BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
-import type Registration from "../data/registration";
+import { Registration, type RegistrationDto } from "@/core/data/registration.ts";
+import { BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
 
-export default class RegisterApiService extends BaseApiService<Registration>
+
+export class RegisterApiService extends BaseApiService<RegistrationDto>
 {
-  routeName: string = "Register";
+	routeName: string = "Register";
 
-  async register(data: Registration): Promise<RequestResult<boolean>>
-  {
-    return await YusrApiHelper.Post(
-      `${ApiConstants.baseUrl}/${this.routeName}`,
-      data
-    );
-  }
+	async register(data: Registration): Promise<RequestResult<boolean>>
+	{
+		return await YusrApiHelper.Post(
+			`/api/${ this.routeName }`,
+			data.toJson()
+		);
+	}
 }

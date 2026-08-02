@@ -8,7 +8,6 @@
     "storeName": "گودام کا نام",
     "nameRequired": "براہ کرم گودام کا نام درج کریں"
   },
-
   "units": {
     "title": "یونٹس کا نظم",
     "entityName": "یونٹ",
@@ -18,7 +17,6 @@
     "unitName": "یونٹ کا نام",
     "nameRequired": "براہ کرم یونٹ کا نام درج کریں"
   },
-
   "pricingMethods": {
     "title": "قیمتوں کے طریقوں کا نظم",
     "entityName": "قیمت کا طریقہ",
@@ -28,7 +26,6 @@
     "methodName": "قیمت کے طریقہ کا نام",
     "nameRequired": "براہ کرم قیمت کے طریقہ کا نام درج کریں"
   },
-
   "stocktakings": {
     "title": "اسٹک لینے",
     "entityName": "اسٹک لینے",
@@ -49,7 +46,6 @@
     "dateRequired": "براہ کرم تاریخ منتخب کریں",
     "itemsRequired": "براہ کرم اسٹک لینے کے لیے کم از کم ایک آئٹم شامل کریں"
   },
-
   "itemsSettlements": {
     "title": "اسٹک ایڈجسٹمنٹس",
     "entityName": "ایڈجسٹمنٹ",
@@ -64,7 +60,6 @@
     "dateRequired": "براہ کرم تاریخ منتخب کریں",
     "itemsRequired": "براہ کرم ایڈجسٹمنٹ کے لیے کم از کم ایک آئٹم شامل کریں"
   },
-
   "itemTransfers": {
     "title": "آئٹم ٹرانسفرز",
     "entityName": "آئٹم ٹرانسفر",
@@ -95,7 +90,6 @@
     "toStoreRequired": "براہ کرم منزل گودام منتخب کریں",
     "sameStoreError": "ایک ہی گودام میں ٹرانسفر نہیں کر سکتے"
   },
-
   "items": {
     "title": "آئٹمز کا نظم",
     "entityName": "آئٹم",
@@ -105,13 +99,14 @@
     "itemName": "آئٹم کا نام",
     "itemType": "قسم",
     "class": "کلاس",
+    "brand": "برانڈ",
     "quantity": "مقدار",
-    "cost": "لاگت",
+    "averageCostWithoutTax": "اوسط لاگت (بغیر ٹیکس)",
     "product": "پروڈکٹ",
     "service": "سروس",
     "itemImages": "آئٹم کی تصاویر",
-    "description": "تفصیل",
-    "notes": "نوٹس",
+    "description": "تفصیل (خارجی)",
+    "notes": "نوٹس (اندرونی)",
     "status": "حالت",
     "active": "فعال",
     "inactive": "غیر فعال",
@@ -130,12 +125,13 @@
     "unit": "یونٹ",
     "pricingMethod": "قیمت کا طریقہ",
     "quantityInUnit": "یونٹ میں مقدار",
-    "sellingPrice": "فروخت کی قیمت",
+    "sellingPrice": "فی {{ unit }} فروخت قیمت",
     "barcode": "بارکوڈ",
     "name": "نام",
     "noPricingMethods": "کوئی قیمت کا طریقہ شامل نہیں",
     "baseUnit": "بنیادی یونٹ",
-    "initialCost": "ابتدائی لاگت",
+    "initialCost": "ابتدائی لاگت (ٹیکس کے بغیر)",
+    "lastBuyPrice": "آخری خریداری قیمت",
     "priceIncludesTax": "فروخت کی قیمت میں ٹیکس شامل ہے",
     "storage": "ذخیرہ",
     "basicInfo": "بنیادی معلومات",
@@ -158,6 +154,32 @@
     "storesRequired": "براہ کرم کم از کم ایک گودام شامل کریں",
     "storesValidationError": "براہ کرم ٹیبل میں تمام مطلوبہ فیلڈز پُر کریں (گودام، ابتدائی مقدار)",
     "baseUnitRequired": "براہ کرم آئٹم کے لیے بنیادی یونٹ منتخب کریں",
-    "initialCostRequired": "براہ کرم ابتدائی لاگت درج کریں"
+    "initialCostRequired": "براہ کرم ابتدائی لاگت درج کریں",
+    "noBarcodeAssigned": "اس یونٹ قیمت کے طریقہ کار کے لیے کوئی بارکوڈ تفویض نہیں کیا گیا ہے",
+    "storeRequired": "گودام درکار ہے",
+    "initialQuantityMin": "ابتدائی مقدار 0 یا اس سے زیادہ ہونی چاہیے",
+    "taxRequired": "ٹیکس درکار ہے",
+    "unitRequired": "یونٹ درکار ہے",
+    "pricingMethodRequired": "قیمت کا طریقہ درکار ہے",
+    "quantityMultiplierMin": "مقدار ضریب 1 یا اس سے زیادہ ہونا چاہیے",
+    "unitPriceMin": "یونٹ قیمت 0 یا اس سے زیادہ ہونی چاہیے",
+    "itemUnitPricingMethodNameRequired": "قیمت کے طریقہ کار کا نام درکار ہے"
+  },
+  "costAdjustments": {
+    "title": "آئٹمز کی قیمت میں تبدیلی",
+    "addNewTitle": "نئی قیمت کی تبدیلی شامل کریں",
+    "entityName": "قیمت کی تبدیلی",
+    "totalAdjustments": "کل تبدیلیاں",
+    "date": "تاریخ",
+    "item": "آئٹم",
+    "oldCost": "پرانی قیمت",
+    "newCost": "نئی قیمت",
+    "quantity": "مقدار",
+    "notes": "نوٹس",
+    "dateRequired": "تاریخ درکار ہے",
+    "itemRequired": "آئٹم درکار ہے",
+    "newCostRequired": "نئی قیمت درکار ہے",
+    "newCostMin": "نئی قیمت 0 یا اس سے زیادہ ہونی چاہیے",
+    "adjustmentId": "تبدیلی کی آئی ڈی"
   }
 }

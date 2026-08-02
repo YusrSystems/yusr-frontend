@@ -26,9 +26,10 @@
     "stocktakings": "اسٹک لینے",
     "itemsSettlements": "اسٹک ایڈجسٹمنٹس",
     "settings": "ترتیبات",
-    "account": "اکاؤنٹ"
+    "account": "اکاؤنٹ",
+    "quotationInvoices": "کوٹیشنز",
+    "costAdjustments": "اشیاء کی لاگت کی ایڈجسٹمنٹ"
   },
-
   "dashborad": {
     "income": "کل آمدنی",
     "totalPassengers": "کل مسافر",
@@ -74,7 +75,6 @@
       "december": "دسمبر"
     }
   },
-
   "permissions": {
     "resources": {
       "branches": "برانچز",
@@ -97,7 +97,8 @@
       "taxes": "ٹیکسز",
       "obligations": "ذمہ داریاں",
       "posTerminals": "پی او ایس ٹرمینلز",
-      "authorizedStores": "مجاز گودام"
+      "authorizedStores": "مجاز گودام",
+      "costAdjustments": "اشیاء کی لاگت کی ایڈجسٹمنٹ"
     },
     "invoice": {
       "addSettlement": "انوائس میں تصفیہ شامل کریں",
@@ -122,6 +123,7 @@
       "voucher": "واؤچر رپورٹ",
       "voucherList": "واؤچر لسٹ رپورٹ",
       "accountStatement": "اکاؤنٹ سٹیٹمنٹ رپورٹ",
+      "partnerStatement": "پارٹنر سٹیٹمنٹ رپورٹ",
       "accountList": "اکاؤنٹ لسٹ رپورٹ",
       "balanceTransfer": "بیلنس ٹرانسفر رپورٹ",
       "itemStatement": "آئٹم سٹیٹمنٹ رپورٹ",
@@ -132,6 +134,7 @@
       "balanceSheet": "بیلنس شیٹ رپورٹ",
       "taxReturn": "ٹیکس ریٹرن رپورٹ",
       "profitAndLoss": "منافع اور نقصان کی رپورٹ",
+      "salesProfitability": "سیلز منافع کی رپورٹ",
       "stocktaking": "اسٹک لینے کی رپورٹ",
       "itemSettlement": "اسٹک ایڈجسٹمنٹ رپورٹ",
       "itemBarcode": "آئٹم بارکوڈ رپورٹ"
@@ -148,20 +151,17 @@
       "reports": "سسٹم رپورٹس"
     }
   },
-
   "storeItemSelector": {
     "addItems": "آئٹمز شامل کریں:",
     "scanBarcode": "بارکوڈ اسکین کریں...",
     "selectItem": "آئٹم منتخب کریں..."
   },
-
   "settings": {
     "loading": "ترتیبات لوڈ ہو رہی ہیں...",
     "title": "سسٹم کی ترتیبات",
     "subtitle": "کمپنی کے ڈیٹا، انوائسز اور ڈیفالٹ اکاؤنٹس کا نظم کریں",
     "basicData": "بنیادی معلومات",
     "invoicesAndTaxes": "انوائسز اور ٹیکسز",
-    "defaultAccounts": "ڈیفالٹ اکاؤنٹس",
     "save": "ترتیبات محفوظ کریں",
     "companyNameRequired": "کمپنی کا نام درکار ہے",
     "companyPhoneRequired": "فون نمبر درکار ہے",
@@ -174,11 +174,12 @@
     "invoicePrintSize": "انوائس پرنٹ سائز",
     "a4Paper": "A4 کاغذ",
     "thermalPrinter": "تھرمل پرنٹر",
-    "invoicePolicy": "انوائس پالیسی (انوائس کے نیچے ظاہر ہوتی ہے)",
+    "salesInvoicePolicy": "سیلز انوائس پالیسی (انوائس کے نیچے ظاہر ہوتی ہے)",
+    "quotationInvoicePolicy": "کوٹیشن پالیسی (کوٹیشن کے نیچے ظاہر ہوتی ہے)",
     "invoicePolicyPlaceholder": "مثال: فروخت شدہ سامان 3 دن بعد واپس یا تبدیل نہیں کیا جا سکتا...",
     "simulationSubtitle": "اتھارٹی کے ساتھ ٹیسٹ کنکشن",
     "productionSubtitle": "اتھارٹی سے رابطہ کریں اور دستاویزات باضابطہ طور پر بھیجیں",
-    "defaultAccountsAndWarehouses": "ڈیفالٹ اکاؤنٹس اور گودام",
+    "defaultValues": "طے شدہ اقدار",
     "defaultWarehouse": "ڈیفالٹ گودام",
     "defaultPaymentMethod": "ڈیفالٹ ادائیگی کا طریقہ",
     "defaultSalesAccount": "ڈیفالٹ سیلز اکاؤنٹ",
@@ -207,9 +208,14 @@
     "linking": "لنک ہو رہا ہے...",
     "startLinking": "لنک کرنا شروع کریں",
     "noCode": "تصدیقی کوڈ نہیں ملا؟",
-    "visitZatca": "تصدیقی کوڈ حاصل کرنے کے لیے اتھارٹی کی ویب سائٹ ملاحظہ کریں"
+    "visitZatca": "تصدیقی کوڈ حاصل کرنے کے لیے اتھارٹی کی ویب سائٹ ملاحظہ کریں",
+    "shareInfoCard": "تنظیم کی معلومات کارڈ",
+    "referralLink": "حوالہ لنک",
+    "copied": "کاپی ہو گیا",
+    "copyLink": "لنک کاپی کریں",
+    "theme": "تھیم اور ظاہریت",
+    "eInvoicing": "ای-انوائسنگ"
   },
-
   "reports": {
     "title": "رپورٹس",
     "subtitle": "کاروباری رپورٹس بنائیں اور ایکسپورٹ کریں",
@@ -221,12 +227,16 @@
     "balanceSheetDescription": "اثاثے، ذمہ داریاں اور ایکویٹی",
     "profitAndLoss": "منافع اور نقصان",
     "profitAndLossDescription": "آمدنی، اخراجات اور خالص منافع",
+    "salesProfitability": "سیلز منافع",
+    "salesProfitabilityDescription": "براہ راست اخراجات کے ساتھ سیلز منافع دیکھیں",
     "taxReturn": "ٹیکس ریٹرن",
     "taxReturnDescription": "متواتر VAT ریٹرن رپورٹ",
     "itemsTaxStatement": "آئٹم ٹیکس سٹیٹمنٹ",
     "itemsTaxStatementDescription": "فی آئٹم ٹیکس کی تفصیلات",
     "itemsMovement": "آئٹمز کی نقل و حرکت",
     "itemsMovementDescription": "آئٹمز کے لیے انوینٹری کی نقل و حرکت",
+    "itemsList": "اشیاء کی فہرست",
+    "itemsListDescription": "تفصیلات اور مقداریں کے ساتھ تمام اشیاء کی رپورٹ",
     "fromDate": "تاریخ سے",
     "toDate": "تاریخ تک",
     "movementType": "نقل و حرکت کی قسم",
@@ -252,14 +262,27 @@
     "purchasesTaxReport": "پرچیز ٹیکس رپورٹ",
     "itemBarcode": "آئٹم بارکوڈ",
     "barcodeCount": "بارکوڈ کی تعداد",
-    "pagesCount": "صفحات کی تعداد"
+    "pagesCount": "صفحات کی تعداد",
+    "InvoicesList": "انوائسز کی فہرست",
+    "InvoicesListDescription": "جامع فلٹرنگ اختیارات کے ساتھ انوائسز دیکھیں",
+    "itemStatement": "آئٹم کا بیان",
+    "itemStatementDescription": "گوداموں اور مدت کے دوران آئٹم کی نقل و حرکت کی تفصیلات دیکھیں",
+    "accountStatement": "اکاؤنٹ کا بیان",
+    "accountStatementDescription": "مخصوص اکاؤنٹ کی منتخب تاریخ کی حد کے دوران لین دین دیکھیں",
+    "partnerStatement": "پارٹنر کا بیان",
+    "partnerStatementDescription": "مخصوص پارٹنر کی منتخب تاریخ کی حد کے دوران لین دین دیکھیں",
+    "accountsList": "اکاؤنٹس کی فہرست",
+    "accountsListDescription": "تمام اکاؤنٹس بیلنس اور تفصیلی معلومات کے ساتھ دیکھیں",
+    "exportToExcel": "ایکسل میں ایکسپورٹ کریں"
   },
-
   "accountStatement": {
     "button": "اکاؤنٹ سٹیٹمنٹ",
     "title": "اکاؤنٹ سٹیٹمنٹ"
   },
-
+  "partnerStatement": {
+    "button": "پارٹنر سٹیٹمنٹ",
+    "title": "پارٹنر سٹیٹمنٹ"
+  },
   "itemStatement": {
     "button": "آئٹم سٹیٹمنٹ",
     "title": "آئٹم سٹیٹمنٹ",

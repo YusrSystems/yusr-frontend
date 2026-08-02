@@ -1,89 +1,78 @@
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
+import type Item from "@/core/data/item";
+import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { Checkbox, CurrencyIcon, type DialogMode, FormField, NumberField, useFormErrors } from "yusr-ui";
-import { ItemSlice, ItemType } from "../../../core/data/item";
-import { useAppDispatch, useAppSelector } from "../../../core/state/store";
+import { ChangeableEntityMode, CheckboxField, FieldsSection, FormField, NumberField } from "yusr-ui";
+import { ItemType } from "@/core/data/item.ts";
 import PricingMethodsTable from "./pricingMethodsTable";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
-export default function PricingTab({ mode }: { mode: DialogMode; })
+
+export default function PricingTab({entity}: { entity: Item; })
 {
-  const { t } = useTranslation("stocking");
-  const { formData, errors } = useAppSelector((state) => state.itemForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const dispatch = useAppDispatch();
+	useSignals();
+	const {t} = useTranslation("stocking");
 
-  return (
-    <div className="space-y-6 animate-in fade-in">
-      <div className="grid grid-cols-3 gap-6">
-        <FormField
-          label={ t("items.baseUnit") }
-          required={ formData.type !== ItemType.Service }
-          isInvalid={ isInvalid("sellUnitId") }
-          error={ getError("sellUnitId") }
-        >
-          <UnitsSearchableSelect
-            id={ formData.sellUnitId }
-            disabled={ formData.type === ItemType.Service || mode === "update" }
-            isInvalid={ isInvalid("sellUnitId") }
-            onValueChange={ (unit) =>
-            {
-              dispatch(ItemSlice.formActions.updateFormData({
-                sellUnitId: unit?.id,
-                sellUnitName: unit?.name
-              }));
+	return (
+		<div className="space-y-6 animate-in fade-in">
+			<FieldsSection columns={ 4 }>
+				<FormField
+					label={ t("items.baseUnit") }
+					required={ entity.type.value !== ItemType.Service }
+					error={ entity.getError("sellUnitId") }
+				>
+					<UnitsSearchableSelect
+						id={ entity.sellUnitId }
+						label={ entity.sellUnitName }
+						disabled={ entity.type.value === ItemType.Service || entity.mode.value === ChangeableEntityMode.Update }
+						onSelect={ (unit) =>
+						{
+							entity.itemUnitPricingMethods.value.forEach((iupm) =>
+							{
+								if (iupm.unitId.value === unit?.id)
+								{
+									iupm.quantityMultiplier.value = 1;
+								}
+							});
+						} }
+					/>
+				</FormField>
 
-              dispatch(ItemSlice.formActions.updateFormData((prev) =>
-              {
-                const list = [...(prev.itemUnitPricingMethods || [])];
-                list.forEach((iupm, i) =>
-                {
-                  if (iupm.unitId === unit?.id)
-                  {
-                    list[i] = {
-                      ...iupm,
-                      quantityMultiplier: 1
-                    };
-                  }
-                });
+				{ entity.type.value === ItemType.Product && (
+					<NumberField
+						label={ t("items.initialCost") }
+						required
+						disabled={ entity.mode.value === ChangeableEntityMode.Update }
+						value={ entity.initialCost }
+						error={ entity.getError("initialCost") }
+						currency={ <ErpCurrencyIcon/> }
+					/>
+				) }
 
-                return { itemUnitPricingMethods: list };
-              }));
-            } }
-          />
-        </FormField>
+				<NumberField
+					label={ t("items.averageCostWithoutTax") }
+					disabled={ entity.type.value !== ItemType.Service }
+					value={ entity.cost }
+					currency={ <ErpCurrencyIcon/> }
+				/>
 
-        <NumberField
-          label={ t("items.initialCost") }
-          required
-          disabled={ mode === "update" }
-          value={ formData.initialCost ?? "0" }
-          onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ initialCost: val })) }
-          isInvalid={ isInvalid("initialCost") }
-          error={ getError("initialCost") }
-          currency={ <CurrencyIcon /> }
-        />
-        <NumberField
-          label={ t("items.cost") }
-          disabled
-          value={ formData.cost || "0" }
-          onChange={ (val) => dispatch(ItemSlice.formActions.updateFormData({ cost: val })) }
-          currency={ <CurrencyIcon /> }
-        />
-      </div>
+				<NumberField
+					label={ t("items.lastBuyPrice") }
+					disabled
+					value={ entity.lastBuyPrice }
+					currency={ <ErpCurrencyIcon/> }
+				/>
 
-      <div className="flex items-center gap-2">
-        <Checkbox
-          id="taxIncluded"
-          checked={ formData.taxIncluded }
-          onCheckedChange={ (checked) =>
-            dispatch(ItemSlice.formActions.updateFormData({ taxIncluded: checked as boolean })) }
-        />
-        <label htmlFor="taxIncluded" className="text-sm font-bold">
-          { t("items.priceIncludesTax") }
-        </label>
-      </div>
+				<CheckboxField
+					required
+					id="taxIncluded"
+					label={ t("items.priceIncludesTax") }
+					error={ entity.getError("taxIncluded") }
+					checked={ entity.taxIncluded }
+				/>
+			</FieldsSection>
 
-      <PricingMethodsTable />
-    </div>
-  );
+			<PricingMethodsTable entity={ entity }/>
+		</div>
+	);
 }

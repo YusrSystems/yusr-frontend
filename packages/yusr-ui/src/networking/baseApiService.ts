@@ -1,62 +1,67 @@
 import { type TFunction } from "i18next";
-import type { BaseEntity } from "../entities/baseEntity";
-import type { RequestResult } from "../types/requestResult";
-import { ApiConstants } from "./apiConstants";
+import type { Dto } from "#/stateManager";
+import type { RequestResult } from "#/types";
 import { BaseFilterableApiService } from "./baseFilterableApiService";
 import { YusrApiHelper } from "./yusrApiHelper";
 
-export abstract class BaseApiService<T extends BaseEntity> extends BaseFilterableApiService<T>
+
+export class BaseApiService<TDto extends Dto> extends BaseFilterableApiService<TDto>
 {
-  private static t: TFunction<"common"> | null = null;
+	private static t: TFunction<"common"> | null = null;
 
-  public static init(t: TFunction<"common">)
-  {
-    this.t = t;
-  }
+	constructor(routeName: string)
+	{
+		super(routeName);
+	}
 
-  protected static getT(): TFunction<"common">
-  {
-    if (!this.t)
-    {
-      throw new Error("BaseApiService not initialized. Call BaseApiService.init(t) first.");
-    }
-    return this.t;
-  }
+	public static init(t: TFunction<"common">)
+	{
+		this.t = t;
+	}
 
-  async Get(id: number): Promise<RequestResult<T>>
-  {
-    return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/${id}`);
-  }
+	protected static getT(): TFunction<"common">
+	{
+		if (!this.t)
+		{
+			throw new Error("BaseApiService not initialized. Call BaseApiService.init(t) first.");
+		}
+		return this.t;
+	}
 
-  async Add(entity: T): Promise<RequestResult<T>>
-  {
-    const t = BaseApiService.getT();
-    return await YusrApiHelper.Post(
-      `${ApiConstants.baseUrl}/${this.routeName}/Add`,
-      entity,
-      undefined,
-      t("api.saveSuccess")
-    );
-  }
+	async Get(id: number): Promise<RequestResult<TDto>>
+	{
+		return await YusrApiHelper.Get<TDto>(`/api/${ this.routeName }/${ id }`);
+	}
 
-  async Update(entity: T): Promise<RequestResult<T>>
-  {
-    const t = BaseApiService.getT();
-    return await YusrApiHelper.Put(
-      `${ApiConstants.baseUrl}/${this.routeName}/Update`,
-      entity,
-      undefined,
-      t("api.updateSuccess")
-    );
-  }
+	async Add(dto: TDto): Promise<RequestResult<TDto>>
+	{
+		const t = BaseApiService.getT();
+		return await YusrApiHelper.Post<TDto>(
+			`/api/${ this.routeName }/Add`,
+			dto,
+			undefined,
+			t("api.saveSuccess")
+		);
+	}
 
-  async Delete(id: number)
-  {
-    const t = BaseApiService.getT();
-    return await YusrApiHelper.Delete(
-      `${ApiConstants.baseUrl}/${this.routeName}/${id}`,
-      undefined,
-      t("api.deleteSuccess")
-    );
-  }
+	async Update(dto: TDto): Promise<RequestResult<TDto>>
+	{
+		const t = BaseApiService.getT();
+		return await YusrApiHelper.Put<TDto>(
+			`/api/${ this.routeName }/Update`,
+			dto,
+			undefined,
+			t("api.updateSuccess")
+		);
+	}
+
+	async Delete(id: number)
+	{
+		const t = BaseApiService.getT();
+		return await YusrApiHelper.Delete(
+			`/api/${ this.routeName }/${ id }`,
+			undefined,
+			t("api.deleteSuccess")
+		);
+	}
 }

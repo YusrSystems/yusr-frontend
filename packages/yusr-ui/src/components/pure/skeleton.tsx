@@ -1,8 +1,10 @@
-import { cn } from "../../utils/cn";
+import { cn } from "#/utils/cn.ts";
+import React from "react";
 
-function Skeleton({ className, ...props }: React.ComponentProps<"div">)
+
+function Skeleton({className, ...props}: React.ComponentProps<"div">)
 {
-  return <div data-slot="skeleton" className={ cn("bg-muted rounded-md animate-pulse", className) } { ...props } />;
+	return <div data-slot="skeleton" className={ cn("bg-muted rounded-md animate-pulse", className) } { ...props } />;
 }
 
 export { Skeleton };

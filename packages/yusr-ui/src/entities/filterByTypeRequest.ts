@@ -1,12 +1,10 @@
-import type { FilterCondition } from "yusr-ui";
-
-export class FilterByTypeRequest<T>
+export class FilterByTypeRequest
 {
-  public types: number[] = [];
-  public condition?: FilterCondition<T>;
+	public types: number[] = [];
+	public searchText?: string;
 
-  constructor(init?: Partial<FilterByTypeRequest<T>>)
-  {
-    Object.assign(this, init);
-  }
+	constructor(init?: Partial<FilterByTypeRequest>)
+	{
+		Object.assign(this, init);
+	}
 }

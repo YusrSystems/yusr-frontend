@@ -1,0 +1,56 @@
+import { ErpRole, ErpRoleDto } from "@/core/data/erpRole";
+import { Cubits } from "@/core/services/cubits";
+import { Services } from "@/core/services/services";
+import { WarehouseIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { RolesPage } from "yusr-ui";
+import { getLabels, getPermissionSections } from "./permissionConfig";
+import StorePermissionsList from "./storePermissionsList";
+import { APP_NAME } from "../../../appConfig.ts";
+import { useEffect } from "react";
+
+
+export function ErpRolesPage()
+{
+	const {t} = useTranslation(["erpCommon", "commonEntities"]);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("commonEntities:roles.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
+
+	return (
+		<RolesPage<ErpRole, ErpRoleDto>
+			labels={ getLabels(t) }
+			permissionSections={ getPermissionSections(t) }
+			rolesApiService={ Services.rolesApi }
+			cubit={ Cubits.roles }
+			createEntity={ (dto) =>
+				dto
+					? ErpRole.load(dto)
+					: ErpRole.create() }
+			onMount={ () => Cubits.stores.init(undefined, {authOnly: false}) }
+			onGet={ (entity, result) =>
+			{
+				if (result.data != undefined)
+				{
+					entity.authorizedStores.value = result.data?.authorizedStores;
+				}
+			} }
+			extraTabs={ (entity) => [{
+				active: false,
+				icon: WarehouseIcon,
+				label: t("permissions.resources.authorizedStores"),
+				content: (
+					<StorePermissionsList
+						authorizedStoreIds={ entity.authorizedStores }
+					/>
+				)
+			}] }
+		/>
+	);
+}

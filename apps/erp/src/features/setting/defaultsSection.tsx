@@ -1,107 +1,162 @@
 import { useTranslation } from "react-i18next";
-import { FieldGroup, FieldsSection, SearchableSelect } from "yusr-ui";
-import { AccountFilterColumns, ClientsAndSuppliersSlice } from "../../core/data/account";
-import { PaymentMethodFilterColumns, PaymentMethodSlice } from "../../core/data/paymentMethod";
-import { StoreFilterColumns, StoreSlice } from "../../core/data/store";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
-import { useSettingContext } from "./settingContext";
+import { CurrenciesSearchableSelect, FieldGroup, FieldsSection, FormField } from "yusr-ui";
+import { useSignals } from "@preact/signals-react/runtime";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
+import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import TaxesSearchableSelect from "@/core/components/searchableSelect/taxesSearchableSelect.tsx";
+import { type Setting } from "@/core/data/setting.ts";
+import { useEffect } from "react";
+import { Cubits } from "@/core/services/cubits.ts";
 
-export default function DefaultsSection()
+
+export default function DefaultsSection({formData}: { formData: Setting })
 {
-  const { t } = useTranslation("erpCommon");
-  const { t: tStocking } = useTranslation("stocking");
-  const { t: tAccounting } = useTranslation("accounting");
-  const {
-    formData,
-    handleChange
-  } = useSettingContext();
+	useSignals();
+	const {t} = useTranslation(["erpCommon", "accounting"]);
 
-  const dispatch = useAppDispatch();
-  const storeState = useAppSelector((state) => state.store);
-  const paymentMethodState = useAppSelector((state) => state.paymentMethod);
-  const accountState = useAppSelector((state) => state.clientsAndSuppliers);
+	useEffect(() =>
+	{
+		Cubits.partners.init();
+	}, []);
 
-  return (
-    <div className="space-y-10 animate-in fade-in">
-      <FieldGroup>
-        <FieldsSection title={t("settings.defaultAccountsAndWarehouses")} columns={ 2 }>
-          <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium">{t("settings.defaultWarehouse")}</label>
-            <SearchableSelect
-              items={ storeState.entities.data ?? [] }
-              itemLabelKey="name"
-              itemValueKey="id"
-              value={ formData.mainStoreId?.toString() || "" }
-              onValueChange={ (val) =>
-              {
-                const selected = storeState.entities.data?.find((s) => s.id.toString() === val);
-                handleChange({ mainStoreId: selected?.id, mainStoreName: selected?.name });
-              } }
-              columnsNames={ StoreFilterColumns.columnsNames(tStocking) }
-              onSearch={ (condition) => dispatch(StoreSlice.entityActions.filter(condition)) }
-              isLoading={ storeState.isLoading }
-              disabled={ storeState.isLoading }
-            />
-          </div>
+	return (
+		<div className="space-y-8 animate-in fade-in">
+			<FieldGroup className="gap-8">
 
-          <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium">{t("settings.defaultPaymentMethod")}</label>
-            <SearchableSelect
-              items={ paymentMethodState.entities.data ?? [] }
-              itemLabelKey="name"
-              itemValueKey="id"
-              value={ formData.mainPaymentMethodId?.toString() || "" }
-              onValueChange={ (val) =>
-              {
-                const selected = paymentMethodState.entities.data?.find((p) => p.id.toString() === val);
-                handleChange({ mainPaymentMethodId: selected?.id, mainPaymentMethodName: selected?.name });
-              } }
-              columnsNames={ PaymentMethodFilterColumns.columnsNames(tAccounting) }
-              onSearch={ (condition) => dispatch(PaymentMethodSlice.entityActions.filter(condition)) }
-              isLoading={ paymentMethodState.isLoading }
-              disabled={ paymentMethodState.isLoading }
-            />
-          </div>
+				<FieldsSection title={ t("settings.operationalDefaults", "إعدادات التشغيل الافتراضية") } columns={ 2 }>
+					<FormField
+						label={ t("settings.defaultCurrency", "العملة الافتراضية") }
+						required
+						error={ formData.getError("currencyId") }
+					>
+						<CurrenciesSearchableSelect
+							id={ formData.currencyId }
+							label={ formData.currency?.value?.name }
+						/>
+					</FormField>
 
-          <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium">{t("settings.defaultSalesAccount")}</label>
-            <SearchableSelect
-              items={ accountState.entities.data ?? [] }
-              itemLabelKey="name"
-              itemValueKey="id"
-              value={ formData.sellAccountId?.toString() || "" }
-              onValueChange={ (val) =>
-              {
-                const selected = accountState.entities.data?.find((a) => a.id.toString() === val);
-                handleChange({ sellAccountId: selected?.id, sellAccountName: selected?.name });
-              } }
-              columnsNames={ AccountFilterColumns.columnsNames(tAccounting) }
-              onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
-              isLoading={ accountState.isLoading }
-              disabled={ accountState.isLoading }
-            />
-          </div>
+					<FormField label={ t("settings.defaultTax", "الضريبة الافتراضية") }>
+						<TaxesSearchableSelect
+							id={ formData.mainTaxId }
+							label={ formData.mainTax?.value?.name }
+						/>
+					</FormField>
 
-          <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-medium">{t("settings.defaultPurchaseAccount")}</label>
-            <SearchableSelect
-              items={ accountState.entities.data ?? [] }
-              itemLabelKey="name"
-              itemValueKey="id"
-              value={ formData.purchaseAccountId?.toString() || "" }
-              onValueChange={ (val) =>
-              {
-                const selected = accountState.entities.data?.find((a) => a.id.toString() === val);
-                handleChange({ purchaseAccountId: selected?.id, purchaseAccountName: selected?.name });
-              } }
-              columnsNames={ AccountFilterColumns.columnsNames(tAccounting) }
-              onSearch={ (condition) => dispatch(ClientsAndSuppliersSlice.entityActions.filter(condition)) }
-              isLoading={ accountState.isLoading }
-              disabled={ accountState.isLoading }
-            />
-          </div>
-        </FieldsSection>
-      </FieldGroup>
-    </div>
-  );
+					<FormField label={ t("settings.defaultWarehouse", "المستودع الافتراضي") }>
+						<StoresSearchableSelect
+							id={ formData.mainStoreId }
+							label={ formData.mainStoreName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.defaultPaymentMethod", "طريقة الدفع الافتراضية") }>
+						<PaymentMethodsSearchableSelect
+							id={ formData.mainPaymentMethodId }
+							label={ formData.mainPaymentMethodName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.defaultCustomerPartner", "العميل الافتراضي للمبيعات") }>
+						<PartnersSearchableSelect
+							id={ formData.defaultCustomerPartnerId }
+							label={ formData.defaultCustomerPartnerName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.defaultSupplierPartner", "المورد الافتراضي للمشتريات") }>
+						<PartnersSearchableSelect
+							id={ formData.defaultSupplierPartnerId }
+							label={ formData.defaultSupplierPartnerName }
+						/>
+					</FormField>
+				</FieldsSection>
+
+				<FieldsSection
+					title={ t("settings.systemAccounts", "الحسابات المحاسبية التلقائية للنظام") }
+					columns={ 3 }>
+					<FormField label={ t("settings.accountsReceivable", "حساب الذمم المدينة (Receivables)") }>
+						<AccountsSearchableSelect
+							id={ formData.receivablesAccountId }
+							label={ formData.receivablesAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.accountsPayable", "حساب الذمم الدائنة (Payables)") }>
+						<AccountsSearchableSelect
+							id={ formData.payablesAccountId }
+							label={ formData.payablesAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.salesRevenue", "حساب إيرادات المبيعات (Sales Revenue)") }>
+						<AccountsSearchableSelect
+							id={ formData.salesRevenueAccountId }
+							label={ formData.salesRevenueAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.cogs", "حساب تكلفة البضاعة المباعة (COGS)") }>
+						<AccountsSearchableSelect
+							id={ formData.cogsAccountId }
+							label={ formData.cogsAccountName }
+						/>
+					</FormField>
+
+					<FormField
+						label={ t("settings.openingBalanceEquity", "حساب تسوية قيمة المخزون (Inventory Adjustment)") }>
+						<AccountsSearchableSelect
+							id={ formData.inventoryAdjustmentAccountId }
+							label={ formData.inventoryAdjustmentAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.inventoryAsset", "حساب مخزون المستودع (Inventory Asset)") }>
+						<AccountsSearchableSelect
+							id={ formData.inventoryAssetAccountId }
+							label={ formData.inventoryAssetAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.outputTax", "حساب ضريبة المخرجات (Output Tax)") }>
+						<AccountsSearchableSelect
+							id={ formData.outputTaxAccountId }
+							label={ formData.outputTaxAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.inputTax", "حساب ضريبة المدخلات (Input Tax)") }>
+						<AccountsSearchableSelect
+							id={ formData.inputTaxAccountId }
+							label={ formData.inputTaxAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.paymentCommission", "حساب عمولات ورسوم الدفع الإلكتروني") }>
+						<AccountsSearchableSelect
+							id={ formData.paymentCommissionAccountId }
+							label={ formData.paymentCommissionAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.purchaseExpense", "حساب مصروفات شراء الخدمات") }>
+						<AccountsSearchableSelect
+							id={ formData.purchaseExpenseAccountId }
+							label={ formData.purchaseExpenseAccountName }
+						/>
+					</FormField>
+
+					<FormField label={ t("settings.openingBalanceEquity", "حساب الأرصدة الافتتاحية (Equity)") }>
+						<AccountsSearchableSelect
+							id={ formData.openingBalanceEquityAccountId }
+							label={ formData.openingBalanceEquityAccountName }
+						/>
+					</FormField>
+
+				</FieldsSection>
+
+			</FieldGroup>
+		</div>
+	);
 }

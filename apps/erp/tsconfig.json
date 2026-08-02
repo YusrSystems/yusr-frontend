@@ -1,10 +1,26 @@
 {
   "files": [],
   "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
   ],
+  "paths": {
+    "@/*": [
+      "./src/*"
+    ],
+    "#/*": [
+      "../../packages/yusr-ui/src/*"
+    ],
+    "yusr-ui": [
+      "../../packages/yusr-ui/src/index.ts"
+    ]
+  },
   "compilerOptions": {
+    "noUncheckedIndexedAccess": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "resolveJsonModule": true,

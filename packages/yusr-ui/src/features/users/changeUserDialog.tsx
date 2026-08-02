@@ -1,107 +1,100 @@
+import { useSignals } from "@preact/signals-react/runtime";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import { BranchesSearchableSelect, ChangeDialog, type CommonChangeDialogProps, FormField, PasswordField, RolesSearchableSelect, SelectField, TextField } from "../../components/custom";
-import { FieldGroup } from "../../components/pure";
-import { BranchSlice, RoleSlice, User, UserSlice, UserValidationRules } from "../../entities";
-import { useFormErrors, useFormInit, useValidate } from "../../hooks";
-import { useAppDispatch } from "../../state";
+import { SystemPermissionsActions, YusrSystemPermissionsResources } from "#/auth";
+import {
+	BranchesSearchableSelect,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldsSection,
+	FormField,
+	RolesSearchableSelect,
+	SelectField,
+	TextField
+} from "#/components/custom";
+import { User, UserDto } from "#/entities";
+import { BaseCubits, BaseServices } from "#/services";
+import { ChangeableEntityMode } from "#/stateManager";
+import { signal } from "@preact/signals-react";
 
-export function ChangeUserDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<User>)
+
+export function ChangeUserDialog({dto, service, onSuccess}: CommonChangeDialogProps<UserDto>)
 {
-  const { t } = useTranslation(["commonEntities", "common"]);
-  const roleState = useSelector((state: any) => state.role);
-  const branchState = useSelector((state: any) => state.branch);
-  const dispatch = useAppDispatch();
+	useSignals();
 
-  const initialValues = useMemo(() => ({ ...entity, password: "" }), [entity]);
+	const entity = useMemo(() => signal<User>(dto ? User.load(dto) : User.create()), []);
 
-  const { formData, errors } = useSelector((state: any) => state.userForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    UserValidationRules.validationRules(t),
-    (errors) => dispatch(UserSlice.formActions.setErrors(errors))
-  );
-  useFormInit(UserSlice.formActions.setInitialData, initialValues);
+	if (
+		(entity.value.mode.value === ChangeableEntityMode.Create
+			&& !BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Users, SystemPermissionsActions.Add))
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
+			&& !BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Users, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-  useEffect(() =>
-  {
-    dispatch(RoleSlice.entityActions.filter());
-    dispatch(BranchSlice.entityActions.filter());
-  }, [dispatch]);
+	const {t} = useTranslation(["commonEntities", "common"]);
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
+		? t("users.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("users.entityName") }`;
 
-  const title = mode === "create" ? t("users.addNewTitle") : `${t("common:crudRow.edit")} ${t("users.entityName")}`;
+	useEffect(() =>
+	{
+		BaseCubits.branches.init();
+		BaseCubits.roles.init();
+	}, []);
 
-  return (
-    <ChangeDialog<User>
-      title={ title }
-      className="sm:max-w-xl"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => roleState.isLoading || branchState.isLoading }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-    >
-      <FieldGroup>
-        <div className="grid grid-cols-2 gap-4">
-          <TextField
-            label={ t("users.username") }
-            required
-            value={ formData.username || "" }
-            onChange={ (e) => dispatch(UserSlice.formActions.updateFormData({ username: e.target.value })) }
-            isInvalid={ isInvalid("username") }
-            error={ getError("username") }
-          />
+	return (
+		<ChangeDialog className="sm:max-w-lg">
+			<ChangeDialog.Header title={ title }/>
 
-          <PasswordField
-            label={ t("users.password") }
-            required
-            value={ formData.password || "" }
-            onChange={ (e) => dispatch(UserSlice.formActions.updateFormData({ password: e.target.value })) }
-            isInvalid={ isInvalid("password") }
-            error={ getError("password") }
-          />
-        </div>
+			<FieldsSection columns={ 2 }>
+				<TextField
+					label={ t("users.username") }
+					required
+					value={ entity.value.username }
+					error={ entity.value.getError("username") }
+				/>
 
-        <FormField label={ t("users.role") } required isInvalid={ isInvalid("roleId") } error={ getError("roleId") }>
-          <RolesSearchableSelect
-            id={ formData.roleId }
-            isInvalid={ isInvalid("roleId") }
-            onValueChange={ (role) =>
-            {
-              dispatch(UserSlice.formActions.updateFormData({ roleId: role.id }));
-              dispatch(UserSlice.formActions.updateFormData({ role: role }));
-            } }
-          />
-        </FormField>
+				<TextField
+					label={ t("users.password") }
+					required
+					value={ entity.value.password }
+					error={ entity.value.getError("password") }
+				/>
 
-        <FormField
-          label={ t("users.branch") }
-          required
-          isInvalid={ isInvalid("branchId") }
-          error={ getError("branchId") }
-        >
-          <BranchesSearchableSelect
-            id={ formData.branchId }
-            isInvalid={ isInvalid("branchId") }
-            onValueChange={ (branch) =>
-            {
-              dispatch(UserSlice.formActions.updateFormData({ branchId: branch.id }));
-              dispatch(UserSlice.formActions.updateFormData({ branch: branch }));
-            } }
-          />
-        </FormField>
+				<FormField label={ t("users.role") } required error={ entity.value.getError("roleId") }>
+					<RolesSearchableSelect
+						id={ entity.value.roleId }
+						label={ entity.value.roleName }
+					/>
+				</FormField>
 
-        <SelectField
-          label={ t("users.userStatus") }
-          value={ formData.isActive ? "active" : "inactive" }
-          onValueChange={ (val) => dispatch(UserSlice.formActions.updateFormData({ isActive: val === "active" })) }
-          required={ true }
-          options={ [{ label: t("users.active"), value: "active" }, { label: t("users.inactive"), value: "inactive" }] }
-        />
-      </FieldGroup>
-    </ChangeDialog>
-  );
+				<FormField label={ t("users.branch") } required error={ entity.value.getError("branchId") }>
+					<BranchesSearchableSelect
+						id={ entity.value.branchId }
+						label={ entity.value.branchName }
+					/>
+				</FormField>
+
+				<SelectField
+					label={ t("users.userStatus") }
+					required
+					value={ entity.value.isActive }
+					options={ [{label: t("users.active"), value: true}, {label: t("users.inactive"), value: false}] }
+				/>
+			</FieldsSection>
+
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+
+				<ChangeDialog.SaveButton<User, UserDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

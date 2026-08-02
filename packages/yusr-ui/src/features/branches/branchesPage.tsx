@@ -1,82 +1,153 @@
+import { useSignals } from "@preact/signals-react/runtime";
 import { Building } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { selectPermissionsByResource, SystemPermissions, SystemPermissionsActions, YusrSystemPermissionsResources } from "../../auth";
-import { CrudPage } from "../../components/custom";
-import { Branch, BranchFilterColumns, BranchSlice } from "../../entities";
-import { BranchesApiService } from "../../networking";
-import type { YusrRootState } from "../../state";
+import { SystemPermissionsActions, YusrSystemPermissionsResources } from "#/auth";
+import { CrudPage, TablePreview, UnauthorizedPage } from "#/components/custom";
+import { type BranchDto } from "#/entities";
+import { BaseCubits, BaseServices } from "#/services";
+import { ChangeableEntityMode, PageError, PageLoaded, PageLoading } from "#/stateManager";
 import { ChangeBranchDialog } from "./changeBranchDialog";
 
-export function BranchesPage()
-{
-  const { t } = useTranslation("commonEntities");
-  const dispatch = useDispatch();
-  const authState = useSelector((state: YusrRootState) => state.auth);
-  const branchState = useSelector((state: YusrRootState) => state.branch);
-  const branchDialogState = useSelector((state: YusrRootState) => state.branchDialog);
-  const permissions = useSelector((state: YusrRootState) =>
-    selectPermissionsByResource(state, YusrSystemPermissionsResources.Branches)
-  );
-  const service = useMemo(() => new BranchesApiService(), []);
 
-  return (
-    <CrudPage<Branch>
-      title={ t("branches.title") }
-      entityName={ t("branches.entityName") }
-      addNewItemTitle={ t("branches.addNewTitle") }
-      permissions={ permissions }
-      hasPagePermission={ SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        YusrSystemPermissionsResources.Branches,
-        SystemPermissionsActions.Get
-      ) }
-      entityState={ branchState }
-      useSlice={ () => branchDialogState }
-      service={ service }
-      cards={ [{
-        title: t("branches.totalBranches"),
-        data: (branchState.entities?.count ?? 0).toString(),
-        icon: <Building className="h-4 w-4 text-muted-foreground" />
-      }] }
-      columnsToFilter={ BranchFilterColumns.columnsNames }
-      tableHeadRows={ [
-        { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: t("branches.branchId"), rowStyles: "w-30" },
-        { rowName: t("branches.branchName"), rowStyles: "" },
-        { rowName: t("branches.city"), rowStyles: "" }
-      ] }
-      tableRowMapper={ (
-        branch: Branch
-      ) => [{ rowName: `#${branch.id}`, rowStyles: "" }, { rowName: branch.name, rowStyles: "font-semibold" }, {
-        rowName: branch.city?.name,
-        rowStyles: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800"
-      }] }
-      actions={ {
-        filter: BranchSlice.entityActions.filter,
-        openChangeDialog: (entity) => BranchSlice.dialogActions.openChangeDialog(entity),
-        openDeleteDialog: (entity) => BranchSlice.dialogActions.openDeleteDialog(entity),
-        setIsChangeDialogOpen: (open) => BranchSlice.dialogActions.setIsChangeDialogOpen(open),
-        setIsDeleteDialogOpen: (open) => BranchSlice.dialogActions.setIsDeleteDialogOpen(open),
-        refresh: BranchSlice.entityActions.refresh,
-        setCurrentPage: (page) => BranchSlice.entityActions.setCurrentPage(page)
-      } }
-      ChangeDialog={ 
-        <ChangeBranchDialog
-          entity={ branchDialogState.selectedRow || undefined }
-          mode={ branchDialogState.selectedRow ? "update" : "create" }
-          service={ service }
-          onSuccess={ (data, mode) =>
-          {
-            dispatch(BranchSlice.entityActions.refresh({ data: data }));
-            if (mode === "create")
-            {
-              dispatch(BranchSlice.dialogActions.setIsChangeDialogOpen(false));
-            }
-          } }
-        />
-       }
-    />
-  );
+export function BranchesPage({onUpdate}: { onUpdate?: (dto: BranchDto) => void; })
+{
+	const {t} = useTranslation("commonEntities");
+
+	if (!BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Branches, SystemPermissionsActions.Get))
+	{
+		return <UnauthorizedPage/>;
+	}
+
+	useEffect(() =>
+	{
+		BaseCubits.branches.init();
+	}, []);
+
+	return (
+		<CrudPage<BranchDto>>
+			<CrudPage.Header
+				title={ t("branches.title") }
+				addButtonTitle={ t("branches.addNewTitle") }
+				isAddButtonVisible={ BaseServices.auth.hasAuth(
+					YusrSystemPermissionsResources.Branches,
+					SystemPermissionsActions.Add
+				) }
+			/>
+
+			<Cards/>
+
+			<CrudPage.SearchInput onSearch={ (searchText) => BaseCubits.branches.search(searchText) }/>
+
+			<PageTable/>
+
+			<CrudPage.ChangeDialog<BranchDto>
+				changeDialog={ (dto, closeDialog) =>
+				{
+					return (
+						<ChangeBranchDialog
+							dto={ dto }
+							service={ BaseServices.branchesApi }
+							onSuccess={ (data, mode) =>
+							{
+								if (mode === ChangeableEntityMode.Create)
+								{
+									BaseCubits.branches.add(data);
+									closeDialog();
+								}
+								else if (mode === ChangeableEntityMode.Update)
+								{
+									BaseCubits.branches.update(data);
+									onUpdate?.(data);
+								}
+							} }
+						/>
+					);
+				} }
+			/>
+
+			<CrudPage.DeleteDialog
+				entityNameSelector={ (entity) => entity.name }
+				service={ BaseServices.branchesApi }
+				onSuccess={ (entity) => BaseCubits.branches.delete(entity) }
+			/>
+		</CrudPage>
+	);
+}
+
+function Cards()
+{
+	useSignals();
+	const {t} = useTranslation("commonEntities");
+	return (
+		<CrudPage.Cards
+			cards={ [{
+				title: t("branches.totalBranches"),
+				data: BaseCubits.branches.count.value.toString(),
+				icon: <Building className="h-4 w-4 text-muted-foreground"/>
+			}] }
+		/>
+	);
+}
+
+function PageTable()
+{
+	useSignals();
+	const {t} = useTranslation(["commonEntities", "common"]);
+
+	if (BaseCubits.branches.state.value instanceof PageLoading)
+	{
+		return <TablePreview.Loading/>;
+	}
+
+	if (BaseCubits.branches.state.value instanceof PageLoaded)
+	{
+		return (
+			<CrudPage.Table>
+				<CrudPage.TableBody<BranchDto>
+					data={ BaseCubits.branches.entities.value }
+					headerRows={ [
+						{rowBody: "", rowStyles: "text-left w-12.5"},
+						{rowBody: t("branches.branchId"), rowStyles: "w-30"},
+						{rowBody: t("branches.branchName"), rowStyles: "w-50"},
+						{rowBody: t("branches.city"), rowStyles: "w-50"}
+					] }
+					tableRowMapper={ (
+						branch
+					) => [{rowBody: `#${ branch.id }`, rowStyles: ""}, {
+						rowBody: branch.name,
+						rowStyles: "font-semibold"
+					}, {
+						rowBody: branch.cityName,
+						rowStyles:
+							"inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800"
+					}] }
+					hasUpdatePermission={ BaseServices.auth.hasAuth(
+						YusrSystemPermissionsResources.Branches,
+						SystemPermissionsActions.Update
+					) }
+					hasDeletePermission={ BaseServices.auth.hasAuth(
+						YusrSystemPermissionsResources.Branches,
+						SystemPermissionsActions.Delete
+					) }
+				/>
+				<CrudPage.TablePagination
+					pageSize={ BaseCubits.branches.pageSize.value }
+					totalNumber={ BaseCubits.branches.count.value }
+					currentPage={ BaseCubits.branches.currentPage.value }
+					onPageChanged={ (newPage) =>
+					{
+						BaseCubits.branches.changePage(newPage);
+					} }
+				/>
+			</CrudPage.Table>
+		);
+	}
+
+	if (BaseCubits.branches.state.value instanceof PageError)
+	{
+		return <TablePreview.Error/>;
+	}
+
+	return <TablePreview.Empty/>;
 }

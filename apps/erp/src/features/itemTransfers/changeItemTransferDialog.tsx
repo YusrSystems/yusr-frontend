@@ -1,248 +1,154 @@
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
-import { useEffect, useMemo, useState } from "react";
+import { Cubits } from "@/core/services/cubits";
+import { Services } from "@/core/services/services";
+import { signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { ChangeDialog, type CommonChangeDialogProps, DialogContent, DialogDescription, DialogHeader, DialogTitle, FieldGroup, FieldsSection, FilterByTypeRequest, FormField, Loading, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { ItemType } from "../../core/data/item";
-import ItemTransfer, { ItemTransfersItem, ItemTransferSlice, ItemTransferValidationRules } from "../../core/data/itemTransfer";
-import { StoreSlice } from "../../core/data/store";
-import { fetchStoreItems } from "../../core/state/shared/storeItemsSlice";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
-import StoreItemSelector from "../items/storeItemSelector";
-import { ItemTransferActions } from "./logic/itemTransferActions";
-import { initializeItems } from "./logic/itemTransferSlice";
-import SelectedItemsTable from "./selectedItemsTable";
+import {
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	FieldsSection,
+	FormField,
+	Loading,
+	SystemPermissionsActions,
+	TextField
+} from "yusr-ui";
+import { ItemType } from "@/core/data/item.ts";
+import ItemTransfer, { ItemTransferDto } from "../../core/data/itemTransfer";
+import ItemTransferTable from "./itemTransferTable";
 
-export default function ChangeItemTransferDialog({
-  entity,
-  mode,
-  service,
-  onSuccess
-}: CommonChangeDialogProps<ItemTransfer>)
+
+export default function ChangeItemTransferDialog(
+	{dto, service, onSuccess}: CommonChangeDialogProps<ItemTransferDto>
+)
 {
-  const { t } = useTranslation(["stocking", "common"]);
-  const dispatch = useAppDispatch();
-  const [initLoading, setInitLoading] = useState(false);
-  const storeState = useAppSelector((state) => state.store);
-  const { items } = useAppSelector((state) => state.itemTransferUI);
+	useSignals();
+	const {t} = useTranslation(["stocking", "common"]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
+	const entity = useMemo(() => signal<ItemTransfer>(dto ? ItemTransfer.load(dto) : ItemTransfer.create()), []);
+	const isLoading = useMemo(() => signal<boolean>(false), []);
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
+		? t("itemTransfers.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("itemTransfers.entityName") }`;
 
-  const initialValues = useMemo(
-    () => ({
-      ...entity,
-      transferDate: entity?.transferDate ? new Date(entity.transferDate).toLocaleDateString("en-CA") : new Date().toLocaleDateString("en-CA"),
-      itemTransfersItems: entity?.itemTransfersItems || []
-    }),
-    [entity]
-  );
+	useEffect(() =>
+	{
+		if (entity.value.mode.value === ChangeableEntityMode.Update && entity.value?.id.value)
+		{
+			isLoading.value = true;
+			const fetch = async () =>
+			{
+				const res = await service.Get(entity.value.id.value);
+				if (res.data != undefined)
+				{
+					entity.value = ItemTransfer.load(res.data);
+				}
+				isLoading.value = false;
+			};
+			void fetch();
+		}
+		else
+		{
+			Cubits.stores.init();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
+	}, []);
 
-  const { formData, errors } = useAppSelector((state) => state.itemTransferForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    ItemTransferValidationRules.validationRules(t),
-    (errors) => dispatch(ItemTransferSlice.formActions.setErrors(errors))
-  );
-  useFormInit(ItemTransferSlice.formActions.setInitialData, initialValues);
+	useEffect(() =>
+	{
+		if (entity.value.mode.value === ChangeableEntityMode.Create && entity.value?.fromStoreId.value)
+		{
+			Cubits.items.init([ItemType.Product], {storeId: entity.value.fromStoreId.value});
+		}
+	}, [entity.value.fromStoreId.value, entity.value.mode.value]);
 
-  useEffect(() =>
-  {
-    if (mode === "update" && entity?.itemTransfersItems)
-    {
-      ItemTransferActions.initialize(dispatch, entity.itemTransfersItems);
-    }
-    return () =>
-    {
-      ItemTransferActions.clear(dispatch);
-    };
-  }, [dispatch, entity, mode]);
+	if (
+		(entity.value.mode.value === ChangeableEntityMode.Create
+			&& !Services.auth.hasAuth(SystemPermissionsResources.ItemTransfers, SystemPermissionsActions.Add))
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
+			&& !Services.auth.hasAuth(SystemPermissionsResources.ItemTransfers, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-  useEffect(() =>
-  {
-    const mappedItems = items.map(
-      (item) =>
-        new ItemTransfersItem({
-          id: isNaN(Number(item.id)) ? Math.floor(Math.random() * 1000000) : Number(item.id),
-          itemId: item.itemId,
-          itemName: item.itemName,
-          itemUnitPricingMethodId: item.selectedPricingMethodId,
-          itemUnitPricingMethodName: item.itemUnitPricingMethods.find((m) =>
-            m.id === item.selectedPricingMethodId
-          )?.itemUnitPricingMethodName || "",
-          quantity: item.quantity,
-          itemUnitPricingMethods: item.itemUnitPricingMethods as any
-        })
-    );
-    dispatch(ItemTransferSlice.formActions.updateFormData({ itemTransfersItems: mappedItems }));
-  }, [items]);
+	if (isLoading.value)
+	{
+		return (
+			<ChangeDialog>
+				<ChangeDialog.Header title={ title }/>
+				<Loading entityName={ t("itemTransfers.entityName") }/>
+			</ChangeDialog>
+		);
+	}
 
-  useEffect(() =>
-  {
-    if (mode === "update" && entity?.id)
-    {
-      setInitLoading(true);
-      const getItem = async () =>
-      {
-        const res = await service.Get(entity.id);
-        dispatch(ItemTransferSlice.formActions.updateFormData({ ...res.data }));
-        dispatch(initializeItems(res.data?.itemTransfersItems ?? []));
-        setInitLoading(false);
-      };
-      getItem();
-    }
-  }, [entity?.id, mode]);
+	return (
+		<ChangeDialog className="sm:max-w-7xl">
+			<ChangeDialog.Header title={ title }/>
 
-  const handleValidate = () =>
-  {
-    const isFormValid = validate();
-    const isTableValid = ItemTransferActions.validate(dispatch, items, t);
-    return isFormValid && isTableValid;
-  };
+			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
+				<FieldGroup>
+					<FieldsSection columns={ 3 }>
+						<TextField
+							label={ t("itemTransfers.date") }
+							required
+							value={ entity.value.date }
+							disabled
+						/>
+						<FormField
+							label={ t("itemTransfers.fromStore") }
+							required
+							error={ entity.value.getError("fromStoreId") }
+						>
+							<StoresSearchableSelect
+								id={ entity.value.fromStoreId }
+								label={ entity.value.fromStoreName }
+								disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+								onSelect={ () =>
+								{
+									entity.value.itemTransfersItems.value = [];
+								} }
+							/>
+						</FormField>
 
-  useEffect(() =>
-  {
-    if (formData.fromStoreId)
-    {
-      dispatch(fetchStoreItems({
-        pageNumber: 1,
-        rowsPerPage: 100,
-        storeId: formData.fromStoreId,
-        request: new FilterByTypeRequest({ condition: undefined, types: [ItemType.Product] })
-      }));
-    }
-  }, [dispatch, formData.fromStoreId]);
+						<FormField
+							label={ t("itemTransfers.toStore") }
+							required
+							error={ entity.value.getError("toStoreId") }
+						>
+							<StoresSearchableSelect
+								id={ entity.value.toStoreId }
+								label={ entity.value.toStoreName }
+								disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+							/>
+						</FormField>
+					</FieldsSection>
 
-  useEffect(() =>
-  {
-    dispatch(StoreSlice.entityActions.filter());
-  }, [dispatch]);
+					<FieldsSection columns={ 1 }>
+						<TextField
+							label={ t("itemTransfers.description") }
+							value={ entity.value.description }
+						/>
+					</FieldsSection>
 
-  const availableFromStores = useMemo(() =>
-  {
-    if (!storeState.entities.data)
-    {
-      return [];
-    }
-    return storeState.entities.data.filter((s) => s.id !== formData.toStoreId);
-  }, [storeState.entities.data, formData.toStoreId]);
+					<FieldsSection columns={ 1 }>
+						<ItemTransferTable entity={ entity.value }/>
+					</FieldsSection>
+				</FieldGroup>
+			</div>
 
-  const availableToStores = useMemo(() =>
-  {
-    if (!storeState.entities.data)
-    {
-      return [];
-    }
-    return storeState.entities.data.filter((s) => s.id !== formData.fromStoreId);
-  }, [storeState.entities.data, formData.fromStoreId]);
-
-  if (initLoading)
-  {
-    return (
-      <DialogContent dir="rtl">
-        <DialogHeader>
-          <DialogTitle>
-            { mode === "create"
-              ? t("itemTransfers.addNewTitle")
-              : `${t("common:crudRow.edit")} ${t("itemTransfers.entityName")}` }
-          </DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
-        <Loading entityName={ t("items.entityName") } />
-      </DialogContent>
-    );
-  }
-
-  return (
-    <ChangeDialog<ItemTransfer>
-      title={ mode === "create"
-        ? t("itemTransfers.addNewTitle")
-        : `${t("common:crudRow.edit")} ${t("itemTransfers.entityName")}` }
-      className="sm:max-w-5xl"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => storeState.isLoading }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ handleValidate }
-    >
-      <FieldGroup>
-        <FieldsSection columns={ 3 }>
-          <TextField
-            label={ t("itemTransfers.stocktakingDate") }
-            required
-            value={ formData.transferDate ? new Date(formData.transferDate).toLocaleDateString("en-CA") : "" }
-            isInvalid={ isInvalid("date") }
-            error={ getError("date") }
-            disabled
-          />
-          <FormField
-            label={ t("itemTransfers.fromStore") }
-            required
-            isInvalid={ isInvalid("fromStoreId") }
-            error={ getError("fromStoreId") }
-          >
-            <StoresSearchableSelect
-              id={ formData.fromStoreId }
-              items={ availableFromStores }
-              isInvalid={ isInvalid("fromStoreId") }
-              onValueChange={ (store) =>
-              {
-                ItemTransferActions.clear(dispatch);
-                dispatch(
-                  ItemTransferSlice.formActions.updateFormData({
-                    fromStoreId: store.id,
-                    fromStoreName: store.name
-                  })
-                );
-              } }
-            />
-          </FormField>
-
-          <FormField
-            label={ t("itemTransfers.toStore") }
-            required
-            isInvalid={ isInvalid("toStoreId") }
-            error={ getError("toStoreId") }
-          >
-            <StoresSearchableSelect
-              id={ formData.toStoreId }
-              items={ availableToStores }
-              isInvalid={ isInvalid("toStoreId") }
-              onValueChange={ (store) =>
-              {
-                dispatch(
-                  ItemTransferSlice.formActions.updateFormData({ toStoreId: store.id, toStoreName: store.name })
-                );
-              } }
-            />
-          </FormField>
-        </FieldsSection>
-
-        <FieldsSection columns={ 1 }>
-          <TextField
-            label={ t("itemTransfers.description") }
-            value={ formData.description || "" }
-            onChange={ (e) => dispatch(ItemTransferSlice.formActions.updateFormData({ description: e.target.value })) }
-          />
-        </FieldsSection>
-
-        <FieldsSection columns={ 1 }>
-          { formData.fromStoreId && (
-            <>
-              { mode === "create" && (
-                <StoreItemSelector
-                  itemTypes={ [ItemType.Product] }
-                  storeId={ formData.fromStoreId }
-                  onSelect={ (storeItem, selectedIupm) =>
-                  {
-                    ItemTransferActions.addItem(dispatch, storeItem, selectedIupm);
-                  } }
-                />
-              ) }
-
-              <SelectedItemsTable mode={ mode } />
-            </>
-          ) }
-        </FieldsSection>
-      </FieldGroup>
-    </ChangeDialog>
-  );
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+				<ChangeDialog.SaveButton<ItemTransfer, ItemTransferDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

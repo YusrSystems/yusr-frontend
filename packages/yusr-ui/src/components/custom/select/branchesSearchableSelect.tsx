@@ -1,36 +1,58 @@
-import { useSelector } from "react-redux";
-import { Branch, BranchesApiService, BranchFilterColumns, type EntitySearchableSelectParams } from "yusr-ui";
-import { YusrSystemPermissionsResources } from "../../../auth";
-import { BranchSlice } from "../../../entities";
-import { ChangeBranchDialog } from "../../../features/branches/changeBranchDialog";
-import type { YusrRootState } from "../../../state";
-import { ChangableSearchableSelect } from "./changableSearchableSelect";
+import { useSignals } from "@preact/signals-react/runtime";
+import React from "react";
+import { BranchDto } from "#/entities";
+import { BaseCubits } from "#/services";
+import { PageLoaded, PageLoading } from "#/stateManager";
+import { SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "./searchableSelect";
 
-export function BranchesSearchableSelect(
-  { id, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<Branch>
-)
+
+export function BranchesSearchableSelect({...props}: SearchableSelectProps<BranchDto>)
 {
-  const branchState = useSelector((state: YusrRootState) => state.branch);
-  const authState = useSelector((state: YusrRootState) => state.auth);
+	useSignals();
 
-  return (
-    <ChangableSearchableSelect<Branch>
-      id={ id }
-      itemLabelKey="name"
-      itemValueKey="id"
-      state={ branchState }
-      apiService={ new BranchesApiService() }
-      columnsNames={ BranchFilterColumns.columnsNames }
-      disabled={ disabled }
-      isInvalid={ isInvalid }
-      systemPermissionsResources={ YusrSystemPermissionsResources.Branches }
-      onValueChange={ onValueChange }
-      entityActions={ {
-        filter: BranchSlice.entityActions.filter,
-        refresh: BranchSlice.entityActions.refresh
-      } }
-      changeDialog={ ChangeBranchDialog }
-      authPermissions={ authState.loggedInUser?.role?.permissions ?? [] }
-    />
-  );
+	return (
+		<SearchableSelect>
+			<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
+			<SearchableSelect.Content>
+				<SearchableSelect.SearchInput onSearch={ (searchInput) => BaseCubits.branches.search(searchInput) }/>
+				<SearchableSelect.Command>
+					<SearchableSelect.NullOption { ...props } />
+					<CommandItems/>
+				</SearchableSelect.Command>
+			</SearchableSelect.Content>
+		</SearchableSelect>
+	);
+
+	function CommandItems()
+	{
+		useSignals();
+		if (BaseCubits.branches.state.value instanceof PageLoading)
+		{
+			return <SearchableSelect.Loading/>;
+		}
+
+		if (BaseCubits.branches.state.value instanceof PageLoaded && BaseCubits.branches.entities.value.length > 0)
+		{
+			return BaseCubits.branches.entities.value.map((entity) => (
+				<Option key={ entity.id } item={ entity } { ...props } />
+			));
+		}
+
+		return <SearchableSelect.Empty/>;
+	}
 }
+
+const Option = React.memo(
+	function Option({...props}: Omit<SearchableSelectOptionProps<BranchDto>, "labelSelector">)
+	{
+		useSignals();
+		return (
+			<SearchableSelect.Option<BranchDto>
+				labelSelector="name"
+				{ ...props }
+			>
+				<SearchableSelect.OptionBody label={ props.item.name }/>
+			</SearchableSelect.Option>
+		);
+	}
+);

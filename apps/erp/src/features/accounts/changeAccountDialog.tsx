@@ -1,404 +1,275 @@
-import ClientsSearchableSelect from "@/core/components/searchableSelect/clientsSearchableSelect";
-import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
-import { Plus, Trash2 } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps, IEntityState, IFormState } from "yusr-ui";
-import { Button, ChangeDialog, CityFilterColumns, CitySlice, CurrencyIcon, FieldGroup, FieldsSection, FormField, Input, NumberField, SearchableSelect, SelectField, SystemPermissions, SystemPermissionsActions, TextAreaField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import Account, { AccountContact, type AccountSliceType, AccountType, accountTypeToResource, AccountValidationRules, ClientsSlice, SuppliersSlice } from "../../core/data/account";
-import { type RootState, useAppDispatch, useAppSelector } from "../../core/state/store";
+import {
+	ChangeableEntityMode,
+	ChangeDialog,
+	cn,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	FieldsSection,
+	FormField,
+	NumberField,
+	SelectField,
+	SystemPermissionsActions,
+	TextAreaField,
+	TextField,
+	YoutubeButton
+} from "yusr-ui";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect";
+import {
+	Account,
+	AccountClass,
+	type AccountDto,
+	AccountType,
+	getAccountClass,
+	getAccountTypesByClasses
+} from "@/core/data/account.ts";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import React, { useEffect, useMemo } from "react";
+import { signal } from "@preact/signals-react";
+import { Cubits } from "@/core/services/cubits.ts";
 
-export default function ChangeAccountDialog({
-  entity,
-  mode,
-  service,
-  onSuccess,
-  slice,
-  fixedType,
-  selectTypes = [],
-  filterDataOutside = false,
-  selectEntityState,
-  selectFormState
-}: CommonChangeDialogProps<Account> & {
-  slice: AccountSliceType;
-  fixedType?: AccountType;
-  selectTypes?: {
-    label: string;
-    value: string;
-  }[];
-  filterDataOutside?: boolean;
-  selectEntityState: (state: RootState) => IEntityState<Account>;
-  selectFormState: (state: RootState) => IFormState<Account>;
-})
+
+export default function ChangeAccountDialog(
+	{dto, service, onSuccess, initDto}: CommonChangeDialogProps<AccountDto> & {
+		initDto?: AccountDto;
+	}
+)
 {
-  const { t } = useTranslation(["accounting", "common"]);
-  const dispatch = useAppDispatch();
-  const cityState = useAppSelector((state) => state.city);
-  const authState = useAppSelector((state) => state.auth);
-  const accountState = useAppSelector(selectEntityState);
+	useSignals();
+	const {t} = useTranslation(["accounting", "common"]);
 
-  const initialValues = useMemo(
-    () => ({
-      type: entity?.type || fixedType,
-      ...entity,
-      name: entity?.name || "",
-      accountContacts: entity?.accountContacts || [new AccountContact()]
-    }),
-    [entity]
-  );
+	const entity = useMemo(() => signal<Account>(dto ? Account.load(dto) : Account.create(initDto)), []);
 
-  const { formData, errors } = useAppSelector(selectFormState);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    AccountValidationRules.validationRules(t),
-    (errors) => dispatch(slice.formActions.setErrors(errors))
-  );
-  useFormInit(slice.formActions.setInitialData, initialValues);
+	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
 
-  useEffect(() =>
-  {
-    if (filterDataOutside)
-    {
-      return;
-    }
-    dispatch(CitySlice.entityActions.filter());
-  }, [dispatch]);
+	const title = !isUpdateMode
+		? t("accounts.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("accounts.entityName") }`;
 
-  useEffect(() =>
-  {
-    if (formData.type == undefined || filterDataOutside)
-    {
-      return;
-    }
+	const groupedAccountTypes = [
+		{
+			group: "الأصول (Assets)",
+			options: [
+				{label: "أصول متداولة (Current Asset)", value: AccountType.CurrentAsset},
+				{label: "ذمم مدينة (Accounts Receivable)", value: AccountType.AccountsReceivable},
+				{label: "النقد والبنوك (Cash and Bank)", value: AccountType.CashAndBank},
+				{label: "أصول غير متداولة (Non-Current Asset)", value: AccountType.NonCurrentAsset},
+				{label: "ضريبة مدخلات (Input Tax)", value: AccountType.InputTax},
+				{label: "أصول المخزون (Inventory Asset)", value: AccountType.InventoryAsset}
+			]
+		},
+		{
+			group: "الالتزامات (Liabilities)",
+			options: [
+				{label: "التزامات متداولة (Current Liability)", value: AccountType.CurrentLiability},
+				{label: "ذمم دائنة (Accounts Payable)", value: AccountType.AccountsPayable},
+				{label: "التزامات غير متداولة (Non-Current Liability)", value: AccountType.NonCurrentLiability},
+				{label: "ضريبة مخرجات (Output Tax)", value: AccountType.OutputTax}
+			]
+		},
+		{
+			group: "حقوق الملكية (Equity)",
+			options: [
+				{label: "حقوق الملكية (Equity)", value: AccountType.Equity},
+				{label: "حقوق ملكية رصيد افتتاحي (Opening Balance Equity)", value: AccountType.OpeningBalanceEquity}
+			]
+		},
+		{
+			group: "الإيرادات (Revenue)",
+			options: [
+				{label: "الإيرادات (Sales Revenue)", value: AccountType.SalesRevenue}
+			]
+		},
+		{
+			group: "المصروفات (Expense)",
+			options: [
+				{label: "تكلفة البضاعة المباعة (Cost of Goods Sold)", value: AccountType.CostOfGoodsSold},
+				{label: "مصاريف تشغيلية (Operating Expense)", value: AccountType.OperatingExpense},
+				{label: "تسوية قيمة المخزون (Inventory Adjustments)", value: AccountType.InventoryAdjustment}
+			]
+		}
+	];
 
-    if (formData.type === AccountType.Client)
-    {
-      dispatch(ClientsSlice.entityActions.filter());
-    }
-    if (formData.type === AccountType.Supplier)
-    {
-      dispatch(SuppliersSlice.entityActions.filter());
-    }
-  }, [formData.type]);
+	const flatOptions = useMemo(() =>
+	{
+		const list: { label: React.ReactNode; value: AccountType | undefined; disabled?: boolean }[] = [];
+		groupedAccountTypes.forEach((section) =>
+		{
+			section.options.forEach((opt) =>
+			{
+				list.push({
+					// Wrap the text in our new custom component to display the text + badge
+					label: <AccountTypeOptionItem type={ opt.value } label={ opt.label }/>,
+					value: opt.value
+				});
+			});
+		});
+		return list;
+	}, []);
 
-  const addContact = () =>
-  {
-    dispatch(slice.formActions.updateFormData({
-      accountContacts: [...(formData.accountContacts || []), new AccountContact()]
-    }));
-  };
+	useEffect(() =>
+	{
+		Cubits.parentAccounts.init(getAccountTypesByClasses([getAccountClass(entity.value.type.value ?? AccountType.CashAndBank)]), {
+			"isParentOnly": true
+		});
+	}, [entity.value.type.value]);
 
-  const updateContact = (
-    index: number,
-    field: keyof AccountContact,
-    value: any
-  ) =>
-  {
-    const newContacts = [...(formData.accountContacts || [])];
-    newContacts[index] = { ...newContacts[index], [field]: value };
-    dispatch(slice.formActions.updateFormData({ accountContacts: newContacts }));
-  };
+	if (
+		(entity.value.mode.value === ChangeableEntityMode.Create
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Add))
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-  const removeContact = (index: number) =>
-  {
-    const newContacts = [...(formData.accountContacts || [])];
-    newContacts.splice(index, 1);
-    dispatch(slice.formActions.updateFormData({ accountContacts: newContacts }));
-  };
+	return (
+		<ChangeDialog className="sm:max-w-2xl">
+			<ChangeDialog.Header title={ title }/>
+			<div className="max-h-[70vh] overflow-y-auto px-2 pb-2">
+				<FieldGroup>
+					<FieldsSection columns={ 1 }>
+						<TextField
+							label={ t("accounts.accountName", "اسم الحساب") }
+							required
+							value={ entity.value.name }
+							error={ entity.value.getError("name") }
+						/>
 
-  const isBank = formData?.type === AccountType.Bank;
-  const isBox = formData?.type === AccountType.Box;
-  const requiresTaxInfo = formData?.type === AccountType.Client
-    || formData?.type === AccountType.Supplier
-    || formData?.type === AccountType.Employee;
-  const requiresAddress = !isBank;
-  const requiresContacts = !isBank && !isBox;
+						<SelectField<AccountType>
+							label={ t("accounts.accountType", "نوع الحساب") }
+							required
+							value={ entity.value.type }
+							error={ entity.value.getError("type") }
+							options={ flatOptions }
+							disabled={ isUpdateMode }
+							onValueChange={ (type) =>
+							{
+								if (getAccountClass(type) === AccountClass.Revenue || getAccountClass(type) === AccountClass.Expense)
+								{
+									entity.value.openingBalance.value = 0;
+								}
+							} }
+						/>
 
-  const getTypeName = () =>
-  {
-    if (!formData?.type)
-    {
-      return "";
-    }
+						<FormField label={ t("accounts.parentAccount", "الحساب الأب") }
+						           error={ entity.value.getError("parentAccountId") }>
+							<AccountsSearchableSelect
+								id={ entity.value.parentAccountId }
+								label={ entity.value.parentAccountName }
+								accountsCubit={ Cubits.parentAccounts }
+								showAddButton={ false }
+							/>
+						</FormField>
 
-    switch (formData.type)
-    {
-      case AccountType.Client:
-        return t("accounts.client");
-      case AccountType.Supplier:
-        return t("accounts.supplier");
-      case AccountType.Employee:
-        return t("accounts.employee");
-      case AccountType.Bank:
-        return t("accounts.bank");
-      case AccountType.Box:
-        return t("accounts.box");
-    }
-  };
+						<div className="grid grid-cols-2 gap-4">
+							<NumberField
+								label={ t("accounts.openingBalance", "الرصيد الافتتاحي") }
+								value={ entity.value.openingBalance }
+								currency={ <ErpCurrencyIcon/> }
+								disabled={ entity.value.isParent.value || getAccountClass(entity.value.type.value) === AccountClass.Revenue || getAccountClass(entity.value.type.value) === AccountClass.Expense }
+							/>
 
-  const canShowBalance = SystemPermissions.hasAuth(
-    authState.loggedInUser?.role?.permissions ?? [],
-    SystemPermissionsResources.AccountShowBalance,
-    SystemPermissionsActions.Get
-  );
+							<NumberField
+								label={ t("accounts.balance", "الرصيد الحالي") }
+								disabled
+								value={ entity.value.balance }
+								currency={ <ErpCurrencyIcon/> }
+							/>
+						</div>
 
-  const authorized = () =>
-  {
-    if (formData.type == undefined)
-    {
-      return true;
-    }
+						<TextAreaField
+							label={ t("accounts.notes", "ملاحظات") }
+							value={ entity.value.notes }
+							rows={ 3 }
+						/>
+					</FieldsSection>
+				</FieldGroup>
+			</div>
+			<ChangeDialog.Footer>
+				<div className="flex items-center justify-between w-full">
+					<YoutubeButton videoId="WNCe2c2kqCw"/>
+					<div className="flex justify-end gap-3">
+						<ChangeDialog.Close/>
+						<ChangeDialog.SaveButton<Account, AccountDto>
+							entity={ entity }
+							service={ service }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+						/>
+					</div>
+				</div>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
+}
 
-    return SystemPermissions.hasAuth(
-      authState.loggedInUser?.role?.permissions ?? [],
-      accountTypeToResource[formData.type],
-      SystemPermissionsActions.Get
-    );
-  };
+// ----------------------------------------------------------------------------------
+// Custom Component (With temporary translations built directly in)
+// ----------------------------------------------------------------------------------
 
-  return (
-    <ChangeDialog<Account>
-      title={ `${
-        mode === "create" ? t("accounts.addNewTitle") : `${t("common:crudRow.edit")} ${t("accounts.entityName")}`
-      } ${getTypeName()}` }
-      className="sm:max-w-4xl"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => cityState.isLoading || accountState.isLoading }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-      authorized={ authorized() }
-    >
-      <div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
-        <FieldGroup className="gap-10">
-          <FieldsSection title={ t("accounts.basicInfo") } columns={ 2 }>
-            { selectTypes.length > 0 && (
-              <SelectField
-                label={ t("accounts.accountType") }
-                required
-                disabled={ mode === "update" }
-                value={ formData.type?.toString() || "" }
-                onValueChange={ (val) =>
-                  dispatch(slice.formActions.updateFormData({ type: Number(val) as AccountType })) }
-                options={ selectTypes }
-                isInvalid={ isInvalid("type") }
-                error={ getError("type") }
-              />
-            ) }
+interface AccountTypeOptionItemProps
+{
+	type: AccountType;
+	label: string;
+}
 
-            <TextField
-              label={ t("accounts.accountName") }
-              required
-              value={ formData.name || "" }
-              onChange={ (e) => dispatch(slice.formActions.updateFormData({ name: e.target.value })) }
-              isInvalid={ isInvalid("name") }
-              error={ getError("name") }
-            />
+function AccountTypeOptionItem({type, label}: AccountTypeOptionItemProps)
+{
+	const accountClass = getAccountClass(type);
 
-            { (formData.type === AccountType.Client || formData.type === AccountType.Supplier) && (
-              <FormField label={ t("accounts.parentAccount") }>
-                { formData.type === AccountType.Supplier && (
-                  <SuppliersSearchableSelect
-                    id={ formData.parentId }
-                    isInvalid={ isInvalid("parentId") }
-                    disabled={ mode === "update" }
-                    onValueChange={ (account) =>
-                    {
-                      dispatch(slice.formActions.updateFormData({
-                        parentId: account?.id,
-                        parentName: account?.name
-                      }));
-                    } }
-                  />
-                ) }
+	const getClassBadgeDetails = (cls: AccountClass) =>
+	{
+		switch (cls)
+		{
+			case AccountClass.Asset:
+				return {
+					badgeText: "الأصول (Assets)",
+					color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+				};
+			case AccountClass.Liability:
+				return {
+					badgeText: "الالتزامات (Liabilities)",
+					color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+				};
+			case AccountClass.Equity:
+				return {
+					badgeText: "حقوق الملكية (Equity)",
+					color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400"
+				};
+			case AccountClass.Revenue:
+				return {
+					badgeText: "الإيرادات (Revenue)",
+					color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+				};
+			case AccountClass.Expense:
+				return {
+					badgeText: "المصروفات (Expense)",
+					color: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400"
+				};
+			default:
+				return {
+					badgeText: "غير معروف (Unknown)",
+					color: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+				};
+		}
+	};
 
-                { formData.type === AccountType.Client && (
-                  <ClientsSearchableSelect
-                    id={ formData.parentId }
-                    isInvalid={ isInvalid("parentId") }
-                    disabled={ mode === "update" }
-                    onValueChange={ (account) =>
-                    {
-                      dispatch(slice.formActions.updateFormData({
-                        parentId: account?.id,
-                        parentName: account?.name
-                      }));
-                    } }
-                  />
-                ) }
-              </FormField>
-            ) }
+	const {badgeText, color} = getClassBadgeDetails(accountClass);
 
-            <NumberField
-              label={ t("accounts.openingBalance") }
-              value={ canShowBalance ? (formData.initialBalance || "") : "" }
-              onChange={ (val) => dispatch(slice.formActions.updateFormData({ initialBalance: val })) }
-              currency={ <CurrencyIcon /> }
-            />
-
-            <NumberField
-              label={ t("accounts.balance") }
-              disabled
-              value={ canShowBalance ? (formData.balance || "") : "" }
-              onChange={ (val) => dispatch(slice.formActions.updateFormData({ initialBalance: val })) }
-              currency={ <CurrencyIcon /> }
-            />
-          </FieldsSection>
-
-          { (requiresTaxInfo || isBank) && (
-            <FieldsSection
-              title={ isBank ? t("accounts.bankingInfo") : t("accounts.taxCommercialInfo") }
-              columns={ 2 }
-            >
-              { requiresTaxInfo && (
-                <>
-                  <TextField
-                    label={ t("accounts.vatNumber") }
-                    value={ formData.vatNumber || "" }
-                    onChange={ (e) => dispatch(slice.formActions.updateFormData({ vatNumber: e.target.value })) }
-                    dir="ltr"
-                  />
-                  <TextField
-                    label={ t("accounts.crn") }
-                    value={ formData.crn || "" }
-                    onChange={ (e) => dispatch(slice.formActions.updateFormData({ crn: e.target.value })) }
-                    dir="ltr"
-                  />
-                </>
-              ) }
-
-              { isBank && (
-                <TextField
-                  label={ t("accounts.bankAccountNumber") }
-                  value={ formData.bankAccountNumber || "" }
-                  onChange={ (e) => dispatch(slice.formActions.updateFormData({ bankAccountNumber: e.target.value })) }
-                  dir="ltr"
-                />
-              ) }
-            </FieldsSection>
-          ) }
-
-          { (requiresAddress || requiresContacts) && (
-            <div
-              className={ `grid gap-6 ${
-                requiresAddress && requiresContacts
-                  ? "grid-cols-1 md:grid-cols-2"
-                  : "grid-cols-1"
-              }` }
-            >
-              { requiresAddress && (
-                <FieldsSection title={ t("accounts.addressInfo") } columns={ 1 }>
-                  <div className="flex flex-col gap-1.5 w-full">
-                    <label className="text-sm font-medium">{ t("accounts.city") }</label>
-                    <SearchableSelect
-                      items={ cityState.entities.data ?? [] }
-                      itemLabelKey="name"
-                      itemValueKey="id"
-                      placeholder={ t("common:searchableSelect.placeholder") }
-                      value={ formData.cityId?.toString() || "" }
-                      columnsNames={ CityFilterColumns.columnsNames }
-                      onSearch={ (condition) => dispatch(CitySlice.entityActions.filter(condition)) }
-                      isLoading={ cityState.isLoading }
-                      disabled={ cityState.isLoading }
-                      onValueChange={ (val) =>
-                      {
-                        const selected = cityState.entities.data?.find(
-                          (c) => c.id.toString() === val
-                        );
-                        dispatch(slice.formActions.updateFormData({ cityId: selected?.id, city: selected }));
-                      } }
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <TextField
-                      label={ t("accounts.district") }
-                      value={ formData.district || "" }
-                      onChange={ (e) => dispatch(slice.formActions.updateFormData({ district: e.target.value })) }
-                    />
-                    <TextField
-                      label={ t("accounts.street") }
-                      value={ formData.street || "" }
-                      onChange={ (e) => dispatch(slice.formActions.updateFormData({ street: e.target.value })) }
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <TextField
-                      label={ t("accounts.buildingNumber") }
-                      value={ formData.buildingNumber || "" }
-                      onChange={ (e) => dispatch(slice.formActions.updateFormData({ buildingNumber: e.target.value })) }
-                      isInvalid={ isInvalid("buildingNumber") }
-                      error={ getError("buildingNumber") }
-                    />
-                    <TextField
-                      label={ t("accounts.postalCode") }
-                      value={ formData.postalCode || "" }
-                      onChange={ (e) => dispatch(slice.formActions.updateFormData({ postalCode: e.target.value })) }
-                      isInvalid={ isInvalid("postalCode") }
-                      error={ getError("postalCode") }
-                    />
-                  </div>
-                </FieldsSection>
-              ) }
-
-              { requiresContacts && (
-                <FieldsSection title={ t("accounts.contactNumbers") } columns={ 1 }>
-                  <div className="relative flex flex-col max-h-50 border rounded-md">
-                    <div className="space-y-3 overflow-y-auto p-3 flex-1">
-                      { formData.accountContacts?.map((contact, index) => (
-                        <div key={ index } className="flex items-center gap-3">
-                          <div className="flex-1">
-                            <Input
-                              value={ contact.number || "" }
-                              onChange={ (e) =>
-                                updateContact(index, "number", e.target.value) }
-                              placeholder="05xxxxxxxx"
-                            />
-                          </div>
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="sticky"
-                            onClick={ () =>
-                              removeContact(index) }
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )) }
-                    </div>
-
-                    <div className="sticky bottom-0 p-3 border-t">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={ addContact }
-                        className="w-full border-dashed"
-                      >
-                        <Plus className="h-4 w-4 ml-2" />
-                        { t("accounts.addContact") }
-                      </Button>
-                    </div>
-                  </div>
-                </FieldsSection>
-              ) }
-            </div>
-          ) }
-
-          <FieldsSection title={ t("accounts.additionalInfo") } columns={ 1 }>
-            <TextAreaField
-              label={ t("accounts.notes") }
-              value={ formData.notes || "" }
-              onChange={ (e) => dispatch(slice.formActions.updateFormData({ notes: e.target.value })) }
-              rows={ 3 }
-            />
-          </FieldsSection>
-        </FieldGroup>
-      </div>
-    </ChangeDialog>
-  );
+	return (
+		<div className="flex items-center justify-between w-full py-0.5 gap-4">
+			<div className="flex flex-col min-w-0 flex-1 text-right">
+				<span className="text-sm font-medium truncate">{ label }</span>
+			</div>
+			<div className="shrink-0 flex items-center">
+				<span className={ cn("text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap", color) }>
+					{ badgeText }
+				</span>
+			</div>
+		</div>
+	);
 }

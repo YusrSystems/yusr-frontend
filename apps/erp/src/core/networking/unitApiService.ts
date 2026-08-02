@@ -1,13 +1,18 @@
-import { ApiConstants, BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
+import { BaseApiService, type RequestResult, YusrApiHelper } from "yusr-ui";
 import type ServiceIds from "../data/serviceIds";
-import type Unit from "../data/unit";
+import type { UnitDto } from "../data/unit";
 
-export default class UnitsApiService extends BaseApiService<Unit>
+
+export default class UnitsApiService extends BaseApiService<UnitDto>
 {
-  routeName: string = "Units";
 
-  async GetServiceIds(): Promise<RequestResult<ServiceIds>>
-  {
-    return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/ServiceIds`);
-  }
+	constructor()
+	{
+		super("Units");
+	}
+
+	async GetServiceIds(): Promise<RequestResult<ServiceIds>>
+	{
+		return await YusrApiHelper.Get(`/api/${ this.routeName }/ServiceIds`);
+	}
 }

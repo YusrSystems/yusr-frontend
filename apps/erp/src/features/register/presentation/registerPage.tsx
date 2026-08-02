@@ -1,86 +1,47 @@
-import { useCallback, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { ApiConstants, CitySlice, CurrencySlice, ResultStatus, useValidate, YusrApiHelper, YusrBackground } from "yusr-ui";
-import type Registration from "../../../core/data/registration";
-import { logout, useAppDispatch, useAppSelector } from "../../../core/state/store";
-import { getValidationRules, nextStep, prevStep, registerAsync, reset, setErrors, setStep } from "../logic/registerSlice";
+import { YusrApiHelper, YusrBackground } from "yusr-ui";
 import { RegisterForm } from "./registerForm";
-import Welcome from "./wellcome";
+import { Services } from "@/core/services/services.ts";
+import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
+import { APP_NAME } from "../../../../appConfig.ts";
+
 
 export default function RegisterPage()
 {
-  const { t } = useTranslation("loginRegister");
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { formData, acceptPolicies, successed } = useAppSelector((state) => state.register);
+	const navigate = useNavigate();
 
-  const validationRules = getValidationRules(t);
+	const {t} = useTranslation("loginRegister");
+	useEffect(() =>
+	{
+		document.title = `${ t("register.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
-  const handleSetErrors = useCallback((errors: Record<string, string>) =>
-  {
-    dispatch(setErrors(errors as Partial<Record<keyof Registration, string>>));
-  }, [dispatch]);
+	const Logout = async () =>
+	{
+		const result = await YusrApiHelper.Post(`/api/Logout`);
 
-  const { validate } = useValidate(formData, validationRules, handleSetErrors);
+		if (result.status === 200 || result.status === 204)
+		{
+			Services.auth.logout();
+		}
+	};
 
-  useEffect(() =>
-  {
-    const Logout = async () =>
-    {
-      const result = await YusrApiHelper.Post(`${ApiConstants.baseUrl}/Logout`);
+	void Logout();
 
-      if (result.status === ResultStatus.Ok || result.status === ResultStatus.NoContent)
-      {
-        dispatch(logout());
-        dispatch(reset());
-      }
-    };
+	return (
+		<div className="flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
+			<YusrBackground/>
 
-    Logout();
-  }, [dispatch]);
-
-  const handleSubmit = async () =>
-  {
-    if (!acceptPolicies)
-    {
-      toast.error(t("register.accountInfo.acceptPoliciesError"));
-      return;
-    }
-
-    const isValid = validate();
-
-    if (!isValid)
-    {
-      toast.error(t("register.validationError"));
-      dispatch(setStep(0));
-      return;
-    }
-
-    await dispatch(registerAsync(formData as Registration));
-  };
-
-  useEffect(() =>
-  {
-    dispatch(CurrencySlice.entityActions.filter());
-    dispatch(CitySlice.entityActions.filter());
-  }, [dispatch]);
-
-  return (
-    <div className="flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-      <YusrBackground />
-      { !successed && (
-        <div className="w-full max-w-sm md:max-w-4xl">
-          <RegisterForm
-            onNextStep={ () => dispatch(nextStep()) }
-            onPrevStep={ () => dispatch(prevStep()) }
-            onSubmit={ handleSubmit }
-            onLoginClick={ () => navigate("/login") }
-          />
-        </div>
-      ) }
-      { successed && <Welcome /> }
-    </div>
-  );
+			<div className="w-full max-w-sm md:max-w-4xl">
+				<RegisterForm
+					onLoginClick={ () => navigate("/login") }
+				/>
+			</div>
+		</div>
+	);
 }

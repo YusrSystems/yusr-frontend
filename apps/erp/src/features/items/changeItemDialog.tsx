@@ -1,143 +1,172 @@
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import type { ItemDto } from "@/core/data/item";
+import Item from "@/core/data/item";
+import type ServiceIds from "@/core/data/serviceIds";
+import { Cubits } from "@/core/services/cubits";
+import { Services } from "@/core/services/services";
+import { signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Box, Database, DollarSign } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialogTabbed, DialogContent, DialogDescription, DialogHeader, DialogTitle, Loading, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import Item, { ItemSlice, ItemType, ItemValidationRules } from "../../core/data/item";
-import { PricingMethodSlice } from "../../core/data/pricingMethod";
-import { StoreSlice } from "../../core/data/store";
-import { TaxSlice } from "../../core/data/tax";
-import { UnitSlice } from "../../core/data/unit";
-import { fetchServiceIds } from "../../core/state/shared/serviceIdsSlice";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import {
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	Loading,
+	StorageType,
+	SystemPermissionsActions,
+	useStorageFile
+} from "yusr-ui";
+import { ItemType } from "@/core/data/item.ts";
 import BasicTab from "./basic/basicTab";
 import PricingTab from "./pricing/pricingTab";
 import StorageTab from "./storage/storageTab";
+
 
 const BASIC_FIELDS = ["name", "type"] as const;
 const STORAGE_FIELDS = ["itemStores"] as const;
 const PRICING_FIELDS = ["sellUnitId", "initialCost", "itemUnitPricingMethods"] as const;
 
-export default function ChangeItemDialog({
-  entity,
-  mode,
-  service,
-  onSuccess
-}: CommonChangeDialogProps<Item>)
+export default function ChangeItemDialog({dto, service, onSuccess}: CommonChangeDialogProps<ItemDto>)
 {
-  const { t } = useTranslation(["stocking", "common"]);
-  const dispatch = useAppDispatch();
-  const [initLoading, setInitLoading] = useState(false);
+	useSignals();
 
-  const initialValues = useMemo(
-    () => ({
-      type: entity?.type || ItemType.Product,
-      statusId: entity?.statusId || 1,
-      taxable: entity?.taxable ?? true,
-      taxIncluded: entity?.taxIncluded ?? false,
-      ...entity,
-      name: entity?.name || "",
-      itemUnitPricingMethods: entity?.itemUnitPricingMethods || [],
-      itemTaxes: entity?.itemTaxes || [],
-      itemStores: entity?.itemStores || [],
-      itemImages: entity?.itemImages || []
-    }),
-    [entity]
-  );
+	const {t} = useTranslation(["stocking", "common"]);
+	const servicesIds = useMemo(() => signal<ServiceIds>(), []);
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
+	const entity = useMemo(() => signal<Item>(dto ? Item.load(dto) : Item.create()), []);
+	const isLoading = useMemo(() => signal<boolean>(false), []);
 
-  const { formData, errors } = useAppSelector((state) => state.itemForm);
-  const { isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    ItemValidationRules.validationRules(t),
-    (errors) => dispatch(ItemSlice.formActions.setErrors(errors))
-  );
-  useFormInit(ItemSlice.formActions.setInitialData, initialValues);
+	useEffect(() =>
+	{
+		const fetch = async () =>
+		{
+			isLoading.value = true;
 
-  const basicHasError = BASIC_FIELDS.some((f) => isInvalid(f));
-  const storageHasError = STORAGE_FIELDS.some((f) => isInvalid(f));
-  const pricingHasError = PRICING_FIELDS.some((f) => isInvalid(f));
+			Cubits.taxes.init();
+			Cubits.pricingMethods.init();
 
-  useEffect(() =>
-  {
-    dispatch(TaxSlice.entityActions.filter());
-    dispatch(UnitSlice.entityActions.filter());
-    dispatch(PricingMethodSlice.entityActions.filter());
-    dispatch(StoreSlice.entityActions.filter());
-    dispatch(fetchServiceIds());
-  }, [dispatch]);
+			const result = await Services.unitsApi.GetServiceIds();
+			if (result.data)
+			{
+				servicesIds.value = result.data;
+			}
 
-  useEffect(() =>
-  {
-    if (mode === "update" && entity?.id)
-    {
-      setInitLoading(true);
+			if (entity.value.mode.value === ChangeableEntityMode.Update && entity.value?.id)
+			{
+				const res = await service.Get(entity.value.id.value);
+				if (res.data != undefined)
+				{
+					entity.value = Item.load(res.data);
+				}
+			}
 
-      const getItem = async () =>
-      {
-        const res = await service.Get(entity.id);
-        if (res.data != undefined)
-        {
-          dispatch(ItemSlice.formActions.setInitialData(res.data));
-        }
-        setInitLoading(false);
-      };
+			isLoading.value = false;
+		};
 
-      getItem();
-    }
-  }, [entity?.id, mode]);
+		void fetch();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []); // I left the deps array empty, it causes infinite rerenders if you put anything inside it
 
-  if (initLoading)
-  {
-    return (
-      <DialogContent dir="rtl">
-        <DialogHeader>
-          <DialogTitle>
-            { mode === "create" ? t("items.addNewTitle") : `${t("common:crudRow.edit")} ${t("items.entityName")}` }
-          </DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
-        <Loading entityName={ t("items.entityName") } />
-      </DialogContent>
-    );
-  }
+	useEffect(() =>
+	{
+		if (entity.value.mode.value === ChangeableEntityMode.Create && !entity.value.isDirty.value && Cubits.taxes.entities.value.length > 0)
+		{
+			entity.value.changeTaxable(true, Cubits.taxes.entities);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [Cubits.taxes.entities.value]); // I left the deps array like this, it causes infinite rerenders if you put anything inside it
 
-  return (
-    <ChangeDialogTabbed<Item>
-      changeDialogProps={ {
-        title: mode === "create" ? t("items.addNewTitle") : `${t("common:crudRow.edit")} ${t("items.entityName")}`,
-        className: "sm:max-w-7xl",
-        formData,
-        dialogMode: mode,
-        service,
-        onSuccess: (data) => onSuccess?.(data, mode),
-        validate
-      } }
-      tabs={ [
-        {
-          label: t("items.basicInfo"),
-          icon: Box,
-          active: true,
-          hasError: basicHasError,
-          content: <BasicTab mode={ mode } />
-        },
-        ...(formData.type !== ItemType.Service
-          ? [{
-            label: t("items.storage"),
-            icon: Database,
-            active: false,
-            hasError: storageHasError,
-            content: <StorageTab mode={ mode } />
-          }]
-          : []),
-        {
-          label: t("items.pricing"),
-          icon: DollarSign,
-          active: false,
-          hasError: pricingHasError,
-          content: <PricingTab mode={ mode } />
-        }
-      ] }
-    />
-  );
+	const {commitFiles} = useStorageFile(
+		() => entity.value.itemImages.value,
+		(v) => (entity.value.itemImages.value = v),
+		StorageType.Public
+	);
+
+	if (
+		(entity.value.mode.value === ChangeableEntityMode.Create
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Add))
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
+
+	const basicHasError = BASIC_FIELDS.some((f) => entity.value.getError(f).value)
+		|| entity.value.itemTaxes.value.some((t) => t.hasErrors)
+		|| Boolean(entity.value.getError("itemImages").value);
+	const storageHasError = STORAGE_FIELDS.some((f) => entity.value.getError(f).value)
+		|| entity.value.itemStores.value.some((t) => t.hasErrors);
+	const pricingHasError = PRICING_FIELDS.some((f) => entity.value.getError(f).value)
+		|| entity.value.itemUnitPricingMethods.value.some((t) => t.hasErrors);
+
+	const transformDataBeforeSave = async (): Promise<ItemDto> =>
+	{
+		entity.value.itemImages.value = await commitFiles(
+			entity.value.itemImages.value,
+			`Items`
+		);
+
+		return entity.value.toJson();
+	};
+
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
+		? t("items.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("items.entityName") }`;
+
+	if (isLoading.value)
+	{
+		return (
+			<ChangeDialog>
+				<ChangeDialog.Header title={ title }/>
+				<Loading entityName={ t("items.entityName") }/>
+			</ChangeDialog>
+		);
+	}
+
+	return (
+		<ChangeDialog className="sm:max-w-[80%]">
+			<ChangeDialog.Header title={ title }/>
+			<ChangeDialog.Tabbed
+				tabs={ [
+					{
+						label: t("items.basicInfo"),
+						icon: Box,
+						active: true,
+						hasError: basicHasError,
+						content: <BasicTab entity={ entity.value } serviceIds={ servicesIds }/>
+					},
+					...(entity.value.type.value !== ItemType.Service
+						? [{
+							label: t("items.storage"),
+							icon: Database,
+							active: false,
+							hasError: storageHasError,
+							content: <StorageTab entity={ entity.value }/>
+						}]
+						: []),
+					{
+						label: t("items.pricing"),
+						icon: DollarSign,
+						active: false,
+						hasError: pricingHasError,
+						content: <PricingTab entity={ entity.value }/>
+					}
+				] }
+			/>
+
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+
+				<ChangeDialog.SaveButton<Item, ItemDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+					transformData={ transformDataBeforeSave }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

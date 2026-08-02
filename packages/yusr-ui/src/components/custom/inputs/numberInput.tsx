@@ -1,105 +1,166 @@
-import { useEffect, useState } from "react";
-import { cn } from "../../../utils/cn";
-import { Input } from "../../pure/input";
+import { type Signal, signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
+import React, { useMemo } from "react";
+import { cn } from "#/utils/cn.ts";
+import { BaseInput } from "./baseInput";
+
 
 export interface NumberInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value">
 {
-  isInvalid?: boolean;
-  value?: string | number;
-  onChange?: (val: number | undefined) => void;
-  currency?: React.ReactNode;
+	error?: Signal<string | undefined>;
+	value: Signal<number | undefined>;
+	onChange?: (value: number | undefined) => void;
+	currency?: React.ReactNode;
 }
 
-export function NumberInput({ value, onChange, min, max, isInvalid, className, currency, ...props }: NumberInputProps)
+// Helper function to add commas to the integer part of the string
+const formatWithCommas = (str: string) =>
 {
-  const [localValue, setLocalValue] = useState<string | number>(value ?? "");
+	if (!str) return "";
+	const parts = str.split(".");
+	// Add commas every 3 digits, but only to the whole number part
+	parts[0] = parts[0]!.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	return parts.join(".");
+};
 
-  useEffect(() =>
-  {
-    setLocalValue(value ?? "");
-  }, [value]);
+export function NumberInput({
+	value, onChange, min, max, className, currency, onBlur, ...props
+}: NumberInputProps)
+{
+	useSignals();
 
-  const input = (
-    <Input
-      { ...props }
-      type="number"
-      min={ min }
-      max={ max }
-      value={ localValue }
-      className={ cn(
-        className,
-        currency && "pe-8",
-        isInvalid && "border-red-600 ring-red-600 text-red-900"
-      ) }
-      onChange={ (e) =>
-      {
-        const rawValue = e.target.value;
+	const localValue: Signal<string> = useMemo(
+		() => signal(value.value != undefined ? formatWithCommas(value.value.toString()) : ""),
+		[value.value]
+	);
 
-        setLocalValue(rawValue);
+	const input = (
+		<BaseInput
+			{ ...props }
+			type="text"
+			inputMode="decimal"
+			min={ min }
+			max={ max }
+			value={ localValue.value }
+			className={ cn(className, currency && "pe-8") }
+			onChange={ (inputValue) =>
+			{
+				// 0. Strip existing commas before processing
+				let rawValue = inputValue.replace(/,/g, "");
 
-        if (rawValue === "")
-        {
-          onChange?.(undefined);
-          return;
-        }
+				// 1. Normalize Arabic/Persian digits
+				rawValue = rawValue
+					.replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d).toString())
+					.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d).toString());
 
-        // Allow intermediate typing states: "-" or "-0" or "3."
-        if (rawValue === "-" || rawValue === "-0" || rawValue.endsWith("."))
-        {
-          return; // Wait for more input, don't call parent onChange yet
-        }
+				// 2. Block invalid characters
+				if (!/^-?\d*\.?\d*$/.test(rawValue))
+				{
+					// Revert to previous valid state (fixed from original slice bug)
+					const temp = localValue.value;
+					localValue.value = ""; // Force signal trigger
+					localValue.value = temp;
+					return;
+				}
 
-        let val = Number(rawValue);
+				// 3. Mid-typing states — not a number yet, just update display
+				if (!rawValue)
+				{
+					localValue.value = "";
+					value.value = 0;
+					onChange?.(0);
+					return;
+				}
 
-        if (isNaN(val))
-        {
-          return;
-        }
+				const isMidTyping =
+					rawValue === "-" ||
+					rawValue === "." ||
+					rawValue === "-." ||
+					rawValue.endsWith(".");
 
-        if (min !== undefined && val < Number(min))
-        {
-          val = Number(min);
-          setLocalValue(val);
-        }
-        if (max !== undefined && val > Number(max))
-        {
-          val = Number(max);
-          setLocalValue(val);
-        }
+				if (isMidTyping)
+				{
+					localValue.value = formatWithCommas(rawValue);
+					return;
+				}
 
-        onChange?.(val);
-      } }
-      onBlur={ (e) =>
-      {
-        // Clean up invalid trailing characters if the user clicks away
-        if (localValue === "-" || localValue === "-0")
-        {
-          setLocalValue("");
-          onChange?.(undefined);
-        }
-        else if (typeof localValue === "string" && localValue.endsWith("."))
-        {
-          const cleanVal = Number(localValue);
-          setLocalValue(isNaN(cleanVal) ? "" : cleanVal);
-        }
+				// 4. Block leading zeros ("0013" → reject, but "0", "0.5" are fine)
+				if (/^-?0\d/.test(rawValue))
+				{
+					return;
+				}
 
-        // Trigger any parent onBlur if passed
-        props.onBlur?.(e);
-      } }
-    />
-  );
+				// 5. Normalize dot-leading input (".5" → "0.5")
+				if (rawValue.startsWith(".") || rawValue.startsWith("-."))
+				{
+					const sign = rawValue.startsWith("-") ? "-" : "";
+					rawValue = sign + "0." + rawValue.slice(sign ? 2 : 1);
+				}
 
-  if (!currency)
-  {
-    return input;
-  }
+				// 6. Normal number — parse, clamp, commit
+				let val = Number(rawValue);
+				if (isNaN(val))
+				{
+					localValue.value = "";
+					value.value = undefined;
+					onChange?.(undefined);
+					return;
+				}
 
-  return (
-    <div className="relative flex items-center">
-      <div className="absolute end-3 flex items-center pointer-events-none text-muted-foreground">
-        { currency }
-      </div>
-      { input }
-    </div>
-  );
+				let clampedVal = val;
+				let wasClamped = false;
+
+				if (min !== undefined && val < Number(min))
+				{
+					clampedVal = Number(min);
+					wasClamped = true;
+				}
+				if (max !== undefined && val > Number(max))
+				{
+					clampedVal = Number(max);
+					wasClamped = true;
+				}
+
+				// If the number was clamped, we format the clamped value.
+				// If NOT clamped, we format the `rawValue` string directly.
+				// This prevents bugs where typing "1.0" immediately deletes the ".0".
+				localValue.value = wasClamped
+					? formatWithCommas(String(clampedVal))
+					: formatWithCommas(rawValue);
+
+				value.value = clampedVal;
+				onChange?.(clampedVal);
+			} }
+			onBlur={ (e) =>
+			{
+				// Strip commas on blur check just in case
+				const unformattedEventValue = e.target.value.replace(/,/g, "");
+				if (!unformattedEventValue && min != undefined)
+				{
+					if (0 >= Number(min))
+					{
+						value.value = 0;
+						localValue.value = formatWithCommas("0");
+					}
+					else
+					{
+						value.value = Number(min);
+						localValue.value = formatWithCommas(String(min));
+					}
+				}
+				onBlur?.(e);
+			} }
+		/>
+	);
+
+	if (!currency) return input;
+
+	return (
+		<div className="relative flex items-center">
+			<div className="absolute end-3 flex items-center pointer-events-none text-muted-foreground">
+				{ currency }
+			</div>
+			{ input }
+		</div>
+	);
 }

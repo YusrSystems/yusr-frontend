@@ -1,68 +1,86 @@
-import { useMemo } from "react";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, NumberField, SelectField, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import { type Tax, TaxSlice, TaxValidationRules } from "../../core/data/tax";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import {
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	FieldsSection,
+	NumberField,
+	SelectField,
+	SystemPermissionsActions,
+	TextField
+} from "yusr-ui";
+import { Tax, TaxDto } from "@/core/data/tax.ts";
+import { useMemo } from "react";
+import { signal } from "@preact/signals-react";
 
-export default function ChangeTaxDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Tax>)
+
+export default function ChangeTaxDialog({dto, service, onSuccess}: CommonChangeDialogProps<TaxDto>)
 {
-  const { t } = useTranslation(["accounting", "common"]);
-  const dispatch = useAppDispatch();
-  const initialValues = useMemo(() => ({ isPrimary: false, ...entity }), [entity]);
+	useSignals();
+	const {t} = useTranslation(["accounting", "common"]);
 
-  const { formData, errors } = useAppSelector((state) => state.taxForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    TaxValidationRules.validationRules(t),
-    (errors) => dispatch(TaxSlice.formActions.setErrors(errors))
-  );
-  useFormInit(TaxSlice.formActions.setInitialData, initialValues);
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
+	const entity = useMemo(() => signal<Tax>(dto ? Tax.load(dto) : Tax.create()), []);
 
-  const title = mode === "create" ? t("taxes.addNewTitle") : `${t("common:crudRow.edit")} ${t("taxes.entityName")}`;
+	if (
+		(entity.value.mode.value === ChangeableEntityMode.Create
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Add))
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-  return (
-    <ChangeDialog<Tax>
-      title={ title }
-      className="sm:max-w-lg"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-    >
-      <FieldGroup>
-        <div className="grid grid-cols-2 gap-4">
-          <TextField
-            label={ t("taxes.taxName") }
-            required
-            value={ formData.name || "" }
-            onChange={ (e) => dispatch(TaxSlice.formActions.updateFormData({ name: e.target.value })) }
-            isInvalid={ isInvalid("name") }
-            error={ getError("name") }
-          />
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
+		? t("taxes.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("taxes.entityName") }`;
 
-          <NumberField
-            label={ t("taxes.percentage") }
-            required
-            min={ 0 }
-            max={ 100 }
-            value={ formData.percentage ?? 0 }
-            onChange={ (value) => dispatch(TaxSlice.formActions.updateFormData({ percentage: Number(value) })) }
-            isInvalid={ isInvalid("percentage") }
-            error={ getError("percentage") }
-          />
-        </div>
+	return (
+		<ChangeDialog className="sm:max-w-lg">
+			<ChangeDialog.Header title={ title }/>
 
-        <SelectField
-          label={ t("taxes.isPrimary") }
-          value={ formData.isPrimary ? "yes" : "no" }
-          onValueChange={ (val) => dispatch(TaxSlice.formActions.updateFormData({ isPrimary: val === "yes" })) }
-          required={ true }
-          options={ [{ label: t("common:yes"), value: "yes" }, { label: t("common:no"), value: "no" }] }
-        />
-      </FieldGroup>
-    </ChangeDialog>
-  );
+			<FieldGroup>
+				<TextField
+					label={ t("taxes.taxName") }
+					required
+					value={ entity.value.name }
+					error={ entity.value.getError("name") }
+				/>
+				<FieldsSection columns={ 2 }>
+					<NumberField
+						label={ t("taxes.percentage") }
+						required
+						min={ 1 }
+						max={ 100 }
+						value={ entity.value.percentage }
+						error={ entity.value.getError("percentage") }
+					/>
+					<SelectField
+						label={ t("taxes.isPrimary") }
+						value={ entity.value.isPrimary }
+						required
+						options={ [{label: t("common:yes"), value: true}, {label: t("common:no"), value: false}] }
+					/>
+				</FieldsSection>
+			</FieldGroup>
+
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+
+				<ChangeDialog.SaveButton<Tax, TaxDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) =>
+					{
+						onSuccess?.(data, entity.value.mode.value);
+					} }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

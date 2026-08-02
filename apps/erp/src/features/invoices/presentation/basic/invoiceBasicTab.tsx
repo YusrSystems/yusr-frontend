@@ -1,47 +1,61 @@
-import { SystemPermissions, SystemPermissionsActions } from "yusr-ui";
-import { SystemPermissionsResources } from "../../../../core/auth/systemPermissionsResources";
-import { InvoiceType } from "../../../../core/data/invoice";
-import StoreItemSelector from "../../../items/storeItemSelector";
-import { useInvoiceContext } from "../../logic/invoiceContext";
-import InvoiceProfitDialog from "../profit/InvoiceProfitDialog";
+import { InvoiceType } from "@/core/types/invoiceType.ts";
+import { SystemPermissionsActions } from "yusr-ui";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import InvoicePayments from "../payments/invoicePayments";
 import InvoiceBasicInfo from "./invoiceBasicInfo";
 import InvoiceGlobalSettlements from "./invoiceGlobalSettlements";
-import InvoiceItemsSummary from "./invoiceItemsSummary";
 import InvoiceItemsTable from "./invoiceItemsTable";
+import InvoiceSummary from "./invoiceSummary";
+import { Services } from "@/core/services/services.ts";
+import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
+import StoreItemSelector from "@/features/items/storeItemSelector.tsx";
+import { useSignals } from "@preact/signals-react/runtime";
+import { useEffect } from "react";
+import { Cubits } from "@/core/services/cubits.ts";
+import { PartnerType } from "@/core/data/partner.ts";
 
-export default function InvoiceBasicTab()
+
+export default function InvoiceBasicTab({invoice}: { invoice: Invoice })
 {
-  const {
-    mode,
-    formData,
-    slice,
-    authState,
-    dispatch,
-    disabled
-  } = useInvoiceContext();
+	useSignals();
 
-  return (
-    <div className="flex flex-col gap-6">
-      <InvoiceBasicInfo />
-      { !(disabled || mode === "return") && (
-        <StoreItemSelector onSelect={ (item) => dispatch(slice.formActions.addItem(item)) } />
-      ) }
-      <InvoiceItemsTable />
-      <div className="flex flex-col-reverse lg:flex-row items-stretch gap-3">
-        { SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
-          SystemPermissionsResources.InvoiceAddSettlement,
-          SystemPermissionsActions.Get
-        ) && <InvoiceGlobalSettlements /> }
+	useEffect(() =>
+	{
+		Cubits.partners.init(invoice.type.value == InvoiceType.Purchase || invoice.type.value == InvoiceType.PurchaseReturn ? [PartnerType.Supplier] : [PartnerType.Customer]);
+	}, [invoice]);
 
-        { SystemPermissions.hasAuth(
-          authState.loggedInUser?.role?.permissions ?? [],
-          SystemPermissionsResources.InvoiceShowProfit,
-          SystemPermissionsActions.Get
-        ) && (formData.type === InvoiceType.Sell || formData.type === InvoiceType.Quotation)
-          && <InvoiceProfitDialog /> }
-        <InvoiceItemsSummary />
-      </div>
-    </div>
-  );
+	return (
+		<div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+			{ /* LEFT WORKSPACE */ }
+			<div className="xl:col-span-8 2xl:col-span-9 space-y-4 min-w-0">
+				<InvoiceBasicInfo invoice={ invoice }/>
+
+				{ !invoice.isDisabled && invoice.invoiceMode.value !== InvoiceMode.Return && (
+					<StoreItemSelector
+						storeId={ invoice.storeId }
+						onSelect={ (item) =>
+						{
+							invoice.addItem(item);
+							invoice.syncPaymentVouchers();
+						} }
+					/>
+				) }
+
+				<InvoiceItemsTable invoice={ invoice }/>
+			</div>
+
+			{ /* RIGHT SIDEBAR */ }
+			<div className="xl:col-span-4 2xl:col-span-3">
+				<div className="sticky top-4 space-y-4">
+					{ Services.auth.hasAuth(
+						SystemPermissionsResources.InvoiceAddSettlement,
+						SystemPermissionsActions.Get
+					) && <InvoiceGlobalSettlements invoice={ invoice }/> }
+
+					<InvoiceSummary invoice={ invoice }/>
+					{ invoice.type.value !== InvoiceType.Quotation && <InvoicePayments invoice={ invoice }/> }
+				</div>
+			</div>
+		</div>
+	);
 }

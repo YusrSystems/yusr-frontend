@@ -1,18 +1,32 @@
-import { BaseInput, type BaseInputProps } from "../inputs/baseInput";
-import { FormField } from "./formField";
+import { BaseInput, BaseInputOld, type BaseInputProps, type BaseInputPropsOld } from "../inputs/baseInput";
+import { FormField, FormFieldOld, type FormFieldProps } from "./formField";
 
-export interface InputFieldProps extends BaseInputProps
+export interface InputFieldPropsOld extends BaseInputPropsOld
 {
   label: string;
   error?: string;
   required?: boolean;
 }
 
-export function InputField({ label, error, isInvalid, required, ...props }: InputFieldProps)
+export type InputFieldProps = BaseInputProps & FormFieldProps;
+
+export function InputFieldOld({ label, error, isInvalid, required, ...props }: InputFieldPropsOld)
 {
   return (
-    <FormField label={ label } error={ error } isInvalid={ isInvalid } required={ required }>
-      <BaseInput { ...props } isInvalid={ isInvalid } />
+    <FormFieldOld label={ label } error={ error } isInvalid={ isInvalid } required={ required }>
+      <BaseInputOld { ...props } isInvalid={ isInvalid } />
+    </FormFieldOld>
+  );
+}
+
+export function InputField({ label, error, required, ...props }: InputFieldProps)
+{
+  return (
+    <FormField label={ label } error={ error } required={ required }>
+      <BaseInput
+        error={ error }
+        { ...props }
+      />
     </FormField>
   );
 }

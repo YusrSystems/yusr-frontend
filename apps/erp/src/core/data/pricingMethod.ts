@@ -1,46 +1,23 @@
-import { type TFunction } from "i18next";
-import { BaseEntity, type ColumnName, createGenericDialogSlice, createGenericEntitySlice, createGenericFormSlice, type ValidationRule, Validators } from "yusr-ui";
-import PricingMethodsApiService from "../networking/PricingMethodsApiService";
+import type { Signal } from "@preact/signals-react";
+import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
 
-export default class PricingMethod extends BaseEntity
+export class PricingMethodDto extends Dto
 {
   public name!: string;
+}
 
-  constructor(init?: Partial<PricingMethod>)
+export default class PricingMethod extends ChangeableEntity<PricingMethodDto>
+{
+  public name: Signal<string>;
+
+  constructor(dto: Partial<PricingMethodDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
   {
-    super();
-    Object.assign(this, init);
+    super(dto, [{
+      field: "name",
+      selector: (d) => d.name,
+      validators: [Validators.required(i18n.t("stocking:pricingMethods.nameRequired"))]
+    }], mode);
+
+    this.name = this.assign("name", dto?.name ?? "");
   }
-}
-
-export class PricingMethodFilterColumns
-{
-  public static columnsNames = (t: TFunction<"stocking">): ColumnName<PricingMethod>[] => [{
-    label: t("pricingMethods.methodName"),
-    value: "name"
-  }];
-}
-
-export class PricingMethodValidationRules
-{
-  public static validationRules = (t: TFunction<"stocking">): ValidationRule<Partial<PricingMethod>>[] => [{
-    field: "name",
-    selector: (d) => d.name,
-    validators: [Validators.required(t("pricingMethods.nameRequired"))]
-  }];
-}
-
-export class PricingMethodSlice
-{
-  private static entitySliceInstance = createGenericEntitySlice("pricingMethod", new PricingMethodsApiService());
-  public static entityActions = PricingMethodSlice.entitySliceInstance.actions;
-  public static entityReducer = PricingMethodSlice.entitySliceInstance.reducer;
-
-  private static dialogSliceInstance = createGenericDialogSlice<PricingMethod>("pricingMethodDialog");
-  public static dialogActions = PricingMethodSlice.dialogSliceInstance.actions;
-  public static dialogReducer = PricingMethodSlice.dialogSliceInstance.reducer;
-
-  private static formSliceInstance = createGenericFormSlice<PricingMethod>("pricingMethodForm");
-  public static formActions = PricingMethodSlice.formSliceInstance.actions;
-  public static formReducer = PricingMethodSlice.formSliceInstance.reducer;
 }

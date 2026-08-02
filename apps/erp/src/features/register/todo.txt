@@ -1,0 +1,11 @@
+- use new state framework 
+    - create registration dto (only needed fields) ✅
+    - create entity ✅
+    - add validations ✅
+    - create states ✅
+    - create cubit ✅
+    - logic:
+        - main company info
+        - cities (Repository)
+        - currencies (Repository)
+- change prev translation into new one (i18n.t) 

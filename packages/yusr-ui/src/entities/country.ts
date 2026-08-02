@@ -1,28 +1,22 @@
-import { CountriesApiService } from "../networking";
-import { createGenericEntitySlice } from "../state";
-import type { ColumnName } from "../types/ColumnName";
-import { BaseEntity } from "./baseEntity";
+import type { Signal } from "@preact/signals-react";
+import { Dto, Entity } from "#/stateManager";
 
-export class Country extends BaseEntity
+
+export class CountryDto extends Dto
 {
-  public name!: string;
-  public code!: string;
-
-  constructor(init?: Partial<Country>)
-  {
-    super();
-    Object.assign(this, init);
-  }
+	public name!: string;
+	public code!: string;
 }
 
-export class CountryFilterColumns
+export class Country extends Entity<CountryDto>
 {
-  public static columnsNames: ColumnName<Country>[] = [{ label: "", value: "name" }];
-}
+	public name!: Signal<string>;
+	public code!: Signal<string>;
 
-export class CountrySlice
-{
-  private static entitySliceInstance = createGenericEntitySlice<Country>("country", new CountriesApiService());
-  public static entityActions = CountrySlice.entitySliceInstance.actions;
-  public static entityReducer = CountrySlice.entitySliceInstance.reducer;
+	constructor(dto?: Partial<CountryDto> | undefined)
+	{
+		super();
+		this.name = this.assign("name", dto?.name ?? "");
+		this.code = this.assign("code", dto?.code ?? "");
+	}
 }

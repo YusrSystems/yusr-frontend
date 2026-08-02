@@ -1,54 +1,62 @@
-import { useMemo } from "react";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import Unit, { UnitDto } from "@/core/data/unit";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import type { CommonChangeDialogProps } from "yusr-ui";
-import { ChangeDialog, FieldGroup, TextField, useFormErrors, useFormInit, useValidate } from "yusr-ui";
-import type Unit from "../../core/data/unit";
-import { UnitSlice, UnitValidationRules } from "../../core/data/unit";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import {
+	ChangeableEntityMode,
+	ChangeDialog,
+	type CommonChangeDialogProps,
+	FieldGroup,
+	SystemPermissionsActions,
+	TextField
+} from "yusr-ui";
+import { useMemo } from "react";
+import { signal } from "@preact/signals-react";
 
-export default function ChangeUnitDialog({
-  entity,
-  mode,
-  service,
-  onSuccess
-}: CommonChangeDialogProps<Unit>)
+
+export default function ChangeUnitDialog({dto, service, onSuccess}: CommonChangeDialogProps<UnitDto>)
 {
-  const { t } = useTranslation(["stocking", "common"]);
-  const dispatch = useAppDispatch();
-  const initialValues = useMemo(() => ({ ...entity, name: entity?.name || "" }), [entity]);
+	useSignals();
+	const {t} = useTranslation(["stocking", "common"]);
 
-  const { formData, errors } = useAppSelector((state) => state.unitForm);
-  const { getError, isInvalid } = useFormErrors(errors);
-  const { validate } = useValidate(
-    formData,
-    UnitValidationRules.validationRules(t),
-    (errors) => dispatch(UnitSlice.formActions.setErrors(errors))
-  );
-  useFormInit(UnitSlice.formActions.setInitialData, initialValues);
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
+	const entity = useMemo(() => signal<Unit>(dto ? Unit.load(dto) : Unit.create()), []);
 
-  const title = mode === "create" ? t("units.addNewTitle") : `${t("common:crudRow.edit")} ${t("units.entityName")}`;
+	if (
+		(entity.value.mode.value === ChangeableEntityMode.Create
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Add))
+		|| (entity.value.mode.value === ChangeableEntityMode.Update
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
-  return (
-    <ChangeDialog<Unit>
-      title={ title }
-      className="sm:max-w-md"
-      formData={ formData }
-      dialogMode={ mode }
-      service={ service }
-      disable={ () => false }
-      onSuccess={ (data) => onSuccess?.(data, mode) }
-      validate={ validate }
-    >
-      <FieldGroup>
-        <TextField
-          label={ t("units.unitName") }
-          required
-          value={ formData.name || "" }
-          onChange={ (e) => dispatch(UnitSlice.formActions.updateFormData({ name: e.target.value })) }
-          isInvalid={ isInvalid("name") }
-          error={ getError("name") }
-        />
-      </FieldGroup>
-    </ChangeDialog>
-  );
+	const title = entity.value.mode.value === ChangeableEntityMode.Create
+		? t("units.addNewTitle")
+		: `${ t("common:crudRow.edit") } ${ t("units.entityName") }`;
+
+	return (
+		<ChangeDialog className="sm:max-w-lg">
+			<ChangeDialog.Header title={ title }/>
+			<FieldGroup>
+				<TextField
+					label={ t("units.unitName") }
+					required
+					value={ entity.value.name }
+					error={ entity.value.getError("name") }
+				/>
+			</FieldGroup>
+			<ChangeDialog.Footer>
+				<ChangeDialog.Close/>
+
+				<ChangeDialog.SaveButton<Unit, UnitDto>
+					entity={ entity }
+					service={ service }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+				/>
+			</ChangeDialog.Footer>
+		</ChangeDialog>
+	);
 }

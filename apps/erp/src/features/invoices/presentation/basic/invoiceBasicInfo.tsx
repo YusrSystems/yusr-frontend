@@ -1,222 +1,146 @@
-import ClientsSearchableSelect from "@/core/components/searchableSelect/clientsSearchableSelect";
-import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
-import SuppliersSearchableSelect from "@/core/components/searchableSelect/suppliersSearchableSelect";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Checkbox, DateField, FieldsSection, FormField, SelectField, TextField } from "yusr-ui";
-import Account from "../../../../core/data/account";
-import { ImportExportType, InvoiceType } from "../../../../core/data/invoice";
-import { useInvoiceContext } from "../../logic/invoiceContext";
+import { CheckboxField, DateField, FieldsSection, FormField, SelectField, TextField } from "yusr-ui";
+import Invoice, { InvoiceMode } from "@/core/data/invoices/invoice.ts";
+import { signal, useComputed } from "@preact/signals-react";
+import { Services } from "@/core/services/services.ts";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
+import { InvoiceType } from "@/core/types/invoiceType.ts";
+import { ImportExportType } from "@/core/types/importExportType.ts";
+import { useSignals } from "@preact/signals-react/runtime";
+import { type PartnerDto, PartnerType } from "@/core/data/partner.ts";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 
-export default function InvoiceBasicInfo()
+
+export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 {
-  const { t } = useTranslation("accounting");
-  const {
-    mode,
-    formData,
-    isInvalid,
-    getError,
-    slice,
-    authState,
-    dispatch,
-    accountState
-  } = useInvoiceContext();
-  let selectedAccount: Account | undefined = accountState.entities?.data?.find((account) =>
-    account.id === formData.actionAccountId
-  );
+	useSignals();
+	const {t} = useTranslation("accounting");
+	const selectedPartner = useMemo(() => signal<PartnerDto | undefined>(), []);
 
-  const canBeExportInvoice = () =>
-  {
-    const accountCountryId: number | undefined = selectedAccount?.city?.countryId;
-    const settingsCountryId: number | undefined = authState.setting?.branch?.city?.countryId;
+	const invoiceOrigin = useComputed(() =>
+	{
+		const partnerCountryId = selectedPartner.value?.city?.countryId;
+		const settingsCountryId = Services.auth.setting?.branch?.value?.city.value?.countryId.value;
 
-    if (accountCountryId == undefined || settingsCountryId == undefined)
-    {
-      return false;
-    }
-    else
-    {
-      return ((formData.type === InvoiceType.Purchase || formData.type === InvoiceType.PurchaseReturn)
-        && accountCountryId !== settingsCountryId);
-    }
-  };
+		if (partnerCountryId == undefined || settingsCountryId == undefined)
+		{
+			return {canBeExportInvoice: false, canBeImportInvoice: false};
+		}
 
-  const canBeImportInvoice = () =>
-  {
-    const accountCountryId: number | undefined = selectedAccount?.city?.countryId;
-    const settingsCountryId: number | undefined = authState.setting?.branch?.city?.countryId;
+		const isCrossBorder = partnerCountryId !== settingsCountryId;
 
-    if (accountCountryId == undefined || settingsCountryId == undefined)
-    {
-      return false;
-    }
-    else
-    {
-      return ((formData.type === InvoiceType.Sell || formData.type === InvoiceType.SellReturn
-        || formData.type === InvoiceType.Quotation)
-        && accountCountryId !== settingsCountryId);
-    }
-  };
+		return {
+			canBeExportInvoice: isCrossBorder
+				&& (invoice.type.value === InvoiceType.Sell || invoice.type.value === InvoiceType.PurchaseReturn || invoice.type.value === InvoiceType.Quotation),
 
-  useEffect(() =>
-  {
-    if (canBeExportInvoice())
-    {
-      dispatch(
-        slice.formActions.updateFormData({
-          importExportType: ImportExportType.ImportAccordingToTheReverseChargeMechanism
-        })
-      );
-    }
-    else
-    {
-      dispatch(slice.formActions.updateFormData({ importExportType: undefined }));
-    }
-  }, [canBeExportInvoice()]);
+			canBeImportInvoice: isCrossBorder
+				&& (invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.SellReturn)
+		};
+	});
 
-  const isPurchaseInvoice = () =>
-    formData.type === InvoiceType.Purchase || formData.type === InvoiceType.PurchaseReturn;
+	useEffect(() =>
+	{
+		if (invoiceOrigin.value.canBeExportInvoice)
+		{
+			invoice.importExportType.value = ImportExportType.Export;
+		}
+		else if (invoiceOrigin.value.canBeImportInvoice)
+		{
+			invoice.importExportType.value = ImportExportType.ImportAccordingToTheReverseChargeMechanism;
+		}
+		else
+		{
+			invoice.importExportType.value = undefined;
+		}
+	}, [invoice.importExportType, invoiceOrigin.value]);
 
-  return (
-    <FieldsSection columns={ { base: 1, md: 2, lg: 4 } }>
-      { (formData.type === InvoiceType.Sell || formData.type === InvoiceType.Quotation) && (
-        <SelectField
-          label={ t("invoices.invoiceType") }
-          required
-          value={ formData.type?.toString() || "" }
-          onValueChange={ (val) => dispatch(slice.formActions.updateFormData({ type: Number(val) as InvoiceType })) }
-          isInvalid={ isInvalid("type") }
-          error={ getError("type") }
-          disabled={ mode === "update" || mode === "return" }
-          options={ [{ label: t("invoices.sellInvoice"), value: InvoiceType.Sell.toString() }, {
-            label: t("invoices.quotation"),
-            value: InvoiceType.Quotation.toString()
-          }] }
-        />
-      ) }
+	return (
+		<FieldsSection columns={ {base: 1, md: 2, lg: 4} }>
 
-      { (mode === "update" || mode === "return") && (
-        <TextField
-          label={ t("invoices.invoiceDate") }
-          required
-          value={ formData.date ? new Date(formData.date).toISOString().split("T")[0] : "" }
-          isInvalid={ isInvalid("date") }
-          error={ getError("date") }
-          disabled
-        />
-      ) }
+			<DateField
+				label={ t("invoices.invoiceDate") }
+				required
+				value={ invoice.date }
+				error={ invoice.getError("date") }
+				disabled={ invoice.type.value !== InvoiceType.Quotation }
+			/>
 
-      { mode === "create" && (
-        <DateField
-          label={ t("invoices.invoiceDate") }
-          required
-          value={ formData.date ? new Date(formData.date) : undefined }
-          onChange={ (e) => dispatch(slice.formActions.updateFormData({ date: e })) }
-          isInvalid={ isInvalid("date") }
-          error={ getError("date") }
-        />
-      ) }
+			<FormField
+				label={ t("invoices.store") }
+				required
+				error={ invoice.getError("storeId") }
+			>
+				<StoresSearchableSelect
+					id={ invoice.storeId }
+					label={ invoice.storeName }
+					disabled={ invoice.isDisabled }
+					onSelect={ () =>
+					{
+						invoice.invoiceItems.value = [];
+						invoice.paymentVouchers.value = [];
+					} }
+				/>
+			</FormField>
 
-      <FormField
-        label={ t("invoices.store") }
-        required
-        isInvalid={ isInvalid("storeId") }
-        error={ getError("storeId") }
-      >
-        <StoresSearchableSelect
-          id={ formData.storeId }
-          isInvalid={ isInvalid("storeId") }
-          onValueChange={ (store) =>
-          {
-            dispatch(
-              slice.formActions.updateFormData({ storeId: store?.id, storeName: store?.name, invoiceItems: [] })
-            );
-          } }
-        />
-      </FormField>
+			<FormField
+				label={ (invoice.type.value === InvoiceType.Sell || invoice.type.value === InvoiceType.SellReturn) ? t("vouchers.customer", "العميل") : t("vouchers.supplier", "المورد") }
+				required
+				error={ invoice.getError("partnerId") }
+			>
+				<PartnersSearchableSelect
+					id={ invoice.partnerId }
+					label={ invoice.partnerName }
+					disabled={ invoice.isDisabled }
+					onSelect={ (account) =>
+					{
+						selectedPartner.value = account;
+					} }
+					types={ invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.PurchaseReturn ? [PartnerType.Supplier] : [PartnerType.Customer] }
+				/>
+			</FormField>
 
-      <FormField
-        label={ t("invoices.account") }
-        required
-        isInvalid={ isInvalid("actionAccountId") }
-        error={ getError("actionAccountId") }
-      >
-        { isPurchaseInvoice() && (
-          <SuppliersSearchableSelect
-            id={ formData.actionAccountId }
-            isInvalid={ isInvalid("actionAccountId") }
-            onValueChange={ (account) =>
-            {
-              selectedAccount = account;
-              dispatch(
-                slice.formActions.updateFormData({ actionAccountId: account?.id, actionAccountName: account?.name })
-              );
-            } }
-          />
-        ) }
+			<TextField
+				label={ t("invoices.relatedInvoiceNumber") }
+				disabled
+				value={ invoice.originalInvoiceId }
+			/>
 
-        { !isPurchaseInvoice() && (
-          <ClientsSearchableSelect
-            id={ formData.actionAccountId }
-            isInvalid={ isInvalid("actionAccountId") }
-            onValueChange={ (account) =>
-            {
-              selectedAccount = account;
-              dispatch(
-                slice.formActions.updateFormData({ actionAccountId: account?.id, actionAccountName: account?.name })
-              );
-            } }
-          />
-        ) }
-      </FormField>
+			{
+				/* <TextField
+				 label={ t("invoices.delegateEmployee") }
+				 value={ formData.delegateEmp || "" }
+				 onChange={ (e) => dispatch(slice.formActions.updateFormData({ delegateEmp: e.target.value })) }
+				 /> */
+			}
 
-      <TextField
-        label={ t("invoices.relatedInvoiceNumber") }
-        disabled
-        value={ formData.originalInvoiceId || "" }
-        onChange={ () =>
-        {} }
-      />
+			{ invoiceOrigin.value.canBeExportInvoice && (
+				<SelectField<ImportExportType>
+					label={ t("invoices.importInvoice") }
+					required
+					disabled={ invoice.invoiceMode.value === InvoiceMode.Return }
+					value={ invoice.importExportType }
+					error={ invoice.getError("importExportType") }
+					options={ [{
+						label: t("invoices.importReverseCharge"),
+						value: ImportExportType.ImportAccordingToTheReverseChargeMechanism
+					}, {
+						label: t("invoices.importCustomsPaid"),
+						value: ImportExportType.ImportPaidForCustoms
+					}] }
+				/>
+			) }
 
-      <TextField
-        label={ t("invoices.delegateEmployee") }
-        value={ formData.delegateEmp || "" }
-        onChange={ (e) => dispatch(slice.formActions.updateFormData({ delegateEmp: e.target.value })) }
-      />
+			{ invoiceOrigin.value.canBeImportInvoice && (
+				<CheckboxField checked label={ t("invoices.exportInvoice") }/>
+			) }
 
-      { canBeExportInvoice() && (
-        <SelectField
-          label={ t("invoices.importInvoice") }
-          required
-          disabled={ mode === "return" }
-          value={ formData.importExportType?.toString() || "" }
-          onValueChange={ (val) =>
-            dispatch(slice.formActions.updateFormData({ importExportType: Number(val) as ImportExportType })) }
-          isInvalid={ isInvalid("importExportType") }
-          error={ getError("importExportType") }
-          options={ [{ label: t("invoices.importReverseCharge"), value: "2" }, {
-            label: t("invoices.importCustomsPaid"),
-            value: "3"
-          }] }
-        />
-      ) }
-
-      { canBeImportInvoice() && (
-        <div className="flex items-center gap-2 mt-6 border bg-primary/5 rounded-lg px-2">
-          <Checkbox id="importInvoice" checked disabled />
-          <label htmlFor="importInvoice" className="text-sm font-bold">
-            { t("invoices.exportInvoice") }
-          </label>
-        </div>
-      ) }
-
-      <div className="col-span-1 md:col-span-2 lg:col-span-4">
-        <TextField
-          label={ t("invoices.notes") }
-          value={ formData.notes || "" }
-          onChange={ (e) => dispatch(slice.formActions.updateFormData({ notes: e.target.value })) }
-        />
-      </div>
-    </FieldsSection>
-  );
+			<div className="col-span-1 md:col-span-2 lg:col-span-4">
+				<TextField
+					label={ t("invoices.notes") }
+					value={ invoice.notes }
+				/>
+			</div>
+		</FieldsSection>
+	);
 }

@@ -1,36 +1,58 @@
-import { useSelector } from "react-redux";
-import { Role, RoleFilterColumns, RoleSlice } from "../../../entities";
-import { useAppDispatch, type YusrRootState } from "../../../state";
-import { type EntitySearchableSelectParams, SearchableSelect } from "./searchableSelect";
+import { useSignals } from "@preact/signals-react/runtime";
+import React from "react";
+import { RoleDto } from "#/entities";
+import { BaseCubits } from "#/services";
+import { PageLoaded, PageLoading } from "#/stateManager";
+import { SearchableSelect, type SearchableSelectOptionProps, type SearchableSelectProps } from "./searchableSelect";
 
-export function RolesSearchableSelect(
-  { id, disabled, isInvalid, onValueChange }: EntitySearchableSelectParams<Role>
-)
+
+export function RolesSearchableSelect({...props}: SearchableSelectProps<RoleDto>)
 {
-  const roleState = useSelector((state: YusrRootState) => state.role);
-  const dispatch = useAppDispatch();
+	useSignals();
 
-  return (
-    <SearchableSelect<Role>
-      items={ roleState.entities?.data ?? [] }
-      itemLabelKey="name"
-      itemValueKey="id"
-      value={ id?.toString() || "" }
-      columnsNames={ RoleFilterColumns.columnsNames }
-      onSearch={ (condition) => dispatch(RoleSlice.entityActions.filter(condition)) }
-      isLoading={ roleState.isLoading }
-      disabled={ roleState.isLoading || disabled }
-      isInvalid={ isInvalid }
-      onValueChange={ (val) =>
-      {
-        const selected = (roleState.entities?.data)?.find(
-          (t: Role) => t.id.toString() === val
-        );
-        if (selected)
-        {
-          onValueChange(selected);
-        }
-      } }
-    />
-  );
+	return (
+		<SearchableSelect>
+			<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
+			<SearchableSelect.Content>
+				<SearchableSelect.SearchInput onSearch={ (searchInput) => BaseCubits.roles.search(searchInput) }/>
+				<SearchableSelect.Command>
+					<SearchableSelect.NullOption { ...props } />
+					<CommandItems/>
+				</SearchableSelect.Command>
+			</SearchableSelect.Content>
+		</SearchableSelect>
+	);
+
+	function CommandItems()
+	{
+		useSignals();
+		if (BaseCubits.roles.state.value instanceof PageLoading)
+		{
+			return <SearchableSelect.Loading/>;
+		}
+
+		if (BaseCubits.roles.state.value instanceof PageLoaded && BaseCubits.roles.entities.value.length > 0)
+		{
+			return BaseCubits.roles.entities.value.map((entity) => (
+				<Option key={ entity.id } item={ entity } { ...props } />
+			));
+		}
+
+		return <SearchableSelect.Empty/>;
+	}
 }
+
+const Option = React.memo(
+	function Option({...props}: Omit<SearchableSelectOptionProps<RoleDto>, "labelSelector">)
+	{
+		useSignals();
+		return (
+			<SearchableSelect.Option<RoleDto>
+				labelSelector="name"
+				{ ...props }
+			>
+				<SearchableSelect.OptionBody label={ props.item.name }/>
+			</SearchableSelect.Option>
+		);
+	}
+);

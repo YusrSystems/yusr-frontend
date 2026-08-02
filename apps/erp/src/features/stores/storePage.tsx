@@ -1,75 +1,168 @@
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import { type StoreDto } from "@/core/data/store";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
 import { Warehouse } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CrudPage, selectPermissionsByResource, SystemPermissions, SystemPermissionsActions } from "yusr-ui";
-import { SystemPermissionsResources } from "../../core/auth/systemPermissionsResources";
-import type Store from "../../core/data/store";
-import { StoreFilterColumns, StoreSlice } from "../../core/data/store";
-import StoresApiService from "../../core/networking/storeApiService";
-import { useAppDispatch, useAppSelector } from "../../core/state/store";
+import {
+	ChangeableEntityMode,
+	CrudPage,
+	PageError,
+	PageLoaded,
+	PageLoading,
+	SystemPermissionsActions,
+	TablePreview,
+	UnauthorizedPage
+} from "yusr-ui";
 import ChangeStoreDialog from "./changeStoreDialog";
+import { Cubits } from "@/core/services/cubits";
+import { APP_NAME } from "../../../appConfig.ts";
+
 
 export default function StoresPage()
 {
-  const { t } = useTranslation("stocking");
-  const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const storeState = useAppSelector((state) => state.store);
-  const storeDialogState = useAppSelector((state) => state.storeDialog);
-  const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Stores));
-  const service = useMemo(() => new StoresApiService(), []);
+	const {t} = useTranslation("stocking");
+	useEffect(() => Cubits.stores.init(), []);
 
-  return (
-    <CrudPage<Store>
-      title={ t("stores.title") }
-      entityName={ t("stores.entityName") }
-      addNewItemTitle={ t("stores.addNewTitle") }
-      permissions={ permissions }
-      hasPagePermission={ SystemPermissions.hasAuth(
-        authState.loggedInUser?.role?.permissions ?? [],
-        SystemPermissionsResources.Stores,
-        SystemPermissionsActions.Get
-      ) }
-      entityState={ storeState }
-      useSlice={ () => storeDialogState }
-      service={ service }
-      cards={ [{
-        title: t("stores.totalStores"),
-        data: (storeState.entities?.count ?? 0).toString(),
-        icon: <Warehouse className="h-4 w-4 text-muted-foreground" />
-      }] }
-      columnsToFilter={ StoreFilterColumns.columnsNames(t) }
-      tableHeadRows={ [{ rowName: "", rowStyles: "text-left w-12.5" }, {
-        rowName: t("stores.storeId"),
-        rowStyles: "w-30"
-      }, { rowName: t("stores.storeName"), rowStyles: "w-70" }] }
-      tableRowMapper={ (
-        store: Store
-      ) => [{ rowName: `#${store.id}`, rowStyles: "" }, { rowName: store.name, rowStyles: "font-semibold" }] }
-      actions={ {
-        filter: StoreSlice.entityActions.filter,
-        openChangeDialog: (entity) => StoreSlice.dialogActions.openChangeDialog(entity),
-        openDeleteDialog: (entity) => StoreSlice.dialogActions.openDeleteDialog(entity),
-        setIsChangeDialogOpen: (open) => StoreSlice.dialogActions.setIsChangeDialogOpen(open),
-        setIsDeleteDialogOpen: (open) => StoreSlice.dialogActions.setIsDeleteDialogOpen(open),
-        refresh: StoreSlice.entityActions.refresh,
-        setCurrentPage: (page) => StoreSlice.entityActions.setCurrentPage(page)
-      } }
-      ChangeDialog={ 
-        <ChangeStoreDialog
-          entity={ storeDialogState.selectedRow || undefined }
-          mode={ storeDialogState.selectedRow ? "update" : "create" }
-          service={ service }
-          onSuccess={ (data, mode) =>
-          {
-            dispatch(StoreSlice.entityActions.refresh({ data: data }));
-            if (mode === "create")
-            {
-              dispatch(StoreSlice.dialogActions.setIsChangeDialogOpen(false));
-            }
-          } }
-        />
-       }
-    />
-  );
+	useEffect(() =>
+	{
+		document.title = `${ t("stores.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
+
+	if (!Services.auth.hasAuth(SystemPermissionsResources.Stores, SystemPermissionsActions.Get))
+	{
+		return <UnauthorizedPage/>;
+	}
+
+	return (
+		<CrudPage<StoreDto>>
+			<CrudPage.Header
+				title={ t("stores.title") }
+				addButtonTitle={ t("stores.addNewTitle") }
+				isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Stores, SystemPermissionsActions.Add) }
+			/>
+
+			<Cards/>
+
+			<CrudPage.SearchInput onSearch={ (searchText) => Cubits.stores.search(searchText) }/>
+
+			<PageTable/>
+
+			<CrudPage.ChangeDialog
+				fetchEntity={ async (id: number) =>
+				{
+					const result = await Services.storesApi.Get(id);
+					return result.data;
+				} }
+				changeDialog={ (dto: StoreDto | undefined, closeDialog) =>
+				{
+					return (
+						<ChangeStoreDialog
+							dto={ dto }
+							service={ Services.storesApi }
+							onSuccess={ (data, mode) =>
+							{
+								if (mode === ChangeableEntityMode.Create)
+								{
+									Cubits.stores.add(data);
+									closeDialog();
+								}
+								else if (mode === ChangeableEntityMode.Update)
+								{
+									Cubits.stores.update(data);
+								}
+							} }
+						/>
+					);
+				} }
+			/>
+
+			<CrudPage.DeleteDialog
+				entityNameSelector={ (store) => store.name }
+				service={ Services.storesApi }
+				onSuccess={ (entity) => Cubits.stores.delete(entity) }
+			/>
+		</CrudPage>
+	);
+}
+
+function Cards()
+{
+	useSignals();
+	const {t} = useTranslation("stocking");
+	return (
+		<CrudPage.Cards
+			cards={ [{
+				title: t("stores.totalStores"),
+				data: Cubits.stores.count.value.toString(),
+				icon: <Warehouse className="h-4 w-4 text-muted-foreground"/>
+			}] }
+		/>
+	);
+}
+
+function PageTable()
+{
+	useSignals();
+	const {t} = useTranslation(["stocking", "common", "erpCommon"]);
+
+	if (Cubits.stores.state.value instanceof PageLoading)
+	{
+		return <TablePreview.Loading/>;
+	}
+
+	if (Cubits.stores.state.value instanceof PageLoaded)
+	{
+		return (
+			<CrudPage.Table>
+				<CrudPage.TableBody<StoreDto>
+					isShareablePage={ true }
+					data={ Cubits.stores.entities.value }
+					headerRows={ [
+						{rowBody: "", rowStyles: "text-left w-12.5"},
+						{
+							rowBody: t("stores.storeId"),
+							rowStyles: "w-30"
+						},
+						{rowBody: t("stores.storeName"), rowStyles: "w-70"}
+					] }
+					tableRowMapper={ (
+						store
+					) => [
+						{rowBody: `#${ store.id }`, rowStyles: ""},
+						{rowBody: store.name, rowStyles: "font-semibold"}
+					] }
+					hasUpdatePermission={ Services.auth.hasAuth(
+						SystemPermissionsResources.Taxes,
+						SystemPermissionsActions.Update
+					) }
+					hasDeletePermission={ Services.auth.hasAuth(
+						SystemPermissionsResources.Taxes,
+						SystemPermissionsActions.Delete
+					) }
+				/>
+				<CrudPage.TablePagination
+					pageSize={ Cubits.stores.pageSize.value }
+					totalNumber={ Cubits.stores.count.value }
+					currentPage={ Cubits.stores.currentPage.value }
+					onPageChanged={ (newPage) =>
+					{
+						Cubits.stores.changePage(newPage);
+					} }
+				/>
+			</CrudPage.Table>
+		);
+	}
+
+	if (Cubits.stores.state.value instanceof PageError)
+	{
+		return <TablePreview.Error/>;
+	}
+
+	return <TablePreview.Empty/>;
 }

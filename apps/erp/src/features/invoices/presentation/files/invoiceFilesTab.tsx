@@ -1,31 +1,31 @@
-import type Invoice from "@/core/data/invoice";
-import { StorageFileField, useStorageFile } from "yusr-ui";
-import { useInvoiceContext } from "../../logic/invoiceContext";
+import { StorageFileField, StorageType, useStorageFile } from "yusr-ui";
+import type Invoice from "@/core/data/invoices/invoice.ts";
+import { useSignals } from "@preact/signals-react/runtime";
 
-export default function InvoiceFilesTab()
+
+export default function InvoiceFilesTab({invoice}: { invoice: Invoice })
 {
-  const { formData, slice, dispatch } = useInvoiceContext();
-  const { fileInputRef, handleFileChange, handleRemoveFile, handleDownload, showFilePreview, getFileSrc } =
-    useStorageFile(
-      (updater) =>
-        dispatch(slice.formActions.updateFormData(
-          updater as (prev: Partial<Invoice>) => Partial<Invoice>
-        )),
-      "invoiceFiles"
-    );
+	useSignals();
+	const {fileInputRef, handleFileChange, handleRemoveFile, handleDownload, showFilePreview, getFileSrc} =
+		useStorageFile(
+			() => invoice.invoiceFiles.value,
+			(value) => (invoice.invoiceFiles.value = value),
+			StorageType.Private
+		);
 
-  return (
-    <div className="w-full flex items-center justify-center shrink-0 bg-muted/10 p-4 rounded-lg border">
-      <StorageFileField
-        label=""
-        file={ formData.invoiceFiles ?? [] }
-        onFileChange={ handleFileChange }
-        onRemove={ handleRemoveFile }
-        onDownload={ handleDownload }
-        getFileSrc={ getFileSrc }
-        showPreview={ showFilePreview }
-        fileInputRef={ fileInputRef }
-      />
-    </div>
-  );
+	return (
+
+		<div className="w-full flex items-center justify-center shrink-0 bg-muted/10 p-4 rounded-lg border">
+			<StorageFileField
+				file={ invoice.invoiceFiles.value ?? [] }
+				onFileChange={ handleFileChange }
+				onRemove={ handleRemoveFile }
+				onDownload={ handleDownload }
+				getFileSrc={ getFileSrc }
+				showPreview={ showFilePreview }
+				fileInputRef={ fileInputRef }
+				error={ invoice.getError("invoiceFiles") }
+			/>
+		</div>
+	);
 }

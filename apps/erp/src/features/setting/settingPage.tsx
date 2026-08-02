@@ -1,174 +1,170 @@
-import { Building2, Loader2, Receipt, Wallet } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Services } from "@/core/services/services";
+import { useSignals } from "@preact/signals-react/runtime";
+import { Building2, Loader2, Receipt, Star, Zap } from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { BranchSlice, Button, Card, CardContent, CardFooter, CurrencySlice, TabButton, useEntityForm, type ValidationRule, Validators } from "yusr-ui";
-import { ClientsAndSuppliersSlice } from "../../core/data/account";
-import { PaymentMethodSlice } from "../../core/data/paymentMethod";
-import { Setting } from "../../core/data/setting";
-import { StoreSlice } from "../../core/data/store";
-import { TaxSlice } from "../../core/data/tax";
-import SettingsApiService from "../../core/networking/settingsApiService";
-import { updateSetting, useAppDispatch } from "../../core/state/store";
+import {
+	Button,
+	Card,
+	CardContent,
+	CardFooter,
+	StorageType,
+	TabButton,
+	ThemeSection,
+	type ThemeSettings,
+	useStorageFile
+} from "yusr-ui";
 import BasicSection from "./basicSection";
 import DefaultsSection from "./defaultsSection";
 import InvoiceSection from "./invoiceSection";
-import { SettingContext } from "./settingContext";
+import SettingsCubit from "@/features/setting/logic/settingsCubit.ts";
+import { SettingsLoading, SettingsSaving } from "@/features/setting/logic/settingsState.ts";
+import { Cubits } from "@/core/services/cubits.ts";
+import { signal } from "@preact/signals-react";
+import EInvoiceSection from "@/features/setting/eInvoicing/eInvoiceSection.tsx";
+import { APP_NAME } from "../../../appConfig.ts";
+
 
 export default function SettingPage()
 {
-  const { t } = useTranslation("erpCommon");
-  const { t: tCommon } = useTranslation("common");
+	useSignals();
+	const {t} = useTranslation("erpCommon");
+	const draftTheme = signal<ThemeSettings | undefined>(undefined);
 
-  const validationRules: ValidationRule<Partial<Setting>>[] = useMemo(
-    () => [{
-      field: "companyName",
-      selector: (d) => d.companyName,
-      validators: [Validators.required(t("settings.companyNameRequired"))]
-    }, {
-      field: "companyPhone",
-      selector: (d) => d.companyPhone,
-      validators: [Validators.required(t("settings.companyPhoneRequired"))]
-    }, {
-      field: "branchId",
-      selector: (d) => d.branchId,
-      validators: [Validators.required(t("settings.branchRequired"))]
-    }, {
-      field: "email",
-      selector: (d) => d.email,
-      validators: [Validators.required(t("settings.emailRequired"))]
-    }, {
-      field: "currencyId",
-      selector: (d) => d.currencyId,
-      validators: [Validators.required(t("settings.currencyRequired"))]
-    }],
-    [t]
-  );
+	useEffect(() =>
+	{
+		document.title = `${ t("settings.title") } | ${ APP_NAME }`;
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [t]);
 
-  const INITIAL_STATE = useMemo(() => new Setting(), []);
-  const { formData, handleChange, getError, isInvalid, validate, clearError } = useEntityForm<Setting>(
-    INITIAL_STATE,
-    validationRules
-  );
+	const {commitFiles} = useStorageFile(
+		() => Services.auth?.setting?.logo?.value ? [Services.auth?.setting?.logo.value] : [],
+		(files) =>
+		{
+			const file = Array.isArray(files)
+				? files[0]
+				: files;
 
-  const [loading, setLoading] = useState(false);
-  const [initLoading, setInitLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"basic" | "invoicing" | "accounts" | "subscription">("basic");
+			if (Services.auth?.setting?.logo && file)
+			{
+				Services.auth.setting.logo.value = file;
+			}
+		},
+		StorageType.Public,
+		false
+	);
 
-  const dispatch = useAppDispatch();
+	const cubit = useMemo(() => new SettingsCubit(), []);
+	useEffect(() =>
+	{
+		void cubit.init();
+	}, [cubit]);
 
-  useEffect(() =>
-  {
-    const fetchSettings = async () =>
-    {
-      setInitLoading(true);
-      const response = await new SettingsApiService().Get();
+	useEffect(() =>
+	{
+		Cubits.accounts.init();
+		Cubits.paymentMethods.init();
+		Cubits.stores.init();
+		Cubits.taxes.init();
+		Cubits.currencies.init();
+	}, []);
 
-      if (response.data)
-      {
-        handleChange(response.data);
-        dispatch(updateSetting(response.data));
-      }
-      setInitLoading(false);
-    };
+	async function transformDataBeforeSave()
+	{
 
-    fetchSettings();
-  }, []);
+		const resolvedLogo = await commitFiles(
+			cubit.formData.logo?.value,
+			`Logos`
+		);
+		const updatedLogo = resolvedLogo[0];
 
-  useEffect(() =>
-  {
-    dispatch(CurrencySlice.entityActions.filter());
-    dispatch(TaxSlice.entityActions.filter());
-    dispatch(StoreSlice.entityActions.filter());
-    dispatch(PaymentMethodSlice.entityActions.filter());
-    dispatch(BranchSlice.entityActions.filter());
-    dispatch(ClientsAndSuppliersSlice.entityActions.filter());
-  }, [dispatch]);
+		if (cubit.formData.logo)
+		{
+			cubit.formData.logo.value = updatedLogo;
+		}
+	}
 
-  async function Save()
-  {
-    if (!validate())
-    {
-      setActiveTab("basic");
-      return;
-    }
+	if (cubit.state.value instanceof SettingsLoading)
+	{
+		return (
+			<div className="p-8 text-center text-muted-foreground flex flex-col items-center justify-center h-[50vh]">
+				<Loader2 className="h-8 w-8 animate-spin text-primary mb-4"/>
+				{ t("settings.loading") }
+			</div>
+		);
+	}
 
-    setLoading(true);
-    const result = await new SettingsApiService().Update(formData as Setting, tCommon);
-    setLoading(false);
+	const isLoading = cubit.state.value instanceof SettingsSaving;
 
-    if (result.status === 200)
-    {
-      handleChange(result.data as Setting);
-      dispatch(updateSetting(result.data as Setting));
-    }
-  }
+	return (
+		<div className="container mx-auto px-5 pb-8 max-w-5xl">
+			<div className="mb-5 text-center">
+				<h1 className="text-3xl font-bold tracking-tight">{ t("settings.title") }</h1>
+				<p className="text-muted-foreground mt-2">{ t("settings.subtitle") }</p>
+			</div>
 
-  if (initLoading)
-  {
-    return (
-      <div className="p-8 text-center text-muted-foreground flex flex-col items-center justify-center h-[50vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-        { t("settings.loading") }
-      </div>
-    );
-  }
+			<Card className="relative shadow-lg border-muted/40 py-0">
+				<div className="flex border-b bg-muted/10 rounded-t-xl overflow-x-auto">
+					<TabButton
+						active={ cubit.activeTab.value === "basic" }
+						icon={ Building2 }
+						label={ t("settings.basicData") }
+						onClick={ () => cubit.activeTab.value = "basic" }
+						content={ <></> }
+					/>
+					<TabButton
+						active={ cubit.activeTab.value === "invoicing" }
+						icon={ Receipt }
+						label={ t("settings.invoicesAndTaxes") }
+						onClick={ () => cubit.activeTab.value = "invoicing" }
+						content={ <></> }
+					/>
+					<TabButton
+						active={ cubit.activeTab.value === "eInvoicing" }
+						icon={ Zap }
+						label={ t("settings.eInvoicing") }
+						onClick={ () => cubit.activeTab.value = "eInvoicing" }
+						content={ <></> }
+					/>
+					<TabButton
+						active={ cubit.activeTab.value === "accounts" }
+						icon={ Star }
+						label={ t("settings.defaultValues") }
+						onClick={ () => cubit.activeTab.value = "accounts" }
+						content={ <></> }
+					/>
+					{/*<TabButton*/ }
+					{/*	active={ cubit.activeTab.value === "theme" }*/ }
+					{/*	icon={ Palette }*/ }
+					{/*	label={ t("settings.theme", "Theme & Appearance") }*/ }
+					{/*	onClick={ () => cubit.activeTab.value = "theme" }*/ }
+					{/*	content={ <></> }*/ }
+					{/*/>*/ }
+				</div>
 
-  return (
-    <SettingContext.Provider
-      value={ {
-        mode: "update",
-        handleChange,
-        formData,
-        isInvalid,
-        getError,
-        clearError
-      } }
-    >
-      <div className="container mx-auto px-5 pb-8 max-w-5xl">
-        <div className="mb-5 text-center">
-          <h1 className="text-3xl font-bold tracking-tight">{ t("settings.title") }</h1>
-          <p className="text-muted-foreground mt-2">{ t("settings.subtitle") }</p>
-        </div>
+				<CardContent className="py-3 min-h-[50vh]">
+					{ cubit.activeTab.value === "basic" && <BasicSection formData={ cubit.formData }/> }
+					{ cubit.activeTab.value === "invoicing" && <InvoiceSection formData={ cubit.formData }/> }
+					{ cubit.activeTab.value === "eInvoicing" && <EInvoiceSection formData={ cubit.formData }/> }
+					{ cubit.activeTab.value === "accounts" && <DefaultsSection formData={ cubit.formData }/> }
+					{ cubit.activeTab.value === "theme" && <ThemeSection draftTheme={ draftTheme }/> }
+				</CardContent>
 
-        <Card className="relative shadow-lg border-muted/40 py-0">
-          <div className="flex border-b bg-muted/10 rounded-t-xl overflow-x-auto">
-            <TabButton
-              active={ activeTab === "basic" }
-              icon={ Building2 }
-              label={ t("settings.basicData") }
-              onClick={ () => setActiveTab("basic") }
-              content={ <></> }
-            />
-            <TabButton
-              active={ activeTab === "invoicing" }
-              icon={ Receipt }
-              label={ t("settings.invoicesAndTaxes") }
-              onClick={ () => setActiveTab("invoicing") }
-              content={ <></> }
-            />
-            <TabButton
-              active={ activeTab === "accounts" }
-              icon={ Wallet }
-              label={ t("settings.defaultAccounts") }
-              onClick={ () => setActiveTab("accounts") }
-              content={ <></> }
-            />
-          </div>
-
-          <CardContent className="py-3 min-h-[50vh]">
-            { activeTab === "basic" && <BasicSection /> }
-            { activeTab === "invoicing" && <InvoiceSection /> }
-            { activeTab === "accounts" && <DefaultsSection /> }
-          </CardContent>
-
-          <CardFooter className="flex justify-end border-t pt-4">
-            <Button disabled={ loading } size="lg" className="px-12 font-bold text-md shadow-lg" onClick={ Save }>
-              { loading && <Loader2 className="ml-2 h-5 w-5 animate-spin" /> }
-              { t("settings.save") }
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    </SettingContext.Provider>
-  );
+				<CardFooter className="flex justify-end border-t pt-4">
+					<Button disabled={ isLoading } size="lg" className="px-12 font-bold text-md shadow-lg"
+					        onClick={ async () =>
+							{
+								await transformDataBeforeSave();
+								await cubit.save(draftTheme);
+							} }>
+						{ isLoading && <Loader2 className="ml-2 h-5 w-5 animate-spin"/> }
+						{ t("settings.save") }
+					</Button>
+				</CardFooter>
+			</Card>
+		</div>
+	);
 }
