@@ -206,6 +206,12 @@ export default function ReportsPage()
 			name: t("reports.itemsMovement"),
 			description: t("reports.itemsMovementDescription"),
 			icon: ArrowRightLeft
+		}, {
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/stockValuation") }>{ t("reports.create") }</Button>,
+			name: "تقييم المخزون",
+			description: "تقرير يعرض قيمة المخزون الحالية بناءً على متوسط التكلفة وتاريخ محدد",
+			icon: PackageSearch
 		}]
 	}];
 

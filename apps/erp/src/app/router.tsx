@@ -42,6 +42,7 @@ import PartnersPage from "@/features/partners/partnersPage.tsx";
 import { PartnerType } from "@/core/data/partner.ts";
 import { SalesProfitabilityReportPage } from "@/features/reports/salesProfitability/salesProfitabilityReportPage.tsx";
 import { TaxAuditReportPage } from "@/features/reports/taxAudit/taxAuditReportPage.tsx";
+import { StockValuationReportPage } from "@/features/reports/stockValuation/stockValuationReportPage.tsx";
 
 
 const refreshPage = () =>
@@ -116,6 +117,10 @@ export const router = createBrowserRouter([{
 					{
 						path: "/reports/partnerStatement/:partnerId?/:partnerName?",
 						element: <PartnerStatementReportPage/>
+					},
+					{
+						path: "reports/stockValuation",
+						element: <StockValuationReportPage/>
 					}
 
 				]

@@ -42,6 +42,8 @@ import type {
 } from "@/features/reports/salesProfitability/salesProfitabilityReportResult.ts";
 import type { TaxAuditReportRequest } from "@/features/reports/taxAudit/taxAuditReportRequest.ts";
 import type { TaxAuditReportResult } from "@/features/reports/taxAudit/taxAuditReportResult.ts";
+import type { StockValuationReportRequest } from "@/features/reports/stockValuation/stockValuationReportRequest.ts";
+import type { StockValuationReportResult } from "@/features/reports/stockValuation/stockValuationReportResult.ts";
 
 
 export class Cubits extends BaseCubits
@@ -80,6 +82,7 @@ export class Cubits extends BaseCubits
 	public static readonly ProfitAndLossReport = new ReportCubit<ProfitAndLossReportRequest, ProfitAndLossReportResult>("ProfitAndLoss");
 	public static readonly SalesProfitabilityReport = new PageReportCubit<SalesProfitabilityReportRequest, SalesProfitabilityReportResult>("SalesProfitability");
 	public static readonly TaxAuditReport = new PageReportCubit<TaxAuditReportRequest, TaxAuditReportResult>("TaxAudit");
+	public static stockValuationReport = new PageReportCubit<StockValuationReportRequest, StockValuationReportResult>("StockValuation");
 
 	static
 	{
