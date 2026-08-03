@@ -26,7 +26,7 @@ import StorageTab from "./storage/storageTab";
 
 const BASIC_FIELDS = ["name", "type"] as const;
 const STORAGE_FIELDS = ["itemStores"] as const;
-const PRICING_FIELDS = ["sellUnitId", "initialCost", "itemUnitPricingMethods"] as const;
+const PRICING_FIELDS = ["sellUnitId", "uoMs"] as const;
 
 export default function ChangeItemDialog({dto, service, onSuccess}: CommonChangeDialogProps<ItemDto>)
 {
@@ -100,7 +100,7 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 	const storageHasError = STORAGE_FIELDS.some((f) => entity.value.getError(f).value)
 		|| entity.value.itemStores.value.some((t) => t.hasErrors);
 	const pricingHasError = PRICING_FIELDS.some((f) => entity.value.getError(f).value)
-		|| entity.value.itemUnitPricingMethods.value.some((t) => t.hasErrors);
+		|| entity.value.uoMs.value.some((t) => t.hasErrors);
 
 	const transformDataBeforeSave = async (): Promise<ItemDto> =>
 	{

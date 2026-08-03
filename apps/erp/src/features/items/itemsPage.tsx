@@ -31,7 +31,12 @@ import { createPortal } from "react-dom";
 import { AppNavigator } from "@/app/appNavigator.ts";
 import { ItemBarcodeReport } from "@/features/reports/itemBarcode/itemBarcodeReport.tsx";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
-import { printBarcodesQtn, printItem, printIupm } from "@/features/reports/itemBarcode/itemBarcodePrintState.ts";
+import {
+	printBarcodesQtn,
+	printItem,
+	printItemPrice,
+	printItemUoM
+} from "@/features/reports/itemBarcode/itemBarcodePrintState.ts";
 import TaxesMultiSearchableSelect from "@/core/components/searchableSelect/taxesMultiSearchableSelect.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
 
@@ -140,17 +145,21 @@ export default function ItemsPage()
 				/>
 			</CrudPage>
 
-			{ (printItem.value == undefined || printIupm.value == undefined) && createPortal(
+			{ (printItem.value == undefined || printItemUoM.value == undefined) && createPortal(
 				<PortalReportContainer>
 					<ItemsListReport isPortal={ true }/>
 				</PortalReportContainer>,
 				document.body
 			) }
 
-			{ printItem.value && printIupm.value && createPortal(
+			{ printItem.value && printItemUoM.value && createPortal(
 				<PortalReportContainer>
-					<ItemBarcodeReport item={ printItem.value } iupm={ printIupm.value }
-					                   barcodesQtn={ printBarcodesQtn.value }/>
+					<ItemBarcodeReport
+						item={ printItem.value }
+						itemUoM={ printItemUoM.value }
+						itemPrice={ printItemPrice.value }
+						barcodesQtn={ printBarcodesQtn.value }
+					/>
 				</PortalReportContainer>,
 				document.body
 			) }

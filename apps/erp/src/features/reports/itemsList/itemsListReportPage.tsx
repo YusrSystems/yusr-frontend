@@ -26,7 +26,6 @@ export function ItemsListReportPage()
 	useEffect(() =>
 	{
 		document.title = "قائمة المواد";
-
 		return () =>
 		{
 			document.title = APP_NAME;
@@ -46,12 +45,26 @@ export function ItemsListReportPage()
 						{header: "التصنيف", accessor: (r) => r.class ?? ""},
 						{header: "العلامة التجارية", accessor: (r) => r.brand ?? ""},
 						{header: "وحدة البيع الرئيسية", accessor: (r) => r.sellUnitName ?? ""},
-						{header: "الرصيد الافتتاحي", accessor: (r) => r.initialQuantity.toString()},
 						{header: "المخزون الإجمالي الحالي", accessor: (r) => r.quantity.toString()},
 						{header: "حد الطلب (الأدنى)", accessor: (r) => r.minQuantity?.toString() ?? "0"},
 						{header: "الحد الأعلى للمخزون", accessor: (r) => r.maxQuantity?.toString() ?? "0"},
-						{header: "التكلفة الافتتاحية", accessor: (r) => r.initialCost.toString()},
-						{header: "التكلفة الحالية", accessor: (r) => r.cost.toString()},
+						{
+							header: "متوسط التكلفة الحالية",
+							accessor: (r) =>
+							{
+								const total = r.itemStores?.reduce((sum, s) => sum + (s.quantity * s.averageCost), 0) ?? 0;
+								const avg = r.quantity > 0 ? total / r.quantity : 0;
+								return avg.toString();
+							}
+						},
+						{
+							header: "إجمالي التكلفة الحالية",
+							accessor: (r) =>
+							{
+								const total = r.itemStores?.reduce((sum, s) => sum + (s.quantity * s.averageCost), 0) ?? 0;
+								return total.toString();
+							}
+						},
 						{header: "آخر سعر شراء", accessor: (r) => r.lastBuyPrice.toString()},
 						{header: "خاضع للضريبة", accessor: (r) => r.taxable ? "نعم" : "لا"},
 						{header: "كود سبب الإعفاء الضريبي", accessor: (r) => r.exemptionReasonCode ?? ""},
@@ -71,16 +84,21 @@ export function ItemsListReportPage()
 								storeId: s.storeId,
 								storeName: s.storeName,
 								quantity: s.quantity,
-								initialQuantity: s.initialQuantity
+								averageCost: s.averageCost
 							}))) : "[]"
 						},
 						{
-							header: "طرق التسعير",
-							accessor: (r) => r.itemUnitPricingMethods ? JSON.stringify(r.itemUnitPricingMethods.map(p => ({
+							header: "طرق ووحدات التسعير (UoMs)",
+							accessor: (r) => r.uoMs ? JSON.stringify(r.uoMs.map(p => ({
 								unitId: p.unitId,
-								itemUnitPricingMethodName: p.itemUnitPricingMethodName,
-								price: p.price,
-								barcode: p.barcode || ""
+								unitName: p.unitName,
+								quantityMultiplier: p.quantityMultiplier,
+								barcode: p.barcode || "",
+								prices: p.prices.map(pr => ({
+									pricingMethodId: pr.pricingMethodId,
+									pricingMethodName: pr.pricingMethodName,
+									price: pr.price
+								}))
 							}))) : "[]"
 						},
 						{header: "الموقع / الرف", accessor: (r) => r.location ?? ""},
@@ -112,7 +130,6 @@ export function ItemsListReportPage()
 					Cubits.items.changePage(newPage);
 				} }
 			/>
-
 		</ReportPage>
 	);
 }

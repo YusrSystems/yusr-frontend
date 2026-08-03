@@ -10,17 +10,51 @@ export class ItemsCubit extends PageCubit<ItemDto>
 		super(Services.itemsApi);
 	}
 
-	async getByBarcode(
-		barcode: string,
-		storeId: number
-	): Promise<BarcodeResult | undefined>
+	public filterByStoreAndDate(storeId?: number | null, targetDate?: string | null): void
+	{
+		const query: Record<string, string | number | boolean> = {};
+
+		if (storeId != null)
+		{
+			query["storeId"] = storeId;
+		}
+		if (targetDate != null)
+		{
+			query["targetDate"] = targetDate;
+		}
+
+		this.queryParams.value = {...this.queryParams.value, ...query};
+		void this.filter(1);
+	}
+
+	public initForStoreAndDate(
+		types?: number[],
+		storeId?: number | null,
+		targetDate?: string | null,
+		rowsPerPage = 100
+	): void
+	{
+		const query: Record<string, string | number | boolean> = {};
+
+		if (storeId != null)
+		{
+			query["storeId"] = storeId;
+		}
+		if (targetDate != null)
+		{
+			query["targetDate"] = targetDate;
+		}
+
+		void this.filter(1, rowsPerPage, undefined, types, query);
+	}
+
+	async getByBarcode(barcode: string, storeId: number): Promise<BarcodeResult | undefined>
 	{
 		const res = await Services.itemsApi.GetByBarcode(barcode, storeId);
 		if (res.status === 200 && res.data)
 		{
 			return res.data;
 		}
-
 		return undefined;
 	}
 

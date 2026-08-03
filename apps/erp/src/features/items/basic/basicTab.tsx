@@ -1,5 +1,4 @@
 import type Item from "@/core/data/item";
-import { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
 import type ServiceIds from "@/core/data/serviceIds";
 import type { Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -17,6 +16,8 @@ import {
 } from "yusr-ui";
 import { ItemType } from "@/core/data/item.ts";
 import TaxesSection from "./taxesSection";
+import { ItemUoM } from "@/core/data/itemUoM.ts";
+import { ItemPriceDto } from "@/core/data/itemPrice.ts";
 
 
 export default function BasicTab(
@@ -64,23 +65,32 @@ export default function BasicTab(
 								entity.type.value = numericType;
 								entity.itemStores.value = [];
 								entity.quantity.value = 0;
-								entity.initialQuantity.value = 0;
 								entity.minQuantity.value = 0;
 								entity.maxQuantity.value = 0;
 								entity.location.value = undefined;
 								entity.sellUnitId.value = numericType === ItemType.Service ? serviceIds.value?.unitId : undefined;
 								entity.sellUnitName.value = numericType === ItemType.Service ? t("items.service") : undefined;
-								entity.itemUnitPricingMethods.value = numericType === ItemType.Service
-									? [ItemUnitPricingMethod.create({
+								entity.uoMs.value = numericType === ItemType.Service
+									? [ItemUoM.create({
 										unitId: serviceIds.value?.unitId,
 										unitName: t("items.service"),
-										pricingMethodId: serviceIds.value?.pricingMethodId,
-										pricingMethodName: t("items.service"),
 										quantityMultiplier: 1,
-										barcode: ItemUnitPricingMethod.generateBarcode(),
-										itemUnitPricingMethodName: t("items.service")
+										barcode: ItemUoM.generateBarcode(),
+										prices: [
+											{
+												itemUoMId: 0,
+												pricingMethodId: serviceIds.value?.pricingMethodId,
+												pricingMethodName: t("items.service"),
+												price: 0
+											} as ItemPriceDto
+										]
 									})]
-									: [];
+									: [ItemUoM.create({
+										unitId: undefined,
+										unitName: undefined,
+										quantityMultiplier: 1,
+										barcode: ItemUoM.generateBarcode()
+									})];
 							} }
 							options={ [{label: t("items.product"), value: ItemType.Product}, {
 								label: t("items.service"),

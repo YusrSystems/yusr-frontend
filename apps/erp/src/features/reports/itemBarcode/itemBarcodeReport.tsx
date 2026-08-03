@@ -1,17 +1,20 @@
+// file: features/reports/itemBarcode/itemBarcodeReport.tsx
 import { useEffect, useRef } from "react";
 import JsBarcode from "jsbarcode";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ReportContainer } from "@/features/report/reportContainer.tsx";
 import { Services } from "@/core/services/services.ts";
 import type Item from "@/core/data/item";
-import type { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import type { ItemUoM } from "@/core/data/itemUoM.ts";
+import type { ItemPrice } from "@/core/data/itemPrice.ts";
 
 
 export interface ItemBarcodeReportProps
 {
 	item: Item;
-	iupm: ItemUnitPricingMethod;
+	itemUoM?: ItemUoM;
+	itemPrice?: ItemPrice,
 	barcodesQtn: number;
 	isPortal?: boolean;
 }
@@ -31,24 +34,21 @@ function BarcodeSvg({value}: { value: string })
 		{
 			JsBarcode(svgRef.current, value, {
 				format: "CODE128",
-				height: 40, // Base height (will be constrained by CSS)
-				width: 1.5, // Slightly thinner lines so longer barcodes fit better
+				height: 40,
+				width: 1.5,
 				displayValue: false,
 				margin: 0
 			});
 
-			// CRITICAL FIX: Override JsBarcode's hardcoded dimensions so CSS can take over
-			// without warping the aspect ratio.
 			svgRef.current.style.width = "100%";
 			svgRef.current.style.height = "100%";
 		}
 		catch
 		{
-			// Invalid barcode input
+			// Invalid barcode fallback
 		}
 	}, [value]);
 
-	// Use object-contain to ensure the barcode scales to fit the width but never exceeds the fixed height
 	return (
 		<div className="w-full h-[12mm] flex justify-center items-center overflow-hidden">
 			<svg ref={ svgRef } className="object-contain max-h-full max-w-full"/>
@@ -56,11 +56,16 @@ function BarcodeSvg({value}: { value: string })
 	);
 }
 
-export function ItemBarcodeReport({item, iupm, barcodesQtn, isPortal = true}: ItemBarcodeReportProps)
+export function ItemBarcodeReport({item, itemUoM, itemPrice, barcodesQtn, isPortal = true}: ItemBarcodeReportProps)
 {
 	useSignals();
 
-	const barcode = iupm.barcode.value;
+	if (!itemUoM || !itemPrice)
+	{
+		return;
+	}
+
+	const barcode = itemUoM.barcode.value;
 	if (!barcode)
 	{
 		return null;
@@ -71,15 +76,7 @@ export function ItemBarcodeReport({item, iupm, barcodesQtn, isPortal = true}: It
 	// ==========================================
 	const cols = 4;
 	const rows = 10;
-
-	// The Gap between items
 	const gapMm = 1.5;
-
-	// MATH CORRECTION FOR PAGINATION:
-	// A4 total height = 297mm.
-	// ReportContainer @page margins = 5mm (top) + 12mm (bottom) = 17mm.
-	// Printable space = 297mm - 17mm = 280mm.
-	// We use 279mm as a safety buffer to prevent browser rounding errors from creating a blank page.
 	const safePrintableHeightMm = 260;
 	const itemsPerPage = cols * rows;
 
@@ -100,15 +97,10 @@ export function ItemBarcodeReport({item, iupm, barcodesQtn, isPortal = true}: It
 					dir="rtl"
 					className="grid w-full box-border print:break-after-page page-break-after-always overflow-hidden"
 					style={ {
-						// Use exact safe printable height
 						height: `${ safePrintableHeightMm }mm`,
 						maxHeight: `${ safePrintableHeightMm }mm`,
 						gap: `${ gapMm }mm`,
-
-						// DYNAMIC CSS GRID:
 						gridTemplateColumns: `repeat(${ cols }, minmax(0, 1fr))`,
-						// Using `1fr` lets the browser calculate the exact perfect height per row
-						// automatically subtracting the gaps, avoiding calc() sub-pixel bugs!
 						gridTemplateRows: `repeat(${ rows }, minmax(0, 1fr))`
 					} }
 				>
@@ -129,13 +121,13 @@ export function ItemBarcodeReport({item, iupm, barcodesQtn, isPortal = true}: It
 								</p>
 
 								<p className="text-[6.5pt] leading-tight text-center line-clamp-1 max-w-full">
-									{ item.name.value } | { iupm.itemUnitPricingMethodName.value }
+									{ item.name.value } | { itemUoM.unitName.value }
 								</p>
 							</div>
 
 							<div className="flex items-center gap-0.5 overflow-hidden">
 								<p className="text-[7pt] font-bold leading-none text-center mt-auto pt-0.5">
-									{ iupm.price.value.toLocaleString(undefined, {maximumFractionDigits: 0}) }
+									{ itemPrice.price.value.toLocaleString(undefined, {maximumFractionDigits: 0}) }
 								</p>
 								<ErpCurrencyIcon className="w-3 h-3"/>
 							</div>
