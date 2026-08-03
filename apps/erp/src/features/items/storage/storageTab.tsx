@@ -24,6 +24,14 @@ export default function StorageTab({entity}: { entity: Item; })
 	return (
 		<div className="space-y-6 animate-in fade-in">
 			<div className="grid grid-cols-2 gap-6">
+				<NumberField
+					label={ t("items.minQuantity") }
+					value={ entity.minQuantity }
+				/>
+				<NumberField
+					label={ t("items.maxQuantity") }
+					value={ entity.maxQuantity }
+				/>
 				<TextField
 					label={ t("items.locationInStore") }
 					value={ entity.location }

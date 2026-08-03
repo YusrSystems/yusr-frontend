@@ -16,6 +16,7 @@ export class ItemPrice extends ChangeableEntity<ItemPriceDto>
 	public pricingMethodId: Signal<number>;
 	public pricingMethodName: Signal<string>;
 	public price: Signal<number>;
+	public unitPrice: Signal<number>;
 
 	constructor(dto?: Partial<ItemPriceDto>)
 	{
@@ -36,5 +37,6 @@ export class ItemPrice extends ChangeableEntity<ItemPriceDto>
 		this.pricingMethodId = this.assign("pricingMethodId", dto?.pricingMethodId ?? 0);
 		this.pricingMethodName = this.assign("pricingMethodName", dto?.pricingMethodName ?? "");
 		this.price = this.assign("price", dto?.price ?? 0);
+		this.unitPrice = this.assign("price", dto?.price ?? 0);
 	}
 }
