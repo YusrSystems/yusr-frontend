@@ -2,7 +2,6 @@ import { type Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, type StorageFile, Validators } from "yusr-ui";
 import { ItemStore, type ItemStoreDto } from "./itemStore";
 import { ItemTax, ItemTaxDto } from "./itemTax";
-import { ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
 import { TaxDto } from "@/core/data/tax.ts";
 import { ItemUoM, type ItemUoMDto } from "@/core/data/itemUoM.ts";
 
@@ -35,6 +34,11 @@ export class ItemDto extends Dto
 	public location?: string;
 	public notes?: string;
 	public totalTaxes!: number;
+	public createdAt!: string | Date;
+	public createdBy!: number;
+	public updatedAt!: string | Date;
+	public updatedBy!: number;
+	public rowVer!: number;
 
 	public uoMs: ItemUoMDto[] = [];
 	public itemTaxes: ItemTaxDto[] = [];
@@ -64,6 +68,11 @@ export default class Item extends ChangeableEntity<ItemDto>
 	public location: Signal<string | undefined>;
 	public notes: Signal<string | undefined>;
 	public totalTaxes: Signal<number>;
+	public createdAt: Signal<string | Date | undefined>;
+	public createdBy: Signal<number | undefined>;
+	public updatedAt: Signal<string | Date | undefined>;
+	public updatedBy: Signal<number | undefined>;
+	public rowVer: Signal<number | undefined>;
 
 	public uoMs: Signal<ItemUoM[]>;
 	public itemTaxes: Signal<ItemTax[]>;
@@ -142,6 +151,11 @@ export default class Item extends ChangeableEntity<ItemDto>
 		this.location = this.assign("location", dto?.location ?? "");
 		this.notes = this.assign("notes", dto?.notes ?? "");
 		this.totalTaxes = this.assign("totalTaxes", dto?.totalTaxes ?? 0);
+		this.createdAt = this.assign("createdAt", dto?.createdAt);
+		this.createdBy = this.assign("createdBy", dto?.createdBy);
+		this.updatedAt = this.assign("updatedAt", dto?.updatedAt);
+		this.updatedBy = this.assign("updatedBy", dto?.updatedBy);
+		this.rowVer = this.assign("rowVer", dto?.rowVer);
 
 		this.uoMs = this.assign("uoMs", (dto?.uoMs ?? [ItemUoM.create({
 			unitId: undefined,
@@ -198,5 +212,6 @@ export default class Item extends ChangeableEntity<ItemDto>
 export class BarcodeResult
 {
 	public item!: ItemDto;
-	public selectedIupm!: ItemUnitPricingMethodDto;
+	public selectedUoMId?: number;
+	public selectedPricingMethodId?: number;
 }

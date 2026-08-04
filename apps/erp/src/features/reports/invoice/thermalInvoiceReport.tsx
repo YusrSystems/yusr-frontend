@@ -73,7 +73,7 @@ export function ThermalInvoiceReport({data, isPortal}: { data: InvoiceReportResu
 					<tr key={ item.id } className="border-b border-gray-200 border-dashed">
 						<td className="py-1">
 							<div>{ item.itemName }</div>
-							<div className="text-[10px] text-gray-500">{ item.itemUnitPricingMethodName }</div>
+							<div className="text-[10px] text-gray-500">{ item.unitName }</div>
 						</td>
 						<td className="py-1 text-center">{ formatNumber(item.quantity) }</td>
 						<td className="py-1">{ formatNumber(item.taxInclusivePrice) }</td>

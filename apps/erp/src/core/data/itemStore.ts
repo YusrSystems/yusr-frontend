@@ -5,8 +5,8 @@ import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "y
 export class ItemStoreDto extends Dto
 {
 	public itemId!: number;
-	public storeId?: number;
-	public storeName?: string;
+	public storeId!: number;
+	public storeName!: string;
 	public quantity!: number;
 	public averageCost!: number;
 }
@@ -14,7 +14,7 @@ export class ItemStoreDto extends Dto
 export class ItemStore extends ChangeableEntity<ItemStoreDto>
 {
 	public itemId: Signal<number>;
-	public storeId: Signal<number>;
+	public storeId: Signal<number | undefined>;
 	public storeName: Signal<string | undefined>;
 	public quantity: Signal<number>;
 	public averageCost: Signal<number>;
@@ -29,7 +29,7 @@ export class ItemStore extends ChangeableEntity<ItemStoreDto>
 
 		this.itemId = this.assign("itemId", dto?.itemId ?? 0);
 		this.storeId = this.assign("storeId", dto?.storeId);
-		this.storeName = this.assign("storeName", dto?.storeName);
+		this.storeName = this.assign("storeName", dto?.storeName ?? "");
 		this.quantity = this.assign("quantity", dto?.quantity ?? 0);
 		this.averageCost = this.assign("averageCost", dto?.averageCost ?? 0);
 	}

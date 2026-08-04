@@ -33,7 +33,7 @@ import { ItemType } from "@/core/data/item.ts";
 export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 {
 	useSignals();
-	const {t} = useTranslation("accounting");
+	const {t} = useTranslation(["accounting", "stocking"]);
 	const focusedQuantityIndex = useMemo(() => signal<number | undefined>(undefined), []);
 	const errorMessage = invoice.getError("invoiceItems");
 	const hasSettlementPerm = Services.auth.hasAuth(
@@ -97,7 +97,6 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 			: originalTaxInclusivePrice;
 	};
 
-	// Move Hooks BEFORE the early return to comply with the Rules of Hooks
 	const dragState = useMemo(() => signal<{
 		draggedIndex: number | undefined,
 		dragOverIndex: number | undefined
@@ -111,7 +110,7 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 
 	const handleDragOver = useCallback((e: React.DragEvent, index: number) =>
 	{
-		e.preventDefault(); // required to allow the drop
+		e.preventDefault();
 		if (dragState.value.dragOverIndex !== index)
 		{
 			dragState.value.dragOverIndex = index;
@@ -130,7 +129,6 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 
 	const handleDragEnd = useCallback(() =>
 	{
-		// Runs when drag is cancelled (e.g. Escape key) without a valid drop
 		dragState.value.draggedIndex = undefined;
 		dragState.value.dragOverIndex = undefined;
 	}, [dragState.value]);
@@ -152,8 +150,8 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 		);
 	}
 
-	const fixedColCount = 7; // drag handler + number + item + pricingMethod + quantity + price + totalPrice
-	const actionColCount = (showProfit ? 1 : 0) + 1; // profit + delete
+	const fixedColCount = 8;
+	const actionColCount = (showProfit ? 1 : 0) + 1;
 	const visibleCount = COLUMNS.filter((c) => isVisible(c.key)).length;
 	const totalColSpan = fixedColCount + visibleCount + actionColCount;
 
@@ -190,7 +188,8 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 						<th className="p-3 w-5"/>
 						<th className="p-3 font-semibold w-16 text-muted-foreground">{ t("invoices.number") }</th>
 						<th className="p-3 font-semibold text-start w-40">{ t("invoices.item") }</th>
-						<th className="p-3 font-semibold text-start w-20 min-w-20">{ t("invoices.pricingMethod") }</th>
+						<th className="p-3 font-semibold text-start w-24 min-w-24">{ t("stocking:items.unit") }</th>
+						<th className="p-3 font-semibold text-start w-24 min-w-24">{ t("invoices.pricingMethod") }</th>
 						{ isVisible("cost") && (
 							<th className="p-3 font-semibold text-start w-25 min-w-25">{ t("invoices.cost") }</th>
 						) }
@@ -224,10 +223,9 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 						const showToolTip = (invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.Sell)
 							&& invoice.invoiceMode.value != InvoiceMode.Return;
 						const multiplier = invoice.type.value === InvoiceType.Sell ? -1 : 1;
-						const selectedMethod = invoiceItem.itemUnitPricingMethods.value?.find(
-							(p) => p.id.value === invoiceItem.itemUnitPricingMethodId.value);
+						const selectedUoM = invoiceItem.uoMDtos.value?.find((u) => u.id.value === invoiceItem.itemUoMId.value);
 						const remaining = invoiceItem.originalQuantity.value
-							+ invoiceItem.quantity.value * (selectedMethod?.quantityMultiplier.value ?? 1) * multiplier;
+							+ invoiceItem.quantity.value * (selectedUoM?.quantityMultiplier.value ?? 1) * multiplier;
 						const isLowStock = remaining < 0;
 
 						return (
@@ -260,21 +258,48 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 									<td className="px-2 pt-2">
 										{ (invoice.isDisabled)
 											? <div
-												className="font-semibold text-foreground">{ invoiceItem.itemUnitPricingMethodName }</div>
+												className="font-semibold text-foreground">{ invoiceItem.unitName }</div>
 											: (
 												<SelectField<number>
-													value={ invoiceItem.itemUnitPricingMethodId }
-													placeholder={ t("invoices.selectPricingMethod") }
-													error={ invoiceItem.getError("itemUnitPricingMethodId") }
+													value={ invoiceItem.itemUoMId }
+													placeholder={ t("stocking:items.unit") }
+													error={ invoiceItem.getError("itemUoMId") }
 													disabled={ invoice.isDisabled || invoiceItem.itemType.value === ItemType.Service }
-													options={ invoiceItem.itemUnitPricingMethods.value?.map((m) => ({
-														label: m.itemUnitPricingMethodName.value,
+													options={ invoiceItem.uoMDtos.value?.map((m) => ({
+														label: m.unitName.value,
 														value: m.id.value
 													})) || [] }
-													onValueChange={ (iupmId) =>
+													onValueChange={ (uomId) =>
 													{
-														invoiceItem.changeIupm(iupmId);
+														invoiceItem.changeUoM(uomId);
 														invoice.syncPaymentVouchers();
+													} }
+												/>
+											) }
+									</td>
+
+									<td className="px-2 pt-2">
+										{ (invoice.isDisabled)
+											? <div
+												className="font-semibold text-foreground">{ invoiceItem.pricingMethodName }</div>
+											: (
+												<SelectField<number>
+													value={ invoiceItem.pricingMethodId }
+													placeholder={ t("invoices.selectPricingMethod") }
+													disabled={ invoice.isDisabled || invoiceItem.itemType.value === ItemType.Service }
+													options={ invoiceItem.uoMDtos.value?.find(u => u.id.value === invoiceItem.itemUoMId.value)?.prices.value?.map((p) => ({
+														label: p.pricingMethodName.value,
+														value: p.pricingMethodId.value
+													})) || [] }
+													onValueChange={ (pmId) =>
+													{
+														const uom = invoiceItem.uoMDtos.value?.find(u => u.id.value === invoiceItem.itemUoMId.value);
+														const pmName = uom?.prices.value?.find(p => p.pricingMethodId.value === pmId)?.pricingMethodName.value;
+														if (pmId)
+														{
+															invoiceItem.changePricingMethod(pmId, pmName);
+															invoice.syncPaymentVouchers();
+														}
 													} }
 												/>
 											) }
@@ -431,8 +456,6 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 					</tbody>
 				</table>
 			</div>
-
-
 		</div>
 	);
 }

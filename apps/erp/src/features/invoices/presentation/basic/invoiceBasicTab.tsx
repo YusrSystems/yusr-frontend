@@ -33,9 +33,9 @@ export default function InvoiceBasicTab({invoice}: { invoice: Invoice })
 				{ !invoice.isDisabled && invoice.invoiceMode.value !== InvoiceMode.Return && (
 					<StoreItemSelector
 						storeId={ invoice.storeId }
-						onSelect={ (item) =>
+						onSelect={ (item, uomId, pmId) =>
 						{
-							invoice.addItem(item);
+							invoice.addItem(item, uomId, pmId);
 							invoice.syncPaymentVouchers();
 						} }
 					/>
