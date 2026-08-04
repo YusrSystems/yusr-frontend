@@ -1,5 +1,5 @@
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, SystemPermissionsActions, Validators } from "yusr-ui";
-import { type Signal } from "@preact/signals-react";
+import { signal, type Signal } from "@preact/signals-react";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 import { ItemDto, ItemType } from "@/core/data/item.ts";
 import type Invoice from "@/core/data/invoices/invoice.ts";
@@ -108,8 +108,8 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		this.unitName = this.assign("unitName", dto?.unitName);
 		this.uoMDtos = this.assign("uoMDtos", (dto?.uoMDtos ?? []).map(x => ItemUoM.create(x)));
 
-		this.pricingMethodId = this.assign("pricingMethodId", undefined);
-		this.pricingMethodName = this.assign("pricingMethodName", undefined);
+		this.pricingMethodId = signal<number | undefined>(undefined);
+		this.pricingMethodName = signal<string | undefined>(undefined);
 
 		// Guess the pricing method on load for display purposes
 		if (dto && dto.itemUoMId && dto.uoMDtos)
@@ -158,17 +158,8 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 		const isPurchase = invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.PurchaseReturn;
 
-		// Map the base cost properly based on Invoice type
-		let baseCost = 0;
-		if (isPurchase)
-		{
-			baseCost = item.lastBuyPrice ?? 0;
-		}
-		else
-		{
-			const storeDetails = item.itemStores?.find(s => s.storeId === invoice.storeId.value);
-			baseCost = storeDetails?.averageCost ?? 0;
-		}
+		const storeDetails = item.itemStores?.find(s => s.storeId === invoice.storeId.value);
+		const baseCost = isPurchase ? (item.lastBuyPrice ?? 0) : (storeDetails?.averageCost ?? 0);
 
 		const cost = baseCost * (defaultUoM.quantityMultiplier ?? 1);
 		const price = defaultPriceTier?.price ?? 0;
@@ -179,7 +170,6 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			item.totalTaxes ?? 0
 		);
 
-		const storeDetails = item.itemStores?.find(s => s.storeId === invoice.storeId.value);
 		const storeQuantity = storeDetails?.quantity ?? 0;
 
 		const ii = InvoiceItem.create({
@@ -235,17 +225,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 	public changeQuantity(newQtn: number)
 	{
 		this.quantity.value = newQtn;
-		this.taxExclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxExclusiveTotalPrice(
-			this.taxExclusivePrice.value,
-			this.settlement.value,
-			this.quantity.value,
-			this.totalTaxesPerc.value
-		);
-		this.taxInclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxInclusiveTotalPrice(
-			this.taxInclusivePrice.value,
-			this.settlement.value,
-			this.quantity.value
-		);
+		this.recalculateTotals();
 
 		const invoice = this.getInvoice();
 		if (invoice && invoice.settlementAmount.value)
@@ -257,17 +237,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 	public changeSettlement(newSettlement: number | undefined, resetInvoiceSettlements: boolean = false)
 	{
 		this.settlement.value = newSettlement ?? 0;
-		this.taxExclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxExclusiveTotalPrice(
-			this.taxExclusivePrice.value,
-			this.settlement.value,
-			this.quantity.value,
-			this.totalTaxesPerc.value
-		);
-		this.taxInclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxInclusiveTotalPrice(
-			this.taxInclusivePrice.value,
-			this.settlement.value,
-			this.quantity.value
-		);
+		this.recalculateTotals();
 
 		const invoice = this.getInvoice();
 		if (invoice && resetInvoiceSettlements)
@@ -279,19 +249,9 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 	public changeTaxInclusivePrice(taxInclusivePrice: number, taxExclusivePrice?: number)
 	{
-		this.taxInclusivePrice.value = taxInclusivePrice!;
+		this.taxInclusivePrice.value = taxInclusivePrice;
 		this.taxExclusivePrice.value = taxExclusivePrice ?? InvoiceItemsMath.CalcTaxExclusivePrice(taxInclusivePrice, this.totalTaxesPerc.value);
-		this.taxExclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxExclusiveTotalPrice(
-			this.taxExclusivePrice.value,
-			this.settlement.value,
-			this.quantity.value,
-			this.totalTaxesPerc.value
-		);
-		this.taxInclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxInclusiveTotalPrice(
-			this.taxInclusivePrice.value,
-			this.settlement.value,
-			this.quantity.value
-		);
+		this.recalculateTotals();
 
 		const invoice = this.getInvoice();
 
@@ -339,6 +299,21 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		this.pricingMethodId.value = pricingMethodId;
 		if (pricingMethodName) this.pricingMethodName.value = pricingMethodName;
 		this.applyPricingMethodPrice();
+	}
+
+	private recalculateTotals()
+	{
+		this.taxExclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxExclusiveTotalPrice(
+			this.taxExclusivePrice.value,
+			this.settlement.value,
+			this.quantity.value,
+			this.totalTaxesPerc.value
+		);
+		this.taxInclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxInclusiveTotalPrice(
+			this.taxInclusivePrice.value,
+			this.settlement.value,
+			this.quantity.value
+		);
 	}
 
 	private applyPricingMethodPrice()
