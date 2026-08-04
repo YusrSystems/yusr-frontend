@@ -2,10 +2,12 @@ import { ItemDto } from "@/core/data/item";
 import type ItemTransfer from "@/core/data/itemTransfer";
 import { ItemTransfersItem } from "@/core/data/itemTransfer";
 import { ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod";
+import { ItemUoMDto } from "@/core/data/itemUoM";
 import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
 import { AlertCircle, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { Button, ChangeableEntityMode, NumberField, SelectField } from "yusr-ui";
 import StoreItemSelector from "../items/storeItemSelector";
 
@@ -13,7 +15,7 @@ import StoreItemSelector from "../items/storeItemSelector";
 export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 {
 	useSignals();
-	const {t} = useTranslation("stocking");
+	const {t} = useTranslation(["stocking", "common", "erpCommon"]);
 
 	const groupedItems = (() =>
 	{
@@ -32,8 +34,8 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 	const getAvailableUnits = (itemId: number | undefined, group: ItemTransfersItem[]) =>
 	{
 		const storeItem = Cubits.items.entities.value.find((si) => si.id === itemId);
-		const usedUnitIds = group.map((i) => i.itemUnitPricingMethodId.value);
-		return storeItem?.itemUnitPricingMethods?.filter((u) => !usedUnitIds.includes(u.id)) || [];
+		const usedUnitIds = group.map((i) => i.itemUoMId.value);
+		return storeItem?.uoMs?.filter((u) => !usedUnitIds.includes(u.id)) || [];
 	};
 
 	const getQuantities = (
@@ -41,8 +43,8 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 		group: ItemTransfersItem[]
 	): { availableQuantity: number, MaxQuantity: number } =>
 	{
-		const method = row.itemUnitPricingMethods.value.find(
-			m => m.id.value === row.itemUnitPricingMethodId.value
+		const method = row.itemUoMs.value.find(
+			m => m.id.value === row.itemUoMId.value
 		);
 
 		if (!method)
@@ -54,8 +56,8 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 			.filter(i => i.id.value !== row.id.value)
 			.reduce((sum, i) =>
 			{
-				const m = i.itemUnitPricingMethods.value.find(
-					x => x.id.value === i.itemUnitPricingMethodId.value
+				const m = i.itemUoMs.value.find(
+					x => x.id.value === i.itemUoMId.value
 				);
 
 				return sum + (i.quantity.value || 0) * (m?.quantityMultiplier.value || 0);
@@ -85,16 +87,16 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 		};
 	};
 
-	const createTransferItem = (storeItem: ItemDto, iupm: ItemUnitPricingMethodDto) =>
+	const createTransferItem = (storeItem: ItemDto, uom: ItemUoMDto) =>
 	{
 		return ItemTransfersItem.create({
 			// eslint-disable-next-line react-hooks/purity
 			id: Math.floor(Math.random() * -1000000),
 			itemId: storeItem.id,
 			itemName: storeItem.name,
-			itemUnitPricingMethods: storeItem.itemUnitPricingMethods || [],
-			itemUnitPricingMethodId: iupm.id,
-			itemUnitPricingMethodName: iupm.itemUnitPricingMethodName,
+			itemUoMs: storeItem.uoMs || [],
+			itemUoMId: uom.id,
+			itemUoMName: uom.unitName,
 			quantity: storeItem.storeQuantity >= 1 ? 1 : 0,
 			maxQuantity: storeItem.storeQuantity
 		});
@@ -103,7 +105,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 	const addUnitToItem = (itemId: number, unitId: number | undefined) =>
 	{
 		const storeItem = Cubits.items.entities.value.find((si) => si.id === itemId);
-		const unitDetails = storeItem?.itemUnitPricingMethods?.find((u) => u.id === unitId);
+		const unitDetails = storeItem?.uoMs?.find((u) => u.id === unitId);
 
 		if (!storeItem || !unitDetails)
 		{
@@ -113,17 +115,20 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 		entity.itemTransfersItems.value = [...entity.itemTransfersItems.value, createTransferItem(storeItem, unitDetails)];
 	};
 
-	const handleStoreItemSelect = (storeItem: ItemDto, selectedIupm?: ItemUnitPricingMethodDto) =>
+	const handleStoreItemSelect = (item: ItemDto, selectedIupm?: ItemUnitPricingMethodDto) =>
 	{
-		const defaultMethod = selectedIupm ?? storeItem.itemUnitPricingMethods[0];
+		const uomsList = item.uoMs || [];
+		const defaultUoM = selectedIupm ? uomsList.find((u) => u.unitId === selectedIupm.unitId) : uomsList[0];
+		const unit = defaultUoM || uomsList[0];
 
-		if (!defaultMethod)
+		if (!unit)
 		{
-			throw Error("IUPM should be selected");
+			toast.error(t("items.noPackagingUnits", "لا توجد وحدات تغليف لهذه المادة"));
+			return;
 		}
 
 		const list = [...(entity.itemTransfersItems.value || [])];
-		const existingIndex = list.findIndex((i) => i.itemId.value === storeItem.id && i.itemUnitPricingMethodId.value === defaultMethod.id);
+		const existingIndex = list.findIndex((i) => i.itemId.value === item.id && i.itemUoMId.value === unit.id);
 
 		if (existingIndex !== -1 && list[existingIndex])
 		{
@@ -132,7 +137,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 		}
 		else
 		{
-			entity.itemTransfersItems.value = [...list, createTransferItem(storeItem, defaultMethod)];
+			entity.itemTransfersItems.value = [...list, createTransferItem(item, unit)];
 		}
 	};
 
@@ -148,7 +153,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 
 	if (!entity.fromStoreId.value)
 	{
-		return;
+		return null;
 	}
 
 	return (
@@ -207,7 +212,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 													<div key={ row.id.value } className="flex gap-2 items-start">
 														<div
 															className="bg-muted px-3 py-2 rounded-md text-xs font-medium w-32 truncate text-center border shrink-0 mt-0.5">
-															{ row.itemUnitPricingMethodName.value }
+															{ row.itemUoMName.value }
 														</div>
 														<div className="flex-1">
 															<NumberField
@@ -241,11 +246,11 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 												{ entity.mode.value === ChangeableEntityMode.Create && availableUnits.length > 0 && (
 													<div className="mt-1">
 														<SelectField<number>
-															options={ availableUnits.map((iupm) => ({
-																label: iupm.itemUnitPricingMethodName,
-																value: iupm.id
+															options={ availableUnits.map((uom) => ({
+																label: uom.unitName,
+																value: uom.id
 															})) }
-															placeholder={ t("itemTransfers.selectPricingMethod") }
+															placeholder={ t("items.unit") }
 															onValueChange={ (unitId) => addUnitToItem(itemId, unitId) }
 														/>
 													</div>

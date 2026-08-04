@@ -1,6 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
-import { ItemUnitPricingMethod, type ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
+import { ItemUoM, type ItemUoMDto } from "./itemUoM";
 
 
 export class ItemTransfersItemDto extends Dto
@@ -8,11 +8,11 @@ export class ItemTransfersItemDto extends Dto
 	public itemTransferId!: number;
 	public itemId!: number;
 	public itemName!: string;
-	public itemUnitPricingMethodId!: number;
-	public itemUnitPricingMethodName!: string;
+	public itemUoMId!: number;
+	public itemUoMName!: string;
 	public quantity!: number;
 	public maxQuantity!: number;
-	public itemUnitPricingMethods: ItemUnitPricingMethodDto[] = [];
+	public itemUoMs: ItemUoMDto[] = [];
 }
 
 export class ItemTransfersItem extends ChangeableEntity<ItemTransfersItemDto>
@@ -20,11 +20,11 @@ export class ItemTransfersItem extends ChangeableEntity<ItemTransfersItemDto>
 	public itemTransferId: Signal<number>;
 	public itemId: Signal<number>;
 	public itemName: Signal<string>;
-	public itemUnitPricingMethodId: Signal<number>;
-	public itemUnitPricingMethodName: Signal<string>;
+	public itemUoMId: Signal<number>;
+	public itemUoMName: Signal<string>;
 	public quantity: Signal<number>;
 	public maxQuantity: Signal<number>;
-	public itemUnitPricingMethods: Signal<ItemUnitPricingMethod[]>;
+	public itemUoMs: Signal<ItemUoM[]>;
 
 	constructor(dto?: Partial<ItemTransfersItemDto> | undefined)
 	{
@@ -33,14 +33,14 @@ export class ItemTransfersItem extends ChangeableEntity<ItemTransfersItemDto>
 		this.itemTransferId = this.assign("itemTransferId", dto?.itemTransferId ?? 0);
 		this.itemId = this.assign("itemId", dto?.itemId ?? 0);
 		this.itemName = this.assign("itemName", dto?.itemName ?? "");
-		this.itemUnitPricingMethodId = this.assign("itemUnitPricingMethodId", dto?.itemUnitPricingMethodId ?? 0);
-		this.itemUnitPricingMethodName = this.assign("itemUnitPricingMethodName", dto?.itemUnitPricingMethodName ?? "");
+		this.itemUoMId = this.assign("itemUoMId", dto?.itemUoMId ?? 0);
+		this.itemUoMName = this.assign("itemUoMName", dto?.itemUoMName ?? "");
 		this.quantity = this.assign("quantity", dto?.quantity ?? 0);
 		this.maxQuantity = this.assign("maxQuantity", dto?.maxQuantity ?? 0);
-		this.itemUnitPricingMethods = this.assign(
-			"itemUnitPricingMethods",
-			(dto?.itemUnitPricingMethods ?? []).map((m) =>
-				m instanceof ItemUnitPricingMethod ? m : new ItemUnitPricingMethod(m)
+		this.itemUoMs = this.assign(
+			"itemUoMs",
+			(dto?.itemUoMs ?? []).map((m) =>
+				m instanceof ItemUoM ? m : new ItemUoM(m)
 			)
 		);
 	}
