@@ -63,6 +63,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 	// Local UI state (not strictly needed in backend DTO)
 	public pricingMethodId: Signal<number | undefined>;
 	public pricingMethodName: Signal<string | undefined>;
+	public lastBuyPrice: Signal<number>;
 
 	constructor(dto?: Partial<InvoiceItemDto>)
 	{
@@ -110,6 +111,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 		this.pricingMethodId = signal<number | undefined>(undefined);
 		this.pricingMethodName = signal<string | undefined>(undefined);
+		this.lastBuyPrice = signal<number>(0);
 
 		// Guess the pricing method on load for display purposes
 		if (dto && dto.itemUoMId && dto.uoMDtos)
@@ -158,11 +160,15 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 		const isPurchase = invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.PurchaseReturn;
 
+		// 1. Cost is ALWAYS store.averageCost
 		const storeDetails = item.itemStores?.find(s => s.storeId === invoice.storeId.value);
-		const baseCost = isPurchase ? (item.lastBuyPrice ?? 0) : (storeDetails?.averageCost ?? 0);
-
+		const baseCost = storeDetails?.averageCost ?? 0;
 		const cost = baseCost * (defaultUoM.quantityMultiplier ?? 1);
-		const price = defaultPriceTier?.price ?? 0;
+
+		// 2. Price is lastBuyPrice if Purchase, otherwise selling price from pricing method
+		const price = isPurchase
+			? (item.lastBuyPrice ?? 0) * (defaultUoM.quantityMultiplier ?? 1)
+			: (defaultPriceTier?.price ?? 0);
 
 		const {taxExclusivePrice, taxInclusivePrice} = InvoiceItemsMath.GetPrices(
 			item.taxIncluded,
@@ -210,6 +216,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 		ii.pricingMethodId.value = defaultPriceTier?.pricingMethodId;
 		ii.pricingMethodName.value = defaultPriceTier?.pricingMethodName;
+		ii.lastBuyPrice.value = item.lastBuyPrice ?? 0;
 		ii.getInvoice = () => invoice;
 
 		return ii;
@@ -321,8 +328,19 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		const selectedUoM = this.uoMDtos.value?.find(u => u.id.value === this.itemUoMId.value);
 		if (!selectedUoM) return;
 
-		const priceTier = selectedUoM.prices.value?.find(p => p.pricingMethodId.value === this.pricingMethodId.value);
-		const price = priceTier ? priceTier.price.value : 0;
+		const invoice = this.getInvoice();
+		const isPurchase = invoice?.type.value === InvoiceType.Purchase || invoice?.type.value === InvoiceType.PurchaseReturn;
+
+		let price = 0;
+		if (isPurchase)
+		{
+			price = (this.lastBuyPrice.value ?? 0) * (selectedUoM.quantityMultiplier.value ?? 1);
+		}
+		else
+		{
+			const priceTier = selectedUoM.prices.value?.find(p => p.pricingMethodId.value === this.pricingMethodId.value);
+			price = priceTier ? priceTier.price.value : 0;
+		}
 
 		const {taxExclusivePrice, taxInclusivePrice} = InvoiceItemsMath.GetPrices(
 			this.taxIncluded.value,
