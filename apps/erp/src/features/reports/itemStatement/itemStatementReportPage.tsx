@@ -12,6 +12,7 @@ import type { ItemStatementLine } from "@/features/reports/itemStatement/itemSta
 import { APP_NAME } from "../../../../appConfig.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { Services } from "@/core/services/services.ts";
+import { getDocumentTypeName } from "@/core/types/documentType.ts";
 
 
 export function ItemStatementReportPage()
@@ -55,7 +56,11 @@ export function ItemStatementReportPage()
 	{
 		const currentItemName = data?.itemName || itemName || "محددة";
 
-		if (data)
+		if (data && lastRequest.value?.fromDate && lastRequest.value?.toDate)
+		{
+			document.title = `كشف حركة مادة - ${ currentItemName } - من ${ lastRequest.value.fromDate } إلى ${ lastRequest.value.toDate }`;
+		}
+		else if (data)
 		{
 			document.title = `كشف حركة مادة - ${ currentItemName }`;
 		}
@@ -68,7 +73,7 @@ export function ItemStatementReportPage()
 		{
 			document.title = APP_NAME;
 		};
-	}, [data, itemName]);
+	}, [data, itemName, lastRequest.value?.fromDate, lastRequest.value?.toDate]);
 
 	return (
 		<ReportPage permissionResource={ SystemPermissionsResources.ReportItemStatement }>
@@ -78,13 +83,15 @@ export function ItemStatementReportPage()
 					getRows={ async () => Cubits.ItemStatementReport.result.value?.lines ?? [] }
 					columns={ [
 						{header: "التاريخ", accessor: (r) => r.date},
+						{header: "نوع المستند", accessor: (r) => getDocumentTypeName(r.documentType)},
 						{header: "رقم المستند", accessor: (r) => r.documentId.toString()},
-						{header: "المستودع", accessor: (r) => r.storeName},
-						{header: "الطرف الثاني", accessor: (r) => r.secondPartyName ?? ""},
+						{header: "الجهة", accessor: (r) => r.partnerName ?? ""},
 						{header: "الكمية الواردة", accessor: (r) => r.quantityIn.toString()},
 						{header: "الكمية الصادرة", accessor: (r) => r.quantityOut.toString()},
+						{header: "تكلفة الحركة", accessor: (r) => r.transactionCost.toString()},
 						{header: "الرصيد الجاري", accessor: (r) => r.runningQuantity.toString()},
-						{header: "تكلفة الوحدة", accessor: (r) => r.unitCost.toString()}
+						{header: "متوسط التكلفة", accessor: (r) => r.runningAverageCost.toString()},
+						{header: "التقييم", accessor: (r) => r.runningValuationValue.toString()}
 					] }
 				/>
 				<ReportPage.PrintButton/>

@@ -16,20 +16,28 @@ export function ItemStatementReportInfo({data}: ItemStatementReportInfoProps)
 			<div className="grid grid-cols-3 gap-3">
 				<ReportField labelAr="رقم المادة" labelEn="Item id" value={ data.itemId.toString() }/>
 				<ReportField labelAr="اسم المادة" labelEn="Item name" value={ data.itemName }/>
-				<ReportField labelAr="متوسط التكلفة" labelEn="Avg cost" value={ formatNumber(data.cost) }/>
+				<ReportField labelAr="المستودع" labelEn="Store" value={ data.storeName || "الكل (All)" }/>
 			</div>
 
-			<div className="grid grid-cols-3 gap-3">
-				<ReportField labelAr="الكمية" labelEn="Quantity"
-				             value={ data.minQuantity != null ? formatNumber(data.quantity) : "" }/>
-				<ReportField labelAr="الحد الأدنى للكمية" labelEn="Min quantity"
-				             value={ data.minQuantity != null ? formatNumber(data.minQuantity) : "" }/>
-				<ReportField labelAr="الحد الأعلى للكمية" labelEn="Max quantity"
-				             value={ data.maxQuantity != null ? formatNumber(data.maxQuantity) : "" }/>
-
+			<div className="grid grid-cols-3 gap-3 mt-2 pt-2">
+				<ReportField labelAr="الكمية الافتتاحية" labelEn="Opening Qty"
+				             value={ formatNumber(data.openingQuantity) }/>
+				<ReportField labelAr="متوسط التكلفة الافتتاحي" labelEn="Opening Avg Cost"
+				             value={ formatNumber(data.openingAverageCost) }/>
+				<ReportField labelAr="التقييم الافتتاحي" labelEn="Opening Valuation"
+				             value={ formatNumber(data.openingValuation) }/>
 			</div>
 
-			<div className="grid grid-cols-3 gap-3">
+			<div className="grid grid-cols-3 gap-3 mt-2 pt-2">
+				<ReportField labelAr="الكمية النهائية" labelEn="Closing Qty"
+				             value={ formatNumber(data.closingQuantity) }/>
+				<ReportField labelAr="متوسط التكلفة النهائي" labelEn="Closing Avg Cost"
+				             value={ formatNumber(data.closingAverageCost) }/>
+				<ReportField labelAr="التقييم النهائي" labelEn="Closing Valuation"
+				             value={ formatNumber(data.closingValuation) }/>
+			</div>
+
+			<div className="grid grid-cols-3 gap-3 mt-2 pt-2">
 				<ReportField labelAr="آخر سعر شراء" labelEn="Last purch price"
 				             value={ formatNumber(data.lastBuyPrice) }/>
 				<ReportField labelAr="أقل سعر شراء" labelEn="Lowest purch price"

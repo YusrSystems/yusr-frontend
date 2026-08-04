@@ -7,26 +7,34 @@ export interface ItemStatementLine
 	date: string;
 	documentType: DocumentType;
 	documentId: number;
-	storeName: string;
-	secondPartyName: string;
+	partnerName: string;
 	quantityIn: number;
 	quantityOut: number;
+	transactionCost: number;
 	runningQuantity: number;
-	unitCost: number;
+	runningAverageCost: number;
+	runningValuationValue: number;
 }
 
 export interface ItemStatementReportResult
 {
-	lines: ItemStatementLine[];
 	itemId: number;
 	itemName: string;
-	storeId: number;
-	storeName: string;
-	cost: number;
-	quantity: number;
 	minQuantity?: number;
 	maxQuantity?: number;
 	notes?: string;
+	storeId?: number;
+	storeName?: string;
+	fromDate: string;
+	toDate: string;
+
+	openingQuantity: number;
+	openingAverageCost: number;
+	openingValuation: number;
+
+	closingQuantity: number;
+	closingAverageCost: number;
+	closingValuation: number;
 
 	// Historical Prices Cache
 	lastBuyPrice: number;
@@ -36,11 +44,8 @@ export interface ItemStatementReportResult
 	minSellPrice: number;
 	maxSellPrice: number;
 
+	lines: ItemStatementLine[];
 	totalCount: number;
 	pageNumber: number;
 	rowsPerPage: number;
-
-	// Page-level total summaries
-	pageTotalQuantityIn: number;
-	pageTotalQuantityOut: number;
 }
