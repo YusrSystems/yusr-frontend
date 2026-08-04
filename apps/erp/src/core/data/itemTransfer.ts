@@ -9,10 +9,10 @@ export class ItemTransfersItemDto extends Dto
 	public itemId!: number;
 	public itemName!: string;
 	public itemUoMId!: number;
-	public itemUoMName!: string;
+	public unitName!: string;
 	public quantity!: number;
 	public maxQuantity!: number;
-	public itemUoMs: ItemUoMDto[] = [];
+	public uoMs: ItemUoMDto[] = [];
 }
 
 export class ItemTransfersItem extends ChangeableEntity<ItemTransfersItemDto>
@@ -21,10 +21,10 @@ export class ItemTransfersItem extends ChangeableEntity<ItemTransfersItemDto>
 	public itemId: Signal<number>;
 	public itemName: Signal<string>;
 	public itemUoMId: Signal<number>;
-	public itemUoMName: Signal<string>;
+	public unitName: Signal<string>;
 	public quantity: Signal<number>;
 	public maxQuantity: Signal<number>;
-	public itemUoMs: Signal<ItemUoM[]>;
+	public uoMs: Signal<ItemUoM[]>;
 
 	constructor(dto?: Partial<ItemTransfersItemDto> | undefined)
 	{
@@ -34,12 +34,12 @@ export class ItemTransfersItem extends ChangeableEntity<ItemTransfersItemDto>
 		this.itemId = this.assign("itemId", dto?.itemId ?? 0);
 		this.itemName = this.assign("itemName", dto?.itemName ?? "");
 		this.itemUoMId = this.assign("itemUoMId", dto?.itemUoMId ?? 0);
-		this.itemUoMName = this.assign("itemUoMName", dto?.itemUoMName ?? "");
+		this.unitName = this.assign("unitName", dto?.unitName ?? "");
 		this.quantity = this.assign("quantity", dto?.quantity ?? 0);
 		this.maxQuantity = this.assign("maxQuantity", dto?.maxQuantity ?? 0);
-		this.itemUoMs = this.assign(
-			"itemUoMs",
-			(dto?.itemUoMs ?? []).map((m) =>
+		this.uoMs = this.assign(
+			"uoMs",
+			(dto?.uoMs ?? []).map((m) =>
 				m instanceof ItemUoM ? m : new ItemUoM(m)
 			)
 		);

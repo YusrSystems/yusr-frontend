@@ -30,7 +30,7 @@ export function ItemTransferReport({
 	}
 
 	const getMultiplier = (item: ItemTransfersItemDto) =>
-		item.itemUoMs?.find((m) => m.id === item.itemUoMId)?.quantityMultiplier ?? 1;
+		item.uoMs?.find((m) => m.id === item.itemUoMId)?.quantityMultiplier ?? 1;
 
 	const rows = itemTransfer.itemTransfersItems ?? [];
 
@@ -78,7 +78,7 @@ export function ItemTransferReport({
 									<ReportTableTd isEven={ isEven }>{ item.itemId }</ReportTableTd>
 									<ReportTableTd isEven={ isEven } align="start">{ item.itemName }</ReportTableTd>
 									<ReportTableTd isEven={ isEven }
-									               align="start">{ item.itemUoMName }</ReportTableTd>
+									               align="start">{ item.unitName }</ReportTableTd>
 									<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity) }</ReportTableTd>
 									<ReportTableTd isEven={ isEven }>{ formatNumber(multiplier) }</ReportTableTd>
 									<ReportTableTd isEven={ isEven }>{ formatNumber(totalItemQuantity) }</ReportTableTd>

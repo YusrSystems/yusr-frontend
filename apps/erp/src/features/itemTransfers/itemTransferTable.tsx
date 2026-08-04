@@ -43,7 +43,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 		group: ItemTransfersItem[]
 	): { availableQuantity: number, MaxQuantity: number } =>
 	{
-		const method = row.itemUoMs.value.find(
+		const method = row.uoMs.value.find(
 			m => m.id.value === row.itemUoMId.value
 		);
 
@@ -56,7 +56,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 			.filter(i => i.id.value !== row.id.value)
 			.reduce((sum, i) =>
 			{
-				const m = i.itemUoMs.value.find(
+				const m = i.uoMs.value.find(
 					x => x.id.value === i.itemUoMId.value
 				);
 
@@ -94,9 +94,9 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 			id: Math.floor(Math.random() * -1000000),
 			itemId: storeItem.id,
 			itemName: storeItem.name,
-			itemUoMs: storeItem.uoMs || [],
+			uoMs: storeItem.uoMs || [],
 			itemUoMId: uom.id,
-			itemUoMName: uom.unitName,
+			unitName: uom.unitName,
 			quantity: storeItem.storeQuantity >= 1 ? 1 : 0,
 			maxQuantity: storeItem.storeQuantity
 		});
@@ -212,7 +212,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 													<div key={ row.id.value } className="flex gap-2 items-start">
 														<div
 															className="bg-muted px-3 py-2 rounded-md text-xs font-medium w-32 truncate text-center border shrink-0 mt-0.5">
-															{ row.itemUoMName.value }
+															{ row.unitName.value }
 														</div>
 														<div className="flex-1">
 															<NumberField
