@@ -15,6 +15,8 @@ export class CostAdjustmentDto extends Dto
 	public date!: string;
 	public itemId!: number;
 	public itemName!: string;
+	public storeId!: number;
+	public storeName!: string;
 	public oldCost!: number;
 	public newCost!: number;
 	public quantity!: number;
@@ -26,8 +28,10 @@ export class CostAdjustmentDto extends Dto
 export default class CostAdjustment extends ChangeableEntity<CostAdjustmentDto>
 {
 	public date: Signal<string>;
-	public itemId: Signal<number>;
+	public itemId: Signal<number | undefined>;
 	public itemName: Signal<string>;
+	public storeId: Signal<number | undefined>;
+	public storeName: Signal<string>;
 	public oldCost: Signal<number>;
 	public newCost: Signal<number>;
 	public quantity: Signal<number>;
@@ -42,6 +46,11 @@ export default class CostAdjustment extends ChangeableEntity<CostAdjustmentDto>
 				field: "date",
 				selector: (d) => d.date,
 				validators: [Validators.required(i18n.t("stocking:costAdjustments.dateRequired"))]
+			},
+			{
+				field: "storeId",
+				selector: (d) => d.storeId,
+				validators: [Validators.required(i18n.t("stocking:costAdjustments.storeRequired", "المستودع مطلوب"))]
 			},
 			{
 				field: "itemId",
@@ -63,6 +72,8 @@ export default class CostAdjustment extends ChangeableEntity<CostAdjustmentDto>
 		this.date = this.assign("date", dto?.date ?? DateService.formatDateOnly(new Date()));
 		this.itemId = this.assign("itemId", dto?.itemId ?? undefined);
 		this.itemName = this.assign("itemName", dto?.itemName ?? "");
+		this.storeId = this.assign("storeId", dto?.storeId ?? undefined);
+		this.storeName = this.assign("storeName", dto?.storeName ?? "");
 		this.oldCost = this.assign("oldCost", dto?.oldCost ?? 0);
 		this.newCost = this.assign("newCost", dto?.newCost ?? 0);
 		this.quantity = this.assign("quantity", dto?.quantity ?? 0);

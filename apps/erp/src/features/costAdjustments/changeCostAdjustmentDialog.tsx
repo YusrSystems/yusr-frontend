@@ -1,5 +1,6 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import CostAdjustment, { type CostAdjustmentDto } from "@/core/data/costAdjustment";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
@@ -18,6 +19,7 @@ import {
 	TextField
 } from "yusr-ui";
 import { signal } from "@preact/signals-react";
+import { ItemType } from "@/core/data/item.ts";
 
 
 export default function ChangeCostAdjustmentDialog({
@@ -33,8 +35,16 @@ export default function ChangeCostAdjustmentDialog({
 
 	useEffect(() =>
 	{
-		Cubits.items.init();
+		Cubits.stores.init();
 	}, []);
+
+	useEffect(() =>
+	{
+		if (entity.value.storeId.value && entity.value.date.value)
+		{
+			Cubits.items.initForStoreAndDate([ItemType.Product], entity.value.storeId.value, entity.value.date.value);
+		}
+	}, [entity.value.storeId.value, entity.value.date.value]);
 
 	if (
 		(entity.value.mode.value === ChangeableEntityMode.Create &&
@@ -51,19 +61,39 @@ export default function ChangeCostAdjustmentDialog({
 		: `${ t("common:crudRow.edit") } ${ t("costAdjustments.entityName") }`;
 
 	return (
-		<ChangeDialog className="sm:max-w-2xl">
+		<ChangeDialog className="sm:max-w-3xl">
 			<ChangeDialog.Header title={ title }/>
 
 			<FieldGroup>
-				<FieldsSection columns={ 2 }>
+				<FieldsSection columns={ 3 }>
 					<TextField
 						label={ t("costAdjustments.date") }
 						type="date"
 						required
 						value={ entity.value.date }
 						error={ entity.value.getError("date") }
-						disabled
+						disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
 					/>
+
+					<FormField
+						label={ t("costAdjustments.store", "المستودع") }
+						required
+						error={ entity.value.getError("storeId") }
+					>
+						<StoresSearchableSelect
+							id={ entity.value.storeId }
+							label={ entity.value.storeName }
+							disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+							onSelect={ () =>
+							{
+								entity.value.itemId.value = undefined;
+								entity.value.itemName.value = "";
+								entity.value.oldCost.value = 0;
+								entity.value.quantity.value = 0;
+								entity.value.newCost.value = 0;
+							} }
+						/>
+					</FormField>
 
 					<FormField
 						label={ t("costAdjustments.item") }
@@ -73,18 +103,19 @@ export default function ChangeCostAdjustmentDialog({
 						<ItemsSearchableSelect
 							id={ entity.value.itemId }
 							label={ entity.value.itemName }
-							disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+							disabled={ entity.value.mode.value === ChangeableEntityMode.Update || !entity.value.storeId.value }
 							onSelect={ (item) =>
 							{
 								if (item)
 								{
 									entity.value.itemName.value = item.name;
-									entity.value.oldCost.value = item.cost;
-									entity.value.quantity.value = item.quantity;
+									const storeDetails = item.itemStores?.find(s => s.storeId === entity.value.storeId.value);
+									entity.value.oldCost.value = storeDetails?.averageCost ?? 0;
+									entity.value.quantity.value = storeDetails?.quantity ?? 0;
 									// Optionally pre-fill new cost with old cost to make editing easier
 									if (entity.value.newCost.value === 0)
 									{
-										entity.value.newCost.value = item.cost;
+										entity.value.newCost.value = storeDetails?.averageCost ?? 0;
 									}
 								}
 							} }
