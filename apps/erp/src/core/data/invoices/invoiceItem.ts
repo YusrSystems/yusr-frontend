@@ -16,6 +16,7 @@ export class InvoiceItemDto extends Dto
 	public itemId!: number;
 	public itemType!: ItemType;
 	public itemUoMId!: number;
+	public quantityMultiplier!: number;
 	public quantity!: number;
 	public originalQuantity!: number;
 	public originalCost!: number;
@@ -42,6 +43,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 	public itemId: Signal<number | undefined>;
 	public itemType: Signal<ItemType>;
 	public itemUoMId: Signal<number | undefined>;
+	public quantityMultiplier: Signal<number>;
 	public quantity: Signal<number>;
 	public originalQuantity: Signal<number>;
 	public originalCost: Signal<number>;
@@ -60,7 +62,6 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 	public unitName: Signal<string | undefined>;
 	public uoMDtos: Signal<ItemUoM[]>;
 
-	// Local UI state (not strictly needed in backend DTO)
 	public pricingMethodId: Signal<number | undefined>;
 	public pricingMethodName: Signal<string | undefined>;
 	public lastBuyPrice: Signal<number>;
@@ -91,6 +92,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		this.itemId = this.assign("itemId", dto?.itemId);
 		this.itemType = this.assign("itemType", dto?.itemType);
 		this.itemUoMId = this.assign("itemUoMId", dto?.itemUoMId);
+		this.quantityMultiplier = this.assign("quantityMultiplier", dto?.quantityMultiplier ?? 1);
 		this.quantity = this.assign("quantity", dto?.quantity ?? 0);
 		this.originalQuantity = this.assign("originalQuantity", dto?.originalQuantity ?? 0);
 		this.originalCost = this.assign("originalCost", dto?.originalCost ?? 0);
@@ -113,7 +115,6 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		this.pricingMethodName = signal<string | undefined>(undefined);
 		this.lastBuyPrice = signal<number>(0);
 
-		// Guess the pricing method on load for display purposes
 		if (dto && dto.itemUoMId && dto.uoMDtos)
 		{
 			const uom = dto.uoMDtos.find(u => u.id === dto.itemUoMId);
@@ -160,12 +161,10 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 		const isPurchase = invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.PurchaseReturn;
 
-		// 1. Cost is ALWAYS store.averageCost
 		const storeDetails = item.itemStores?.find(s => s.storeId === invoice.storeId.value);
 		const baseCost = storeDetails?.averageCost ?? 0;
 		const cost = baseCost * (defaultUoM.quantityMultiplier ?? 1);
 
-		// 2. Price is lastBuyPrice if Purchase, otherwise selling price from pricing method
 		const price = isPurchase
 			? (item.lastBuyPrice ?? 0) * (defaultUoM.quantityMultiplier ?? 1)
 			: (defaultPriceTier?.price ?? 0);
@@ -177,6 +176,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		);
 
 		const storeQuantity = storeDetails?.quantity ?? 0;
+		const multiplier = defaultUoM.quantityMultiplier ?? 1;
 
 		const ii = InvoiceItem.create({
 			id: 0,
@@ -192,8 +192,9 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			uoMDtos: item.uoMs ?? [],
 
 			// Financials
+			quantityMultiplier: multiplier,
 			quantity: item.type === ItemType.Service ?
-				1 : storeQuantity
+				1 : storeQuantity >= multiplier
 					? 1 : Services.auth.hasAuth(SystemPermissionsResources.InvoiceSellBeyondAvailableQuantity, SystemPermissionsActions.Get) ? 1 : 0,
 			originalQuantity: storeQuantity,
 			originalCost: baseCost,
@@ -280,9 +281,10 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 		this.itemUoMId.value = selectedUoM.id.value;
 		this.unitName.value = selectedUoM.unitName.value;
+		this.quantityMultiplier.value = selectedUoM.quantityMultiplier.value;
 
 		const baseCost = this.originalCost.value;
-		this.cost.value = Number((baseCost * selectedUoM.quantityMultiplier.value).toFixed(2));
+		this.cost.value = Number((baseCost * this.quantityMultiplier.value).toFixed(2));
 
 		const priceTier = selectedUoM.prices.value?.find(p => p.pricingMethodId.value === this.pricingMethodId.value)
 			|| selectedUoM.prices.value?.[0];
@@ -325,19 +327,19 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 	private applyPricingMethodPrice()
 	{
-		const selectedUoM = this.uoMDtos.value?.find(u => u.id.value === this.itemUoMId.value);
-		if (!selectedUoM) return;
-
 		const invoice = this.getInvoice();
 		const isPurchase = invoice?.type.value === InvoiceType.Purchase || invoice?.type.value === InvoiceType.PurchaseReturn;
 
 		let price = 0;
 		if (isPurchase)
 		{
-			price = (this.lastBuyPrice.value ?? 0) * (selectedUoM.quantityMultiplier.value ?? 1);
+			price = (this.lastBuyPrice.value ?? 0) * (this.quantityMultiplier.value ?? 1);
 		}
 		else
 		{
+			const selectedUoM = this.uoMDtos.value?.find(u => u.id.value === this.itemUoMId.value);
+			if (!selectedUoM) return;
+
 			const priceTier = selectedUoM.prices.value?.find(p => p.pricingMethodId.value === this.pricingMethodId.value);
 			price = priceTier ? priceTier.price.value : 0;
 		}

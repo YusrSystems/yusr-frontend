@@ -223,9 +223,9 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 						const showToolTip = (invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.Sell)
 							&& invoice.invoiceMode.value != InvoiceMode.Return;
 						const multiplier = invoice.type.value === InvoiceType.Sell ? -1 : 1;
-						const selectedUoM = invoiceItem.uoMDtos.value?.find((u) => u.id.value === invoiceItem.itemUoMId.value);
-						const remaining = invoiceItem.originalQuantity.value
-							+ invoiceItem.quantity.value * (selectedUoM?.quantityMultiplier.value ?? 1) * multiplier;
+
+						const remaining = invoiceItem.originalQuantity.value + invoiceItem.quantity.value * invoiceItem.quantityMultiplier.value * multiplier;
+
 						const isLowStock = remaining < 0;
 
 						return (
