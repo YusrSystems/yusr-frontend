@@ -70,6 +70,7 @@ export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => 
 	[SystemPermissionsResources.ReportItemSettlement]: t("permissions.report.itemSettlement"),
 	[SystemPermissionsResources.ReportItemBarcode]: t("permissions.report.itemBarcode"),
 	[SystemPermissionsResources.ReportStockValuation]: t("permissions.report.stockValuation", "تقرير تقييم المخزون"),
+	[SystemPermissionsResources.ReportLowStock]: t("permissions.report.lowStock", "تقرير النواقص"),
 
 	// Actions
 	[SystemPermissionsActions.Add]: t("permissions.actions.add"),
@@ -153,7 +154,7 @@ export const getPermissionSections = (t: TFunction<"erpCommon">) => [{
 		SystemPermissionsResources.ReportStocktaking,
 		SystemPermissionsResources.ReportItemSettlement,
 		SystemPermissionsResources.ReportItemBarcode,
-		SystemPermissionsResources.ReportPl,
-		SystemPermissionsResources.ReportStockValuation
+		SystemPermissionsResources.ReportStockValuation,
+		SystemPermissionsResources.ReportLowStock
 	]
 }];

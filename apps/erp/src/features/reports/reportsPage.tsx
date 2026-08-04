@@ -1,4 +1,5 @@
 import {
+	AlertTriangle,
 	ArrowRightLeft,
 	BarChart2,
 	FileSearch,
@@ -212,6 +213,12 @@ export default function ReportsPage()
 			name: "تقييم المخزون",
 			description: "تقرير يعرض قيمة المخزون الحالية بناءً على متوسط التكلفة وتاريخ محدد",
 			icon: PackageSearch
+		}, {
+			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/lowStock") }>{ t("reports.create") }</Button>,
+			name: t("reports.lowStock", "تقرير النواقص"),
+			description: t("reports.lowStockDescription", "عرض المواد التي وصلت للحد الأدنى أو نفدت"),
+			icon: AlertTriangle
 		}]
 	}];
 

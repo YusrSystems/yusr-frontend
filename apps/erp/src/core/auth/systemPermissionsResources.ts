@@ -73,6 +73,7 @@ export const SystemPermissionsResources = {
 	ReportItemBarcode: "ReportItemBarcode",
 	ReportSalesProfitability: "ReportSalesProfitability",
 	ReportTaxAudit: "ReportTaxAudit",
-	ReportStockValuation: "ReportStockValuation"
+	ReportStockValuation: "ReportStockValuation",
+	ReportLowStock: "ReportLowStock"
 
 } as const;
