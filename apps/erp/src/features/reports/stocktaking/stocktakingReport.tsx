@@ -27,7 +27,7 @@ export function StocktakingReport({
 {
 	if (stocktaking == undefined)
 	{
-		return;
+		return null;
 	}
 
 	const groupedItems = (() =>
@@ -94,7 +94,7 @@ export function StocktakingReport({
 							<ReportTableTh ar="اسم المادة" en="Item name"/>
 							<ReportTableTh ar="الكمية في النظام" en="Quantity in system"/>
 							<ReportTableTh ar="فرق الكمية" en="Variance"/>
-							<ReportTableTh ar="الكمية الفعلية" en="Actual quantity"/>
+							<ReportTableTh ar="الكمية الفعلية (التكلفة)" en="Actual quantity (Cost)"/>
 						</tr>
 						</thead>
 						<tbody>
@@ -125,10 +125,15 @@ export function StocktakingReport({
 											{ group.map((item, j) => (
 												<div key={ j } className="flex items-center gap-2">
 													<span className="text-xs text-muted-foreground min-w-20">
-														{ item.itemUnitPricingMethodName }
+														{ item.unitName }
 													</span>
 													<span
 														className="font-medium">{ formatNumber(item.actualQuantity) }</span>
+													{ item.unitCost != null && (
+														<span className="text-xs text-muted-foreground">
+															(التكلفة: { formatNumber(item.unitCost) })
+														</span>
+													) }
 												</div>
 											)) }
 										</div>

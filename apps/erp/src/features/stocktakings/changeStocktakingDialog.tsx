@@ -11,6 +11,7 @@ import {
 	ChangeableEntityMode,
 	ChangeDialog,
 	type CommonChangeDialogProps,
+	DateField,
 	FieldGroup,
 	FieldsSection,
 	FormField,
@@ -44,12 +45,20 @@ export default function ChangeStocktakingDialog(
 		}
 
 		Cubits.stores.init();
+	}, [entity.value.mode.value]);
 
-		if (entity.value?.storeId.value)
+	useEffect(() =>
+	{
+		if (entity.value.mode.value !== ChangeableEntityMode.Create)
 		{
-			Cubits.items.init([ItemType.Product], {storeId: entity.value.storeId.value});
+			return;
 		}
-	}, [entity.value.mode.value, entity.value.storeId.value]);
+
+		if (entity.value.storeId.value && entity.value.date.value)
+		{
+			Cubits.items.initForStoreAndDate([ItemType.Product], entity.value.storeId.value, entity.value.date.value);
+		}
+	}, [entity.value.mode.value, entity.value.storeId.value, entity.value.date.value]);
 
 	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? addDialogTitle
@@ -72,11 +81,18 @@ export default function ChangeStocktakingDialog(
 			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
 				<FieldGroup>
 					<FieldsSection columns={ 2 }>
-						<TextField
+						<DateField
 							label={ t("stocktakings.stocktakingDate") }
 							value={ entity.value.date }
 							required
-							disabled
+							disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+							onChange={ (val) =>
+							{
+								if (entity.value.mode.value === ChangeableEntityMode.Create && val)
+								{
+									entity.value.items.value = [];
+								}
+							} }
 						/>
 
 						<FormField

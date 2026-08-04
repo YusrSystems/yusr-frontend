@@ -43,4 +43,11 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto>
 		const itemsList = (dto?.items ?? []).map((s) => new StocktakingItem(s));
 		this.items = this.assign("items", itemsList);
 	}
+
+	override validate(dto?: Partial<StocktakingDto>): boolean
+	{
+		const isBaseValid = super.validate(dto);
+		const areItemsValid = this.items.value.every(item => item.validate());
+		return isBaseValid && areItemsValid;
+	}
 }
