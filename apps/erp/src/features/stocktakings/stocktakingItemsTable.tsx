@@ -1,13 +1,13 @@
 import { ItemDto } from "@/core/data/item";
 import type Stocktaking from "@/core/data/stocktaking";
 import type { StocktakingItem } from "@/core/data/stocktakingItem";
-import type { ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod";
 import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
 import { AlertCircle, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, ChangeableEntityMode, NumberField, SelectField } from "yusr-ui";
 import StoreItemSelector from "../items/storeItemSelector";
+import { toast } from "sonner";
 
 
 export interface StocktakingItemsTableProps
@@ -160,20 +160,20 @@ export default function StocktakingItemsTable(
 		entity.items.value = [...entity.items.value, newItem];
 	};
 
-	const handleStoreItemSelect = (item: ItemDto, selectedIupm?: ItemUnitPricingMethodDto) =>
+	const handleStoreItemSelect = (item: ItemDto, selectedUoMId?: number) =>
 	{
 		const uoMsList = item.uoMs || [];
-		const defaultUoM = selectedIupm ? uoMsList.find((u) => u.unitId === selectedIupm.unitId) : uoMsList[0];
-		const unit = defaultUoM || uoMsList[0];
+		const itemUoM = uoMsList.find((u) => u.id === selectedUoMId) ?? uoMsList[0];
 
-		if (!unit)
+		if (!itemUoM)
 		{
+			toast.error(t("items.noPackagingUnits", "لا توجد وحدات لهذه المادة"));
 			return;
 		}
 
 		const list = [...(entity.items.value || [])];
 		const existingIndex = list.findIndex(
-			(i) => i.itemId.value === item.id && i.itemUoMId.value === unit.id
+			(i) => i.itemId.value === item.id && i.itemUoMId.value === itemUoM.id
 		);
 
 		if (existingIndex !== -1 && list[existingIndex])
@@ -202,15 +202,15 @@ export default function StocktakingItemsTable(
 		{
 			const storeDetails = item.itemStores?.find(s => s.storeId === entity.storeId.value);
 			const systemQty = storeDetails?.quantity || 0;
-			const initialActualQty = selectedIupm ? 1 : 0;
-			const varVal = (initialActualQty * (unit.quantityMultiplier ?? 1)) - systemQty;
+			const initialActualQty = itemUoM ? 1 : 0;
+			const varVal = (initialActualQty * (itemUoM.quantityMultiplier ?? 1)) - systemQty;
 
 			const newItem = createInstance();
 			newItem.itemId.value = item.id;
 			newItem.itemName.value = item.name;
-			newItem.itemUoMId.value = unit.id;
-			newItem.unitName.value = unit.unitName;
-			newItem.quantityMultiplier.value = unit.quantityMultiplier ?? 1;
+			newItem.itemUoMId.value = itemUoM.id;
+			newItem.unitName.value = itemUoM.unitName;
+			newItem.quantityMultiplier.value = itemUoM.quantityMultiplier ?? 1;
 			newItem.systemQuantity.value = systemQty;
 			newItem.actualQuantity.value = initialActualQty;
 			newItem.variance.value = varVal;

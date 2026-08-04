@@ -1,7 +1,6 @@
 import { ItemDto } from "@/core/data/item";
 import type ItemTransfer from "@/core/data/itemTransfer";
 import { ItemTransfersItem } from "@/core/data/itemTransfer";
-import { ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod";
 import { ItemUoMDto } from "@/core/data/itemUoM";
 import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -115,20 +114,19 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 		entity.itemTransfersItems.value = [...entity.itemTransfersItems.value, createTransferItem(storeItem, unitDetails)];
 	};
 
-	const handleStoreItemSelect = (item: ItemDto, selectedIupm?: ItemUnitPricingMethodDto) =>
+	const handleStoreItemSelect = (item: ItemDto, selectedUoMId?: number) =>
 	{
-		const uomsList = item.uoMs || [];
-		const defaultUoM = selectedIupm ? uomsList.find((u) => u.unitId === selectedIupm.unitId) : uomsList[0];
-		const unit = defaultUoM || uomsList[0];
+		const uoMsList = item.uoMs || [];
+		const itemUoM = uoMsList.find((u) => u.id === selectedUoMId) ?? uoMsList[0];
 
-		if (!unit)
+		if (!itemUoM)
 		{
-			toast.error(t("items.noPackagingUnits", "لا توجد وحدات تغليف لهذه المادة"));
+			toast.error(t("items.noPackagingUnits", "لا توجد وحدات لهذه المادة"));
 			return;
 		}
 
 		const list = [...(entity.itemTransfersItems.value || [])];
-		const existingIndex = list.findIndex((i) => i.itemId.value === item.id && i.itemUoMId.value === unit.id);
+		const existingIndex = list.findIndex((i) => i.itemId.value === item.id && i.itemUoMId.value === itemUoM.id);
 
 		if (existingIndex !== -1 && list[existingIndex])
 		{
@@ -137,7 +135,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 		}
 		else
 		{
-			entity.itemTransfersItems.value = [...list, createTransferItem(item, unit)];
+			entity.itemTransfersItems.value = [...list, createTransferItem(item, itemUoM)];
 		}
 	};
 
