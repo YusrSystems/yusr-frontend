@@ -50,8 +50,6 @@ export default function ItemsPage()
 	useEffect(() =>
 	{
 		Cubits.items.init();
-		Cubits.stores.init();
-		Cubits.units.init();
 	}, []);
 
 	useEffect(() =>

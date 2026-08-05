@@ -24,25 +24,30 @@ export class ItemsCubit extends PageCubit<ItemDto>
 		}
 
 		this.queryParams.value = {...this.queryParams.value, ...query};
-		void this.filter(1);
+		void this.filter(1, undefined, undefined, undefined, {});
 	}
 
 	public initForStoreAndDate(
 		types?: number[],
-		storeId?: number | null,
-		targetDate?: string | null,
+		storeId?: number,
+		targetDate?: string,
+		onlyInStore: boolean = false,
 		rowsPerPage = 100
 	): void
 	{
 		const query: Record<string, string | number | boolean> = {};
 
-		if (storeId != null)
+		if (storeId != undefined)
 		{
 			query["storeId"] = storeId;
 		}
-		if (targetDate != null)
+		if (targetDate != undefined)
 		{
 			query["targetDate"] = targetDate;
+		}
+		if (onlyInStore != undefined)
+		{
+			query["onlyInStore"] = onlyInStore;
 		}
 
 		void this.filter(1, rowsPerPage, undefined, types, query);

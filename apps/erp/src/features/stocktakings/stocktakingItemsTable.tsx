@@ -344,7 +344,7 @@ export default function StocktakingItemsTable(
 																label: u.unitName,
 																value: u.id
 															})) }
-															placeholder={ t("items.unit", "اختر الوحدة") }
+															placeholder="اختر الوحدة"
 															onValueChange={ (unitId) => addUnitToItem(itemId, unitId) }
 														/>
 													</div>

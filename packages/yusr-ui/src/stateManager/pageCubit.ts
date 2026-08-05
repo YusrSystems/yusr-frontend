@@ -74,6 +74,8 @@ export class PageCubit<TDto extends Dto> extends Cubit<PageState>
 
 	init(types?: number[], queryParams?: Record<string, string | number | boolean>, rowsPerPage: number = 100): void
 	{
+		this.queryParams.value = queryParams;
+
 		void this.filter(1, rowsPerPage, undefined, types, queryParams);
 	}
 
