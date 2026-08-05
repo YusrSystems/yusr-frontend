@@ -11,6 +11,7 @@ import {
 	ChangeableEntityMode,
 	ChangeDialog,
 	type CommonChangeDialogProps,
+	DateField,
 	FieldGroup,
 	FieldsSection,
 	FormField,
@@ -66,9 +67,8 @@ export default function ChangeCostAdjustmentDialog({
 
 			<FieldGroup>
 				<FieldsSection columns={ 3 }>
-					<TextField
+					<DateField
 						label={ t("costAdjustments.date") }
-						type="date"
 						required
 						value={ entity.value.date }
 						error={ entity.value.getError("date") }
@@ -112,11 +112,7 @@ export default function ChangeCostAdjustmentDialog({
 									const storeDetails = item.itemStores?.find(s => s.storeId === entity.value.storeId.value);
 									entity.value.oldCost.value = storeDetails?.averageCost ?? 0;
 									entity.value.quantity.value = storeDetails?.quantity ?? 0;
-									// Optionally pre-fill new cost with old cost to make editing easier
-									if (entity.value.newCost.value === 0)
-									{
-										entity.value.newCost.value = storeDetails?.averageCost ?? 0;
-									}
+									entity.value.newCost.value = storeDetails?.averageCost ?? 0;
 								}
 							} }
 						/>
