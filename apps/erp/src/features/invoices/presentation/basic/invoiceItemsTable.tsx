@@ -271,9 +271,9 @@ export default function InvoiceItemsTable({invoice}: { invoice: Invoice })
 														label: m.itemUnitPricingMethodName.value,
 														value: m.id.value
 													})) || [] }
-													onValueChange={ (iupmId) =>
+													onValueChange={ (iupmId, oldIumpId) =>
 													{
-														invoiceItem.changeIupm(iupmId);
+														invoiceItem.changeIupm(iupmId, oldIumpId);
 														invoice.syncPaymentVouchers();
 													} }
 												/>

@@ -244,11 +244,12 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		}
 	}
 
-	public changeIupm(iupmId: number)
+	public changeIupm(iupmId: number, oldIumpId?: number)
 	{
+		const oldSelectedMethod = this.itemUnitPricingMethods.value?.find((p) => p.id.value === oldIumpId);
 		const selectedMethod = this.itemUnitPricingMethods.value?.find((p) => p.id.value === iupmId);
 
-		if (!selectedMethod)
+		if (!selectedMethod || !oldSelectedMethod)
 		{
 			throw Error("ItemUnitPricingMethod not found");
 		}
@@ -261,7 +262,8 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 		this.itemUnitPricingMethodId.value = iupmId;
 		this.itemUnitPricingMethodName.value = selectedMethod.itemUnitPricingMethodName.value ?? "";
-		this.cost.value = (this.originalCost.value ?? 0) * (selectedMethod.quantityMultiplier.value ?? 0);
+		this.originalCost.value = (this.originalCost.value ?? 0) / (oldSelectedMethod.quantityMultiplier.value ?? 1) * (selectedMethod.quantityMultiplier.value ?? 0);
+		this.cost.value = (this.originalCost.value ?? 0);
 		this.changeTaxInclusivePrice(taxInclusivePrice, taxExclusivePrice);
 	}
 }

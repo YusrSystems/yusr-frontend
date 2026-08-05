@@ -360,7 +360,7 @@ function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 			return {message: t("invoices.fullyPaid"), styles: "bg-green-100 text-green-800"};
 		}
 
-		if (invoice.paymentStatusId > PaymentStatus.Overpaid)
+		if (invoice.paymentStatusId === PaymentStatus.Overpaid)
 		{
 			return {message: t("invoices.overpaid"), styles: "bg-red-100 text-red-800"};
 		}
