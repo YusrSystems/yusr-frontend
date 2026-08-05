@@ -4,7 +4,7 @@ import { ItemStore } from "@/core/data/itemStore";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, ChangeableEntityMode, FormField, NumberField, TextField } from "yusr-ui";
+import { Button, ChangeableEntityMode, FormField, NumberField, TablePreview, TextField } from "yusr-ui";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
@@ -18,8 +18,6 @@ export default function StorageTab({entity}: { entity: Item; })
 	{
 		entity.itemStores.value = entity.itemStores.value.filter((_, i) => i !== index);
 	};
-
-	const errorMessage = entity.getError("itemStores");
 
 	return (
 		<div className="space-y-6 animate-in fade-in">
@@ -53,7 +51,7 @@ export default function StorageTab({entity}: { entity: Item; })
 				</div>
 
 				<div
-					className={ `bg-muted/20 rounded-lg border overflow-hidden ${ errorMessage.value ? "border-red-500" : "" }` }
+					className="bg-muted/20 rounded-lg border overflow-hidden"
 				>
 					<table className="w-full text-sm text-right">
 						<thead className="bg-muted/50 text-muted-foreground">
@@ -77,7 +75,6 @@ export default function StorageTab({entity}: { entity: Item; })
 										<StoresSearchableSelect
 											id={ store.storeId }
 											label={ store.storeName }
-											onSelect={ () => entity.clearError("itemStores") }
 											disabled={ entity.mode.value === ChangeableEntityMode.Update && !!store.id?.value }
 										/>
 									</FormField>
@@ -112,12 +109,10 @@ export default function StorageTab({entity}: { entity: Item; })
 						)) }
 						</tbody>
 					</table>
+					{ entity.itemStores.value.length <= 0 && (
+						<TablePreview.Empty/>
+					) }
 				</div>
-				{ errorMessage.value && (
-					<div className="text-xs font-medium text-red-500 mt-2">
-						{ errorMessage.value }
-					</div>
-				) }
 			</div>
 		</div>
 	);

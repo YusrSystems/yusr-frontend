@@ -4,7 +4,7 @@ import type Item from "@/core/data/item";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Barcode, Package, Plus, Receipt, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, FormField, NumberField, SystemPermissionsActions, TextField } from "yusr-ui";
+import { Button, FormField, NumberField, SystemPermissionsActions, TablePreview, TextField } from "yusr-ui";
 import { ItemType } from "@/core/data/item.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { ItemUoM } from "@/core/data/itemUoM.ts";
@@ -108,7 +108,6 @@ export function PricingMethodsTable({entity}: { entity: Item })
 
 								<NumberField
 									label={ t("items.quantityInUnit") }
-									min={ 0.0001 }
 									value={ uoM.quantityMultiplier }
 									disabled={ isService || uoM.unitId.value === entity.sellUnitId.value }
 									error={ uoM.getError("quantityMultiplier") }
@@ -143,10 +142,10 @@ export function PricingMethodsTable({entity}: { entity: Item })
 										<tr className="bg-muted/30 border-b border-border/60 text-muted-foreground">
 											<th className="py-2.5 px-3 w-10 text-center font-medium text-xs">#</th>
 											<th className="py-2.5 px-3 text-start font-medium text-xs">
-													<span className="flex items-center gap-1.5">
-														<Receipt className="w-3.5 h-3.5"/>
-														{ t("items.pricingMethod", "فئة البيع") }
-													</span>
+												<span className="flex items-center gap-1.5">
+													<Receipt className="w-3.5 h-3.5"/>
+													{ t("items.pricingMethod", "فئة البيع") }
+												</span>
 											</th>
 											<th className="py-2.5 px-3 text-start font-medium text-xs w-[35%]">
 												{ t("items.sellingPrice", {unit: entity.sellUnitName.value}) }
@@ -159,69 +158,59 @@ export function PricingMethodsTable({entity}: { entity: Item })
 										</thead>
 										<tbody className="divide-y divide-border/40">
 										{ uoM.prices.value.length > 0 ? (
-											uoM.prices.value.map((price, prIdx) =>
-											{
-												price.unitPrice.value = Number((price.price.value / uoM.quantityMultiplier.value).toFixed(2));
-
-												return (
-													<tr
-														key={ `${ price.id.value }-${ prIdx }` }
-														className="hover:bg-muted/10 transition-colors group"
-													>
-														<td className="p-1.5 px-2 text-center text-muted-foreground text-xs font-medium align-middle">
-															{ prIdx + 1 }
-														</td>
-														<td className="p-1.5 px-2 align-top">
-															<FormField label=""
-															           error={ price.getError("pricingMethodId") }>
-																<PricingMethodsSearchableSelect
-																	id={ price.pricingMethodId }
-																	label={ price.pricingMethodName }
-																	onSelect={ (m) => (price.pricingMethodName.value = m?.name ?? "") }
-																/>
-															</FormField>
-														</td>
-														<td className="p-1.5 px-2 align-top">
-															<NumberField
-																label=""
-																value={ price.unitPrice }
-																error={ price.getError("price") }
-																currency={ <ErpCurrencyIcon/> }
-																onChange={ () =>
-																{
-																	price.price.value = Number((price.unitPrice.value * uoM.quantityMultiplier.value).toFixed(2));
-																} }
+											uoM.prices.value.map((price, prIdx) => (
+												<tr
+													key={ `${ price.id.value }-${ prIdx }` }
+													className="hover:bg-muted/10 transition-colors group"
+												>
+													<td className="p-1.5 px-2 text-center text-muted-foreground text-xs font-medium align-middle">
+														{ prIdx + 1 }
+													</td>
+													<td className="p-1.5 px-2 align-top">
+														<FormField label="" error={ price.getError("pricingMethodId") }>
+															<PricingMethodsSearchableSelect
+																id={ price.pricingMethodId }
+																label={ price.pricingMethodName }
+																onSelect={ (m) => (price.pricingMethodName.value = m?.name ?? "") }
+															/>
+														</FormField>
+													</td>
+													<td className="p-1.5 px-2 align-top">
+														<NumberField
+															label=""
+															value={ price.unitPrice }
+															error={ price.getError("price") }
+															currency={ <ErpCurrencyIcon/> }
+														/>
+													</td>
+													{ canSeeBarcode && (
+														<td className="p-1.5 px-2 text-center align-middle">
+															<ItemBarcodeButton
+																item={ entity }
+																itemUoM={ uoM }
+																itemPrice={ price }
 															/>
 														</td>
-														{ canSeeBarcode && (
-															<td className="p-1.5 px-2 text-center align-middle">
-																<ItemBarcodeButton
-																	item={ entity }
-																	itemUoM={ uoM }
-																	itemPrice={ price }
-																/>
-															</td>
+													) }
+													<td className="p-1.5 px-2 text-center align-middle">
+														{ !isService && (
+															<Button
+																type="button"
+																variant="ghost"
+																size="icon"
+																className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+																onClick={ () =>
+																	(uoM.prices.value = uoM.prices.value.filter(
+																		(_, idx) => idx !== prIdx
+																	))
+																}
+															>
+																<Trash2 className="w-4 h-4"/>
+															</Button>
 														) }
-														<td className="p-1.5 px-2 text-center align-middle">
-															{ !isService && (
-																<Button
-																	type="button"
-																	variant="ghost"
-																	size="icon"
-																	className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
-																	onClick={ () =>
-																		(uoM.prices.value = uoM.prices.value.filter(
-																			(_, idx) => idx !== prIdx
-																		))
-																	}
-																>
-																	<Trash2 className="w-4 h-4"/>
-																</Button>
-															) }
-														</td>
-													</tr>
-												);
-											})
+													</td>
+												</tr>
+											))
 										) : (
 											<tr>
 												<td
@@ -243,7 +232,7 @@ export function PricingMethodsTable({entity}: { entity: Item })
 												size="sm"
 												className="w-full h-8 border border-dashed border-muted-foreground/30 text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/30 text-xs"
 												onClick={ () =>
-													(uoM.prices.value = [...uoM.prices.value, ItemPrice.create()])
+													(uoM.prices.value = [...uoM.prices.value, new ItemPrice(undefined, uoM.quantityMultiplier)])
 												}
 											>
 												<Plus className="h-3.5 w-3.5 me-1.5"/>
@@ -254,15 +243,20 @@ export function PricingMethodsTable({entity}: { entity: Item })
 								</div>
 
 								{ uoM.getError("prices").value && (
-									<p className="text-xs font-medium text-destructive mt-1.5">
+									<div
+										className="p-3 mt-3 text-sm font-medium text-destructive bg-destructive/10 rounded-md border border-destructive/20">
 										{ uoM.getError("prices").value }
-									</p>
+									</div>
 								) }
 							</div>
 						</div>
 					</div>
 				)) }
 			</div>
+
+			{ entity.uoMs.value.length <= 0 && (
+				<TablePreview.Empty className="rounded-xl!"/>
+			) }
 
 			{ errorMessage.value && (
 				<div

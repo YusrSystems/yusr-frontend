@@ -25,7 +25,6 @@ import StorageTab from "./storage/storageTab";
 
 
 const BASIC_FIELDS = ["name", "type"] as const;
-const STORAGE_FIELDS = ["itemStores"] as const;
 const PRICING_FIELDS = ["sellUnitId", "uoMs"] as const;
 
 export default function ChangeItemDialog({dto, service, onSuccess}: CommonChangeDialogProps<ItemDto>)
@@ -97,8 +96,7 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 	const basicHasError = BASIC_FIELDS.some((f) => entity.value.getError(f).value)
 		|| entity.value.itemTaxes.value.some((t) => t.hasErrors)
 		|| Boolean(entity.value.getError("itemImages").value);
-	const storageHasError = STORAGE_FIELDS.some((f) => entity.value.getError(f).value)
-		|| entity.value.itemStores.value.some((t) => t.hasErrors);
+	const storageHasError = entity.value.itemStores.value.some((t) => t.hasErrors);
 	const pricingHasError = PRICING_FIELDS.some((f) => entity.value.getError(f).value)
 		|| entity.value.uoMs.value.some((t) => t.hasErrors);
 

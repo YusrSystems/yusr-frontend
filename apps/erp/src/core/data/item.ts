@@ -105,18 +105,6 @@ export default class Item extends ChangeableEntity<ItemDto>
 				]
 			},
 			{
-				field: "itemStores",
-				selector: (d) => d.itemStores,
-				validators: [Validators.custom(
-					(stores: ItemStoreDto[], form: ItemDto) =>
-					{
-						if (form.type === ItemType.Service) return true;
-						return stores.length > 0;
-					},
-					i18n.t("stocking:items.storesValidationError")
-				)]
-			},
-			{
 				field: "sellUnitId",
 				selector: (d) => d.sellUnitId,
 				validators: [Validators.custom(

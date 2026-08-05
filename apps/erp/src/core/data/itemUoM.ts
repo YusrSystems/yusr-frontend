@@ -1,6 +1,6 @@
-import { Signal } from "@preact/signals-react";
+import { type Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
-import { ItemPrice, ItemPriceDto } from "./itemPrice";
+import { ItemPrice, type ItemPriceDto } from "./itemPrice";
 
 
 export class ItemUoMDto extends Dto
@@ -16,7 +16,7 @@ export class ItemUoMDto extends Dto
 export class ItemUoM extends ChangeableEntity<ItemUoMDto>
 {
 	public itemId: Signal<number>;
-	public unitId: Signal<number>;
+	public unitId: Signal<number | undefined>;
 	public unitName: Signal<string>;
 	public quantityMultiplier: Signal<number>;
 	public barcode: Signal<string | undefined>;
@@ -40,21 +40,21 @@ export class ItemUoM extends ChangeableEntity<ItemUoMDto>
 				selector: (d) => d.prices,
 				validators: [
 					Validators.arrayMinLength(1, i18n.t("stocking:items.pricingMethodsRequired", "يجب إضافة طريقة تسعير واحدة على الأقل")),
-					// Rule B: Prevent duplicate pricing tiers inside a single unit row
 					Validators.custom((val: ItemPriceDto[]) =>
 					{
-						const ids = val.map(p => p.pricingMethodId).filter(id => id != undefined && id > 0);
+						const ids = val.map(p => p.pricingMethodId).filter(id => id !== undefined && id > 0);
 						return new Set(ids).size === ids.length;
 					}, i18n.t("stocking:items.duplicatePricingMethodError", "لا يمكن تكرار نفس طريقة التسعير لنفس وحدة التغليف"))
 				]
 			}
 		], ChangeableEntityMode.Create);
 
-		this.itemId = this.assign("itemId", dto?.itemId ?? 0);
-		this.unitId = this.assign("unitId", dto?.unitId ?? 0);
-		this.unitName = this.assign("unitName", dto?.unitName ?? "");
+		this.itemId = this.assign("itemId", dto?.itemId);
+		this.unitId = this.assign("unitId", dto?.unitId);
+		this.unitName = this.assign("unitName", dto?.unitName);
 		this.quantityMultiplier = this.assign("quantityMultiplier", dto?.quantityMultiplier ?? 1);
-		this.barcode = this.assign("barcode", dto?.barcode ?? null);
+		this.barcode = this.assign("barcode", dto?.barcode ?? undefined);
+
 		this.prices = this.assign("prices", (dto?.prices ?? [
 			{
 				itemUoMId: 0,
@@ -62,7 +62,7 @@ export class ItemUoM extends ChangeableEntity<ItemUoMDto>
 				pricingMethodName: undefined,
 				price: 0
 			} as ItemPriceDto
-		]).map(p => new ItemPrice(p)));
+		]).map(p => new ItemPrice(p, this.quantityMultiplier)));
 
 		const checkChildren = () =>
 		{
