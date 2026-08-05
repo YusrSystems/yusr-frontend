@@ -31,7 +31,7 @@ export class ItemsCubit extends PageCubit<ItemDto>
 		types?: number[],
 		storeId?: number,
 		targetDate?: string,
-		onlyInStore: boolean = false,
+		onlyInStore: boolean = true,
 		rowsPerPage = 100
 	): void
 	{

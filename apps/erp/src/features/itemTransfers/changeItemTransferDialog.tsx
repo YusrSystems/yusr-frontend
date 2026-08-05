@@ -10,6 +10,7 @@ import {
 	ChangeableEntityMode,
 	ChangeDialog,
 	type CommonChangeDialogProps,
+	DateField,
 	FieldGroup,
 	FieldsSection,
 	FormField,
@@ -60,11 +61,16 @@ export default function ChangeItemTransferDialog(
 
 	useEffect(() =>
 	{
-		if (entity.value.mode.value === ChangeableEntityMode.Create && entity.value?.fromStoreId.value)
+		if (entity.value.mode.value !== ChangeableEntityMode.Create)
 		{
-			Cubits.items.init([ItemType.Product], {storeId: entity.value.fromStoreId.value});
+			return;
 		}
-	}, [entity.value.fromStoreId.value, entity.value.mode.value]);
+
+		if (entity.value.fromStoreId.value && entity.value.date.value)
+		{
+			Cubits.items.initForStoreAndDate([ItemType.Product], entity.value.fromStoreId.value, entity.value.date.value);
+		}
+	}, [entity.value.mode.value, entity.value.fromStoreId.value, entity.value.date.value]);
 
 	if (
 		(entity.value.mode.value === ChangeableEntityMode.Create
@@ -93,11 +99,11 @@ export default function ChangeItemTransferDialog(
 			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
 				<FieldGroup>
 					<FieldsSection columns={ 3 }>
-						<TextField
+						<DateField
 							label={ t("itemTransfers.date") }
 							required
 							value={ entity.value.date }
-							disabled
+							disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
 						/>
 						<FormField
 							label={ t("itemTransfers.fromStore") }
