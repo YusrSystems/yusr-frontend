@@ -7,14 +7,17 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { AlertCircle, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { Button, ChangeableEntityMode, NumberField, SelectField } from "yusr-ui";
+import { Button, NumberField, SelectField } from "yusr-ui";
 import StoreItemSelector from "../items/storeItemSelector";
+import { TransactionStatus } from "@/core/types/transactionStatus";
 
 
 export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common", "erpCommon"]);
+
+	const isDraft = entity.statusId.value === TransactionStatus.Draft;
 
 	const groupedItems = (() =>
 	{
@@ -157,7 +160,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 	return (
 		<div>
 			<div className="sticky top-0 z-10 pt-4 pb-2 bg-background">
-				{ entity.mode.value === ChangeableEntityMode.Create && (
+				{ isDraft && (
 					<StoreItemSelector
 						storeId={ entity.fromStoreId }
 						onSelect={ handleStoreItemSelect }
@@ -218,16 +221,16 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 																min={ 0 }
 																max={ Math.max(0, getQuantities(row, group).MaxQuantity) }
 																value={ row.quantity }
-																disabled={ entity.mode.value === ChangeableEntityMode.Update }
+																disabled={ !isDraft }
 															/>
-															{ entity.mode.value === ChangeableEntityMode.Create && (
+															{ isDraft && (
 																<div
 																	className="text-xs font-semibold text-destructive mt-1 text-start">
 																	{ t("itemTransfers.available") }: { getQuantities(row, group).availableQuantity }
 																</div>
 															) }
 														</div>
-														{ entity.mode.value === ChangeableEntityMode.Create && (
+														{ isDraft && (
 															<Button
 																type="button"
 																variant="ghost"
@@ -241,7 +244,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 													</div>
 												)) }
 
-												{ entity.mode.value === ChangeableEntityMode.Create && availableUnits.length > 0 && (
+												{ isDraft && availableUnits.length > 0 && (
 													<div className="mt-1">
 														<SelectField<number>
 															options={ availableUnits.map((uom) => ({
@@ -256,7 +259,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 											</div>
 										</td>
 
-										{ entity.mode.value === ChangeableEntityMode.Create && (
+										{ isDraft && (
 											<td className="p-4 text-center align-top pt-4">
 												<Button
 													type="button"

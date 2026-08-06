@@ -19,6 +19,7 @@ import ChangeBalanceTransferDialog from "./changeBalanceTransferDialog";
 import { BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
+import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "@/core/types/transactionStatus";
 
 
 export default function BalanceTransfersPage()
@@ -114,7 +115,7 @@ function Cards()
 function Table()
 {
 	useSignals();
-	const {t} = useTranslation("accounting");
+	const {t} = useTranslation(["accounting", "common"]);
 	if (Cubits.balanceTransfers.state.value instanceof PageLoading)
 	{
 		return <TablePreview.Loading/>;
@@ -130,6 +131,7 @@ function Table()
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("balanceTransfers.transferId"), rowStyles: "w-24"},
+						{rowBody: t("common:status.title", "الحالة"), rowStyles: "w-24"},
 						{rowBody: t("balanceTransfers.date"), rowStyles: "w-24"},
 						{rowBody: t("balanceTransfers.fromAccount"), rowStyles: "w-40"},
 						{rowBody: t("balanceTransfers.toAccount"), rowStyles: "w-40"},
@@ -140,6 +142,15 @@ function Table()
 						transfer
 					) => [
 						{rowBody: `#${ transfer.id }`, rowStyles: ""},
+						{
+							rowBody: (
+								<span
+									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(transfer.statusId) }` }>
+									{ getTransactionStatusName(transfer.statusId) }
+								</span>
+							),
+							rowStyles: ""
+						},
 						{rowBody: new Date(transfer.date).toLocaleDateString("en-CA"), rowStyles: ""},
 						{rowBody: transfer.fromGlAccountName ?? "-", rowStyles: "font-semibold text-red-600"},
 						{rowBody: transfer.toGlAccountName ?? "-", rowStyles: "font-semibold text-green-600"},
@@ -161,10 +172,13 @@ function Table()
 						SystemPermissionsResources.BalanceTransfers,
 						SystemPermissionsActions.Update
 					) }
-					hasDeletePermission={ Services.auth.hasAuth(
-						SystemPermissionsResources.BalanceTransfers,
-						SystemPermissionsActions.Delete
-					) }
+					hasDeletePermission={ (transfer) =>
+						transfer.statusId !== TransactionStatus.Voided &&
+						Services.auth.hasAuth(
+							SystemPermissionsResources.BalanceTransfers,
+							SystemPermissionsActions.Delete
+						)
+					}
 				/>
 
 				<CrudPage.TablePagination

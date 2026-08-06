@@ -20,6 +20,7 @@ import {
 } from "yusr-ui";
 import { ItemType } from "@/core/data/item.ts";
 import StocktakingItemsTable from "./stocktakingItemsTable";
+import { TransactionStatus } from "@/core/types/transactionStatus";
 
 
 export default function ChangeStocktakingDialog(
@@ -74,6 +75,10 @@ export default function ChangeStocktakingDialog(
 		);
 	}
 
+	const isDraft = entity.value.statusId.value === TransactionStatus.Draft;
+	const isPosted = entity.value.statusId.value === TransactionStatus.Posted;
+	const isVoided = entity.value.statusId.value === TransactionStatus.Voided;
+
 	return (
 		<ChangeDialog className="sm:max-w-7xl">
 			<ChangeDialog.Header title={ title }/>
@@ -85,7 +90,7 @@ export default function ChangeStocktakingDialog(
 							label={ t("stocktakings.stocktakingDate") }
 							value={ entity.value.date }
 							required
-							disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+							disabled={ !isDraft }
 							onChange={ (val) =>
 							{
 								if (entity.value.mode.value === ChangeableEntityMode.Create && val)
@@ -103,7 +108,7 @@ export default function ChangeStocktakingDialog(
 							<StoresSearchableSelect
 								id={ entity.value.storeId }
 								label={ entity.value.storeName }
-								disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+								disabled={ !isDraft }
 								onSelect={ (store) =>
 								{
 									entity.value.storeId.value = store?.id;
@@ -117,6 +122,7 @@ export default function ChangeStocktakingDialog(
 					<TextField
 						label={ t("stocktakings.description") }
 						value={ entity.value.description }
+						disabled={ !isDraft }
 					/>
 
 					<StocktakingItemsTable
@@ -128,11 +134,44 @@ export default function ChangeStocktakingDialog(
 
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
-				<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
-					entity={ entity }
-					service={ service }
-					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
-				/>
+				{ isDraft && (
+					<>
+						<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
+							entity={ entity }
+							service={ service }
+							variant="outline"
+							label={ t("common:saveAsDraft", "حفظ كمسودة") }
+							transformData={ (data) =>
+							{
+								data.statusId = TransactionStatus.Draft;
+								return data;
+							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							disabled={ isVoided }
+						/>
+						<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
+							entity={ entity }
+							service={ service }
+							label={ t("common:saveAndPost", "حفظ واعتماد") }
+							transformData={ (data) =>
+							{
+								data.statusId = TransactionStatus.Posted;
+								return data;
+							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							disabled={ isVoided }
+						/>
+					</>
+				) }
+				{ isPosted && (
+					<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
+						entity={ entity }
+						service={ service }
+						label={ t("common:save", "حفظ") }
+						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+						disabled={ isVoided }
+					/>
+				) }
 			</ChangeDialog.Footer>
 		</ChangeDialog>
 	);

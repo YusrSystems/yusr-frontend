@@ -21,6 +21,7 @@ import {
 import { ItemType } from "@/core/data/item.ts";
 import ItemTransfer, { ItemTransferDto } from "../../core/data/itemTransfer";
 import ItemTransferTable from "./itemTransferTable";
+import { TransactionStatus } from "@/core/types/transactionStatus";
 
 
 export default function ChangeItemTransferDialog(
@@ -92,6 +93,10 @@ export default function ChangeItemTransferDialog(
 		);
 	}
 
+	const isDraft = entity.value.statusId.value === TransactionStatus.Draft;
+	const isPosted = entity.value.statusId.value === TransactionStatus.Posted;
+	const isVoided = entity.value.statusId.value === TransactionStatus.Voided;
+
 	return (
 		<ChangeDialog className="sm:max-w-7xl">
 			<ChangeDialog.Header title={ title }/>
@@ -103,7 +108,7 @@ export default function ChangeItemTransferDialog(
 							label={ t("itemTransfers.date") }
 							required
 							value={ entity.value.date }
-							disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+							disabled={ !isDraft }
 						/>
 						<FormField
 							label={ t("itemTransfers.fromStore") }
@@ -113,7 +118,7 @@ export default function ChangeItemTransferDialog(
 							<StoresSearchableSelect
 								id={ entity.value.fromStoreId }
 								label={ entity.value.fromStoreName }
-								disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+								disabled={ !isDraft }
 								onSelect={ () =>
 								{
 									entity.value.itemTransfersItems.value = [];
@@ -129,7 +134,7 @@ export default function ChangeItemTransferDialog(
 							<StoresSearchableSelect
 								id={ entity.value.toStoreId }
 								label={ entity.value.toStoreName }
-								disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+								disabled={ !isDraft }
 							/>
 						</FormField>
 					</FieldsSection>
@@ -138,6 +143,7 @@ export default function ChangeItemTransferDialog(
 						<TextField
 							label={ t("itemTransfers.description") }
 							value={ entity.value.description }
+							disabled={ !isDraft }
 						/>
 					</FieldsSection>
 
@@ -149,11 +155,44 @@ export default function ChangeItemTransferDialog(
 
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
-				<ChangeDialog.SaveButton<ItemTransfer, ItemTransferDto>
-					entity={ entity }
-					service={ service }
-					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
-				/>
+				{ isDraft && (
+					<>
+						<ChangeDialog.SaveButton<ItemTransfer, ItemTransferDto>
+							entity={ entity }
+							service={ service }
+							variant="outline"
+							label={ t("common:saveAsDraft", "حفظ كمسودة") }
+							transformData={ (data) =>
+							{
+								data.statusId = TransactionStatus.Draft;
+								return data;
+							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							disabled={ isVoided }
+						/>
+						<ChangeDialog.SaveButton<ItemTransfer, ItemTransferDto>
+							entity={ entity }
+							service={ service }
+							label={ t("common:saveAndPost", "حفظ واعتماد") }
+							transformData={ (data) =>
+							{
+								data.statusId = TransactionStatus.Posted;
+								return data;
+							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							disabled={ isVoided }
+						/>
+					</>
+				) }
+				{ isPosted && (
+					<ChangeDialog.SaveButton<ItemTransfer, ItemTransferDto>
+						entity={ entity }
+						service={ service }
+						label={ t("common:save", "حفظ") }
+						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+						disabled={ isVoided }
+					/>
+				) }
 			</ChangeDialog.Footer>
 		</ChangeDialog>
 	);

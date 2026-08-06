@@ -1,15 +1,17 @@
 import type { Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
 import { StocktakingItem, type StocktakingItemDto } from "./stocktakingItem";
+import { type ITransactionEntity, TransactionStatus } from "@/core/types/transactionStatus";
 
 
-export class StocktakingDto extends Dto
+export class StocktakingDto extends Dto implements ITransactionEntity
 {
 	public description?: string;
 	public date!: string;
 	public storeId?: number;
 	public storeName?: string;
 	public items: StocktakingItemDto[] = [];
+	public statusId: TransactionStatus = TransactionStatus.Draft;
 }
 
 export default class Stocktaking extends ChangeableEntity<StocktakingDto>
@@ -19,6 +21,7 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto>
 	public storeId: Signal<number | undefined>;
 	public storeName: Signal<string | undefined>;
 	public items: Signal<StocktakingItem[]>;
+	public statusId: Signal<TransactionStatus>;
 
 	constructor(dto: Partial<StocktakingDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
@@ -42,6 +45,7 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto>
 		this.storeName = this.assign("storeName", dto?.storeName ?? "");
 		const itemsList = (dto?.items ?? []).map((s) => new StocktakingItem(s));
 		this.items = this.assign("items", itemsList);
+		this.statusId = this.assign("statusId", dto?.statusId ?? TransactionStatus.Draft);
 	}
 
 	override validate(dto?: Partial<StocktakingDto>): boolean

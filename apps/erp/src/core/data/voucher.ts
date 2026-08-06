@@ -2,6 +2,7 @@ import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validat
 import { Signal } from "@preact/signals-react";
 import { PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import type { TFunction } from "i18next";
+import { type ITransactionEntity, TransactionStatus } from "@/core/types/transactionStatus";
 
 
 export enum VoucherType
@@ -10,7 +11,7 @@ export enum VoucherType
 	Receipt = 2
 }
 
-export class VoucherDto extends Dto
+export class VoucherDto extends Dto implements ITransactionEntity
 {
 	public type!: VoucherType;
 	public date!: string;
@@ -30,6 +31,7 @@ export class VoucherDto extends Dto
 	public rowVer!: number;
 	public isDeleted: boolean = false;
 	public isDirectMode!: boolean;
+	public statusId: TransactionStatus = TransactionStatus.Draft;
 
 	public paymentMethod?: PaymentMethodDto;
 }
@@ -54,6 +56,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 	public rowVer: Signal<number>;
 	public isDeleted: Signal<boolean>;
 	public isDirectMode: Signal<boolean>;
+	public statusId: Signal<TransactionStatus>;
 
 	public paymentMethod: Signal<PaymentMethod>;
 
@@ -117,6 +120,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 		this.rowVer = this.assign("rowVer", dto?.rowVer ?? 0);
 		this.isDeleted = this.assign("isDeleted", dto?.isDeleted ?? false);
 		this.isDirectMode = this.assign("isDirectMode", dto?.isDirectMode ?? false);
+		this.statusId = this.assign("statusId", dto?.statusId ?? TransactionStatus.Draft);
 
 		this.paymentMethod = this.assign("paymentMethod", new PaymentMethod(dto?.paymentMethod));
 	}

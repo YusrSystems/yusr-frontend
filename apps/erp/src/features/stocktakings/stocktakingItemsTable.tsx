@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { Button, ChangeableEntityMode, NumberField, SelectField } from "yusr-ui";
 import StoreItemSelector from "../items/storeItemSelector";
 import { toast } from "sonner";
+import { TransactionStatus } from "@/core/types/transactionStatus";
 
 
 export interface StocktakingItemsTableProps
@@ -22,6 +23,8 @@ export default function StocktakingItemsTable(
 {
 	useSignals();
 	const {t} = useTranslation("stocking");
+
+	const isDraft = entity.statusId.value === TransactionStatus.Draft;
 
 	const groupedItems = (() =>
 	{
@@ -232,7 +235,7 @@ export default function StocktakingItemsTable(
 	return (
 		<div>
 			<div className="sticky top-0 z-10 pt-4 pb-2 bg-background">
-				{ entity.mode.value === ChangeableEntityMode.Create && (
+				{ isDraft && (
 					<StoreItemSelector
 						storeId={ entity.storeId }
 						onSelect={ handleStoreItemSelect }
@@ -307,7 +310,7 @@ export default function StocktakingItemsTable(
 																label=""
 																value={ item.actualQuantity }
 																onChange={ (val) => updateActualQuantity(item, val) }
-																disabled={ entity.mode.value === ChangeableEntityMode.Update }
+																disabled={ !isDraft }
 															/>
 														</div>
 														<div className="w-1/2">
@@ -319,11 +322,11 @@ export default function StocktakingItemsTable(
 																{
 																	if (val !== undefined) item.unitCost.value = val;
 																} }
-																disabled={ entity.mode.value === ChangeableEntityMode.Update || variance <= 0 }
+																disabled={ !isDraft || variance <= 0 }
 																error={ item.getError("unitCost") }
 															/>
 														</div>
-														{ entity.mode.value === ChangeableEntityMode.Create && (
+														{ isDraft && (
 															<Button
 																type="button"
 																variant="ghost"
@@ -337,7 +340,7 @@ export default function StocktakingItemsTable(
 													</div>
 												)) }
 
-												{ entity.mode.value === ChangeableEntityMode.Create && availableUnits.length > 0 && (
+												{ isDraft && availableUnits.length > 0 && (
 													<div className="mt-1 w-1/2">
 														<SelectField<number>
 															options={ availableUnits.map((u) => ({
@@ -352,7 +355,7 @@ export default function StocktakingItemsTable(
 											</div>
 										</td>
 
-										{ entity.mode.value === ChangeableEntityMode.Create && (
+										{ isDraft && (
 											<td className="p-3 text-center align-top pt-4">
 												<Button
 													type="button"

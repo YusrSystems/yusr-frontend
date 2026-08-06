@@ -23,6 +23,7 @@ import { createPortal } from "react-dom";
 import { StocktakingReport } from "@/features/reports/stocktaking/stocktakingReport.tsx";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
+import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "@/core/types/transactionStatus";
 
 
 export default function ItemsSettlementsPage()
@@ -188,6 +189,7 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("itemsSettlements.settlementId"), rowStyles: "w-32"},
+						{rowBody: t("common:status.title", "الحالة"), rowStyles: "w-24"},
 						{rowBody: t("itemsSettlements.date"), rowStyles: "w-32"},
 						{rowBody: t("itemsSettlements.store"), rowStyles: "w-48"},
 						{rowBody: t("itemsSettlements.description"), rowStyles: ""},
@@ -202,6 +204,15 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 						settlement
 					) => [
 						{rowBody: `#${ settlement.id }`, rowStyles: ""},
+						{
+							rowBody: (
+								<span
+									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(settlement.statusId) }` }>
+									{ getTransactionStatusName(settlement.statusId) }
+								</span>
+							),
+							rowStyles: ""
+						},
 						{rowBody: settlement.date, rowStyles: ""},
 						{rowBody: settlement.storeName, rowStyles: "font-semibold"},
 						{rowBody: settlement.description ?? "-", rowStyles: "text-sm text-gray-500"},
@@ -225,10 +236,13 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 						SystemPermissionsResources.ItemsSettlements,
 						SystemPermissionsActions.Update
 					) }
-					hasDeletePermission={ Services.auth.hasAuth(
-						SystemPermissionsResources.ItemsSettlements,
-						SystemPermissionsActions.Delete
-					) }
+					hasDeletePermission={ (settlement) =>
+						settlement.statusId !== TransactionStatus.Voided &&
+						Services.auth.hasAuth(
+							SystemPermissionsResources.ItemsSettlements,
+							SystemPermissionsActions.Delete
+						)
+					}
 				/>
 				<CrudPage.TablePagination
 					pageSize={ Cubits.itemsSettlements.pageSize.value }
