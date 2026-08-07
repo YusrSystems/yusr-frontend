@@ -16,7 +16,7 @@ import {
 	FieldsSection,
 	FormField,
 	Loading,
-	TextField
+	TextAreaField
 } from "yusr-ui";
 import { ItemType } from "@/core/data/item.ts";
 import StocktakingItemsTable from "./stocktakingItemsTable";
@@ -119,10 +119,11 @@ export default function ChangeStocktakingDialog(
 						</FormField>
 					</FieldsSection>
 
-					<TextField
+					<TextAreaField
 						label={ t("stocktakings.description") }
 						value={ entity.value.description }
-						disabled={ !isDraft }
+						collapsible
+						collapsedHeight={ 60 }
 					/>
 
 					<StocktakingItemsTable
@@ -159,17 +160,17 @@ export default function ChangeStocktakingDialog(
 								return data;
 							} }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							checkEntityChanges={ false }
 							disabled={ isVoided }
 						/>
 					</>
 				) }
-				{ isPosted && (
+				{ (isPosted || isVoided) && (
 					<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
 						entity={ entity }
 						service={ service }
 						label={ t("common:save", "حفظ") }
 						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
-						disabled={ isVoided }
 					/>
 				) }
 			</ChangeDialog.Footer>

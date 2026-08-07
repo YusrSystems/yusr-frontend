@@ -78,7 +78,7 @@ export default function ChangeBalanceTransferDialog(
 
 			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
 				<FieldGroup>
-					<FieldsSection title={ t("balanceTransfers.transferDetails") } columns={ 2 }>
+					<FieldsSection columns={ 2 }>
 						<DateField
 							label={ t("balanceTransfers.transferDate") }
 							value={ entity.value.date }
@@ -102,7 +102,7 @@ export default function ChangeBalanceTransferDialog(
 						</div>
 					</FieldsSection>
 
-					<FieldsSection title={ t("balanceTransfers.transferParties") } columns={ 2 }>
+					<FieldsSection columns={ 2 }>
 						<FormField
 							label={ t("balanceTransfers.fromAccount") }
 							required
@@ -128,11 +128,12 @@ export default function ChangeBalanceTransferDialog(
 						</FormField>
 					</FieldsSection>
 
-					<FieldsSection title={ t("balanceTransfers.additionalInfo") } columns={ 1 }>
+					<FieldsSection columns={ 1 }>
 						<TextAreaField
 							label={ t("balanceTransfers.description") }
 							value={ entity.value.description }
-							rows={ 3 }
+							collapsible
+							collapsedHeight={ 60 }
 						/>
 					</FieldsSection>
 				</FieldGroup>

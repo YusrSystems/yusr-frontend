@@ -284,9 +284,10 @@ export default function ChangeVoucherDialog({
 
 					<FieldsSection columns={ 1 }>
 						<TextAreaField
-							label={ t("vouchers.description") }
-							value={ entity.value.description ?? "" }
-							rows={ 4 }
+							label={ t("balanceTransfers.description") }
+							value={ entity.value.description }
+							collapsible
+							collapsedHeight={ 60 }
 						/>
 					</FieldsSection>
 				</FieldGroup>
