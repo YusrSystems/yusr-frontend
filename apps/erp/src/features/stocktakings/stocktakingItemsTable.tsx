@@ -24,7 +24,7 @@ export default function StocktakingItemsTable(
 	useSignals();
 	const {t} = useTranslation("stocking");
 
-	const isDraft = entity.statusId.value === TransactionStatus.Draft;
+	const isDraft = entity.transactionStatus.value === TransactionStatus.Draft;
 
 	const groupedItems = (() =>
 	{
