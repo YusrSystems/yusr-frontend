@@ -28,7 +28,7 @@ import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import { CommissionType, PaymentMethod } from "@/core/data/paymentMethod.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { AccountClass, getAccountTypesByClasses } from "@/core/data/account.ts";
-import { TransactionStatus } from "@/core/types/transactionStatus";
+import { TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function ChangeVoucherDialog({
@@ -307,12 +307,7 @@ export default function ChangeVoucherDialog({
 								data.transactionStatus = TransactionStatus.Draft;
 								return data;
 							} }
-							onSuccess={ (data) =>
-							{
-								entity.value.transactionStatus.value = data.transactionStatus;
-								entity.value.rowVer.value = data.rowVer;
-								onSuccess?.(data, entity.value.mode.value);
-							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 							disabled={ isVoided }
 						/>
 						<ChangeDialog.SaveButton<Voucher, VoucherDto>
@@ -324,12 +319,7 @@ export default function ChangeVoucherDialog({
 								data.transactionStatus = TransactionStatus.Posted;
 								return data;
 							} }
-							onSuccess={ (data) =>
-							{
-								entity.value.transactionStatus.value = data.transactionStatus;
-								entity.value.rowVer.value = data.rowVer;
-								onSuccess?.(data, entity.value.mode.value);
-							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 							checkEntityChanges={ false }
 							disabled={ isVoided }
 						/>
@@ -340,12 +330,7 @@ export default function ChangeVoucherDialog({
 						entity={ entity }
 						service={ service }
 						label={ t("common:saveButton.saveChanges") }
-						onSuccess={ (data) =>
-						{
-							entity.value.transactionStatus.value = data.transactionStatus;
-							entity.value.rowVer.value = data.rowVer;
-							onSuccess?.(data, entity.value.mode.value);
-						} }
+						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 					/>
 				) }
 			</ChangeDialog.Footer>

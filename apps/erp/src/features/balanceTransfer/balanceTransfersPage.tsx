@@ -19,7 +19,7 @@ import ChangeBalanceTransferDialog from "./changeBalanceTransferDialog";
 import { BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
-import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "@/core/types/transactionStatus";
+import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function BalanceTransfersPage()

@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button, NumberField, SelectField } from "yusr-ui";
 import StoreItemSelector from "../items/storeItemSelector";
-import { TransactionStatus } from "@/core/types/transactionStatus";
+import { TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function ItemTransferTable({entity}: { entity: ItemTransfer; })

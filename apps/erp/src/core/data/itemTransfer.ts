@@ -1,7 +1,16 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
+import {
+	ChangeableEntity,
+	ChangeableEntityMode,
+	DateService,
+	Dto,
+	i18n,
+	type IStatusWorkflowEntity,
+	Validators
+} from "yusr-ui";
 import { ItemUoM, type ItemUoMDto } from "./itemUoM";
-import { type ITransactionEntity, TransactionStatus } from "@/core/types/transactionStatus";
+import { type IStatusWorkflowDto, TransactionStatus } from "#/types/transactionStatus.ts";
+import type { IRowVerDto, IRowVerEntity } from "#/types/rowVer.ts";
 
 
 export class ItemTransfersItemDto extends Dto
@@ -47,7 +56,7 @@ export class ItemTransfersItem extends ChangeableEntity<ItemTransfersItemDto>
 	}
 }
 
-export class ItemTransferDto extends Dto implements ITransactionEntity
+export class ItemTransferDto extends Dto implements IStatusWorkflowDto, IRowVerDto
 {
 	public description?: string;
 	public date!: string;
@@ -56,10 +65,11 @@ export class ItemTransferDto extends Dto implements ITransactionEntity
 	public toStoreId!: number;
 	public toStoreName?: string;
 	public itemTransfersItems!: ItemTransfersItemDto[];
+	public rowVer!: number;
 	public transactionStatus: TransactionStatus = TransactionStatus.Draft;
 }
 
-export default class ItemTransfer extends ChangeableEntity<ItemTransferDto>
+export default class ItemTransfer extends ChangeableEntity<ItemTransferDto> implements IStatusWorkflowEntity, IRowVerEntity
 {
 	public description: Signal<string | undefined>;
 	public date: Signal<string>;
@@ -68,6 +78,7 @@ export default class ItemTransfer extends ChangeableEntity<ItemTransferDto>
 	public toStoreId: Signal<number | undefined>;
 	public toStoreName: Signal<string | undefined>;
 	public itemTransfersItems: Signal<ItemTransfersItem[]>;
+	public rowVer: Signal<number>;
 	public transactionStatus: Signal<TransactionStatus>;
 
 	constructor(dto?: Partial<ItemTransferDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
@@ -104,6 +115,7 @@ export default class ItemTransfer extends ChangeableEntity<ItemTransferDto>
 		this.toStoreName = this.assign("toStoreName", dto?.toStoreName ?? undefined);
 		const itemsList = (dto?.itemTransfersItems ?? []).map((s) => new ItemTransfersItem(s));
 		this.itemTransfersItems = this.assign("itemTransfersItems", itemsList);
+		this.rowVer = this.assign("rowVer", dto?.rowVer);
 		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
 	}
 }

@@ -24,7 +24,7 @@ import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { VoucherReport } from "@/features/reports/voucher/voucherReport.tsx";
 import { signal } from "@preact/signals-react";
 import { APP_NAME } from "../../../appConfig.ts";
-import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "@/core/types/transactionStatus";
+import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function VouchersPage()

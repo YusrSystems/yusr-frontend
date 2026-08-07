@@ -1,9 +1,18 @@
 import { type Signal } from "@preact/signals-react";
-import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
-import { type ITransactionEntity, TransactionStatus } from "@/core/types/transactionStatus";
+import {
+	ChangeableEntity,
+	ChangeableEntityMode,
+	DateService,
+	Dto,
+	i18n,
+	type IStatusWorkflowEntity,
+	Validators
+} from "yusr-ui";
+import { type IStatusWorkflowDto, TransactionStatus } from "#/types/transactionStatus.ts";
+import type { IRowVerDto, IRowVerEntity } from "#/types/rowVer.ts";
 
 
-export class BalanceTransferDto extends Dto implements ITransactionEntity
+export class BalanceTransferDto extends Dto implements IStatusWorkflowDto, IRowVerDto
 {
 	public description?: string;
 	public date!: string;
@@ -12,10 +21,11 @@ export class BalanceTransferDto extends Dto implements ITransactionEntity
 	public toGlAccountId!: number;
 	public fromGlAccountName?: string;
 	public toGlAccountName?: string;
+	public rowVer!: number;
 	public transactionStatus: TransactionStatus = TransactionStatus.Draft;
 }
 
-export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
+export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto> implements IStatusWorkflowEntity, IRowVerEntity
 {
 	public description: Signal<string | undefined>;
 	public date: Signal<string>;
@@ -24,6 +34,7 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 	public toGlAccountId: Signal<number>;
 	public fromGlAccountName: Signal<string | undefined>;
 	public toGlAccountName: Signal<string | undefined>;
+	public rowVer: Signal<number>;
 	public transactionStatus: Signal<TransactionStatus>;
 
 	constructor(dto?: Partial<BalanceTransferDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
@@ -66,6 +77,7 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 		this.toGlAccountId = this.assign("toGlAccountId", dto?.toGlAccountId);
 		this.fromGlAccountName = this.assign("fromGlAccountName", dto?.fromGlAccountName);
 		this.toGlAccountName = this.assign("toGlAccountName", dto?.toGlAccountName);
+		this.rowVer = this.assign("rowVer", dto?.rowVer);
 		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
 	}
 }

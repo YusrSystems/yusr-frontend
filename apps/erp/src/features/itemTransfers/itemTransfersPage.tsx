@@ -23,7 +23,7 @@ import { ItemTransferReport } from "@/features/reports/itemsTransfer/itemTransfe
 import { createPortal } from "react-dom";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
-import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "@/core/types/transactionStatus";
+import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function ItemTransfersPage()

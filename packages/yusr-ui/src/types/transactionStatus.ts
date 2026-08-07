@@ -1,3 +1,6 @@
+import { type Signal } from "@preact/signals-react";
+
+
 export enum TransactionStatus
 {
 	Draft = 0,
@@ -5,15 +8,43 @@ export enum TransactionStatus
 	Voided = 2
 }
 
-export interface ITransactionEntity
+export interface IStatusWorkflowDto
 {
 	transactionStatus: TransactionStatus;
 }
 
-// export function getTransactionStatusName(status: TransactionStatus, t: TFunction | undefined): string
+export interface IStatusWorkflowEntity
+{
+	transactionStatus: Signal<TransactionStatus>;
+}
+
+export abstract class StatusWorkflow
+{
+	static isEntity(target: unknown): target is IStatusWorkflowEntity
+	{
+		return Boolean(
+			target &&
+			typeof target === "object" &&
+			"transactionStatus" in target &&
+			(target as Record<string, unknown>).transactionStatus &&
+			typeof (target as Record<string, unknown>).transactionStatus === "object" &&
+			"value" in ((target as Record<string, unknown>).transactionStatus as object)
+		);
+	}
+
+	static isDto(target: unknown): target is IStatusWorkflowDto
+	{
+		return Boolean(
+			target &&
+			typeof target === "object" &&
+			"transactionStatus" in target &&
+			typeof (target as Record<string, unknown>).transactionStatus === "number"
+		);
+	}
+}
+
 export function getTransactionStatusName(status: TransactionStatus): string
 {
-	console.log(status);
 	switch (status)
 	{
 		case TransactionStatus.Draft:

@@ -21,7 +21,7 @@ import {
 import { ItemType } from "@/core/data/item.ts";
 import ItemTransfer, { ItemTransferDto } from "../../core/data/itemTransfer";
 import ItemTransferTable from "./itemTransferTable";
-import { TransactionStatus } from "@/core/types/transactionStatus";
+import { TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function ChangeItemTransferDialog(
@@ -168,11 +168,7 @@ export default function ChangeItemTransferDialog(
 								data.transactionStatus = TransactionStatus.Draft;
 								return data;
 							} }
-							onSuccess={ (data) =>
-							{
-								entity.value.transactionStatus.value = data.transactionStatus;
-								onSuccess?.(data, entity.value.mode.value);
-							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 							disabled={ isVoided }
 						/>
 						<ChangeDialog.SaveButton<ItemTransfer, ItemTransferDto>
@@ -184,11 +180,7 @@ export default function ChangeItemTransferDialog(
 								data.transactionStatus = TransactionStatus.Posted;
 								return data;
 							} }
-							onSuccess={ (data) =>
-							{
-								entity.value.transactionStatus.value = data.transactionStatus;
-								onSuccess?.(data, entity.value.mode.value);
-							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 							checkEntityChanges={ false }
 							disabled={ isVoided }
 						/>
@@ -199,11 +191,7 @@ export default function ChangeItemTransferDialog(
 						entity={ entity }
 						service={ service }
 						label={ t("common:saveButton.saveChanges") }
-						onSuccess={ (data) =>
-						{
-							entity.value.transactionStatus.value = data.transactionStatus;
-							onSuccess?.(data, entity.value.mode.value);
-						} }
+						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 					/>
 				) }
 			</ChangeDialog.Footer>

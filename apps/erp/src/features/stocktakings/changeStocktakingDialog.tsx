@@ -20,7 +20,7 @@ import {
 } from "yusr-ui";
 import { ItemType } from "@/core/data/item.ts";
 import StocktakingItemsTable from "./stocktakingItemsTable";
-import { TransactionStatus } from "@/core/types/transactionStatus";
+import { TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function ChangeStocktakingDialog(
@@ -147,11 +147,7 @@ export default function ChangeStocktakingDialog(
 								data.transactionStatus = TransactionStatus.Draft;
 								return data;
 							} }
-							onSuccess={ (data) =>
-							{
-								entity.value.transactionStatus.value = data.transactionStatus;
-								onSuccess?.(data, entity.value.mode.value);
-							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 							disabled={ isVoided }
 						/>
 						<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
@@ -163,11 +159,7 @@ export default function ChangeStocktakingDialog(
 								data.transactionStatus = TransactionStatus.Posted;
 								return data;
 							} }
-							onSuccess={ (data) =>
-							{
-								entity.value.transactionStatus.value = data.transactionStatus;
-								onSuccess?.(data, entity.value.mode.value);
-							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 							checkEntityChanges={ false }
 							disabled={ isVoided }
 						/>
@@ -178,11 +170,7 @@ export default function ChangeStocktakingDialog(
 						entity={ entity }
 						service={ service }
 						label={ t("common:save", "حفظ") }
-						onSuccess={ (data) =>
-						{
-							entity.value.transactionStatus.value = data.transactionStatus;
-							onSuccess?.(data, entity.value.mode.value);
-						} }
+						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 					/>
 				) }
 			</ChangeDialog.Footer>

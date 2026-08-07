@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { BaseApiService } from "#/networking";
 import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "#/stateManager";
-import { type RequestResult, ResultStatus } from "#/types";
+import { type RequestResult, ResultStatus, StatusWorkflow } from "#/types";
 import {
 	Dialog,
 	DialogClose,
@@ -16,6 +16,7 @@ import {
 	DialogTitle
 } from "../../pure";
 import { Button } from "../../pure/button";
+import { RowVer } from "#/types/rowVer.ts";
 
 
 export interface SaveButtonProps<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>
@@ -110,6 +111,16 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 
 		if (result.status === ResultStatus.Ok && result.data != undefined)
 		{
+			if (StatusWorkflow.isEntity(entity.value) && StatusWorkflow.isDto(result.data))
+			{
+				entity.value.transactionStatus.value = result.data.transactionStatus;
+			}
+
+			if (RowVer.isEntity(entity.value) && RowVer.isDto(result.data))
+			{
+				entity.value.rowVer.value = result.data.rowVer;
+			}
+
 			onSuccess?.(result.data);
 		}
 	}

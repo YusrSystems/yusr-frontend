@@ -1,8 +1,17 @@
-import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
+import {
+	ChangeableEntity,
+	ChangeableEntityMode,
+	DateService,
+	Dto,
+	i18n,
+	type IStatusWorkflowEntity,
+	Validators
+} from "yusr-ui";
 import { Signal } from "@preact/signals-react";
 import { PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import type { TFunction } from "i18next";
-import { type ITransactionEntity, TransactionStatus } from "@/core/types/transactionStatus";
+import { type IStatusWorkflowDto, TransactionStatus } from "#/types/transactionStatus.ts";
+import type { IRowVerDto, IRowVerEntity } from "#/types/rowVer.ts";
 
 
 export enum VoucherType
@@ -11,7 +20,7 @@ export enum VoucherType
 	Receipt = 2
 }
 
-export class VoucherDto extends Dto implements ITransactionEntity
+export class VoucherDto extends Dto implements IStatusWorkflowDto, IRowVerDto
 {
 	public type!: VoucherType;
 	public date!: string;
@@ -35,7 +44,7 @@ export class VoucherDto extends Dto implements ITransactionEntity
 	public paymentMethod?: PaymentMethodDto;
 }
 
-export class Voucher extends ChangeableEntity<VoucherDto>
+export class Voucher extends ChangeableEntity<VoucherDto> implements IStatusWorkflowEntity, IRowVerEntity
 {
 	public type: Signal<VoucherType>;
 	public date: Signal<string>;
@@ -115,7 +124,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 		this.giver = this.assign("giver", dto?.giver);
 		this.recipient = this.assign("recipient", dto?.recipient);
 		this.notes = this.assign("notes", dto?.notes);
-		this.rowVer = this.assign("rowVer", dto?.rowVer ?? 0);
+		this.rowVer = this.assign("rowVer", dto?.rowVer);
 		this.isDirectMode = this.assign("isDirectMode", dto?.isDirectMode ?? false);
 		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
 

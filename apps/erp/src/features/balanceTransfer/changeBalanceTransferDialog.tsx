@@ -23,7 +23,7 @@ import {
 import { BalanceTransfer, type BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { Cubits } from "@/core/services/cubits.ts";
-import { TransactionStatus } from "@/core/types/transactionStatus";
+import { TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function ChangeBalanceTransferDialog(
@@ -153,11 +153,7 @@ export default function ChangeBalanceTransferDialog(
 								data.transactionStatus = TransactionStatus.Draft;
 								return data;
 							} }
-							onSuccess={ (data) =>
-							{
-								entity.value.transactionStatus.value = data.transactionStatus;
-								onSuccess?.(data, entity.value.mode.value);
-							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 							disabled={ isVoided }
 						/>
 						<ChangeDialog.SaveButton<BalanceTransfer, BalanceTransferDto>
@@ -169,11 +165,7 @@ export default function ChangeBalanceTransferDialog(
 								data.transactionStatus = TransactionStatus.Posted;
 								return data;
 							} }
-							onSuccess={ (data) =>
-							{
-								entity.value.transactionStatus.value = data.transactionStatus;
-								onSuccess?.(data, entity.value.mode.value);
-							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 							checkEntityChanges={ false }
 							disabled={ isVoided }
 						/>
@@ -184,11 +176,7 @@ export default function ChangeBalanceTransferDialog(
 						entity={ entity }
 						service={ service }
 						label={ t("common:saveButton.saveChanges") }
-						onSuccess={ (data) =>
-						{
-							entity.value.transactionStatus.value = data.transactionStatus;
-							onSuccess?.(data, entity.value.mode.value);
-						} }
+						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 					/>
 				) }
 			</ChangeDialog.Footer>

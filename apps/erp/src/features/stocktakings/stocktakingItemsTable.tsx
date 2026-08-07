@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { Button, ChangeableEntityMode, NumberField, SelectField } from "yusr-ui";
 import StoreItemSelector from "../items/storeItemSelector";
 import { toast } from "sonner";
-import { TransactionStatus } from "@/core/types/transactionStatus";
+import { TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export interface StocktakingItemsTableProps
