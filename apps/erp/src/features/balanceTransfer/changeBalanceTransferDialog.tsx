@@ -153,7 +153,11 @@ export default function ChangeBalanceTransferDialog(
 								data.transactionStatus = TransactionStatus.Draft;
 								return data;
 							} }
-							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							onSuccess={ (data) =>
+							{
+								entity.value.transactionStatus.value = data.transactionStatus;
+								onSuccess?.(data, entity.value.mode.value);
+							} }
 							disabled={ isVoided }
 						/>
 						<ChangeDialog.SaveButton<BalanceTransfer, BalanceTransferDto>
@@ -165,7 +169,11 @@ export default function ChangeBalanceTransferDialog(
 								data.transactionStatus = TransactionStatus.Posted;
 								return data;
 							} }
-							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							onSuccess={ (data) =>
+							{
+								entity.value.transactionStatus.value = data.transactionStatus;
+								onSuccess?.(data, entity.value.mode.value);
+							} }
 							checkEntityChanges={ false }
 							disabled={ isVoided }
 						/>
@@ -176,7 +184,11 @@ export default function ChangeBalanceTransferDialog(
 						entity={ entity }
 						service={ service }
 						label={ t("common:saveButton.saveChanges") }
-						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+						onSuccess={ (data) =>
+						{
+							entity.value.transactionStatus.value = data.transactionStatus;
+							onSuccess?.(data, entity.value.mode.value);
+						} }
 					/>
 				) }
 			</ChangeDialog.Footer>

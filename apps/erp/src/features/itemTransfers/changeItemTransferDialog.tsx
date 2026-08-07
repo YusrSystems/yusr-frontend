@@ -168,7 +168,11 @@ export default function ChangeItemTransferDialog(
 								data.transactionStatus = TransactionStatus.Draft;
 								return data;
 							} }
-							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							onSuccess={ (data) =>
+							{
+								entity.value.transactionStatus.value = data.transactionStatus;
+								onSuccess?.(data, entity.value.mode.value);
+							} }
 							disabled={ isVoided }
 						/>
 						<ChangeDialog.SaveButton<ItemTransfer, ItemTransferDto>
@@ -180,7 +184,11 @@ export default function ChangeItemTransferDialog(
 								data.transactionStatus = TransactionStatus.Posted;
 								return data;
 							} }
-							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							onSuccess={ (data) =>
+							{
+								entity.value.transactionStatus.value = data.transactionStatus;
+								onSuccess?.(data, entity.value.mode.value);
+							} }
 							checkEntityChanges={ false }
 							disabled={ isVoided }
 						/>
@@ -191,7 +199,11 @@ export default function ChangeItemTransferDialog(
 						entity={ entity }
 						service={ service }
 						label={ t("common:saveButton.saveChanges") }
-						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+						onSuccess={ (data) =>
+						{
+							entity.value.transactionStatus.value = data.transactionStatus;
+							onSuccess?.(data, entity.value.mode.value);
+						} }
 					/>
 				) }
 			</ChangeDialog.Footer>

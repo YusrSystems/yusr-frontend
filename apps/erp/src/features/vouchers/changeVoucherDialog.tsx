@@ -307,7 +307,12 @@ export default function ChangeVoucherDialog({
 								data.transactionStatus = TransactionStatus.Draft;
 								return data;
 							} }
-							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							onSuccess={ (data) =>
+							{
+								entity.value.transactionStatus.value = data.transactionStatus;
+								entity.value.rowVer.value = data.rowVer;
+								onSuccess?.(data, entity.value.mode.value);
+							} }
 							disabled={ isVoided }
 						/>
 						<ChangeDialog.SaveButton<Voucher, VoucherDto>
@@ -319,7 +324,12 @@ export default function ChangeVoucherDialog({
 								data.transactionStatus = TransactionStatus.Posted;
 								return data;
 							} }
-							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							onSuccess={ (data) =>
+							{
+								entity.value.transactionStatus.value = data.transactionStatus;
+								entity.value.rowVer.value = data.rowVer;
+								onSuccess?.(data, entity.value.mode.value);
+							} }
 							checkEntityChanges={ false }
 							disabled={ isVoided }
 						/>
@@ -330,7 +340,12 @@ export default function ChangeVoucherDialog({
 						entity={ entity }
 						service={ service }
 						label={ t("common:saveButton.saveChanges") }
-						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+						onSuccess={ (data) =>
+						{
+							entity.value.transactionStatus.value = data.transactionStatus;
+							entity.value.rowVer.value = data.rowVer;
+							onSuccess?.(data, entity.value.mode.value);
+						} }
 					/>
 				) }
 			</ChangeDialog.Footer>

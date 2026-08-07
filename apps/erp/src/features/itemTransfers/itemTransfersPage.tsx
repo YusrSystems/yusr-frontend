@@ -108,7 +108,18 @@ export default function ItemTransfersPage()
 				<CrudPage.DeleteDialog
 					entityNameSelector={ () => `"${ t("itemTransfers.entityName") }"` }
 					service={ Services.itemTransfersApi }
-					onSuccess={ (entity) => Cubits.itemTransfers.delete(entity) }
+					onSuccess={ (entity) =>
+					{
+						if (entity.transactionStatus !== TransactionStatus.Draft)
+						{
+							entity.transactionStatus = TransactionStatus.Voided;
+							Cubits.itemTransfers.update(entity);
+						}
+						else
+						{
+							Cubits.itemTransfers.delete(entity);
+						}
+					} }
 				/>
 			</CrudPage>
 

@@ -124,7 +124,18 @@ export default function VouchersPage()
 				<CrudPage.DeleteDialog
 					entityNameSelector={ () => `"${ t("vouchers.entityName") }"` }
 					service={ Services.voucherApi }
-					onSuccess={ (entity) => Cubits.vouchers.delete(entity) }
+					onSuccess={ (entity) =>
+					{
+						if (entity.transactionStatus !== TransactionStatus.Draft)
+						{
+							entity.transactionStatus = TransactionStatus.Voided;
+							Cubits.vouchers.update(entity);
+						}
+						else
+						{
+							Cubits.vouchers.delete(entity);
+						}
+					} }
 				/>
 
 

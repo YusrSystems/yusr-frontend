@@ -90,7 +90,18 @@ export default function BalanceTransfersPage()
 			<CrudPage.DeleteDialog<BalanceTransferDto>
 				entityNameSelector={ () => `"${ t("balanceTransfers.entityName") }"` }
 				service={ Services.balanceTransfersApi }
-				onSuccess={ (entity) => Cubits.balanceTransfers.delete(entity) }
+				onSuccess={ (entity) =>
+				{
+					if (entity.transactionStatus !== TransactionStatus.Draft)
+					{
+						entity.transactionStatus = TransactionStatus.Voided;
+						Cubits.balanceTransfers.update(entity);
+					}
+					else
+					{
+						Cubits.balanceTransfers.delete(entity);
+					}
+				} }
 			/>
 		</CrudPage>
 	);
