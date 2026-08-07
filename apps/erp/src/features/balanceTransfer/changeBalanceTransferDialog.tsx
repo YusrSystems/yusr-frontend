@@ -10,6 +10,7 @@ import {
 	ChangeableEntityMode,
 	ChangeDialog,
 	type CommonChangeDialogProps,
+	DateField,
 	FieldGroup,
 	FieldsSection,
 	FormField,
@@ -37,9 +38,9 @@ export default function ChangeBalanceTransferDialog(
 
 	useEffect(() =>
 	{
-		if (entity.value.isDeleted.value) return;
+		if (entity.value.transactionStatus.value === TransactionStatus.Voided) return;
 		Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true});
-	}, [entity.value.isDeleted.value]);
+	}, [entity.value.transactionStatus.value]);
 
 	useEffect(() =>
 	{
@@ -78,10 +79,10 @@ export default function ChangeBalanceTransferDialog(
 			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
 				<FieldGroup>
 					<FieldsSection title={ t("balanceTransfers.transferDetails") } columns={ 2 }>
-						<TextField
+						<DateField
 							label={ t("balanceTransfers.transferDate") }
 							value={ entity.value.date }
-							disabled
+							disabled={ !isDraft }
 						/>
 						<NumberField
 							label={ t("balanceTransfers.amount") }
@@ -90,7 +91,7 @@ export default function ChangeBalanceTransferDialog(
 							value={ entity.value.amount }
 							error={ entity.value.getError("amount") }
 							currency={ <ErpCurrencyIcon/> }
-							disabled={ entity.value.isDeleted.value || !isDraft }
+							disabled={ !isDraft }
 						/>
 						<div className="col-span-full">
 							<TextField
@@ -110,7 +111,7 @@ export default function ChangeBalanceTransferDialog(
 							<AccountsSearchableSelect
 								label={ entity.value.fromGlAccountName }
 								id={ entity.value.fromGlAccountId }
-								disabled={ entity.value.isDeleted.value || !isDraft }
+								disabled={ !isDraft }
 							/>
 						</FormField>
 
@@ -122,7 +123,7 @@ export default function ChangeBalanceTransferDialog(
 							<AccountsSearchableSelect
 								label={ entity.value.toGlAccountName }
 								id={ entity.value.toGlAccountId }
-								disabled={ entity.value.isDeleted.value || !isDraft }
+								disabled={ !isDraft }
 							/>
 						</FormField>
 					</FieldsSection>
@@ -130,9 +131,8 @@ export default function ChangeBalanceTransferDialog(
 					<FieldsSection title={ t("balanceTransfers.additionalInfo") } columns={ 1 }>
 						<TextAreaField
 							label={ t("balanceTransfers.description") }
-							value={ entity.value.description ?? "" }
+							value={ entity.value.description }
 							rows={ 3 }
-							disabled={ entity.value.isDeleted.value || !isDraft }
 						/>
 					</FieldsSection>
 				</FieldGroup>
@@ -153,29 +153,29 @@ export default function ChangeBalanceTransferDialog(
 								return data;
 							} }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
-							disabled={ entity.value.isDeleted.value || isVoided }
+							disabled={ isVoided }
 						/>
 						<ChangeDialog.SaveButton<BalanceTransfer, BalanceTransferDto>
 							entity={ entity }
 							service={ service }
-							label={ t("common:saveAndPost", "حفظ واعتماد") }
+							label={ t("common:saveAndPost", "حفظ وترحيل") }
 							transformData={ (data) =>
 							{
 								data.transactionStatus = TransactionStatus.Posted;
 								return data;
 							} }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
-							disabled={ entity.value.isDeleted.value || isVoided }
+							checkEntityChanges={ false }
+							disabled={ isVoided }
 						/>
 					</>
 				) }
-				{ isPosted && (
+				{ (isPosted || isVoided) && (
 					<ChangeDialog.SaveButton<BalanceTransfer, BalanceTransferDto>
 						entity={ entity }
 						service={ service }
-						label={ t("common:save", "حفظ") }
+						label={ t("common:saveButton.saveChanges") }
 						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
-						disabled={ entity.value.isDeleted.value || isVoided }
 					/>
 				) }
 			</ChangeDialog.Footer>

@@ -12,7 +12,6 @@ export class BalanceTransferDto extends Dto implements ITransactionEntity
 	public toGlAccountId!: number;
 	public fromGlAccountName?: string;
 	public toGlAccountName?: string;
-	public isDeleted: boolean = false;
 	public transactionStatus: TransactionStatus = TransactionStatus.Draft;
 }
 
@@ -25,7 +24,6 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 	public toGlAccountId: Signal<number>;
 	public fromGlAccountName: Signal<string | undefined>;
 	public toGlAccountName: Signal<string | undefined>;
-	public isDeleted: Signal<boolean>;
 	public transactionStatus: Signal<TransactionStatus>;
 
 	constructor(dto?: Partial<BalanceTransferDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
@@ -63,12 +61,11 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 
 		this.description = this.assign("description", dto?.description);
 		this.date = this.assign("date", dto?.date ?? DateService.formatDateOnly(new Date()));
-		this.amount = this.assign("amount", dto?.amount ?? 0);
-		this.fromGlAccountId = this.assign("fromGlAccountId", dto?.fromGlAccountId ?? 0);
-		this.toGlAccountId = this.assign("toGlAccountId", dto?.toGlAccountId ?? 0);
+		this.amount = this.assign("amount", dto?.amount);
+		this.fromGlAccountId = this.assign("fromGlAccountId", dto?.fromGlAccountId);
+		this.toGlAccountId = this.assign("toGlAccountId", dto?.toGlAccountId);
 		this.fromGlAccountName = this.assign("fromGlAccountName", dto?.fromGlAccountName);
 		this.toGlAccountName = this.assign("toGlAccountName", dto?.toGlAccountName);
-		this.isDeleted = this.assign("isDeleted", dto?.isDeleted ?? false);
 		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
 	}
 }

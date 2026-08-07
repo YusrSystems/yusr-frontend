@@ -328,7 +328,7 @@ export default function ChangeVoucherDialog({
 					<ChangeDialog.SaveButton<Voucher, VoucherDto>
 						entity={ entity }
 						service={ service }
-						label={ t("common:save", "حفظ") }
+						label={ t("common:saveButton.saveChanges") }
 						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 					/>
 				) }
