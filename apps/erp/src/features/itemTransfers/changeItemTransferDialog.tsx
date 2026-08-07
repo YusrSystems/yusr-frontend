@@ -16,7 +16,7 @@ import {
 	FormField,
 	Loading,
 	SystemPermissionsActions,
-	TextField
+	TextAreaField
 } from "yusr-ui";
 import { ItemType } from "@/core/data/item.ts";
 import ItemTransfer, { ItemTransferDto } from "../../core/data/itemTransfer";
@@ -140,10 +140,11 @@ export default function ChangeItemTransferDialog(
 					</FieldsSection>
 
 					<FieldsSection columns={ 1 }>
-						<TextField
+						<TextAreaField
 							label={ t("itemTransfers.description") }
 							value={ entity.value.description }
-							disabled={ !isDraft }
+							collapsible
+							collapsedHeight={ 60 }
 						/>
 					</FieldsSection>
 
@@ -180,17 +181,17 @@ export default function ChangeItemTransferDialog(
 								return data;
 							} }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							checkEntityChanges={ false }
 							disabled={ isVoided }
 						/>
 					</>
 				) }
-				{ isPosted && (
+				{ (isPosted || isVoided) && (
 					<ChangeDialog.SaveButton<ItemTransfer, ItemTransferDto>
 						entity={ entity }
 						service={ service }
-						label={ t("common:save", "حفظ") }
+						label={ t("common:saveButton.saveChanges") }
 						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
-						disabled={ isVoided }
 					/>
 				) }
 			</ChangeDialog.Footer>
