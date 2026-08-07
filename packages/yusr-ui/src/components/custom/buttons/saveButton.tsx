@@ -26,6 +26,7 @@ export interface SaveButtonProps<TEntity extends ChangeableEntity<TDto>, TDto ex
 	variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
 	className?: string;
 	disabled?: boolean;
+	checkEntityChanges?: boolean;
 	onSuccess?: (newData: TDto) => void;
 	transformData?: (data: TDto) => TDto | Promise<TDto>;
 	showConfirmationDialog?: (entity: TEntity) => boolean;
@@ -41,6 +42,7 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 		variant = "default",
 		className,
 		disabled,
+		checkEntityChanges = true,
 		onSuccess,
 		transformData,
 		showConfirmationDialog,
@@ -127,7 +129,7 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 	return (
 		<>
 			<Button
-				disabled={ loading.value || pendingIgnore.value || !entity.value.hasChanges.value || disabled }
+				disabled={ loading.value || pendingIgnore.value || (checkEntityChanges && !entity.value.hasChanges.value) || disabled }
 				onClick={ () => Save() }
 				variant={ variant }
 				className={ className }

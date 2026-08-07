@@ -319,17 +319,17 @@ export default function ChangeVoucherDialog({
 								return data;
 							} }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							checkEntityChanges={ false }
 							disabled={ isVoided }
 						/>
 					</>
 				) }
-				{ isPosted && (
+				{ (isPosted || isVoided) && (
 					<ChangeDialog.SaveButton<Voucher, VoucherDto>
 						entity={ entity }
 						service={ service }
 						label={ t("common:save", "حفظ") }
 						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
-						disabled={ isVoided }
 					/>
 				) }
 			</ChangeDialog.Footer>
