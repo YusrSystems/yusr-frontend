@@ -191,8 +191,8 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 						{
 							rowBody: (
 								<span
-									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(voucher.statusId) }` }>
-									{ getTransactionStatusName(voucher.statusId) }
+									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(voucher.transactionStatus) }` }>
+									{ getTransactionStatusName(voucher.transactionStatus) }
 								</span>
 							),
 							rowStyles: ""
@@ -232,7 +232,7 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 						SystemPermissionsActions.Update
 					) }
 					hasDeletePermission={ (voucher) =>
-						voucher.statusId !== TransactionStatus.Voided &&
+						voucher.transactionStatus !== TransactionStatus.Voided &&
 						Services.auth.hasAuth(
 							SystemPermissionsResources.Vouchers,
 							SystemPermissionsActions.Delete

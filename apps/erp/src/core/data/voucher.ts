@@ -31,7 +31,7 @@ export class VoucherDto extends Dto implements ITransactionEntity
 	public rowVer!: number;
 	public isDeleted: boolean = false;
 	public isDirectMode!: boolean;
-	public statusId: TransactionStatus = TransactionStatus.Draft;
+	public transactionStatus: TransactionStatus = TransactionStatus.Draft;
 
 	public paymentMethod?: PaymentMethodDto;
 }
@@ -56,7 +56,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 	public rowVer: Signal<number>;
 	public isDeleted: Signal<boolean>;
 	public isDirectMode: Signal<boolean>;
-	public statusId: Signal<TransactionStatus>;
+	public transactionStatus: Signal<TransactionStatus>;
 
 	public paymentMethod: Signal<PaymentMethod>;
 
@@ -120,7 +120,7 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 		this.rowVer = this.assign("rowVer", dto?.rowVer ?? 0);
 		this.isDeleted = this.assign("isDeleted", dto?.isDeleted ?? false);
 		this.isDirectMode = this.assign("isDirectMode", dto?.isDirectMode ?? false);
-		this.statusId = this.assign("statusId", dto?.statusId ?? TransactionStatus.Draft);
+		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
 
 		this.paymentMethod = this.assign("paymentMethod", new PaymentMethod(dto?.paymentMethod));
 	}

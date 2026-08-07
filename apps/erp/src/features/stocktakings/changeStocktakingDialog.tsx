@@ -75,9 +75,9 @@ export default function ChangeStocktakingDialog(
 		);
 	}
 
-	const isDraft = entity.value.statusId.value === TransactionStatus.Draft;
-	const isPosted = entity.value.statusId.value === TransactionStatus.Posted;
-	const isVoided = entity.value.statusId.value === TransactionStatus.Voided;
+	const isDraft = entity.value.transactionStatus.value === TransactionStatus.Draft;
+	const isPosted = entity.value.transactionStatus.value === TransactionStatus.Posted;
+	const isVoided = entity.value.transactionStatus.value === TransactionStatus.Voided;
 
 	return (
 		<ChangeDialog className="sm:max-w-7xl">
@@ -143,7 +143,7 @@ export default function ChangeStocktakingDialog(
 							label={ t("common:saveAsDraft", "حفظ كمسودة") }
 							transformData={ (data) =>
 							{
-								data.statusId = TransactionStatus.Draft;
+								data.transactionStatus = TransactionStatus.Draft;
 								return data;
 							} }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
@@ -155,7 +155,7 @@ export default function ChangeStocktakingDialog(
 							label={ t("common:saveAndPost", "حفظ واعتماد") }
 							transformData={ (data) =>
 							{
-								data.statusId = TransactionStatus.Posted;
+								data.transactionStatus = TransactionStatus.Posted;
 								return data;
 							} }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }

@@ -7,12 +7,13 @@ export enum TransactionStatus
 
 export interface ITransactionEntity
 {
-	statusId: TransactionStatus;
+	transactionStatus: TransactionStatus;
 }
 
 // export function getTransactionStatusName(status: TransactionStatus, t: TFunction | undefined): string
 export function getTransactionStatusName(status: TransactionStatus): string
 {
+	console.log(status);
 	switch (status)
 	{
 		case TransactionStatus.Draft:

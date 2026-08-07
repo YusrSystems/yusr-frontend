@@ -17,7 +17,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 	useSignals();
 	const {t} = useTranslation(["stocking", "common", "erpCommon"]);
 
-	const isDraft = entity.statusId.value === TransactionStatus.Draft;
+	const isDraft = entity.transactionStatus.value === TransactionStatus.Draft;
 
 	const groupedItems = (() =>
 	{

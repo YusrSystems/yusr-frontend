@@ -13,7 +13,7 @@ export class BalanceTransferDto extends Dto implements ITransactionEntity
 	public fromGlAccountName?: string;
 	public toGlAccountName?: string;
 	public isDeleted: boolean = false;
-	public statusId: TransactionStatus = TransactionStatus.Draft;
+	public transactionStatus: TransactionStatus = TransactionStatus.Draft;
 }
 
 export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
@@ -26,7 +26,7 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 	public fromGlAccountName: Signal<string | undefined>;
 	public toGlAccountName: Signal<string | undefined>;
 	public isDeleted: Signal<boolean>;
-	public statusId: Signal<TransactionStatus>;
+	public transactionStatus: Signal<TransactionStatus>;
 
 	constructor(dto?: Partial<BalanceTransferDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
@@ -69,6 +69,6 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 		this.fromGlAccountName = this.assign("fromGlAccountName", dto?.fromGlAccountName);
 		this.toGlAccountName = this.assign("toGlAccountName", dto?.toGlAccountName);
 		this.isDeleted = this.assign("isDeleted", dto?.isDeleted ?? false);
-		this.statusId = this.assign("statusId", dto?.statusId ?? TransactionStatus.Draft);
+		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
 	}
 }

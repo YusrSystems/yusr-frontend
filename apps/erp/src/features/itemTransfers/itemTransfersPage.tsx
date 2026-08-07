@@ -176,8 +176,8 @@ function PageTable({onPrint}: { onPrint: (transfer: ItemTransferDto) => void })
 						{
 							rowBody: (
 								<span
-									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(transfer.statusId) }` }>
-									{ getTransactionStatusName(transfer.statusId) }
+									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(transfer.transactionStatus) }` }>
+									{ getTransactionStatusName(transfer.transactionStatus) }
 								</span>
 							),
 							rowStyles: ""
@@ -207,7 +207,7 @@ function PageTable({onPrint}: { onPrint: (transfer: ItemTransferDto) => void })
 						SystemPermissionsActions.Update
 					) }
 					hasDeletePermission={ (transfer) =>
-						transfer.statusId !== TransactionStatus.Voided &&
+						transfer.transactionStatus !== TransactionStatus.Voided &&
 						Services.auth.hasAuth(
 							SystemPermissionsResources.ItemTransfers,
 							SystemPermissionsActions.Delete

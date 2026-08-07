@@ -178,8 +178,8 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 						{
 							rowBody: (
 								<span
-									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(stocktaking.statusId) }` }>
-									{ getTransactionStatusName(stocktaking.statusId) }
+									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(stocktaking.transactionStatus) }` }>
+									{ getTransactionStatusName(stocktaking.transactionStatus) }
 								</span>
 							),
 							rowStyles: ""
@@ -208,7 +208,7 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 						SystemPermissionsActions.Update
 					) }
 					hasDeletePermission={ (stocktaking) =>
-						stocktaking.statusId !== TransactionStatus.Voided &&
+						stocktaking.transactionStatus !== TransactionStatus.Voided &&
 						Services.auth.hasAuth(
 							SystemPermissionsResources.Stocktakings,
 							SystemPermissionsActions.Delete
