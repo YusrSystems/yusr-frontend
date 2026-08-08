@@ -1,24 +1,38 @@
 import type { Signal } from "@preact/signals-react";
-import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
+import {
+	ChangeableEntity,
+	ChangeableEntityMode,
+	DateService,
+	Dto,
+	i18n,
+	type IStatusWorkflowEntity,
+	Validators
+} from "yusr-ui";
 import { StocktakingItem, type StocktakingItemDto } from "./stocktakingItem";
+import { type IStatusWorkflowDto, TransactionStatus } from "#/types/transactionStatus.ts";
+import type { IRowVerDto, IRowVerEntity } from "#/types/rowVer.ts";
 
 
-export class StocktakingDto extends Dto
+export class StocktakingDto extends Dto implements IStatusWorkflowDto, IRowVerDto
 {
 	public description?: string;
 	public date!: string;
 	public storeId?: number;
 	public storeName?: string;
 	public items: StocktakingItemDto[] = [];
+	public rowVer!: number;
+	public transactionStatus: TransactionStatus = TransactionStatus.Draft;
 }
 
-export default class Stocktaking extends ChangeableEntity<StocktakingDto>
+export default class Stocktaking extends ChangeableEntity<StocktakingDto> implements IStatusWorkflowEntity, IRowVerEntity
 {
 	public description: Signal<string | undefined>;
 	public date: Signal<string>;
 	public storeId: Signal<number | undefined>;
 	public storeName: Signal<string | undefined>;
 	public items: Signal<StocktakingItem[]>;
+	public rowVer: Signal<number>;
+	public transactionStatus: Signal<TransactionStatus>;
 
 	constructor(dto: Partial<StocktakingDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
@@ -42,5 +56,14 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto>
 		this.storeName = this.assign("storeName", dto?.storeName ?? "");
 		const itemsList = (dto?.items ?? []).map((s) => new StocktakingItem(s));
 		this.items = this.assign("items", itemsList);
+		this.rowVer = this.assign("rowVer", dto?.rowVer);
+		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
+	}
+
+	override validate(dto?: Partial<StocktakingDto>): boolean
+	{
+		const isBaseValid = super.validate(dto);
+		const areItemsValid = this.items.value.every(item => item.validate());
+		return isBaseValid && areItemsValid;
 	}
 }

@@ -342,16 +342,18 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 		this.paidAmount.value = taxInclusivePrice;
 	}
 
-	public addItem(storeItem: ItemDto)
+	public addItem(storeItem: ItemDto, selectedUoMId?: number, selectedPricingMethodId?: number)
 	{
-		const existingItem = this.invoiceItems.value?.find((item) => item.itemId.value === storeItem.id);
+		const existingItem = this.invoiceItems.value?.find((item) =>
+			item.itemId.value === storeItem.id && (!selectedUoMId || item.itemUoMId.value === selectedUoMId)
+		);
 
 		if (existingItem)
 		{
 			return existingItem.incrementQuantity();
 		}
 
-		const newInvoiceItem = InvoiceItem.createFromItem(this, storeItem);
+		const newInvoiceItem = InvoiceItem.createFromItem(this, storeItem, selectedUoMId, selectedPricingMethodId);
 		this.invoiceItems.value = [...this.invoiceItems.value, newInvoiceItem];
 
 		if (this.settlementPercent.value)
@@ -367,7 +369,6 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 
 	public removeItem(index: number)
 	{
-
 		this.invoiceItems.value = this.invoiceItems.value.filter((_, i) =>
 			i !== index
 		);

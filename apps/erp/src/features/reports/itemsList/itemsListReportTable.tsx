@@ -37,7 +37,7 @@ export function ItemsListReportTable()
 					<ReportTableTh ar="العلامة التجارية" en="brand"/>
 					<ReportTableTh ar="الوحدة الأساسية" en="main unit"/>
 					<ReportTableTh ar="الكمية" en="quantity"/>
-					<ReportTableTh ar="التكلفة" en="cost"/>
+					<ReportTableTh ar="متوسط التكلفة" en="avg cost"/>
 					<ReportTableTh ar="التكلفة الإجمالية" en="total cost"/>
 				</tr>
 				</thead>
@@ -45,10 +45,16 @@ export function ItemsListReportTable()
 				{ Cubits.items.entities.value.map((item, idx) =>
 				{
 					const isEven = idx % 2 === 0;
+
+					// Calculate totals safely
+					const itemTotalCost = item.itemStores?.reduce((sum, s) => sum + (s.quantity * s.averageCost), 0) ?? 0;
+					const itemAverageCost = item.quantity > 0 ? itemTotalCost / item.quantity : 0;
+
 					return (
 						<tr key={ item.id }>
-							<ReportTableTd
-								isEven={ isEven }>{ idx + 1 + ((Cubits.items.currentPage.value - 1) * Cubits.items.pageSize.value) }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>
+								{ idx + 1 + ((Cubits.items.currentPage.value - 1) * Cubits.items.pageSize.value) }
+							</ReportTableTd>
 							<ReportTableTd isEven={ isEven }
 							               className="p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!">
 								<Link
@@ -71,9 +77,8 @@ export function ItemsListReportTable()
 							<ReportTableTd isEven={ isEven } align="start">{ item.brand }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.sellUnitName }</ReportTableTd>
 							<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity) }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(item.cost) }</ReportTableTd>
-							<ReportTableTd
-								isEven={ isEven }>{ formatNumber(item.quantity * item.cost) }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>{ formatNumber(itemAverageCost) }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>{ formatNumber(itemTotalCost) }</ReportTableTd>
 						</tr>
 					);
 				}) }

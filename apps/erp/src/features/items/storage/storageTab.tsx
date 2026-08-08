@@ -4,7 +4,8 @@ import { ItemStore } from "@/core/data/itemStore";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, ChangeableEntityMode, FormField, NumberField, TextField } from "yusr-ui";
+import { Button, ChangeableEntityMode, FormField, NumberField, TablePreview, TextField } from "yusr-ui";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 
 
 export default function StorageTab({entity}: { entity: Item; })
@@ -16,21 +17,11 @@ export default function StorageTab({entity}: { entity: Item; })
 	const removeStore = (index: number) =>
 	{
 		entity.itemStores.value = entity.itemStores.value.filter((_, i) => i !== index);
-		syncInitialQuantity();
 	};
-	const syncInitialQuantity = () =>
-	{
-		entity.initialQuantity.value = entity.itemStores.value.reduce(
-			(sum, store) => sum + (store.initialQuantity.value || 0),
-			0
-		);
-	};
-
-	const errorMessage = entity.getError("itemStores");
 
 	return (
 		<div className="space-y-6 animate-in fade-in">
-			<div className="grid grid-cols-3 gap-6">
+			<div className="grid grid-cols-2 gap-6">
 				<NumberField
 					label={ t("items.minQuantity") }
 					value={ entity.minQuantity }
@@ -42,12 +33,6 @@ export default function StorageTab({entity}: { entity: Item; })
 				<TextField
 					label={ t("items.locationInStore") }
 					value={ entity.location }
-				/>
-				<NumberField
-					label={ t("items.totalInitialQuantity") }
-					value={ entity.initialQuantity }
-					disabled
-					className="bg-muted font-bold"
 				/>
 				<NumberField
 					label={ t("items.totalCurrentQuantity") }
@@ -66,15 +51,15 @@ export default function StorageTab({entity}: { entity: Item; })
 				</div>
 
 				<div
-					className={ `bg-muted/20 rounded-lg border overflow-hidden ${ errorMessage.value ? "border-red-500" : "" }` }
+					className="bg-muted/20 rounded-lg border overflow-hidden"
 				>
 					<table className="w-full text-sm text-right">
 						<thead className="bg-muted/50 text-muted-foreground">
 						<tr>
 							<th className="p-3 w-16 text-start">{ t("items.number") }</th>
 							<th className="p-3 w-48 text-start">{ t("items.store") }</th>
-							<th className="p-3 w-48 text-start">{ t("items.initialQuantity") }</th>
 							<th className="p-3 w-48 text-start">{ t("items.currentQuantity") }</th>
+							<th className="p-3 w-48 text-start">{ t("items.averageCost", "متوسط التكلفة") }</th>
 							<th className="p-3 w-16 text-center"></th>
 						</tr>
 						</thead>
@@ -90,7 +75,6 @@ export default function StorageTab({entity}: { entity: Item; })
 										<StoresSearchableSelect
 											id={ store.storeId }
 											label={ store.storeName }
-											onSelect={ () => entity.clearError("itemStores") }
 											disabled={ entity.mode.value === ChangeableEntityMode.Update && !!store.id?.value }
 										/>
 									</FormField>
@@ -98,21 +82,15 @@ export default function StorageTab({entity}: { entity: Item; })
 								<td className="p-3">
 									<NumberField
 										label=""
-										min={ 0 }
-										value={ store.initialQuantity }
-										disabled={ entity.mode.value === ChangeableEntityMode.Update }
-										error={ store.getError("initialQuantity") }
-										onChange={ () =>
-										{
-											entity.clearError("itemStores");
-											syncInitialQuantity();
-										} }
+										value={ store.quantity }
+										disabled
 									/>
 								</td>
 								<td className="p-3">
 									<NumberField
 										label=""
-										value={ store.quantity }
+										value={ store.averageCost }
+										currency={ <ErpCurrencyIcon/> }
 										disabled
 									/>
 								</td>
@@ -131,17 +109,10 @@ export default function StorageTab({entity}: { entity: Item; })
 						)) }
 						</tbody>
 					</table>
-					{ entity.itemStores?.value.length === 0 && (
-						<div className="p-4 text-center text-muted-foreground">
-							{ t("items.noStores") }
-						</div>
+					{ entity.itemStores.value.length <= 0 && (
+						<TablePreview.Empty/>
 					) }
 				</div>
-				{ errorMessage.value && (
-					<div className="text-xs font-medium text-red-500 mt-2 animate-in fade-in slide-in-from-top-1">
-						{ errorMessage.value }
-					</div>
-				) }
 			</div>
 		</div>
 	);

@@ -91,8 +91,7 @@ export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, i
 									<ReportTableTd isEven={ isEven } align="start">
 										<div className="flex flex-col">
 											<span className="font-semibold">{ item.itemName }</span>
-											<span
-												className="text-[10px] text-muted-foreground">{ item.itemUnitPricingMethodName }</span>
+											<span className="text-[10px] text-muted-foreground">{ item.unitName }</span>
 										</div>
 									</ReportTableTd>
 									<ReportTableTd isEven={ isEven } align="start">{ item.notes || "-" }</ReportTableTd>

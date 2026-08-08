@@ -7,7 +7,8 @@ import { AlertCircle, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, ChangeableEntityMode, NumberField, SelectField } from "yusr-ui";
 import StoreItemSelector from "../items/storeItemSelector";
-import type { ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod";
+import { toast } from "sonner";
+import { TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export interface StocktakingItemsTableProps
@@ -22,6 +23,8 @@ export default function StocktakingItemsTable(
 {
 	useSignals();
 	const {t} = useTranslation("stocking");
+
+	const isDraft = entity.transactionStatus.value === TransactionStatus.Draft;
 
 	const groupedItems = (() =>
 	{
@@ -56,8 +59,8 @@ export default function StocktakingItemsTable(
 	{
 		const storeItem = Cubits.items.entities.value.find((si) => si.id === itemId);
 		const usedUnitIds =
-			entity.items?.value.filter((i) => i.itemId.value === itemId).map((i) => i.itemUnitPricingMethodId.value) || [];
-		return storeItem?.itemUnitPricingMethods?.filter((u) => !usedUnitIds.includes(u.id)) || [];
+			entity.items?.value.filter((i) => i.itemId.value === itemId).map((i) => i.itemUoMId.value) || [];
+		return storeItem?.uoMs?.filter((u) => !usedUnitIds.includes(u.id)) || [];
 	};
 
 	const getCalculatedActual = (group: StocktakingItem[]) =>
@@ -66,6 +69,13 @@ export default function StocktakingItemsTable(
 			(sum, item) => sum + ((item.actualQuantity.value || 0) * (item.quantityMultiplier.value || 1)),
 			0
 		);
+	};
+
+	const getAverageCost = (itemId: number | undefined) =>
+	{
+		const storeItem = Cubits.items.entities.value.find((si) => si.id === itemId);
+		const storeDetails = storeItem?.itemStores?.find(s => s.storeId === entity.storeId.value);
+		return storeDetails?.averageCost || 0;
 	};
 
 	const getVariance = (group: StocktakingItem[]) =>
@@ -83,13 +93,27 @@ export default function StocktakingItemsTable(
 
 		const list = [...(entity.items.value || [])];
 		const index = list.findIndex((i) =>
-			i.itemId.value === item.itemId.value && i.itemUnitPricingMethodId.value === item.itemUnitPricingMethodId.value
+			i.itemId.value === item.itemId.value && i.itemUoMId.value === item.itemUoMId.value
 		);
 		if (index !== -1 && list[index])
 		{
 			list[index].actualQuantity.value = newQty;
 			const group = list.filter((i) => i.itemId.value === item.itemId.value);
-			list[index].variance.value = getCalculatedActual(group) - getSystemQuantity(item.itemId.value);
+			const varVal = getCalculatedActual(group) - getSystemQuantity(item.itemId.value);
+
+			list.forEach((i) =>
+			{
+				if (i.itemId.value === item.itemId.value)
+				{
+					i.variance.value = varVal;
+					if (varVal <= 0)
+					{
+						i.unitCost.value = getAverageCost(i.itemId.value) * i.quantityMultiplier.value;
+						i.clearError("unitCost");
+					}
+				}
+			});
+
 			entity.items.value = list;
 		}
 	};
@@ -98,7 +122,7 @@ export default function StocktakingItemsTable(
 	{
 		entity.items.value = entity.items?.value.filter((i) =>
 			!(i.itemId.value === item.itemId.value
-				&& i.itemUnitPricingMethodId.value === item.itemUnitPricingMethodId.value)
+				&& i.itemUoMId.value === item.itemUoMId.value)
 		) || [];
 	};
 
@@ -110,7 +134,7 @@ export default function StocktakingItemsTable(
 	const addUnitToItem = (itemId: number, unitId: number | undefined) =>
 	{
 		const storeItem = Cubits.items.entities.value.find((si) => si.id === itemId);
-		const unitDetails = storeItem?.itemUnitPricingMethods?.find((u) => u.id === unitId);
+		const unitDetails = storeItem?.uoMs?.find((u) => u.id === unitId);
 
 		if (!storeItem || !unitDetails)
 		{
@@ -118,27 +142,41 @@ export default function StocktakingItemsTable(
 		}
 
 		const systemQty = getSystemQuantity(itemId);
+		const group = entity.items.value.filter((i) => i.itemId.value === itemId);
+		const varVal = getCalculatedActual(group) - systemQty;
 
 		const newItem = createInstance();
 		newItem.itemId.value = storeItem.id;
 		newItem.itemName.value = storeItem.name;
-		newItem.itemUnitPricingMethodId.value = unitDetails.id;
-		newItem.itemUnitPricingMethodName.value = unitDetails.itemUnitPricingMethodName;
+		newItem.itemUoMId.value = unitDetails.id;
+		newItem.unitName.value = unitDetails.unitName;
 		newItem.quantityMultiplier.value = unitDetails.quantityMultiplier;
 		newItem.systemQuantity.value = systemQty;
 		newItem.actualQuantity.value = 0;
-		newItem.variance.value = -systemQty;
+		newItem.variance.value = varVal;
+
+		if (varVal <= 0)
+		{
+			newItem.unitCost.value = getAverageCost(itemId) * newItem.quantityMultiplier.value;
+		}
 
 		entity.items.value = [...entity.items.value, newItem];
 	};
 
-	const handleStoreItemSelect = (item: ItemDto, selectedIupm?: ItemUnitPricingMethodDto) =>
+	const handleStoreItemSelect = (item: ItemDto, selectedUoMId?: number) =>
 	{
-		const unit = selectedIupm || item.itemUnitPricingMethods[0];
+		const uoMsList = item.uoMs || [];
+		const itemUoM = uoMsList.find((u) => u.id === selectedUoMId) ?? uoMsList[0];
+
+		if (!itemUoM)
+		{
+			toast.error(t("items.noPackagingUnits", "لا توجد وحدات لهذه المادة"));
+			return;
+		}
 
 		const list = [...(entity.items.value || [])];
 		const existingIndex = list.findIndex(
-			(i) => i.itemId.value === item.id && i.itemUnitPricingMethodId.value === unit?.id
+			(i) => i.itemId.value === item.id && i.itemUoMId.value === itemUoM.id
 		);
 
 		if (existingIndex !== -1 && list[existingIndex])
@@ -146,24 +184,44 @@ export default function StocktakingItemsTable(
 			const currentQty = list[existingIndex].actualQuantity.value || 0;
 			list[existingIndex].actualQuantity.value = currentQty + 1;
 			const group = list.filter((i) => i.itemId.value === item.id);
-			list[existingIndex].variance.value = getCalculatedActual(group) - getSystemQuantity(item.id);
+			const varVal = getCalculatedActual(group) - getSystemQuantity(item.id);
+
+			list.forEach((i) =>
+			{
+				if (i.itemId.value === item.id)
+				{
+					i.variance.value = varVal;
+					if (varVal <= 0)
+					{
+						i.unitCost.value = getAverageCost(item.id) * i.quantityMultiplier.value;
+						i.clearError("unitCost");
+					}
+				}
+			});
+
 			entity.items.value = list;
 		}
 		else
 		{
-			// Brand-new item — fall back to live store quantity
-			const systemQty = item.storeQuantity || 0;
-			const initialActualQty = selectedIupm ? 1 : 0;
+			const storeDetails = item.itemStores?.find(s => s.storeId === entity.storeId.value);
+			const systemQty = storeDetails?.quantity || 0;
+			const initialActualQty = itemUoM ? 1 : 0;
+			const varVal = (initialActualQty * (itemUoM.quantityMultiplier ?? 1)) - systemQty;
 
 			const newItem = createInstance();
 			newItem.itemId.value = item.id;
 			newItem.itemName.value = item.name;
-			newItem.itemUnitPricingMethodId.value = unit?.id;
-			newItem.itemUnitPricingMethodName.value = unit?.itemUnitPricingMethodName;
-			newItem.quantityMultiplier.value = unit?.quantityMultiplier ?? 1;
+			newItem.itemUoMId.value = itemUoM.id;
+			newItem.unitName.value = itemUoM.unitName;
+			newItem.quantityMultiplier.value = itemUoM.quantityMultiplier ?? 1;
 			newItem.systemQuantity.value = systemQty;
 			newItem.actualQuantity.value = initialActualQty;
-			newItem.variance.value = (initialActualQty * (unit?.quantityMultiplier ?? 1)) - systemQty;
+			newItem.variance.value = varVal;
+
+			if (varVal <= 0)
+			{
+				newItem.unitCost.value = (storeDetails?.averageCost || 0) * newItem.quantityMultiplier.value;
+			}
 
 			entity.items.value = [...list, newItem];
 		}
@@ -171,13 +229,13 @@ export default function StocktakingItemsTable(
 
 	if (!entity.storeId.value)
 	{
-		return;
+		return null;
 	}
 
 	return (
 		<div>
 			<div className="sticky top-0 z-10 pt-4 pb-2 bg-background">
-				{ entity.mode.value === ChangeableEntityMode.Create && (
+				{ isDraft && (
 					<StoreItemSelector
 						storeId={ entity.storeId }
 						onSelect={ handleStoreItemSelect }
@@ -193,9 +251,10 @@ export default function StocktakingItemsTable(
 							<tr>
 								<th className="p-3 w-12 text-center">#</th>
 								<th className="p-3 w-1/4 text-start">{ t("stocktakings.item") }</th>
-								<th className="p-3 w-1/4 text-center">{ t("stocktakings.systemQuantity") }</th>
+								<th className="p-3 w-1/6 text-center">{ t("stocktakings.systemQuantity") }</th>
 								<th className="p-3 w-1/6 text-center">{ t("stocktakings.variance") }</th>
-								<th className="p-3 w-1/4">{ t("stocktakings.actualQuantity") }</th>
+								<th className="p-3 w-1/4 text-center">{ t("stocktakings.actualQuantity") }</th>
+								<th className="p-3 w-1/6 text-center">{ t("stocktakings.unitCost", "سعر التكلفة") }</th>
 								<th className="p-3 w-12 text-center"></th>
 							</tr>
 							</thead>
@@ -238,23 +297,36 @@ export default function StocktakingItemsTable(
                                             </span>
 										</td>
 
-										<td className="p-3">
+										<td className="p-3" colSpan={ 2 }>
 											<div className="flex flex-col gap-2">
 												{ group.map((item, j) => (
-													<div key={ j } className="flex gap-2 items-center">
+													<div key={ j } className="flex gap-2 items-center w-full">
 														<div
-															className="bg-muted px-3 py-2 rounded-md text-xs font-medium w-24 truncate text-center border">
-															{ item.itemUnitPricingMethodName.value }
+															className="bg-muted px-3 py-2 rounded-md text-xs font-medium w-24 truncate text-center border shrink-0">
+															{ item.unitName.value }
 														</div>
-														<div className="flex-1">
+														<div className="w-1/2">
 															<NumberField
 																label=""
 																value={ item.actualQuantity }
 																onChange={ (val) => updateActualQuantity(item, val) }
-																disabled={ entity.mode.value === ChangeableEntityMode.Update }
+																disabled={ !isDraft }
 															/>
 														</div>
-														{ entity.mode.value === ChangeableEntityMode.Create && (
+														<div className="w-1/2">
+															<NumberField
+																label=""
+																min={ 0 }
+																value={ item.unitCost }
+																onChange={ (val) =>
+																{
+																	if (val !== undefined) item.unitCost.value = val;
+																} }
+																disabled={ !isDraft || variance <= 0 }
+																error={ item.getError("unitCost") }
+															/>
+														</div>
+														{ isDraft && (
 															<Button
 																type="button"
 																variant="ghost"
@@ -268,13 +340,14 @@ export default function StocktakingItemsTable(
 													</div>
 												)) }
 
-												{ entity.mode.value === ChangeableEntityMode.Create && availableUnits.length > 0 && (
-													<div className="mt-1">
+												{ isDraft && availableUnits.length > 0 && (
+													<div className="mt-1 w-1/2">
 														<SelectField<number>
-															options={ availableUnits.map((iupm) => ({
-																label: iupm.itemUnitPricingMethodName,
-																value: iupm.id
+															options={ availableUnits.map((u) => ({
+																label: u.unitName,
+																value: u.id
 															})) }
+															placeholder="اختر الوحدة"
 															onValueChange={ (unitId) => addUnitToItem(itemId, unitId) }
 														/>
 													</div>
@@ -282,7 +355,7 @@ export default function StocktakingItemsTable(
 											</div>
 										</td>
 
-										{ entity.mode.value === ChangeableEntityMode.Create && (
+										{ isDraft && (
 											<td className="p-3 text-center align-top pt-4">
 												<Button
 													type="button"

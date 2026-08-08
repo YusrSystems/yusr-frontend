@@ -31,12 +31,13 @@ export function ItemStatementReportTable()
 					<ReportTableTh ar="التاريخ" en="Date"/>
 					<ReportTableTh ar="نوع المستند" en="Document Type"/>
 					<ReportTableTh ar="رقم المستند" en="Doc No."/>
-					<ReportTableTh ar="المستودع" en="Store" align="start"/>
-					<ReportTableTh ar="الحساب / الطرف المقابل" en="Partner / Counterparty" align="start"/>
+					<ReportTableTh ar="الجهة" en="Partner" align="start"/>
 					<ReportTableTh ar="الوارد (+)" en="Qty In"/>
 					<ReportTableTh ar="الصادر (-)" en="Qty Out"/>
+					<ReportTableTh ar="تكلفة الحركة" en="Trans. Cost"/>
 					<ReportTableTh ar="الرصيد الجاري" en="Running Qty"/>
-					<ReportTableTh ar="التكلفة للوحدة" en="Unit Cost"/>
+					<ReportTableTh ar="متوسط التكلفة" en="Running Avg Cost"/>
+					<ReportTableTh ar="التقييم" en="Running Valuation"/>
 				</tr>
 				</thead>
 				<tbody>
@@ -67,9 +68,7 @@ export function ItemStatementReportTable()
 								<ReportTableTd isEven={ isEven }>{ line.documentId || "-" }</ReportTableTd>
 							) }
 
-							<ReportTableTd isEven={ isEven } align="start">{ line.storeName || "-" }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }
-							               align="start">{ line.secondPartyName || "-" }</ReportTableTd>
+							<ReportTableTd isEven={ isEven } align="start">{ line.partnerName || "-" }</ReportTableTd>
 
 							<ReportTableTd isEven={ isEven }
 							               className={ line.quantityIn > 0 ? "text-green-600! font-semibold!" : "text-muted-foreground!" }>
@@ -81,26 +80,20 @@ export function ItemStatementReportTable()
 								{ line.quantityOut > 0 ? formatNumber(line.quantityOut) : "-" }
 							</ReportTableTd>
 
+							<ReportTableTd isEven={ isEven }>{ formatNumber(line.transactionCost) }</ReportTableTd>
+
 							<ReportTableTd
 								isEven={ isEven }
 								className={ line.runningQuantity > 0 ? "text-green-600! font-semibold!" : "text-red-600!" }>
 								{ formatNumber(line.runningQuantity) }
 							</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(line.unitCost) }</ReportTableTd>
+
+							<ReportTableTd isEven={ isEven }>{ formatNumber(line.runningAverageCost) }</ReportTableTd>
+							<ReportTableTd
+								isEven={ isEven }>{ formatNumber(line.runningValuationValue) }</ReportTableTd>
 						</tr>
 					);
 				}) }
-
-				{ result && lines.length > 0 && (
-					<tr className="border-t-2 border-border font-bold bg-muted/40">
-						<td colSpan={ 5 } className="p-3 text-start font-extrabold text-xs">
-							المجموع (Totals):
-						</td>
-						<td className="p-3 text-center text-green-600!">{ formatNumber(result.pageTotalQuantityIn) }</td>
-						<td className="p-3 text-center text-red-600!">{ formatNumber(result.pageTotalQuantityOut) }</td>
-						<td colSpan={ 2 } className="p-3"/>
-					</tr>
-				) }
 				</tbody>
 			</table>
 		);

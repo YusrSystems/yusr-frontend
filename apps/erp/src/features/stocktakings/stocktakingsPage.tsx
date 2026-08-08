@@ -23,6 +23,7 @@ import { StocktakingReport } from "@/features/reports/stocktaking/stocktakingRep
 import { signal } from "@preact/signals-react";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
+import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function StocktakingsPage()
@@ -111,7 +112,18 @@ export default function StocktakingsPage()
 				<CrudPage.DeleteDialog
 					entityNameSelector={ () => `"${ t("stocktakings.entityName") }"` }
 					service={ Services.stocktakingApi }
-					onSuccess={ (entity) => Cubits.stocktaking.delete(entity) }
+					onSuccess={ (entity) =>
+					{
+						if (entity.transactionStatus !== TransactionStatus.Draft)
+						{
+							entity.transactionStatus = TransactionStatus.Voided;
+							Cubits.stocktaking.update(entity);
+						}
+						else
+						{
+							Cubits.stocktaking.delete(entity);
+						}
+					} }
 				/>
 			</CrudPage>
 
@@ -159,6 +171,7 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("stocktakings.stocktakingId"), rowStyles: "w-32"},
+						{rowBody: t("common:status.title", "الحالة"), rowStyles: "w-24"},
 						{rowBody: t("stocktakings.date"), rowStyles: "w-32"},
 						{rowBody: t("stocktakings.store"), rowStyles: "w-48"},
 						{rowBody: t("stocktakings.description"), rowStyles: ""},
@@ -173,6 +186,15 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 						stocktaking
 					) => [
 						{rowBody: `#${ stocktaking.id }`, rowStyles: ""},
+						{
+							rowBody: (
+								<span
+									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(stocktaking.transactionStatus) }` }>
+									{ getTransactionStatusName(stocktaking.transactionStatus) }
+								</span>
+							),
+							rowStyles: ""
+						},
 						{rowBody: stocktaking.date, rowStyles: ""},
 						{rowBody: stocktaking.storeName, rowStyles: "font-semibold"},
 						{rowBody: stocktaking.description ?? "-", rowStyles: "text-sm text-gray-500"},
@@ -196,10 +218,13 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 						SystemPermissionsResources.Stocktakings,
 						SystemPermissionsActions.Update
 					) }
-					hasDeletePermission={ Services.auth.hasAuth(
-						SystemPermissionsResources.Stocktakings,
-						SystemPermissionsActions.Delete
-					) }
+					hasDeletePermission={ (stocktaking) =>
+						stocktaking.transactionStatus !== TransactionStatus.Voided &&
+						Services.auth.hasAuth(
+							SystemPermissionsResources.Stocktakings,
+							SystemPermissionsActions.Delete
+						)
+					}
 				/>
 				<CrudPage.TablePagination
 					pageSize={ Cubits.stocktaking.pageSize.value }

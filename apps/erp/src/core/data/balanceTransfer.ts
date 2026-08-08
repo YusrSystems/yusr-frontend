@@ -1,8 +1,18 @@
 import { type Signal } from "@preact/signals-react";
-import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
+import {
+	ChangeableEntity,
+	ChangeableEntityMode,
+	DateService,
+	Dto,
+	i18n,
+	type IStatusWorkflowEntity,
+	Validators
+} from "yusr-ui";
+import { type IStatusWorkflowDto, TransactionStatus } from "#/types/transactionStatus.ts";
+import type { IRowVerDto, IRowVerEntity } from "#/types/rowVer.ts";
 
 
-export class BalanceTransferDto extends Dto
+export class BalanceTransferDto extends Dto implements IStatusWorkflowDto, IRowVerDto
 {
 	public description?: string;
 	public date!: string;
@@ -11,10 +21,11 @@ export class BalanceTransferDto extends Dto
 	public toGlAccountId!: number;
 	public fromGlAccountName?: string;
 	public toGlAccountName?: string;
-	public isDeleted: boolean = false;
+	public rowVer!: number;
+	public transactionStatus: TransactionStatus = TransactionStatus.Draft;
 }
 
-export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
+export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto> implements IStatusWorkflowEntity, IRowVerEntity
 {
 	public description: Signal<string | undefined>;
 	public date: Signal<string>;
@@ -23,7 +34,8 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 	public toGlAccountId: Signal<number>;
 	public fromGlAccountName: Signal<string | undefined>;
 	public toGlAccountName: Signal<string | undefined>;
-	public isDeleted: Signal<boolean>;
+	public rowVer: Signal<number>;
+	public transactionStatus: Signal<TransactionStatus>;
 
 	constructor(dto?: Partial<BalanceTransferDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
@@ -60,11 +72,12 @@ export class BalanceTransfer extends ChangeableEntity<BalanceTransferDto>
 
 		this.description = this.assign("description", dto?.description);
 		this.date = this.assign("date", dto?.date ?? DateService.formatDateOnly(new Date()));
-		this.amount = this.assign("amount", dto?.amount ?? 0);
-		this.fromGlAccountId = this.assign("fromGlAccountId", dto?.fromGlAccountId ?? 0);
-		this.toGlAccountId = this.assign("toGlAccountId", dto?.toGlAccountId ?? 0);
+		this.amount = this.assign("amount", dto?.amount);
+		this.fromGlAccountId = this.assign("fromGlAccountId", dto?.fromGlAccountId);
+		this.toGlAccountId = this.assign("toGlAccountId", dto?.toGlAccountId);
 		this.fromGlAccountName = this.assign("fromGlAccountName", dto?.fromGlAccountName);
 		this.toGlAccountName = this.assign("toGlAccountName", dto?.toGlAccountName);
-		this.isDeleted = this.assign("isDeleted", dto?.isDeleted ?? false);
+		this.rowVer = this.assign("rowVer", dto?.rowVer);
+		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
 	}
 }

@@ -27,8 +27,12 @@ export function ItemStatementReport({isPortal = false}: ItemStatementReportProps
 					titleAr="كشف مادة"
 					titleEn="ITEM STATEMENT"
 				>
-					{ data &&
-                        <span className="text-destructive font-bold">{ data.storeName ?? "كل المستودعات" }</span> }
+					{ data && (data.fromDate || data.toDate) && (
+						<span className="text-destructive font-bold text-sm">
+							{ data.fromDate ? `من ${ data.fromDate } ` : "" }
+							{ data.toDate ? `إلى ${ data.toDate }` : "" }
+						</span>
+					) }
 				</ReportHeader.TitleSection>
 				<ReportHeader.MetaDataSection/>
 			</ReportHeader>

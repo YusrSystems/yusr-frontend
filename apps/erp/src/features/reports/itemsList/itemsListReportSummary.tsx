@@ -7,6 +7,12 @@ import { formatNumber } from "@/features/report/utils/formating.ts";
 export function ItemsListReportSummary()
 {
 	useSignals();
+
+	const totalCosts = Cubits.items.entities.value.reduce(
+		(sum, item) => sum + (item.itemStores?.reduce((storeSum, s) => storeSum + (s.quantity * s.averageCost), 0) ?? 0),
+		0
+	);
+
 	return (
 		<div className="max-w-100 p-3 my-3 border border-border rounded-lg overflow-hidden ms-auto">
 			<SummaryRow>
@@ -16,10 +22,7 @@ export function ItemsListReportSummary()
 				</div>
 				<SummaryRow.Value
 					className="text-destructive!"
-					value={ formatNumber(Cubits.items.entities.value.reduce(
-						(sum, item) => sum + (item.quantity * item.cost),
-						0
-					)) }
+					value={ formatNumber(totalCosts) }
 				/>
 			</SummaryRow>
 		</div>

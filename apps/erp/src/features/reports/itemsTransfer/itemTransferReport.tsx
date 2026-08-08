@@ -26,13 +26,11 @@ export function ItemTransferReport({
 {
 	if (itemTransfer == undefined)
 	{
-		return;
+		return null;
 	}
 
-	// Row doesn't carry its own multiplier — resolve it from the unit's
-	// definition within the row's itemUnitPricingMethods list.
 	const getMultiplier = (item: ItemTransfersItemDto) =>
-		item.itemUnitPricingMethods?.find((m) => m.id === item.itemUnitPricingMethodId)?.quantityMultiplier ?? 1;
+		item.uoMs?.find((m) => m.id === item.itemUoMId)?.quantityMultiplier ?? 1;
 
 	const rows = itemTransfer.itemTransfersItems ?? [];
 
@@ -61,7 +59,7 @@ export function ItemTransferReport({
 							<ReportTableTh ar="الرقم" en="No."/>
 							<ReportTableTh ar="رقم المادة" en="Item id"/>
 							<ReportTableTh ar="اسم المادة" en="Item name"/>
-							<ReportTableTh ar="طريقة تسعير" en="Pricing method name"/>
+							<ReportTableTh ar="الوحدة" en="Unit"/>
 							<ReportTableTh ar="الكمية" en="Quantity"/>
 							<ReportTableTh ar="الكمية في وحدة المادة" en="Quantity in item unit"/>
 							<ReportTableTh ar="مجموع كمية المادة" en="Total item quantity"/>
@@ -75,12 +73,12 @@ export function ItemTransferReport({
 							const totalItemQuantity = item.quantity * multiplier;
 
 							return (
-								<tr key={ `${ item.itemId }-${ item.itemUnitPricingMethodId }` }>
+								<tr key={ `${ item.itemId }-${ item.itemUoMId }` }>
 									<ReportTableTd isEven={ isEven }>{ idx + 1 }</ReportTableTd>
 									<ReportTableTd isEven={ isEven }>{ item.itemId }</ReportTableTd>
 									<ReportTableTd isEven={ isEven } align="start">{ item.itemName }</ReportTableTd>
 									<ReportTableTd isEven={ isEven }
-									               align="start">{ item.itemUnitPricingMethodName }</ReportTableTd>
+									               align="start">{ item.unitName }</ReportTableTd>
 									<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity) }</ReportTableTd>
 									<ReportTableTd isEven={ isEven }>{ formatNumber(multiplier) }</ReportTableTd>
 									<ReportTableTd isEven={ isEven }>{ formatNumber(totalItemQuantity) }</ReportTableTd>

@@ -15,11 +15,21 @@ import {
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import type Item from "@/core/data/item.ts";
-import type { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod.ts";
-import { printBarcodesQtn, printItem, printIupm } from "@/features/reports/itemBarcode/itemBarcodePrintState.ts";
+import {
+	printBarcodesQtn,
+	printItem,
+	printItemPrice,
+	printItemUoM
+} from "@/features/reports/itemBarcode/itemBarcodePrintState.ts";
+import type { ItemUoM } from "@/core/data/itemUoM.ts";
+import type { ItemPrice } from "@/core/data/itemPrice.ts";
 
 
-export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: ItemUnitPricingMethod; })
+export default function ItemBarcodeButton({item, itemUoM, itemPrice}: {
+	item: Item;
+	itemUoM: ItemUoM;
+	itemPrice: ItemPrice
+})
 {
 	useSignals();
 
@@ -33,7 +43,7 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 
 	const onOpen = () =>
 	{
-		if (iupm.barcode.value)
+		if (itemUoM.barcode.value)
 		{
 			isOpen.value = true;
 		}
@@ -48,9 +58,10 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 		isOpen.value = false;
 
 		printItem.value = item;
-		printIupm.value = iupm;
+		printItemUoM.value = itemUoM;
+		printItemPrice.value = itemPrice;
 		printBarcodesQtn.value = barcodesQtn.value;
-		document.title = `باركود - ${ item.name.value } - ${ iupm.barcode.value }`;
+		document.title = `باركود - ${ item.name.value } - ${ itemUoM.barcode.value }`;
 
 		requestAnimationFrame(() =>
 		{
@@ -66,7 +77,8 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 		const handleAfterPrint = () =>
 		{
 			printItem.value = undefined;
-			printIupm.value = undefined;
+			printItemUoM.value = undefined;
+			printItemPrice.value = undefined;
 			document.title = originalTitle;
 		};
 		window.addEventListener("afterprint", handleAfterPrint);
@@ -77,14 +89,14 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 		<>
 			<Button variant="outline" onClick={ onOpen }>
 				<Printer/>
-				{ t("reports.itemBarcode") }
+				طباعة الباركود
 			</Button>
 
 			<Dialog open={ isErrorOpen.value } onOpenChange={ (open) => isErrorOpen.value = open }>
 				<DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>{ t("reports.itemBarcode") }</DialogTitle>
-						<DialogDescription>{ item.name.value } - { iupm.itemUnitPricingMethodName.value }</DialogDescription>
+						<DialogDescription>{ item.name.value } - { itemUoM.unitName.value }</DialogDescription>
 					</DialogHeader>
 
 					<div className="flex flex-col items-center gap-3 py-4 text-center text-red-600">
@@ -102,7 +114,7 @@ export default function ItemBarcodeButton({item, iupm}: { item: Item; iupm: Item
 				<DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
 					<DialogHeader>
 						<DialogTitle>{ t("reports.itemBarcode") }</DialogTitle>
-						<DialogDescription>{ item.name.value } - { iupm.itemUnitPricingMethodName.value }</DialogDescription>
+						<DialogDescription>{ item.name.value } - { itemUoM.unitName.value }</DialogDescription>
 					</DialogHeader>
 
 					<div className="flex flex-col gap-4 py-2">

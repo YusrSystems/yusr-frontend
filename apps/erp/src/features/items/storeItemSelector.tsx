@@ -1,6 +1,5 @@
 import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect";
 import { ItemDto } from "@/core/data/item";
-import { ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod";
 import { Cubits } from "@/core/services/cubits";
 import { type Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -12,7 +11,7 @@ import { useTranslation } from "react-i18next";
 interface StoreItemSelectorProps
 {
 	storeId: Signal<number | undefined>;
-	onSelect?: (item: ItemDto, selectedIupm?: ItemUnitPricingMethodDto) => void;
+	onSelect?: (item: ItemDto, selectedUoMId?: number, selectedPricingMethodId?: number) => void;
 }
 
 export default function StoreItemSelector({storeId, onSelect}: StoreItemSelectorProps)
@@ -31,7 +30,7 @@ export default function StoreItemSelector({storeId, onSelect}: StoreItemSelector
 			const res = await Cubits.items.getByBarcode(barcode.value, storeId.value);
 			if (res)
 			{
-				onSelect?.(res.item, res.selectedIupm);
+				onSelect?.(res.item, res.selectedUoMId, res.selectedPricingMethodId);
 			}
 			barcodeLoading.value = false;
 			barcode.value = "";

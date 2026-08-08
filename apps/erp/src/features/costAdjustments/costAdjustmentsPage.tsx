@@ -117,6 +117,7 @@ function PageTable()
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("costAdjustments.adjustmentId"), rowStyles: "w-24"},
 						{rowBody: t("costAdjustments.date"), rowStyles: "w-32"},
+						{rowBody: t("costAdjustments.store", "المستودع"), rowStyles: "w-40"},
 						{rowBody: t("costAdjustments.item"), rowStyles: "w-48"},
 						{rowBody: t("costAdjustments.quantity"), rowStyles: "w-24"},
 						{rowBody: t("costAdjustments.oldCost"), rowStyles: "w-32"},
@@ -128,6 +129,7 @@ function PageTable()
 					) => [
 						{rowBody: `#${ adjustment.id }`, rowStyles: ""},
 						{rowBody: adjustment.date, rowStyles: ""},
+						{rowBody: adjustment.storeName, rowStyles: "font-semibold"},
 						{rowBody: adjustment.itemName, rowStyles: "font-semibold"},
 						{rowBody: adjustment.quantity.toString(), rowStyles: "font-mono"},
 						{

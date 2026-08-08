@@ -2,8 +2,8 @@ import { type Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, type StorageFile, Validators } from "yusr-ui";
 import { ItemStore, type ItemStoreDto } from "./itemStore";
 import { ItemTax, ItemTaxDto } from "./itemTax";
-import { ItemUnitPricingMethod, ItemUnitPricingMethodDto } from "./itemUnitPricingMethod";
 import { TaxDto } from "@/core/data/tax.ts";
+import { ItemUoM, type ItemUoMDto } from "@/core/data/itemUoM.ts";
 
 
 export const ItemType = {
@@ -23,12 +23,9 @@ export class ItemDto extends Dto
 	public sellUnitName?: string;
 	public minQuantity?: number;
 	public maxQuantity?: number;
-	public initialQuantity!: number;
 	public quantity!: number;
 	public storeQuantity!: number;
 	public lastBuyPrice!: number;
-	public initialCost!: number;
-	public cost!: number;
 	public taxIncluded!: boolean;
 	public taxable!: boolean;
 	public exemptionReasonCode?: string;
@@ -37,7 +34,13 @@ export class ItemDto extends Dto
 	public location?: string;
 	public notes?: string;
 	public totalTaxes!: number;
-	public itemUnitPricingMethods: ItemUnitPricingMethodDto[] = [];
+	public createdAt!: string | Date;
+	public createdBy!: number;
+	public updatedAt!: string | Date;
+	public updatedBy!: number;
+	public rowVer!: number;
+
+	public uoMs: ItemUoMDto[] = [];
 	public itemTaxes: ItemTaxDto[] = [];
 	public itemStores: ItemStoreDto[] = [];
 	public itemImages: StorageFile[] = [];
@@ -54,12 +57,9 @@ export default class Item extends ChangeableEntity<ItemDto>
 	public sellUnitName: Signal<string | undefined>;
 	public minQuantity: Signal<number | undefined>;
 	public maxQuantity: Signal<number | undefined>;
-	public initialQuantity: Signal<number>;
 	public quantity: Signal<number>;
 	public storeQuantity: Signal<number>;
 	public lastBuyPrice: Signal<number>;
-	public initialCost: Signal<number>;
-	public cost: Signal<number>;
 	public taxIncluded: Signal<boolean>;
 	public taxable: Signal<boolean>;
 	public exemptionReasonCode: Signal<string | undefined>;
@@ -68,57 +68,55 @@ export default class Item extends ChangeableEntity<ItemDto>
 	public location: Signal<string | undefined>;
 	public notes: Signal<string | undefined>;
 	public totalTaxes: Signal<number>;
-	public itemUnitPricingMethods: Signal<ItemUnitPricingMethod[]>;
+	public createdAt: Signal<string | Date | undefined>;
+	public createdBy: Signal<number | undefined>;
+	public updatedAt: Signal<string | Date | undefined>;
+	public updatedBy: Signal<number | undefined>;
+	public rowVer: Signal<number | undefined>;
+
+	public uoMs: Signal<ItemUoM[]>;
 	public itemTaxes: Signal<ItemTax[]>;
 	public itemStores: Signal<ItemStore[]>;
 	public itemImages: Signal<StorageFile[]>;
 
 	constructor(dto: Partial<ItemDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
-		super(dto, [{
-			field: "name",
-			selector: (d) => d.name,
-			validators: [Validators.required(i18n.t("stocking:items.nameRequired"))]
-		}, {
-			field: "type",
-			selector: (d) => d.type,
-			validators: [Validators.required(i18n.t("stocking:items.typeRequired"))]
-		}, {
-			field: "itemUnitPricingMethods",
-			selector: (d) => d.itemUnitPricingMethods,
-			validators: [Validators.arrayMinLength(1, i18n.t("stocking:items.pricingMethodsRequired"))]
-		}, {
-			field: "itemStores",
-			selector: (d) => d.itemStores,
-			validators: [Validators.custom(
-				(stores: ItemStoreDto[], form: ItemDto) =>
-				{
-					if (form.type === ItemType.Service)
+		super(dto, [
+			{
+				field: "name",
+				selector: (d) => d.name,
+				validators: [Validators.required(i18n.t("stocking:items.nameRequired"))]
+			},
+			{
+				field: "type",
+				selector: (d) => d.type,
+				validators: [Validators.required(i18n.t("stocking:items.typeRequired"))]
+			},
+			{
+				field: "uoMs",
+				selector: (d) => d.uoMs,
+				validators: [
+					Validators.arrayMinLength(1, i18n.t("stocking:items.pricingMethodsRequired")),
+					Validators.custom((val: ItemUoMDto[]) =>
 					{
-						return true;
-					}
-
-					return stores.length > 0;
-				},
-				i18n.t("stocking:items.storesValidationError")
-			)]
-		}, {
-			field: "sellUnitId",
-			selector: (d) => d.sellUnitId,
-			validators: [Validators.custom(
-				(val, form) => form.type === ItemType.Service || !!val,
-				i18n.t("stocking:items.baseUnitRequired")
-			)]
-		}, {
-			field: "initialCost",
-			selector: (d) => d.initialCost,
-			validators: [Validators.required(i18n.t("stocking:items.initialCostRequired"))]
-		}, {
-			field: "itemImages",
-			selector: (d) => d.itemImages,
-			validators: [Validators.arrayMaxLength(5)]
-		}
-
+						const barcodes = val.map(u => u.barcode?.trim()).filter(Boolean);
+						return new Set(barcodes).size === barcodes.length;
+					}, i18n.t("stocking:items.duplicateBarcodeError", "لا يمكن تكرار نفس الباركود بين الوحدات المختلفة"))
+				]
+			},
+			{
+				field: "sellUnitId",
+				selector: (d) => d.sellUnitId,
+				validators: [Validators.custom(
+					(val, form) => form.type === ItemType.Service || !!val,
+					i18n.t("stocking:items.baseUnitRequired")
+				)]
+			},
+			{
+				field: "itemImages",
+				selector: (d) => d.itemImages,
+				validators: [Validators.arrayMaxLength(5)]
+			}
 		], mode);
 
 		this.type = this.assign("type", dto?.type ?? 1);
@@ -130,12 +128,9 @@ export default class Item extends ChangeableEntity<ItemDto>
 		this.sellUnitName = this.assign("sellUnitName", dto?.sellUnitName ?? "");
 		this.minQuantity = this.assign("minQuantity", dto?.minQuantity ?? 0);
 		this.maxQuantity = this.assign("maxQuantity", dto?.maxQuantity ?? 0);
-		this.initialQuantity = this.assign("initialQuantity", dto?.initialQuantity ?? 0);
 		this.quantity = this.assign("quantity", dto?.quantity ?? 0);
 		this.storeQuantity = this.assign("storeQuantity", dto?.storeQuantity ?? 0);
 		this.lastBuyPrice = this.assign("lastBuyPrice", dto?.lastBuyPrice ?? 0);
-		this.initialCost = this.assign("initialCost", dto?.initialCost ?? 0);
-		this.cost = this.assign("cost", dto?.cost ?? 0);
 		this.taxIncluded = this.assign("taxIncluded", dto?.taxIncluded ?? false);
 		this.taxable = this.assign("taxable", dto?.taxable ?? true);
 		this.exemptionReasonCode = this.assign("exemptionReasonCode", dto?.exemptionReasonCode ?? "");
@@ -144,34 +139,40 @@ export default class Item extends ChangeableEntity<ItemDto>
 		this.location = this.assign("location", dto?.location ?? "");
 		this.notes = this.assign("notes", dto?.notes ?? "");
 		this.totalTaxes = this.assign("totalTaxes", dto?.totalTaxes ?? 0);
-		const itemUnitPricingMethodsSignalArray = (dto?.itemUnitPricingMethods ?? []).map((m) =>
-			m instanceof ItemUnitPricingMethod ? m : new ItemUnitPricingMethod(m)
-		);
-		this.itemUnitPricingMethods = this.assign("itemUnitPricingMethods", itemUnitPricingMethodsSignalArray);
-		const itemTaxesSignalArray = (dto?.itemTaxes ?? []).map((t) => t instanceof ItemTax ? t : new ItemTax(t));
-		this.itemTaxes = this.assign("itemTaxes", itemTaxesSignalArray);
-		const itemStoresSignalArray = (dto?.itemStores ?? []).map((s) => s instanceof ItemStore ? s : new ItemStore(s));
-		this.itemStores = this.assign("itemStores", itemStoresSignalArray);
+		this.createdAt = this.assign("createdAt", dto?.createdAt);
+		this.createdBy = this.assign("createdBy", dto?.createdBy);
+		this.updatedAt = this.assign("updatedAt", dto?.updatedAt);
+		this.updatedBy = this.assign("updatedBy", dto?.updatedBy);
+		this.rowVer = this.assign("rowVer", dto?.rowVer);
+
+		this.uoMs = this.assign("uoMs", (dto?.uoMs ?? [ItemUoM.create({
+			unitId: undefined,
+			unitName: undefined,
+			quantityMultiplier: 1,
+			barcode: ItemUoM.generateBarcode()
+		}).toJson()]).map(m => new ItemUoM(m)));
+		this.itemTaxes = this.assign("itemTaxes", (dto?.itemTaxes ?? []).map(t => new ItemTax(t)));
+		this.itemStores = this.assign("itemStores", (dto?.itemStores ?? []).map(s => new ItemStore(s)));
 		this.itemImages = this.assign("itemImages", dto?.itemImages ?? []);
 
 		const checkChildren = () =>
 		{
-			this.hasChanges.value = this.itemUnitPricingMethods.value.some((m) => m.hasChanges.value)
+			this.hasChanges.value = this.uoMs.value.some((m) => m.hasChanges.value)
 				|| this.itemTaxes.value.some((t) => t.hasChanges.value)
 				|| this.itemStores.value.some((s) => s.hasChanges.value);
 		};
 		this.itemTaxes.value.forEach((t) => t.hasChanges.subscribe(checkChildren));
 		this.itemStores.value.forEach((s) => s.hasChanges.subscribe(checkChildren));
-		this.itemUnitPricingMethods.value.forEach((m) => m.hasChanges.subscribe(checkChildren));
+		this.uoMs.value.forEach((m) => m.hasChanges.subscribe(checkChildren));
 	}
 
 	override validate(dto?: Partial<ItemDto>): boolean
 	{
 		const itemResult = super.validate(dto);
 		const taxesResult = this.itemTaxes.value.every((t) => t.validate());
-		const iupmResult = this.itemUnitPricingMethods.value.every((m) => m.validate());
+		const uoMsResult = this.uoMs.value.every((m) => m.validate());
 		const storesResult = this.type.value === ItemType.Service ? true : this.itemStores.value.every((s) => s.validate());
-		return itemResult && taxesResult && iupmResult && storesResult;
+		return itemResult && taxesResult && uoMsResult && storesResult;
 	}
 
 	public changeTaxable(isTaxable: boolean, taxes: Signal<TaxDto[]>)
@@ -179,16 +180,13 @@ export default class Item extends ChangeableEntity<ItemDto>
 		if (isTaxable)
 		{
 			this.itemTaxes.value = taxes.value.filter((t) => t.isPrimary)
-				.map((t) =>
-					new ItemTax({
-						id: 0,
-						itemId: this.id.value,
-						taxId: t.id,
-						taxName: t.name,
-						taxPercentage: t.percentage
-					})
-				);
-
+				.map((t) => new ItemTax({
+					id: 0,
+					itemId: this.id.value,
+					taxId: t.id,
+					taxName: t.name,
+					taxPercentage: t.percentage
+				}));
 			this.exemptionReason.value = "";
 			this.exemptionReasonCode.value = "";
 		}
@@ -202,5 +200,6 @@ export default class Item extends ChangeableEntity<ItemDto>
 export class BarcodeResult
 {
 	public item!: ItemDto;
-	public selectedIupm!: ItemUnitPricingMethodDto;
+	public selectedUoMId?: number;
+	public selectedPricingMethodId?: number;
 }

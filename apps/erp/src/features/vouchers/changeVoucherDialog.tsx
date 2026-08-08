@@ -28,6 +28,7 @@ import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/p
 import { CommissionType, PaymentMethod } from "@/core/data/paymentMethod.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { AccountClass, getAccountTypesByClasses } from "@/core/data/account.ts";
+import { TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function ChangeVoucherDialog({
@@ -103,11 +104,14 @@ export default function ChangeVoucherDialog({
 
 	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
 	const isReceipt = entity.value.type.value === VoucherType.Receipt;
-	const isLinkedToInvoice = !!entity.value.invoiceId.value;
 
 	const title = !isUpdateMode
 		? t("vouchers.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("vouchers.entityName") }`;
+
+	const isDraft = entity.value.transactionStatus.value === TransactionStatus.Draft;
+	const isPosted = entity.value.transactionStatus.value === TransactionStatus.Posted;
+	const isVoided = entity.value.transactionStatus.value === TransactionStatus.Voided;
 
 	return (
 		<ChangeDialog className="sm:max-w-5xl">
@@ -126,7 +130,7 @@ export default function ChangeVoucherDialog({
 								entity.value.glAccountName.value = undefined;
 							} }
 							className="flex-1 rounded-md text-xs font-semibold"
-							disabled={ entity.value.isDeleted.value || isLinkedToInvoice }
+							disabled={ !isDraft }
 						>
 							{ t("vouchers.partnerPaymentMode", "دفعة لحساب عميل / مورد") }
 						</Button>
@@ -141,7 +145,7 @@ export default function ChangeVoucherDialog({
 								entity.value.invoiceId.value = undefined;
 							} }
 							className="flex-1 rounded-md text-xs font-semibold"
-							disabled={ entity.value.isDeleted.value || isLinkedToInvoice }
+							disabled={ !isDraft }
 						>
 							{ t("vouchers.directExpenseMode", "مصروف عام / إيراد مباشر") }
 						</Button>
@@ -153,7 +157,7 @@ export default function ChangeVoucherDialog({
 							required
 							value={ entity.value.type }
 							error={ entity.value.getError("type") }
-							disabled={ isUpdateMode || entity.value.isDeleted.value || isLinkedToInvoice }
+							disabled={ !isDraft }
 							options={ [
 								{label: t("vouchers.receiptVoucher"), value: VoucherType.Receipt},
 								{label: t("vouchers.paymentVoucher"), value: VoucherType.Payment}
@@ -166,7 +170,7 @@ export default function ChangeVoucherDialog({
 							required
 							value={ entity.value.date }
 							error={ entity.value.getError("date") }
-							disabled={ entity.value.isDeleted.value || isLinkedToInvoice }
+							disabled={ !isDraft }
 						/>
 
 						{ !entity.value.isDirectMode.value && (
@@ -179,7 +183,7 @@ export default function ChangeVoucherDialog({
 									<PartnersSearchableSelect
 										id={ entity.value.partnerId }
 										label={ entity.value.partnerName }
-										disabled={ entity.value.isDeleted.value || isLinkedToInvoice }
+										disabled={ !isDraft }
 									/>
 								</FormField>
 							</>
@@ -195,7 +199,7 @@ export default function ChangeVoucherDialog({
 									<AccountsSearchableSelect
 										id={ entity.value.glAccountId }
 										label={ entity.value.glAccountName }
-										disabled={ entity.value.isDeleted.value || isLinkedToInvoice }
+										disabled={ !isDraft }
 									/>
 								</FormField>
 
@@ -205,7 +209,7 @@ export default function ChangeVoucherDialog({
 									<PartnersSearchableSelect
 										id={ entity.value.partnerId }
 										label={ entity.value.partnerName }
-										disabled={ entity.value.isDeleted.value || isLinkedToInvoice }
+										disabled={ !isDraft }
 									/>
 								</FormField>
 							</>
@@ -224,7 +228,7 @@ export default function ChangeVoucherDialog({
 									selectedPaymentMethod.value = new PaymentMethod(pm);
 									reCalculateCommission();
 								} }
-								disabled={ entity.value.isDeleted.value }
+								disabled={ !isDraft }
 							/>
 						</FormField>
 
@@ -235,7 +239,7 @@ export default function ChangeVoucherDialog({
 							error={ entity.value.getError("amount") }
 							currency={ <ErpCurrencyIcon/> }
 							onChange={ () => reCalculateCommission() }
-							disabled={ entity.value.isDeleted.value }
+							disabled={ !isDraft }
 						/>
 
 						{ isReceipt && (
@@ -271,21 +275,19 @@ export default function ChangeVoucherDialog({
 						<TextField
 							label={ t("vouchers.giver") }
 							value={ entity.value.giver }
-							disabled={ entity.value.isDeleted.value }
 						/>
 						<TextField
 							label={ t("vouchers.recipient") }
 							value={ entity.value.recipient }
-							disabled={ entity.value.isDeleted.value }
 						/>
 					</FieldsSection>
 
 					<FieldsSection columns={ 1 }>
 						<TextAreaField
-							label={ t("vouchers.description") }
-							value={ entity.value.description ?? "" }
-							rows={ 4 }
-							disabled={ entity.value.isDeleted.value }
+							label={ t("balanceTransfers.description") }
+							value={ entity.value.description }
+							collapsible
+							collapsedHeight={ 60 }
 						/>
 					</FieldsSection>
 				</FieldGroup>
@@ -293,12 +295,44 @@ export default function ChangeVoucherDialog({
 
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
-				<ChangeDialog.SaveButton<Voucher, VoucherDto>
-					entity={ entity }
-					service={ service }
-					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
-					disabled={ entity.value.isDeleted.value }
-				/>
+				{ isDraft && (
+					<>
+						<ChangeDialog.SaveButton<Voucher, VoucherDto>
+							entity={ entity }
+							service={ service }
+							variant="outline"
+							label={ t("common:saveAsDraft", "حفظ كمسودة") }
+							transformData={ (data) =>
+							{
+								data.transactionStatus = TransactionStatus.Draft;
+								return data;
+							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							disabled={ isVoided }
+						/>
+						<ChangeDialog.SaveButton<Voucher, VoucherDto>
+							entity={ entity }
+							service={ service }
+							label={ t("common:saveAndPost", "حفظ واعتماد") }
+							transformData={ (data) =>
+							{
+								data.transactionStatus = TransactionStatus.Posted;
+								return data;
+							} }
+							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+							checkEntityChanges={ false }
+							disabled={ isVoided }
+						/>
+					</>
+				) }
+				{ (isPosted || isVoided) && (
+					<ChangeDialog.SaveButton<Voucher, VoucherDto>
+						entity={ entity }
+						service={ service }
+						label={ t("common:saveButton.saveChanges") }
+						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+					/>
+				) }
 			</ChangeDialog.Footer>
 		</ChangeDialog>
 	);

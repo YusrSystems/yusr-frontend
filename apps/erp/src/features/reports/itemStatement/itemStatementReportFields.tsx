@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronDown, Filter } from "lucide-react";
-import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger, FormField } from "yusr-ui";
+import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger, DateField, FormField } from "yusr-ui";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import ItemsSearchableSelect from "@/core/components/searchableSelect/itemsSearchableSelect.tsx";
@@ -33,12 +33,20 @@ export function ItemStatementReportFields({
 	const storeId = useMemo(() => signal<number>(), []);
 	const storeName = useMemo(() => signal<string>(), []);
 
+	const defaults = useMemo(() => new ItemStatementReportRequest(), []);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const fromDate = useMemo(() => signal<string>(defaults.fromDate), []);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const toDate = useMemo(() => signal<string>(defaults.toDate), []);
+
 	const handleClear = () =>
 	{
 		itemId.value = undefined;
 		itemName.value = undefined;
 		storeId.value = undefined;
 		storeName.value = undefined;
+		fromDate.value = defaults.fromDate;
+		toDate.value = defaults.toDate;
 	};
 
 	return (
@@ -64,13 +72,18 @@ export function ItemStatementReportFields({
 
 			<CollapsibleContent>
 				<div className="flex flex-col gap-4 p-4 border-t border-border">
-					<div className="grid grid-cols-2 gap-3">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 						<FormField label={ t("reports.item") }>
 							<ItemsSearchableSelect id={ itemId } label={ itemName }/>
 						</FormField>
 						<FormField label={ t("itemStatement.store") }>
 							<StoresSearchableSelect id={ storeId } label={ storeName }/>
 						</FormField>
+					</div>
+
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+						<DateField label={ t("reports.fromDate", "من تاريخ") } value={ fromDate }/>
+						<DateField label={ t("reports.toDate", "إلى تاريخ") } value={ toDate }/>
 					</div>
 
 					<div className="flex justify-end gap-2">
@@ -82,7 +95,9 @@ export function ItemStatementReportFields({
 							onClick={ () => onSubmit(new ItemStatementReportRequest({
 								itemId: itemId.value!,
 								storeId: storeId.value,
-								storeName: storeName.value
+								storeName: storeName.value,
+								fromDate: fromDate.value,
+								toDate: toDate.value
 							})) }
 						>
 							{ t("common:filter.apply") }

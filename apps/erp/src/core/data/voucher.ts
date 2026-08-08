@@ -1,7 +1,17 @@
-import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, Validators } from "yusr-ui";
+import {
+	ChangeableEntity,
+	ChangeableEntityMode,
+	DateService,
+	Dto,
+	i18n,
+	type IStatusWorkflowEntity,
+	Validators
+} from "yusr-ui";
 import { Signal } from "@preact/signals-react";
 import { PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import type { TFunction } from "i18next";
+import { type IStatusWorkflowDto, TransactionStatus } from "#/types/transactionStatus.ts";
+import type { IRowVerDto, IRowVerEntity } from "#/types/rowVer.ts";
 
 
 export enum VoucherType
@@ -10,7 +20,7 @@ export enum VoucherType
 	Receipt = 2
 }
 
-export class VoucherDto extends Dto
+export class VoucherDto extends Dto implements IStatusWorkflowDto, IRowVerDto
 {
 	public type!: VoucherType;
 	public date!: string;
@@ -28,13 +38,13 @@ export class VoucherDto extends Dto
 	public recipient?: string;
 	public notes?: string;
 	public rowVer!: number;
-	public isDeleted: boolean = false;
 	public isDirectMode!: boolean;
+	public transactionStatus: TransactionStatus = TransactionStatus.Draft;
 
 	public paymentMethod?: PaymentMethodDto;
 }
 
-export class Voucher extends ChangeableEntity<VoucherDto>
+export class Voucher extends ChangeableEntity<VoucherDto> implements IStatusWorkflowEntity, IRowVerEntity
 {
 	public type: Signal<VoucherType>;
 	public date: Signal<string>;
@@ -52,8 +62,8 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 	public recipient: Signal<string | undefined>;
 	public notes: Signal<string | undefined>;
 	public rowVer: Signal<number>;
-	public isDeleted: Signal<boolean>;
 	public isDirectMode: Signal<boolean>;
+	public transactionStatus: Signal<TransactionStatus>;
 
 	public paymentMethod: Signal<PaymentMethod>;
 
@@ -114,9 +124,9 @@ export class Voucher extends ChangeableEntity<VoucherDto>
 		this.giver = this.assign("giver", dto?.giver);
 		this.recipient = this.assign("recipient", dto?.recipient);
 		this.notes = this.assign("notes", dto?.notes);
-		this.rowVer = this.assign("rowVer", dto?.rowVer ?? 0);
-		this.isDeleted = this.assign("isDeleted", dto?.isDeleted ?? false);
+		this.rowVer = this.assign("rowVer", dto?.rowVer);
 		this.isDirectMode = this.assign("isDirectMode", dto?.isDirectMode ?? false);
+		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
 
 		this.paymentMethod = this.assign("paymentMethod", new PaymentMethod(dto?.paymentMethod));
 	}

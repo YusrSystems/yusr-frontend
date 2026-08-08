@@ -46,9 +46,11 @@ export function SelectInput<T extends string | number | boolean | undefined>(
 {
 	useSignals();
 	const {t, i18n} = useTranslation("common");
+	const selectedValue = value?.value !== undefined ? String(value.value) : placeholder != undefined ? undefined : t("searchableSelect.nullOption");
+
 	return (
 		<Select
-			value={ String(value?.value ?? t("searchableSelect.nullOption")) }
+			value={ selectedValue }
 			onValueChange={ (val) =>
 			{
 				const match = options.find((o) => String(o.value) === val);

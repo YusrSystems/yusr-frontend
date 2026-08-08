@@ -1,204 +1,267 @@
 import PricingMethodsSearchableSelect from "@/core/components/searchableSelect/pricingMethodsSearchableSelect";
 import UnitsSearchableSelect from "@/core/components/searchableSelect/unitsSearchableSelect";
 import type Item from "@/core/data/item";
-import { ItemUnitPricingMethod } from "@/core/data/itemUnitPricingMethod";
-import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
-import { Barcode, Plus, Trash2 } from "lucide-react";
+import { Barcode, Package, Plus, Receipt, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, FormField, NumberField, SystemPermissionsActions, TextField } from "yusr-ui";
-import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { Button, FormField, NumberField, SystemPermissionsActions, TablePreview, TextField } from "yusr-ui";
 import { ItemType } from "@/core/data/item.ts";
-import ItemBarcodeButton from "../../reports/itemBarcode/itemBarcodeDialog.tsx";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { ItemUoM } from "@/core/data/itemUoM.ts";
+import { ItemPrice } from "@/core/data/itemPrice.ts";
+import { Services } from "@/core/services/services.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import ItemBarcodeButton from "@/features/reports/itemBarcode/itemBarcodeDialog.tsx";
 
 
-export default function PricingMethodsTable({entity}: { entity: Item; })
+export function PricingMethodsTable({entity}: { entity: Item })
 {
 	useSignals();
 	const {t} = useTranslation("stocking");
-	const errorMessage = entity.getError("itemUnitPricingMethods");
+	const errorMessage = entity.getError("uoMs");
 	const isService = entity.type.value === ItemType.Service;
+	const canSeeBarcode = Services.auth.hasAuth(
+		SystemPermissionsResources.ReportItemBarcode,
+		SystemPermissionsActions.Get
+	);
 
-	const addPricingMethod = () =>
+	const addUoMUnit = () =>
 	{
-		const newItem = ItemUnitPricingMethod.create();
-		newItem.generateBarcode();
-		entity.itemUnitPricingMethods.value = [...entity.itemUnitPricingMethods.value, newItem];
+		const newUnit = ItemUoM.create();
+		newUnit.generateBarcode();
+		entity.uoMs.value = [...entity.uoMs.value, newUnit];
 	};
 
-	const suggestIUPMName = (method: ItemUnitPricingMethod) =>
+	const removeUoMUnit = (index: number) =>
 	{
-		method.itemUnitPricingMethodName.value = `${ method?.unitName.value ?? "" } ${ method?.pricingMethodName.value ?? "" }`;
+		entity.uoMs.value = entity.uoMs.value.filter((_, i) => i !== index);
 	};
 
 	return (
-		<div className="pt-4">
-			<div className="flex justify-between items-center mb-4">
-				<h3 className="font-bold">{ t("items.pricingMethods") }</h3>
+		<div className="space-y-4 pt-5 border-t">
+			<div className="flex justify-between items-center pb-2">
+				<h3 className="font-semibold text-base flex items-center gap-2">
+					<Package className="w-4 h-4 text-muted-foreground"/>
+					{ t("items.packagingUnits", "وحدات المادة") }
+				</h3>
 				{ !isService && (
-					<Button type="button" size="sm" onClick={ addPricingMethod }>
-						<Plus className="w-4 h-4 me-2"/> { t("items.addPricingMethod") }
+					<Button type="button" size="sm" onClick={ addUoMUnit } className="h-8 shrink-0 text-xs">
+						<Plus className="w-3.5 h-3.5 me-1.5"/> { t("items.addPackagingUnit", "إضافة وحدة") }
 					</Button>
 				) }
 			</div>
 
-			<div
-				className={ `bg-muted/20 rounded-lg border overflow-hidden overflow-x-auto transition-colors ${
-					errorMessage.value ? "border-red-500" : ""
-				}` }
-			>
-				<table className="w-full text-sm text-right min-w-200">
-					<thead className="bg-muted/50 text-muted-foreground">
-					<tr>
-						<th className="p-3 w-12 text-start">{ t("items.number") }</th>
-						<th className="p-3 w-32 text-start">{ t("items.unit") }</th>
-						<th className="p-3 w-32 text-start">{ t("items.pricingMethod") }</th>
-						<th className="p-3 w-32 text-start">{ t("items.quantityInUnit") }</th>
-						<th className="p-3 w-32 text-start">{ t("items.sellingPrice", {unit: entity.sellUnitName.value}) }</th>
-						<th className="p-3 w-45 text-start">{ t("items.barcode") }</th>
-						<th className="p-3 w-40 text-start">{ t("items.name") }</th>
-						{ Services.auth.hasAuth(
-							SystemPermissionsResources.ReportItemBarcode,
-							SystemPermissionsActions.Get
-						) && <th className="p-3 w-12 text-center"></th> }
-						{ !isService && <th className="p-3 w-12 text-center"></th> }
-					</tr>
-					</thead>
-					<tbody>
-					{ entity.itemUnitPricingMethods?.value.map((method, index) =>
-					{
-						return (
-							<tr key={ index } className="border-t border-muted">
-								<td className="p-3 font-bold">{ index + 1 }</td>
-								<td className="p-3">
-									<FormField
-										label=""
-										error={ method.getError("unitId") }
-									>
-										<UnitsSearchableSelect
-											id={ method.unitId }
-											label={ method.unitName }
-											disabled={ isService }
-											onSelect={ (unit) =>
-											{
-												if (unit?.id === entity.sellUnitId.value)
-												{
-													method.quantityMultiplier.value = 1;
-												}
-												suggestIUPMName(method);
-												entity.clearError("itemUnitPricingMethods");
-											} }
-										/>
-									</FormField>
-								</td>
-								<td className="p-3">
-									<FormField
-										label=""
-										error={ method.getError("pricingMethodId") }
-									>
-										<PricingMethodsSearchableSelect
-											id={ method.pricingMethodId }
-											label={ method.pricingMethodName }
-											disabled={ isService }
-											onSelect={ () =>
-											{
-												entity.clearError("itemUnitPricingMethods");
-												suggestIUPMName(method);
-											} }
-										/>
-									</FormField>
-								</td>
-								<td className="p-3">
-									<NumberField
-										label=""
-										min={ 1 }
-										disabled={ method.unitId.value === entity.sellUnitId.value }
-										value={ method.quantityMultiplier }
-										error={ method.getError("quantityMultiplier") }
-										onChange={ () =>
-										{
-											method.price.value = (method.unitPrice.value ?? 0) * (method.quantityMultiplier.value ?? 1);
-											entity.clearError("itemUnitPricingMethods");
-										} }
-									/>
-								</td>
-								<td className="p-3">
-									<NumberField
-										label=""
-										min={ 0 }
-										value={ method.unitPrice }
-										onChange={ (val) =>
-										{
-											entity.clearError("itemUnitPricingMethods");
-											const multiplier = method.quantityMultiplier.value && method.quantityMultiplier.value !== 0
-												? method.quantityMultiplier.value
-												: 1;
-											method.price.value = val ? val * multiplier : 0;
-										} }
-										error={ method.getError("unitPrice") }
-										currency={ <ErpCurrencyIcon/> }
-									/>
-								</td>
-								<td className="p-3 flex">
-									<TextField
-										className="rounded-e-none"
-										label=""
-										value={ method.barcode }
-									/>
-									<Button type="button" className="rounded-s-none"
-									        onClick={ () => method.generateBarcode() }>
-										<Barcode className="w-4 h-4"/>
-									</Button>
-								</td>
-								<td className="p-3">
-									<TextField
-										label=""
-										value={ method.itemUnitPricingMethodName }
-										error={ method.getError("itemUnitPricingMethodName") }
-									/>
-								</td>
-
-								{ Services.auth.hasAuth(
-									SystemPermissionsResources.ReportItemBarcode,
-									SystemPermissionsActions.Get
-								) && (
-									<td className="p-3 text-center">
-										<ItemBarcodeButton item={ entity } iupm={ method }/>
-									</td>
+			<div className="space-y-4">
+				{ entity.uoMs.value.map((uoM, uoMIdx) => (
+					<div
+						key={ `${ uoM.id.value }-${ uoMIdx }` }
+						className="rounded-md border bg-card shadow-sm transition-all duration-200"
+					>
+						<div className="flex items-center justify-between px-4 py-2.5 bg-muted/30 border-b">
+							<div className="flex items-center gap-2.5">
+								<div
+									className="flex items-center justify-center w-5 h-5 rounded bg-primary/10 text-primary text-[11px] font-bold">
+									{ uoMIdx + 1 }
+								</div>
+								<span className="font-medium text-sm">
+									{ uoM.unitName.value || t("items.newUnit", "وحدة جديدة") }
+								</span>
+								{ uoM.unitId.value === entity.sellUnitId.value && (
+									<span
+										className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+										{ t("items.baseUnit", "الوحدة الأساسية") }
+									</span>
 								) }
+							</div>
 
-								{ !isService && (
-									<td className="p-3 text-center">
+							{ !isService && (
+								<Button
+									type="button"
+									variant="ghost"
+									size="icon"
+									className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+									onClick={ () => removeUoMUnit(uoMIdx) }
+									title={ t("items.deleteUnit", "حذف الوحدة") }
+								>
+									<Trash2 className="w-3.5 h-3.5"/>
+								</Button>
+							) }
+						</div>
+
+						<div className="p-4 space-y-4">
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+								<FormField label={ t("items.unit") } error={ uoM.getError("unitId") }>
+									<UnitsSearchableSelect
+										id={ uoM.unitId }
+										label={ uoM.unitName }
+										disabled={ isService }
+										onSelect={ (unit) =>
+										{
+											uoM.unitName.value = unit?.name ?? "";
+											if (unit?.id === entity.sellUnitId.value)
+											{
+												uoM.quantityMultiplier.value = 1;
+											}
+										} }
+									/>
+								</FormField>
+
+								<NumberField
+									label={ t("items.quantityInUnit") }
+									value={ uoM.quantityMultiplier }
+									disabled={ isService || uoM.unitId.value === entity.sellUnitId.value }
+									error={ uoM.getError("quantityMultiplier") }
+								/>
+
+								<FormField label={ t("items.barcode") }>
+									<div className="flex">
+										<TextField
+											className="rounded-e-none"
+											value={ uoM.barcode }
+										/>
 										<Button
 											type="button"
-											variant="ghost"
-											size="icon"
-											className="text-red-500 hover:text-red-700 hover:bg-red-100"
-											onClick={ () =>
-												entity.itemUnitPricingMethods.value = entity.itemUnitPricingMethods.value.filter((_, i) =>
-													i !== index
-												) }
+											variant="outline"
+											className="rounded-s-none border-s-0 bg-muted/30 hover:bg-muted text-muted-foreground"
+											onClick={ () => uoM.generateBarcode() }
+											title="توليد"
 										>
-											<Trash2 className="w-4 h-4"/>
+											<Barcode className="w-4 h-4 me-1.5"/>
+											<span className="text-xs">
+												توليد
+											</span>
 										</Button>
-									</td>
+									</div>
+								</FormField>
+							</div>
+
+							<div className="pt-2">
+								<div className="rounded-md border border-border/60 bg-background overflow-hidden">
+									<table className="w-full text-sm text-start">
+										<thead>
+										<tr className="bg-muted/30 border-b border-border/60 text-muted-foreground">
+											<th className="py-2.5 px-3 w-10 text-center font-medium text-xs">#</th>
+											<th className="py-2.5 px-3 text-start font-medium text-xs">
+												<span className="flex items-center gap-1.5">
+													<Receipt className="w-3.5 h-3.5"/>
+													{ t("items.pricingMethod", "فئة البيع") }
+												</span>
+											</th>
+											<th className="py-2.5 px-3 text-start font-medium text-xs w-[35%]">
+												{ t("items.sellingPrice", {unit: entity.sellUnitName.value}) }
+											</th>
+											{ canSeeBarcode && (
+												<th className="py-2.5 px-3 w-10 text-center"></th>
+											) }
+											<th className="py-2.5 px-3 w-10 text-center"></th>
+										</tr>
+										</thead>
+										<tbody className="divide-y divide-border/40">
+										{ uoM.prices.value.length > 0 ? (
+											uoM.prices.value.map((price, prIdx) => (
+												<tr
+													key={ `${ price.id.value }-${ prIdx }` }
+													className="hover:bg-muted/10 transition-colors group"
+												>
+													<td className="p-1.5 px-2 text-center text-muted-foreground text-xs font-medium align-middle">
+														{ prIdx + 1 }
+													</td>
+													<td className="p-1.5 px-2 align-top">
+														<FormField label="" error={ price.getError("pricingMethodId") }>
+															<PricingMethodsSearchableSelect
+																id={ price.pricingMethodId }
+																label={ price.pricingMethodName }
+																onSelect={ (m) => (price.pricingMethodName.value = m?.name ?? "") }
+															/>
+														</FormField>
+													</td>
+													<td className="p-1.5 px-2 align-top">
+														<NumberField
+															label=""
+															value={ price.unitPrice }
+															error={ price.getError("price") }
+															currency={ <ErpCurrencyIcon/> }
+														/>
+													</td>
+													{ canSeeBarcode && (
+														<td className="p-1.5 px-2 text-center align-middle">
+															<ItemBarcodeButton
+																item={ entity }
+																itemUoM={ uoM }
+																itemPrice={ price }
+															/>
+														</td>
+													) }
+													<td className="p-1.5 px-2 text-center align-middle">
+														{ !isService && (
+															<Button
+																type="button"
+																variant="ghost"
+																size="icon"
+																className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+																onClick={ () =>
+																	(uoM.prices.value = uoM.prices.value.filter(
+																		(_, idx) => idx !== prIdx
+																	))
+																}
+															>
+																<Trash2 className="w-4 h-4"/>
+															</Button>
+														) }
+													</td>
+												</tr>
+											))
+										) : (
+											<tr>
+												<td
+													colSpan={ canSeeBarcode ? 5 : 4 }
+													className="py-5 text-center text-sm text-muted-foreground/60"
+												>
+													{ t("items.noPriceTiers", "لا توجد أسعار مضافة") }
+												</td>
+											</tr>
+										) }
+										</tbody>
+									</table>
+
+									{ !isService && (
+										<div className="p-1.5 bg-muted/10">
+											<Button
+												type="button"
+												variant="ghost"
+												size="sm"
+												className="w-full h-8 border border-dashed border-muted-foreground/30 text-muted-foreground hover:text-primary hover:bg-primary/5 hover:border-primary/30 text-xs"
+												onClick={ () =>
+													(uoM.prices.value = [...uoM.prices.value, new ItemPrice(undefined, uoM.quantityMultiplier)])
+												}
+											>
+												<Plus className="h-3.5 w-3.5 me-1.5"/>
+												{ t("items.addPriceTier", "إضافة فئة سعر") }
+											</Button>
+										</div>
+									) }
+								</div>
+
+								{ uoM.getError("prices").value && (
+									<div
+										className="p-3 mt-3 text-sm font-medium text-destructive bg-destructive/10 rounded-md border border-destructive/20">
+										{ uoM.getError("prices").value }
+									</div>
 								) }
-							</tr>
-						);
-					}) }
-					</tbody>
-				</table>
-				{ entity.itemUnitPricingMethods?.value.length === 0 && (
-					<div className="p-4 text-center text-muted-foreground">
-						{ t("items.noPricingMethods") }
+							</div>
+						</div>
 					</div>
-				) }
+				)) }
 			</div>
 
+			{ entity.uoMs.value.length <= 0 && (
+				<TablePreview.Empty className="rounded-xl!"/>
+			) }
+
 			{ errorMessage.value && (
-				<div className="text-xs font-medium text-red-500 mt-2 animate-in fade-in slide-in-from-top-1">
-					{ errorMessage }
+				<div
+					className="p-3 mt-3 text-sm font-medium text-destructive bg-destructive/10 rounded-md border border-destructive/20">
+					{ errorMessage.value }
 				</div>
 			) }
 		</div>

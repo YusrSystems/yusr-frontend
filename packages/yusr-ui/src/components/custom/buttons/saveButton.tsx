@@ -5,7 +5,7 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { BaseApiService } from "#/networking";
 import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "#/stateManager";
-import { type RequestResult, ResultStatus } from "#/types";
+import { type RequestResult, ResultStatus, StatusWorkflow } from "#/types";
 import {
 	Dialog,
 	DialogClose,
@@ -16,6 +16,7 @@ import {
 	DialogTitle
 } from "../../pure";
 import { Button } from "../../pure/button";
+import { RowVer } from "#/types/rowVer.ts";
 
 
 export interface SaveButtonProps<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>
@@ -26,6 +27,7 @@ export interface SaveButtonProps<TEntity extends ChangeableEntity<TDto>, TDto ex
 	variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
 	className?: string;
 	disabled?: boolean;
+	checkEntityChanges?: boolean;
 	onSuccess?: (newData: TDto) => void;
 	transformData?: (data: TDto) => TDto | Promise<TDto>;
 	showConfirmationDialog?: (entity: TEntity) => boolean;
@@ -41,6 +43,7 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 		variant = "default",
 		className,
 		disabled,
+		checkEntityChanges = true,
 		onSuccess,
 		transformData,
 		showConfirmationDialog,
@@ -108,6 +111,16 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 
 		if (result.status === ResultStatus.Ok && result.data != undefined)
 		{
+			if (StatusWorkflow.isEntity(entity.value) && StatusWorkflow.isDto(result.data))
+			{
+				entity.value.transactionStatus.value = result.data.transactionStatus;
+			}
+
+			if (RowVer.isEntity(entity.value) && RowVer.isDto(result.data))
+			{
+				entity.value.rowVer.value = result.data.rowVer;
+			}
+
 			onSuccess?.(result.data);
 		}
 	}
@@ -127,7 +140,7 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 	return (
 		<>
 			<Button
-				disabled={ loading.value || pendingIgnore.value || !entity.value.hasChanges.value || disabled }
+				disabled={ loading.value || pendingIgnore.value || (checkEntityChanges && !entity.value.hasChanges.value) || disabled }
 				onClick={ () => Save() }
 				variant={ variant }
 				className={ className }

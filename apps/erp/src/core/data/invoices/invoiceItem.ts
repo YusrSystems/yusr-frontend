@@ -1,11 +1,12 @@
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, SystemPermissionsActions, Validators } from "yusr-ui";
-import { ItemUnitPricingMethod, type ItemUnitPricingMethodDto } from "@/core/data/itemUnitPricingMethod.ts";
-import { type Signal } from "@preact/signals-react";
+import { signal, type Signal } from "@preact/signals-react";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 import { ItemDto, ItemType } from "@/core/data/item.ts";
 import type Invoice from "@/core/data/invoices/invoice.ts";
 import { Services } from "@/core/services/services.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { ItemUoM, type ItemUoMDto } from "@/core/data/itemUoM.ts";
+import { InvoiceType } from "@/core/types/invoiceType.ts";
 
 
 export class InvoiceItemDto extends Dto
@@ -14,7 +15,9 @@ export class InvoiceItemDto extends Dto
 	public invoiceId!: number;
 	public itemId!: number;
 	public itemType!: ItemType;
-	public itemUnitPricingMethodId!: number;
+	public itemUoMId!: number;
+	public pricingMethodId!: number;
+	public quantityMultiplier!: number;
 	public quantity!: number;
 	public originalQuantity!: number;
 	public originalCost!: number;
@@ -30,8 +33,9 @@ export class InvoiceItemDto extends Dto
 	public totalTaxesPerc!: number;
 	public notes?: string;
 	public itemName!: string;
-	public itemUnitPricingMethodName!: string;
-	public itemUnitPricingMethods: ItemUnitPricingMethodDto[] = [];
+	public unitName!: string;
+	public pricingMethodName!: string;
+	public uoMDtos: ItemUoMDto[] = [];
 }
 
 export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
@@ -40,7 +44,8 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 	public invoiceId: Signal<number>;
 	public itemId: Signal<number | undefined>;
 	public itemType: Signal<ItemType>;
-	public itemUnitPricingMethodId: Signal<number | undefined>;
+	public itemUoMId: Signal<number | undefined>;
+	public quantityMultiplier: Signal<number>;
 	public quantity: Signal<number>;
 	public originalQuantity: Signal<number>;
 	public originalCost: Signal<number>;
@@ -56,14 +61,18 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 	public totalTaxesPerc: Signal<number>;
 	public notes: Signal<string | undefined>;
 	public itemName: Signal<string | undefined>;
-	public itemUnitPricingMethodName: Signal<string | undefined>;
-	public itemUnitPricingMethods: Signal<ItemUnitPricingMethod[]>;
+	public unitName: Signal<string | undefined>;
+	public uoMDtos: Signal<ItemUoM[]>;
+
+	public pricingMethodId: Signal<number | undefined>;
+	public pricingMethodName: Signal<string | undefined>;
+	public lastBuyPrice: Signal<number>;
 
 	constructor(dto?: Partial<InvoiceItemDto>)
 	{
 		super(dto, [{
-			field: "itemUnitPricingMethodId",
-			selector: (d) => d.itemUnitPricingMethodId,
+			field: "itemUoMId",
+			selector: (d) => d.itemUoMId,
 			validators: [Validators.min(1)]
 		}, {
 			field: "quantity",
@@ -84,7 +93,8 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		this.invoiceId = this.assign("invoiceId", dto?.invoiceId ?? 0);
 		this.itemId = this.assign("itemId", dto?.itemId);
 		this.itemType = this.assign("itemType", dto?.itemType);
-		this.itemUnitPricingMethodId = this.assign("itemUnitPricingMethodId", dto?.itemUnitPricingMethodId);
+		this.itemUoMId = this.assign("itemUoMId", dto?.itemUoMId);
+		this.quantityMultiplier = this.assign("quantityMultiplier", dto?.quantityMultiplier ?? 1);
 		this.quantity = this.assign("quantity", dto?.quantity ?? 0);
 		this.originalQuantity = this.assign("originalQuantity", dto?.originalQuantity ?? 0);
 		this.originalCost = this.assign("originalCost", dto?.originalCost ?? 0);
@@ -100,26 +110,56 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		this.totalTaxesPerc = this.assign("totalTaxesPerc", dto?.totalTaxesPerc ?? 0);
 		this.notes = this.assign("notes", dto?.notes);
 		this.itemName = this.assign("itemName", dto?.itemName);
-		this.itemUnitPricingMethodName = this.assign("itemUnitPricingMethodName", dto?.itemUnitPricingMethodName);
-		this.itemUnitPricingMethods = this.assign("itemUnitPricingMethods", (dto?.itemUnitPricingMethods ?? [])
-			.map(x => ItemUnitPricingMethod.create(x)));
+		this.unitName = this.assign("unitName", dto?.unitName);
+		this.uoMDtos = this.assign("uoMDtos", (dto?.uoMDtos ?? []).map(x => ItemUoM.create(x)));
+		this.pricingMethodId = signal<number | undefined>(dto?.pricingMethodId);
+		this.pricingMethodName = signal<string | undefined>(dto?.pricingMethodName);
+		this.lastBuyPrice = signal<number>(0);
 	}
 
-	public static createFromItem(invoice: Invoice, item: ItemDto)
+	public static createFromItem(invoice: Invoice, item: ItemDto, selectedUoMId?: number, selectedPricingMethodId?: number)
 	{
-		const defaultPricingMethod = item.itemUnitPricingMethods?.find((p) => p.unitId === item.sellUnitId)
-			?? item.itemUnitPricingMethods[0];
+		let defaultUoM = selectedUoMId
+			? item.uoMs?.find(u => u.id === selectedUoMId)
+			: item.uoMs?.find(u => u.unitId === item.sellUnitId);
 
-		if (!defaultPricingMethod)
+		if (!defaultUoM && item.uoMs?.length)
 		{
-			throw new Error("Default pricing method not found");
+			defaultUoM = item.uoMs[0];
 		}
+
+		if (!defaultUoM)
+		{
+			throw new Error("Default packaging unit not found");
+		}
+
+		let defaultPriceTier = selectedPricingMethodId
+			? defaultUoM.prices?.find(p => p.pricingMethodId === selectedPricingMethodId)
+			: defaultUoM.prices?.[0];
+
+		if (!defaultPriceTier && defaultUoM.prices?.length)
+		{
+			defaultPriceTier = defaultUoM.prices[0];
+		}
+
+		const isPurchase = invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.PurchaseReturn;
+
+		const storeDetails = item.itemStores?.find(s => s.storeId === invoice.storeId.value);
+		const baseCost = storeDetails?.averageCost ?? 0;
+		const cost = baseCost * (defaultUoM.quantityMultiplier ?? 1);
+
+		const price = isPurchase
+			? (item.lastBuyPrice ?? 0) * (defaultUoM.quantityMultiplier ?? 1)
+			: (defaultPriceTier?.price ?? 0);
 
 		const {taxExclusivePrice, taxInclusivePrice} = InvoiceItemsMath.GetPrices(
 			item.taxIncluded,
-			defaultPricingMethod?.price ?? 0,
+			price,
 			item.totalTaxes ?? 0
 		);
+
+		const storeQuantity = storeDetails?.quantity ?? 0;
+		const multiplier = defaultUoM.quantityMultiplier ?? 1;
 
 		const ii = InvoiceItem.create({
 			id: 0,
@@ -129,18 +169,19 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			itemType: item.type,
 			itemName: item.name,
 
-			// Pricing Method Details
-			itemUnitPricingMethodId: defaultPricingMethod?.id,
-			itemUnitPricingMethodName: defaultPricingMethod?.itemUnitPricingMethodName,
-			itemUnitPricingMethods: (item.itemUnitPricingMethods ?? []),
+			// UoM Details
+			itemUoMId: defaultUoM.id,
+			unitName: defaultUoM.unitName,
+			uoMDtos: item.uoMs ?? [],
 
 			// Financials
+			quantityMultiplier: multiplier,
 			quantity: item.type === ItemType.Service ?
-				1 : item.storeQuantity
+				1 : storeQuantity >= multiplier
 					? 1 : Services.auth.hasAuth(SystemPermissionsResources.InvoiceSellBeyondAvailableQuantity, SystemPermissionsActions.Get) ? 1 : 0,
-			originalQuantity: item.storeQuantity ?? 0,
-			originalCost: item.cost ?? 0,
-			cost: (item.cost ? Number((item.cost).toFixed(2)) : 0) * defaultPricingMethod.quantityMultiplier,
+			originalQuantity: storeQuantity,
+			originalCost: baseCost,
+			cost: Number(cost.toFixed(2)),
 			taxExclusivePrice: taxExclusivePrice,
 			taxInclusivePrice: taxInclusivePrice,
 			originalTaxInclusivePrice: taxInclusivePrice,
@@ -157,6 +198,9 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 			notes: item.description
 		});
 
+		ii.pricingMethodId.value = defaultPriceTier?.pricingMethodId;
+		ii.pricingMethodName.value = defaultPriceTier?.pricingMethodName;
+		ii.lastBuyPrice.value = item.lastBuyPrice ?? 0;
 		ii.getInvoice = () => invoice;
 
 		return ii;
@@ -172,17 +216,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 	public changeQuantity(newQtn: number)
 	{
 		this.quantity.value = newQtn;
-		this.taxExclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxExclusiveTotalPrice(
-			this.taxExclusivePrice.value,
-			this.settlement.value,
-			this.quantity.value,
-			this.totalTaxesPerc.value
-		);
-		this.taxInclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxInclusiveTotalPrice(
-			this.taxInclusivePrice.value,
-			this.settlement.value,
-			this.quantity.value
-		);
+		this.recalculateTotals();
 
 		const invoice = this.getInvoice();
 		if (invoice && invoice.settlementAmount.value)
@@ -193,19 +227,8 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 	public changeSettlement(newSettlement: number | undefined, resetInvoiceSettlements: boolean = false)
 	{
-
 		this.settlement.value = newSettlement ?? 0;
-		this.taxExclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxExclusiveTotalPrice(
-			this.taxExclusivePrice.value,
-			this.settlement.value,
-			this.quantity.value,
-			this.totalTaxesPerc.value
-		);
-		this.taxInclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxInclusiveTotalPrice(
-			this.taxInclusivePrice.value,
-			this.settlement.value,
-			this.quantity.value
-		);
+		this.recalculateTotals();
 
 		const invoice = this.getInvoice();
 		if (invoice && resetInvoiceSettlements)
@@ -217,19 +240,9 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 	public changeTaxInclusivePrice(taxInclusivePrice: number, taxExclusivePrice?: number)
 	{
-		this.taxInclusivePrice.value = taxInclusivePrice!;
+		this.taxInclusivePrice.value = taxInclusivePrice;
 		this.taxExclusivePrice.value = taxExclusivePrice ?? InvoiceItemsMath.CalcTaxExclusivePrice(taxInclusivePrice, this.totalTaxesPerc.value);
-		this.taxExclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxExclusiveTotalPrice(
-			this.taxExclusivePrice.value,
-			this.settlement.value,
-			this.quantity.value,
-			this.totalTaxesPerc.value
-		);
-		this.taxInclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxInclusiveTotalPrice(
-			this.taxInclusivePrice.value,
-			this.settlement.value,
-			this.quantity.value
-		);
+		this.recalculateTotals();
 
 		const invoice = this.getInvoice();
 
@@ -244,26 +257,82 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		}
 	}
 
-	public changeIupm(iupmId: number, oldIumpId?: number)
+	public changeUoM(uomId: number)
 	{
-		const oldSelectedMethod = this.itemUnitPricingMethods.value?.find((p) => p.id.value === oldIumpId);
-		const selectedMethod = this.itemUnitPricingMethods.value?.find((p) => p.id.value === iupmId);
+		const selectedUoM = this.uoMDtos.value?.find(u => u.id.value === uomId);
+		if (!selectedUoM) return;
 
-		if (!selectedMethod || !oldSelectedMethod)
+		this.itemUoMId.value = selectedUoM.id.value;
+		this.unitName.value = selectedUoM.unitName.value;
+		this.quantityMultiplier.value = selectedUoM.quantityMultiplier.value;
+
+		const baseCost = this.originalCost.value;
+		this.cost.value = Number((baseCost * this.quantityMultiplier.value).toFixed(2));
+
+		const priceTier = selectedUoM.prices.value?.find(p => p.pricingMethodId.value === this.pricingMethodId.value)
+			|| selectedUoM.prices.value?.[0];
+
+		if (priceTier)
 		{
-			throw Error("ItemUnitPricingMethod not found");
+			this.pricingMethodId.value = priceTier.pricingMethodId.value;
+			this.pricingMethodName.value = priceTier.pricingMethodName.value;
+		}
+		else
+		{
+			this.pricingMethodId.value = undefined;
+			this.pricingMethodName.value = undefined;
+		}
+
+		this.applyPricingMethodPrice();
+	}
+
+	public changePricingMethod(pricingMethodId: number, pricingMethodName?: string)
+	{
+		this.pricingMethodId.value = pricingMethodId;
+		if (pricingMethodName) this.pricingMethodName.value = pricingMethodName;
+		this.applyPricingMethodPrice();
+	}
+
+	private recalculateTotals()
+	{
+		this.taxExclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxExclusiveTotalPrice(
+			this.taxExclusivePrice.value,
+			this.settlement.value,
+			this.quantity.value,
+			this.totalTaxesPerc.value
+		);
+		this.taxInclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxInclusiveTotalPrice(
+			this.taxInclusivePrice.value,
+			this.settlement.value,
+			this.quantity.value
+		);
+	}
+
+	private applyPricingMethodPrice()
+	{
+		const invoice = this.getInvoice();
+		const isPurchase = invoice?.type.value === InvoiceType.Purchase || invoice?.type.value === InvoiceType.PurchaseReturn;
+
+		let price = 0;
+		if (isPurchase)
+		{
+			price = (this.lastBuyPrice.value ?? 0) * (this.quantityMultiplier.value ?? 1);
+		}
+		else
+		{
+			const selectedUoM = this.uoMDtos.value?.find(u => u.id.value === this.itemUoMId.value);
+			if (!selectedUoM) return;
+
+			const priceTier = selectedUoM.prices.value?.find(p => p.pricingMethodId.value === this.pricingMethodId.value);
+			price = priceTier ? priceTier.price.value : 0;
 		}
 
 		const {taxExclusivePrice, taxInclusivePrice} = InvoiceItemsMath.GetPrices(
 			this.taxIncluded.value,
-			selectedMethod.price.value ?? 0,
+			price,
 			this.totalTaxesPerc.value ?? 0
 		);
 
-		this.itemUnitPricingMethodId.value = iupmId;
-		this.itemUnitPricingMethodName.value = selectedMethod.itemUnitPricingMethodName.value ?? "";
-		this.originalCost.value = (this.originalCost.value ?? 0) / (oldSelectedMethod.quantityMultiplier.value ?? 1) * (selectedMethod.quantityMultiplier.value ?? 0);
-		this.cost.value = (this.originalCost.value ?? 0);
 		this.changeTaxInclusivePrice(taxInclusivePrice, taxExclusivePrice);
 	}
 }

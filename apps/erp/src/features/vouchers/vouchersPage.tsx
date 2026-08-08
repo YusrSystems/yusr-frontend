@@ -24,6 +24,7 @@ import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { VoucherReport } from "@/features/reports/voucher/voucherReport.tsx";
 import { signal } from "@preact/signals-react";
 import { APP_NAME } from "../../../appConfig.ts";
+import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function VouchersPage()
@@ -123,7 +124,18 @@ export default function VouchersPage()
 				<CrudPage.DeleteDialog
 					entityNameSelector={ () => `"${ t("vouchers.entityName") }"` }
 					service={ Services.voucherApi }
-					onSuccess={ (entity) => Cubits.vouchers.delete(entity) }
+					onSuccess={ (entity) =>
+					{
+						if (entity.transactionStatus !== TransactionStatus.Draft)
+						{
+							entity.transactionStatus = TransactionStatus.Voided;
+							Cubits.vouchers.update(entity);
+						}
+						else
+						{
+							Cubits.vouchers.delete(entity);
+						}
+					} }
 				/>
 
 
@@ -174,6 +186,7 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("vouchers.voucherId"), rowStyles: "w-24"},
+						{rowBody: t("common:status.title", "الحالة"), rowStyles: "w-24"},
 						{rowBody: t("vouchers.voucherType"), rowStyles: "w-24"},
 						{rowBody: t("vouchers.date"), rowStyles: "w-24"},
 						{rowBody: t("vouchers.partyOrCategory", "الجهة / الحساب"), rowStyles: "w-48"},
@@ -186,6 +199,15 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 					] }
 					tableRowMapper={ (voucher: VoucherDto) => [
 						{rowBody: `#${ voucher.id }`, rowStyles: ""},
+						{
+							rowBody: (
+								<span
+									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(voucher.transactionStatus) }` }>
+									{ getTransactionStatusName(voucher.transactionStatus) }
+								</span>
+							),
+							rowStyles: ""
+						},
 						{
 							rowBody: voucher.type === VoucherType.Payment ? t("vouchers.paymentVoucher") : t("vouchers.receiptVoucher"),
 							rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
@@ -220,10 +242,13 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 						SystemPermissionsResources.Vouchers,
 						SystemPermissionsActions.Update
 					) }
-					hasDeletePermission={ Services.auth.hasAuth(
-						SystemPermissionsResources.Vouchers,
-						SystemPermissionsActions.Delete
-					) }
+					hasDeletePermission={ (voucher) =>
+						voucher.transactionStatus !== TransactionStatus.Voided &&
+						Services.auth.hasAuth(
+							SystemPermissionsResources.Vouchers,
+							SystemPermissionsActions.Delete
+						)
+					}
 				/>
 				<CrudPage.TablePagination
 					pageSize={ Cubits.vouchers.pageSize.value }
@@ -245,10 +270,3 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 
 	return <TablePreview.Empty/>;
 }
-
-
-
-
-
-
-

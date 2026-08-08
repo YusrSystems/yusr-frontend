@@ -23,6 +23,7 @@ import { ItemTransferReport } from "@/features/reports/itemsTransfer/itemTransfe
 import { createPortal } from "react-dom";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
+import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function ItemTransfersPage()
@@ -107,7 +108,18 @@ export default function ItemTransfersPage()
 				<CrudPage.DeleteDialog
 					entityNameSelector={ () => `"${ t("itemTransfers.entityName") }"` }
 					service={ Services.itemTransfersApi }
-					onSuccess={ (entity) => Cubits.itemTransfers.delete(entity) }
+					onSuccess={ (entity) =>
+					{
+						if (entity.transactionStatus !== TransactionStatus.Draft)
+						{
+							entity.transactionStatus = TransactionStatus.Voided;
+							Cubits.itemTransfers.update(entity);
+						}
+						else
+						{
+							Cubits.itemTransfers.delete(entity);
+						}
+					} }
 				/>
 			</CrudPage>
 
@@ -156,6 +168,7 @@ function PageTable({onPrint}: { onPrint: (transfer: ItemTransferDto) => void })
 					headerRows={ [
 						{rowBody: "", rowStyles: "w-12"},
 						{rowBody: t("itemTransfers.transferId"), rowStyles: "w-24"},
+						{rowBody: t("common:status.title", "الحالة"), rowStyles: "w-24"},
 						{rowBody: t("itemTransfers.date"), rowStyles: "w-32"},
 						{rowBody: t("itemTransfers.fromStore"), rowStyles: "w-48"},
 						{rowBody: t("itemTransfers.toStore"), rowStyles: "w-48"},
@@ -171,6 +184,15 @@ function PageTable({onPrint}: { onPrint: (transfer: ItemTransferDto) => void })
 						transfer
 					) => [
 						{rowBody: `#${ transfer.id }`},
+						{
+							rowBody: (
+								<span
+									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(transfer.transactionStatus) }` }>
+									{ getTransactionStatusName(transfer.transactionStatus) }
+								</span>
+							),
+							rowStyles: ""
+						},
 						{rowBody: transfer.date, rowStyles: ""},
 						{rowBody: transfer.fromStoreName, rowStyles: "font-semibold"},
 						{rowBody: transfer.toStoreName, rowStyles: "font-semibold"},
@@ -195,10 +217,13 @@ function PageTable({onPrint}: { onPrint: (transfer: ItemTransferDto) => void })
 						SystemPermissionsResources.ItemTransfers,
 						SystemPermissionsActions.Update
 					) }
-					hasDeletePermission={ Services.auth.hasAuth(
-						SystemPermissionsResources.ItemTransfers,
-						SystemPermissionsActions.Delete
-					) }
+					hasDeletePermission={ (transfer) =>
+						transfer.transactionStatus !== TransactionStatus.Voided &&
+						Services.auth.hasAuth(
+							SystemPermissionsResources.ItemTransfers,
+							SystemPermissionsActions.Delete
+						)
+					}
 				/>
 				<CrudPage.TablePagination
 					pageSize={ Cubits.itemTransfers.pageSize.value }
