@@ -16,6 +16,7 @@ export class InvoiceItemDto extends Dto
 	public itemId!: number;
 	public itemType!: ItemType;
 	public itemUoMId!: number;
+	public pricingMethodId!: number;
 	public quantityMultiplier!: number;
 	public quantity!: number;
 	public originalQuantity!: number;
@@ -33,6 +34,7 @@ export class InvoiceItemDto extends Dto
 	public notes?: string;
 	public itemName!: string;
 	public unitName!: string;
+	public pricingMethodName!: string;
 	public uoMDtos: ItemUoMDto[] = [];
 }
 
@@ -110,28 +112,9 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		this.itemName = this.assign("itemName", dto?.itemName);
 		this.unitName = this.assign("unitName", dto?.unitName);
 		this.uoMDtos = this.assign("uoMDtos", (dto?.uoMDtos ?? []).map(x => ItemUoM.create(x)));
-
-		this.pricingMethodId = signal<number | undefined>(undefined);
-		this.pricingMethodName = signal<string | undefined>(undefined);
+		this.pricingMethodId = signal<number | undefined>(dto?.pricingMethodId);
+		this.pricingMethodName = signal<string | undefined>(dto?.pricingMethodName);
 		this.lastBuyPrice = signal<number>(0);
-
-		if (dto && dto.itemUoMId && dto.uoMDtos)
-		{
-			const uom = dto.uoMDtos.find(u => u.id === dto.itemUoMId);
-			if (uom && uom.prices)
-			{
-				const matchedPrice = uom.prices.find(p =>
-				{
-					const {taxInclusivePrice} = InvoiceItemsMath.GetPrices(dto.taxIncluded ?? false, p.price, dto.totalTaxesPerc ?? 0);
-					return Math.abs(taxInclusivePrice - (dto.taxInclusivePrice ?? 0)) < 0.01;
-				});
-				if (matchedPrice)
-				{
-					this.pricingMethodId.value = matchedPrice.pricingMethodId;
-					this.pricingMethodName.value = matchedPrice.pricingMethodName;
-				}
-			}
-		}
 	}
 
 	public static createFromItem(invoice: Invoice, item: ItemDto, selectedUoMId?: number, selectedPricingMethodId?: number)
