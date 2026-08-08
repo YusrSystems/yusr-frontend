@@ -40,7 +40,11 @@ export default function InvoiceCostsTab({invoice}: { invoice: Invoice })
 						paymentMethodId: Services.auth.setting?.mainPaymentMethodId?.value,
 						type: VoucherType.Payment,
 						amount: 0,
-						isDirectMode: true
+						isDirectMode: true,
+						glAccountId: undefined,
+						glAccountName: undefined,
+						partnerId: undefined,
+						partnerName: undefined
 					});
 					invoice.costVouchers.value = [...invoice.costVouchers.value, newVoucher];
 				} }
