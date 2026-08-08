@@ -112,8 +112,8 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		this.itemName = this.assign("itemName", dto?.itemName);
 		this.unitName = this.assign("unitName", dto?.unitName);
 		this.uoMDtos = this.assign("uoMDtos", (dto?.uoMDtos ?? []).map(x => ItemUoM.create(x)));
-		this.pricingMethodId = signal<number | undefined>(dto?.pricingMethodId);
-		this.pricingMethodName = signal<string | undefined>(dto?.pricingMethodName);
+		this.pricingMethodId = this.assign("pricingMethodId", dto?.pricingMethodId);
+		this.pricingMethodName = this.assign("pricingMethodName", dto?.pricingMethodName);
 		this.lastBuyPrice = signal<number>(0);
 	}
 
@@ -171,6 +171,8 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 
 			// UoM Details
 			itemUoMId: defaultUoM.id,
+			pricingMethodId: defaultPriceTier?.pricingMethodId,
+			pricingMethodName: defaultPriceTier?.pricingMethodName,
 			unitName: defaultUoM.unitName,
 			uoMDtos: item.uoMs ?? [],
 
