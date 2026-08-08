@@ -34,7 +34,7 @@ export function SelectInputOld({value, onValueChange, options, placeholder, isIn
 export interface SelectInputProps<T>
 {
 	value?: Signal<T | undefined>;
-	onValueChange?: (value: T) => void;
+	onValueChange?: (value: T, oldValue?: T) => void;
 	options: { label: string | ReactNode; value: T | undefined; }[];
 	placeholder?: string;
 	disabled?: boolean;
@@ -54,11 +54,12 @@ export function SelectInput<T extends string | number | boolean | undefined>(
 			onValueChange={ (val) =>
 			{
 				const match = options.find((o) => String(o.value) === val);
+				const oldValue = value?.value;
 				if (value)
 				{
 					value.value = match ? match.value : undefined;
 				}
-				onValueChange?.(match?.value as T);
+				onValueChange?.(match?.value as T, oldValue);
 			} }
 			dir={ i18n.dir() }
 			disabled={ disabled }
