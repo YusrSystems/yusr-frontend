@@ -134,6 +134,7 @@ export default function ChangeInvoiceDialog({
 					else if (entity.value.invoiceMode.value === InvoiceMode.Copy)
 					{
 						res.data.id = 0;
+						res.data.idempotencyKey = crypto.randomUUID();
 						res.data.date = DateService.formatDateOnly(new Date());
 						entity.value = Invoice.create(res.data);
 						entity.value.invoiceMode.value = InvoiceMode.Copy;
@@ -142,6 +143,7 @@ export default function ChangeInvoiceDialog({
 					else if (entity.value.invoiceMode.value === InvoiceMode.QuotationToSales)
 					{
 						res.data.id = 0;
+						res.data.idempotencyKey = crypto.randomUUID();
 						res.data.type = InvoiceType.Sell;
 						res.data.date = DateService.formatDateOnly(new Date());
 						res.data.notes = undefined;
