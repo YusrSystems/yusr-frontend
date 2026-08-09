@@ -92,9 +92,14 @@ export default function InvoiceBasicInfo({invoice}: { invoice: Invoice })
 					id={ invoice.partnerId }
 					label={ invoice.partnerName }
 					disabled={ invoice.isDisabled }
-					onSelect={ (account) =>
+					onSelect={ (partner) =>
 					{
-						selectedPartner.value = account;
+						selectedPartner.value = partner;
+						invoice.paymentVouchers.value.forEach((voucher) =>
+						{
+							voucher.partnerId.value = partner?.id;
+							voucher.partnerName.value = partner?.name;
+						});
 					} }
 					types={ invoice.type.value === InvoiceType.Purchase || invoice.type.value === InvoiceType.PurchaseReturn ? [PartnerType.Supplier] : [PartnerType.Customer] }
 				/>
