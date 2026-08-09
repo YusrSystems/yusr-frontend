@@ -115,6 +115,7 @@ export default function ChangeInvoiceDialog({
 
 						hasCostVouchers.value = res.data.costVouchers.length > 0;
 						res.data.costVouchers = [];
+						res.data.paymentVouchers = res.data.paymentVouchers.map(v => ({...v, id: 0}));
 
 						entity.value = Invoice.create(res.data);
 						entity.value.invoiceMode.value = InvoiceMode.Return;
@@ -125,10 +126,6 @@ export default function ChangeInvoiceDialog({
 						if (returnInvoiceAmount < paymentVouchersAmount)
 						{
 							entity.value.syncPaymentVouchers();
-						}
-						else
-						{
-							res.data.paymentVouchers = res.data.paymentVouchers.map(v => ({...v, id: 0}));
 						}
 					}
 					else if (entity.value.invoiceMode.value === InvoiceMode.Copy)
