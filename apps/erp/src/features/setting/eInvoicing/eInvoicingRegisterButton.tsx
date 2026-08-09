@@ -4,14 +4,14 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogContent } from "yusr-ui";
 import { EInvoicingRegister } from "./eInvoicingRegister";
-import type { EInvoicingEnvironmentType, Setting } from "@/core/data/setting.ts";
+import type { EInvoicingEnvironmentType } from "@/core/data/setting.ts";
 import { useSignals } from "@preact/signals-react/runtime";
-import { signal } from "@preact/signals-react";
+import { type Signal, signal } from "@preact/signals-react";
 
 
 interface EInvoicingRegisterButtonProps
 {
-	formData: Setting;
+	formData: { eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType> };
 	title: string;
 	subtitle: string;
 	linkType: EInvoicingEnvironmentType;

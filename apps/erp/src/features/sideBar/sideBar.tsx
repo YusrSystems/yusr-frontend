@@ -1,3 +1,4 @@
+// full code
 import { AppNavigator } from "@/app/appNavigator";
 import logoOnlyDark from "@/assets/yusrLogoOnly_Dark.png";
 import logoOnlyLight from "@/assets/yusrLogoOnly_Light.png";
@@ -5,6 +6,7 @@ import {
 	Building2,
 	FileChartColumnIncreasing,
 	LayoutDashboardIcon,
+	MonitorSmartphone,
 	Package,
 	ReceiptText,
 	ScrollText,
@@ -53,6 +55,22 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 			url: "/dashboard",
 			icon: <LayoutDashboardIcon/>,
 			hasAuth: true
+		}, {
+			title: "نقاط البيع",
+			url: "#",
+			icon: <MonitorSmartphone/>,
+			hasAuth: Services.auth.hasAuth(
+				SystemPermissionsResources.PosTerminals,
+				SystemPermissionsActions.Get
+			),
+			subItems: [{
+				title: "أجهزة نقاط البيع",
+				url: "/posTerminals",
+				hasAuth: Services.auth.hasAuth(
+					SystemPermissionsResources.PosTerminals,
+					SystemPermissionsActions.Get
+				)
+			}]
 		}, {
 			title: t("sidebar.invoices"),
 			url: "/invoices",

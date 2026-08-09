@@ -1,3 +1,4 @@
+// full code
 import { Services } from "@/core/services/services";
 import BalanceTransfersPage from "@/features/balanceTransfer/balanceTransfersPage";
 import LegalDocViewer from "@/features/legal/legaldocviewer";
@@ -44,6 +45,7 @@ import { SalesProfitabilityReportPage } from "@/features/reports/salesProfitabil
 import { TaxAuditReportPage } from "@/features/reports/taxAudit/taxAuditReportPage.tsx";
 import { StockValuationReportPage } from "@/features/reports/stockValuation/stockValuationReportPage.tsx";
 import { LowStockReportPage } from "@/features/reports/lowStock/lowStockReportPage.tsx";
+import PosTerminalsPage from "@/features/Pos/posTerminals/posTerminalsPage.tsx";
 
 
 const refreshPage = () =>
@@ -85,6 +87,7 @@ export const router = createBrowserRouter([{
 					{path: "/stocktakings", element: <StocktakingsPage/>},
 					{path: "/itemsSettlements/:id?", element: <ItemsSettlementsPage/>},
 					{path: "/vouchers/:id?", element: <VouchersPage/>},
+					{path: "/posTerminals", element: <PosTerminalsPage/>},
 					{
 						path: "/clients/:id?",
 						element: <PartnersPage type={ PartnerType.Customer }/>

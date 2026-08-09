@@ -104,13 +104,13 @@ ChangeDialog.SaveButton = function <TEntity extends ChangeableEntity<TDto>, TDto
 	return <SaveButton<TEntity, TDto> { ...props } />;
 };
 
-ChangeDialog.Tabbed = function ({tabs}: { tabs: ChangeDialogTabProps[]; })
+ChangeDialog.Tabbed = function ({tabs, className}: { tabs: ChangeDialogTabProps[]; className?: string; })
 {
 	const [currentTab, setCurrentTab] = useState(0);
 	const safeTab = Math.min(currentTab, tabs.length - 1);
 
 	return (
-		<div className="flex flex-col h-[80vh]">
+		<div className={ cn("flex flex-col h-[80vh]", className) }>
 			<div className="flex justify-start border-b mb-4 shrink-0 bg-muted/20 rounded-t-lg">
 				{ tabs.map((tab, i) => (
 					<TabButton

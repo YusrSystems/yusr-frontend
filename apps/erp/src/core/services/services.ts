@@ -1,4 +1,5 @@
-import { BaseApiService, BaseServices, RolesApiService } from "yusr-ui";
+// full code
+import { BaseApiService, BaseServices, RolesApiService, UserDto } from "yusr-ui";
 import ItemsApiService from "../networking/itemApiService";
 import UnitsApiService from "../networking/unitApiService";
 import { ErpAuthService } from "./erpAuthService";
@@ -17,6 +18,7 @@ import type { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { type BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import { type VoucherDto } from "@/core/data/voucher.ts";
 import type { PartnerDto } from "@/core/data/partner.ts";
+import { PosTerminalDto } from "@/core/data/posTerminal.ts";
 
 
 export class Services extends BaseServices
@@ -41,6 +43,8 @@ export class Services extends BaseServices
 	public static readonly invoicesApi = new InvoicesApiService();
 	public static readonly settingApi = new SettingsApiService();
 	public static readonly dashboardApi = new DashboardApiService();
+	public static readonly posTerminalsApi = new BaseApiService<PosTerminalDto>("PosTerminals");
+	public static readonly usersApi = new BaseApiService<UserDto>("Users");
 
 	static
 	{

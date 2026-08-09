@@ -1,9 +1,9 @@
-import { type EInvoicingEnvironmentType, Setting } from "@/core/data/setting";
+import { type EInvoicingEnvironmentType } from "@/core/data/setting";
 import EInvoicingApiService from "@/core/networking/eInvoicingApiService";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardContent, OtpInput } from "yusr-ui";
-import { signal } from "@preact/signals-react";
+import { type Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useMemo } from "react";
 
@@ -12,7 +12,7 @@ interface EInvoicingRegisterProps
 {
 	linkType: EInvoicingEnvironmentType;
 	onFinish?: () => void;
-	formData: Setting;
+	formData: { eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType> };
 }
 
 export function EInvoicingRegister({linkType, onFinish, formData}: EInvoicingRegisterProps)
