@@ -18,7 +18,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import React, { useMemo, useState } from "react";
 import { Signal, signal } from "@preact/signals-react";
 import { CategoryDto } from "@/core/data/category.ts";
-import { ChevronDown, ChevronLeft, Plus } from "lucide-react";
+import { ChevronDown, ChevronLeft, Edit2, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 
@@ -37,9 +37,10 @@ export default function CategoriesMultiSearchableSelect(
 	const [searchText, setSearchText] = useState("");
 	const [expanded, setExpanded] = useState<number[]>([]);
 
-	const isAddOpen = useMemo(() => signal(false), []);
-	const newCategoryName = useMemo(() => signal(""), []);
-	const newCategoryParentId = useMemo(() => signal<number>(0), []);
+	const isDialogOpen = useMemo(() => signal(false), []);
+	const editingCategory = useMemo(() => signal<CategoryDto | undefined>(undefined), []);
+	const categoryName = useMemo(() => signal(""), []);
+	const categoryParentId = useMemo(() => signal<number>(0), []);
 	const isSaving = useMemo(() => signal(false), []);
 
 	const toggleExpand = (id: number) =>
@@ -51,12 +52,95 @@ export default function CategoriesMultiSearchableSelect(
 	{
 		return [
 			{label: "بدون تصنيف أب", value: 0},
-			...Cubits.categories.entities.value.filter(c => !c.parentCategoryId).map(c => ({
-				label: c.name,
-				value: c.id
-			}))
+			...Cubits.categories.entities.value
+				.filter(c => !c.parentCategoryId && c.id !== editingCategory.value?.id)
+				.map(c => ({
+					label: c.name,
+					value: c.id
+				}))
 		];
-	}, [Cubits.categories.entities.value]);
+	}, [Cubits.categories.entities.value, editingCategory.value]);
+
+	const handleOpenAdd = (text: string) =>
+	{
+		Cubits.categories.search("");
+		setSearchText("");
+		editingCategory.value = undefined;
+		categoryName.value = text ?? "";
+		categoryParentId.value = 0;
+		isDialogOpen.value = true;
+	};
+
+	const handleOpenEdit = (category: CategoryDto) =>
+	{
+		Cubits.categories.search("");
+		setSearchText("");
+		editingCategory.value = category;
+		categoryName.value = category.name;
+		categoryParentId.value = category.parentCategoryId ?? 0;
+		isDialogOpen.value = true;
+	};
+
+	const handleDelete = async (category: CategoryDto) =>
+	{
+		const res = await Services.categoriesApi.Delete(category.id);
+		if (res.status === 200)
+		{
+			Cubits.categories.delete(category);
+			if (localIds.value.includes(category.id))
+			{
+				localIds.value = localIds.value.filter(id => id !== category.id);
+				const newLabels = {...localLabels.value};
+				delete newLabels[category.id];
+				localLabels.value = newLabels;
+			}
+		}
+	};
+
+	const handleSave = async () =>
+	{
+		isSaving.value = true;
+		try
+		{
+			if (editingCategory.value)
+			{
+				const res = await Services.categoriesApi.Update({
+					...editingCategory.value,
+					name: categoryName.value,
+					parentCategoryId: categoryParentId.value === 0 ? undefined : categoryParentId.value
+				});
+				if (res.data)
+				{
+					Cubits.categories.update(res.data);
+					if (localIds.value.includes(res.data.id))
+					{
+						localLabels.value = {...localLabels.value, [res.data.id]: res.data.name};
+					}
+					isDialogOpen.value = false;
+				}
+			}
+			else
+			{
+				const res = await Services.categoriesApi.Add({
+					name: categoryName.value,
+					parentCategoryId: categoryParentId.value === 0 ? undefined : categoryParentId.value
+				} as CategoryDto);
+				if (res.data)
+				{
+					Cubits.categories.add(res.data);
+					localIds.value = [...localIds.value, res.data.id];
+					localLabels.value = {...localLabels.value, [res.data.id]: res.data.name};
+					setSearchText("");
+					Cubits.categories.search("");
+					isDialogOpen.value = false;
+				}
+			}
+		}
+		finally
+		{
+			isSaving.value = false;
+		}
+	};
 
 	return (
 		<>
@@ -81,47 +165,30 @@ export default function CategoriesMultiSearchableSelect(
 				</MultiSearchableSelect.Content>
 			</MultiSearchableSelect>
 
-			<Dialog open={ isAddOpen.value } onOpenChange={ (open) => isAddOpen.value = open }>
+			<Dialog open={ isDialogOpen.value } onOpenChange={ (open) => isDialogOpen.value = open }>
 				<DialogContent dir={ i18n.dir() } className="sm:max-w-md">
 					<DialogHeader>
-						<DialogTitle>إضافة تصنيف جديد</DialogTitle>
+						<DialogTitle>{ editingCategory.value ? "تعديل التصنيف" : "إضافة تصنيف جديد" }</DialogTitle>
 					</DialogHeader>
 					<div className="flex flex-col gap-4 py-4">
 						<TextField
 							label="اسم التصنيف"
-							value={ newCategoryName }
+							value={ categoryName }
 							required
 						/>
 						<SelectField<number>
 							label="التصنيف الأب (اختياري)"
-							value={ newCategoryParentId }
+							value={ categoryParentId }
 							options={ parentOptions }
 						/>
 					</div>
 					<DialogFooter>
-						<Button variant="outline" onClick={ () => isAddOpen.value = false }>
+						<Button variant="outline" onClick={ () => isDialogOpen.value = false }>
 							إلغاء
 						</Button>
 						<Button
-							disabled={ isSaving.value || !newCategoryName.value }
-							onClick={ async () =>
-							{
-								isSaving.value = true;
-								const res = await Services.categoriesApi.Add({
-									name: newCategoryName.value,
-									parentCategoryId: newCategoryParentId.value === 0 ? undefined : newCategoryParentId.value
-								} as CategoryDto);
-								if (res.data)
-								{
-									Cubits.categories.init();
-									localIds.value = [...localIds.value, res.data.id];
-									localLabels.value = {...localLabels.value, [res.data.id]: res.data.name};
-									setSearchText("");
-									Cubits.categories.search("");
-									isAddOpen.value = false;
-								}
-								isSaving.value = false;
-							} }
+							disabled={ isSaving.value || !categoryName.value }
+							onClick={ handleSave }
 						>
 							حفظ
 						</Button>
@@ -148,7 +215,6 @@ export default function CategoriesMultiSearchableSelect(
 			{
 				content = categories.map((category) =>
 				{
-					const label = category.parentCategoryName ? `${ category.parentCategoryName } > ${ category.name }` : category.name;
 					return (
 						<MultiSearchableSelect.Option<CategoryDto>
 							{ ...props }
@@ -158,7 +224,33 @@ export default function CategoriesMultiSearchableSelect(
 							labelSelector="name"
 							item={ category }
 						>
-							<MultiSearchableSelect.OptionBody label={ label }/>
+							<div className="flex items-center justify-between w-full">
+								<div className="flex items-center gap-2 flex-1 min-w-0">
+									<span className="truncate">{ category.name }</span>
+									{ category.parentCategoryName && (
+										<span
+											className="px-2 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-full whitespace-nowrap">
+											{ category.parentCategoryName }
+										</span>
+									) }
+								</div>
+								<div className="flex items-center gap-1 ms-2">
+									<button type="button" onClick={ (e) =>
+									{
+										e.preventDefault();
+										e.stopPropagation();
+										handleOpenEdit(category);
+									} } className="p-1 text-muted-foreground hover:text-primary transition-colors">
+										<Edit2 className="w-3.5 h-3.5"/></button>
+									<button type="button" onClick={ (e) =>
+									{
+										e.preventDefault();
+										e.stopPropagation();
+										handleDelete(category);
+									} } className="p-1 text-muted-foreground hover:text-destructive transition-colors">
+										<Trash2 className="w-3.5 h-3.5"/></button>
+								</div>
+							</div>
 						</MultiSearchableSelect.Option>
 					);
 				});
@@ -193,12 +285,32 @@ export default function CategoriesMultiSearchableSelect(
 										e.stopPropagation();
 										toggleExpand(parent.id);
 									} }
-									className="flex items-center px-2 py-1.5 text-sm cursor-pointer hover:bg-muted/50 rounded-sm font-semibold text-foreground"
+									className="flex items-center justify-between px-2 py-1.5 text-sm cursor-pointer hover:bg-muted/50 rounded-sm font-semibold text-foreground group"
 								>
-									{ isExpanded ? <ChevronDown className="w-4 h-4 me-2 text-muted-foreground"/> :
-										<ChevronLeft
-											className={ `w-4 h-4 me-2 text-muted-foreground ${ !isRtl ? "rotate-180" : "" }` }/> }
-									<span>{ parent.name }</span>
+									<div className="flex items-center">
+										{ isExpanded ? <ChevronDown className="w-4 h-4 me-2 text-muted-foreground"/> :
+											<ChevronLeft
+												className={ `w-4 h-4 me-2 text-muted-foreground ${ !isRtl ? "rotate-180" : "" }` }/> }
+										<span>{ parent.name }</span>
+									</div>
+									<div
+										className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+										<button type="button" onClick={ (e) =>
+										{
+											e.preventDefault();
+											e.stopPropagation();
+											handleOpenEdit(parent);
+										} } className="p-1 text-muted-foreground hover:text-primary transition-colors">
+											<Edit2 className="w-3.5 h-3.5"/></button>
+										<button type="button" onClick={ (e) =>
+										{
+											e.preventDefault();
+											e.stopPropagation();
+											handleDelete(parent);
+										} }
+										        className="p-1 text-muted-foreground hover:text-destructive transition-colors">
+											<Trash2 className="w-3.5 h-3.5"/></button>
+									</div>
 								</div>
 								{ isExpanded && children.map(child => (
 									<div key={ child.id } className="ps-6">
@@ -209,7 +321,35 @@ export default function CategoriesMultiSearchableSelect(
 											labelSelector="name"
 											item={ child }
 										>
-											<MultiSearchableSelect.OptionBody label={ child.name }/>
+											<div className="flex items-center justify-between w-full">
+												<div className="flex items-center gap-2 flex-1 min-w-0">
+													<span className="truncate">{ child.name }</span>
+													{ child.parentCategoryName && (
+														<span
+															className="px-2 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-full whitespace-nowrap">
+															{ child.parentCategoryName }
+														</span>
+													) }
+												</div>
+												<div className="flex items-center gap-1 ms-2">
+													<button type="button" onClick={ (e) =>
+													{
+														e.preventDefault();
+														e.stopPropagation();
+														handleOpenEdit(child);
+													} }
+													        className="p-1 text-muted-foreground hover:text-primary transition-colors">
+														<Edit2 className="w-3.5 h-3.5"/></button>
+													<button type="button" onClick={ (e) =>
+													{
+														e.preventDefault();
+														e.stopPropagation();
+														handleDelete(child);
+													} }
+													        className="p-1 text-muted-foreground hover:text-destructive transition-colors">
+														<Trash2 className="w-3.5 h-3.5"/></button>
+												</div>
+											</div>
 										</MultiSearchableSelect.Option>
 									</div>
 								)) }
@@ -227,7 +367,34 @@ export default function CategoriesMultiSearchableSelect(
 								labelSelector="name"
 								item={ parent }
 							>
-								<MultiSearchableSelect.OptionBody label={ parent.name }/>
+								<div className="flex items-center justify-between w-full">
+									<div className="flex items-center gap-2 flex-1 min-w-0">
+										<span className="truncate">{ parent.name }</span>
+										{ parent.parentCategoryName && (
+											<span
+												className="px-2 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-full whitespace-nowrap">
+												{ parent.parentCategoryName }
+											</span>
+										) }
+									</div>
+									<div className="flex items-center gap-1 ms-2">
+										<button type="button" onClick={ (e) =>
+										{
+											e.preventDefault();
+											e.stopPropagation();
+											handleOpenEdit(parent);
+										} } className="p-1 text-muted-foreground hover:text-primary transition-colors">
+											<Edit2 className="w-3.5 h-3.5"/></button>
+										<button type="button" onClick={ (e) =>
+										{
+											e.preventDefault();
+											e.stopPropagation();
+											handleDelete(parent);
+										} }
+										        className="p-1 text-muted-foreground hover:text-destructive transition-colors">
+											<Trash2 className="w-3.5 h-3.5"/></button>
+									</div>
+								</div>
 							</MultiSearchableSelect.Option>
 						);
 					}
@@ -245,12 +412,7 @@ export default function CategoriesMultiSearchableSelect(
 						type="button"
 						variant="ghost"
 						className="w-full justify-start text-sm h-8 px-2"
-						onClick={ () =>
-						{
-							newCategoryName.value = searchText;
-							newCategoryParentId.value = 0;
-							isAddOpen.value = true;
-						} }
+						onClick={ () => handleOpenAdd(searchText) }
 					>
 						<Plus className="h-4 w-4 me-2"/> إضافة "{ searchText }"
 					</Button>
