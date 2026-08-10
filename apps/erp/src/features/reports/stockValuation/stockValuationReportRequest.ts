@@ -5,8 +5,8 @@ export class StockValuationReportRequest
 {
 	asOfDate: string;
 	storeId?: number;
-	itemClass?: string;
-	itemBrand?: string;
+	categoryId?: number;
+	brandId?: number;
 	pageNumber: number;
 	rowsPerPage: number;
 

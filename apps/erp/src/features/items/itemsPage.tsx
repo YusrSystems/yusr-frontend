@@ -38,6 +38,8 @@ import {
 	printItemUoM
 } from "@/features/reports/itemBarcode/itemBarcodePrintState.ts";
 import TaxesMultiSearchableSelect from "@/core/components/searchableSelect/taxesMultiSearchableSelect.tsx";
+import CategoriesMultiSearchableSelect from "@/core/components/searchableSelect/categoriesMultiSearchableSelect.tsx";
+import BrandsSearchableSelect from "@/core/components/searchableSelect/brandsSearchableSelect.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
 
 
@@ -203,8 +205,8 @@ function PageTable()
 						{rowBody: t("items.itemImages"), rowStyles: "w-20"},
 						{rowBody: t("items.itemType"), rowStyles: "w-24"},
 						{rowBody: t("items.itemName"), rowStyles: "w-48"},
-						{rowBody: t("items.class"), rowStyles: "w-32"},
-						{rowBody: t("items.brand"), rowStyles: "w-32"},
+						{rowBody: t("items.category", "التصنيف"), rowStyles: "w-32"},
+						{rowBody: t("items.brand", "العلامة التجارية"), rowStyles: "w-32"},
 						{rowBody: t("items.quantity"), rowStyles: "w-24"},
 						...(Services.auth.hasAuth(
 							SystemPermissionsResources.ReportItemStatement,
@@ -240,8 +242,11 @@ function PageTable()
 							}`
 						},
 						{rowBody: item.name, rowStyles: "font-semibold"},
-						{rowBody: item.class ?? "-", rowStyles: "text-sm text-gray-500"},
-						{rowBody: item.brand ?? "-", rowStyles: "text-sm text-gray-500"},
+						{
+							rowBody: item.itemCategories?.map(c => c.categoryName).join(", ") || "-",
+							rowStyles: "text-sm text-gray-500"
+						},
+						{rowBody: item.brandName ?? "-", rowStyles: "text-sm text-gray-500"},
 						{rowBody: item.quantity?.toString() ?? "0", rowStyles: "font-mono"},
 						...(Services.auth.hasAuth(
 							SystemPermissionsResources.ReportAccountStatement,
@@ -333,5 +338,23 @@ export function RenderItemFilterInput({rule, field}: FilterValueInputProps)
 	{
 		return <TaxesMultiSearchableSelect onToggle={ (ids) => rule.value.value = ids }/>;
 	}
+
+	if (field.propertyName === "ItemCategories")
+	{
+		return <CategoriesMultiSearchableSelect onToggle={ (ids) => rule.value.value = ids }/>;
+	}
+
+	if (field.propertyName === "BrandId")
+	{
+		return (
+			<FilterLabelWrapper rule={ rule }>
+				{ label => (
+					<BrandsSearchableSelect id={ rule.value as unknown as Signal<number | undefined> } label={ label }
+					                        onSelect={ entity => rule.value.value = entity ? entity.id : "" }/>
+				) }
+			</FilterLabelWrapper>
+		);
+	}
+
 	return undefined;
 }

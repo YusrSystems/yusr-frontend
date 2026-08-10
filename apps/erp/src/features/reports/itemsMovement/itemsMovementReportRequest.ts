@@ -5,8 +5,8 @@ export class ItemsMovementReportRequest
 {
 	documentTypes?: DocumentType[] | null;
 	itemIds?: number[] | null;
-	itemClasses?: string[] | null;
-	itemBrands?: string[] | null;
+	categoryIds?: number[] | null;
+	brandIds?: number[] | null;
 	fromDate?: string | null;
 	toDate?: string | null;
 	storeId?: number | null;

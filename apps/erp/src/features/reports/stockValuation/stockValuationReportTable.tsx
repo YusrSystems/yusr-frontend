@@ -28,7 +28,7 @@ export function StockValuationReportTable()
 				<tr>
 					<ReportTableTh ar="رقم المادة" en="Item ID"/>
 					<ReportTableTh ar="اسم المادة" en="Item Name" align="start"/>
-					<ReportTableTh ar="التصنيف" en="Class"/>
+					<ReportTableTh ar="التصنيف" en="Category"/>
 					<ReportTableTh ar="الماركة" en="Brand"/>
 					<ReportTableTh ar="الوحدة" en="Base Unit"/>
 					<ReportTableTh ar="المستودع" en="Store"/>
@@ -43,8 +43,8 @@ export function StockValuationReportTable()
 					    className="border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors">
 						<ReportTableTd isEven={ index % 2 === 0 }>{ line.itemId }</ReportTableTd>
 						<ReportTableTd isEven={ index % 2 === 0 } align="start">{ line.itemName }</ReportTableTd>
-						<ReportTableTd isEven={ index % 2 === 0 }>{ line.itemClass || "-" }</ReportTableTd>
-						<ReportTableTd isEven={ index % 2 === 0 }>{ line.itemBrand || "-" }</ReportTableTd>
+						<ReportTableTd isEven={ index % 2 === 0 }>{ line.itemCategoryName || "-" }</ReportTableTd>
+						<ReportTableTd isEven={ index % 2 === 0 }>{ line.itemBrandName || "-" }</ReportTableTd>
 						<ReportTableTd isEven={ index % 2 === 0 }>{ line.baseUnitName }</ReportTableTd>
 						<ReportTableTd isEven={ index % 2 === 0 }>{ line.storeName }</ReportTableTd>
 						<ReportTableTd isEven={ index % 2 === 0 } className="font-semibold">

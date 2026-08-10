@@ -45,6 +45,8 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 
 			Cubits.taxes.init();
 			Cubits.pricingMethods.init();
+			Cubits.categories.init();
+			Cubits.brands.init();
 
 			const result = await Services.unitsApi.GetServiceIds();
 			if (result.data)
@@ -66,7 +68,7 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 
 		void fetch();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []); // I left the deps array empty, it causes infinite rerenders if you put anything inside it
+	}, []);
 
 	useEffect(() =>
 	{
@@ -75,7 +77,7 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 			entity.value.changeTaxable(true, Cubits.taxes.entities);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [Cubits.taxes.entities.value]); // I left the deps array like this, it causes infinite rerenders if you put anything inside it
+	}, [Cubits.taxes.entities.value]);
 
 	const {commitFiles} = useStorageFile(
 		() => entity.value.itemImages.value,

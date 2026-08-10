@@ -42,8 +42,11 @@ export function ItemsListReportPage()
 						{header: "اسم المادة", accessor: (r) => r.name},
 						{header: "النوع", accessor: (r) => r.type === ItemType.Product ? "منتج" : "خدمة"},
 						{header: "الوصف", accessor: (r) => r.description ?? ""},
-						{header: "التصنيف", accessor: (r) => r.class ?? ""},
-						{header: "العلامة التجارية", accessor: (r) => r.brand ?? ""},
+						{
+							header: "التصنيف",
+							accessor: (r) => r.itemCategories?.map(c => c.categoryName).join(" - ") ?? ""
+						},
+						{header: "العلامة التجارية", accessor: (r) => r.brandName ?? ""},
 						{header: "وحدة البيع الرئيسية", accessor: (r) => r.sellUnitName ?? ""},
 						{header: "المخزون الإجمالي الحالي", accessor: (r) => r.quantity.toString()},
 						{header: "حد الطلب (الأدنى)", accessor: (r) => r.minQuantity?.toString() ?? "0"},

@@ -1,4 +1,3 @@
-// full code
 import type { BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import { ItemsCubit } from "@/features/items/state/itemsCubit";
 import { BaseCubits, FilterFieldsCubit, PageCubit, PageReportCubit, ReportCubit, UserDto } from "yusr-ui";
@@ -48,6 +47,8 @@ import type { StockValuationReportResult } from "@/features/reports/stockValuati
 import type { LowStockReportRequest } from "@/features/reports/lowStock/lowStockReportRequest.ts";
 import type { LowStockReportResult } from "@/features/reports/lowStock/lowStockReportResult.ts";
 import { PosTerminalDto } from "@/core/data/posTerminal.ts";
+import { CategoryDto } from "@/core/data/category.ts";
+import { BrandDto } from "@/core/data/brand.ts";
 
 
 export class Cubits extends BaseCubits
@@ -71,6 +72,8 @@ export class Cubits extends BaseCubits
 	public static readonly partners = new PageCubit<PartnerDto>(Services.partnersApi);
 	public static readonly posTerminals = new PageCubit<PosTerminalDto>(Services.posTerminalsApi);
 	public static readonly users = new PageCubit<UserDto>(Services.usersApi);
+	public static readonly categories = new PageCubit<CategoryDto>(Services.categoriesApi);
+	public static readonly brands = new PageCubit<BrandDto>(Services.brandsApi);
 
 	// filter fields
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");

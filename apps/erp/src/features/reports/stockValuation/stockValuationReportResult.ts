@@ -2,8 +2,8 @@ export interface StockValuationLine
 {
 	itemId: number;
 	itemName: string;
-	itemClass: string;
-	itemBrand: string;
+	itemCategoryName?: string;
+	itemBrandName?: string;
 	baseUnitName: string;
 	storeName: string;
 	quantityOnHand: number;

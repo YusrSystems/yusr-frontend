@@ -16,8 +16,10 @@ import { PartnersSearchableSelect } from "@/core/components/searchableSelect/par
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect.tsx";
-import { ItemMetadataTempService } from "@/core/networking/itemMetadataTempService.ts";
+import CategoriesMultiSearchableSelect from "@/core/components/searchableSelect/categoriesMultiSearchableSelect.tsx";
+import BrandsMultiSearchableSelect from "@/core/components/searchableSelect/brandsMultiSearchableSelect.tsx";
 import { DocumentType } from "@/core/types/documentType.ts";
+import { Cubits } from "@/core/services/cubits.ts";
 
 
 interface ItemsMovementReportFieldsProps
@@ -43,16 +45,16 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 	const storeId = useMemo(() => signal<number>(), []);
 	const storeName = useMemo(() => signal<string>(), []);
 
-	const itemClasses = useMemo(() => signal<string[]>([]), []);
-	const itemBrands = useMemo(() => signal<string[]>([]), []);
-	const availableClasses = useMemo(() => signal<string[]>([]), []);
-	const availableBrands = useMemo(() => signal<string[]>([]), []);
+	const categoryIds = useMemo(() => signal<number[]>([]), []);
+	const categoryLabels = useMemo(() => signal<Record<number, string>>({}), []);
+	const brandIds = useMemo(() => signal<number[]>([]), []);
+	const brandLabels = useMemo(() => signal<Record<number, string>>({}), []);
 
 	useEffect(() =>
 	{
-		void ItemMetadataTempService.getDistinctClasses().then((classes) => availableClasses.value = classes);
-		void ItemMetadataTempService.getDistinctBrands().then((brands) => availableBrands.value = brands);
-	}, [availableBrands, availableClasses]);
+		Cubits.categories.init();
+		Cubits.brands.init();
+	}, []);
 
 	const handleClear = () =>
 	{
@@ -65,8 +67,10 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 		partnerName.value = undefined;
 		storeId.value = undefined;
 		storeName.value = undefined;
-		itemClasses.value = [];
-		itemBrands.value = [];
+		categoryIds.value = [];
+		categoryLabels.value = {};
+		brandIds.value = [];
+		brandLabels.value = {};
 
 		// Trigger the callback with a clean, default request instance
 		onSubmit(new ItemsMovementReportRequest());
@@ -116,17 +120,13 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 					</div>
 
 					<div className="grid grid-cols-2 gap-3">
-						<MultiSelectField
-							label={ t("stocking:items.class") }
-							value={ itemClasses }
-							options={ availableClasses.value.map((c) => ({label: c, value: c})) }
-						/>
+						<FormField label={ t("stocking:items.category", "التصنيف") }>
+							<CategoriesMultiSearchableSelect ids={ categoryIds } labels={ categoryLabels }/>
+						</FormField>
 
-						<MultiSelectField
-							label={ t("stocking:items.brand") }
-							value={ itemBrands }
-							options={ availableBrands.value.map((b) => ({label: b, value: b})) }
-						/>
+						<FormField label={ t("stocking:items.brand", "العلامة التجارية") }>
+							<BrandsMultiSearchableSelect ids={ brandIds } labels={ brandLabels }/>
+						</FormField>
 					</div>
 
 					<div className="grid grid-cols-2 gap-3">
@@ -161,8 +161,8 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 							onClick={ () => onSubmit(new ItemsMovementReportRequest({
 								documentTypes: documentTypes.value.length ? documentTypes.value : null,
 								itemIds: itemIds.value.length ? itemIds.value : null,
-								itemClasses: itemClasses.value.length ? itemClasses.value : null,
-								itemBrands: itemBrands.value.length ? itemBrands.value : null,
+								categoryIds: categoryIds.value.length ? categoryIds.value : null,
+								brandIds: brandIds.value.length ? brandIds.value : null,
 								fromDate: fromDate.value ?? null,
 								toDate: toDate.value ?? null,
 								partnerId: partnerId.value ?? null,

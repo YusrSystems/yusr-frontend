@@ -12,13 +12,20 @@ export const ItemType = {
 };
 export type ItemType = (typeof ItemType)[keyof typeof ItemType];
 
+export class ItemCategoryDto extends Dto
+{
+	public itemId!: number;
+	public categoryId!: number;
+	public categoryName!: string;
+}
+
 export class ItemDto extends Dto
 {
 	public type!: ItemType;
 	public name!: string;
 	public description?: string;
-	public class?: string;
-	public brand?: string;
+	public brandId?: number;
+	public brandName?: string;
 	public sellUnitId!: number;
 	public sellUnitName?: string;
 	public minQuantity?: number;
@@ -40,6 +47,7 @@ export class ItemDto extends Dto
 	public updatedBy!: number;
 	public rowVer!: number;
 
+	public itemCategories: ItemCategoryDto[] = [];
 	public uoMs: ItemUoMDto[] = [];
 	public itemTaxes: ItemTaxDto[] = [];
 	public itemStores: ItemStoreDto[] = [];
@@ -51,8 +59,8 @@ export default class Item extends ChangeableEntity<ItemDto>
 	public type: Signal<ItemType>;
 	public name: Signal<string>;
 	public description: Signal<string | undefined>;
-	public class: Signal<string | undefined>;
-	public brand: Signal<string | undefined>;
+	public brandId: Signal<number | undefined>;
+	public brandName: Signal<string | undefined>;
 	public sellUnitId: Signal<number | undefined>;
 	public sellUnitName: Signal<string | undefined>;
 	public minQuantity: Signal<number | undefined>;
@@ -74,6 +82,7 @@ export default class Item extends ChangeableEntity<ItemDto>
 	public updatedBy: Signal<number | undefined>;
 	public rowVer: Signal<number | undefined>;
 
+	public itemCategories: Signal<ItemCategoryDto[]>;
 	public uoMs: Signal<ItemUoM[]>;
 	public itemTaxes: Signal<ItemTax[]>;
 	public itemStores: Signal<ItemStore[]>;
@@ -122,8 +131,8 @@ export default class Item extends ChangeableEntity<ItemDto>
 		this.type = this.assign("type", dto?.type ?? 1);
 		this.name = this.assign("name", dto?.name ?? "");
 		this.description = this.assign("description", dto?.description ?? "");
-		this.class = this.assign("class", dto?.class ?? "");
-		this.brand = this.assign("brand", dto?.brand ?? "");
+		this.brandId = this.assign("brandId", dto?.brandId);
+		this.brandName = this.assign("brandName", dto?.brandName ?? "");
 		this.sellUnitId = this.assign("sellUnitId", dto?.sellUnitId ?? 0);
 		this.sellUnitName = this.assign("sellUnitName", dto?.sellUnitName ?? "");
 		this.minQuantity = this.assign("minQuantity", dto?.minQuantity ?? 0);
@@ -145,6 +154,7 @@ export default class Item extends ChangeableEntity<ItemDto>
 		this.updatedBy = this.assign("updatedBy", dto?.updatedBy);
 		this.rowVer = this.assign("rowVer", dto?.rowVer);
 
+		this.itemCategories = this.assign("itemCategories", dto?.itemCategories ?? []);
 		this.uoMs = this.assign("uoMs", (dto?.uoMs ?? [ItemUoM.create({
 			unitId: undefined,
 			unitName: undefined,
