@@ -259,11 +259,11 @@ export default function CategoriesSearchableSelect(
 											handleOpenEdit(parent);
 										} } className="p-1 text-muted-foreground hover:text-primary transition-colors">
 											<Edit2 className="w-3.5 h-3.5"/></button>
-										<button type="button" onClick={ (e) =>
+										<button type="button" onClick={ async (e) =>
 										{
 											e.preventDefault();
 											e.stopPropagation();
-											handleDelete(parent);
+											await handleDelete(parent);
 										} }
 										        className="p-1 text-muted-foreground hover:text-destructive transition-colors">
 											<Trash2 className="w-3.5 h-3.5"/></button>

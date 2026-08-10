@@ -15,8 +15,8 @@ import {
 import { Cubits } from "@/core/services/cubits.ts";
 import { Services } from "@/core/services/services.ts";
 import { useSignals } from "@preact/signals-react/runtime";
-import React, { useMemo, useState } from "react";
-import { Signal, signal } from "@preact/signals-react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { effect, signal, Signal } from "@preact/signals-react";
 import { CategoryDto } from "@/core/data/category.ts";
 import { ChevronDown, ChevronLeft, Edit2, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -42,6 +42,66 @@ export default function CategoriesMultiSearchableSelect(
 	const categoryName = useMemo(() => signal(""), []);
 	const categoryParentId = useMemo(() => signal<number>(0), []);
 	const isSaving = useMemo(() => signal(false), []);
+
+	const prevIds = useRef<number[]>(localIds.value);
+
+	useEffect(() =>
+	{
+		return effect(() =>
+		{
+			const currentIds = localIds.value;
+			const added = currentIds.filter(id => !prevIds.current.includes(id));
+
+			if (added.length > 0)
+			{
+				let idsToKeep = [...currentIds];
+				let labelsToKeep = {...localLabels.value};
+				let changed = false;
+
+				for (const addedId of added)
+				{
+					const category = Cubits.categories.entities.value.find(c => c.id === addedId);
+					if (!category) continue;
+
+					if (category.parentCategoryId)
+					{
+						// Child added -> remove parent
+						if (idsToKeep.includes(category.parentCategoryId))
+						{
+							idsToKeep = idsToKeep.filter(id => id !== category.parentCategoryId);
+							delete labelsToKeep[category.parentCategoryId];
+							changed = true;
+						}
+					}
+					else
+					{
+						// Parent added -> remove children
+						const childrenIds = Cubits.categories.entities.value
+							.filter(c => c.parentCategoryId === category.id)
+							.map(c => c.id);
+
+						const childrenToRemove = idsToKeep.filter(id => childrenIds.includes(id));
+						if (childrenToRemove.length > 0)
+						{
+							idsToKeep = idsToKeep.filter(id => !childrenIds.includes(id));
+							childrenToRemove.forEach(childId => delete labelsToKeep[childId]);
+							changed = true;
+						}
+					}
+				}
+
+				if (changed)
+				{
+					prevIds.current = idsToKeep;
+					localIds.value = idsToKeep;
+					localLabels.value = labelsToKeep;
+					return;
+				}
+			}
+
+			prevIds.current = currentIds;
+		});
+	}, [localIds, localLabels]);
 
 	const toggleExpand = (id: number) =>
 	{
@@ -279,79 +339,87 @@ export default function CategoriesMultiSearchableSelect(
 						const isExpanded = expanded.includes(parent.id);
 						return (
 							<React.Fragment key={ parent.id }>
-								<div
-									onClick={ (e) =>
-									{
-										e.stopPropagation();
-										toggleExpand(parent.id);
-									} }
-									className="flex items-center justify-between px-2 py-1.5 text-sm cursor-pointer hover:bg-muted/50 rounded-sm font-semibold text-foreground group"
+								<MultiSearchableSelect.Option<CategoryDto>
+									{ ...props }
+									ids={ localIds }
+									labels={ localLabels }
+									labelSelector="name"
+									item={ parent }
 								>
-									<div className="flex items-center">
-										{ isExpanded ? <ChevronDown className="w-4 h-4 me-2 text-muted-foreground"/> :
-											<ChevronLeft
-												className={ `w-4 h-4 me-2 text-muted-foreground ${ !isRtl ? "rotate-180" : "" }` }/> }
-										<span>{ parent.name }</span>
+									<div className="flex items-center justify-between w-full">
+										<div className="flex items-center gap-1 flex-1 min-w-0">
+											<button
+												type="button"
+												onClick={ (e) =>
+												{
+													e.preventDefault();
+													e.stopPropagation();
+													toggleExpand(parent.id);
+												} }
+												className="p-1 -ms-1 hover:bg-muted/80 rounded-md transition-colors flex items-center justify-center"
+											>
+												{ isExpanded ? (
+													<ChevronDown className="w-4 h-4 text-muted-foreground"/>
+												) : (
+													<ChevronLeft
+														className={ `w-4 h-4 text-muted-foreground ${ !isRtl ? "rotate-180" : "" }` }/>
+												) }
+											</button>
+											<span className="truncate font-semibold">{ parent.name }</span>
+										</div>
+										<div className="flex items-center gap-1 ms-2">
+											<button type="button" onClick={ (e) =>
+											{
+												e.preventDefault();
+												e.stopPropagation();
+												handleOpenEdit(parent);
+											} }
+											        className="p-1 text-muted-foreground hover:text-primary transition-colors">
+												<Edit2 className="w-3.5 h-3.5"/></button>
+											<button type="button" onClick={ async (e) =>
+											{
+												e.preventDefault();
+												e.stopPropagation();
+												await handleDelete(parent);
+											} }
+											        className="p-1 text-muted-foreground hover:text-destructive transition-colors">
+												<Trash2 className="w-3.5 h-3.5"/></button>
+										</div>
 									</div>
-									<div
-										className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-										<button type="button" onClick={ (e) =>
-										{
-											e.preventDefault();
-											e.stopPropagation();
-											handleOpenEdit(parent);
-										} } className="p-1 text-muted-foreground hover:text-primary transition-colors">
-											<Edit2 className="w-3.5 h-3.5"/></button>
-										<button type="button" onClick={ (e) =>
-										{
-											e.preventDefault();
-											e.stopPropagation();
-											handleDelete(parent);
-										} }
-										        className="p-1 text-muted-foreground hover:text-destructive transition-colors">
-											<Trash2 className="w-3.5 h-3.5"/></button>
-									</div>
-								</div>
+								</MultiSearchableSelect.Option>
 								{ isExpanded && children.map(child => (
-									<div key={ child.id } className="ps-6">
-										<MultiSearchableSelect.Option<CategoryDto>
-											{ ...props }
-											ids={ localIds }
-											labels={ localLabels }
-											labelSelector="name"
-											item={ child }
-										>
-											<div className="flex items-center justify-between w-full">
-												<div className="flex items-center gap-2 flex-1 min-w-0">
-													<span className="truncate">{ child.name }</span>
-													{ child.parentCategoryName && (
-														<span
-															className="px-2 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-full whitespace-nowrap">
-															{ child.parentCategoryName }
-														</span>
-													) }
-												</div>
-												<div className="flex items-center gap-1 ms-2">
-													<button type="button" onClick={ (e) =>
-													{
-														e.preventDefault();
-														e.stopPropagation();
-														handleOpenEdit(child);
-													} }
-													        className="p-1 text-muted-foreground hover:text-primary transition-colors">
-														<Edit2 className="w-3.5 h-3.5"/></button>
-													<button type="button" onClick={ (e) =>
-													{
-														e.preventDefault();
-														e.stopPropagation();
-														handleDelete(child);
-													} }
-													        className="p-1 text-muted-foreground hover:text-destructive transition-colors">
-														<Trash2 className="w-3.5 h-3.5"/></button>
-												</div>
+									<MultiSearchableSelect.Option<CategoryDto>
+										{ ...props }
+										key={ child.id }
+										ids={ localIds }
+										labels={ localLabels }
+										labelSelector="name"
+										item={ child }
+									>
+										<div className="flex items-center justify-between w-full ps-7">
+											<div className="flex items-center gap-2 flex-1 min-w-0">
+												<span className="truncate">{ child.name }</span>
 											</div>
-										</MultiSearchableSelect.Option>
-									</div>
+											<div className="flex items-center gap-1 ms-2">
+												<button type="button" onClick={ (e) =>
+												{
+													e.preventDefault();
+													e.stopPropagation();
+													handleOpenEdit(child);
+												} }
+												        className="p-1 text-muted-foreground hover:text-primary transition-colors">
+													<Edit2 className="w-3.5 h-3.5"/></button>
+												<button type="button" onClick={ async (e) =>
+												{
+													e.preventDefault();
+													e.stopPropagation();
+													await handleDelete(child);
+												} }
+												        className="p-1 text-muted-foreground hover:text-destructive transition-colors">
+													<Trash2 className="w-3.5 h-3.5"/></button>
+											</div>
+										</div>
+									</MultiSearchableSelect.Option>
 								)) }
 							</React.Fragment>
 						);
@@ -369,13 +437,7 @@ export default function CategoriesMultiSearchableSelect(
 							>
 								<div className="flex items-center justify-between w-full">
 									<div className="flex items-center gap-2 flex-1 min-w-0">
-										<span className="truncate">{ parent.name }</span>
-										{ parent.parentCategoryName && (
-											<span
-												className="px-2 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-full whitespace-nowrap">
-												{ parent.parentCategoryName }
-											</span>
-										) }
+										<span className="truncate font-semibold">{ parent.name }</span>
 									</div>
 									<div className="flex items-center gap-1 ms-2">
 										<button type="button" onClick={ (e) =>
