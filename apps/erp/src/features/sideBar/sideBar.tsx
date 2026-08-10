@@ -1,4 +1,3 @@
-// full code
 import { AppNavigator } from "@/app/appNavigator";
 import logoOnlyDark from "@/assets/yusrLogoOnly_Dark.png";
 import logoOnlyLight from "@/assets/yusrLogoOnly_Light.png";
@@ -64,6 +63,13 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 				SystemPermissionsActions.Get
 			),
 			subItems: [{
+				title: "شاشة البيع",
+				url: "/pos",
+				hasAuth: Services.auth.hasAuth(
+					SystemPermissionsResources.PosTerminals,
+					SystemPermissionsActions.Get
+				)
+			}, {
 				title: "أجهزة نقاط البيع",
 				url: "/posTerminals",
 				hasAuth: Services.auth.hasAuth(
