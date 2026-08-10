@@ -44,7 +44,7 @@ export default function PosEntryPage()
 
 		const init = async () =>
 		{
-			await Cubits.posTerminals.init();
+			Cubits.posTerminals.init();
 			const terminals = Cubits.posTerminals.entities.value;
 			const savedTerminalId = localStorage.getItem("pos_terminal_id");
 
@@ -56,7 +56,7 @@ export default function PosEntryPage()
 			}
 			else if (terminals.length === 1)
 			{
-				targetId = terminals[0].id;
+				targetId = terminals[0]?.id;
 			}
 
 			if (targetId)
@@ -276,11 +276,11 @@ export default function PosEntryPage()
 					open={ isCloseDialogOpen.value }
 					onOpenChange={ (open) => isCloseDialogOpen.value = open }
 					session={ activeSession.value }
-					onSuccess={ () =>
+					onSuccess={ async () =>
 					{
 						if (selectedTerminalId.value)
 						{
-							checkActiveSession(selectedTerminalId.value);
+							await checkActiveSession(selectedTerminalId.value);
 						}
 					} }
 				/>
