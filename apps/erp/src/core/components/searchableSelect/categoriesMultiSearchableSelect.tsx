@@ -18,7 +18,7 @@ import { useSignals } from "@preact/signals-react/runtime";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { effect, signal, Signal } from "@preact/signals-react";
 import { CategoryDto } from "@/core/data/category.ts";
-import { ChevronDown, ChevronLeft, Edit2, Plus, Trash2 } from "lucide-react";
+import { Check, ChevronDown, ChevronLeft, Edit2, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 
@@ -54,49 +54,97 @@ export default function CategoriesMultiSearchableSelect(
 
 			if (added.length > 0)
 			{
-				let idsToKeep = [...currentIds];
-				let labelsToKeep = {...localLabels.value};
-				let changed = false;
-
-				for (const addedId of added)
+				queueMicrotask(() =>
 				{
-					const category = Cubits.categories.entities.value.find(c => c.id === addedId);
-					if (!category) continue;
+					const latestIds = localIds.value;
+					const newlyAdded = latestIds.filter(id => !prevIds.current.includes(id));
 
-					if (category.parentCategoryId)
+					if (newlyAdded.length === 0) return;
+
+					let idsToKeep = [...latestIds];
+					let changed = false;
+
+					for (const addedId of newlyAdded)
 					{
-						// Child added -> remove parent
-						if (idsToKeep.includes(category.parentCategoryId))
+						const category = Cubits.categories.entities.value.find(c => c.id === addedId);
+						if (!category) continue;
+
+						if (category.parentCategoryId)
 						{
-							idsToKeep = idsToKeep.filter(id => id !== category.parentCategoryId);
-							delete labelsToKeep[category.parentCategoryId];
-							changed = true;
+							const parentId = category.parentCategoryId;
+							const siblings = Cubits.categories.entities.value.filter(c => c.parentCategoryId === parentId);
+							const siblingIds = siblings.map(c => c.id);
+
+							if (prevIds.current.includes(parentId))
+							{
+								// Parent was checked, user clicked a child to uncheck it
+								idsToKeep = idsToKeep.filter(id => id !== parentId && id !== addedId);
+								for (const sib of siblings)
+								{
+									if (sib.id !== addedId && !idsToKeep.includes(sib.id))
+									{
+										idsToKeep.push(sib.id);
+									}
+								}
+								changed = true;
+							}
+							else
+							{
+								// Normal child addition
+								const allSiblingsSelected = siblingIds.every(id => idsToKeep.includes(id));
+								if (allSiblingsSelected && siblingIds.length > 0)
+								{
+									idsToKeep = idsToKeep.filter(id => !siblingIds.includes(id));
+									if (!idsToKeep.includes(parentId))
+									{
+										idsToKeep.push(parentId);
+									}
+									changed = true;
+								}
+							}
 						}
+						else
+						{
+							// Parent added -> remove children
+							const childrenIds = Cubits.categories.entities.value
+								.filter(c => c.parentCategoryId === category.id)
+								.map(c => c.id);
+
+							const childrenToRemove = idsToKeep.filter(id => childrenIds.includes(id));
+							if (childrenToRemove.length > 0)
+							{
+								idsToKeep = idsToKeep.filter(id => !childrenIds.includes(id));
+								changed = true;
+							}
+						}
+					}
+
+					if (changed)
+					{
+						const newLabels: Record<number, string> = {};
+						for (const id of idsToKeep)
+						{
+							const cat = Cubits.categories.entities.value.find(c => c.id === id);
+							if (cat)
+							{
+								newLabels[id] = cat.name;
+							}
+							else if (localLabels.value[id])
+							{
+								newLabels[id] = localLabels.value[id];
+							}
+						}
+
+						prevIds.current = idsToKeep;
+						localIds.value = idsToKeep;
+						localLabels.value = newLabels;
 					}
 					else
 					{
-						// Parent added -> remove children
-						const childrenIds = Cubits.categories.entities.value
-							.filter(c => c.parentCategoryId === category.id)
-							.map(c => c.id);
-
-						const childrenToRemove = idsToKeep.filter(id => childrenIds.includes(id));
-						if (childrenToRemove.length > 0)
-						{
-							idsToKeep = idsToKeep.filter(id => !childrenIds.includes(id));
-							childrenToRemove.forEach(childId => delete labelsToKeep[childId]);
-							changed = true;
-						}
+						prevIds.current = latestIds;
 					}
-				}
-
-				if (changed)
-				{
-					prevIds.current = idsToKeep;
-					localIds.value = idsToKeep;
-					localLabels.value = labelsToKeep;
-					return;
-				}
+				});
+				return;
 			}
 
 			prevIds.current = currentIds;
@@ -275,6 +323,7 @@ export default function CategoriesMultiSearchableSelect(
 			{
 				content = categories.map((category) =>
 				{
+					const isParentSelected = category.parentCategoryId && localIds.value.includes(category.parentCategoryId);
 					return (
 						<MultiSearchableSelect.Option<CategoryDto>
 							{ ...props }
@@ -285,7 +334,9 @@ export default function CategoriesMultiSearchableSelect(
 							item={ category }
 						>
 							<div className="flex items-center justify-between w-full">
-								<div className="flex items-center gap-2 flex-1 min-w-0">
+								<div
+									className={ `flex items-center gap-2 flex-1 min-w-0 ${ isParentSelected ? "text-primary/80" : "" }` }>
+									{ isParentSelected && <Check className="w-3.5 h-3.5 text-primary/50 shrink-0"/> }
 									<span className="truncate">{ category.name }</span>
 									{ category.parentCategoryName && (
 										<span
@@ -387,40 +438,53 @@ export default function CategoriesMultiSearchableSelect(
 										</div>
 									</div>
 								</MultiSearchableSelect.Option>
-								{ isExpanded && children.map(child => (
-									<MultiSearchableSelect.Option<CategoryDto>
-										{ ...props }
-										key={ child.id }
-										ids={ localIds }
-										labels={ localLabels }
-										labelSelector="name"
-										item={ child }
-									>
-										<div className="flex items-center justify-between w-full ps-7">
-											<div className="flex items-center gap-2 flex-1 min-w-0">
-												<span className="truncate">{ child.name }</span>
+								{ isExpanded && children.map(child =>
+								{
+									const isParentSelected = localIds.value.includes(child.parentCategoryId!);
+									return (
+										<MultiSearchableSelect.Option<CategoryDto>
+											{ ...props }
+											key={ child.id }
+											ids={ localIds }
+											labels={ localLabels }
+											labelSelector="name"
+											item={ child }
+										>
+											<div className="flex items-center justify-between w-full ps-7">
+												<div
+													className={ `flex items-center gap-2 flex-1 min-w-0 ${ isParentSelected ? "text-primary/80" : "" }` }>
+													{ isParentSelected &&
+                                                        <Check className="w-3.5 h-3.5 text-primary/50 shrink-0"/> }
+													<span className="truncate">{ child.name }</span>
+													{ child.parentCategoryName && (
+														<span
+															className="px-2 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-full whitespace-nowrap">
+															{ child.parentCategoryName }
+														</span>
+													) }
+												</div>
+												<div className="flex items-center gap-1 ms-2">
+													<button type="button" onClick={ (e) =>
+													{
+														e.preventDefault();
+														e.stopPropagation();
+														handleOpenEdit(child);
+													} }
+													        className="p-1 text-muted-foreground hover:text-primary transition-colors">
+														<Edit2 className="w-3.5 h-3.5"/></button>
+													<button type="button" onClick={ async (e) =>
+													{
+														e.preventDefault();
+														e.stopPropagation();
+														await handleDelete(child);
+													} }
+													        className="p-1 text-muted-foreground hover:text-destructive transition-colors">
+														<Trash2 className="w-3.5 h-3.5"/></button>
+												</div>
 											</div>
-											<div className="flex items-center gap-1 ms-2">
-												<button type="button" onClick={ (e) =>
-												{
-													e.preventDefault();
-													e.stopPropagation();
-													handleOpenEdit(child);
-												} }
-												        className="p-1 text-muted-foreground hover:text-primary transition-colors">
-													<Edit2 className="w-3.5 h-3.5"/></button>
-												<button type="button" onClick={ async (e) =>
-												{
-													e.preventDefault();
-													e.stopPropagation();
-													await handleDelete(child);
-												} }
-												        className="p-1 text-muted-foreground hover:text-destructive transition-colors">
-													<Trash2 className="w-3.5 h-3.5"/></button>
-											</div>
-										</div>
-									</MultiSearchableSelect.Option>
-								)) }
+										</MultiSearchableSelect.Option>
+									);
+								}) }
 							</React.Fragment>
 						);
 					}
@@ -438,6 +502,12 @@ export default function CategoriesMultiSearchableSelect(
 								<div className="flex items-center justify-between w-full">
 									<div className="flex items-center gap-2 flex-1 min-w-0">
 										<span className="truncate font-semibold">{ parent.name }</span>
+										{ parent.parentCategoryName && (
+											<span
+												className="px-2 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-full whitespace-nowrap">
+												{ parent.parentCategoryName }
+											</span>
+										) }
 									</div>
 									<div className="flex items-center gap-1 ms-2">
 										<button type="button" onClick={ (e) =>
