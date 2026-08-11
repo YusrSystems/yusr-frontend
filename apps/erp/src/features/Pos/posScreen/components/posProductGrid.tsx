@@ -162,7 +162,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 										) }
 
 										<div
-											className="w-full aspect-4/3 bg-white flex items-center justify-center overflow-hidden relative border-b border-border/40 p-2">
+											className="w-full h-50 max-h-50 aspect-4/3 bg-white flex items-center justify-center overflow-hidden relative border-b border-border/40 p-2">
 											{ imageUrl ? (
 												<img
 													src={ imageUrl }
@@ -224,13 +224,13 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 													</div>
 												</div>
 												<span
-													className="font-black text-primary flex items-center gap-0.5 text-[15px]">
+													className="font-black text-primary flex items-center gap-1 text-base">
 													{ taxInclusivePrice.toLocaleString(undefined, {
 														minimumFractionDigits: 2,
 														maximumFractionDigits: 2
 													}) }
 													<ErpCurrencyIcon
-														className="w-3 h-3 text-muted-foreground/70 mb-0.5"/>
+														className="w-4 h-4 text-muted-foreground/70 mb-0.5"/>
 												</span>
 											</div>
 										</div>
