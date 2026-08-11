@@ -13,59 +13,50 @@ export enum DocumentType
 	ManualAdjustment,
 	OpeningQuantity,
 	ItemTransfer,
-	ItemsSettlement
+	ItemsSettlement,
 }
+
+const DOCUMENT_TYPE_NAMES: Record<DocumentType, string> = {
+	[DocumentType.None]: "غير معروف",
+	[DocumentType.Sales]: "فاتورة مبيعات",
+	[DocumentType.SalesReturn]: "مرتجع مبيعات",
+	[DocumentType.Purchase]: "فاتورة مشتريات",
+	[DocumentType.PurchaseReturn]: "مرتجع مشتريات",
+	[DocumentType.Payment]: "سند صرف",
+	[DocumentType.Receipt]: "سند قبض",
+	[DocumentType.BalanceTransfer]: "نقل رصيد",
+	[DocumentType.CostAdjustment]: "تسوية تكلفة",
+	[DocumentType.OpeningBalance]: "رصيد افتتاحي",
+	[DocumentType.OpeningQuantity]: "كمية افتتاحية",
+	[DocumentType.ManualAdjustment]: "تسوية يدوية",
+	[DocumentType.ItemTransfer]: "نقل مواد",
+	[DocumentType.ItemsSettlement]: "تسوية مواد"
+};
+
+const DOCUMENT_ROUTES: Partial<Record<DocumentType, string>> = {
+	[DocumentType.Sales]: "sales",
+	[DocumentType.SalesReturn]: "sales",
+	[DocumentType.Purchase]: "purchases",
+	[DocumentType.PurchaseReturn]: "purchases",
+	[DocumentType.Payment]: "vouchers",
+	[DocumentType.Receipt]: "vouchers",
+	[DocumentType.BalanceTransfer]: "balanceTransfer",
+	[DocumentType.CostAdjustment]: "costAdjustments",
+	[DocumentType.OpeningBalance]: "openingBalances",
+	[DocumentType.OpeningQuantity]: "openingQuantities",
+	[DocumentType.ManualAdjustment]: "manualAdjustments",
+	[DocumentType.ItemTransfer]: "itemTransfers",
+	[DocumentType.ItemsSettlement]: "itemsSettlements"
+};
 
 export function getDocumentTypeName(type?: DocumentType): string
 {
-	switch (type)
-	{
-		case DocumentType.Sales:
-			return "فاتورة مبيعات";
-		case DocumentType.SalesReturn:
-			return "مرتجع مبيعات";
-		case DocumentType.Purchase:
-			return "فاتورة مشتريات";
-		case DocumentType.PurchaseReturn:
-			return "مرتجع مشتريات";
-		case DocumentType.Payment:
-			return "سند صرف";
-		case DocumentType.Receipt:
-			return "سند قبض";
-		case DocumentType.BalanceTransfer:
-			return "نقل رصيد";
-		case DocumentType.CostAdjustment:
-			return "تسوية تكلفة";
-		case DocumentType.OpeningBalance:
-			return "رصيد افتتاحي";
-		case DocumentType.OpeningQuantity:
-			return "كمية افتتاحية";
-		case DocumentType.ManualAdjustment:
-			return "تسوية يدوية";
-		case DocumentType.None:
-		default:
-			return "غير معروف";
-	}
+	if (type === undefined) return DOCUMENT_TYPE_NAMES[DocumentType.None];
+	return DOCUMENT_TYPE_NAMES[type] ?? DOCUMENT_TYPE_NAMES[DocumentType.None];
 }
 
 export function getDocumentRoute(type?: DocumentType): string | undefined
 {
-	switch (type)
-	{
-		case DocumentType.Sales:
-		case DocumentType.SalesReturn:
-			return "sales";
-		case DocumentType.Purchase:
-		case DocumentType.PurchaseReturn:
-			return "purchases";
-		case DocumentType.Payment:
-		case DocumentType.Receipt:
-			return "vouchers";
-		case DocumentType.BalanceTransfer:
-			return "balanceTransfer";
-		case DocumentType.CostAdjustment:
-			return "costAdjustments";
-		default:
-			return undefined;
-	}
+	if (type === undefined) return undefined;
+	return DOCUMENT_ROUTES[type];
 }
