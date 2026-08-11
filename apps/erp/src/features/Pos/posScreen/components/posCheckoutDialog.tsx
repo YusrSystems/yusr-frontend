@@ -292,7 +292,10 @@ export default function PosCheckoutDialog({
 													onClick={ () => handleUpdatePayment(index, "amount", Number((payment.amount + remaining).toFixed(2))) }
 													title="إكمال المبلغ المتبقي"
 												>
-													+{ remaining.toLocaleString() }
+													+{ remaining.toLocaleString(undefined, {
+													minimumFractionDigits: 2,
+													maximumFractionDigits: 2
+												}) }
 												</Button>
 											) }
 										</div>
@@ -316,7 +319,10 @@ export default function PosCheckoutDialog({
 							className="bg-primary/5 border border-primary/20 rounded-xl p-6 text-center flex flex-col gap-2">
 							<span className="text-muted-foreground font-medium">الإجمالي المطلوب</span>
 							<span className="text-4xl font-bold text-primary">
-								{ totalAmount.toLocaleString() } <ErpCurrencyIcon className="w-6 h-6 inline"/>
+								{ totalAmount.toLocaleString(undefined, {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2
+								}) } <ErpCurrencyIcon className="w-6 h-6 inline"/>
 							</span>
 						</div>
 
@@ -324,7 +330,10 @@ export default function PosCheckoutDialog({
 							<div
 								className="flex justify-between items-center p-4 bg-muted/30 rounded-xl border border-border">
 								<span className="text-muted-foreground font-medium">المدفوع</span>
-								<span className="font-bold text-xl">{ totalPaid.toLocaleString() } <ErpCurrencyIcon
+								<span className="font-bold text-xl">{ totalPaid.toLocaleString(undefined, {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2
+								}) } <ErpCurrencyIcon
 									className="w-4 h-4 inline text-muted-foreground"/></span>
 							</div>
 
@@ -332,14 +341,20 @@ export default function PosCheckoutDialog({
 								<div
 									className="flex justify-between items-center p-4 bg-red-50 text-red-600 rounded-xl border border-red-100">
 									<span className="font-bold">المتبقي</span>
-									<span className="font-black text-2xl">{ remaining.toLocaleString() }
+									<span className="font-black text-2xl">{ remaining.toLocaleString(undefined, {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2
+									}) }
 										<ErpCurrencyIcon className="w-5 h-5 inline"/></span>
 								</div>
 							) : (
 								<div
 									className="flex justify-between items-center p-4 bg-green-50 text-green-600 rounded-xl border border-green-100">
 									<span className="font-bold">الباقي للعميل (Change)</span>
-									<span className="font-black text-2xl">{ change.toLocaleString() } <ErpCurrencyIcon
+									<span className="font-black text-2xl">{ change.toLocaleString(undefined, {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2
+									}) } <ErpCurrencyIcon
 										className="w-5 h-5 inline"/></span>
 								</div>
 							) }

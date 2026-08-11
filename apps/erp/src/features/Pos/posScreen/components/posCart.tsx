@@ -57,7 +57,10 @@ export default function PosCart({invoice, onCheckout}: PosCartProps)
 									<span className="text-xs text-muted-foreground">{ item.unitName.value }</span>
 								</div>
 								<span className="font-bold text-primary flex items-center gap-1">
-									{ item.taxInclusiveTotalPrice.value.toLocaleString() } <ErpCurrencyIcon
+									{ item.taxInclusiveTotalPrice.value.toLocaleString(undefined, {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2
+									}) } <ErpCurrencyIcon
 									className="w-3 h-3"/>
 								</span>
 							</div>
@@ -104,15 +107,24 @@ export default function PosCart({invoice, onCheckout}: PosCartProps)
 				<div className="space-y-2 mb-4 text-sm">
 					<div className="flex justify-between text-muted-foreground">
 						<span>المجموع (بدون ضريبة)</span>
-						<span>{ taxExclusive.toLocaleString() } <ErpCurrencyIcon className="w-3 h-3 inline"/></span>
+						<span>{ taxExclusive.toLocaleString(undefined, {
+							minimumFractionDigits: 2,
+							maximumFractionDigits: 2
+						}) } <ErpCurrencyIcon className="w-3 h-3 inline"/></span>
 					</div>
 					<div className="flex justify-between text-muted-foreground">
 						<span>الضريبة</span>
-						<span>{ taxAmount.toLocaleString() } <ErpCurrencyIcon className="w-3 h-3 inline"/></span>
+						<span>{ taxAmount.toLocaleString(undefined, {
+							minimumFractionDigits: 2,
+							maximumFractionDigits: 2
+						}) } <ErpCurrencyIcon className="w-3 h-3 inline"/></span>
 					</div>
 					<div className="flex justify-between font-bold text-lg pt-2 border-t border-border">
 						<span>الإجمالي المطلوب</span>
-						<span className="text-primary">{ taxInclusive.toLocaleString() } <ErpCurrencyIcon
+						<span className="text-primary">{ taxInclusive.toLocaleString(undefined, {
+							minimumFractionDigits: 2,
+							maximumFractionDigits: 2
+						}) } <ErpCurrencyIcon
 							className="w-4 h-4 inline"/></span>
 					</div>
 				</div>
@@ -129,4 +141,3 @@ export default function PosCart({invoice, onCheckout}: PosCartProps)
 		</div>
 	);
 }
-

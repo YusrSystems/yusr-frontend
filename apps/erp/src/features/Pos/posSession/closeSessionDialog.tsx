@@ -86,18 +86,28 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 							<div className="flex flex-col gap-1">
 								<span className="text-xs text-muted-foreground">إجمالي المبيعات</span>
 								<span
-									className="font-semibold text-emerald-600">{ session.totalSales?.toLocaleString() }
+									className="font-semibold text-emerald-600">{ session.totalSales?.toLocaleString(undefined, {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2
+								}) }
 									<ErpCurrencyIcon className="w-3 h-3 inline"/></span>
 							</div>
 							<div className="flex flex-col gap-1">
 								<span className="text-xs text-muted-foreground">إجمالي المرتجعات</span>
 								<span
-									className="font-semibold text-red-600">{ session.totalSalesReturns?.toLocaleString() }
+									className="font-semibold text-red-600">{ session.totalSalesReturns?.toLocaleString(undefined, {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2
+								}) }
 									<ErpCurrencyIcon className="w-3 h-3 inline"/></span>
 							</div>
 							<div className="flex flex-col gap-1">
 								<span className="text-xs text-muted-foreground">صافي المبيعات</span>
-								<span className="font-bold text-primary">{ session.totalNetSales?.toLocaleString() }
+								<span
+									className="font-bold text-primary">{ session.totalNetSales?.toLocaleString(undefined, {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2
+								}) }
 									<ErpCurrencyIcon className="w-3 h-3 inline"/></span>
 							</div>
 						</div>
@@ -107,7 +117,10 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 						<div className="flex flex-col gap-2 p-4 rounded-xl bg-muted/50 border border-border">
 							<span className="text-sm font-medium text-muted-foreground">المبلغ المتوقع في الصندوق</span>
 							<span className="text-2xl font-bold tabular-nums">
-                                { expectedCash.toLocaleString() } <ErpCurrencyIcon
+                                { expectedCash.toLocaleString(undefined, {
+	                                minimumFractionDigits: 2,
+	                                maximumFractionDigits: 2
+                                }) } <ErpCurrencyIcon
 								className="w-5 h-5 inline text-muted-foreground"/>
                             </span>
 						</div>
@@ -142,7 +155,10 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 							difference === 0 ? "text-green-600" :
 								difference > 0 ? "text-blue-600" : "text-red-600"
 						) }>
-                            { difference > 0 ? "+" : "" }{ difference.toLocaleString() } <ErpCurrencyIcon
+                            { difference > 0 ? "+" : "" }{ difference.toLocaleString(undefined, {
+							minimumFractionDigits: 2,
+							maximumFractionDigits: 2
+						}) } <ErpCurrencyIcon
 							className="w-4 h-4 inline"/>
                         </span>
 					</div>
