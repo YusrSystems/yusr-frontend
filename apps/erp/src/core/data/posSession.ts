@@ -1,6 +1,8 @@
 import { Dto } from "yusr-ui";
 import { PosSessionStatus } from "../types/posSessionStatus";
 import { PaymentMethodCategory } from "../types/paymentMethodCategory";
+import { InvoiceType } from "../types/invoiceType";
+import { InvoiceItemDto } from "./invoices/invoiceItem";
 
 
 export interface PosSessionCloseDto
@@ -51,4 +53,26 @@ export class PosSessionDto extends Dto
 	public transactionsCount!: number;
 
 	public paymentSummaries: PosPaymentSummaryDto[] = [];
+}
+
+export class PosPaymentLineDto
+{
+	public paymentMethodId!: number;
+	public amount!: number;
+	public referenceNumber?: string;
+}
+
+export class PosCheckoutDto
+{
+	public posSessionId!: number;
+	public invoiceType!: InvoiceType;
+	public originalInvoiceId?: number;
+	public partnerId!: number;
+	public fullAmount!: number;
+	public settlementAmount!: number;
+	public notes?: string;
+	public idempotencyKey?: string;
+
+	public items: InvoiceItemDto[] = [];
+	public payments: PosPaymentLineDto[] = [];
 }

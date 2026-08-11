@@ -4,6 +4,14 @@ import { EInvoicingEnvironmentType } from "./setting";
 import type { PaymentMethodDto } from "./paymentMethod";
 
 
+export class PosTerminalFavoriteItemDto extends Dto
+{
+	public posTerminalId!: number;
+	public itemId!: number;
+	public itemName!: string;
+	public displayOrder!: number;
+}
+
 export class PosTerminalUserDto extends Dto
 {
 	public posTerminalId!: number;
@@ -25,6 +33,7 @@ export class PosTerminalDto extends Dto
 	public activeSession?: any;
 	public allowedPaymentMethods: PaymentMethodDto[] = [];
 	public posTerminalUsers: PosTerminalUserDto[] = [];
+	public favoriteItems: PosTerminalFavoriteItemDto[] = [];
 }
 
 export class PosTerminal extends ChangeableEntity<PosTerminalDto>
@@ -39,6 +48,7 @@ export class PosTerminal extends ChangeableEntity<PosTerminalDto>
 	public eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType>;
 	public allowedPaymentMethods: Signal<PaymentMethodDto[]>;
 	public posTerminalUsers: Signal<PosTerminalUserDto[]>;
+	public favoriteItems: Signal<PosTerminalFavoriteItemDto[]>;
 
 	constructor(dto?: Partial<PosTerminalDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
@@ -58,5 +68,6 @@ export class PosTerminal extends ChangeableEntity<PosTerminalDto>
 		this.eInvoicingEnvironmentType = this.assign("eInvoicingEnvironmentType", dto?.eInvoicingEnvironmentType ?? EInvoicingEnvironmentType.NotRegistered);
 		this.allowedPaymentMethods = this.assign("allowedPaymentMethods", dto?.allowedPaymentMethods ?? []);
 		this.posTerminalUsers = this.assign("posTerminalUsers", dto?.posTerminalUsers ?? []);
+		this.favoriteItems = this.assign("favoriteItems", dto?.favoriteItems ?? []);
 	}
 }
