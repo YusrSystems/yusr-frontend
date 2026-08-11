@@ -82,7 +82,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 
 			return (
 				<div className="flex-1 overflow-y-auto p-4">
-					<div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+					<div className="grid grid-cols-3 md:grid-cols-4 gap-4">
 						{ items.map(item =>
 						{
 							const isFavorite = favoriteIds.includes(item.id);
