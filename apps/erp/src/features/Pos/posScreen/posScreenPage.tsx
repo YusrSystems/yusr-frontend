@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSignals } from "@preact/signals-react/runtime";
 import { signal } from "@preact/signals-react";
-import { ArrowRight, Loader2, LogOut, ShoppingCart } from "lucide-react";
+import { ArrowRight, Loader2, LogOut, ReceiptText, ShoppingCart } from "lucide-react";
 import { Button, DateService } from "yusr-ui";
 import { Services } from "@/core/services/services";
 import { PosSessionDto } from "@/core/data/posSession";
@@ -16,6 +16,7 @@ import { ItemType } from "@/core/data/item";
 import PosProductGrid from "./components/posProductGrid";
 import PosCart from "./components/posCart";
 import PosCheckoutDialog from "./components/posCheckoutDialog";
+import PosRecentInvoicesDialog from "./components/posRecentInvoicesDialog";
 
 
 export default function PosScreenPage()
@@ -28,6 +29,7 @@ export default function PosScreenPage()
 	const activeTerminal = useMemo(() => signal<PosTerminalDto | null>(null), []);
 	const isCloseDialogOpen = useMemo(() => signal(false), []);
 	const isCheckoutDialogOpen = useMemo(() => signal(false), []);
+	const isRecentInvoicesDialogOpen = useMemo(() => signal(false), []);
 
 	// We use the Invoice class to handle all cart math automatically
 	const cartInvoice = useMemo(() => signal<Invoice | null>(null), []);
@@ -130,6 +132,15 @@ export default function PosScreenPage()
 
 				<div className="flex items-center gap-3">
 					<Button
+						variant="outline"
+						className="gap-2 h-9"
+						onClick={ () => isRecentInvoicesDialogOpen.value = true }
+					>
+						<ReceiptText className="w-4 h-4 text-primary"/>
+						الفواتير الأخيرة
+					</Button>
+
+					<Button
 						variant="destructive"
 						className="gap-2 h-9"
 						onClick={ () => isCloseDialogOpen.value = true }
@@ -184,6 +195,15 @@ export default function PosScreenPage()
 						initNewCart(activeTerminal.value!);
 						isCheckoutDialogOpen.value = false;
 					} }
+				/>
+			) }
+
+			{ isRecentInvoicesDialogOpen.value && (
+				<PosRecentInvoicesDialog
+					open={ isRecentInvoicesDialogOpen.value }
+					onOpenChange={ (open) => isRecentInvoicesDialogOpen.value = open }
+					terminal={ activeTerminal.value }
+					session={ activeSession.value }
 				/>
 			) }
 		</div>

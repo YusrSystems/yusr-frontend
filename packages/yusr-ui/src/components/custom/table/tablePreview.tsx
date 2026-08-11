@@ -5,7 +5,7 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 
 
 export type TablePreviewProps = PropsWithChildren & {
-	title: string;
+	title?: string;
 	description?: string;
 	className?: string;
 };
@@ -66,10 +66,10 @@ TablePreview.Error = function ({...props}: Omit<TablePreviewProps, "title" | "ch
 	);
 };
 
-TablePreview.Empty = function ({...props}: Omit<TablePreviewProps, "title" | "children" | "description">)
+TablePreview.Empty = function ({title, ...props}: Omit<TablePreviewProps, "children" | "description">)
 {
 	const {t} = useTranslation("common");
-	return <TablePreview title={ t("crudEmptyTable.emptyTitle") }
+	return <TablePreview title={ title ?? t("crudEmptyTable.emptyTitle") }
 	                     description={ t("crudEmptyTable.emptyDescription") } { ...props }/>;
 };
 
