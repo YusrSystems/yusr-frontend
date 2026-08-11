@@ -1,7 +1,17 @@
 import { useSignals } from "@preact/signals-react/runtime";
 import { signal } from "@preact/signals-react";
 import { useEffect, useMemo } from "react";
-import { Button, cn, Dialog, DialogContent, DialogHeader, DialogTitle, TextAreaField } from "yusr-ui";
+import {
+	Button,
+	cn,
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	NumberInput,
+	SelectInput,
+	TextAreaField
+} from "yusr-ui";
 import Invoice from "@/core/data/invoices/invoice";
 import { PosTerminalDto } from "@/core/data/posTerminal";
 import { PosCheckoutDto, PosPaymentLineDto, PosSessionDto } from "@/core/data/posSession";
@@ -249,15 +259,16 @@ export default function PosCheckoutDialog({
 												className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary shrink-0">
 												{ getPaymentIcon(method?.category || 0) }
 											</div>
-											<select
-												className="flex-1 h-10 rounded-md border border-input bg-background px-3 text-sm font-medium focus:ring-2 focus:ring-primary/50 outline-none transition-all"
-												value={ payment.paymentMethodId }
-												onChange={ (e) => handleUpdatePayment(index, "paymentMethodId", Number(e.target.value)) }
-											>
-												{ terminal.allowedPaymentMethods?.map(pm => (
-													<option key={ pm.id } value={ pm.id }>{ pm.name }</option>
-												)) }
-											</select>
+											<div className="flex-1">
+												<SelectInput<number>
+													value={ signal(payment.paymentMethodId) }
+													onValueChange={ (val) => handleUpdatePayment(index, "paymentMethodId", val) }
+													options={ terminal.allowedPaymentMethods?.map(pm => ({
+														label: pm.name,
+														value: pm.id
+													})) || [] }
+												/>
+											</div>
 											<Button
 												variant="ghost"
 												size="icon"
@@ -269,21 +280,15 @@ export default function PosCheckoutDialog({
 										</div>
 
 										<div className="flex items-center gap-2">
-											<div className="relative flex-1">
-												<input
-													type="number"
-													min="0"
-													step="0.01"
-													className="w-full h-12 rounded-lg border-2 border-input bg-muted/20 px-4 text-lg font-bold text-left focus:outline-none focus:border-primary focus:bg-background transition-colors"
-													value={ payment.amount === 0 ? "" : payment.amount }
-													onChange={ (e) => handleUpdatePayment(index, "amount", parseFloat(e.target.value) || 0) }
-													onFocus={ (e) => e.target.select() }
+											<div className="flex-1">
+												<NumberInput
+													min={ 0 }
+													value={ signal(payment.amount === 0 ? undefined : payment.amount) }
+													onChange={ (val) => handleUpdatePayment(index, "amount", val || 0) }
+													className="h-12 text-lg font-bold text-left bg-muted/20 focus:bg-background transition-colors"
+													currency={ <ErpCurrencyIcon className="w-4 h-4"/> }
 													placeholder="0.00"
 												/>
-												<div
-													className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
-													<ErpCurrencyIcon className="w-4 h-4"/>
-												</div>
 											</div>
 											{ remaining > 0 && (
 												<Button

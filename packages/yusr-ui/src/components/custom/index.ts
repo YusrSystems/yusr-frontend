@@ -52,6 +52,7 @@ export * from "./inputs/searchInput";
 export * from "./inputs/selectInput";
 export * from "./inputs/dateInput.tsx";
 export * from "./inputs/multiSelectInput.tsx";
+export * from "./inputs/numberInput";
 
 // locale
 export * from "./locale/languageToggle";

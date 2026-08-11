@@ -1,12 +1,15 @@
 import { useSignals } from "@preact/signals-react/runtime";
 import Invoice from "@/core/data/invoices/invoice";
-import { Button } from "yusr-ui";
-// Need to import ShoppingCart for the empty state
+import { Button, NumberInput } from "yusr-ui";
 import { Minus, Plus, ShoppingCart, Trash2, User } from "lucide-react";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath";
 import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect";
 import { PartnerType } from "@/core/data/partner";
+import { Services } from "@/core/services/services";
+import { useEffect, useMemo } from "react";
+import { signal } from "@preact/signals-react";
+import { useTranslation } from "react-i18next";
 
 
 interface PosCartProps
@@ -18,12 +21,56 @@ interface PosCartProps
 export default function PosCart({invoice, onCheckout}: PosCartProps)
 {
 	useSignals();
+	const {i18n} = useTranslation();
 
 	const items = invoice.invoiceItems.value;
 
-	const taxExclusive = InvoiceItemsMath.CalcInvoiceTaxExclusivePrice(items);
-	const taxInclusive = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(items);
-	const taxAmount = taxInclusive - taxExclusive;
+	// basePrice = tax-inclusive total BEFORE settlement. We still need this
+	// as a cap so a discount can never exceed the order's original total.
+	const basePrice = InvoiceItemsMath.CalcInvoiceBaseTaxInclusivePrice(items);
+
+	// finalTotal = the tax-inclusive total AFTER settlement (discount/addition)
+	// is applied. This is our "source of truth" number.
+	const finalTotal = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(items);
+
+	const mainTaxPerc = Services.auth.setting?.mainTax?.value?.percentage || 15;
+
+	// Instead of computing the pre-tax total and tax amount from the raw
+	// items (which ignores settlement), we derive them FROM finalTotal.
+	// Formula: if finalTotal already includes tax, then
+	//   preTaxTotal = finalTotal / (1 + taxRate/100)
+	//   taxAmount   = finalTotal - preTaxTotal
+	// This way, whenever the settlement changes finalTotal, these two
+	// values automatically recalculate and stay in sync.
+	const baseTaxExclusive = finalTotal / (1 + mainTaxPerc / 100);
+	const baseTaxAmount = finalTotal - baseTaxExclusive;
+
+	const isAddition = useMemo(() => signal(false), []);
+	const displaySettlement = useMemo(() => signal<number | undefined>(0), []);
+
+	useEffect(() =>
+	{
+		const currentSettlement = invoice.settlementAmount.value || 0;
+		displaySettlement.value = Math.abs(currentSettlement);
+		if (currentSettlement !== 0)
+		{
+			isAddition.value = currentSettlement > 0;
+		}
+	}, [invoice.settlementAmount.value]);
+
+	const onSettlementInput = (val: number | undefined) =>
+	{
+		const absVal = Math.abs(val || 0);
+		displaySettlement.value = absVal;
+		invoice.changeSettlementAmount(isAddition.value ? absVal : -absVal);
+	};
+
+	const onSwitchToggle = (checked: boolean) =>
+	{
+		isAddition.value = checked;
+		const absVal = displaySettlement.value || 0;
+		invoice.changeSettlementAmount(checked ? absVal : -absVal);
+	};
 
 	return (
 		<div className="flex flex-col h-full">
@@ -104,24 +151,60 @@ export default function PosCart({invoice, onCheckout}: PosCartProps)
 
 			{/* Totals & Checkout */ }
 			<div className="p-4 bg-muted/20 border-t border-border shrink-0">
-				<div className="space-y-2 mb-4 text-sm">
-					<div className="flex justify-between text-muted-foreground">
+				<div className="space-y-3 mb-4 text-sm">
+					<div className="flex justify-between items-center text-muted-foreground">
 						<span>المجموع (بدون ضريبة)</span>
-						<span>{ taxExclusive.toLocaleString(undefined, {
+						<span>{ baseTaxExclusive.toLocaleString(undefined, {
 							minimumFractionDigits: 2,
 							maximumFractionDigits: 2
 						}) } <ErpCurrencyIcon className="w-3 h-3 inline"/></span>
 					</div>
-					<div className="flex justify-between text-muted-foreground">
-						<span>الضريبة</span>
-						<span>{ taxAmount.toLocaleString(undefined, {
+
+					<div className="flex justify-between items-center text-muted-foreground">
+						<span>الضريبة ({ mainTaxPerc }%)</span>
+						<span>{ baseTaxAmount.toLocaleString(undefined, {
 							minimumFractionDigits: 2,
 							maximumFractionDigits: 2
 						}) } <ErpCurrencyIcon className="w-3 h-3 inline"/></span>
 					</div>
-					<div className="flex justify-between font-bold text-lg pt-2 border-t border-border">
+					<div className="flex justify-between items-center text-muted-foreground">
+						<div className="flex items-center gap-2">
+							<span>التسوية بعد الضريبة</span>
+							<div className="flex items-center gap-1">
+								<Button
+									type="button"
+									size="sm"
+									variant={ isAddition.value ? "default" : "outline" }
+									className="h-7 px-2 text-xs"
+									onClick={ () => onSwitchToggle(true) }
+								>
+									إضافة
+								</Button>
+								<Button
+									type="button"
+									size="sm"
+									variant={ !isAddition.value ? "default" : "outline" }
+									className="h-7 px-2 text-xs"
+									onClick={ () => onSwitchToggle(false) }
+								>
+									خصم
+								</Button>
+							</div>
+						</div>
+						<div className="w-28">
+							<NumberInput
+								value={ displaySettlement }
+								onChange={ onSettlementInput }
+								min={ 0 }
+								max={ isAddition.value ? undefined : basePrice }
+								disabled={ items.length === 0 }
+								className="h-8 text-sm"
+							/>
+						</div>
+					</div>
+					<div className="flex justify-between items-center font-bold text-lg pt-2 border-t border-border">
 						<span>الإجمالي المطلوب</span>
-						<span className="text-primary">{ taxInclusive.toLocaleString(undefined, {
+						<span className="text-primary">{ finalTotal.toLocaleString(undefined, {
 							minimumFractionDigits: 2,
 							maximumFractionDigits: 2
 						}) } <ErpCurrencyIcon
