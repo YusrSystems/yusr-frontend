@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { getDocumentRoute, getDocumentTypeName } from "@/core/types/documentType.ts";
 
 
-const linkClassName = "p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!";
+const linkClassName = "text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!";
 
 export function ItemsMovementReportTable()
 {
