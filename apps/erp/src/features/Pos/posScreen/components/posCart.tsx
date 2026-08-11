@@ -1,6 +1,7 @@
+// full code
 import { useSignals } from "@preact/signals-react/runtime";
 import Invoice from "@/core/data/invoices/invoice";
-import { Button, NumberInput } from "yusr-ui";
+import { Button, NumberInput, SelectInput } from "yusr-ui";
 import { Minus, Plus, ShoppingCart, Trash2, User } from "lucide-react";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath";
@@ -9,7 +10,7 @@ import { PartnerType } from "@/core/data/partner";
 import { Services } from "@/core/services/services";
 import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
-import { useTranslation } from "react-i18next";
+import { ItemType } from "@/core/data/item";
 
 
 interface PosCartProps
@@ -21,7 +22,6 @@ interface PosCartProps
 export default function PosCart({invoice, onCheckout}: PosCartProps)
 {
 	useSignals();
-	const {i18n} = useTranslation();
 
 	const items = invoice.invoiceItems.value;
 
@@ -33,7 +33,8 @@ export default function PosCart({invoice, onCheckout}: PosCartProps)
 	// is applied. This is our "source of truth" number.
 	const finalTotal = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(items);
 
-	const mainTaxPerc = Services.auth.setting?.mainTax?.value?.percentage || 15;
+	// Wrapped in Number() to ensure it's treated as a number for arithmetic operations
+	const mainTaxPerc = Number(Services.auth.setting?.mainTax?.value?.percentage) || 15;
 
 	// Instead of computing the pre-tax total and tax amount from the raw
 	// items (which ignores settlement), we derive them FROM finalTotal.
@@ -56,7 +57,7 @@ export default function PosCart({invoice, onCheckout}: PosCartProps)
 		{
 			isAddition.value = currentSettlement > 0;
 		}
-	}, [invoice.settlementAmount.value]);
+	}, [invoice.settlementAmount.value, displaySettlement, isAddition]);
 
 	const onSettlementInput = (val: number | undefined) =>
 	{
@@ -99,46 +100,93 @@ export default function PosCart({invoice, onCheckout}: PosCartProps)
 						<div key={ `${ item.itemId.value }-${ index }` }
 						     className="flex flex-col p-3 bg-background border border-border rounded-lg shadow-sm">
 							<div className="flex justify-between items-start mb-2">
-								<div className="flex flex-col">
-									<span className="font-semibold text-sm">{ item.itemName.value }</span>
-									<span className="text-xs text-muted-foreground">{ item.unitName.value }</span>
+								<div className="flex flex-col pr-2">
+									<span className="font-semibold text-sm leading-tight">{ item.itemName.value }</span>
 								</div>
-								<span className="font-bold text-primary flex items-center gap-1">
+								<span className="font-bold text-primary flex items-center gap-1 shrink-0">
 									{ item.taxInclusiveTotalPrice.value.toLocaleString(undefined, {
 										minimumFractionDigits: 2,
 										maximumFractionDigits: 2
-									}) } <ErpCurrencyIcon
-									className="w-3 h-3"/>
+									}) } <ErpCurrencyIcon className="w-3 h-3"/>
 								</span>
 							</div>
 
-							<div className="flex items-center justify-between mt-2">
-								<div className="flex items-center bg-muted rounded-md border border-border">
-									<button
-										className="w-8 h-8 flex items-center justify-center hover:bg-background rounded-r-md transition-colors"
-										onClick={ () => item.changeQuantity(item.quantity.value + 1) }
-									>
-										<Plus className="w-4 h-4"/>
-									</button>
-									<div className="w-10 text-center font-semibold text-sm">
-										{ item.quantity.value }
-									</div>
-									<button
-										className="w-8 h-8 flex items-center justify-center hover:bg-background rounded-l-md transition-colors"
-										onClick={ () =>
-										{
-											if (item.quantity.value > 1)
+							{/* Combined Controls Row (Quantity, Unit, Pricing Method, Trash) */ }
+							<div className="flex items-end gap-2 mt-auto pt-1">
+
+								{/* Quantity Controls */ }
+								<div className="flex flex-col gap-1 shrink-0">
+									<span className="text-[10px] text-muted-foreground font-medium px-1">الكمية</span>
+									<div className="flex items-center bg-muted rounded-md border border-border h-9">
+										<button
+											className="w-7 h-full flex items-center justify-center hover:bg-background rounded-r-md transition-colors"
+											onClick={ () => item.changeQuantity(Number(item.quantity.value) + 1) }
+										>
+											<Plus className="w-3 h-3"/>
+										</button>
+										<div className="w-8 text-center font-semibold text-sm">
+											{ item.quantity.value }
+										</div>
+										<button
+											className="w-7 h-full flex items-center justify-center hover:bg-background rounded-l-md transition-colors"
+											onClick={ () =>
 											{
-												item.changeQuantity(item.quantity.value - 1);
-											}
-										} }
-									>
-										<Minus className="w-4 h-4"/>
-									</button>
+												if (item.quantity.value > 1)
+												{
+													item.changeQuantity(Number(item.quantity.value) - 1);
+												}
+											} }
+										>
+											<Minus className="w-3 h-3"/>
+										</button>
+									</div>
 								</div>
 
+								{/* Unit Selector */ }
+								<div className="flex-1 min-w-0 flex flex-col gap-1">
+									<span className="text-[10px] text-muted-foreground font-medium px-1">الوحدة</span>
+									<SelectInput<number>
+										value={ item.itemUoMId }
+										disabled={ item.itemType.value === ItemType.Service }
+										options={ item.uoMDtos.value?.map((m) => ({
+											label: m.unitName.value,
+											value: m.id.value
+										})) || [] }
+										onValueChange={ (uomId) =>
+										{
+											if (uomId)
+											{
+												item.changeUoM(uomId);
+											}
+										} }
+									/>
+								</div>
+
+								{/* Pricing Method Selector */ }
+								<div className="flex-1 min-w-0 flex flex-col gap-1">
+									<span className="text-[10px] text-muted-foreground font-medium px-1 truncate">طريقة التسعير</span>
+									<SelectInput<number>
+										value={ item.pricingMethodId }
+										disabled={ item.itemType.value === ItemType.Service }
+										options={ item.uoMDtos.value?.find(u => u.id.value === item.itemUoMId.value)?.prices.value?.map((p) => ({
+											label: p.pricingMethodName.value,
+											value: p.pricingMethodId.value
+										})) || [] }
+										onValueChange={ (pmId) =>
+										{
+											if (pmId)
+											{
+												const uom = item.uoMDtos.value?.find(u => u.id.value === item.itemUoMId.value);
+												const pmName = uom?.prices.value?.find(p => p.pricingMethodId.value === pmId)?.pricingMethodName.value;
+												item.changePricingMethod(pmId, pmName);
+											}
+										} }
+									/>
+								</div>
+
+								{/* Delete Button */ }
 								<button
-									className="p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors"
+									className="p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors shrink-0 h-9 flex items-center justify-center"
 									onClick={ () => invoice.removeItem(index) }
 								>
 									<Trash2 className="w-4 h-4"/>
