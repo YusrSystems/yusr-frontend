@@ -1,6 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, Filter } from "lucide-react";
-import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger, DateField, FormField } from "yusr-ui";
+import {
+	Button,
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+	DateField,
+	DateService,
+	FormField
+} from "yusr-ui";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
@@ -20,7 +28,7 @@ export function StockValuationReportFields({onSubmit, isLoading = false}: StockV
 {
 	useSignals();
 
-	const asOfDate = useMemo(() => signal<string | undefined>(new Date().toISOString()), []);
+	const asOfDate = useMemo(() => signal<string>(DateService.formatDateOnly(new Date())), []);
 	const storeId = useMemo(() => signal<number | undefined>(undefined), []);
 	const categoryId = useMemo(() => signal<number | undefined>(undefined), []);
 	const categoryName = useMemo(() => signal<string | undefined>(undefined), []);
@@ -37,7 +45,7 @@ export function StockValuationReportFields({onSubmit, isLoading = false}: StockV
 
 	const handleClear = () =>
 	{
-		asOfDate.value = new Date().toISOString();
+		asOfDate.value = DateService.formatDateOnly(new Date());
 		storeId.value = undefined;
 		categoryId.value = undefined;
 		categoryName.value = undefined;
