@@ -1,4 +1,3 @@
-// full code
 import { useSignals } from "@preact/signals-react/runtime";
 import Invoice from "@/core/data/invoices/invoice";
 import { Button, NumberInput, SelectInput } from "yusr-ui";

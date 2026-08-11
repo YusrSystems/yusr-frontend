@@ -3,8 +3,8 @@ import { PosTerminalDto } from "@/core/data/posTerminal";
 import { Cubits } from "@/core/services/cubits";
 import { ItemDto } from "@/core/data/item";
 import { Button, PageLoaded, PageLoading } from "yusr-ui";
-import { Loader2, ScanBarcode, Search, Star } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { Loader2, Package, ScanBarcode, Search, Star } from "lucide-react";
+import React, { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath";
@@ -81,13 +81,18 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 			});
 
 			return (
-				<div className="flex-1 overflow-y-auto p-4">
-					<div className="grid grid-cols-3 md:grid-cols-4 gap-4">
+				<div className="flex-1 overflow-y-auto p-3">
+					<div
+						className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
 						{ items.map(item =>
 						{
 							const isFavorite = favoriteIds.includes(item.id);
 							const defaultUom = item.uoMs?.[0];
 							const basePrice = defaultUom?.prices?.[0]?.price ?? 0;
+
+							// Safely get and format quantity
+							const quantity = item.storeQuantity ?? 0;
+							const formattedQty = Number.isInteger(quantity) ? quantity : quantity.toFixed(2);
 
 							// Calculate the price after tax
 							const {taxInclusivePrice} = InvoiceItemsMath.GetPrices(
@@ -102,55 +107,54 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 								<div
 									key={ item.id }
 									onClick={ () => onAddItem(item) }
-									className="group relative flex flex-col bg-card border border-border rounded-2xl overflow-hidden cursor-pointer hover:border-primary/40 hover:shadow-lg transition-all duration-200 active:scale-[0.97] select-none h-full"
+									className="group relative flex flex-col bg-card border border-border rounded-xl overflow-hidden cursor-pointer hover:border-primary/40 hover:shadow-lg transition-all duration-200 active:scale-[0.97] select-none h-full"
 								>
 									{ isFavorite && (
 										<div
-											className="absolute top-2 right-2 z-10 bg-background/90 backdrop-blur-md p-1.5 rounded-full shadow-sm border border-border/50">
+											className="absolute top-1.5 right-1.5 z-10 bg-background/90 backdrop-blur-md p-1 rounded-full shadow-sm border border-border/50">
 											<Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500"/>
 										</div>
 									) }
 
 									<div
-										className="h-28 bg-muted/50 flex items-center justify-center overflow-hidden relative">
+										className="w-full aspect-4/3 bg-white flex items-center justify-center overflow-hidden relative border-b border-border/40 p-2">
 										{ imageUrl ? (
-											<>
-												<img src={ imageUrl } alt={ item.name }
-												     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"/>
-												<div
-													className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"/>
-											</>
+											<img
+												src={ imageUrl }
+												alt={ item.name }
+												className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+											/>
 										) : (
 											<span
-												className="text-muted-foreground/50 text-xs font-medium">لا توجد صورة</span>
+												className="text-muted-foreground/50 text-[10px] font-medium">لا توجد صورة</span>
 										) }
 									</div>
 
-									<div className="p-3.5 flex flex-col flex-1 gap-2.5">
-										<div className="flex flex-col gap-1">
+									<div className="p-2.5 flex flex-col flex-1 gap-2">
+										<div className="flex flex-col gap-0.5">
 											{ item.brandName && (
 												<span
-													className="text-[10px] font-bold text-primary/70 uppercase tracking-wider line-clamp-1">
+													className="text-[9px] font-bold text-primary/70 uppercase tracking-wider line-clamp-1">
 													{ item.brandName }
 												</span>
 											) }
 											<span
-												className="font-bold text-sm line-clamp-2 leading-snug text-foreground group-hover:text-primary transition-colors">
+												className="font-bold text-[13px] line-clamp-2 leading-tight text-foreground group-hover:text-primary transition-colors">
 												{ item.name }
 											</span>
 										</div>
 
 										{ item.itemCategories && item.itemCategories.length > 0 && (
-											<div className="flex flex-wrap gap-1.5 mt-0.5">
+											<div className="flex flex-wrap gap-1 mt-0.5">
 												{ item.itemCategories.slice(0, 2).map(c => (
 													<span key={ c.categoryId }
-													      className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-medium bg-secondary text-secondary-foreground border border-border/50">
+													      className="inline-flex items-center px-1.5 py-px rounded-md text-[9px] font-medium bg-secondary text-secondary-foreground border border-border/50">
 														{ c.categoryName }
 													</span>
 												)) }
 												{ item.itemCategories.length > 2 && (
 													<span
-														className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-medium bg-muted text-muted-foreground border border-border/50">
+														className="inline-flex items-center px-1.5 py-px rounded-md text-[9px] font-medium bg-muted text-muted-foreground border border-border/50">
 														+{ item.itemCategories.length - 2 }
 													</span>
 												) }
@@ -158,18 +162,29 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 										) }
 
 										<div
-											className="mt-auto pt-3 flex items-end justify-between border-t border-border/40">
+											className="mt-auto pt-2 flex items-end justify-between border-t border-border/40">
+											{/* Unit and Quantity display */ }
+											<div
+												className="flex items-center gap-1.5 bg-muted/50 px-1.5 py-0.5 rounded-md border border-border/50">
+												<span className="text-[10px] font-medium text-muted-foreground">
+													{ defaultUom?.unitName }
+												</span>
+												<span className="w-0.75 h-0.75 rounded-full bg-muted-foreground/40"/>
+												<div className="flex items-center gap-0.5 text-primary/80">
+													<Package className="w-3 h-3"/>
+													<span className="text-[11px] font-bold" dir="ltr">
+														{ formattedQty }
+													</span>
+												</div>
+											</div>
 											<span
-												className="text-[11px] font-medium text-muted-foreground bg-muted/50 px-2 py-1 rounded-md border border-border/50">
-												{ defaultUom?.unitName }
-											</span>
-											<span className="font-black text-primary flex items-center gap-1 text-base">
+												className="font-black text-primary flex items-center gap-0.5 text-[15px]">
 												{ taxInclusivePrice.toLocaleString(undefined, {
 													minimumFractionDigits: 2,
 													maximumFractionDigits: 2
 												}) }
 												<ErpCurrencyIcon
-													className="w-3.5 h-3.5 text-muted-foreground/70 mb-0.5"/>
+													className="w-3 h-3 text-muted-foreground/70 mb-0.5"/>
 											</span>
 										</div>
 									</div>
@@ -187,20 +202,20 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 	return (
 		<div className="flex flex-col h-full bg-muted/10">
 			<div className="flex flex-col bg-card border-b border-border shrink-0">
-				<div className="p-4 flex gap-4">
+				<div className="p-3 flex gap-3">
 					<div className="relative flex-1">
-						<Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground"/>
+						<Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"/>
 						<input
 							type="text"
 							placeholder="البحث عن منتج..."
 							value={ searchQuery.value }
 							onChange={ (e) => searchQuery.value = e.target.value }
-							className="w-full h-12 pl-4 pr-10 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+							className="w-full h-11 pl-4 pr-9 text-sm rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
 						/>
 					</div>
 					<div className="relative w-64">
 						<ScanBarcode
-							className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground"/>
+							className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"/>
 						<input
 							type="text"
 							placeholder="قراءة الباركود..."
@@ -208,7 +223,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 							onChange={ (e) => barcodeQuery.value = e.target.value }
 							onKeyDown={ handleBarcodeSubmit }
 							disabled={ isBarcodeLoading.value }
-							className="w-full h-12 pl-4 pr-10 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+							className="w-full h-11 pl-4 pr-9 text-sm rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
 						/>
 						{ isBarcodeLoading.value && (
 							<Loader2
@@ -216,11 +231,11 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 						) }
 					</div>
 				</div>
-				<div className="px-4 pb-3 flex gap-2 overflow-x-auto scrollbar-hide">
+				<div className="px-3 pb-3 flex gap-2 overflow-x-auto scrollbar-hide">
 					<Button
 						variant={ selectedCategoryId.value === undefined ? "default" : "outline" }
 						size="sm"
-						className="rounded-full whitespace-nowrap"
+						className="rounded-full whitespace-nowrap h-8 text-xs"
 						onClick={ () => selectedCategoryId.value = undefined }
 					>
 						الكل
@@ -230,7 +245,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 							key={ cat.id }
 							variant={ selectedCategoryId.value === cat.id ? "default" : "outline" }
 							size="sm"
-							className="rounded-full whitespace-nowrap"
+							className="rounded-full whitespace-nowrap h-8 text-xs"
 							onClick={ () => selectedCategoryId.value = cat.id }
 						>
 							{ cat.name }
