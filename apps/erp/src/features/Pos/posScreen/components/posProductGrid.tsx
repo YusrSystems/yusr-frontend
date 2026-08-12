@@ -10,6 +10,7 @@ import {
 	FilterOperator,
 	PageLoaded,
 	PageLoading,
+	ResultStatus,
 	SearchInput
 } from "yusr-ui";
 import { Loader2, Package, ScanBarcode, Star } from "lucide-react";
@@ -17,6 +18,8 @@ import React, { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath";
+import { Services } from "@/core/services/services";
+import { toast } from "sonner";
 
 
 interface PosProductGridProps
@@ -32,7 +35,20 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 	const searchQuery = useMemo(() => signal(""), []);
 	const barcodeQuery = useMemo(() => signal(""), []);
 	const isBarcodeLoading = useMemo(() => signal(false), []);
-	const selectedCategoryId = useMemo(() => signal<number | undefined>(undefined), []);
+
+	// Track active filter: "all", "favorites", or category ID
+	const activeFilter = useMemo(() => signal<"all" | "favorites" | number>("all"), []);
+
+	// Local reactive mirror of terminal.favoriteItems. `terminal` is a plain prop object,
+	// so mutating `terminal.favoriteItems` directly does NOT trigger a re-render under
+	// @preact/signals-react — only writes to a signal's `.value` do. Reads/writes go
+	// through this signal instead, and we sync it if the parent ever passes a new terminal.
+	const favoriteItems = useMemo(() => signal(terminal.favoriteItems ?? []), []);
+
+	useEffect(() =>
+	{
+		favoriteItems.value = terminal.favoriteItems ?? [];
+	}, [terminal.favoriteItems]);
 
 	useEffect(() =>
 	{
@@ -49,15 +65,29 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 		};
 
 		const groups: FilterGroupDto[] = [];
-		if (selectedCategoryId.value)
+
+		if (activeFilter.value === "favorites")
 		{
+			groups.push({
+				id: 0,
+				rules: [{
+					id: 0,
+					field: "PosTerminalFavoriteItems",
+					operator: FilterOperator.Equal,
+					value: terminal.id
+				}]
+			});
+		}
+		else if (typeof activeFilter.value === "number")
+		{
+			// Category filter
 			groups.push({
 				id: 0,
 				rules: [{
 					id: 0,
 					field: "ItemCategories",
 					operator: FilterOperator.Includes,
-					value: [selectedCategoryId.value]
+					value: [activeFilter.value]
 				}]
 			});
 		}
@@ -76,7 +106,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 	{
 		Cubits.items.currentPage.value = 1;
 		fetchItems();
-	}, [selectedCategoryId.value]);
+	}, [activeFilter.value]);
 
 	const handleSearchChange = (value: string | undefined) =>
 	{
@@ -100,6 +130,87 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 		}
 	};
 
+	const toggleFavorite = async (e: React.MouseEvent, item: ItemDto) =>
+	{
+		e.stopPropagation(); // Prevent triggering onAddItem
+
+		const isFav = favoriteItems.value.some(f => f.itemId === item.id);
+
+		// Helper function for the API call to use inside toast.promise
+		const processToggle = async () =>
+		{
+			if (isFav)
+			{
+				// Background API call
+				const res = await Services.posTerminalsApi.RemoveFavorite(terminal.id, item.id);
+				if (res.status !== ResultStatus.Ok)
+				{
+					// Rollback on failure
+					favoriteItems.value = [...favoriteItems.value, {
+						itemId: item.id,
+						posTerminalId: terminal.id,
+						itemName: item.name,
+						displayOrder: 0,
+						id: 0
+					}];
+					terminal.favoriteItems = favoriteItems.value;
+					throw new Error("فشل في إزالة المادة من المفضلة");
+				}
+
+				// Refresh grid if on favorites tab
+				if (activeFilter.value === "favorites")
+				{
+					fetchItems();
+				}
+			}
+			else
+			{
+				const currentMaxOrder = favoriteItems.value.length > 0
+					? Math.max(...favoriteItems.value.map(f => f.displayOrder))
+					: 0;
+
+				// Background API call
+				const res = await Services.posTerminalsApi.AddFavorite(terminal.id, item.id, currentMaxOrder + 1);
+				if (res.status !== ResultStatus.Ok)
+				{
+					// Rollback on failure
+					favoriteItems.value = favoriteItems.value.filter(f => f.itemId !== item.id);
+					terminal.favoriteItems = favoriteItems.value;
+					throw new Error("فشل في إضافة المادة للمفضلة");
+				}
+			}
+		};
+
+		// 1. Optimistic UI Update instantly
+		if (isFav)
+		{
+			favoriteItems.value = favoriteItems.value.filter(f => f.itemId !== item.id);
+		}
+		else
+		{
+			const currentMaxOrder = favoriteItems.value.length > 0
+				? Math.max(...favoriteItems.value.map(f => f.displayOrder))
+				: 0;
+			favoriteItems.value = [...favoriteItems.value, {
+				itemId: item.id,
+				posTerminalId: terminal.id,
+				itemName: item.name,
+				displayOrder: currentMaxOrder + 1,
+				id: 0
+			}];
+		}
+
+		// Keep the terminal object itself in sync too, in case other code reads it directly
+		terminal.favoriteItems = favoriteItems.value;
+
+		// 2. Trigger Toast Promise
+		toast.promise(processToggle(), {
+			loading: "جاري التحديث...",
+			success: () => isFav ? "تمت إزالة المادة من المفضلة" : "تمت إضافة المادة للمفضلة",
+			error: (err) => err.message || "حدث خطأ في الاتصال بالخادم"
+		});
+	};
+
 	const renderContent = () =>
 	{
 		if (Cubits.items.state.value instanceof PageLoading)
@@ -114,15 +225,40 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 		if (Cubits.items.state.value instanceof PageLoaded)
 		{
 			const items = [...Cubits.items.entities.value];
+			const favoriteIds = favoriteItems.value.map(f => f.itemId);
+			const favoriteOrderMap = new Map(favoriteItems.value.map(f => [f.itemId, f.displayOrder]));
 
-			// Sort favorites first (client-side sort on current page results)
-			const favoriteIds = terminal.favoriteItems.map(f => f.itemId);
-			items.sort((a, b) =>
+			if (activeFilter.value === "favorites")
 			{
-				const aFav = favoriteIds.includes(a.id) ? 1 : 0;
-				const bFav = favoriteIds.includes(b.id) ? 1 : 0;
-				return bFav - aFav;
-			});
+				// Favorites tab: sort strictly by the manager-defined displayOrder
+				items.sort((a, b) => (favoriteOrderMap.get(a.id) ?? 0) - (favoriteOrderMap.get(b.id) ?? 0));
+			}
+			else
+			{
+				// Other tabs: favorites first (ordered by displayOrder), non-favorites keep
+				// their existing (backend) order relative to each other
+				items.sort((a, b) =>
+				{
+					const aOrder = favoriteOrderMap.get(a.id);
+					const bOrder = favoriteOrderMap.get(b.id);
+
+					if (aOrder !== undefined && bOrder !== undefined) return aOrder - bOrder;
+					if (aOrder !== undefined) return -1;
+					if (bOrder !== undefined) return 1;
+					return 0;
+				});
+			}
+
+			if (items.length === 0)
+			{
+				return (
+					<div
+						className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-6 text-center">
+						<Package className="w-12 h-12 mb-3 opacity-20"/>
+						<p>{ activeFilter.value === "favorites" ? "لا توجد عناصر في المفضلة" : "لا توجد منتجات تطابق بحثك" }</p>
+					</div>
+				);
+			}
 
 			return (
 				<div className="flex-1 flex flex-col min-h-0">
@@ -154,12 +290,14 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 										onClick={ () => onAddItem(item) }
 										className="group relative flex flex-col bg-card border border-border rounded-xl overflow-hidden cursor-pointer hover:border-primary/40 hover:shadow-lg transition-all duration-200 active:scale-[0.97] select-none h-full"
 									>
-										{ isFavorite && (
-											<div
-												className="absolute top-1.5 right-1.5 z-10 bg-background/90 backdrop-blur-md p-1 rounded-full shadow-sm border border-border/50">
-												<Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500"/>
-											</div>
-										) }
+										{/* Favorite Toggle Button */ }
+										<button
+											onClick={ (e) => toggleFavorite(e, item) }
+											className="absolute top-1.5 right-1.5 z-10 bg-background/90 backdrop-blur-md p-1.5 rounded-full shadow-sm border border-border/50 hover:bg-muted transition-colors"
+										>
+											<Star
+												className={ `w-3.5 h-3.5 ${ isFavorite ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground" }` }/>
+										</button>
 
 										<div
 											className="w-full h-50 max-h-50 aspect-4/3 bg-white flex items-center justify-center overflow-hidden relative border-b border-border/40 p-2">
@@ -184,7 +322,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 													</span>
 												) }
 												<span
-													className="font-bold text-[13px] line-clamp-2 leading-tight text-foreground group-hover:text-primary transition-colors">
+													className="font-bold text-sm leading-tight text-foreground group-hover:text-primary transition-colors">
 													{ item.name }
 												</span>
 											</div>
@@ -293,20 +431,34 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 				</div>
 				<div className="px-3 pb-3 flex gap-2 overflow-x-auto scrollbar-hide">
 					<Button
-						variant={ selectedCategoryId.value === undefined ? "default" : "outline" }
+						variant={ activeFilter.value === "all" ? "default" : "outline" }
 						size="sm"
-						className="rounded-full whitespace-nowrap h-8 text-xs"
-						onClick={ () => selectedCategoryId.value = undefined }
+						className="rounded-full whitespace-nowrap h-8 text-xs font-bold"
+						onClick={ () => activeFilter.value = "all" }
 					>
 						الكل
 					</Button>
+
+					<Button
+						variant={ activeFilter.value === "favorites" ? "default" : "outline" }
+						size="sm"
+						className="rounded-full whitespace-nowrap h-8 text-xs font-bold gap-1"
+						onClick={ () => activeFilter.value = "favorites" }
+					>
+						<Star
+							className={ `w-3.5 h-3.5 ${ activeFilter.value === "favorites" ? "fill-primary-foreground" : "fill-muted-foreground text-muted-foreground" }` }/>
+						المفضلة
+					</Button>
+
+					<div className="w-px h-6 bg-border mx-1 self-center"/>
+
 					{ Cubits.categories.state.value instanceof PageLoaded && Cubits.categories.entities.value.map(cat => (
 						<Button
 							key={ cat.id }
-							variant={ selectedCategoryId.value === cat.id ? "default" : "outline" }
+							variant={ activeFilter.value === cat.id ? "default" : "outline" }
 							size="sm"
 							className="rounded-full whitespace-nowrap h-8 text-xs"
-							onClick={ () => selectedCategoryId.value = cat.id }
+							onClick={ () => activeFilter.value = cat.id }
 						>
 							{ cat.name }
 						</Button>

@@ -17,11 +17,11 @@ import type { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { type BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import { type VoucherDto } from "@/core/data/voucher.ts";
 import type { PartnerDto } from "@/core/data/partner.ts";
-import { PosTerminalDto } from "@/core/data/posTerminal.ts";
 import { CategoryDto } from "@/core/data/category.ts";
 import { BrandDto } from "@/core/data/brand.ts";
 import PosSessionApiService from "@/core/networking/posSessionApiService.ts";
 import PosCheckoutApiService from "@/core/networking/posCheckoutApiService.ts";
+import PosTerminalsApiService from "@/core/networking/posTerminalsApiService.ts";
 
 
 export class Services extends BaseServices
@@ -46,9 +46,9 @@ export class Services extends BaseServices
 	public static readonly invoicesApi = new InvoicesApiService();
 	public static readonly settingApi = new SettingsApiService();
 	public static readonly dashboardApi = new DashboardApiService();
-	public static readonly posTerminalsApi = new BaseApiService<PosTerminalDto>("PosTerminals");
 	public static readonly posSessionsApi = new PosSessionApiService();
 	public static readonly posCheckoutApi = new PosCheckoutApiService();
+	public static readonly posTerminalsApi = new PosTerminalsApiService();
 	public static readonly usersApi = new BaseApiService<UserDto>("Users");
 	public static readonly categoriesApi = new BaseApiService<CategoryDto>("Categories");
 	public static readonly brandsApi = new BaseApiService<BrandDto>("Brands");

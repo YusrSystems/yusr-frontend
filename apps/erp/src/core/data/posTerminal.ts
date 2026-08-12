@@ -2,6 +2,7 @@ import { Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, Dto, Validators } from "yusr-ui";
 import { EInvoicingEnvironmentType } from "./setting";
 import type { PaymentMethodDto } from "./paymentMethod";
+import type { PosSessionDto } from "@/core/data/posSession.ts";
 
 
 export class PosTerminalFavoriteItemDto extends Dto
@@ -29,8 +30,7 @@ export class PosTerminalDto extends Dto
 	public defaultPartnerId?: number;
 	public defaultPartnerName?: string;
 	public eInvoicingEnvironmentType!: EInvoicingEnvironmentType;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	public activeSession?: any;
+	public activeSession?: PosSessionDto;
 	public allowedPaymentMethods: PaymentMethodDto[] = [];
 	public posTerminalUsers: PosTerminalUserDto[] = [];
 	public favoriteItems: PosTerminalFavoriteItemDto[] = [];
