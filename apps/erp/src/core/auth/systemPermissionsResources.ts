@@ -17,20 +17,20 @@ export const SystemPermissionsResources = {
 	Vouchers: "Vouchers",
 	Partners: "Partners",
 
-	// Invoices
+	// Invoices & POS
 	Invoices: "Invoices",
 	Obligations: "Obligations",
 	PosTerminals: "PosTerminals",
+	PosSessions: "PosSessions",
 
 	// Items
 	Items: "Items",
+	Brands: "Brands",
+	Categories: "Categories",
 	ItemsSettlements: "ItemsSettlements",
 	ItemTransfers: "ItemTransfers",
 	Stocktakings: "Stocktakings",
 	CostAdjustments: "CostAdjustments",
-
-	// Dashboard
-	Dashboard: "Dashboard",
 
 	// Invoice Permission Settings
 	InvoiceAddSettlement: "InvoiceAddSettlement",
@@ -75,5 +75,4 @@ export const SystemPermissionsResources = {
 	ReportTaxAudit: "ReportTaxAudit",
 	ReportStockValuation: "ReportStockValuation",
 	ReportLowStock: "ReportLowStock"
-
 } as const;
