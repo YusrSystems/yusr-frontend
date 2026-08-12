@@ -47,6 +47,7 @@ import { LowStockReportPage } from "@/features/reports/lowStock/lowStockReportPa
 import PosTerminalsPage from "@/features/Pos/posTerminals/posTerminalsPage.tsx";
 import PosEntryPage from "@/features/Pos/posSession/posEntryPage.tsx";
 import PosScreenPage from "@/features/Pos/posScreen/posScreenPage.tsx";
+import { VouchersListReportPage } from "@/features/reports/vouchersList/vouchersListReportPage.tsx";
 
 
 const refreshPage = () =>
@@ -113,6 +114,7 @@ export const router = createBrowserRouter([{
 						// reports
 						{path: "/reports/itemsList", element: <ItemsListReportPage/>},
 						{path: "/reports/accountsList", element: <AccountsListReportPage/>},
+						{path: "/reports/vouchersList", element: <VouchersListReportPage/>},
 						{path: "/reports/invoicesList", element: <InvoicesListReportPage/>},
 						{path: "/reports/itemsMovement", element: <ItemsMovementReportPage/>},
 						{path: "/reports/vatReturn", element: <VatReturnReportPage/>},
