@@ -122,6 +122,17 @@ export default class Item extends ChangeableEntity<ItemDto>
 				)]
 			},
 			{
+				field: "itemStores",
+				selector: (d) => d.itemStores,
+				validators: [
+					Validators.custom((val: ItemStoreDto[] | undefined, form) =>
+					{
+						if (form.type === ItemType.Service) return true;
+						return Array.isArray(val) && val.length > 0;
+					}, i18n.t("stocking:items.storesRequired"))
+				]
+			},
+			{
 				field: "itemImages",
 				selector: (d) => d.itemImages,
 				validators: [Validators.arrayMaxLength(5)]
@@ -181,7 +192,9 @@ export default class Item extends ChangeableEntity<ItemDto>
 		const itemResult = super.validate(dto);
 		const taxesResult = this.itemTaxes.value.every((t) => t.validate());
 		const uoMsResult = this.uoMs.value.every((m) => m.validate());
-		const storesResult = this.type.value === ItemType.Service ? true : this.itemStores.value.every((s) => s.validate());
+		const storesResult = this.type.value === ItemType.Service
+			? true
+			: (this.itemStores.value.length > 0 && this.itemStores.value.every((s) => s.validate()));
 		return itemResult && taxesResult && uoMsResult && storesResult;
 	}
 

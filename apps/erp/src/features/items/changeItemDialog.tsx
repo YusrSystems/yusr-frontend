@@ -98,7 +98,8 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 	const basicHasError = BASIC_FIELDS.some((f) => entity.value.getError(f).value)
 		|| entity.value.itemTaxes.value.some((t) => t.hasErrors)
 		|| Boolean(entity.value.getError("itemImages").value);
-	const storageHasError = entity.value.itemStores.value.some((t) => t.hasErrors);
+	const storageHasError = Boolean(entity.value.getError("itemStores").value)
+		|| entity.value.itemStores.value.some((t) => t.hasErrors);
 	const pricingHasError = PRICING_FIELDS.some((f) => entity.value.getError(f).value)
 		|| entity.value.uoMs.value.some((t) => t.hasErrors);
 
