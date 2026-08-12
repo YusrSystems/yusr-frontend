@@ -19,8 +19,6 @@ export default function StorageTab({entity}: { entity: Item; })
 		entity.itemStores.value = entity.itemStores.value.filter((_, i) => i !== index);
 	};
 
-	const errorMessage = entity.getError("itemStores");
-
 	return (
 		<div className="space-y-6 animate-in fade-in">
 			<div className="grid grid-cols-2 gap-6">
@@ -115,13 +113,6 @@ export default function StorageTab({entity}: { entity: Item; })
 						<TablePreview.Empty/>
 					) }
 				</div>
-
-				{ errorMessage.value && (
-					<div
-						className="p-3 mt-3 text-sm font-medium text-destructive bg-destructive/10 rounded-md border border-destructive/20">
-						{ errorMessage.value }
-					</div>
-				) }
 			</div>
 		</div>
 	);
