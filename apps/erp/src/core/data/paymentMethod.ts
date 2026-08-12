@@ -1,5 +1,6 @@
 import type { Signal } from "@preact/signals-react";
 import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "yusr-ui";
+import { PaymentMethodCategory } from "@/core/types/paymentMethodCategory.ts";
 
 
 export enum CommissionType
@@ -15,6 +16,7 @@ export class PaymentMethodDto extends Dto
 	glAccountName!: string;
 	commissionType!: CommissionType;
 	commissionAmount!: number;
+	category!: PaymentMethodCategory;
 }
 
 export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
@@ -24,6 +26,7 @@ export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
 	public glAccountName: Signal<string | undefined>;
 	public commissionType: Signal<CommissionType>;
 	public commissionAmount: Signal<number>;
+	public category: Signal<PaymentMethodCategory>;
 
 	constructor(dto: Partial<PaymentMethodDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
@@ -43,6 +46,10 @@ export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
 			field: "commissionAmount",
 			selector: (d) => d.commissionAmount,
 			validators: [Validators.required(i18n.t("accounting:paymentMethods.commissionValueRequired"))]
+		}, {
+			field: "category",
+			selector: (d) => d.category,
+			validators: [Validators.required("التصنيف مطلوب")]
 		}], mode);
 
 		this.name = this.assign("name", dto?.name ?? "");
@@ -50,5 +57,6 @@ export class PaymentMethod extends ChangeableEntity<PaymentMethodDto>
 		this.glAccountName = this.assign("glAccountName", dto?.glAccountName);
 		this.commissionType = this.assign("commissionType", dto?.commissionType ?? CommissionType.Percent);
 		this.commissionAmount = this.assign("commissionAmount", dto?.commissionAmount ?? 0);
+		this.category = this.assign("category", dto?.category ?? PaymentMethodCategory.Cash);
 	}
 }

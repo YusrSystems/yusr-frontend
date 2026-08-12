@@ -44,6 +44,9 @@ import { SalesProfitabilityReportPage } from "@/features/reports/salesProfitabil
 import { TaxAuditReportPage } from "@/features/reports/taxAudit/taxAuditReportPage.tsx";
 import { StockValuationReportPage } from "@/features/reports/stockValuation/stockValuationReportPage.tsx";
 import { LowStockReportPage } from "@/features/reports/lowStock/lowStockReportPage.tsx";
+import PosTerminalsPage from "@/features/Pos/posTerminals/posTerminalsPage.tsx";
+import PosEntryPage from "@/features/Pos/posSession/posEntryPage.tsx";
+import PosScreenPage from "@/features/Pos/posScreen/posScreenPage.tsx";
 
 
 const refreshPage = () =>
@@ -64,72 +67,79 @@ export const router = createBrowserRouter([{
 		{path: "/sharing/:registrationKey", element: <TenantInfoSharingPage/>},
 		{
 			element: <AuthGate/>,
-			children: [{
-				element: <AppLayout/>,
-				children: [
-					{path: "/dashboard", element: <DashboardPage/>},
-					{path: "/users/:id?", element: <UsersPage/>},
-					{path: "/settings", element: <SettingPage/>},
-					{path: "/taxes", element: <TaxesPage/>},
-					{path: "/branches", element: <BranchesPage onUpdate={ Services.auth.updateBranch }/>},
-					{path: "/roles", element: <ErpRolesPage/>},
-					{path: "/stores/:id?", element: <StoresPage/>},
-					{path: "/units", element: <UnitsPage/>},
-					{path: "/accounts/:id?", element: <AccountsPage/>},
-					{path: "/paymentMethods", element: <PaymentMethodsPage/>},
-					{path: "/balanceTransfer/:id?", element: <BalanceTransfersPage/>},
-					{path: "/items/:id?", element: <ItemsPage/>},
-					{path: "/costAdjustments", element: <CostAdjustmentsPage/>},
-					{path: "/pricingMethods", element: <PricingMethodsPage/>},
-					{path: "/itemTransfers/:id?", element: <ItemTransfersPage/>},
-					{path: "/stocktakings", element: <StocktakingsPage/>},
-					{path: "/itemsSettlements/:id?", element: <ItemsSettlementsPage/>},
-					{path: "/vouchers/:id?", element: <VouchersPage/>},
-					{
-						path: "/clients/:id?",
-						element: <PartnersPage type={ PartnerType.Customer }/>
-					},
-					{
-						path: "/suppliers/:id?",
-						element: <PartnersPage type={ PartnerType.Supplier }/>
-					},
-					{path: "/reports", element: <ReportsPage/>},
+			children: [
+				{
+					path: "/pos/screen",
+					element: <PosScreenPage/>
+				},
+				{
+					element: <AppLayout/>,
+					children: [
+						{path: "/dashboard", element: <DashboardPage/>},
+						{path: "/users/:id?", element: <UsersPage/>},
+						{path: "/settings", element: <SettingPage/>},
+						{path: "/taxes", element: <TaxesPage/>},
+						{path: "/branches", element: <BranchesPage onUpdate={ Services.auth.updateBranch }/>},
+						{path: "/roles", element: <ErpRolesPage/>},
+						{path: "/stores/:id?", element: <StoresPage/>},
+						{path: "/units", element: <UnitsPage/>},
+						{path: "/accounts/:id?", element: <AccountsPage/>},
+						{path: "/paymentMethods", element: <PaymentMethodsPage/>},
+						{path: "/balanceTransfer/:id?", element: <BalanceTransfersPage/>},
+						{path: "/items/:id?", element: <ItemsPage/>},
+						{path: "/costAdjustments", element: <CostAdjustmentsPage/>},
+						{path: "/pricingMethods", element: <PricingMethodsPage/>},
+						{path: "/itemTransfers/:id?", element: <ItemTransfersPage/>},
+						{path: "/stocktakings", element: <StocktakingsPage/>},
+						{path: "/itemsSettlements/:id?", element: <ItemsSettlementsPage/>},
+						{path: "/vouchers/:id?", element: <VouchersPage/>},
+						{path: "/posTerminals", element: <PosTerminalsPage/>},
+						{path: "/pos", element: <PosEntryPage/>},
+						{
+							path: "/clients/:id?",
+							element: <PartnersPage type={ PartnerType.Customer }/>
+						},
+						{
+							path: "/suppliers/:id?",
+							element: <PartnersPage type={ PartnerType.Supplier }/>
+						},
+						{path: "/reports", element: <ReportsPage/>},
 
-					// invoices
-					{path: "/sales/:id?", element: <SellInvoicesPage/>},
-					{path: "/purchases/:id?", element: <PurchaseInvoicesPage/>},
-					{path: "/quotations/:id?", element: <QuotationInvoicesPage/>},
+						// invoices
+						{path: "/sales/:id?", element: <SellInvoicesPage/>},
+						{path: "/purchases/:id?", element: <PurchaseInvoicesPage/>},
+						{path: "/quotations/:id?", element: <QuotationInvoicesPage/>},
 
-					// reports
-					{path: "/reports/itemsList", element: <ItemsListReportPage/>},
-					{path: "/reports/accountsList", element: <AccountsListReportPage/>},
-					{path: "/reports/invoicesList", element: <InvoicesListReportPage/>},
-					{path: "/reports/itemsMovement", element: <ItemsMovementReportPage/>},
-					{path: "/reports/vatReturn", element: <VatReturnReportPage/>},
-					{path: "/reports/profitAndLoss", element: <ProfitAndLossReportPage/>},
-					{path: "/reports/balanceSheet", element: <BalanceSheetReportPage/>},
-					{path: "/reports/salesProfitability", element: <SalesProfitabilityReportPage/>},
-					{path: "/reports/taxAudit", element: <TaxAuditReportPage/>},
-					{path: "/reports/itemStatement/:itemId?/:itemName?", element: <ItemStatementReportPage/>},
-					{
-						path: "/reports/accountStatement/:accountId?/:accountName?",
-						element: <AccountStatementReportPage/>
-					},
-					{
-						path: "/reports/partnerStatement/:partnerId?/:partnerName?",
-						element: <PartnerStatementReportPage/>
-					},
-					{
-						path: "reports/stockValuation",
-						element: <StockValuationReportPage/>
-					},
-					{
-						path: "reports/lowStock",
-						element: <LowStockReportPage/>
-					}
+						// reports
+						{path: "/reports/itemsList", element: <ItemsListReportPage/>},
+						{path: "/reports/accountsList", element: <AccountsListReportPage/>},
+						{path: "/reports/invoicesList", element: <InvoicesListReportPage/>},
+						{path: "/reports/itemsMovement", element: <ItemsMovementReportPage/>},
+						{path: "/reports/vatReturn", element: <VatReturnReportPage/>},
+						{path: "/reports/profitAndLoss", element: <ProfitAndLossReportPage/>},
+						{path: "/reports/balanceSheet", element: <BalanceSheetReportPage/>},
+						{path: "/reports/salesProfitability", element: <SalesProfitabilityReportPage/>},
+						{path: "/reports/taxAudit", element: <TaxAuditReportPage/>},
+						{path: "/reports/itemStatement/:itemId?/:itemName?", element: <ItemStatementReportPage/>},
+						{
+							path: "/reports/accountStatement/:accountId?/:accountName?",
+							element: <AccountStatementReportPage/>
+						},
+						{
+							path: "/reports/partnerStatement/:partnerId?/:partnerName?",
+							element: <PartnerStatementReportPage/>
+						},
+						{
+							path: "reports/stockValuation",
+							element: <StockValuationReportPage/>
+						},
+						{
+							path: "reports/lowStock",
+							element: <LowStockReportPage/>
+						}
 
-				]
-			}
+					]
+				}
 			]
 		},
 		{path: "*", element: <NotFoundPage/>}

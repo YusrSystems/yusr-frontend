@@ -33,8 +33,8 @@ export function ItemsListReportTable()
 					<ReportTableTh ar="رقم المادة" en="Item Id"/>
 					<ReportTableTh ar="نوع المادة" en="Item type"/>
 					<ReportTableTh ar="اسم المادة" en="Item Name"/>
-					<ReportTableTh ar="الصنف" en="category"/>
-					<ReportTableTh ar="العلامة التجارية" en="brand"/>
+					<ReportTableTh ar="التصنيف" en="Category"/>
+					<ReportTableTh ar="العلامة التجارية" en="Brand"/>
 					<ReportTableTh ar="الوحدة الأساسية" en="main unit"/>
 					<ReportTableTh ar="الكمية" en="quantity"/>
 					<ReportTableTh ar="متوسط التكلفة" en="avg cost"/>
@@ -73,8 +73,9 @@ export function ItemsListReportTable()
 							</ReportTableTd>
 							<ReportTableTd isEven={ isEven }
 							               align="start">{ item.name }</ReportTableTd>
-							<ReportTableTd isEven={ isEven } align="start">{ item.class }</ReportTableTd>
-							<ReportTableTd isEven={ isEven } align="start">{ item.brand }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }
+							               align="start">{ item.itemCategories?.map(c => c.categoryName).join(" - ") || "-" }</ReportTableTd>
+							<ReportTableTd isEven={ isEven } align="start">{ item.brandName || "-" }</ReportTableTd>
 							<ReportTableTd isEven={ isEven } align="start">{ item.sellUnitName }</ReportTableTd>
 							<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity) }</ReportTableTd>
 							<ReportTableTd isEven={ isEven }>{ formatNumber(itemAverageCost) }</ReportTableTd>

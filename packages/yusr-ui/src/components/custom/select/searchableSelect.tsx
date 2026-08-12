@@ -21,7 +21,7 @@ import useSearchableSelectContext, { SearchableSelectContext } from "./useSearch
 
 
 export type SearchableSelectOptionProps<TDto extends Dto> = {
-	id: Signal<number | undefined>;
+	id?: Signal<number | undefined>;
 	label?: Signal<string | undefined>;
 	labelSelector: keyof TDto;
 	item: TDto;
@@ -310,7 +310,10 @@ SearchableSelect.Option = function <TDto extends Dto>(
 			value={ item.id.toString() }
 			onSelect={ () =>
 			{
-				id.value = item.id;
+				if (id != undefined)
+				{
+					id.value = item.id;
+				}
 				if (label != undefined)
 				{
 					label.value = (item[labelSelector])?.toString();
@@ -323,7 +326,7 @@ SearchableSelect.Option = function <TDto extends Dto>(
 			<Check
 				className={ cn(
 					"h-4 w-4 ltr:mr-2 rtl:ml-2 shrink-0",
-					item.id === id.value ? "opacity-100" : "opacity-0"
+					item.id === id?.value ? "opacity-100" : "opacity-0"
 				) }
 			/>
 			{ children }
@@ -342,7 +345,10 @@ SearchableSelect.NullOption = function (
 			value="all-items-option"
 			onSelect={ () =>
 			{
-				id.value = undefined;
+				if (id != undefined)
+				{
+					id.value = undefined;
+				}
 				if (label != undefined)
 				{
 					label.value = undefined;
@@ -355,7 +361,7 @@ SearchableSelect.NullOption = function (
 			<Check
 				className={ cn(
 					"h-4 w-4 ltr:mr-2 rtl:ml-2",
-					id.value === undefined ? "opacity-100" : "opacity-0"
+					id?.value == undefined ? "opacity-100" : "opacity-0"
 				) }
 			/>
 			<span className="italic text-red-500">

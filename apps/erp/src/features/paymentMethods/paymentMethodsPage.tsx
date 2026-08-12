@@ -16,6 +16,7 @@ import {
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { CommissionType, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
+import { getPaymentMethodCategoryName } from "@/core/types/paymentMethodCategory.ts";
 import ChangePaymentMethodDialog from "./changePaymentMethodDialog";
 import { APP_NAME } from "../../../appConfig.ts";
 
@@ -124,6 +125,7 @@ function PageTable()
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("paymentMethods.methodId"), rowStyles: "w-20"},
 						{rowBody: t("paymentMethods.name"), rowStyles: "w-40"},
+						{rowBody: "التصنيف", rowStyles: "w-40"},
 						{rowBody: t("paymentMethods.account"), rowStyles: "w-40"},
 						{rowBody: t("paymentMethods.commissionType"), rowStyles: "w-30"},
 						{rowBody: t("paymentMethods.commissionValue"), rowStyles: "w-30"}
@@ -133,6 +135,9 @@ function PageTable()
 					) => [{rowBody: `#${ paymentMethod.id }`, rowStyles: ""}, {
 						rowBody: paymentMethod.name,
 						rowStyles: "font-semibold"
+					}, {
+						rowBody: getPaymentMethodCategoryName(paymentMethod.category),
+						rowStyles: "text-sm text-muted-foreground"
 					}, {
 						rowBody: paymentMethod.glAccountName,
 						rowStyles: ""

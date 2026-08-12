@@ -1,12 +1,14 @@
 import type Item from "@/core/data/item";
 import type ServiceIds from "@/core/data/serviceIds";
 import type { Signal } from "@preact/signals-react";
+import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
 	ChangeableEntityMode,
 	FieldsSection,
+	FormField,
 	SelectField,
 	StorageFileField,
 	StorageType,
@@ -18,6 +20,9 @@ import { ItemType } from "@/core/data/item.ts";
 import TaxesSection from "./taxesSection";
 import { ItemUoM } from "@/core/data/itemUoM.ts";
 import { ItemPriceDto } from "@/core/data/itemPrice.ts";
+import CategoriesMultiSearchableSelect from "@/core/components/searchableSelect/categoriesMultiSearchableSelect";
+import BrandsSearchableSelect from "@/core/components/searchableSelect/brandsSearchableSelect";
+import { useEffect, useMemo } from "react";
 
 
 export default function BasicTab(
@@ -42,6 +47,20 @@ export default function BasicTab(
 		(v) => (entity.itemImages.value = v),
 		StorageType.Public
 	);
+
+	const categoryIds = useMemo(() => signal<number[]>(entity.itemCategories.value.map(c => c.categoryId)), []);
+	const categoryLabels = useMemo(() => signal<Record<number, string>>(
+		Object.fromEntries(entity.itemCategories.value.map(c => [c.categoryId, c.categoryName]))
+	), []);
+
+	useEffect(() =>
+	{
+		entity.itemCategories.value = categoryIds.value.map(id => ({
+			itemId: entity.id.value || 0,
+			categoryId: id,
+			categoryName: categoryLabels.value[id]
+		} as any));
+	}, [categoryIds.value]);
 
 	return (
 		<div className="space-y-6 animate-in fade-in">
@@ -98,15 +117,13 @@ export default function BasicTab(
 							}] }
 						/>
 
-						<TextField
-							label={ t("items.class") }
-							value={ entity.class }
-						/>
+						<FormField label={ t("items.category", "التصنيف") }>
+							<CategoriesMultiSearchableSelect ids={ categoryIds } labels={ categoryLabels }/>
+						</FormField>
 
-						<TextField
-							label={ t("items.brand") }
-							value={ entity.brand }
-						/>
+						<FormField label={ t("items.brand", "العلامة التجارية") }>
+							<BrandsSearchableSelect id={ entity.brandId } label={ entity.brandName }/>
+						</FormField>
 
 						<SelectField
 							label={ t("items.status") }

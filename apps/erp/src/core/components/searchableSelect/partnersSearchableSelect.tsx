@@ -55,7 +55,7 @@ export function PartnersSearchableSelect({
 							service={ Services.partnersApi }
 							onSuccess={ (data) =>
 							{
-								props.id.value = data.id;
+								if (props.id) props.id.value = data.id;
 								if (props.label) props.label.value = data.name;
 								props.onSelect?.(data);
 								isAddOpen.value = false;
@@ -81,7 +81,7 @@ export function PartnersSearchableSelect({
 							service={ Services.partnersApi }
 							onSuccess={ (data) =>
 							{
-								if (props.id.value === data.id && props.label)
+								if (props.id?.value === data.id && props.label)
 								{
 									props.label.value = data.name;
 								}

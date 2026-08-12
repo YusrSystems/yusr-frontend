@@ -87,7 +87,7 @@ export default function ChangeStocktakingDialog(
 				<FieldGroup>
 					<FieldsSection columns={ 2 }>
 						<DateField
-							label={ t("stocktakings.stocktakingDate") }
+							label={ t("stocktakings.date") }
 							value={ entity.value.date }
 							required
 							disabled={ !isDraft }

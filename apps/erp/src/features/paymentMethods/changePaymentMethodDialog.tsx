@@ -16,6 +16,7 @@ import {
 	TextField
 } from "yusr-ui";
 import { CommissionType, PaymentMethod, PaymentMethodDto } from "@/core/data/paymentMethod.ts";
+import { getPaymentMethodCategoryOptions } from "@/core/types/paymentMethodCategory.ts";
 import { useEffect, useMemo } from "react";
 import { Cubits } from "@/core/services/cubits";
 import { signal } from "@preact/signals-react";
@@ -85,16 +86,26 @@ export default function ChangePaymentMethodDialog(
 						error={ entity.value.getError("name") }
 					/>
 
-					<FormField
-						label={ t("paymentMethods.responsibleAccount") }
+					<SelectField
+						label="التصنيف"
 						required
-						error={ entity.value.getError("glAccountId") }
-					>
-						<AccountsSearchableSelect
-							id={ entity.value.glAccountId }
-							label={ entity.value.glAccountName }
-						/>
-					</FormField>
+						value={ entity.value.category }
+						error={ entity.value.getError("category") }
+						options={ getPaymentMethodCategoryOptions() }
+					/>
+
+					<div className="col-span-2">
+						<FormField
+							label={ t("paymentMethods.responsibleAccount") }
+							required
+							error={ entity.value.getError("glAccountId") }
+						>
+							<AccountsSearchableSelect
+								id={ entity.value.glAccountId }
+								label={ entity.value.glAccountName }
+							/>
+						</FormField>
+					</div>
 				</div>
 
 				<div className="grid grid-cols-2 gap-4">

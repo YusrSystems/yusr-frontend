@@ -1,4 +1,5 @@
 import {
+	Button,
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
@@ -7,8 +8,7 @@ import {
 	PaginationContent,
 	PaginationItem,
 	PaginationNext,
-	PaginationPrevious,
-	SidebarMenuButton
+	PaginationPrevious
 } from "#/components/pure";
 
 import { useTranslation } from "react-i18next";
@@ -72,9 +72,10 @@ export function CrudTablePagination({
 
 					<DropdownMenu dir={ i18n.dir() }>
 						<DropdownMenuTrigger asChild>
-							<SidebarMenuButton className="w-full h-5 justify-start gap-2 text-base cursor-pointer">
+							<Button variant="outline"
+							        className="w-fit h-8 px-3 justify-start gap-2 text-sm cursor-pointer">
 								<span>{ currentPage }</span>
-							</SidebarMenuButton>
+							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							{ Array.from(

@@ -157,9 +157,9 @@ export class YusrApiHelper
 
 		if (response.status >= 400 && response.status < 500)
 		{
-			const errorData = await response.json() as RequestResult<any>;
 			try
 			{
+				const errorData = await response.json() as RequestResult<any>;
 				toast.error(errorData.title || t("api.notFound"), {
 					description: errorData.errors?.join("\n") || errorData.warnings?.join("\n")
 				});

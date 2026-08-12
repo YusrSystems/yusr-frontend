@@ -1,11 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, Filter } from "lucide-react";
-import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger, DateField, SelectField } from "yusr-ui";
+import {
+	Button,
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+	DateField,
+	DateService,
+	FormField
+} from "yusr-ui";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
-import { ItemMetadataTempService } from "@/core/networking/itemMetadataTempService.ts";
+import CategoriesSearchableSelect from "@/core/components/searchableSelect/categoriesSearchableSelect.tsx";
+import BrandsSearchableSelect from "@/core/components/searchableSelect/brandsSearchableSelect.tsx";
 import { StockValuationReportRequest } from "./stockValuationReportRequest.ts";
+import { Cubits } from "@/core/services/cubits.ts";
 
 
 interface StockValuationReportFieldsProps
@@ -18,38 +28,29 @@ export function StockValuationReportFields({onSubmit, isLoading = false}: StockV
 {
 	useSignals();
 
-	const asOfDate = useMemo(() => signal<string | undefined>(new Date().toISOString()), []);
+	const asOfDate = useMemo(() => signal<string>(DateService.formatDateOnly(new Date())), []);
 	const storeId = useMemo(() => signal<number | undefined>(undefined), []);
-	const itemClass = useMemo(() => signal<string | undefined>(undefined), []);
-	const itemBrand = useMemo(() => signal<string | undefined>(undefined), []);
+	const categoryId = useMemo(() => signal<number | undefined>(undefined), []);
+	const categoryName = useMemo(() => signal<string | undefined>(undefined), []);
+	const brandId = useMemo(() => signal<number | undefined>(undefined), []);
+	const brandName = useMemo(() => signal<string | undefined>(undefined), []);
 
 	const [isOpen, setIsOpen] = useState(true);
-	const [classes, setClasses] = useState<string[]>([]);
-	const [brands, setBrands] = useState<string[]>([]);
 
 	useEffect(() =>
 	{
-		// Call the methods directly on ItemMetadataTempService without using 'new'
-		ItemMetadataTempService.getDistinctClasses().then(setClasses);
-		ItemMetadataTempService.getDistinctBrands().then(setBrands);
+		Cubits.categories.init();
+		Cubits.brands.init();
 	}, []);
-
-	const classOptions = useMemo(() => [
-		{label: "الكل (All)", value: ""},
-		...classes.map(c => ({label: c, value: c}))
-	], [classes]);
-
-	const brandOptions = useMemo(() => [
-		{label: "الكل (All)", value: ""},
-		...brands.map(b => ({label: b, value: b}))
-	], [brands]);
 
 	const handleClear = () =>
 	{
-		asOfDate.value = new Date().toISOString();
+		asOfDate.value = DateService.formatDateOnly(new Date());
 		storeId.value = undefined;
-		itemClass.value = undefined;
-		itemBrand.value = undefined;
+		categoryId.value = undefined;
+		categoryName.value = undefined;
+		brandId.value = undefined;
+		brandName.value = undefined;
 		handleApply();
 	};
 
@@ -58,8 +59,8 @@ export function StockValuationReportFields({onSubmit, isLoading = false}: StockV
 		onSubmit(new StockValuationReportRequest({
 			asOfDate: asOfDate.value,
 			storeId: storeId.value,
-			itemClass: itemClass.value || undefined,
-			itemBrand: itemBrand.value || undefined
+			categoryId: categoryId.value,
+			brandId: brandId.value
 		}));
 	};
 
@@ -87,16 +88,12 @@ export function StockValuationReportFields({onSubmit, isLoading = false}: StockV
 						<label className="text-sm font-medium">المستودع (Store)</label>
 						<StoresSearchableSelect id={ storeId }/>
 					</div>
-					<SelectField
-						label="تصنيف المادة (Item Class)"
-						value={ itemClass }
-						options={ classOptions }
-					/>
-					<SelectField
-						label="العلامة التجارية (Item Brand)"
-						value={ itemBrand }
-						options={ brandOptions }
-					/>
+					<FormField label="تصنيف المادة (Item Category)">
+						<CategoriesSearchableSelect id={ categoryId } label={ categoryName }/>
+					</FormField>
+					<FormField label="العلامة التجارية (Item Brand)">
+						<BrandsSearchableSelect id={ brandId } label={ brandName }/>
+					</FormField>
 				</div>
 				<div className="flex justify-end gap-2 mt-6">
 					<Button variant="outline" onClick={ handleClear } disabled={ isLoading }>مسح (Clear)</Button>

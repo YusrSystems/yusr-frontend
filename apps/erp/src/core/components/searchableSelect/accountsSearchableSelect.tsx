@@ -53,11 +53,8 @@ export default function AccountsSearchableSelect(
 							service={ Services.accountsApi }
 							onSuccess={ (data) =>
 							{
-								props.id.value = data.id;
-								if (props.label)
-								{
-									props.label.value = data.name;
-								}
+								if (props.id) props.id.value = data.id;
+								if (props.label) props.label.value = data.name;
 								props.onSelect?.(data);
 								isAddAccountOpen.value = false;
 								accountsCubit.init();
