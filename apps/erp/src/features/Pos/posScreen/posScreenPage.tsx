@@ -9,7 +9,7 @@ import { PosSessionDto } from "@/core/data/posSession";
 import { PosTerminalDto } from "@/core/data/posTerminal";
 import CloseSessionDialog from "../posSession/closeSessionDialog";
 import { APP_NAME } from "../../../../appConfig";
-import Invoice from "@/core/data/invoices/invoice";
+import Invoice, { InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice";
 import { InvoiceType } from "@/core/types/invoiceType";
 import { Cubits } from "@/core/services/cubits";
 import { ItemType } from "@/core/data/item";
@@ -17,6 +17,7 @@ import PosProductGrid from "./components/posProductGrid";
 import PosCart from "./components/posCart";
 import PosCheckoutDialog from "./components/posCheckoutDialog";
 import PosRecentInvoicesDialog from "./components/posRecentInvoicesDialog";
+import { toast } from "sonner";
 
 
 export default function PosScreenPage()
@@ -60,7 +61,7 @@ export default function PosScreenPage()
 					activeSession.value = sessionRes.data;
 					activeTerminal.value = terminalRes.data;
 
-					// Initialize items for this store using DateService to avoid 400 Bad Request
+					// Initialize items for this store
 					Cubits.items.initForStoreAndDate(
 						[ItemType.Product, ItemType.Service],
 						terminalRes.data.storeId,
@@ -98,6 +99,51 @@ export default function PosScreenPage()
 			partnerName: terminal.defaultPartnerName ?? Services.auth.setting?.defaultCustomerPartnerName?.value
 		});
 		cartInvoice.value = newInvoice;
+	};
+
+	// Process Receipt-Linked Return Flow (No full-screen reload)
+	const handleProcessReturn = (invoiceDto: InvoiceDto) =>
+	{
+		if (!activeTerminal.value) return;
+
+		const fetchReturnDetails = async () =>
+		{
+			const res = await Services.invoicesApi.GetReturnInvoiceInitialDetails(invoiceDto.id);
+
+			if (res.data)
+			{
+				const returnDetails = res.data;
+
+				// Construct return invoice instance
+				returnDetails.date = DateService.formatDateOnly(new Date());
+				returnDetails.originalInvoiceId = invoiceDto.id;
+				returnDetails.type = InvoiceType.SellReturn;
+				returnDetails.costVouchers = [];
+				returnDetails.paymentVouchers = returnDetails.paymentVouchers.map(v => ({...v, id: 0}));
+
+				const returnInvoice = Invoice.create(returnDetails);
+				returnInvoice.invoiceMode.value = InvoiceMode.Return;
+
+				cartInvoice.value = returnInvoice;
+				return `تم تحميل مواد الفاتورة #${ invoiceDto.id } لإتمام المرتجع`;
+			}
+			throw new Error();
+		};
+
+		toast.promise(fetchReturnDetails(), {
+			loading: "جاري جلب تفاصيل الفاتورة الأصلية...",
+			success: (msg) => msg
+		});
+	};
+
+	// Clear Return Mode and reset back to standard New Sale cart
+	const handleCancelReturn = () =>
+	{
+		if (activeTerminal.value)
+		{
+			initNewCart(activeTerminal.value);
+			toast.success("تم إلغاء وضع المرتجع والعودة للمبيعات العادية");
+		}
 	};
 
 	if (isLoading.value || !activeSession.value || !activeTerminal.value || !cartInvoice.value)
@@ -158,6 +204,11 @@ export default function PosScreenPage()
 						terminal={ activeTerminal.value }
 						onAddItem={ (item, uomId, pmId) =>
 						{
+							if (cartInvoice.value?.type.value === InvoiceType.SellReturn)
+							{
+								toast.error("لا يمكن إضافة منتجات جديدة في وضع المرتجع. يرجى إلغاء المرتجع أولاً.");
+								return;
+							}
 							cartInvoice.value?.addItem(item, uomId, pmId);
 						} }
 					/>
@@ -168,6 +219,7 @@ export default function PosScreenPage()
 					<PosCart
 						invoice={ cartInvoice.value }
 						onCheckout={ () => isCheckoutDialogOpen.value = true }
+						onCancelReturn={ handleCancelReturn }
 					/>
 				</div>
 			</main>
@@ -204,6 +256,7 @@ export default function PosScreenPage()
 					onOpenChange={ (open) => isRecentInvoicesDialogOpen.value = open }
 					terminal={ activeTerminal.value }
 					session={ activeSession.value }
+					onProcessReturn={ handleProcessReturn }
 				/>
 			) }
 		</div>

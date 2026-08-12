@@ -39,8 +39,8 @@ import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { toast } from "sonner";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
-import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus.ts";
-import { PaymentStatus } from "@/core/types/paymentStatus.ts";
+import { getReturnStatus, InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus.ts";
+import { getPaymentStatus, PaymentStatus } from "@/core/types/paymentStatus.ts";
 import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect.tsx";
 import { PartnerType } from "@/core/data/partner.ts";
 import { createPortal } from "react-dom";
@@ -348,50 +348,6 @@ function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 		return rows;
 	};
 
-	const getPaymentStatus = (invoice: InvoiceDto): { message: string; styles: string; } =>
-	{
-		if (invoice.paymentStatusId === PaymentStatus.NotPaid)
-		{
-			return {message: t("invoices.notPaid"), styles: "bg-red-100 text-red-800"};
-		}
-
-		if (invoice.paymentStatusId === PaymentStatus.FullyPaid)
-		{
-			return {message: t("invoices.fullyPaid"), styles: "bg-green-100 text-green-800"};
-		}
-
-		if (invoice.paymentStatusId === PaymentStatus.Overpaid)
-		{
-			return {message: t("invoices.overpaid"), styles: "bg-red-100 text-red-800"};
-		}
-
-		return {
-			message: t("invoices.partiallyPaid", {
-				amount: invoice.paidAmount,
-				currency: Services.auth.setting?.currency?.value.code.value
-			}),
-			styles: "bg-orange-100 text-orange-800"
-		};
-	};
-
-	const getReturnStatus = (invoice: InvoiceDto): { message: string; styles: string; } =>
-	{
-		if (invoice.returnStatusId === InvoiceReturnStatus.NotReturned)
-		{
-			return {message: t("invoices.notReturned"), styles: "bg-green-100 text-green-800"};
-		}
-
-		if (invoice.returnStatusId === InvoiceReturnStatus.FullyReturned)
-		{
-			return {message: t("invoices.fullyReturned"), styles: "bg-red-100 text-red-800"};
-		}
-
-		return {
-			message: t("invoices.partialReturned"),
-			styles: "bg-orange-100 text-orange-800"
-		};
-	};
-
 	const getEInvoiceStatus = (invoice: InvoiceDto): { message: string; styles: string; } =>
 	{
 		if (
@@ -532,9 +488,9 @@ function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 		{
 			cells.push(
 				{
-					rowBody: getPaymentStatus(invoice).message,
+					rowBody: getPaymentStatus(invoice, t).message,
 					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-						getPaymentStatus(invoice).styles
+						getPaymentStatus(invoice, t).styles
 					}`
 				}
 			);
@@ -542,9 +498,9 @@ function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 			if (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.Purchase)
 			{
 				cells.push({
-					rowBody: getReturnStatus(invoice).message,
+					rowBody: getReturnStatus(invoice, t).message,
 					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-						getReturnStatus(invoice).styles
+						getReturnStatus(invoice, t).styles
 					}`
 				});
 			}
