@@ -4,10 +4,15 @@ import {
 	Button,
 	ChangeableEntityMode,
 	CrudPage,
+	FilterLabelWrapper,
+	FilterSection,
+	type FilterValueInputProps,
 	PageError,
 	PageLoaded,
 	PageLoading,
+	SelectField,
 	SystemPermissionsActions,
+	TableHeaderActionButtons,
 	TablePreview,
 	UnauthorizedPage
 } from "yusr-ui";
@@ -22,9 +27,13 @@ import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { createPortal } from "react-dom";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { VoucherReport } from "@/features/reports/voucher/voucherReport.tsx";
-import { signal } from "@preact/signals-react";
+import { type Signal, signal } from "@preact/signals-react";
 import { APP_NAME } from "../../../appConfig.ts";
 import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "#/types/transactionStatus.ts";
+import { VouchersListReport } from "@/features/reports/vouchersList/vouchersListReport.tsx";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
+import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
+import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
 
 
 export default function VouchersPage()
@@ -32,7 +41,7 @@ export default function VouchersPage()
 	useSignals();
 	const {t} = useTranslation("accounting");
 	useEffect(() => Cubits.vouchers.init(), []);
-	const printedVoucher = useMemo(() => signal<VoucherDto | undefined>(), []);
+	const printedVoucher = useMemo(() => signal<VoucherDto | undefined>(undefined), []);
 
 	useEffect(() =>
 	{
@@ -62,13 +71,40 @@ export default function VouchersPage()
 	return (
 		<>
 			<CrudPage<VoucherDto>>
-				<CrudPage.Header
-					title={ t("vouchers.title") }
-					addButtonTitle={ t("vouchers.addNewTitle") }
-					isAddButtonVisible={ Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Add) }
-				/>
+				<CrudPage.HeaderContainer>
+					<h1>{ t("vouchers.title") }</h1>
+					<CrudPage.HeaderButtonsContainer>
+						<TableHeaderActionButtons actionButtons={
+							Services.auth.hasAuth(
+								SystemPermissionsResources.ReportVoucherList,
+								SystemPermissionsActions.Get
+							) ? [
+								<Button
+									key="print-list"
+									variant="outline"
+									onClick={ () => setTimeout(() => window.print(), 100) }
+								>
+									<Printer className="h-4 w-4"/>
+									{ t("vouchers.vouchersList", "قائمة السندات") }
+								</Button>
+							] : []
+						}/>
+						{ Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Add) && (
+							<CrudPage.AddButton title={ t("vouchers.addNewTitle") }/>
+						) }
+					</CrudPage.HeaderButtonsContainer>
+				</CrudPage.HeaderContainer>
 
 				<Cards/>
+
+				<div className="print:hidden">
+					<FilterSection
+						fieldsCubit={ Cubits.voucherFilterFields }
+						onApply={ (groups) => Cubits.vouchers.applyFilterGroups(groups) }
+						onClear={ () => Cubits.vouchers.clearFilterGroups() }
+						renderCustomInput={ RenderVoucherFilterInput }
+					/>
+				</div>
 
 				<CrudPage.SearchInput onSearch={ (searchText) => Cubits.vouchers.search(searchText) }/>
 
@@ -120,7 +156,6 @@ export default function VouchersPage()
 					} }
 				/>
 
-
 				<CrudPage.DeleteDialog
 					entityNameSelector={ () => `"${ t("vouchers.entityName") }"` }
 					service={ Services.voucherApi }
@@ -137,18 +172,20 @@ export default function VouchersPage()
 						}
 					} }
 				/>
-
-
 			</CrudPage>
 
 			{ createPortal(
 				<PortalReportContainer>
-					<VoucherReport voucher={ printedVoucher.value }/>
+					{ printedVoucher.value ? (
+						<VoucherReport voucher={ printedVoucher.value }/>
+					) : (
+						<VouchersListReport isPortal={ true }/>
+					) }
 				</PortalReportContainer>,
 				document.body
 			) }
-		</>);
-
+		</>
+	);
 }
 
 function Cards()
@@ -269,4 +306,90 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 	}
 
 	return <TablePreview.Empty/>;
+}
+
+export function RenderVoucherFilterInput({rule, field}: FilterValueInputProps)
+{
+	useSignals();
+	const {t} = useTranslation("accounting");
+
+	if (field.propertyName === "PartnerId")
+	{
+		return (
+			<FilterLabelWrapper rule={ rule }>
+				{ label => (
+					<PartnersSearchableSelect
+						id={ rule.value as unknown as Signal<number | undefined> }
+						label={ label }
+						onSelect={ entity =>
+							rule.value.value = entity ? entity.id : ""
+						}
+					/>
+				) }
+			</FilterLabelWrapper>
+		);
+	}
+
+	if (field.propertyName === "GlAccountId")
+	{
+		return (
+			<FilterLabelWrapper rule={ rule }>
+				{ label => (
+					<AccountsSearchableSelect
+						id={ rule.value as unknown as Signal<number | undefined> }
+						label={ label }
+						onSelect={ entity => rule.value.value = entity ? entity.id : "" }
+					/>
+				) }
+			</FilterLabelWrapper>
+		);
+	}
+
+	if (field.propertyName === "PaymentMethodId")
+	{
+		return (
+			<FilterLabelWrapper rule={ rule }>
+				{ label => (
+					<PaymentMethodsSearchableSelect
+						id={ rule.value as unknown as Signal<number | undefined> }
+						label={ label }
+						onSelect={ entity => rule.value.value = entity ? entity.id : "" }
+					/>
+				) }
+			</FilterLabelWrapper>
+		);
+	}
+
+	if (field.propertyName === "Type")
+	{
+		return (
+			<SelectField<VoucherType>
+				required
+				value={ rule.value as unknown as Signal<VoucherType | undefined> }
+				onValueChange={ (type) => rule.value.value = type }
+				options={ [
+					{label: t("vouchers.paymentVoucher"), value: VoucherType.Payment},
+					{label: t("vouchers.receiptVoucher"), value: VoucherType.Receipt}
+				] }
+			/>
+		);
+	}
+
+	if (field.propertyName === "TransactionStatus")
+	{
+		return (
+			<SelectField<TransactionStatus>
+				required
+				value={ rule.value as unknown as Signal<TransactionStatus | undefined> }
+				onValueChange={ (status) => rule.value.value = status }
+				options={ [
+					{label: getTransactionStatusName(TransactionStatus.Draft), value: TransactionStatus.Draft},
+					{label: getTransactionStatusName(TransactionStatus.Posted), value: TransactionStatus.Posted},
+					{label: getTransactionStatusName(TransactionStatus.Voided), value: TransactionStatus.Voided}
+				] }
+			/>
+		);
+	}
+
+	return undefined;
 }

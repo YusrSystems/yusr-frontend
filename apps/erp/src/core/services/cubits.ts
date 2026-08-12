@@ -80,6 +80,7 @@ export class Cubits extends BaseCubits
 	public static readonly itemFilterFields = new FilterFieldsCubit("Items");
 	public static readonly invoiceFilterFields = new FilterFieldsCubit("Invoices");
 	public static readonly partnerFilterFields = new FilterFieldsCubit("Partners");
+	public static readonly voucherFilterFields = new FilterFieldsCubit("Vouchers");
 
 	// reports
 	public static readonly ItemsMovementReport = new PageReportCubit<ItemsMovementReportRequest, ItemsMovementReportResult>("ItemsMovement");

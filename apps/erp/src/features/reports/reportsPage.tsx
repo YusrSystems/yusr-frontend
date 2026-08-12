@@ -151,6 +151,12 @@ export default function ReportsPage()
 			icon: FileText
 		}, {
 			comp: <Button variant="outline"
+			              onClick={ async () => await AppNavigator.navigate("/reports/vouchersList") }>{ t("reports.create") }</Button>,
+			name: t("reports.vouchersList", "قائمة السندات"),
+			description: t("reports.vouchersListDescription", "عرض قائمة بسندات القبض والصرف الفردية وحالاتها"),
+			icon: FileText
+		}, {
+			comp: <Button variant="outline"
 			              onClick={ async () => await AppNavigator.navigate("/reports/accountStatement") }>{ t("reports.create") }</Button>,
 			name: t("reports.accountStatement"),
 			description: t("reports.accountStatementDescription"),
