@@ -142,7 +142,7 @@ export default function PosCheckoutDialog({
 	const handleUpdatePayment = <K extends keyof PosPaymentLineDto>(index: number, field: K, value: PosPaymentLineDto[K]) =>
 	{
 		const newPayments = [...payments.value];
-		newPayments[index] = {...newPayments[index], [field]: value};
+		newPayments[index] = {...newPayments[index]!, [field]: value};
 		payments.value = newPayments;
 	};
 
