@@ -15,13 +15,15 @@ interface EInvoicingRegisterButtonProps
 	title: string;
 	subtitle: string;
 	linkType: EInvoicingEnvironmentType;
+	posTerminalId?: number;
 }
 
 export function EInvoicingRegisterButton({
 	formData,
 	title,
 	subtitle,
-	linkType
+	linkType,
+	posTerminalId
 }: EInvoicingRegisterButtonProps)
 {
 	useSignals();
@@ -55,7 +57,12 @@ export function EInvoicingRegisterButton({
 
 			<Dialog open={ isOpen.value } onOpenChange={ (open) => isOpen.value = open }>
 				<DialogContent className="max-w-xl">
-					<EInvoicingRegister formData={ formData } linkType={ linkType } onFinish={ handleFinish }/>
+					<EInvoicingRegister
+						formData={ formData }
+						linkType={ linkType }
+						posTerminalId={ posTerminalId }
+						onFinish={ handleFinish }
+					/>
 				</DialogContent>
 			</Dialog>
 		</>

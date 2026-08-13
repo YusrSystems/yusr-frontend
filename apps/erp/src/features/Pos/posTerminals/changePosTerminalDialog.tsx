@@ -378,6 +378,12 @@ function FavoritesOrderTab({entity}: { entity: PosTerminal })
 function EInvoiceTab({entity}: { entity: PosTerminal })
 {
 	useSignals();
+
+	if (!entity.id.value)
+	{
+		return;
+	}
+
 	return (
 		<div className="max-h-[55vh] overflow-y-auto px-1 py-1 space-y-4 animate-in fade-in">
 			<EInvoicingRegisterButton
@@ -385,18 +391,21 @@ function EInvoiceTab({entity}: { entity: PosTerminal })
 				title="بيئة التجربة (Testing)"
 				subtitle="sandbox"
 				linkType={ EInvoicingEnvironmentType.Test }
+				posTerminalId={ entity.id.value }
 			/>
 			<EInvoicingRegisterButton
 				formData={ entity }
 				title="بيئة المحاكاة (Simulation)"
 				subtitle="تجربة الربط مع الهيئة"
 				linkType={ EInvoicingEnvironmentType.Simulation }
+				posTerminalId={ entity.id.value }
 			/>
 			<EInvoicingRegisterButton
 				formData={ entity }
 				title="البيئة الفعلية (Production)"
 				subtitle="الربط مع الهيئة وإرسال المستندات بشكل رسمي"
 				linkType={ EInvoicingEnvironmentType.Production }
+				posTerminalId={ entity.id.value }
 			/>
 		</div>
 	);

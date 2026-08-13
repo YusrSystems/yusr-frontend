@@ -6,9 +6,9 @@ export default class EInvoicingApiService
 {
 	routeName: string = "EInvoicing";
 
-	async Link(otp: string, eInvoicingEnvironmentType: EInvoicingEnvironmentType): Promise<RequestResult<boolean>>
+	async Link(otp: string, eInvoicingEnvironmentType: EInvoicingEnvironmentType, posTerminalId?: number): Promise<RequestResult<boolean>>
 	{
-		const url = `/api/${ this.routeName }/LinkEInvoicing/${ otp }/${ eInvoicingEnvironmentType }`;
+		const url = `/api/${ this.routeName }/LinkEInvoicing/${ otp }/${ eInvoicingEnvironmentType }/${ posTerminalId }`;
 		return await YusrApiHelper.Get<boolean>(url);
 	}
 }

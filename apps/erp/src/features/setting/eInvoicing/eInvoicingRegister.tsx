@@ -11,11 +11,12 @@ import { useMemo } from "react";
 interface EInvoicingRegisterProps
 {
 	linkType: EInvoicingEnvironmentType;
+	posTerminalId?: number;
 	onFinish?: () => void;
 	formData: { eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType> };
 }
 
-export function EInvoicingRegister({linkType, onFinish, formData}: EInvoicingRegisterProps)
+export function EInvoicingRegister({linkType, posTerminalId, onFinish, formData}: EInvoicingRegisterProps)
 {
 	useSignals();
 	const {t} = useTranslation("erpCommon");
@@ -31,7 +32,7 @@ export function EInvoicingRegister({linkType, onFinish, formData}: EInvoicingReg
 
 		isLoading.value = true;
 
-		const res = await new EInvoicingApiService().Link(otp.value, linkType);
+		const res = await new EInvoicingApiService().Link(otp.value, linkType, posTerminalId);
 
 		if (res.status === 200)
 		{
