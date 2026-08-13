@@ -1,4 +1,4 @@
-import type Item from "@/core/data/item";
+import Item, { ItemCategoryDto } from "@/core/data/item";
 import type ServiceIds from "@/core/data/serviceIds";
 import type { Signal } from "@preact/signals-react";
 import { signal } from "@preact/signals-react";
@@ -20,9 +20,9 @@ import { ItemType } from "@/core/data/item.ts";
 import TaxesSection from "./taxesSection";
 import { ItemUoM } from "@/core/data/itemUoM.ts";
 import { ItemPriceDto } from "@/core/data/itemPrice.ts";
-import CategoriesMultiSearchableSelect from "@/core/components/searchableSelect/categoriesMultiSearchableSelect";
 import BrandsSearchableSelect from "@/core/components/searchableSelect/brandsSearchableSelect";
 import { useEffect, useMemo } from "react";
+import CategoriesMultiSearchableSelect from "@/features/itemCategories/categoriesMultiSearchableSelect.tsx";
 
 
 export default function BasicTab(
@@ -55,11 +55,11 @@ export default function BasicTab(
 
 	useEffect(() =>
 	{
-		entity.itemCategories.value = categoryIds.value.map(id => ({
+		entity.itemCategories.value = categoryIds.value.map((id) => ({
 			itemId: entity.id.value || 0,
 			categoryId: id,
 			categoryName: categoryLabels.value[id]
-		} as any));
+		})) as ItemCategoryDto[];
 	}, [categoryIds.value]);
 
 	return (

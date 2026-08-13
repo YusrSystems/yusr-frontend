@@ -6,7 +6,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	MultiSearchableSelect,
-	type MultiSearchableSelectRootProps,
+	type MultiSearchableSelectProps,
 	PageLoaded,
 	PageLoading,
 	SelectField,
@@ -16,20 +16,24 @@ import { Cubits } from "@/core/services/cubits.ts";
 import { Services } from "@/core/services/services.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { effect, signal } from "@preact/signals-react";
+import { effect, signal, Signal } from "@preact/signals-react";
 import { CategoryDto } from "@/core/data/category.ts";
 import { Check, ChevronDown, ChevronLeft, Edit2, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 
 export default function CategoriesMultiSearchableSelect(
-	props: MultiSearchableSelectRootProps<CategoryDto>
+	{ids, labels, ...props}: Omit<MultiSearchableSelectProps<CategoryDto>, "ids"> & {
+		ids?: Signal<number[]>;
+	}
 )
 {
 	useSignals();
 	const {i18n} = useTranslation();
 	const isRtl = i18n.dir() === "rtl";
 
+	const localIds = useMemo(() => ids ?? signal<number[]>([]), [ids]);
+	const localLabels = useMemo(() => labels ?? signal<Record<number, string>>([]), [labels]);
 	const [searchText, setSearchText] = useState("");
 	const [expanded, setExpanded] = useState<number[]>([]);
 
@@ -39,22 +43,20 @@ export default function CategoriesMultiSearchableSelect(
 	const categoryParentId = useMemo(() => signal<number>(0), []);
 	const isSaving = useMemo(() => signal(false), []);
 
-	const prevIds = useRef<number[]>(props.ids?.value ?? []);
+	const prevIds = useRef<number[]>(localIds.value);
 
 	useEffect(() =>
 	{
-		if (!props.ids || !props.labels) return;
-
 		return effect(() =>
 		{
-			const currentIds = props.ids!.value;
+			const currentIds = localIds.value;
 			const added = currentIds.filter(id => !prevIds.current.includes(id));
 
 			if (added.length > 0)
 			{
 				queueMicrotask(() =>
 				{
-					const latestIds = props.ids!.value;
+					const latestIds = localIds.value;
 					const newlyAdded = latestIds.filter(id => !prevIds.current.includes(id));
 
 					if (newlyAdded.length === 0) return;
@@ -75,6 +77,7 @@ export default function CategoriesMultiSearchableSelect(
 
 							if (prevIds.current.includes(parentId))
 							{
+								// Parent was checked, user clicked a child to uncheck it
 								idsToKeep = idsToKeep.filter(id => id !== parentId && id !== addedId);
 								for (const sib of siblings)
 								{
@@ -87,6 +90,7 @@ export default function CategoriesMultiSearchableSelect(
 							}
 							else
 							{
+								// Normal child addition
 								const allSiblingsSelected = siblingIds.every(id => idsToKeep.includes(id));
 								if (allSiblingsSelected && siblingIds.length > 0)
 								{
@@ -101,6 +105,7 @@ export default function CategoriesMultiSearchableSelect(
 						}
 						else
 						{
+							// Parent added -> remove children
 							const childrenIds = Cubits.categories.entities.value
 								.filter(c => c.parentCategoryId === category.id)
 								.map(c => c.id);
@@ -124,15 +129,15 @@ export default function CategoriesMultiSearchableSelect(
 							{
 								newLabels[id] = cat.name;
 							}
-							else if (props.labels!.value[id])
+							else if (localLabels.value[id])
 							{
-								newLabels[id] = props.labels!.value[id];
+								newLabels[id] = localLabels.value[id];
 							}
 						}
 
 						prevIds.current = idsToKeep;
-						props.ids!.value = idsToKeep;
-						props.labels!.value = newLabels;
+						localIds.value = idsToKeep;
+						localLabels.value = newLabels;
 					}
 					else
 					{
