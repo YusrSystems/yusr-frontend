@@ -1,6 +1,7 @@
 import React from "react";
-import { ChevronDown, ChevronLeft, Edit2, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronLeft } from "lucide-react";
 import { CategoryDto } from "@/core/data/category.ts";
+import { MultiSearchableSelect, SearchableSelect } from "yusr-ui";
 
 
 interface CategoryOptionItemProps
@@ -13,6 +14,7 @@ interface CategoryOptionItemProps
 	onDelete?: () => void;
 	extraBadge?: React.ReactNode;
 	className?: string;
+	isMulti?: boolean;
 }
 
 export const CategoryOptionItem: React.FC<CategoryOptionItemProps> = React.memo(({
@@ -23,9 +25,13 @@ export const CategoryOptionItem: React.FC<CategoryOptionItemProps> = React.memo(
 	onEdit,
 	onDelete,
 	extraBadge,
-	className = ""
+	className = "",
+	isMulti = false
 }) =>
 {
+	const DeleteBtn = isMulti ? MultiSearchableSelect.DeleteOptionButton : SearchableSelect.DeleteOptionButton;
+	const EditBtn = isMulti ? MultiSearchableSelect.EditOptionButton : SearchableSelect.EditOptionButton;
+
 	return (
 		<div className={ `flex items-center justify-between w-full ${ className }` }>
 			<div className="flex items-center gap-1.5 flex-1 min-w-0">
@@ -65,36 +71,8 @@ export const CategoryOptionItem: React.FC<CategoryOptionItemProps> = React.memo(
 			</div>
 
 			<div className="flex items-center gap-1 ms-2 shrink-0">
-				{ onEdit && (
-					<button
-						type="button"
-						onClick={ (e) =>
-						{
-							e.preventDefault();
-							e.stopPropagation();
-							onEdit();
-						} }
-						className="p-1 text-muted-foreground hover:text-primary transition-colors"
-						title="تعديل"
-					>
-						<Edit2 className="w-3.5 h-3.5"/>
-					</button>
-				) }
-				{ onDelete && (
-					<button
-						type="button"
-						onClick={ (e) =>
-						{
-							e.preventDefault();
-							e.stopPropagation();
-							onDelete();
-						} }
-						className="p-1 text-muted-foreground hover:text-destructive transition-colors"
-						title="حذف"
-					>
-						<Trash2 className="w-3.5 h-3.5"/>
-					</button>
-				) }
+				{ onEdit && <EditBtn onEdit={ onEdit }/> }
+				{ onDelete && <DeleteBtn onDelete={ async () => onDelete() }/> }
 			</div>
 		</div>
 	);

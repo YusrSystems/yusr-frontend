@@ -16,7 +16,7 @@ import {
 	PopoverTrigger
 } from "../../pure";
 import { cn } from "#/utils/cn.ts";
-import { Check, ChevronsUpDown, Loader2, X } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2, Pencil, Trash2, X } from "lucide-react";
 import { SearchInput, type SearchInputParams } from "../../custom";
 
 
@@ -269,6 +269,110 @@ MultiSearchableSelect.Option = function <TDto extends Dto>(
 				) }
 			/>
 			{ children }
+		</CommandItem>
+	);
+};
+
+MultiSearchableSelect.DeleteOptionButton = function ({onDelete}: { onDelete: () => Promise<void>; })
+{
+	useSignals();
+	const isDeleting = useMemo(() => signal(false), []);
+
+	return (
+		<div
+			className="flex items-center justify-center min-w-[32px]"
+			onClick={ (e) => e.stopPropagation() }
+			onPointerDown={ (e) => e.stopPropagation() }
+			onPointerUp={ (e) => e.stopPropagation() }
+		>
+			{ isDeleting.value
+				? <Loader2 className="h-4 w-4 animate-spin text-muted-foreground"/>
+				: (
+					<Button
+						type="button"
+						onClick={ async (e) =>
+						{
+							e.preventDefault();
+							e.stopPropagation();
+							isDeleting.value = true;
+							await onDelete();
+							isDeleting.value = false;
+						} }
+						variant="destructive"
+						size="sm"
+						className="shrink-0 rounded-lg px-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+					>
+						<Trash2 className="h-3.5 w-3.5"/>
+					</Button>
+				) }
+		</div>
+	);
+};
+
+MultiSearchableSelect.EditOptionButton = function ({onEdit}: { onEdit: () => void; })
+{
+	return (
+		<div
+			className="flex items-center justify-center min-w-[32px]"
+			onClick={ (e) => e.stopPropagation() }
+			onPointerDown={ (e) => e.stopPropagation() }
+			onPointerUp={ (e) => e.stopPropagation() }
+		>
+			<Button
+				type="button"
+				onClick={ (e) =>
+				{
+					e.preventDefault();
+					e.stopPropagation();
+					onEdit();
+				} }
+				variant="outline"
+				size="sm"
+				className="shrink-0 rounded-lg px-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
+				aria-label="edit"
+			>
+				<Pencil className="h-3.5 w-3.5"/>
+			</Button>
+		</div>
+	);
+};
+
+MultiSearchableSelect.AddOptionButton = function (
+	{onCreate}: { onCreate: (searchText: string | undefined, closeCommand: () => void) => Promise<void>; }
+)
+{
+	useSignals();
+	const isAdding = useMemo(() => signal(false), []);
+	const data = useSearchableSelectContext();
+
+	if (!data.searchInput.value)
+	{
+		return null;
+	}
+
+	return (
+		<CommandItem
+			value={ `__create__${ data.searchInput.value }` }
+			onSelect={ async () =>
+			{
+				isAdding.value = true;
+				await onCreate(data.searchInput.value, () =>
+				{
+					data.isOpen.value = false;
+					data.searchInput.value = undefined;
+				});
+				isAdding.value = false;
+			} }
+			className="cursor-pointer text-primary"
+		>
+			{ isAdding.value
+				? <Loader2 className="h-4 w-4 animate-spin"/>
+				: (
+					<>
+						<span className="ltr:mr-2 rtl:ml-2">+</span>
+						{ data.t("searchableSelect.addOption", {value: data.searchInput.value?.trim()}) }
+					</>
+				) }
 		</CommandItem>
 	);
 };

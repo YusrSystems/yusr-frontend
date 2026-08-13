@@ -1,10 +1,10 @@
 import React from "react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { Button, MultiSearchableSelect, PageLoaded, PageLoading } from "yusr-ui";
+import { MultiSearchableSelect, PageLoaded, PageLoading } from "yusr-ui";
 import { CategoryDto } from "@/core/data/category.ts";
 import { Cubits } from "@/core/services/cubits.ts";
-import { Check, Plus } from "lucide-react";
+import { Check } from "lucide-react";
 import { Signal } from "@preact/signals-react";
 import { CategoryOptionItem } from "./categoryOptionItem";
 
@@ -58,6 +58,7 @@ export function CategoriesMultiCommandItems({
 							>
 								<CategoryOptionItem
 									category={ category }
+									isMulti
 									onEdit={ () => onOpenEdit(category) }
 									onDelete={ () => onDelete(category) }
 									extraBadge={
@@ -103,6 +104,7 @@ export function CategoriesMultiCommandItems({
 								>
 									<CategoryOptionItem
 										category={ parent }
+										isMulti
 										isExpanded={ isExpanded }
 										isRtl={ isRtl }
 										onToggleExpand={ () => onToggleExpand(parent.id) }
@@ -122,6 +124,7 @@ export function CategoriesMultiCommandItems({
 												<div className="ps-6 w-full">
 													<CategoryOptionItem
 														category={ child }
+														isMulti
 														onEdit={ () => onOpenEdit(child) }
 														onDelete={ () => onDelete(child) }
 														extraBadge={
@@ -147,6 +150,7 @@ export function CategoriesMultiCommandItems({
 						>
 							<CategoryOptionItem
 								category={ parent }
+								isMulti
 								onEdit={ () => onOpenEdit(parent) }
 								onDelete={ () => onDelete(parent) }
 							/>
@@ -157,21 +161,13 @@ export function CategoriesMultiCommandItems({
 		);
 	}
 
-	if (searchText)
-	{
-		return (
-			<div className="p-1">
-				<Button
-					type="button"
-					variant="ghost"
-					className="w-full justify-start text-sm h-8 px-2"
-					onClick={ () => onOpenAdd(searchText) }
-				>
-					<Plus className="h-4 w-4 me-2"/> إضافة "{ searchText }"
-				</Button>
-			</div>
-		);
-	}
-
-	return <MultiSearchableSelect.Empty/>;
+	return (
+		<MultiSearchableSelect.AddOptionButton
+			onCreate={ async (text, closeCommand) =>
+			{
+				onOpenAdd(text ?? "");
+				closeCommand();
+			} }
+		/>
+	);
 }
