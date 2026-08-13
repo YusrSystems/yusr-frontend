@@ -1,47 +1,43 @@
-import { Dialog, MultiSearchableSelect, type MultiSearchableSelectProps } from "yusr-ui";
+import { Dialog, MultiSearchableSelect, type MultiSearchableSelectRootProps } from "yusr-ui";
 import { Cubits } from "@/core/services/cubits.ts";
 import { Services } from "@/core/services/services.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { effect, signal, type Signal } from "@preact/signals-react";
+import { effect, signal } from "@preact/signals-react";
 import { CategoryDto } from "@/core/data/category.ts";
 import ChangeCategoryDialog from "./changeCategoryDialog";
 import { CategoriesMultiCommandItems } from "./components/categoriesMultiCommandItems";
 
 
-export default function CategoriesMultiSearchableSelect({
-	ids,
-	labels,
-	...props
-}: Omit<MultiSearchableSelectProps<CategoryDto>, "ids"> & {
-	ids?: Signal<number[]>;
-})
+export default function CategoriesMultiSearchableSelect(
+	props: MultiSearchableSelectRootProps<CategoryDto>
+)
 {
 	useSignals();
 
-	const localIds = useMemo(() => ids ?? signal<number[]>([]), [ids]);
-	const localLabels = useMemo(() => labels ?? signal<Record<number, string>>([]), [labels]);
 	const [searchText, setSearchText] = useState("");
 	const [expanded, setExpanded] = useState<number[]>([]);
 
-	const isAddOpen = useMemo(() => signal(false), []);
+	const isDialogOpen = useMemo(() => signal(false), []);
 	const newSearchText = useMemo(() => signal(""), []);
 	const editingCategory = useMemo(() => signal<CategoryDto | undefined>(undefined), []);
 
-	const prevIds = useRef<number[]>(localIds.value);
+	const prevIds = useRef<number[]>(props.ids?.value ?? []);
 
 	useEffect(() =>
 	{
+		if (!props.ids || !props.labels) return;
+
 		return effect(() =>
 		{
-			const currentIds = localIds.value;
+			const currentIds = props.ids!.value;
 			const added = currentIds.filter(id => !prevIds.current.includes(id));
 
 			if (added.length > 0)
 			{
 				queueMicrotask(() =>
 				{
-					const latestIds = localIds.value;
+					const latestIds = props.ids!.value;
 					const newlyAdded = latestIds.filter(id => !prevIds.current.includes(id));
 
 					if (newlyAdded.length === 0) return;
@@ -62,7 +58,6 @@ export default function CategoriesMultiSearchableSelect({
 
 							if (prevIds.current.includes(parentId))
 							{
-								// Parent was checked, user clicked a child to uncheck it
 								idsToKeep = idsToKeep.filter(id => id !== parentId && id !== addedId);
 								for (const sib of siblings)
 								{
@@ -75,7 +70,6 @@ export default function CategoriesMultiSearchableSelect({
 							}
 							else
 							{
-								// Normal child addition
 								const allSiblingsSelected = siblingIds.every(id => idsToKeep.includes(id));
 								if (allSiblingsSelected && siblingIds.length > 0)
 								{
@@ -90,7 +84,6 @@ export default function CategoriesMultiSearchableSelect({
 						}
 						else
 						{
-							// Parent added -> remove children
 							const childrenIds = Cubits.categories.entities.value
 								.filter(c => c.parentCategoryId === category.id)
 								.map(c => c.id);
@@ -114,15 +107,15 @@ export default function CategoriesMultiSearchableSelect({
 							{
 								newLabels[id] = cat.name;
 							}
-							else if (localLabels.value[id])
+							else if (props.labels!.value[id])
 							{
-								newLabels[id] = localLabels.value[id];
+								newLabels[id] = props.labels!.value[id];
 							}
 						}
 
 						prevIds.current = idsToKeep;
-						localIds.value = idsToKeep;
-						localLabels.value = newLabels;
+						props.ids!.value = idsToKeep;
+						props.labels!.value = newLabels;
 					}
 					else
 					{
@@ -134,7 +127,7 @@ export default function CategoriesMultiSearchableSelect({
 
 			prevIds.current = currentIds;
 		});
-	}, [localIds, localLabels]);
+	}, [props.ids, props.labels]);
 
 	const toggleExpand = (id: number) =>
 	{
@@ -146,7 +139,7 @@ export default function CategoriesMultiSearchableSelect({
 		Cubits.categories.search("");
 		setSearchText("");
 		newSearchText.value = text ?? "";
-		isAddOpen.value = true;
+		isDialogOpen.value = true;
 	};
 
 	const handleOpenEdit = (category: CategoryDto) =>
@@ -162,20 +155,23 @@ export default function CategoriesMultiSearchableSelect({
 		if (res.status === 200)
 		{
 			Cubits.categories.delete(category);
-			if (localIds.value.includes(category.id))
+			if (props.ids?.value.includes(category.id))
 			{
-				localIds.value = localIds.value.filter(id => id !== category.id);
-				const newLabels = {...localLabels.value};
-				delete newLabels[category.id];
-				localLabels.value = newLabels;
+				props.ids.value = props.ids.value.filter(id => id !== category.id);
+				if (props.labels?.value)
+				{
+					const newLabels = {...props.labels.value};
+					delete newLabels[category.id];
+					props.labels.value = newLabels;
+				}
 			}
 		}
 	};
 
 	return (
 		<>
-			<MultiSearchableSelect<CategoryDto>>
-				<MultiSearchableSelect.Trigger labels={ localLabels } disabled={ props.disabled }/>
+			<MultiSearchableSelect<CategoryDto> labelSelector="name" { ...props }>
+				<MultiSearchableSelect.Trigger disabled={ props.disabled }/>
 				<MultiSearchableSelect.Content>
 					<MultiSearchableSelect.SearchInput
 						onSearch={ (text) =>
@@ -186,35 +182,39 @@ export default function CategoriesMultiSearchableSelect({
 					/>
 					<MultiSearchableSelect.Command>
 						<CategoriesMultiCommandItems
-							localIds={ localIds }
-							localLabels={ localLabels }
+							ids={ props.ids }
 							searchText={ searchText }
 							expanded={ expanded }
 							onToggleExpand={ toggleExpand }
 							onOpenAdd={ handleOpenAdd }
 							onOpenEdit={ handleOpenEdit }
 							onDelete={ handleDelete }
-							{ ...props }
 						/>
 					</MultiSearchableSelect.Command>
 
-					<MultiSearchableSelect.Footer ids={ localIds } labels={ localLabels }/>
+					<MultiSearchableSelect.Footer/>
 				</MultiSearchableSelect.Content>
 			</MultiSearchableSelect>
 
-			{ isAddOpen.value && (
-				<Dialog open={ isAddOpen.value } onOpenChange={ (open) => (isAddOpen.value = open) }>
+			{ isDialogOpen.value && (
+				<Dialog open={ isDialogOpen.value } onOpenChange={ (open) => (isDialogOpen.value = open) }>
 					<ChangeCategoryDialog
 						initDto={ {name: newSearchText.value} }
 						service={ Services.categoriesApi }
 						onSuccess={ (data) =>
 						{
 							Cubits.categories.add(data);
-							localIds.value = [...localIds.value, data.id];
-							localLabels.value = {...localLabels.value, [data.id]: data.name};
+							if (props.ids)
+							{
+								props.ids.value = [...props.ids.value, data.id];
+							}
+							if (props.labels)
+							{
+								props.labels.value = {...props.labels.value, [data.id]: data.name};
+							}
 							setSearchText("");
 							Cubits.categories.search("");
-							isAddOpen.value = false;
+							isDialogOpen.value = false;
 						} }
 					/>
 				</Dialog>
@@ -222,7 +222,7 @@ export default function CategoriesMultiSearchableSelect({
 
 			{ editingCategory.value && (
 				<Dialog
-					open={ editingCategory.value !== undefined }
+					open={ true }
 					onOpenChange={ (open) =>
 					{
 						if (!open) editingCategory.value = undefined;
@@ -234,9 +234,9 @@ export default function CategoriesMultiSearchableSelect({
 						onSuccess={ (data) =>
 						{
 							Cubits.categories.update(data);
-							if (localIds.value.includes(data.id))
+							if (props.ids?.value.includes(data.id) && props.labels?.value)
 							{
-								localLabels.value = {...localLabels.value, [data.id]: data.name};
+								props.labels.value = {...props.labels.value, [data.id]: data.name};
 							}
 							editingCategory.value = undefined;
 						} }

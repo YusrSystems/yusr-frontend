@@ -1,7 +1,7 @@
 import React from "react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useTranslation } from "react-i18next";
-import { Button, MultiSearchableSelect, type MultiSearchableSelectProps, PageLoaded, PageLoading } from "yusr-ui";
+import { Button, MultiSearchableSelect, PageLoaded, PageLoading } from "yusr-ui";
 import { CategoryDto } from "@/core/data/category.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 import { Check, Plus } from "lucide-react";
@@ -9,10 +9,9 @@ import { Signal } from "@preact/signals-react";
 import { CategoryOptionItem } from "./categoryOptionItem";
 
 
-interface CategoriesMultiCommandItemsProps extends Omit<MultiSearchableSelectProps<CategoryDto>, "ids">
+interface CategoriesMultiCommandItemsProps
 {
-	localIds: Signal<number[]>;
-	localLabels: Signal<Record<number, string>>;
+	ids?: Signal<number[]>;
 	searchText: string;
 	expanded: number[];
 	onToggleExpand: (id: number) => void;
@@ -22,15 +21,13 @@ interface CategoriesMultiCommandItemsProps extends Omit<MultiSearchableSelectPro
 }
 
 export function CategoriesMultiCommandItems({
-	localIds,
-	localLabels,
+	ids,
 	searchText,
 	expanded,
 	onToggleExpand,
 	onOpenAdd,
 	onOpenEdit,
-	onDelete,
-	...props
+	onDelete
 }: CategoriesMultiCommandItemsProps)
 {
 	useSignals();
@@ -53,14 +50,10 @@ export function CategoriesMultiCommandItems({
 					{ categories.map((category) =>
 					{
 						const isParentSelected =
-							category.parentCategoryId && localIds.value.includes(category.parentCategoryId);
+							category.parentCategoryId && ids?.value.includes(category.parentCategoryId);
 						return (
 							<MultiSearchableSelect.Option<CategoryDto>
-								{ ...props }
 								key={ category.id }
-								ids={ localIds }
-								labels={ localLabels }
-								labelSelector="name"
 								item={ category }
 							>
 								<CategoryOptionItem
@@ -106,10 +99,6 @@ export function CategoriesMultiCommandItems({
 						return (
 							<React.Fragment key={ parent.id }>
 								<MultiSearchableSelect.Option<CategoryDto>
-									{ ...props }
-									ids={ localIds }
-									labels={ localLabels }
-									labelSelector="name"
 									item={ parent }
 								>
 									<CategoryOptionItem
@@ -124,14 +113,10 @@ export function CategoriesMultiCommandItems({
 								{ isExpanded &&
 									children.map(child =>
 									{
-										const isParentSelected = localIds.value.includes(child.parentCategoryId!);
+										const isParentSelected = ids?.value.includes(child.parentCategoryId!);
 										return (
 											<MultiSearchableSelect.Option<CategoryDto>
-												{ ...props }
 												key={ child.id }
-												ids={ localIds }
-												labels={ localLabels }
-												labelSelector="name"
 												item={ child }
 											>
 												<div className="ps-6 w-full">
@@ -157,11 +142,7 @@ export function CategoriesMultiCommandItems({
 
 					return (
 						<MultiSearchableSelect.Option<CategoryDto>
-							{ ...props }
 							key={ parent.id }
-							ids={ localIds }
-							labels={ localLabels }
-							labelSelector="name"
 							item={ parent }
 						>
 							<CategoryOptionItem
