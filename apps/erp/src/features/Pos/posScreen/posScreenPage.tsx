@@ -1,8 +1,8 @@
 import { useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSignals } from "@preact/signals-react/runtime";
 import { signal } from "@preact/signals-react";
-import { ArrowRight, Loader2, LogOut, ReceiptText, ShoppingCart } from "lucide-react";
+import { AlertCircle, ArrowRight, Loader2, LogOut, ReceiptText, ShoppingCart } from "lucide-react";
 import { Button, DateService } from "yusr-ui";
 import { Services } from "@/core/services/services";
 import { PosSessionDto } from "@/core/data/posSession";
@@ -12,7 +12,7 @@ import { APP_NAME } from "../../../../appConfig";
 import Invoice, { InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice";
 import { InvoiceType } from "@/core/types/invoiceType";
 import { Cubits } from "@/core/services/cubits";
-import { ItemType } from "@/core/data/item";
+import { ItemType } from "@/core/data/item.ts";
 import PosProductGrid from "./components/posProductGrid";
 import PosCart from "./components/posCart";
 import PosCheckoutDialog from "./components/posCheckoutDialog";
@@ -24,6 +24,7 @@ export default function PosScreenPage()
 {
 	useSignals();
 	const navigate = useNavigate();
+	const {terminalId: terminalIdParam} = useParams<{ terminalId?: string }>();
 
 	const isLoading = useMemo(() => signal(true), []);
 	const activeSession = useMemo(() => signal<PosSessionDto | null>(null), []);
@@ -31,6 +32,7 @@ export default function PosScreenPage()
 	const isCloseDialogOpen = useMemo(() => signal(false), []);
 	const isCheckoutDialogOpen = useMemo(() => signal(false), []);
 	const isRecentInvoicesDialogOpen = useMemo(() => signal(false), []);
+	const isOutdatedSession = useMemo(() => signal(false), []);
 
 	// We use the Invoice class to handle all cart math automatically
 	const cartInvoice = useMemo(() => signal<Invoice | null>(null), []);
@@ -41,8 +43,14 @@ export default function PosScreenPage()
 
 		const fetchSessionAndTerminal = async () =>
 		{
-			const terminalIdStr = localStorage.getItem("pos_terminal_id");
-			if (!terminalIdStr)
+			if (!terminalIdParam)
+			{
+				navigate("/pos", {replace: true});
+				return;
+			}
+
+			const terminalId = Number(terminalIdParam);
+			if (Number.isNaN(terminalId) || terminalId <= 0)
 			{
 				navigate("/pos", {replace: true});
 				return;
@@ -50,7 +58,6 @@ export default function PosScreenPage()
 
 			try
 			{
-				const terminalId = Number(terminalIdStr);
 				const [sessionRes, terminalRes] = await Promise.all([
 					Services.posSessionsApi.GetActiveSession(terminalId),
 					Services.posTerminalsApi.Get(terminalId)
@@ -60,6 +67,15 @@ export default function PosScreenPage()
 				{
 					activeSession.value = sessionRes.data;
 					activeTerminal.value = terminalRes.data;
+
+					const openedDate = new Date(sessionRes.data.openedAt).toDateString();
+					const today = new Date().toDateString();
+
+					if (openedDate !== today)
+					{
+						isOutdatedSession.value = true;
+						isCloseDialogOpen.value = true;
+					}
 
 					// Initialize items for this store
 					Cubits.items.initForStoreAndDate(
@@ -87,7 +103,7 @@ export default function PosScreenPage()
 		};
 
 		fetchSessionAndTerminal();
-	}, [navigate]);
+	}, [navigate, terminalIdParam]);
 
 	const initNewCart = (terminal: PosTerminalDto) =>
 	{
@@ -156,7 +172,35 @@ export default function PosScreenPage()
 	}
 
 	return (
-		<div className="h-screen flex flex-col bg-muted/10 overflow-hidden" dir="rtl">
+		<div className="h-screen flex flex-col bg-muted/10 overflow-hidden relative" dir="rtl">
+			{/* Outdated Session Overlay / Blocker */ }
+			{ isOutdatedSession.value && (
+				<div
+					className="absolute inset-0 z-50 bg-background/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
+					<div
+						className="max-w-md bg-card border border-destructive/30 rounded-2xl p-6 shadow-2xl flex flex-col items-center gap-4">
+						<div
+							className="w-16 h-16 rounded-full bg-destructive/10 text-destructive flex items-center justify-center">
+							<AlertCircle className="w-8 h-8"/>
+						</div>
+						<h2 className="text-xl font-bold text-destructive">الوردية من يوم سابق</h2>
+						<p className="text-sm text-muted-foreground leading-relaxed">
+							هذه الوردية تم إفتتاحها في تاريخ سابق ولم يتم إغلاقها بعد. يجب إغلاق الوردية السابقة للتمكن
+							من متابعة العمل.
+						</p>
+						<Button
+							size="lg"
+							variant="destructive"
+							className="w-full h-12 font-bold gap-2 text-base mt-2"
+							onClick={ () => isCloseDialogOpen.value = true }
+						>
+							<LogOut className="w-5 h-5"/>
+							إغلاق الوردية الآن
+						</Button>
+					</div>
+				</div>
+			) }
+
 			<header
 				className="h-14 bg-card border-b border-border flex items-center justify-between px-4 shadow-sm shrink-0 z-10">
 				<div className="flex items-center gap-4">
@@ -181,6 +225,7 @@ export default function PosScreenPage()
 						variant="outline"
 						className="gap-2 h-9"
 						onClick={ () => isRecentInvoicesDialogOpen.value = true }
+						disabled={ isOutdatedSession.value }
 					>
 						<ReceiptText className="w-4 h-4 text-primary"/>
 						الفواتير الأخيرة
@@ -204,6 +249,11 @@ export default function PosScreenPage()
 						terminal={ activeTerminal.value }
 						onAddItem={ (item, uomId, pmId) =>
 						{
+							if (isOutdatedSession.value)
+							{
+								toast.error("يجب إغلاق الوردية السابقة أولاً");
+								return;
+							}
 							if (cartInvoice.value?.type.value === InvoiceType.SellReturn)
 							{
 								toast.error("لا يمكن إضافة منتجات جديدة في وضع المرتجع. يرجى إلغاء المرتجع أولاً.");
@@ -218,7 +268,15 @@ export default function PosScreenPage()
 				<div className="w-[400px] flex flex-col bg-card shrink-0 shadow-xl z-10">
 					<PosCart
 						invoice={ cartInvoice.value }
-						onCheckout={ () => isCheckoutDialogOpen.value = true }
+						onCheckout={ () =>
+						{
+							if (isOutdatedSession.value)
+							{
+								toast.error("يجب إغلاق الوردية السابقة أولاً");
+								return;
+							}
+							isCheckoutDialogOpen.value = true;
+						} }
 						onCancelReturn={ handleCancelReturn }
 					/>
 				</div>
@@ -230,8 +288,7 @@ export default function PosScreenPage()
 				session={ activeSession.value }
 				onSuccess={ () =>
 				{
-					localStorage.removeItem("pos_terminal_id");
-					navigate("/dashboard", {replace: true});
+					navigate("/pos", {replace: true});
 				} }
 			/>
 

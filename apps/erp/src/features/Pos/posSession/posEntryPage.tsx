@@ -46,15 +46,10 @@ export default function PosEntryPage()
 		{
 			Cubits.posTerminals.init();
 			const terminals = Cubits.posTerminals.entities.value;
-			const savedTerminalId = localStorage.getItem("pos_terminal_id");
 
 			let targetId: number | undefined = undefined;
 
-			if (savedTerminalId && terminals.some(t => t.id === Number(savedTerminalId)))
-			{
-				targetId = Number(savedTerminalId);
-			}
-			else if (terminals.length === 1)
+			if (terminals.length === 1)
 			{
 				targetId = terminals[0]?.id;
 			}
@@ -85,17 +80,18 @@ export default function PosEntryPage()
 
 				if (openedDate === today)
 				{
-					localStorage.setItem("pos_terminal_id", terminalId.toString());
-					navigate("/pos/screen", {replace: true});
+					navigate(`/pos/screen/${ terminalId }`, {replace: true});
 				}
 				else
 				{
 					activeSession.value = session;
+					isCloseDialogOpen.value = true;
 				}
 			}
 			else
 			{
 				activeSession.value = null;
+				isCloseDialogOpen.value = false;
 			}
 		}
 		finally
@@ -114,6 +110,7 @@ export default function PosEntryPage()
 		else
 		{
 			activeSession.value = null;
+			isCloseDialogOpen.value = false;
 		}
 	};
 
@@ -130,8 +127,7 @@ export default function PosEntryPage()
 
 		if (res.status === 200 && res.data)
 		{
-			localStorage.setItem("pos_terminal_id", selectedTerminalId.value.toString());
-			navigate("/pos/screen", {replace: true});
+			navigate(`/pos/screen/${ selectedTerminalId.value }`, {replace: true});
 		}
 		isStarting.value = false;
 	};
@@ -185,6 +181,7 @@ export default function PosEntryPage()
 									{
 										selectedTerminalId.value = undefined;
 										activeSession.value = null;
+										isCloseDialogOpen.value = false;
 									} }
 								>
 									تغيير الجهاز

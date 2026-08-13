@@ -70,7 +70,7 @@ export const router = createBrowserRouter([{
 			element: <AuthGate/>,
 			children: [
 				{
-					path: "/pos/screen",
+					path: "/pos/screen/:terminalId?",
 					element: <PosScreenPage/>
 				},
 				{
