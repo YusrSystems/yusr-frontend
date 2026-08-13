@@ -1,6 +1,5 @@
 import { Signal } from "@preact/signals-react";
-import { ChangeableEntity, ChangeableEntityMode, Dto, Validators } from "yusr-ui";
-import { EInvoicingEnvironmentType } from "./setting";
+import { ChangeableEntity, ChangeableEntityMode, Dto, UserDto, Validators } from "yusr-ui";
 import type { PaymentMethodDto } from "./paymentMethod";
 import type { PosSessionDto } from "@/core/data/posSession.ts";
 
@@ -13,13 +12,6 @@ export class PosTerminalFavoriteItemDto extends Dto
 	public displayOrder!: number;
 }
 
-export class PosTerminalUserDto extends Dto
-{
-	public posTerminalId!: number;
-	public userId!: number;
-	public username!: string;
-}
-
 export class PosTerminalDto extends Dto
 {
 	public name!: string;
@@ -29,10 +21,9 @@ export class PosTerminalDto extends Dto
 	public storeName!: string;
 	public defaultPartnerId?: number;
 	public defaultPartnerName?: string;
-	public eInvoicingEnvironmentType!: EInvoicingEnvironmentType;
 	public activeSession?: PosSessionDto;
 	public allowedPaymentMethods: PaymentMethodDto[] = [];
-	public posTerminalUsers: PosTerminalUserDto[] = [];
+	public posTerminalUsers: UserDto[] = [];
 	public favoriteItems: PosTerminalFavoriteItemDto[] = [];
 }
 
@@ -45,9 +36,8 @@ export class PosTerminal extends ChangeableEntity<PosTerminalDto>
 	public storeName: Signal<string | undefined>;
 	public defaultPartnerId: Signal<number | undefined>;
 	public defaultPartnerName: Signal<string | undefined>;
-	public eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType>;
 	public allowedPaymentMethods: Signal<PaymentMethodDto[]>;
-	public posTerminalUsers: Signal<PosTerminalUserDto[]>;
+	public posTerminalUsers: Signal<UserDto[]>;
 	public favoriteItems: Signal<PosTerminalFavoriteItemDto[]>;
 
 	constructor(dto?: Partial<PosTerminalDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
@@ -65,7 +55,6 @@ export class PosTerminal extends ChangeableEntity<PosTerminalDto>
 		this.storeName = this.assign("storeName", dto?.storeName);
 		this.defaultPartnerId = this.assign("defaultPartnerId", dto?.defaultPartnerId);
 		this.defaultPartnerName = this.assign("defaultPartnerName", dto?.defaultPartnerName);
-		this.eInvoicingEnvironmentType = this.assign("eInvoicingEnvironmentType", dto?.eInvoicingEnvironmentType ?? EInvoicingEnvironmentType.NotRegistered);
 		this.allowedPaymentMethods = this.assign("allowedPaymentMethods", dto?.allowedPaymentMethods ?? []);
 		this.posTerminalUsers = this.assign("posTerminalUsers", dto?.posTerminalUsers ?? []);
 		this.favoriteItems = this.assign("favoriteItems", dto?.favoriteItems ?? []);

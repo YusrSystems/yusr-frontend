@@ -6,7 +6,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	MultiSearchableSelect,
-	type MultiSearchableSelectProps,
+	type MultiSearchableSelectRootProps,
 	PageLoaded,
 	PageLoading,
 	SelectField,
@@ -16,24 +16,20 @@ import { Cubits } from "@/core/services/cubits.ts";
 import { Services } from "@/core/services/services.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { effect, signal, Signal } from "@preact/signals-react";
+import { effect, signal } from "@preact/signals-react";
 import { CategoryDto } from "@/core/data/category.ts";
 import { Check, ChevronDown, ChevronLeft, Edit2, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 
 export default function CategoriesMultiSearchableSelect(
-	{ids, labels, ...props}: Omit<MultiSearchableSelectProps<CategoryDto>, "ids"> & {
-		ids?: Signal<number[]>;
-	}
+	props: MultiSearchableSelectRootProps<CategoryDto>
 )
 {
 	useSignals();
 	const {i18n} = useTranslation();
 	const isRtl = i18n.dir() === "rtl";
 
-	const localIds = useMemo(() => ids ?? signal<number[]>([]), [ids]);
-	const localLabels = useMemo(() => labels ?? signal<Record<number, string>>([]), [labels]);
 	const [searchText, setSearchText] = useState("");
 	const [expanded, setExpanded] = useState<number[]>([]);
 
@@ -43,20 +39,22 @@ export default function CategoriesMultiSearchableSelect(
 	const categoryParentId = useMemo(() => signal<number>(0), []);
 	const isSaving = useMemo(() => signal(false), []);
 
-	const prevIds = useRef<number[]>(localIds.value);
+	const prevIds = useRef<number[]>(props.ids?.value ?? []);
 
 	useEffect(() =>
 	{
+		if (!props.ids || !props.labels) return;
+
 		return effect(() =>
 		{
-			const currentIds = localIds.value;
+			const currentIds = props.ids!.value;
 			const added = currentIds.filter(id => !prevIds.current.includes(id));
 
 			if (added.length > 0)
 			{
 				queueMicrotask(() =>
 				{
-					const latestIds = localIds.value;
+					const latestIds = props.ids!.value;
 					const newlyAdded = latestIds.filter(id => !prevIds.current.includes(id));
 
 					if (newlyAdded.length === 0) return;
@@ -77,7 +75,6 @@ export default function CategoriesMultiSearchableSelect(
 
 							if (prevIds.current.includes(parentId))
 							{
-								// Parent was checked, user clicked a child to uncheck it
 								idsToKeep = idsToKeep.filter(id => id !== parentId && id !== addedId);
 								for (const sib of siblings)
 								{
@@ -90,7 +87,6 @@ export default function CategoriesMultiSearchableSelect(
 							}
 							else
 							{
-								// Normal child addition
 								const allSiblingsSelected = siblingIds.every(id => idsToKeep.includes(id));
 								if (allSiblingsSelected && siblingIds.length > 0)
 								{
@@ -105,7 +101,6 @@ export default function CategoriesMultiSearchableSelect(
 						}
 						else
 						{
-							// Parent added -> remove children
 							const childrenIds = Cubits.categories.entities.value
 								.filter(c => c.parentCategoryId === category.id)
 								.map(c => c.id);
@@ -129,15 +124,15 @@ export default function CategoriesMultiSearchableSelect(
 							{
 								newLabels[id] = cat.name;
 							}
-							else if (localLabels.value[id])
+							else if (props.labels!.value[id])
 							{
-								newLabels[id] = localLabels.value[id];
+								newLabels[id] = props.labels!.value[id];
 							}
 						}
 
 						prevIds.current = idsToKeep;
-						localIds.value = idsToKeep;
-						localLabels.value = newLabels;
+						props.ids!.value = idsToKeep;
+						props.labels!.value = newLabels;
 					}
 					else
 					{
@@ -149,7 +144,7 @@ export default function CategoriesMultiSearchableSelect(
 
 			prevIds.current = currentIds;
 		});
-	}, [localIds, localLabels]);
+	}, [props.ids, props.labels]);
 
 	const toggleExpand = (id: number) =>
 	{
@@ -195,12 +190,15 @@ export default function CategoriesMultiSearchableSelect(
 		if (res.status === 200)
 		{
 			Cubits.categories.delete(category);
-			if (localIds.value.includes(category.id))
+			if (props.ids?.value.includes(category.id))
 			{
-				localIds.value = localIds.value.filter(id => id !== category.id);
-				const newLabels = {...localLabels.value};
-				delete newLabels[category.id];
-				localLabels.value = newLabels;
+				props.ids.value = props.ids.value.filter(id => id !== category.id);
+				if (props.labels?.value)
+				{
+					const newLabels = {...props.labels.value};
+					delete newLabels[category.id];
+					props.labels.value = newLabels;
+				}
 			}
 		}
 	};
@@ -220,9 +218,9 @@ export default function CategoriesMultiSearchableSelect(
 				if (res.data)
 				{
 					Cubits.categories.update(res.data);
-					if (localIds.value.includes(res.data.id))
+					if (props.ids?.value.includes(res.data.id) && props.labels?.value)
 					{
-						localLabels.value = {...localLabels.value, [res.data.id]: res.data.name};
+						props.labels.value = {...props.labels.value, [res.data.id]: res.data.name};
 					}
 					isDialogOpen.value = false;
 				}
@@ -236,8 +234,14 @@ export default function CategoriesMultiSearchableSelect(
 				if (res.data)
 				{
 					Cubits.categories.add(res.data);
-					localIds.value = [...localIds.value, res.data.id];
-					localLabels.value = {...localLabels.value, [res.data.id]: res.data.name};
+					if (props.ids)
+					{
+						props.ids.value = [...props.ids.value, res.data.id];
+					}
+					if (props.labels)
+					{
+						props.labels.value = {...props.labels.value, [res.data.id]: res.data.name};
+					}
 					setSearchText("");
 					Cubits.categories.search("");
 					isDialogOpen.value = false;
@@ -252,11 +256,8 @@ export default function CategoriesMultiSearchableSelect(
 
 	return (
 		<>
-			<MultiSearchableSelect<CategoryDto>>
-				<MultiSearchableSelect.Trigger
-					labels={ localLabels }
-					disabled={ props.disabled }
-				/>
+			<MultiSearchableSelect<CategoryDto> labelSelector="name" { ...props }>
+				<MultiSearchableSelect.Trigger disabled={ props.disabled }/>
 				<MultiSearchableSelect.Content>
 					<MultiSearchableSelect.SearchInput
 						onSearch={ (text) =>
@@ -269,7 +270,7 @@ export default function CategoriesMultiSearchableSelect(
 						<CommandItems searchText={ searchText }/>
 					</MultiSearchableSelect.Command>
 
-					<MultiSearchableSelect.Footer ids={ localIds } labels={ localLabels }/>
+					<MultiSearchableSelect.Footer/>
 				</MultiSearchableSelect.Content>
 			</MultiSearchableSelect>
 
@@ -323,14 +324,10 @@ export default function CategoriesMultiSearchableSelect(
 			{
 				content = categories.map((category) =>
 				{
-					const isParentSelected = category.parentCategoryId && localIds.value.includes(category.parentCategoryId);
+					const isParentSelected = category.parentCategoryId && props.ids?.value.includes(category.parentCategoryId);
 					return (
 						<MultiSearchableSelect.Option<CategoryDto>
-							{ ...props }
 							key={ category.id }
-							ids={ localIds }
-							labels={ localLabels }
-							labelSelector="name"
 							item={ category }
 						>
 							<div className="flex items-center justify-between w-full">
@@ -391,10 +388,6 @@ export default function CategoriesMultiSearchableSelect(
 						return (
 							<React.Fragment key={ parent.id }>
 								<MultiSearchableSelect.Option<CategoryDto>
-									{ ...props }
-									ids={ localIds }
-									labels={ localLabels }
-									labelSelector="name"
 									item={ parent }
 								>
 									<div className="flex items-center justify-between w-full">
@@ -440,14 +433,10 @@ export default function CategoriesMultiSearchableSelect(
 								</MultiSearchableSelect.Option>
 								{ isExpanded && children.map(child =>
 								{
-									const isParentSelected = localIds.value.includes(child.parentCategoryId!);
+									const isParentSelected = props.ids?.value.includes(child.parentCategoryId!);
 									return (
 										<MultiSearchableSelect.Option<CategoryDto>
-											{ ...props }
 											key={ child.id }
-											ids={ localIds }
-											labels={ localLabels }
-											labelSelector="name"
 											item={ child }
 										>
 											<div className="flex items-center justify-between w-full ps-7">
@@ -492,11 +481,7 @@ export default function CategoriesMultiSearchableSelect(
 					{
 						return (
 							<MultiSearchableSelect.Option<CategoryDto>
-								{ ...props }
 								key={ parent.id }
-								ids={ localIds }
-								labels={ localLabels }
-								labelSelector="name"
 								item={ parent }
 							>
 								<div className="flex items-center justify-between w-full">

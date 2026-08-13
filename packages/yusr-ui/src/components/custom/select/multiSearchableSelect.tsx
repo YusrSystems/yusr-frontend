@@ -20,34 +20,69 @@ import { Check, ChevronsUpDown, Loader2, X } from "lucide-react";
 import { SearchInput, type SearchInputParams } from "../../custom";
 
 
-export type MultiSearchableSelectOptionProps<TDto extends Dto> = {
-	ids: Signal<number[]>;
+export type MultiSearchableSelectRootProps<TDto extends Dto> = PropsWithChildren<{
+	ids?: Signal<number[]>;
 	labels?: Signal<Record<number, string>>;
-	labelSelector: keyof TDto;
-	item: TDto;
+	selectedItems?: Signal<TDto[]>;
+	labelSelector?: keyof TDto;
 	disabled?: boolean;
-	onToggle?: (ids: number[]) => void;
+	onToggle?: (ids: number[], selectedItems: TDto[]) => void;
+}>;
+
+export type MultiSearchableSelectOptionProps<TDto extends Dto> = {
+	item: TDto;
+	ids?: Signal<number[]>;
+	labels?: Signal<Record<number, string>>;
+	labelSelector?: keyof TDto;
+	selectedItems?: Signal<TDto[]>;
+	disabled?: boolean;
+	onToggle?: (ids: number[], selectedItems: TDto[]) => void;
 };
 
-export type MultiSearchableSelectProps<TDto extends Dto> = Omit<
-	MultiSearchableSelectOptionProps<TDto>,
-	"labelSelector" | "item"
->;
-
-export function MultiSearchableSelect<TDto extends Dto>({children}: PropsWithChildren)
+export function MultiSearchableSelect<TDto extends Dto>({
+	ids: propIds,
+	labels: propLabels,
+	selectedItems,
+	labelSelector,
+	onToggle,
+	children
+}: MultiSearchableSelectRootProps<TDto>)
 {
 	useSignals();
 	const isOpen = useMemo(() => signal<boolean>(false), []);
 	const searchInput = useMemo(() => signal<string | undefined>(""), []);
 	const {t, i18n} = useTranslation("common");
 
+	// Initialize IDs from selectedItems if not explicitly provided
+	const localIds = useMemo(
+		() => propIds ?? signal<number[]>(selectedItems?.value?.map((i) => i.id) ?? []),
+		[propIds, selectedItems]
+	);
+
+	// Initialize Labels from selectedItems if not explicitly provided
+	const localLabels = useMemo(
+		() => propLabels ?? signal<Record<number, string>>(
+			selectedItems?.value?.reduce((acc, item) =>
+			{
+				if (labelSelector) acc[item.id] = item[labelSelector] as string;
+				return acc;
+			}, {} as Record<number, string>) ?? {}
+		),
+		[propLabels, selectedItems, labelSelector]
+	);
+
 	return (
 		<SearchableSelectContext.Provider
 			value={ {
-				isOpen: isOpen,
-				i18n: i18n,
-				t: t,
-				searchInput: searchInput
+				isOpen,
+				i18n,
+				t,
+				searchInput,
+				ids: localIds,
+				labels: localLabels,
+				selectedItems,
+				labelSelector,
+				onToggle
 			} }
 		>
 			<Popover open={ isOpen.value } onOpenChange={ (open) => isOpen.value = open } modal={ true }>
@@ -59,7 +94,7 @@ export function MultiSearchableSelect<TDto extends Dto>({children}: PropsWithChi
 
 // Trigger shows badges for selected items (or a count once it gets crowded) instead of a single label
 MultiSearchableSelect.Trigger = function (
-	{className, labels, placeholder, ...props}: React.ComponentProps<"button"> & {
+	{className, labels: propLabels, placeholder, ...props}: React.ComponentProps<"button"> & {
 		labels?: Signal<Record<number, string>>;
 		placeholder?: string;
 	}
@@ -67,6 +102,7 @@ MultiSearchableSelect.Trigger = function (
 {
 	useSignals();
 	const data = useSearchableSelectContext();
+	const labels = propLabels ?? data.labels;
 	const labelMap = labels?.value ?? {};
 	const selectedLabels = Object.values(labelMap);
 
@@ -77,10 +113,7 @@ MultiSearchableSelect.Trigger = function (
 				variant="outline"
 				role="combobox"
 				aria-expanded={ data.isOpen.value }
-				className={ cn(
-					"w-full justify-between font-normal",
-					className
-				) }
+				className={ cn("w-full justify-between font-normal", className) }
 				{ ...props }
 			>
 				<div className="flex flex-wrap gap-1 flex-1 justify-start">
@@ -170,18 +203,19 @@ MultiSearchableSelect.OptionBody = function ({label}: { label: string; })
 
 // Toggles membership in `ids` instead of replacing the value; popover stays open after selection
 MultiSearchableSelect.Option = function <TDto extends Dto>(
-	{
-		ids,
-		labels,
-		labelSelector,
-		item,
-		disabled,
-		onToggle,
-		children
-	}: MultiSearchableSelectOptionProps<TDto> & PropsWithChildren
+	props: MultiSearchableSelectOptionProps<TDto> & PropsWithChildren
 )
 {
 	useSignals();
+	const context = useSearchableSelectContext();
+
+	const ids = props.ids ?? context.ids ?? signal<number[]>([]);
+	const labels = props.labels ?? context.labels;
+	const selectedItems = props.selectedItems ?? context.selectedItems;
+	const labelSelector = props.labelSelector ?? context.labelSelector;
+	const onToggle = props.onToggle ?? context.onToggle;
+	const {item, disabled, children} = props;
+
 	const itemId = item.id;
 	const isSelected = ids.value.includes(itemId);
 
@@ -193,16 +227,17 @@ MultiSearchableSelect.Option = function <TDto extends Dto>(
 			{
 				const nextSelected = !isSelected;
 
-				ids.value = nextSelected
+				const nextIds = nextSelected
 					? [...ids.value, itemId]
 					: ids.value.filter((id) => id !== itemId);
+				ids.value = nextIds;
 
-				if (labels)
+				if (labels && labelSelector)
 				{
 					const nextLabels = {...labels.value};
 					if (nextSelected)
 					{
-						nextLabels[itemId] = item[labelSelector] as string;
+						nextLabels[itemId] = String(item[labelSelector as keyof TDto]);
 					}
 					else
 					{
@@ -211,7 +246,19 @@ MultiSearchableSelect.Option = function <TDto extends Dto>(
 					labels.value = nextLabels;
 				}
 
-				onToggle?.(ids.value);
+				if (selectedItems)
+				{
+					const nextItems = nextSelected
+						? [...selectedItems.value, item]
+						: selectedItems.value.filter((i) => i.id !== itemId);
+
+					selectedItems.value = nextItems;
+					onToggle?.(nextIds, nextItems);
+				}
+				else
+				{
+					onToggle?.(nextIds, [item]);
+				}
 			} }
 			className="cursor-pointer group"
 		>
@@ -228,21 +275,23 @@ MultiSearchableSelect.Option = function <TDto extends Dto>(
 
 // Optional footer showing a clear-all action once something is selected
 MultiSearchableSelect.Footer = function (
-	{ids, labels}: { ids: Signal<number[]>; labels?: Signal<Record<number, string>>; }
+	{ids: propIds, labels: propLabels}: { ids?: Signal<number[]>; labels?: Signal<Record<number, string>>; } = {}
 )
 {
 	useSignals();
 	const data = useSearchableSelectContext();
+	const ids = propIds ?? data.ids;
+	const labels = propLabels ?? data.labels;
 
-	if (ids.value.length === 0)
+	if (ids?.value.length === 0)
 	{
 		return null;
 	}
 
 	return (
 		<div className="flex items-center justify-between border-t px-3 py-2">
-		<span className="text-xs text-muted-foreground">
-			{ data.t("searchableSelect.selectedCount", {count: ids.value.length}) }
+			<span className="text-xs text-muted-foreground">
+				{ data.t("searchableSelect.selectedCount", {count: ids?.value.length}) }
 			</span>
 			<Button
 				type="button"
@@ -251,11 +300,10 @@ MultiSearchableSelect.Footer = function (
 				className="h-6 px-2 text-xs"
 				onClick={ () =>
 				{
-					ids.value = [];
-					if (labels)
-					{
-						labels.value = {};
-					}
+					if (ids) ids.value = [];
+					if (labels) labels.value = {};
+					if (data.selectedItems) data.selectedItems.value = [];
+					data.onToggle?.([], []);
 				} }
 			>
 				<X className="h-3 w-3 ltr:mr-1 rtl:ml-1"/>
