@@ -135,19 +135,19 @@ export default function PosEntryPage()
 	if (isLoading.value)
 	{
 		return (
-			<div className="min-h-screen flex items-center justify-center bg-muted/20">
+			<div className="h-screen w-full flex items-center justify-center bg-muted/20 overflow-hidden">
 				<Loader2 className="w-10 h-10 animate-spin text-primary"/>
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" dir="rtl">
+		<div className="h-screen w-full flex items-center justify-center p-4 relative overflow-hidden" dir="rtl">
 			<YusrBackground/>
 
-			<div className="w-full max-w-md relative z-10">
+			<div className="w-full max-w-md relative z-10 my-auto">
 				{ activeSession.value ? (
-					<Card className="border-red-200 shadow-lg shadow-red-500/10">
+					<Card className="border-red-200 shadow-lg shadow-red-500/10 max-h-[85vh] overflow-y-auto">
 						<CardHeader className="text-center pb-2">
 							<div
 								className="mx-auto w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4">
@@ -198,7 +198,7 @@ export default function PosEntryPage()
 						</CardContent>
 					</Card>
 				) : (
-					<Card className="shadow-xl border-primary/10">
+					<Card className="shadow-xl border-primary/10 max-h-[85vh] overflow-y-auto">
 						<CardHeader className="text-center pb-6 relative">
 							<Button
 								variant="ghost"
