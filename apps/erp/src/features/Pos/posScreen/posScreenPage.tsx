@@ -18,6 +18,10 @@ import PosCart from "./components/posCart";
 import PosCheckoutDialog from "./components/posCheckoutDialog";
 import PosRecentInvoicesDialog from "./components/posRecentInvoicesDialog";
 import { toast } from "sonner";
+import { createPortal } from "react-dom";
+import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
+import { InvoiceReport } from "@/features/reports/invoice/invoiceReport.tsx";
+import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
 
 
 export default function PosScreenPage()
@@ -36,6 +40,30 @@ export default function PosScreenPage()
 
 	// We use the Invoice class to handle all cart math automatically
 	const cartInvoice = useMemo(() => signal<Invoice | null>(null), []);
+	const printedInvoice = useMemo(() => signal<InvoiceReportResult | undefined>(undefined), []);
+
+	useEffect(() =>
+	{
+		const handleAfterPrint = () =>
+		{
+			printedInvoice.value = undefined;
+		};
+		window.addEventListener("afterprint", handleAfterPrint);
+		return () => window.removeEventListener("afterprint", handleAfterPrint);
+	}, [printedInvoice]);
+
+	const triggerImmediatePrint = (report: InvoiceReportResult) =>
+	{
+		printedInvoice.value = report;
+		// Wait for DOM to render the portal before triggering print dialog
+		requestAnimationFrame(() =>
+		{
+			requestAnimationFrame(() =>
+			{
+				window.print();
+			});
+		});
+	};
 
 	useEffect(() =>
 	{
@@ -107,14 +135,13 @@ export default function PosScreenPage()
 
 	const initNewCart = (terminal: PosTerminalDto) =>
 	{
-		const newInvoice = Invoice.create({
+		cartInvoice.value = Invoice.create({
 			type: InvoiceType.Sell,
 			storeId: terminal.storeId,
 			storeName: terminal.storeName,
 			partnerId: terminal.defaultPartnerId ?? Services.auth.setting?.defaultCustomerPartnerId?.value,
 			partnerName: terminal.defaultPartnerName ?? Services.auth.setting?.defaultCustomerPartnerName?.value
 		});
-		cartInvoice.value = newInvoice;
 	};
 
 	// Process Receipt-Linked Return Flow (No full-screen reload)
@@ -299,10 +326,15 @@ export default function PosScreenPage()
 					invoice={ cartInvoice.value }
 					terminal={ activeTerminal.value }
 					session={ activeSession.value }
-					onSuccess={ () =>
+					onSuccess={ (reportResult) =>
 					{
 						initNewCart(activeTerminal.value!);
 						isCheckoutDialogOpen.value = false;
+
+						if (reportResult)
+						{
+							triggerImmediatePrint(reportResult);
+						}
 					} }
 				/>
 			) }
@@ -316,6 +348,15 @@ export default function PosScreenPage()
 					onProcessReturn={ handleProcessReturn }
 				/>
 			) }
+
+			{ printedInvoice.value &&
+				createPortal(
+					<PortalReportContainer>
+						<InvoiceReport data={ printedInvoice.value } isPortal={ true } forceThermal={ true }/>
+					</PortalReportContainer>,
+					document.body
+				)
+			}
 		</div>
 	);
 }

@@ -36,6 +36,7 @@ import {
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath";
 import { toast } from "sonner";
 import { InvoiceType } from "@/core/types/invoiceType";
+import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
 
 
 interface PosCheckoutDialogProps
@@ -45,7 +46,7 @@ interface PosCheckoutDialogProps
 	invoice: Invoice;
 	terminal: PosTerminalDto;
 	session: PosSessionDto;
-	onSuccess: () => void;
+	onSuccess: (reportResult: InvoiceReportResult) => void;
 }
 
 const getPaymentIcon = (category: number) =>
@@ -203,21 +204,6 @@ export default function PosCheckoutDialog({
 
 		isSubmitting.value = true;
 
-		// Handle Change (Deduct from Cash) for standard sales
-		const finalPayments = payments.value.map(p => ({...p}));
-		if (!isReturnMode && change > 0)
-		{
-			const cashMethod = terminal.allowedPaymentMethods?.find(m => m.category === 1);
-			if (cashMethod && cashMethod.id !== undefined)
-			{
-				const cashLine = finalPayments.find(p => p.paymentMethodId === cashMethod.id);
-				if (cashLine)
-				{
-					cashLine.amount = Number((cashLine.amount - change).toFixed(2));
-				}
-			}
-		}
-
 		const formattedItems = invoice.invoiceItems.value.map((item, index) =>
 		{
 			const itemDto = item.toJson();
@@ -235,7 +221,7 @@ export default function PosCheckoutDialog({
 			notes: notes.value || undefined,
 			idempotencyKey: crypto.randomUUID(),
 			items: formattedItems,
-			payments: finalPayments.filter(p => p.amount > 0)
+			payments: payments.value.filter(p => p.amount > 0)
 		};
 
 		try
@@ -244,7 +230,7 @@ export default function PosCheckoutDialog({
 			if (res.status === 200 && res.data)
 			{
 				toast.success(isReturnMode ? "تمت عملية إرجاع المبلغ بنجاح" : "تمت عملية الدفع بنجاح");
-				onSuccess();
+				onSuccess(res.data);
 			}
 			else
 			{

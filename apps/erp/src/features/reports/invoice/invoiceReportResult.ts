@@ -12,6 +12,8 @@ export interface InvoiceReportResult
 	totalAfterTax: number;
 	paidAmount: number;
 	remainingAmount: number;
+	tenderedAmount?: number;
+	changeAmount?: number;
 	titleAr: string;
 	titleEn: string;
 	isSimplified: boolean;

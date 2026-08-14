@@ -392,7 +392,7 @@ export default function PosRecentInvoicesDialog({
 			{ printedInvoice.value &&
 				createPortal(
 					<PortalReportContainer>
-						<InvoiceReport data={ printedInvoice.value } isPortal={ true }/>
+						<InvoiceReport data={ printedInvoice.value } isPortal={ true } forceThermal={ true }/>
 					</PortalReportContainer>,
 					document.body
 				) }
