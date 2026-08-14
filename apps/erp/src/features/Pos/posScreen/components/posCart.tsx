@@ -36,7 +36,7 @@ export default function PosCart({invoice, onCheckout, onCancelReturn}: PosCartPr
 	const finalTotal = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(items);
 
 	// Wrapped in Number() to ensure it's treated as a number for arithmetic operations
-	const mainTaxPerc = Number(Services.auth.setting?.mainTax?.value?.percentage) || 15;
+	const mainTaxPerc = Number(Services.auth.setting?.mainTax?.value?.percentage) || 0;
 
 	// Formula for VAT calculations
 	const baseTaxExclusive = finalTotal / (1 + mainTaxPerc / 100);
