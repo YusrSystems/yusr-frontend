@@ -30,12 +30,12 @@ export default class InvoiceItemsMath
 
 	public static CalcTaxExclusivePrice(taxInclusivePrice: number, totalTaxesPerc: number)
 	{
-		return Number((taxInclusivePrice / (100 + totalTaxesPerc) * 100).toFixed(2));
+		return InvoiceItemsMath.round2(taxInclusivePrice / (100 + totalTaxesPerc) * 100);
 	}
 
 	public static CalcTaxInclusivePrice(taxExclusivePrice: number, totalTaxesPerc: number): number
 	{
-		return Number((taxExclusivePrice * (100 + totalTaxesPerc) / 100).toFixed(2));
+		return InvoiceItemsMath.round2(taxExclusivePrice * (100 + totalTaxesPerc) / 100);
 	}
 
 	public static CalcTaxExclusiveTotalPrice(
@@ -45,17 +45,17 @@ export default class InvoiceItemsMath
 		totalTaxesPerc: number
 	)
 	{
-		return Number(((taxExclusivePrice + (settlement / (100 + totalTaxesPerc) * 100)) * qtn).toFixed(2));
+		return InvoiceItemsMath.round2((taxExclusivePrice + (settlement / (100 + totalTaxesPerc) * 100)) * qtn);
 	}
 
 	public static CalcTaxInclusiveTotalPrice(taxInclusivePrice: number, settlement: number, qtn: number)
 	{
-		return Number(((taxInclusivePrice + settlement) * qtn).toFixed(2));
+		return InvoiceItemsMath.round2((taxInclusivePrice + settlement) * qtn);
 	}
 
 	public static CalcTotalCost(cost: number, qtn: number)
 	{
-		return Number((cost * qtn).toFixed(2));
+		return InvoiceItemsMath.round2(cost * qtn);
 	}
 
 	public static CalcInvoiceTaxExclusivePrice(invoiceItems: InvoiceItem[])
@@ -85,7 +85,7 @@ export default class InvoiceItemsMath
 				),
 			0
 		);
-		price = price == undefined ? 0 : Number(price.toFixed(2));
+		price = price == undefined ? 0 : InvoiceItemsMath.round2(price);
 		return price;
 	}
 
@@ -95,15 +95,15 @@ export default class InvoiceItemsMath
 			(sum, i) => sum + ((i.taxInclusivePrice.value ?? 0) * (i.quantity.value ?? 0)),
 			0
 		);
-		return Number(price.toFixed(2));
+		return InvoiceItemsMath.round2(price);
 	}
 
 	public static CalcInvoiceItemProfit(invoiceItem: InvoiceItem): InvoiceItemProfitResult
 	{
 		const taxInclusivePrice = (invoiceItem.taxInclusivePrice.value ?? 0) + (invoiceItem.settlement.value ?? 0);
 		const taxFactor = (100 + invoiceItem.totalTaxesPerc.value) / 100;
-		const itemTaxesAmount = Number((taxInclusivePrice - (taxInclusivePrice / taxFactor)).toFixed(2));
-		const profit = Number((taxInclusivePrice - itemTaxesAmount - (invoiceItem.cost.value ?? 0)).toFixed(2));
+		const itemTaxesAmount = InvoiceItemsMath.round2(taxInclusivePrice - (taxInclusivePrice / taxFactor));
+		const profit = InvoiceItemsMath.round2(taxInclusivePrice - itemTaxesAmount - (invoiceItem.cost.value ?? 0));
 		const qtn = invoiceItem.quantity.value ?? 0;
 		return {
 			taxInclusivePrice,
@@ -111,7 +111,7 @@ export default class InvoiceItemsMath
 			totalTaxesAmount: itemTaxesAmount,
 			quantity: qtn,
 			profit,
-			totalProfit: Number((profit * qtn).toFixed(2))
+			totalProfit: InvoiceItemsMath.round2(profit * qtn)
 		};
 	}
 
@@ -151,5 +151,12 @@ export default class InvoiceItemsMath
 	{
 		return InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(invoiceItems)
 			- InvoiceItemsMath.CalcInvoicePaidPrice(paymentVouchers);
+	}
+
+	private static round2(value: number): number
+	{
+		return value >= 0
+			? Math.round((value + Number.EPSILON) * 100) / 100
+			: -Math.round((-value + Number.EPSILON) * 100) / 100;
 	}
 }
