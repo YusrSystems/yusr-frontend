@@ -275,9 +275,12 @@ export default function PosEntryPage()
 					session={ activeSession.value }
 					onSuccess={ async () =>
 					{
-						if (selectedTerminalId.value)
+						const targetTerminalId = selectedTerminalId.value;
+						activeSession.value = null;
+						isCloseDialogOpen.value = false;
+						if (targetTerminalId)
 						{
-							await checkActiveSession(selectedTerminalId.value);
+							await checkActiveSession(targetTerminalId);
 						}
 					} }
 				/>
