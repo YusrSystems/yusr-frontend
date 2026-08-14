@@ -11,8 +11,6 @@ import CloseSessionDialog from "../posSession/closeSessionDialog";
 import { APP_NAME } from "../../../../appConfig";
 import Invoice, { InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice";
 import { InvoiceType } from "@/core/types/invoiceType";
-import { Cubits } from "@/core/services/cubits";
-import { ItemType } from "@/core/data/item.ts";
 import PosProductGrid from "./components/posProductGrid";
 import PosCart from "./components/posCart";
 import PosCheckoutDialog from "./components/posCheckoutDialog";
@@ -104,13 +102,6 @@ export default function PosScreenPage()
 						isOutdatedSession.value = true;
 						isCloseDialogOpen.value = true;
 					}
-
-					// Initialize items for this store
-					Cubits.items.initForStoreAndDate(
-						[ItemType.Product, ItemType.Service],
-						terminalRes.data.storeId,
-						DateService.formatDateOnly(new Date())
-					);
 
 					// Initialize empty cart
 					initNewCart(terminalRes.data);
