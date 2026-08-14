@@ -21,6 +21,7 @@ import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport.tsx";
 import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
+import { PosTempCache } from "@/features/Pos/posTempCache.ts";
 
 
 export default function PosScreenPage()
@@ -130,17 +131,43 @@ export default function PosScreenPage()
 
 			try
 			{
+				// 1. Check cache first
+				const cachedSession = PosTempCache.getSession(terminalId);
+				const cachedTerminal = PosTempCache.getTerminal(terminalId);
+
+				// 2. Only fetch missing endpoints
+				const promises: [
+						Promise<{ data?: PosSessionDto }> | null,
+						Promise<{ data?: PosTerminalDto }> | null
+				] = [
+					cachedSession === undefined ? Services.posSessionsApi.GetActiveSession(terminalId) : null,
+					!cachedTerminal ? Services.posTerminalsApi.Get(terminalId) : null
+				];
+
 				const [sessionRes, terminalRes] = await Promise.all([
-					Services.posSessionsApi.GetActiveSession(terminalId),
-					Services.posTerminalsApi.Get(terminalId)
+					promises[0] ? promises[0] : Promise.resolve({data: cachedSession ?? undefined}),
+					promises[1] ? promises[1] : Promise.resolve({data: cachedTerminal ?? undefined})
 				]);
 
-				if (sessionRes.data && terminalRes.data)
-				{
-					activeSession.value = sessionRes.data;
-					activeTerminal.value = terminalRes.data;
+				const session = sessionRes?.data ?? cachedSession ?? null;
+				const terminal = terminalRes?.data ?? cachedTerminal ?? null;
 
-					const openedDate = new Date(sessionRes.data.openedAt).toDateString();
+				// Update cache if fetched from API
+				if (sessionRes?.data !== undefined)
+				{
+					PosTempCache.setSession(terminalId, sessionRes.data ?? null);
+				}
+				if (terminalRes?.data)
+				{
+					PosTempCache.setTerminal(terminalRes.data);
+				}
+
+				if (session && terminal)
+				{
+					activeSession.value = session;
+					activeTerminal.value = terminal;
+
+					const openedDate = new Date(session.openedAt).toDateString();
 					const today = new Date().toDateString();
 
 					if (openedDate !== today)
@@ -150,7 +177,7 @@ export default function PosScreenPage()
 					}
 
 					// Initialize empty cart
-					initNewCart(terminalRes.data);
+					initNewCart(terminal);
 				}
 				else
 				{
@@ -168,7 +195,7 @@ export default function PosScreenPage()
 		};
 
 		fetchSessionAndTerminal();
-	}, [navigate, terminalIdParam]);
+	}, [terminalIdParam]);
 
 	const initNewCart = (terminal: PosTerminalDto) =>
 	{
@@ -301,7 +328,7 @@ export default function PosScreenPage()
 						<MonitorPlay className="w-4 h-4 text-primary"/>
 						شاشة العميل
 					</Button>
-					
+
 					<Button
 						variant="outline"
 						className="gap-2 h-9"

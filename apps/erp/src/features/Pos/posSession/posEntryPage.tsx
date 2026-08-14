@@ -21,6 +21,8 @@ import { PosSessionDto } from "@/core/data/posSession";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
 import CloseSessionDialog from "./closeSessionDialog";
 import { APP_NAME } from "../../../../appConfig";
+import { PosTempCache } from "../posTempCache";
+import type { PosTerminalDto } from "@/core/data/posTerminal.ts";
 
 
 export default function PosEntryPage()
@@ -44,7 +46,7 @@ export default function PosEntryPage()
 
 		const init = async () =>
 		{
-			Cubits.posTerminals.init();
+			await Cubits.posTerminals.init();
 			const terminals = Cubits.posTerminals.entities.value;
 
 			let targetId: number | undefined = undefined;
@@ -52,6 +54,7 @@ export default function PosEntryPage()
 			if (terminals.length === 1)
 			{
 				targetId = terminals[0]?.id;
+				PosTempCache.setTerminal(terminals[0] as PosTerminalDto);
 			}
 
 			if (targetId)
@@ -63,7 +66,7 @@ export default function PosEntryPage()
 			isLoading.value = false;
 		};
 
-		init();
+		void init();
 	}, []);
 
 	const checkActiveSession = async (terminalId: number) =>
@@ -71,10 +74,18 @@ export default function PosEntryPage()
 		isCheckingSession.value = true;
 		try
 		{
+			const terminal = Cubits.posTerminals.entities.value.find(t => t.id === terminalId);
+			if (terminal)
+			{
+				PosTempCache.setTerminal(terminal);
+			}
+
 			const res = await Services.posSessionsApi.GetActiveSession(terminalId);
 			if (res.data)
 			{
 				const session = res.data;
+				PosTempCache.setSession(terminalId, session);
+
 				const openedDate = new Date(session.openedAt).toDateString();
 				const today = new Date().toDateString();
 
@@ -90,6 +101,7 @@ export default function PosEntryPage()
 			}
 			else
 			{
+				PosTempCache.setSession(terminalId, null);
 				activeSession.value = null;
 				isCloseDialogOpen.value = false;
 			}
@@ -97,20 +109,6 @@ export default function PosEntryPage()
 		finally
 		{
 			isCheckingSession.value = false;
-		}
-	};
-
-	const handleTerminalChange = async (val: number | undefined) =>
-	{
-		selectedTerminalId.value = val;
-		if (val)
-		{
-			await checkActiveSession(val);
-		}
-		else
-		{
-			activeSession.value = null;
-			isCloseDialogOpen.value = false;
 		}
 	};
 
@@ -127,9 +125,30 @@ export default function PosEntryPage()
 
 		if (res.status === 200 && res.data)
 		{
+			PosTempCache.setSession(selectedTerminalId.value, res.data);
+			const terminal = Cubits.posTerminals.entities.value.find(t => t.id === selectedTerminalId.value);
+			if (terminal)
+			{
+				PosTempCache.setTerminal(terminal);
+			}
+
 			navigate(`/pos/screen/${ selectedTerminalId.value }`, {replace: true});
 		}
 		isStarting.value = false;
+	};
+
+	const handleTerminalChange = async (val: number | undefined) =>
+	{
+		selectedTerminalId.value = val;
+		if (val)
+		{
+			await checkActiveSession(val);
+		}
+		else
+		{
+			activeSession.value = null;
+			isCloseDialogOpen.value = false;
+		}
 	};
 
 	if (isLoading.value)

@@ -16,6 +16,7 @@ import {
 } from "yusr-ui";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
 import { AlertTriangle, Calculator, Loader2, ReceiptText } from "lucide-react";
+import { PosTempCache } from "@/features/Pos/posTempCache.ts";
 
 
 interface CloseSessionDialogProps
@@ -77,6 +78,7 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 
 		if (res.status === 200 && res.data)
 		{
+			PosTempCache.clear();
 			onSuccess(res.data);
 			onOpenChange(false);
 		}
