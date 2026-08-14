@@ -158,7 +158,26 @@ export default function PosCheckoutDialog({
 	const handleUpdatePayment = <K extends keyof PosPaymentLineDto>(index: number, field: K, value: PosPaymentLineDto[K]) =>
 	{
 		const newPayments = [...payments.value];
-		newPayments[index] = {...newPayments[index]!, [field]: value};
+		const current = newPayments[index]!;
+
+		if (field === "amount")
+		{
+			const method = terminal.allowedPaymentMethods?.find(m => m.id === current.paymentMethodId);
+			const isCash = method?.category === 1;
+			const allowOverpay = isCash && !isReturnMode;
+
+			if (!allowOverpay)
+			{
+				const othersTotal = newPayments.reduce(
+					(sum, p, i) => (i === index ? sum : sum + (p.amount || 0)),
+					0
+				);
+				const maxAllowed = Math.max(0, Number((totalAmount - othersTotal).toFixed(2)));
+				value = Math.min(value as number, maxAllowed) as PosPaymentLineDto[K];
+			}
+		}
+
+		newPayments[index] = {...current, [field]: value};
 		payments.value = newPayments;
 	};
 
@@ -264,13 +283,18 @@ export default function PosCheckoutDialog({
 							</Button>
 						</div>
 
-						<div className="flex flex-col gap-4 max-h-100 overflow-y-auto pr-2">
+						<div className="flex flex-col gap-4 max-h-[400px] overflow-y-auto pr-2">
 							{ payments.value.map((payment, index) =>
 							{
 								const method = terminal.allowedPaymentMethods?.find(m => m.id === payment.paymentMethodId);
+								const isCash = method?.category === 1;
+								const allowOverpay = isCash && !isReturnMode;
+								const othersTotal = payments.value.reduce((sum, p, i) => (i === index ? sum : sum + (p.amount || 0)), 0);
+								const lineMax = allowOverpay ? undefined : Math.max(0, Number((totalAmount - othersTotal).toFixed(2)));
+
 								return (
 									<div key={ index }
-									     className="flex flex-col gap-3 bg-card p-4 rounded-xl border border-border shadow-sm relative overflow-hidden group">
+									     className="shrink-0 flex flex-col gap-3 bg-card p-4 rounded-xl border border-border shadow-sm relative overflow-hidden group">
 										<div className="flex items-center gap-3">
 											<div
 												className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary shrink-0">
@@ -300,6 +324,7 @@ export default function PosCheckoutDialog({
 											<div className="flex-1">
 												<NumberInput
 													min={ 0 }
+													max={ lineMax }
 													value={ signal(payment.amount === 0 ? undefined : payment.amount) }
 													onChange={ (val) => handleUpdatePayment(index, "amount", val || 0) }
 													className="h-12 text-lg font-bold text-left bg-muted/20 focus:bg-background transition-colors"
@@ -328,7 +353,7 @@ export default function PosCheckoutDialog({
 
 						<div className="pt-2">
 							<TextAreaField
-								label="ملاحظات المرتجع / الفاتورة"
+								label="ملاحظات الفاتورة"
 								value={ notes }
 								rows={ 2 }
 							/>
@@ -369,7 +394,7 @@ export default function PosCheckoutDialog({
 							{ remaining > 0 ? (
 								<div
 									className="flex justify-between items-center p-4 bg-red-50 text-red-600 rounded-xl border border-red-100">
-									<span className="font-bold">المتبقي للإرجاع</span>
+									<span className="font-bold">المتبقي</span>
 									<span className="font-black text-2xl">{ remaining.toLocaleString(undefined, {
 										minimumFractionDigits: 2,
 										maximumFractionDigits: 2
