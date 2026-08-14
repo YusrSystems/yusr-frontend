@@ -15,7 +15,7 @@ import {
 	TextAreaField
 } from "yusr-ui";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
-import { AlertTriangle, Calculator, ReceiptText } from "lucide-react";
+import { AlertTriangle, Calculator, Loader2, ReceiptText } from "lucide-react";
 
 
 interface CloseSessionDialogProps
@@ -34,6 +34,9 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 	const closingNotes = useMemo(() => signal<string>(""), []);
 	const isSubmitting = useMemo(() => signal(false), []);
 
+	const isLoading = useMemo(() => signal(false), []);
+	const liveSession = useMemo(() => signal<PosSessionDto>(session), [session]);
+
 	useEffect(() =>
 	{
 		if (open)
@@ -41,10 +44,24 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 			closingCash.value = 0;
 			closingNotes.value = "";
 			isSubmitting.value = false;
-		}
-	}, [open]);
+			isLoading.value = true;
 
-	const expectedCash = session.expectedCash || 0;
+			Services.posSessionsApi.Get(session.id)
+				.then(res =>
+				{
+					if (res.data)
+					{
+						liveSession.value = res.data;
+					}
+				})
+				.finally(() =>
+				{
+					isLoading.value = false;
+				});
+		}
+	}, [open, session.id]);
+
+	const expectedCash = liveSession.value.expectedCash || 0;
 	const difference = closingCash.value - expectedCash;
 
 	const handleCloseSession = async () =>
@@ -52,10 +69,10 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 		isSubmitting.value = true;
 
 		const res = await Services.posSessionsApi.CloseSession({
-			posSessionId: session.id,
+			posSessionId: liveSession.value.id,
 			closingCash: closingCash.value,
 			closingNotes: closingNotes.value,
-			rowVer: session.rowVer
+			rowVer: liveSession.value.rowVer
 		});
 
 		if (res.status === 200 && res.data)
@@ -76,7 +93,14 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 					</DialogTitle>
 				</DialogHeader>
 
-				<div className="flex flex-col gap-6 py-4">
+				<div className="flex flex-col gap-6 py-4 relative">
+					{ isLoading.value && (
+						<div
+							className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 rounded-xl">
+							<Loader2 className="w-8 h-8 animate-spin text-primary"/>
+						</div>
+					) }
+
 					<div className="bg-muted/30 border border-border rounded-xl p-4 space-y-3">
 						<div className="flex items-center gap-2 text-sm font-bold text-muted-foreground mb-2">
 							<ReceiptText className="w-4 h-4"/>
@@ -85,30 +109,33 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 						<div className="grid grid-cols-3 gap-4">
 							<div className="flex flex-col gap-1">
 								<span className="text-xs text-muted-foreground">إجمالي المبيعات</span>
-								<span
-									className="font-semibold text-emerald-600">{ session.totalSales?.toLocaleString(undefined, {
-									minimumFractionDigits: 2,
-									maximumFractionDigits: 2
-								}) }
-									<ErpCurrencyIcon className="w-3 h-3 inline"/></span>
+								<span className="font-semibold text-emerald-600">
+									{ liveSession.value.totalSales?.toLocaleString(undefined, {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2
+									}) }
+									<ErpCurrencyIcon className="w-3 h-3 inline"/>
+								</span>
 							</div>
 							<div className="flex flex-col gap-1">
 								<span className="text-xs text-muted-foreground">إجمالي المرتجعات</span>
-								<span
-									className="font-semibold text-red-600">{ session.totalSalesReturns?.toLocaleString(undefined, {
-									minimumFractionDigits: 2,
-									maximumFractionDigits: 2
-								}) }
-									<ErpCurrencyIcon className="w-3 h-3 inline"/></span>
+								<span className="font-semibold text-red-600">
+									{ liveSession.value.totalSalesReturns?.toLocaleString(undefined, {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2
+									}) }
+									<ErpCurrencyIcon className="w-3 h-3 inline"/>
+								</span>
 							</div>
 							<div className="flex flex-col gap-1">
 								<span className="text-xs text-muted-foreground">صافي المبيعات</span>
-								<span
-									className="font-bold text-primary">{ session.totalNetSales?.toLocaleString(undefined, {
-									minimumFractionDigits: 2,
-									maximumFractionDigits: 2
-								}) }
-									<ErpCurrencyIcon className="w-3 h-3 inline"/></span>
+								<span className="font-bold text-primary">
+									{ liveSession.value.totalNetSales?.toLocaleString(undefined, {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2
+									}) }
+									<ErpCurrencyIcon className="w-3 h-3 inline"/>
+								</span>
 							</div>
 						</div>
 					</div>
@@ -118,10 +145,9 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 							<span className="text-sm font-medium text-muted-foreground">المبلغ المتوقع في الصندوق</span>
 							<span className="text-2xl font-bold tabular-nums">
                                 { expectedCash.toLocaleString(undefined, {
-	                                minimumFractionDigits: 2,
-	                                maximumFractionDigits: 2
-                                }) } <ErpCurrencyIcon
-								className="w-5 h-5 inline text-muted-foreground"/>
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2
+								}) } <ErpCurrencyIcon className="w-5 h-5 inline text-muted-foreground"/>
                             </span>
 						</div>
 
@@ -146,9 +172,7 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 						<div className="flex items-center gap-2">
 							{ difference !== 0 && <AlertTriangle
                                 className={ cn("w-5 h-5", difference > 0 ? "text-blue-600" : "text-red-600") }/> }
-							<span className="font-semibold">
-                                العجز / الزيادة
-                            </span>
+							<span className="font-semibold">العجز / الزيادة</span>
 						</div>
 						<span className={ cn(
 							"text-xl font-bold tabular-nums",
@@ -158,8 +182,7 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
                             { difference > 0 ? "+" : "" }{ difference.toLocaleString(undefined, {
 							minimumFractionDigits: 2,
 							maximumFractionDigits: 2
-						}) } <ErpCurrencyIcon
-							className="w-4 h-4 inline"/>
+						}) } <ErpCurrencyIcon className="w-4 h-4 inline"/>
                         </span>
 					</div>
 
@@ -172,11 +195,12 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 				</div>
 
 				<DialogFooter>
-					<Button variant="outline" onClick={ () => onOpenChange(false) } disabled={ isSubmitting.value }>
+					<Button variant="outline" onClick={ () => onOpenChange(false) }
+					        disabled={ isSubmitting.value || isLoading.value }>
 						إلغاء
 					</Button>
 					<Button onClick={ handleCloseSession }
-					        disabled={ isSubmitting.value || closingCash.value === undefined }>
+					        disabled={ isSubmitting.value || isLoading.value || closingCash.value === undefined }>
 						تأكيد الإغلاق
 					</Button>
 				</DialogFooter>
