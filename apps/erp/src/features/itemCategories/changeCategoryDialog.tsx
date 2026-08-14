@@ -47,7 +47,7 @@ export default function ChangeCategoryDialog({
 					value: c.id
 				}))
 		];
-	}, [entity.value.id]);
+	}, [entity.value.id, Cubits.categories.entities.value]);
 
 	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
 	const title = isUpdateMode ? "تعديل التصنيف" : "إضافة تصنيف جديد";
