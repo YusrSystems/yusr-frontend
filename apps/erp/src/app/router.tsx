@@ -48,6 +48,7 @@ import PosTerminalsPage from "@/features/Pos/posTerminals/posTerminalsPage.tsx";
 import PosEntryPage from "@/features/Pos/posSession/posEntryPage.tsx";
 import PosScreenPage from "@/features/Pos/posScreen/posScreenPage.tsx";
 import { VouchersListReportPage } from "@/features/reports/vouchersList/vouchersListReportPage.tsx";
+import PosCustomerDisplayPage from "@/features/Pos/posScreen/posCustomerDisplayPage.tsx";
 
 
 const refreshPage = () =>
@@ -73,6 +74,7 @@ export const router = createBrowserRouter([{
 					path: "/pos/screen/:terminalId?",
 					element: <PosScreenPage/>
 				},
+				{path: "/pos/customer/:terminalId", element: <PosCustomerDisplayPage/>},
 				{
 					element: <AppLayout/>,
 					children: [

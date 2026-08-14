@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSignals } from "@preact/signals-react/runtime";
 import { signal } from "@preact/signals-react";
-import { AlertCircle, ArrowRight, Loader2, LogOut, ReceiptText, ShoppingCart } from "lucide-react";
+import { AlertCircle, ArrowRight, Loader2, LogOut, MonitorPlay, ReceiptText, ShoppingCart } from "lucide-react";
 import { Button, DateService } from "yusr-ui";
 import { Services } from "@/core/services/services";
 import { PosSessionDto } from "@/core/data/posSession";
@@ -20,6 +20,7 @@ import { createPortal } from "react-dom";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport.tsx";
 import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
+import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
 
 
 export default function PosScreenPage()
@@ -62,6 +63,51 @@ export default function PosScreenPage()
 			});
 		});
 	};
+
+	useEffect(() =>
+	{
+		if (!activeTerminal.value) return;
+
+		const channel = new BroadcastChannel(`pos_customer_channel_${ activeTerminal.value.id }`);
+
+		const invoice = cartInvoice.value;
+		if (!invoice || invoice.invoiceItems.value.length === 0)
+		{
+			channel.postMessage({type: "RESET", items: [], totalAmount: 0});
+			return;
+		}
+
+		// Calculate Totals
+		const items = invoice.invoiceItems.value.map((i) => ({
+			name: i.itemName.value,
+			quantity: Number(i.quantity.value),
+			unitPrice: Number(i.taxInclusivePrice.value),
+			totalPrice: Number(i.taxInclusiveTotalPrice.value),
+			unitName: i.unitName.value
+		}));
+
+		const finalTotal = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(invoice.invoiceItems.value);
+		const mainTaxPerc = Number(Services.auth.setting?.mainTax?.value?.percentage) || 0;
+		const baseTaxExclusive = finalTotal / (1 + mainTaxPerc / 100);
+		const baseTaxAmount = finalTotal - baseTaxExclusive;
+
+		// Broadcast live cart to Customer Display
+		channel.postMessage({
+			type: "CART_UPDATED",
+			items,
+			totalAmount: finalTotal,
+			totalTax: baseTaxAmount,
+			discount: invoice.settlementAmount.value,
+			invoiceType: invoice.type.value
+		});
+
+		return () => channel.close();
+	}, [
+		cartInvoice.value,
+		cartInvoice.value?.invoiceItems.value,
+		cartInvoice.value?.invoiceItems.value.map((i) => i.quantity.value + i.taxInclusiveTotalPrice.value).join(","),
+		cartInvoice.value?.settlementAmount.value
+	]);
 
 	useEffect(() =>
 	{
@@ -241,6 +287,23 @@ export default function PosScreenPage()
 				<div className="flex items-center gap-3">
 					<Button
 						variant="outline"
+						className="gap-2 h-9 text-xs"
+						onClick={ () =>
+						{
+							window.open(
+								`/pos/customer/${ activeTerminal.value?.id }`,
+								`pos_customer_display_${ activeTerminal.value?.id }`,
+								"width=1024,height=768,menubar=no,toolbar=no,location=no,status=no"
+							);
+						} }
+						title="فتح شاشة العميل في شاشة منفصلة"
+					>
+						<MonitorPlay className="w-4 h-4 text-primary"/>
+						شاشة العميل
+					</Button>
+					
+					<Button
+						variant="outline"
 						className="gap-2 h-9"
 						onClick={ () => isRecentInvoicesDialogOpen.value = true }
 						disabled={ isOutdatedSession.value }
@@ -325,6 +388,22 @@ export default function PosScreenPage()
 						if (reportResult)
 						{
 							triggerImmediatePrint(reportResult);
+
+							// Notify Customer Screen about Payment Success & Change
+							const channel = new BroadcastChannel(`pos_customer_channel_${ activeTerminal.value!.id }`);
+							channel.postMessage({
+								type: "CHECKOUT_COMPLETED",
+								totalAmount: reportResult.totalAfterTax,
+								tenderedAmount: reportResult.tenderedAmount,
+								changeAmount: reportResult.changeAmount
+							});
+
+							// Reset to Idle after 8 seconds
+							setTimeout(() =>
+							{
+								channel.postMessage({type: "RESET", items: [], totalAmount: 0});
+								channel.close();
+							}, 8000);
 						}
 					} }
 				/>
