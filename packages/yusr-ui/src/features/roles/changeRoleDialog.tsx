@@ -11,6 +11,7 @@ import {
 	type CommonChangeDialogProps,
 	Loading,
 	PermissionCard,
+	SelectField,
 	TextField
 } from "#/components/custom";
 import type { Role, RoleDto } from "#/entities";
@@ -33,9 +34,19 @@ export type PermissionSection = {
 	resources: string[];
 };
 
+export type RolePreset<TRole = any> = {
+	id: string;
+	name: string;
+	description?: string;
+	permissions: string[] | (() => string[]);
+	onApply?: (entity: TRole) => void;
+};
+
 export type ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto> = {
 	labels: Record<string, string>;
 	permissionSections: PermissionSection[];
+	presets?: RolePreset<TRole>[];
+	onApplyPreset?: (preset: RolePreset<TRole>, entity: TRole) => void;
 	createEntity: (dto?: TRoleDto) => TRole;
 	onMount?: () => void;
 	onGet?: (entity: TRole, result: RequestResult<TRoleDto>) => void;
@@ -43,13 +54,26 @@ export type ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends Role
 };
 
 export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto>(
-	{dto, service, onSuccess, labels, permissionSections, createEntity, onGet, onMount, extraTabs}:
+	{
+		dto,
+		service,
+		onSuccess,
+		labels,
+		permissionSections,
+		presets,
+		onApplyPreset,
+		createEntity,
+		onGet,
+		onMount,
+		extraTabs
+	}:
 	& CommonChangeDialogProps<TRoleDto>
 		& ChangeRoleDialog<TRole, TRoleDto>
 )
 {
 	const {t} = useTranslation(["commonEntities", "common"]);
 	const entity = useMemo(() => signal<TRole>(createEntity(dto)), []);
+	const selectedPresetId = useMemo(() => signal<string | undefined>(undefined), []);
 	const delimiter = ".";
 	const isLoading = useMemo(() => signal(false), []);
 
@@ -87,6 +111,23 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 		onMount?.();
 	}, [entity.value?.id.value]);
 
+	const handleApplyPreset = (presetId: string | undefined) =>
+	{
+		if (!presetId || !presets) return;
+		const preset = presets.find((p) => p.id === presetId);
+		if (!preset) return;
+
+		const perms = typeof preset.permissions === "function" ? preset.permissions() : preset.permissions;
+		entity.value.permissions.value = [...perms];
+		if (!entity.value.name.value?.trim())
+		{
+			entity.value.name.value = preset.name;
+		}
+
+		preset.onApply?.(entity.value);
+		onApplyPreset?.(preset, entity.value);
+	};
+
 	return (
 		<ChangeDialog className="sm:max-w-6xl">
 			<ChangeDialog.Header
@@ -118,12 +159,30 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 			content: (
 				<div className="space-y-4">
 					{ index === 0 && (
-						<TextField
-							label={ t("commonEntities:roles.roleName") }
-							required
-							value={ entity.value.name }
-							error={ entity.value.getError("name") }
-						/>
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+							<TextField
+								label={ t("commonEntities:roles.roleName") }
+								required
+								value={ entity.value.name }
+								error={ entity.value.getError("name") }
+							/>
+							{ presets && presets.length > 0 && (
+								<SelectField<string | undefined>
+									label={ t("commonEntities:roles.preset", "تطبيق قالب جاهز") }
+									value={ selectedPresetId }
+									placeholder={ t("commonEntities:roles.selectPreset", "اختر قالباً جاهزاً...") }
+									options={ presets.map((preset) => ({
+										label: preset.name,
+										value: preset.id
+									})) }
+									onValueChange={ (val) =>
+									{
+										selectedPresetId.value = val;
+										handleApplyPreset(val);
+									} }
+								/>
+							) }
+						</div>
 					) }
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 						{ categorizePermissions(BaseServices.auth.systemPermissions.value, section.resources, delimiter).map((

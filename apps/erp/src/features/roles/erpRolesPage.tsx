@@ -4,7 +4,7 @@ import { Services } from "@/core/services/services";
 import { WarehouseIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { RolesPage } from "yusr-ui";
-import { getLabels, getPermissionSections } from "./permissionConfig";
+import { getLabels, getPermissionSections, getRolePresets } from "./permissionConfig";
 import StorePermissionsList from "./storePermissionsList";
 import { APP_NAME } from "../../../appConfig.ts";
 import { useEffect } from "react";
@@ -27,6 +27,7 @@ export function ErpRolesPage()
 		<RolesPage<ErpRole, ErpRoleDto>
 			labels={ getLabels(t) }
 			permissionSections={ getPermissionSections(t) }
+			presets={ getRolePresets(t) }
 			rolesApiService={ Services.rolesApi }
 			cubit={ Cubits.roles }
 			createEntity={ (dto) =>
