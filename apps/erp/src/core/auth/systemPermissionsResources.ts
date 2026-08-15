@@ -45,11 +45,6 @@ export const SystemPermissionsResources = {
 
 	// Allowed Account Types
 	AccountShowBalance: "AccountShowBalance",
-	AccountClient: "AccountClient",
-	AccountSupplier: "AccountSupplier",
-	AccountEmployee: "AccountEmployee",
-	AccountBank: "AccountBank",
-	AccountBox: "AccountBox",
 
 	// Reports
 	ReportInvoice: "ReportInvoice",

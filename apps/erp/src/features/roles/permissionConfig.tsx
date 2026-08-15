@@ -46,11 +46,6 @@ export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => 
 
 	// Allowed Account Types
 	[SystemPermissionsResources.AccountShowBalance]: t("permissions.account.showBalance"),
-	[SystemPermissionsResources.AccountClient]: t("permissions.account.client"),
-	[SystemPermissionsResources.AccountSupplier]: t("permissions.account.supplier"),
-	[SystemPermissionsResources.AccountEmployee]: t("permissions.account.employee"),
-	[SystemPermissionsResources.AccountBank]: t("permissions.account.bank"),
-	[SystemPermissionsResources.AccountBox]: t("permissions.account.box"),
 
 	// Report Permissions
 	[SystemPermissionsResources.ReportInvoice]: t("permissions.report.invoice"),
@@ -130,12 +125,7 @@ export const getPermissionSections = (t: TFunction<"erpCommon">) => [{
 	title: t("permissions.sections.accounts"),
 	icon: Wallet,
 	resources: [
-		SystemPermissionsResources.AccountShowBalance,
-		SystemPermissionsResources.AccountClient,
-		SystemPermissionsResources.AccountSupplier,
-		SystemPermissionsResources.AccountEmployee,
-		SystemPermissionsResources.AccountBank,
-		SystemPermissionsResources.AccountBox
+		SystemPermissionsResources.AccountShowBalance
 	]
 }, {
 	id: "reports",
@@ -278,9 +268,6 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 
 			// Accounts Tab
 			...single(SystemPermissionsResources.AccountShowBalance),
-			...single(SystemPermissionsResources.AccountClient),
-			...single(SystemPermissionsResources.AccountSupplier),
-			...single(SystemPermissionsResources.AccountBox),
 
 			// Reports Tab
 			...single(SystemPermissionsResources.ReportInvoice),
@@ -324,9 +311,6 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 			...single(SystemPermissionsResources.InvoiceSell),
 			...single(SystemPermissionsResources.InvoiceAddSettlement),
 
-			// Accounts Tab
-			...single(SystemPermissionsResources.AccountClient),
-
 			// Reports Tab
 			...single(SystemPermissionsResources.ReportInvoice),
 			...single(SystemPermissionsResources.ReportItemBarcode)
@@ -352,11 +336,6 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 
 			// Accounts Tab
 			...single(SystemPermissionsResources.AccountShowBalance),
-			...single(SystemPermissionsResources.AccountClient),
-			...single(SystemPermissionsResources.AccountSupplier),
-			...single(SystemPermissionsResources.AccountEmployee),
-			...single(SystemPermissionsResources.AccountBank),
-			...single(SystemPermissionsResources.AccountBox),
 
 			// Reports Tab
 			...single(SystemPermissionsResources.ReportVoucher),
@@ -399,11 +378,6 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 
 			// Accounts Tab
 			...single(SystemPermissionsResources.AccountShowBalance),
-			...single(SystemPermissionsResources.AccountClient),
-			...single(SystemPermissionsResources.AccountSupplier),
-			...single(SystemPermissionsResources.AccountEmployee),
-			...single(SystemPermissionsResources.AccountBank),
-			...single(SystemPermissionsResources.AccountBox),
 
 			// Reports Tab
 			...single(SystemPermissionsResources.ReportBalanceSheet),
@@ -472,9 +446,6 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 			...single(SystemPermissionsResources.InvoiceSell),
 			...single(SystemPermissionsResources.InvoiceAddSettlement),
 
-			// Accounts Tab
-			...single(SystemPermissionsResources.AccountClient),
-
 			// Reports Tab
 			...single(SystemPermissionsResources.ReportInvoice),
 			...single(SystemPermissionsResources.ReportItemList),
@@ -500,9 +471,6 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 
 			// Invoices Tab
 			...single(SystemPermissionsResources.InvoicePurchase),
-
-			// Accounts Tab
-			...single(SystemPermissionsResources.AccountSupplier),
 
 			// Reports Tab
 			...single(SystemPermissionsResources.ReportInvoice),
@@ -565,11 +533,6 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 
 			// Accounts Tab
 			...single(SystemPermissionsResources.AccountShowBalance),
-			...single(SystemPermissionsResources.AccountClient),
-			...single(SystemPermissionsResources.AccountSupplier),
-			...single(SystemPermissionsResources.AccountEmployee),
-			...single(SystemPermissionsResources.AccountBank),
-			...single(SystemPermissionsResources.AccountBox),
 
 			// Reports Tab
 			...single(SystemPermissionsResources.ReportInvoice),
