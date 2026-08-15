@@ -2,46 +2,54 @@ import { Dto, Entity } from "yusr-ui";
 import type { Signal } from "@preact/signals-react";
 
 
-export class YearlyData
+export class DashboardSummaryDto extends Dto
 {
-	public sales: number[] = [];
-	public purchases: number[] = [];
-	public salesReturns: number[] = [];
-	public purchasesReturns: number[] = [];
-	public receiptVouchers: number[] = [];
-	public paymentVouchers: number[] = [];
+	public netSales: number = 0;
+	public netPurchases: number = 0;
+	public receipts: number = 0;
+	public payments: number = 0;
+	public grossProfit: number = 0;
+	public marginPercentage: number = 0;
+	public netCashFlow: number = 0;
+	public outputVat: number = 0;
+	public inputVat: number = 0;
+	public netVatDue: number = 0;
+}
+
+export class DashboardChartPointDto extends Dto
+{
+	public label: string = "";
+	public netSales: number = 0;
+	public netPurchases: number = 0;
+	public receipts: number = 0;
+	public payments: number = 0;
 }
 
 export class DashboardDataDto extends Dto
 {
-	public weeklySales: number[] = [];
-	public weeklyPurchases: number[] = [];
-	public weeklyReceipts: number[] = [];
-	public weeklyPayments: number[] = [];
-	public monthlyData: number[] = [];
-	public yearlyData: YearlyData = new YearlyData();
+	public thisMonth: DashboardSummaryDto = new DashboardSummaryDto();
+	public thisWeek: DashboardSummaryDto = new DashboardSummaryDto();
+	public weeklyChart: DashboardChartPointDto[] = [];
+	public monthlyChart: DashboardChartPointDto[] = [];
+	public yearlyChart: DashboardChartPointDto[] = [];
 }
 
 export class DashboardData extends Entity<DashboardDataDto>
 {
-	public weeklySales: Signal<number[]>;
-	public weeklyPurchases: Signal<number[]>;
-	public weeklyReceipts: Signal<number[]>;
-	public weeklyPayments: Signal<number[]>;
-	public monthlyData: Signal<number[]>;
-	public yearlyData: Signal<YearlyData>;
+	public thisMonth: Signal<DashboardSummaryDto>;
+	public thisWeek: Signal<DashboardSummaryDto>;
+	public weeklyChart: Signal<DashboardChartPointDto[]>;
+	public monthlyChart: Signal<DashboardChartPointDto[]>;
+	public yearlyChart: Signal<DashboardChartPointDto[]>;
 
 	constructor(dto?: Partial<DashboardDataDto>)
 	{
 		super(dto);
 
-		this.weeklySales = this.assign("weeklySales", dto?.weeklySales);
-		this.weeklyPurchases = this.assign("weeklyPurchases", dto?.weeklyPurchases);
-		this.weeklyReceipts = this.assign("weeklyReceipts", dto?.weeklyReceipts);
-		this.weeklyPayments = this.assign("weeklyPayments", dto?.weeklyPayments);
-		this.monthlyData = this.assign("monthlyData", dto?.monthlyData);
-		this.yearlyData = this.assign("yearlyData", dto?.yearlyData);
-
+		this.thisMonth = this.assign("thisMonth", dto?.thisMonth ?? new DashboardSummaryDto());
+		this.thisWeek = this.assign("thisWeek", dto?.thisWeek ?? new DashboardSummaryDto());
+		this.weeklyChart = this.assign("weeklyChart", dto?.weeklyChart ?? []);
+		this.monthlyChart = this.assign("monthlyChart", dto?.monthlyChart ?? []);
+		this.yearlyChart = this.assign("yearlyChart", dto?.yearlyChart ?? []);
 	}
-
 }
