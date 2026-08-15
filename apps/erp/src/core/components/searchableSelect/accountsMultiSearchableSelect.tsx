@@ -1,42 +1,36 @@
-import { MultiSearchableSelect, type MultiSearchableSelectProps, PageLoaded, PageLoading } from "yusr-ui";
+import type { MultiSearchableSelectRootProps } from "yusr-ui";
+import { MultiSearchableSelect, PageLoaded, PageLoading } from "yusr-ui";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
-import { useMemo } from "react";
-import { Signal, signal } from "@preact/signals-react";
 import type { AccountDto } from "@/core/data/account.ts";
 
 
 export default function AccountsMultiSearchableSelect(
-	{ids, labels, ...props}: Omit<MultiSearchableSelectProps<AccountDto>, "ids"> & {
-		ids?: Signal<number[]>;
-	}
+	props: MultiSearchableSelectRootProps<AccountDto>
 )
 {
 	useSignals();
 
-	const localIds = useMemo(() => ids ?? signal<number[]>([]), [ids]);
-	const localLabels = useMemo(() => labels ?? signal<Record<number, string>>([]), [labels]);
+	return (
+		<MultiSearchableSelect<AccountDto> labelSelector="name" { ...props }>
+			<MultiSearchableSelect.Trigger disabled={ props.disabled }/>
+			<MultiSearchableSelect.Content>
+				<MultiSearchableSelect.SearchInput
+					onSearch={ (text) => Cubits.accounts.search(text) }
+				/>
+				<MultiSearchableSelect.Command>
+					<CommandItems/>
+				</MultiSearchableSelect.Command>
 
-	return (<MultiSearchableSelect<AccountDto>>
-		<MultiSearchableSelect.Trigger
-			labels={ localLabels }
-			disabled={ props.disabled }
-		/>
-		<MultiSearchableSelect.Content>
-			<MultiSearchableSelect.SearchInput
-				onSearch={ (text) => Cubits.accounts.search(text) }
-			/>
-			<MultiSearchableSelect.Command>
-				<CommandItems/>
-			</MultiSearchableSelect.Command>
-
-			<MultiSearchableSelect.Footer ids={ localIds } labels={ localLabels }/>
-		</MultiSearchableSelect.Content>
-	</MultiSearchableSelect>);
+				<MultiSearchableSelect.Footer/>
+			</MultiSearchableSelect.Content>
+		</MultiSearchableSelect>
+	);
 
 	function CommandItems()
 	{
 		useSignals();
+
 		if (Cubits.accounts.state.value instanceof PageLoading)
 		{
 			return <MultiSearchableSelect.Loading/>;
@@ -46,11 +40,7 @@ export default function AccountsMultiSearchableSelect(
 		{
 			return Cubits.accounts.entities.value.map((account) => (
 				<MultiSearchableSelect.Option<AccountDto>
-					{ ...props }
 					key={ account.id }
-					ids={ localIds }
-					labels={ localLabels }
-					labelSelector="name"
 					item={ account }
 				>
 					<MultiSearchableSelect.OptionBody label={ account.name }/>

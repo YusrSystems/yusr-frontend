@@ -28,13 +28,13 @@ import { InvoiceReportRequest } from "@/core/data/report/invoiceReportRequest";
 import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport";
 import { PortalReportContainer } from "@/features/report/reportContainer";
-import { PaymentStatus } from "@/core/types/paymentStatus";
+import { getPaymentStatus } from "@/core/types/paymentStatus";
 import { InvoiceType } from "@/core/types/invoiceType";
 import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect";
 import { PartnerType } from "@/core/data/partner";
 import { useTranslation } from "react-i18next";
 import { Cubits } from "@/core/services/cubits.ts";
-import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus.ts";
+import { getReturnStatus, InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus.ts";
 
 
 interface PosRecentInvoicesDialogProps
@@ -56,7 +56,7 @@ export default function PosRecentInvoicesDialog({
 {
 	useSignals();
 
-	const {i18n} = useTranslation("erpCommon");
+	const {t, i18n} = useTranslation("accounting");
 	const activeTab = useMemo(() => signal<"shift" | "store">("shift"), []);
 	const filterDate = useMemo(() => signal<string | undefined>(undefined), []);
 	const filterInvoiceId = useMemo(() => signal<number | undefined>(undefined), []);
@@ -101,8 +101,8 @@ export default function PosRecentInvoicesDialog({
 			const groups: FilterGroupDto[] = [{id: 0, rules}];
 
 			await Cubits.invoices.filter(
-				1,
-				30,
+				Cubits.invoices.currentPage.value,
+				Cubits.invoices.pageSize.value,
 				undefined,
 				[InvoiceType.Sell, InvoiceType.SellReturn],
 				undefined,
@@ -173,25 +173,6 @@ export default function PosRecentInvoicesDialog({
 		filterPartnerId.value = undefined;
 	};
 
-	const getPaymentStatusInfo = (inv: InvoiceDto) =>
-	{
-		if (inv.paymentStatusId === PaymentStatus.NotPaid)
-		{
-			return {message: "غير مدفوع", styles: "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300"};
-		}
-		if (inv.paymentStatusId === PaymentStatus.FullyPaid)
-		{
-			return {
-				message: "مدفوع بالكامل",
-				styles: "bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300"
-			};
-		}
-		return {
-			message: "مدفوع جزئياً",
-			styles: "bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300"
-		};
-	};
-
 	return (
 		<>
 			<Dialog open={ open } onOpenChange={ onOpenChange }>
@@ -239,19 +220,19 @@ export default function PosRecentInvoicesDialog({
 					{/* Filter Section Bar */ }
 					<div
 						className="p-3 bg-muted/20 border-b border-border grid grid-cols-1 sm:grid-cols-10 gap-2 items-end">
-						<div className="sm:col-span-3">
-							<DateField
-								label="تاريخ الفاتورة"
-								value={ filterDate }
-								placeholder="التاريخ..."
-							/>
-						</div>
 
 						<div className="sm:col-span-3">
 							<NumberField
 								label="رقم الفاتورة"
 								value={ filterInvoiceId }
-								placeholder="رقم الفاتورة..."
+							/>
+						</div>
+
+						<div className="sm:col-span-3">
+							<DateField
+								label="تاريخ الفاتورة"
+								value={ filterDate }
+								placeholder="التاريخ..."
 							/>
 						</div>
 
@@ -298,7 +279,7 @@ export default function PosRecentInvoicesDialog({
 										<th className="p-3 text-start w-32">النوع</th>
 										<th className="p-3 text-start">العميل</th>
 										<th className="p-3 text-start w-32">الإجمالي</th>
-										<th className="p-3 text-start w-32">حالة الدفع</th>
+										<th className="p-3 text-start w-35"></th>
 										<th className="p-3 text-center w-28">الإجراءات</th>
 									</tr>
 									</thead>
@@ -306,7 +287,8 @@ export default function PosRecentInvoicesDialog({
 									{ Cubits.invoices.entities.value.map((inv) =>
 									{
 										const isReturn = inv.type === InvoiceType.SellReturn;
-										const status = getPaymentStatusInfo(inv);
+										const paymentStatus = getPaymentStatus(inv, t);
+										const returnStatus = getReturnStatus(inv, t);
 
 										return (
 											<tr key={ inv.id } className="hover:bg-muted/30 transition-colors">
@@ -331,11 +313,17 @@ export default function PosRecentInvoicesDialog({
 														<ErpCurrencyIcon/>
 													</div>
 												</td>
-												<td className="p-3">
+												<td className="p-3 flex flex-col items-center gap-3 text-center">
+													<span
+														className={ cn("inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium", paymentStatus.styles) }>
+													   { paymentStatus.message }
+													</span>
+													{ inv.type === InvoiceType.Sell && (
 														<span
-															className={ cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium", status.styles) }>
-															{ status.message }
-														</span>
+															className={ cn("inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium", returnStatus.styles) }>
+														  { returnStatus.message }
+													   </span>
+													) }
 												</td>
 												<td className="p-3">
 													<div className="flex items-center justify-start gap-1.5">
@@ -356,15 +344,13 @@ export default function PosRecentInvoicesDialog({
 														</Button>
 
 														{/* Return Invoice Button */ }
-														{/* TODO: Implement receipt-linked return flow */ }
-														{ inv.returnStatusId !== InvoiceReturnStatus.FullyReturned && (
+														{ inv.type === InvoiceType.Sell && inv.returnStatusId !== InvoiceReturnStatus.FullyReturned && (
 															<Button
 																className="w-20"
 																type="button"
 																variant="destructive"
 																onClick={ () =>
 																{
-																	// TODO: Initiate receipt-linked return flow
 																	onProcessReturn?.(inv);
 																	onOpenChange(false);
 																} }
@@ -406,7 +392,7 @@ export default function PosRecentInvoicesDialog({
 			{ printedInvoice.value &&
 				createPortal(
 					<PortalReportContainer>
-						<InvoiceReport data={ printedInvoice.value } isPortal={ true }/>
+						<InvoiceReport data={ printedInvoice.value } isPortal={ true } forceThermal={ true }/>
 					</PortalReportContainer>,
 					document.body
 				) }

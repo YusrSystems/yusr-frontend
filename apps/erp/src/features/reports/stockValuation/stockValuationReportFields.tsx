@@ -12,10 +12,10 @@ import {
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
-import CategoriesSearchableSelect from "@/core/components/searchableSelect/categoriesSearchableSelect.tsx";
 import BrandsSearchableSelect from "@/core/components/searchableSelect/brandsSearchableSelect.tsx";
 import { StockValuationReportRequest } from "./stockValuationReportRequest.ts";
 import { Cubits } from "@/core/services/cubits.ts";
+import CategoriesSearchableSelect from "@/features/itemCategories/categoriesSearchableSelect.tsx";
 
 
 interface StockValuationReportFieldsProps

@@ -94,33 +94,17 @@ CrudPage.HeaderButtonsContainer = function ({className, children}: { className?:
 CrudPage.AddButton = function ({title, onClick}: { title: string } & ButtonProps)
 {
 	useSignals();
-
 	const {selectedDto, isChangeDialogOpen} = useCrudPageContext();
 	return (
-		<Button variant="default" onClick={ (e) =>
-		{
-			selectedDto.value = undefined;
-			isChangeDialogOpen.value = true;
-			onClick?.(e);
-		} }>
-			<PlusIcon className="h-4 w-4"/>
-			{ title }
-		</Button>
-	);
-};
-
-CrudPage.AddButton = function ({title, onClick}: { title: string } & ButtonProps)
-{
-	useSignals();
-
-	const {selectedDto, isChangeDialogOpen} = useCrudPageContext();
-	return (
-		<Button variant="default" onClick={ (e) =>
-		{
-			selectedDto.value = undefined;
-			isChangeDialogOpen.value = true;
-			onClick?.(e);
-		} }>
+		<Button
+			variant="default"
+			onClick={ (e) =>
+			{
+				selectedDto.value = undefined;
+				isChangeDialogOpen.value = true;
+				onClick?.(e);
+			} }
+		>
 			<PlusIcon className="h-4 w-4"/>
 			{ title }
 		</Button>
@@ -142,11 +126,9 @@ CrudPage.Table = function ({children}: PropsWithChildren)
 {
 	useSignals();
 	return (
-		<>
-			<div className="rounded-b-xl border shadow-sm overflow-auto ">
-				{ children }
-			</div>
-		</>
+		<div className="rounded-b-xl border shadow-sm overflow-auto">
+			{ children }
+		</div>
 	);
 };
 
@@ -180,12 +162,16 @@ CrudPage.TableBody = function <TDto extends Dto>(
 		isShareablePage && navigate(`${ basePath }/${ dto.id }`);
 		isChangeDialogOpen.value = true;
 	};
+
 	return (
 		<Table>
 			<TableHeader className="bg-muted">
 				<TableRow>
-					{ headerRows.map((row, i) => <TableHead key={ i }
-					                                        className={ row.rowStyles }>{ row.rowBody }</TableHead>) }
+					{ headerRows.map((row, i) => (
+						<TableHead key={ i } className={ row.rowStyles }>
+							{ row.rowBody }
+						</TableHead>
+					)) }
 				</TableRow>
 			</TableHeader>
 
@@ -276,9 +262,25 @@ CrudPage.ChangeDialog = function <TDto extends Dto>(
 			return;
 		}
 
+		// 1. If 'new', open modal directly without backend requests
+		if (params.id === "new")
+		{
+			selectedDto.value = undefined;
+			isChangeDialogOpen.value = true;
+			return;
+		}
+
+		const idNumber = Number(params.id);
+		if (isNaN(idNumber) || idNumber <= 0)
+		{
+			navigate(basePath, {replace: true});
+			return;
+		}
+
+		// 2. Otherwise, fetch the existing entity by ID
 		async function loadEntity()
 		{
-			const entity = await fetchEntity?.(Number(params.id));
+			const entity = await fetchEntity?.(idNumber);
 			if (!entity)
 			{
 				navigate(basePath, {replace: true});
@@ -289,7 +291,7 @@ CrudPage.ChangeDialog = function <TDto extends Dto>(
 		}
 
 		void loadEntity();
-	}, []);
+	}, [params.id, basePath, fetchEntity, isChangeDialogOpen, navigate, selectedDto]);
 
 	return (
 		<>

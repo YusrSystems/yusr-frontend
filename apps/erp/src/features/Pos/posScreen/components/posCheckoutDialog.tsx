@@ -29,11 +29,14 @@ import {
 	Plus,
 	Receipt,
 	Trash2,
+	Undo2,
 	User,
 	Wallet
 } from "lucide-react";
 import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath";
 import { toast } from "sonner";
+import { InvoiceType } from "@/core/types/invoiceType";
+import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
 
 
 interface PosCheckoutDialogProps
@@ -43,7 +46,7 @@ interface PosCheckoutDialogProps
 	invoice: Invoice;
 	terminal: PosTerminalDto;
 	session: PosSessionDto;
-	onSuccess: () => void;
+	onSuccess: (reportResult: InvoiceReportResult) => void;
 }
 
 const getPaymentIcon = (category: number) =>
@@ -86,6 +89,8 @@ export default function PosCheckoutDialog({
 	const payments = useMemo(() => signal<PosPaymentLineDto[]>([]), []);
 	const notes = useMemo(() => signal(""), []);
 
+	const isReturnMode = invoice.type.value === InvoiceType.SellReturn;
+
 	const totalAmount = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(invoice.invoiceItems.value);
 
 	const totalPaid = payments.value.reduce((sum, p) => sum + (p.amount || 0), 0);
@@ -97,24 +102,36 @@ export default function PosCheckoutDialog({
 		if (open)
 		{
 			isSubmitting.value = false;
-			notes.value = "";
+			notes.value = invoice.notes.value || "";
 
-			const firstMethod = terminal.allowedPaymentMethods?.[0];
-			if (firstMethod && firstMethod.id !== undefined)
+			// If in Return mode and invoice has pre-filled payment vouchers from original invoice
+			if (isReturnMode && invoice.paymentVouchers.value.length > 0)
 			{
-				const initialPayment: PosPaymentLineDto = {
-					paymentMethodId: firstMethod.id,
-					amount: totalAmount,
+				payments.value = invoice.paymentVouchers.value.map(v => ({
+					paymentMethodId: v.paymentMethodId.value ?? terminal.allowedPaymentMethods?.[0]?.id ?? 1,
+					amount: v.amount.value ?? totalAmount,
 					referenceNumber: ""
-				};
-				payments.value = [initialPayment];
+				}));
 			}
 			else
 			{
-				payments.value = [];
+				const firstMethod = terminal.allowedPaymentMethods?.[0];
+				if (firstMethod && firstMethod.id !== undefined)
+				{
+					const initialPayment: PosPaymentLineDto = {
+						paymentMethodId: firstMethod.id,
+						amount: totalAmount,
+						referenceNumber: ""
+					};
+					payments.value = [initialPayment];
+				}
+				else
+				{
+					payments.value = [];
+				}
 			}
 		}
-	}, [open, totalAmount, terminal.allowedPaymentMethods, isSubmitting, notes, payments]);
+	}, [open, totalAmount, terminal.allowedPaymentMethods, isSubmitting, notes, payments, isReturnMode]);
 
 	const handleAddPayment = () =>
 	{
@@ -142,13 +159,31 @@ export default function PosCheckoutDialog({
 	const handleUpdatePayment = <K extends keyof PosPaymentLineDto>(index: number, field: K, value: PosPaymentLineDto[K]) =>
 	{
 		const newPayments = [...payments.value];
-		newPayments[index] = {...newPayments[index]!, [field]: value};
+		const current = newPayments[index]!;
+
+		if (field === "amount")
+		{
+			const method = terminal.allowedPaymentMethods?.find(m => m.id === current.paymentMethodId);
+			const isCash = method?.category === 1;
+			const allowOverpay = isCash && !isReturnMode;
+
+			if (!allowOverpay)
+			{
+				const othersTotal = newPayments.reduce(
+					(sum, p, i) => (i === index ? sum : sum + (p.amount || 0)),
+					0
+				);
+				const maxAllowed = Math.max(0, Number((totalAmount - othersTotal).toFixed(2)));
+				value = Math.min(value as number, maxAllowed) as PosPaymentLineDto[K];
+			}
+		}
+
+		newPayments[index] = {...current, [field]: value};
 		payments.value = newPayments;
 	};
 
 	const handleCheckout = async () =>
 	{
-		// 1. Strict Validations
 		if (!invoice.partnerId.value)
 		{
 			toast.error("الرجاء اختيار العميل من السلة أولاً");
@@ -163,28 +198,12 @@ export default function PosCheckoutDialog({
 
 		if (remaining > 0)
 		{
-			toast.error("المبلغ المدفوع غير كافٍ");
+			toast.error(isReturnMode ? "المبلغ المراد إرجاعه غير مكتمل" : "المبلغ المدفوع غير كافٍ");
 			return;
 		}
 
 		isSubmitting.value = true;
 
-		// 2. Handle Change (Deduct from Cash)
-		const finalPayments = payments.value.map(p => ({...p}));
-		if (change > 0)
-		{
-			const cashMethod = terminal.allowedPaymentMethods?.find(m => m.category === 1);
-			if (cashMethod && cashMethod.id !== undefined)
-			{
-				const cashLine = finalPayments.find(p => p.paymentMethodId === cashMethod.id);
-				if (cashLine)
-				{
-					cashLine.amount = Number((cashLine.amount - change).toFixed(2));
-				}
-			}
-		}
-
-		// 3. Format Items (Ensure index is set and no undefined values)
 		const formattedItems = invoice.invoiceItems.value.map((item, index) =>
 		{
 			const itemDto = item.toJson();
@@ -192,17 +211,17 @@ export default function PosCheckoutDialog({
 			return itemDto;
 		});
 
-		// 4. Build Payload
 		const dto: PosCheckoutDto = {
 			posSessionId: session.id,
 			invoiceType: invoice.type.value,
+			originalInvoiceId: invoice.originalInvoiceId.value || undefined,
 			partnerId: invoice.partnerId.value,
 			fullAmount: totalAmount || 0,
 			settlementAmount: invoice.settlementAmount.value || 0,
 			notes: notes.value || undefined,
 			idempotencyKey: crypto.randomUUID(),
 			items: formattedItems,
-			payments: finalPayments.filter(p => p.amount > 0)
+			payments: payments.value.filter(p => p.amount > 0)
 		};
 
 		try
@@ -210,13 +229,12 @@ export default function PosCheckoutDialog({
 			const res = await Services.posCheckoutApi.Checkout(dto);
 			if (res.status === 200 && res.data)
 			{
-				toast.success("تمت عملية الدفع بنجاح");
-				onSuccess();
+				toast.success(isReturnMode ? "تمت عملية إرجاع المبلغ بنجاح" : "تمت عملية الدفع بنجاح");
+				onSuccess(res.data);
 			}
 			else
 			{
-				// If it still fails, this will catch non-200 responses
-				toast.error("حدث خطأ أثناء الدفع، يرجى التحقق من البيانات");
+				toast.error("حدث خطأ أثناء العملية، يرجى التحقق من البيانات");
 			}
 		}
 		catch (error)
@@ -234,26 +252,35 @@ export default function PosCheckoutDialog({
 		<Dialog open={ open } onOpenChange={ onOpenChange }>
 			<DialogContent dir="rtl" className="sm:max-w-3xl">
 				<DialogHeader>
-					<DialogTitle className="text-2xl">إتمام الدفع</DialogTitle>
+					<DialogTitle
+						className={ cn("text-2xl flex items-center gap-2", isReturnMode && "text-red-600 dark:text-red-400") }>
+						{ isReturnMode ? <Undo2 className="w-6 h-6"/> : null }
+						{ isReturnMode ? `إرجاع المبلغ للفاتورة #${ invoice.originalInvoiceId.value }` : "إتمام الدفع" }
+					</DialogTitle>
 				</DialogHeader>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-4">
 					{/* Left Side: Payment Methods */ }
 					<div className="flex flex-col gap-4 border-l border-border pl-6">
 						<div className="flex items-center justify-between">
-							<h3 className="font-bold text-lg">طرق الدفع</h3>
+							<h3 className="font-bold text-lg">{ isReturnMode ? "طريقة إرجاع المبلغ" : "طرق الدفع" }</h3>
 							<Button variant="outline" size="sm" onClick={ handleAddPayment }>
 								<Plus className="w-4 h-4 ml-1"/> إضافة
 							</Button>
 						</div>
 
-						<div className="flex flex-col gap-4 max-h-100 overflow-y-auto pr-2">
+						<div className="flex flex-col gap-4 max-h-[400px] overflow-y-auto pr-2">
 							{ payments.value.map((payment, index) =>
 							{
 								const method = terminal.allowedPaymentMethods?.find(m => m.id === payment.paymentMethodId);
+								const isCash = method?.category === 1;
+								const allowOverpay = isCash && !isReturnMode;
+								const othersTotal = payments.value.reduce((sum, p, i) => (i === index ? sum : sum + (p.amount || 0)), 0);
+								const lineMax = allowOverpay ? undefined : Math.max(0, Number((totalAmount - othersTotal).toFixed(2)));
+
 								return (
 									<div key={ index }
-									     className="flex flex-col gap-3 bg-card p-4 rounded-xl border border-border shadow-sm relative overflow-hidden group">
+									     className="shrink-0 flex flex-col gap-3 bg-card p-4 rounded-xl border border-border shadow-sm relative overflow-hidden group">
 										<div className="flex items-center gap-3">
 											<div
 												className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary shrink-0">
@@ -283,6 +310,7 @@ export default function PosCheckoutDialog({
 											<div className="flex-1">
 												<NumberInput
 													min={ 0 }
+													max={ lineMax }
 													value={ signal(payment.amount === 0 ? undefined : payment.amount) }
 													onChange={ (val) => handleUpdatePayment(index, "amount", val || 0) }
 													className="h-12 text-lg font-bold text-left bg-muted/20 focus:bg-background transition-colors"
@@ -321,9 +349,15 @@ export default function PosCheckoutDialog({
 					{/* Right Side: Summary */ }
 					<div className="flex flex-col gap-6">
 						<div
-							className="bg-primary/5 border border-primary/20 rounded-xl p-6 text-center flex flex-col gap-2">
-							<span className="text-muted-foreground font-medium">الإجمالي المطلوب</span>
-							<span className="text-4xl font-bold text-primary">
+							className={ cn(
+								"border rounded-xl p-6 text-center flex flex-col gap-2",
+								isReturnMode ? "bg-red-500/10 border-red-500/20" : "bg-primary/5 border-primary/20"
+							) }>
+							<span className="text-muted-foreground font-medium">
+								{ isReturnMode ? "إجمالي المبلغ المراد إرجاعه" : "الإجمالي المطلوب" }
+							</span>
+							<span
+								className={ cn("text-4xl font-bold", isReturnMode ? "text-red-600 dark:text-red-400" : "text-primary") }>
 								{ totalAmount.toLocaleString(undefined, {
 									minimumFractionDigits: 2,
 									maximumFractionDigits: 2
@@ -334,7 +368,8 @@ export default function PosCheckoutDialog({
 						<div className="flex flex-col gap-3 text-lg">
 							<div
 								className="flex justify-between items-center p-4 bg-muted/30 rounded-xl border border-border">
-								<span className="text-muted-foreground font-medium">المدفوع</span>
+								<span
+									className="text-muted-foreground font-medium">{ isReturnMode ? "المسترد" : "المدفوع" }</span>
 								<span className="font-bold text-xl">{ totalPaid.toLocaleString(undefined, {
 									minimumFractionDigits: 2,
 									maximumFractionDigits: 2
@@ -353,30 +388,38 @@ export default function PosCheckoutDialog({
 										<ErpCurrencyIcon className="w-5 h-5 inline"/></span>
 								</div>
 							) : (
-								<div
-									className="flex justify-between items-center p-4 bg-green-50 text-green-600 rounded-xl border border-green-100">
-									<span className="font-bold">الباقي للعميل (Change)</span>
-									<span className="font-black text-2xl">{ change.toLocaleString(undefined, {
-										minimumFractionDigits: 2,
-										maximumFractionDigits: 2
-									}) } <ErpCurrencyIcon
-										className="w-5 h-5 inline"/></span>
-								</div>
+								!isReturnMode && (
+									<div
+										className="flex justify-between items-center p-4 bg-green-50 text-green-600 rounded-xl border border-green-100">
+										<span className="font-bold">الباقي للعميل (Change)</span>
+										<span className="font-black text-2xl">{ change.toLocaleString(undefined, {
+											minimumFractionDigits: 2,
+											maximumFractionDigits: 2
+										}) } <ErpCurrencyIcon
+											className="w-5 h-5 inline"/></span>
+									</div>
+								)
 							) }
 						</div>
 
 						<Button
 							size="lg"
+							variant={ isReturnMode ? "destructive" : "default" }
 							className={ cn(
-								"w-full h-14 text-xl mt-auto shadow-lg transition-transform",
+								"w-full h-14 text-xl mt-auto shadow-lg transition-transform gap-2",
 								remaining > 0 ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.02] active:scale-[0.98]"
 							) }
 							disabled={ remaining > 0 || isSubmitting.value }
 							onClick={ handleCheckout }
 						>
-							{ isSubmitting.value ? <Loader2 className="w-6 h-6 animate-spin"/> :
-								<CheckCircle2 className="w-6 h-6 ml-2"/> }
-							تأكيد الدفع
+							{ isSubmitting.value ? (
+								<Loader2 className="w-6 h-6 animate-spin"/>
+							) : isReturnMode ? (
+								<Undo2 className="w-6 h-6"/>
+							) : (
+								<CheckCircle2 className="w-6 h-6"/>
+							) }
+							{ isReturnMode ? "تأكيد إرجاع المبلغ" : "تأكيد الدفع" }
 						</Button>
 					</div>
 				</div>

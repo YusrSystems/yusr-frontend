@@ -6,7 +6,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	MultiSearchableSelect,
-	type MultiSearchableSelectProps,
+	type MultiSearchableSelectRootProps,
 	PageLoaded,
 	PageLoading,
 	TextField
@@ -15,23 +15,19 @@ import { Cubits } from "@/core/services/cubits.ts";
 import { Services } from "@/core/services/services.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useMemo, useState } from "react";
-import { Signal, signal } from "@preact/signals-react";
+import { signal } from "@preact/signals-react";
 import { BrandDto } from "@/core/data/brand.ts";
 import { Edit2, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 
 export default function BrandsMultiSearchableSelect(
-	{ids, labels, ...props}: Omit<MultiSearchableSelectProps<BrandDto>, "ids"> & {
-		ids?: Signal<number[]>;
-	}
+	props: MultiSearchableSelectRootProps<BrandDto>
 )
 {
 	useSignals();
 	const {i18n} = useTranslation();
 
-	const localIds = useMemo(() => ids ?? signal<number[]>([]), [ids]);
-	const localLabels = useMemo(() => labels ?? signal<Record<number, string>>([]), [labels]);
 	const [searchText, setSearchText] = useState("");
 
 	const isDialogOpen = useMemo(() => signal(false), []);
@@ -63,12 +59,15 @@ export default function BrandsMultiSearchableSelect(
 		if (res.status === 200)
 		{
 			Cubits.brands.delete(brand);
-			if (localIds.value.includes(brand.id))
+			if (props.ids?.value.includes(brand.id))
 			{
-				localIds.value = localIds.value.filter(id => id !== brand.id);
-				const newLabels = {...localLabels.value};
-				delete newLabels[brand.id];
-				localLabels.value = newLabels;
+				props.ids.value = props.ids.value.filter(id => id !== brand.id);
+				if (props.labels?.value)
+				{
+					const newLabels = {...props.labels.value};
+					delete newLabels[brand.id];
+					props.labels.value = newLabels;
+				}
 			}
 		}
 	};
@@ -87,9 +86,9 @@ export default function BrandsMultiSearchableSelect(
 				if (res.data)
 				{
 					Cubits.brands.update(res.data);
-					if (localIds.value.includes(res.data.id))
+					if (props.ids?.value.includes(res.data.id) && props.labels?.value)
 					{
-						localLabels.value = {...localLabels.value, [res.data.id]: res.data.name};
+						props.labels.value = {...props.labels.value, [res.data.id]: res.data.name};
 					}
 					isDialogOpen.value = false;
 				}
@@ -100,8 +99,14 @@ export default function BrandsMultiSearchableSelect(
 				if (res.data)
 				{
 					Cubits.brands.add(res.data);
-					localIds.value = [...localIds.value, res.data.id];
-					localLabels.value = {...localLabels.value, [res.data.id]: res.data.name};
+					if (props.ids)
+					{
+						props.ids.value = [...props.ids.value, res.data.id];
+					}
+					if (props.labels)
+					{
+						props.labels.value = {...props.labels.value, [res.data.id]: res.data.name};
+					}
 					setSearchText("");
 					Cubits.brands.search("");
 					isDialogOpen.value = false;
@@ -116,11 +121,8 @@ export default function BrandsMultiSearchableSelect(
 
 	return (
 		<>
-			<MultiSearchableSelect<BrandDto>>
-				<MultiSearchableSelect.Trigger
-					labels={ localLabels }
-					disabled={ props.disabled }
-				/>
+			<MultiSearchableSelect<BrandDto> labelSelector="name" { ...props }>
+				<MultiSearchableSelect.Trigger disabled={ props.disabled }/>
 				<MultiSearchableSelect.Content>
 					<MultiSearchableSelect.SearchInput
 						onSearch={ (text) =>
@@ -133,7 +135,7 @@ export default function BrandsMultiSearchableSelect(
 						<CommandItems searchText={ searchText }/>
 					</MultiSearchableSelect.Command>
 
-					<MultiSearchableSelect.Footer ids={ localIds } labels={ localLabels }/>
+					<MultiSearchableSelect.Footer/>
 				</MultiSearchableSelect.Content>
 			</MultiSearchableSelect>
 
@@ -181,11 +183,7 @@ export default function BrandsMultiSearchableSelect(
 				<>
 					{ Cubits.brands.entities.value.map((brand) => (
 						<MultiSearchableSelect.Option<BrandDto>
-							{ ...props }
 							key={ brand.id }
-							ids={ localIds }
-							labels={ localLabels }
-							labelSelector="name"
 							item={ brand }
 						>
 							<div className="flex items-center justify-between w-full">

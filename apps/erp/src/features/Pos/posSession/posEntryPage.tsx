@@ -21,6 +21,8 @@ import { PosSessionDto } from "@/core/data/posSession";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
 import CloseSessionDialog from "./closeSessionDialog";
 import { APP_NAME } from "../../../../appConfig";
+import { PosTempCache } from "../posTempCache";
+import type { PosTerminalDto } from "@/core/data/posTerminal.ts";
 
 
 export default function PosEntryPage()
@@ -44,19 +46,15 @@ export default function PosEntryPage()
 
 		const init = async () =>
 		{
-			Cubits.posTerminals.init();
+			await Cubits.posTerminals.init();
 			const terminals = Cubits.posTerminals.entities.value;
-			const savedTerminalId = localStorage.getItem("pos_terminal_id");
 
 			let targetId: number | undefined = undefined;
 
-			if (savedTerminalId && terminals.some(t => t.id === Number(savedTerminalId)))
-			{
-				targetId = Number(savedTerminalId);
-			}
-			else if (terminals.length === 1)
+			if (terminals.length === 1)
 			{
 				targetId = terminals[0]?.id;
+				PosTempCache.setTerminal(terminals[0] as PosTerminalDto);
 			}
 
 			if (targetId)
@@ -68,7 +66,7 @@ export default function PosEntryPage()
 			isLoading.value = false;
 		};
 
-		init();
+		void init();
 	}, []);
 
 	const checkActiveSession = async (terminalId: number) =>
@@ -76,44 +74,41 @@ export default function PosEntryPage()
 		isCheckingSession.value = true;
 		try
 		{
+			const terminal = Cubits.posTerminals.entities.value.find(t => t.id === terminalId);
+			if (terminal)
+			{
+				PosTempCache.setTerminal(terminal);
+			}
+
 			const res = await Services.posSessionsApi.GetActiveSession(terminalId);
 			if (res.data)
 			{
 				const session = res.data;
+				PosTempCache.setSession(terminalId, session);
+
 				const openedDate = new Date(session.openedAt).toDateString();
 				const today = new Date().toDateString();
 
 				if (openedDate === today)
 				{
-					localStorage.setItem("pos_terminal_id", terminalId.toString());
-					navigate("/pos/screen", {replace: true});
+					navigate(`/pos/screen/${ terminalId }`, {replace: true});
 				}
 				else
 				{
 					activeSession.value = session;
+					isCloseDialogOpen.value = true;
 				}
 			}
 			else
 			{
+				PosTempCache.setSession(terminalId, null);
 				activeSession.value = null;
+				isCloseDialogOpen.value = false;
 			}
 		}
 		finally
 		{
 			isCheckingSession.value = false;
-		}
-	};
-
-	const handleTerminalChange = async (val: number | undefined) =>
-	{
-		selectedTerminalId.value = val;
-		if (val)
-		{
-			await checkActiveSession(val);
-		}
-		else
-		{
-			activeSession.value = null;
 		}
 	};
 
@@ -130,28 +125,48 @@ export default function PosEntryPage()
 
 		if (res.status === 200 && res.data)
 		{
-			localStorage.setItem("pos_terminal_id", selectedTerminalId.value.toString());
-			navigate("/pos/screen", {replace: true});
+			PosTempCache.setSession(selectedTerminalId.value, res.data);
+			const terminal = Cubits.posTerminals.entities.value.find(t => t.id === selectedTerminalId.value);
+			if (terminal)
+			{
+				PosTempCache.setTerminal(terminal);
+			}
+
+			navigate(`/pos/screen/${ selectedTerminalId.value }`, {replace: true});
 		}
 		isStarting.value = false;
+	};
+
+	const handleTerminalChange = async (val: number | undefined) =>
+	{
+		selectedTerminalId.value = val;
+		if (val)
+		{
+			await checkActiveSession(val);
+		}
+		else
+		{
+			activeSession.value = null;
+			isCloseDialogOpen.value = false;
+		}
 	};
 
 	if (isLoading.value)
 	{
 		return (
-			<div className="min-h-screen flex items-center justify-center bg-muted/20">
+			<div className="h-screen w-full flex items-center justify-center bg-muted/20 overflow-hidden">
 				<Loader2 className="w-10 h-10 animate-spin text-primary"/>
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" dir="rtl">
+		<div className="h-screen w-full flex items-center justify-center p-4 relative overflow-hidden" dir="rtl">
 			<YusrBackground/>
 
-			<div className="w-full max-w-md relative z-10">
+			<div className="w-full max-w-md relative z-10 my-auto">
 				{ activeSession.value ? (
-					<Card className="border-red-200 shadow-lg shadow-red-500/10">
+					<Card className="border-red-200 shadow-lg shadow-red-500/10 max-h-[85vh] overflow-y-auto">
 						<CardHeader className="text-center pb-2">
 							<div
 								className="mx-auto w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4">
@@ -185,6 +200,7 @@ export default function PosEntryPage()
 									{
 										selectedTerminalId.value = undefined;
 										activeSession.value = null;
+										isCloseDialogOpen.value = false;
 									} }
 								>
 									تغيير الجهاز
@@ -201,7 +217,7 @@ export default function PosEntryPage()
 						</CardContent>
 					</Card>
 				) : (
-					<Card className="shadow-xl border-primary/10">
+					<Card className="shadow-xl border-primary/10 max-h-[85vh] overflow-y-auto">
 						<CardHeader className="text-center pb-6 relative">
 							<Button
 								variant="ghost"
@@ -278,9 +294,12 @@ export default function PosEntryPage()
 					session={ activeSession.value }
 					onSuccess={ async () =>
 					{
-						if (selectedTerminalId.value)
+						const targetTerminalId = selectedTerminalId.value;
+						activeSession.value = null;
+						isCloseDialogOpen.value = false;
+						if (targetTerminalId)
 						{
-							await checkActiveSession(selectedTerminalId.value);
+							await checkActiveSession(targetTerminalId);
 						}
 					} }
 				/>

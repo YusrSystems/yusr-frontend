@@ -4,11 +4,19 @@ import { A4InvoiceReport } from "./a4InvoiceReport";
 import { ThermalInvoiceReport } from "./thermalInvoiceReport";
 
 
-export function InvoiceReport({data, isPortal = true}: { data?: InvoiceReportResult, isPortal?: boolean })
+export function InvoiceReport({
+	data,
+	isPortal = true,
+	forceThermal = false
+}: {
+	data?: InvoiceReportResult,
+	isPortal?: boolean,
+	forceThermal?: boolean
+})
 {
 	if (!data) return null;
 
-	if (data.invoicePrintSize === InvoicePrintSize.ThermalPrinter)
+	if (forceThermal || data.invoicePrintSize === InvoicePrintSize.ThermalPrinter)
 	{
 		return <ThermalInvoiceReport data={ data } isPortal={ isPortal }/>;
 	}

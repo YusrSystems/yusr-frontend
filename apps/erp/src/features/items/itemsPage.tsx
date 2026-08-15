@@ -38,7 +38,7 @@ import {
 	printItemUoM
 } from "@/features/reports/itemBarcode/itemBarcodePrintState.ts";
 import TaxesMultiSearchableSelect from "@/core/components/searchableSelect/taxesMultiSearchableSelect.tsx";
-import CategoriesMultiSearchableSelect from "@/core/components/searchableSelect/categoriesMultiSearchableSelect.tsx";
+import CategoriesMultiSearchableSelect from "@/features/itemCategories/categoriesMultiSearchableSelect.tsx";
 import BrandsSearchableSelect from "@/core/components/searchableSelect/brandsSearchableSelect.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
 

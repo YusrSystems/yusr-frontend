@@ -1,13 +1,11 @@
 import { InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice.ts";
-import ReportConstants from "@/core/data/report/reportConstants.ts";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import ChangeInvoiceDialog from "@/features/invoices/changeInvoiceDialog.tsx";
-import ReportButton from "@/features/reports/reportButton.tsx";
 import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import type { TFunction } from "i18next";
-import { Copy, FilePlusCorner, FileTextIcon, Printer, RotateCw, Undo2 } from "lucide-react";
+import { Copy, FilePlusCorner, FileTextIcon, Loader2, Printer, RotateCw, Undo2 } from "lucide-react";
 import React, { type ReactNode, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -39,8 +37,8 @@ import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { toast } from "sonner";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
-import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus.ts";
-import { PaymentStatus } from "@/core/types/paymentStatus.ts";
+import { getReturnStatus, InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus.ts";
+import { getPaymentStatus, PaymentStatus } from "@/core/types/paymentStatus.ts";
 import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect.tsx";
 import { PartnerType } from "@/core/data/partner.ts";
 import { createPortal } from "react-dom";
@@ -97,12 +95,21 @@ export default function InvoicesPage({
 
 	useEffect(() =>
 	{
-		document.title = `${ title } | ${ APP_NAME }`;
+		const printed = printedInvoice.value;
+		if (printed?.invoice)
+		{
+			document.title = `${ printed.invoice.id } - ${ getInvoiceTypeName(printed.invoice.type, t) } - ${ printed.invoice.partnerName }`;
+		}
+		else
+		{
+			document.title = `${ title } | ${ APP_NAME }`;
+		}
+
 		return () =>
 		{
 			document.title = APP_NAME;
 		};
-	}, [title]);
+	}, [printedInvoice.value, title, t]);
 
 	useEffect(() =>
 	{
@@ -196,6 +203,7 @@ export default function InvoicesPage({
 				<CrudPage.ChangeDialog
 					fetchEntity={ async (id: number) =>
 					{
+						if (!id || isNaN(id) || id <= 0) return undefined;
 						const result = await Services.invoicesApi.Get(id);
 						return result.data;
 					} }
@@ -348,50 +356,6 @@ function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 		return rows;
 	};
 
-	const getPaymentStatus = (invoice: InvoiceDto): { message: string; styles: string; } =>
-	{
-		if (invoice.paymentStatusId === PaymentStatus.NotPaid)
-		{
-			return {message: t("invoices.notPaid"), styles: "bg-red-100 text-red-800"};
-		}
-
-		if (invoice.paymentStatusId === PaymentStatus.FullyPaid)
-		{
-			return {message: t("invoices.fullyPaid"), styles: "bg-green-100 text-green-800"};
-		}
-
-		if (invoice.paymentStatusId === PaymentStatus.Overpaid)
-		{
-			return {message: t("invoices.overpaid"), styles: "bg-red-100 text-red-800"};
-		}
-
-		return {
-			message: t("invoices.partiallyPaid", {
-				amount: invoice.paidAmount,
-				currency: Services.auth.setting?.currency?.value.code.value
-			}),
-			styles: "bg-orange-100 text-orange-800"
-		};
-	};
-
-	const getReturnStatus = (invoice: InvoiceDto): { message: string; styles: string; } =>
-	{
-		if (invoice.returnStatusId === InvoiceReturnStatus.NotReturned)
-		{
-			return {message: t("invoices.notReturned"), styles: "bg-green-100 text-green-800"};
-		}
-
-		if (invoice.returnStatusId === InvoiceReturnStatus.FullyReturned)
-		{
-			return {message: t("invoices.fullyReturned"), styles: "bg-red-100 text-red-800"};
-		}
-
-		return {
-			message: t("invoices.partialReturned"),
-			styles: "bg-orange-100 text-orange-800"
-		};
-	};
-
 	const getEInvoiceStatus = (invoice: InvoiceDto): { message: string; styles: string; } =>
 	{
 		if (
@@ -532,9 +496,9 @@ function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 		{
 			cells.push(
 				{
-					rowBody: getPaymentStatus(invoice).message,
+					rowBody: getPaymentStatus(invoice, t).message,
 					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-						getPaymentStatus(invoice).styles
+						getPaymentStatus(invoice, t).styles
 					}`
 				}
 			);
@@ -542,9 +506,9 @@ function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 			if (invoice.type === InvoiceType.Sell || invoice.type === InvoiceType.Purchase)
 			{
 				cells.push({
-					rowBody: getReturnStatus(invoice).message,
+					rowBody: getReturnStatus(invoice, t).message,
 					rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-						getReturnStatus(invoice).styles
+						getReturnStatus(invoice, t).styles
 					}`
 				});
 			}
@@ -615,14 +579,10 @@ function PageTable({fixedType, permissionResource, onPrint, isPrinting}: {
 					<Tooltip delayDuration={ 200 }>
 						<TooltipTrigger asChild>
 							<span className="inline-block layout-fix">
-								<ReportButton
-									reportName={ ReportConstants.Invoice }
-									request={ new InvoiceReportRequest({invoiceId: invoice.id}) }
-									fileName={ `${ invoice.id }-${ getInvoiceTypeName(invoice.type, t) }-${ invoice.partnerName }` }
-									disabled={ !invoice.canBePrinted }
-									onPrint={ () => onPrint(invoice) }
-									isPrinting={ isPrinting.value === invoice.id }
-								/>
+								<Button disabled={ !invoice.canBePrinted } onClick={ () => onPrint(invoice) }>
+									{ isPrinting.value === invoice.id ? <Loader2 className="h-4 w-4 animate-spin"/> :
+										<Printer className="h-4 w-4"/> }
+								</Button>
 							</span>
 						</TooltipTrigger>
 

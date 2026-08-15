@@ -9,9 +9,9 @@ export default class PosSessionApiService extends BaseApiService<PosSessionDto>
 		super("PosSessions");
 	}
 
-	async GetActiveSession(terminalId: number): Promise<RequestResult<PosSessionDto>>
+	async GetActiveSession(terminalId: number): Promise<RequestResult<PosSessionDto | undefined>>
 	{
-		return await YusrApiHelper.Get<PosSessionDto>(`/api/${ this.routeName }/Active/${ terminalId }`);
+		return await YusrApiHelper.Get<PosSessionDto | undefined>(`/api/${ this.routeName }/Active/${ terminalId }`);
 	}
 
 	async OpenSession(data: Partial<PosSessionDto>): Promise<RequestResult<PosSessionDto>>

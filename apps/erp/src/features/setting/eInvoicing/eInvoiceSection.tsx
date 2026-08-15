@@ -14,21 +14,21 @@ export default function EInvoiceSection({formData}: { formData: Setting })
 		<div className="space-y-10 animate-in fade-in">
 			<EInvoicingRegisterButton
 				formData={ formData }
-				title="Testing"
+				title="بيئة التجربة (Testing)"
 				subtitle="sandbox"
 				linkType={ EInvoicingEnvironmentType.Test }
 			/>
 
 			<EInvoicingRegisterButton
 				formData={ formData }
-				title="Fatoora Simulation"
+				title="بيئة المحاكاة (Simulation)"
 				subtitle={ t("settings.simulationSubtitle") }
 				linkType={ EInvoicingEnvironmentType.Simulation }
 			/>
 
 			<EInvoicingRegisterButton
 				formData={ formData }
-				title="Fatoora Portal"
+				title="البيئة الفعلية (Production)"
 				subtitle={ t("settings.productionSubtitle") }
 				linkType={ EInvoicingEnvironmentType.Production }
 			/>

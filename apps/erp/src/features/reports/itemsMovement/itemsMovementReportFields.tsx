@@ -16,7 +16,7 @@ import { PartnersSearchableSelect } from "@/core/components/searchableSelect/par
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect.tsx";
-import CategoriesMultiSearchableSelect from "@/core/components/searchableSelect/categoriesMultiSearchableSelect.tsx";
+import CategoriesMultiSearchableSelect from "@/features/itemCategories/categoriesMultiSearchableSelect.tsx";
 import BrandsMultiSearchableSelect from "@/core/components/searchableSelect/brandsMultiSearchableSelect.tsx";
 import { DocumentType } from "@/core/types/documentType.ts";
 import { Cubits } from "@/core/services/cubits.ts";
