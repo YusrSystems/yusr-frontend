@@ -130,6 +130,7 @@ export default function VouchersPage()
 				<CrudPage.ChangeDialog
 					fetchEntity={ async (id: number) =>
 					{
+						if (!id || isNaN(id) || id <= 0) return undefined;
 						const result = await Services.voucherApi.Get(id);
 						return result.data;
 					} }

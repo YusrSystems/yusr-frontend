@@ -203,6 +203,7 @@ export default function InvoicesPage({
 				<CrudPage.ChangeDialog
 					fetchEntity={ async (id: number) =>
 					{
+						if (!id || isNaN(id) || id <= 0) return undefined;
 						const result = await Services.invoicesApi.Get(id);
 						return result.data;
 					} }
