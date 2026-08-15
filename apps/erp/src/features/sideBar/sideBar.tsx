@@ -132,9 +132,6 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 			url: "/clients",
 			icon: <ShoppingBag/>,
 			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.AccountClient,
-				SystemPermissionsActions.Get
-			) && Services.auth.hasAuth(
 				SystemPermissionsResources.Partners,
 				SystemPermissionsActions.Get
 			)
@@ -143,9 +140,6 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 			url: "/suppliers",
 			icon: <Truck/>,
 			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.AccountSupplier,
-				SystemPermissionsActions.Get
-			) && Services.auth.hasAuth(
 				SystemPermissionsResources.Partners,
 				SystemPermissionsActions.Get
 			)
