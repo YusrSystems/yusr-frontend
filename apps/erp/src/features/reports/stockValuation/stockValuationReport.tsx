@@ -7,7 +7,9 @@ import { StockValuationReportTable } from "./stockValuationReportTable.tsx";
 import { StockValuationReportSummary } from "./stockValuationReportSummary.tsx";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
-import type { StockValuationReportResult } from "./stockValuationReportResult.ts";
+import { Services } from "@/core/services/services.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { SystemPermissionsActions, UnauthorizedPage } from "yusr-ui";
 
 
 interface StockValuationReportProps
@@ -19,35 +21,40 @@ export function StockValuationReport({isPortal = false}: StockValuationReportPro
 {
 	useSignals();
 
-	const state = Cubits.stockValuationReport.state.value;
+	if (!Services.auth.hasAuth(
+		SystemPermissionsResources.ReportStockValuation,
+		SystemPermissionsActions.Get
+	))
+	{
+		return (
+			<ReportContainer isPortal={ isPortal }>
+				<div className="min-h-screen flex items-center justify-center">
+					<UnauthorizedPage showButtons={ false }/>
+				</div>
+			</ReportContainer>
+		);
+	}
 
-	// Explicitly cast the data to the correct type
-	const data = "data" in state ? (state.data as StockValuationReportResult) : undefined;
+	const data = Cubits.stockValuationReport.result.value;
 
 	return (
 		<ReportContainer isPortal={ isPortal }>
+			<ReportHeader>
+				<ReportHeader.CompanySection/>
+				<ReportHeader.TitleSection titleAr="تقييم المخزون" titleEn="Stock Valuation"/>
+				<ReportHeader.MetaDataSection/>
+			</ReportHeader>
+
+			{ data && (
+				<div className="grid grid-cols-2 gap-3 my-4 print:break-inside-avoid">
+					<ReportField labelAr="إلى تاريخ" labelEn="As of Date" value={ data.asOfDate }/>
+				</div>
+			) }
+
 			<ReportPageContainer>
-				<thead className="table-header-group">
-				<tr>
-					<td className="p-0 pb-4">
-						<ReportHeader>
-							<div className="flex flex-col gap-1">
-								<h1 className="text-xl font-bold">تقييم المخزون</h1>
-								<h2 className="text-sm text-muted-foreground font-semibold tracking-wider">STOCK
-									VALUATION</h2>
-							</div>
-							<div className="col-span-2 grid grid-cols-2 gap-4">
-								<ReportField labelAr="إلى تاريخ" labelEn="As of Date" value={ data?.asOfDate }/>
-								<ReportField labelAr="إجمالي التقييم" labelEn="Total Valuation"
-								             value={ data ? data.totalInventoryValue.toLocaleString() : "" }/>
-							</div>
-						</ReportHeader>
-					</td>
-				</tr>
-				</thead>
 				<ReportPageBody>
-					<StockValuationReportSummary/>
 					<StockValuationReportTable/>
+					<StockValuationReportSummary/>
 				</ReportPageBody>
 			</ReportPageContainer>
 		</ReportContainer>
