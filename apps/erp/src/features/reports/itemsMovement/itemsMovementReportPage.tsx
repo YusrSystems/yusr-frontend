@@ -13,18 +13,23 @@ import { APP_NAME } from "../../../../appConfig.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { Services } from "@/core/services/services.ts";
 
-
 export function ItemsMovementReportPage()
 {
 	useSignals();
 
-	const lastRequest = useMemo(() => signal<ItemsMovementReportRequest>(new ItemsMovementReportRequest()), []);
+	const lastRequest = useMemo(() =>
+	{
+		const req = new ItemsMovementReportRequest();
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("fromDate")) req.fromDate = params.get("fromDate");
+		if (params.get("toDate")) req.toDate = params.get("toDate");
+		return signal<ItemsMovementReportRequest>(req);
+	}, []);
 
 	useEffect(() =>
 	{
 		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportItemMovement, SystemPermissionsActions.Get)) return;
 		void Cubits.ItemsMovementReport.getReportData(lastRequest.value, 1);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSubmit = (request: ItemsMovementReportRequest) =>
@@ -53,7 +58,6 @@ export function ItemsMovementReportPage()
 		{
 			document.title = "تقرير حركة المواد";
 		}
-
 		return () =>
 		{
 			document.title = APP_NAME;
@@ -81,15 +85,12 @@ export function ItemsMovementReportPage()
 				/>
 				<ReportPage.PrintButton/>
 			</ReportPage.ActionButtonsContainer>
-
 			<div className="print:hidden w-full shrink-0">
 				<ItemsMovementReportFields onSubmit={ handleSubmit } isLoading={ isLoading }/>
 			</div>
-
 			<div className="flex-1 min-h-0 flex flex-col print:block">
 				<ItemsMovementReport/>
 			</div>
-
 			{ Cubits.ItemsMovementReport.result.value && Cubits.ItemsMovementReport.result.value.totalCount > 0 && (
 				<CrudTablePagination
 					className="print:hidden w-full bg-card text-card-foreground border border-t-0 p-4 shadow-sm rounded-b-xl shrink-0"

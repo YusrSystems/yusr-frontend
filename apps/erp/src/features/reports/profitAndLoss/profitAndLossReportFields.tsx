@@ -6,7 +6,6 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ProfitAndLossReportRequest } from "@/features/reports/profitAndLoss/profitAndLossReportRequest.ts";
 
-
 interface ProfitAndLossReportFieldsProps
 {
 	onSubmit: (request: ProfitAndLossReportRequest) => void;
@@ -17,20 +16,24 @@ export function ProfitAndLossReportFields({onSubmit, isLoading = false}: ProfitA
 {
 	useSignals();
 	const {t} = useTranslation(["erpCommon", "common"]);
-
 	const isOpen = useMemo(() => signal(true), []);
-	const defaults = useMemo(() => new ProfitAndLossReportRequest(), []);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const fromDate = useMemo(() => signal<string>(defaults.fromDate), []);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const toDate = useMemo(() => signal<string>(defaults.toDate), []);
+	const defaults = useMemo(() =>
+	{
+		const req = new ProfitAndLossReportRequest();
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("fromDate")) req.fromDate = params.get("fromDate")!;
+		if (params.get("toDate")) req.toDate = params.get("toDate")!;
+		return req;
+	}, []);
+
+	const fromDate = useMemo(() => signal<string>(defaults.fromDate), [defaults.fromDate]);
+	const toDate = useMemo(() => signal<string>(defaults.toDate), [defaults.toDate]);
 
 	const handleClear = () =>
 	{
 		fromDate.value = defaults.fromDate;
 		toDate.value = defaults.toDate;
-
 		onSubmit(new ProfitAndLossReportRequest({
 			fromDate: defaults.fromDate,
 			toDate: defaults.toDate
@@ -62,14 +65,12 @@ export function ProfitAndLossReportFields({onSubmit, isLoading = false}: ProfitA
 					/>
 				</button>
 			</CollapsibleTrigger>
-
 			<CollapsibleContent>
 				<div className="flex flex-col gap-4 p-4 border-t border-border">
 					<div className="grid grid-cols-2 gap-3">
 						<DateField label={ t("reports.fromDate") } value={ fromDate }/>
 						<DateField label={ t("reports.toDate") } value={ toDate }/>
 					</div>
-
 					<div className="flex justify-end gap-2">
 						<Button disabled={ isLoading } variant="outline" onClick={ handleClear }>
 							{ t("common:filter.clear") }

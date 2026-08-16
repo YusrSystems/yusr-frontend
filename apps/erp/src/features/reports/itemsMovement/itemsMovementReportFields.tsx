@@ -21,7 +21,6 @@ import BrandsMultiSearchableSelect from "@/core/components/searchableSelect/bran
 import { DocumentType } from "@/core/types/documentType.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 
-
 interface ItemsMovementReportFieldsProps
 {
 	onSubmit: (request: ItemsMovementReportRequest) => void;
@@ -32,11 +31,19 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 {
 	useSignals();
 	const {t} = useTranslation(["erpCommon", "common", "stocking", "accounting"]);
-
 	const isOpen = useMemo(() => signal(true), []);
 
-	const fromDate = useMemo(() => signal<string>(), []);
-	const toDate = useMemo(() => signal<string>(), []);
+	const defaults = useMemo(() =>
+	{
+		const req = new ItemsMovementReportRequest();
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("fromDate")) req.fromDate = params.get("fromDate");
+		if (params.get("toDate")) req.toDate = params.get("toDate");
+		return req;
+	}, []);
+
+	const fromDate = useMemo(() => signal<string | undefined>(defaults.fromDate ?? undefined), [defaults.fromDate]);
+	const toDate = useMemo(() => signal<string | undefined>(defaults.toDate ?? undefined), [defaults.toDate]);
 	const documentTypes = useMemo(() => signal<DocumentType[]>([]), []);
 	const itemIds = useMemo(() => signal<number[]>([]), []);
 	const itemLabels = useMemo(() => signal<Record<number, string>>({}), []);
@@ -44,7 +51,6 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 	const partnerName = useMemo(() => signal<string>(), []);
 	const storeId = useMemo(() => signal<number>(), []);
 	const storeName = useMemo(() => signal<string>(), []);
-
 	const categoryIds = useMemo(() => signal<number[]>([]), []);
 	const categoryLabels = useMemo(() => signal<Record<number, string>>({}), []);
 	const brandIds = useMemo(() => signal<number[]>([]), []);
@@ -58,8 +64,8 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 
 	const handleClear = () =>
 	{
-		fromDate.value = undefined;
-		toDate.value = undefined;
+		fromDate.value = defaults.fromDate ?? undefined;
+		toDate.value = defaults.toDate ?? undefined;
 		documentTypes.value = [];
 		itemIds.value = [];
 		itemLabels.value = {};
@@ -71,9 +77,10 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 		categoryLabels.value = {};
 		brandIds.value = [];
 		brandLabels.value = {};
-
-		// Trigger the callback with a clean, default request instance
-		onSubmit(new ItemsMovementReportRequest());
+		onSubmit(new ItemsMovementReportRequest({
+			fromDate: defaults.fromDate,
+			toDate: defaults.toDate
+		}));
 	};
 
 	return (
@@ -96,7 +103,6 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 					/>
 				</button>
 			</CollapsibleTrigger>
-
 			<CollapsibleContent>
 				<div className="flex flex-col gap-4 p-4 border-t border-border">
 					<div className="grid grid-cols-2 gap-3">
@@ -113,27 +119,22 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 								{label: t("sidebar.costAdjustments"), value: DocumentType.CostAdjustment}
 							] }
 						/>
-
 						<FormField label={ t("sidebar.items") }>
 							<ItemsMultiSearchableSelect ids={ itemIds } labels={ itemLabels }/>
 						</FormField>
 					</div>
-
 					<div className="grid grid-cols-2 gap-3">
 						<FormField label={ t("stocking:items.category", "التصنيف") }>
 							<CategoriesMultiSearchableSelect ids={ categoryIds } labels={ categoryLabels }/>
 						</FormField>
-
 						<FormField label={ t("stocking:items.brand", "العلامة التجارية") }>
 							<BrandsMultiSearchableSelect ids={ brandIds } labels={ brandLabels }/>
 						</FormField>
 					</div>
-
 					<div className="grid grid-cols-2 gap-3">
 						<DateField label={ t("reports.fromDate") } value={ fromDate }/>
 						<DateField label={ t("reports.toDate") } value={ toDate }/>
 					</div>
-
 					<div className="grid grid-cols-2 gap-3">
 						<FormField label={ t("reports.partner", "الجهة") }>
 							<PartnersSearchableSelect
@@ -145,7 +146,6 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 							<StoresSearchableSelect id={ storeId } label={ storeName }/>
 						</FormField>
 					</div>
-
 					<div className="flex justify-end gap-2">
 						<Button
 							className="self-end"

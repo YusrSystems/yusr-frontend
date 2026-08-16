@@ -5,7 +5,6 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { TaxAuditReportRequest } from "./taxAuditReportRequest";
 
-
 interface TaxAuditReportFieldsProps
 {
 	onSubmit: (request: TaxAuditReportRequest) => void;
@@ -15,9 +14,16 @@ interface TaxAuditReportFieldsProps
 export function TaxAuditReportFields({onSubmit, isLoading = false}: TaxAuditReportFieldsProps)
 {
 	useSignals();
-
 	const isOpen = useMemo(() => signal(true), []);
-	const defaults = useMemo(() => new TaxAuditReportRequest(), []);
+
+	const defaults = useMemo(() =>
+	{
+		const req = new TaxAuditReportRequest();
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("fromDate")) req.fromDate = params.get("fromDate")!;
+		if (params.get("toDate")) req.toDate = params.get("toDate")!;
+		return req;
+	}, []);
 
 	const fromDate = useMemo(() => signal<string>(defaults.fromDate), [defaults.fromDate]);
 	const toDate = useMemo(() => signal<string>(defaults.toDate), [defaults.toDate]);
@@ -57,14 +63,12 @@ export function TaxAuditReportFields({onSubmit, isLoading = false}: TaxAuditRepo
 					/>
 				</button>
 			</CollapsibleTrigger>
-
 			<CollapsibleContent>
 				<div className="flex flex-col gap-4 p-4 border-t border-border">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 						<DateField label="من تاريخ" value={ fromDate }/>
 						<DateField label="إلى تاريخ" value={ toDate }/>
 					</div>
-
 					<div className="flex justify-end gap-2">
 						<Button disabled={ isLoading } variant="outline" onClick={ handleClear }>
 							مسح

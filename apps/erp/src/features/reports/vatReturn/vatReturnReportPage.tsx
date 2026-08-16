@@ -10,7 +10,6 @@ import { APP_NAME } from "../../../../appConfig.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { Services } from "@/core/services/services.ts";
 
-
 export function VatReturnReportPage()
 {
 	useSignals();
@@ -18,11 +17,14 @@ export function VatReturnReportPage()
 	useEffect(() =>
 	{
 		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportVatReturn, SystemPermissionsActions.Get)) return;
-		void Cubits.VatReturnReport.getReportData(new VatReturnReportRequest());
+		const req = new VatReturnReportRequest();
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("fromDate")) req.fromDate = params.get("fromDate")!;
+		if (params.get("toDate")) req.toDate = params.get("toDate")!;
+		void Cubits.VatReturnReport.getReportData(req);
 	}, []);
 
 	const isLoading = Cubits.VatReturnReport.state.value instanceof ReportLoading;
-
 	const data = Cubits.VatReturnReport.result.value;
 
 	useEffect(() =>
@@ -35,7 +37,6 @@ export function VatReturnReportPage()
 		{
 			document.title = "إقرار ضريبة القيمة المضافة";
 		}
-
 		return () =>
 		{
 			document.title = APP_NAME;
@@ -57,7 +58,6 @@ export function VatReturnReportPage()
 					isLoading={ isLoading }
 				/>
 			</div>
-
 			<div className="flex-1 min-h-0 flex flex-col print:block">
 				<VatReturnReport/>
 			</div>

@@ -18,7 +18,6 @@ import { useSignals } from "@preact/signals-react/runtime";
 import { SalesProfitabilityReportRequest } from "./salesProfitabilityReportRequest";
 import AccountsMultiSearchableSelect from "@/core/components/searchableSelect/accountsMultiSearchableSelect";
 
-
 interface SalesProfitabilityReportFieldsProps
 {
 	onSubmit: (request: SalesProfitabilityReportRequest) => void;
@@ -29,16 +28,21 @@ export function SalesProfitabilityReportFields({onSubmit, isLoading = false}: Sa
 {
 	useSignals();
 	const {t} = useTranslation(["erpCommon", "common"]);
-
 	const isOpen = useMemo(() => signal(true), []);
-	const defaults = useMemo(() => new SalesProfitabilityReportRequest(), []);
+
+	const defaults = useMemo(() =>
+	{
+		const req = new SalesProfitabilityReportRequest();
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("fromDate")) req.fromDate = params.get("fromDate")!;
+		if (params.get("toDate")) req.toDate = params.get("toDate")!;
+		return req;
+	}, []);
 
 	const fromDate = useMemo(() => signal<string>(defaults.fromDate), [defaults.fromDate]);
 	const toDate = useMemo(() => signal<string>(defaults.toDate), [defaults.toDate]);
 	const expenseAccountIds = useMemo(() => signal<number[]>([]), []);
 	const expenseAccountLabels = useMemo(() => signal<Record<number, string>>({}), []);
-
-	// Track whether expenses should be included at all
 	const includeExpenses = useMemo(() => signal<boolean>(true), []);
 
 	const handleClear = () =>
@@ -58,7 +62,6 @@ export function SalesProfitabilityReportFields({onSubmit, isLoading = false}: Sa
 	const handleApply = () =>
 	{
 		let targetExpenseIds: number[] | null = null;
-
 		if (!includeExpenses.value)
 		{
 			targetExpenseIds = [];
@@ -95,13 +98,11 @@ export function SalesProfitabilityReportFields({onSubmit, isLoading = false}: Sa
 					/>
 				</button>
 			</CollapsibleTrigger>
-
 			<CollapsibleContent>
 				<div className="flex flex-col gap-4 p-4 border-t border-border">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 						<DateField label={ t("reports.fromDate") } value={ fromDate }/>
 						<DateField label={ t("reports.toDate") } value={ toDate }/>
-
 						<CheckboxField
 							id="include-expenses-checkbox"
 							checked={ includeExpenses }
@@ -116,7 +117,6 @@ export function SalesProfitabilityReportFields({onSubmit, isLoading = false}: Sa
 							label={
 								<div className="flex items-center gap-1.5" onClick={ (e) => e.stopPropagation() }>
 									<span>{ t("reports.includeExpenses", "تضمين المصروفات المباشرة") }</span>
-
 									<Tooltip>
 										<TooltipTrigger asChild>
 											<button
@@ -140,7 +140,6 @@ export function SalesProfitabilityReportFields({onSubmit, isLoading = false}: Sa
 													  		{ t("reports.hints.allDesc", "يتم عرض الفواتير مع كافة المصروفات المباشرة.") }
 													    </span>
 												</div>
-
 												<div className="flex flex-col gap-0.5">
 														<span className="font-medium text-foreground">
 														  { t("reports.hints.specific", "تفعيل الخيار مع تحديد حسابات:") }
@@ -149,7 +148,6 @@ export function SalesProfitabilityReportFields({onSubmit, isLoading = false}: Sa
 														  { t("reports.hints.specificDesc", "يتم عرض الفواتير مع مصروفات الحسابات المحددة فقط.") }
 													    </span>
 												</div>
-
 												<div className="flex flex-col gap-0.5">
 														<span className="font-medium text-foreground">
 															{ t("reports.hints.none", "إلغاء تفعيل الخيار تماماً:") }
@@ -164,7 +162,6 @@ export function SalesProfitabilityReportFields({onSubmit, isLoading = false}: Sa
 								</div>
 							}
 						/>
-
 						<FormField label={ t("reports.expenseAccounts", "حسابات المصروفات المباشرة") }>
 							<AccountsMultiSearchableSelect
 								ids={ expenseAccountIds }
@@ -173,7 +170,6 @@ export function SalesProfitabilityReportFields({onSubmit, isLoading = false}: Sa
 							/>
 						</FormField>
 					</div>
-
 					<div className="flex justify-end gap-2">
 						<Button disabled={ isLoading } variant="outline" onClick={ handleClear }>
 							{ t("common:filter.clear") }

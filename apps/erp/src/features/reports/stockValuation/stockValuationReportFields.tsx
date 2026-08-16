@@ -17,7 +17,6 @@ import { StockValuationReportRequest } from "./stockValuationReportRequest.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 import CategoriesSearchableSelect from "@/features/itemCategories/categoriesSearchableSelect.tsx";
 
-
 interface StockValuationReportFieldsProps
 {
 	onSubmit: (request: StockValuationReportRequest) => void;
@@ -28,13 +27,18 @@ export function StockValuationReportFields({onSubmit, isLoading = false}: StockV
 {
 	useSignals();
 
-	const asOfDate = useMemo(() => signal<string>(DateService.formatDateOnly(new Date())), []);
+	const defaultDate = useMemo(() =>
+	{
+		const params = new URLSearchParams(window.location.search);
+		return params.get("asOfDate") || DateService.formatDateOnly(new Date());
+	}, []);
+
+	const asOfDate = useMemo(() => signal<string>(defaultDate), [defaultDate]);
 	const storeId = useMemo(() => signal<number | undefined>(undefined), []);
 	const categoryId = useMemo(() => signal<number | undefined>(undefined), []);
 	const categoryName = useMemo(() => signal<string | undefined>(undefined), []);
 	const brandId = useMemo(() => signal<number | undefined>(undefined), []);
 	const brandName = useMemo(() => signal<string | undefined>(undefined), []);
-
 	const [isOpen, setIsOpen] = useState(true);
 
 	useEffect(() =>
@@ -45,13 +49,16 @@ export function StockValuationReportFields({onSubmit, isLoading = false}: StockV
 
 	const handleClear = () =>
 	{
-		asOfDate.value = DateService.formatDateOnly(new Date());
+		asOfDate.value = defaultDate;
 		storeId.value = undefined;
 		categoryId.value = undefined;
 		categoryName.value = undefined;
 		brandId.value = undefined;
 		brandName.value = undefined;
-		handleApply();
+
+		onSubmit(new StockValuationReportRequest({
+			asOfDate: defaultDate
+		}));
 	};
 
 	const handleApply = () =>

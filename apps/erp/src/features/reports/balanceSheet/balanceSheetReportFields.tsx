@@ -6,7 +6,6 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { BalanceSheetReportRequest } from "@/features/reports/balanceSheet/balanceSheetReportRequest.ts";
 
-
 interface BalanceSheetReportFieldsProps
 {
 	onSubmit: (request: BalanceSheetReportRequest) => void;
@@ -17,11 +16,17 @@ export function BalanceSheetReportFields({onSubmit, isLoading = false}: BalanceS
 {
 	useSignals();
 	const {t} = useTranslation(["erpCommon", "common"]);
-
 	const isOpen = useMemo(() => signal(true), []);
-	const defaults = useMemo(() => new BalanceSheetReportRequest(), []);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const asOfDate = useMemo(() => signal<string>(defaults.asOfDate), []);
+
+	const defaults = useMemo(() =>
+	{
+		const req = new BalanceSheetReportRequest();
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("asOfDate")) req.asOfDate = params.get("asOfDate")!;
+		return req;
+	}, []);
+
+	const asOfDate = useMemo(() => signal<string>(defaults.asOfDate), [defaults.asOfDate]);
 
 	const handleClear = () =>
 	{
@@ -49,11 +54,9 @@ export function BalanceSheetReportFields({onSubmit, isLoading = false}: BalanceS
 					/>
 				</button>
 			</CollapsibleTrigger>
-
 			<CollapsibleContent>
 				<div className="flex flex-col gap-4 p-4 border-t border-border">
 					<DateField label={ t("reports.toDate") } value={ asOfDate }/>
-
 					<div className="flex justify-end gap-2">
 						<Button disabled={ isLoading } variant="outline" onClick={ handleClear }>
 							{ t("common:filter.clear") }

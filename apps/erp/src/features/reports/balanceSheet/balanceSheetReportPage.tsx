@@ -11,18 +11,22 @@ import { APP_NAME } from "../../../../appConfig.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { Services } from "@/core/services/services.ts";
 
-
 export function BalanceSheetReportPage()
 {
 	useSignals();
 
-	const lastRequest = useMemo(() => signal<BalanceSheetReportRequest>(new BalanceSheetReportRequest()), []);
+	const lastRequest = useMemo(() =>
+	{
+		const req = new BalanceSheetReportRequest();
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("asOfDate")) req.asOfDate = params.get("asOfDate")!;
+		return signal<BalanceSheetReportRequest>(req);
+	}, []);
 
 	useEffect(() =>
 	{
 		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportBalanceSheet, SystemPermissionsActions.Get)) return;
 		void Cubits.BalanceSheetReport.getReportData(lastRequest.value);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSubmit = (request: BalanceSheetReportRequest) =>
@@ -42,7 +46,6 @@ export function BalanceSheetReportPage()
 		{
 			document.title = "الميزانية العمومية";
 		}
-
 		return () =>
 		{
 			document.title = APP_NAME;
@@ -59,7 +62,6 @@ export function BalanceSheetReportPage()
 			<div className="print:hidden w-full shrink-0">
 				<BalanceSheetReportFields onSubmit={ handleSubmit } isLoading={ isLoading }/>
 			</div>
-
 			<div className="flex-1 min-h-0 flex flex-col print:block">
 				<BalanceSheetReport asOfDate={ lastRequest.value.asOfDate }/>
 			</div>
