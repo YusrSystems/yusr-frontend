@@ -3,28 +3,39 @@ import { ReportTableTd } from "@/features/report/components/reportTableTd.tsx";
 import { formatNumber } from "@/features/report/utils/formating.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
-import { ReportLoading, TablePreview } from "yusr-ui";
-import type { LowStockReportResult } from "./lowStockReportResult.ts";
+import { ReportError, ReportLoaded, ReportLoading, TablePreview } from "yusr-ui";
+import { Link } from "react-router-dom";
 
 
 export function LowStockReportTable()
 {
 	useSignals();
-	const state = Cubits.lowStockReport.state.value;
 
-	if (state instanceof ReportLoading) return <TablePreview.Loading/>;
-	if (!("data" in state) || !state.data) return <TablePreview.Empty/>;
+	if (Cubits.lowStockReport.state.value instanceof ReportLoading)
+	{
+		return <TablePreview.Loading/>;
+	}
 
-	const data = state.data as LowStockReportResult;
-	const lines = data.lines;
+	if (Cubits.lowStockReport.state.value instanceof ReportError)
+	{
+		return <TablePreview.Error/>;
+	}
 
-	if (lines.length === 0) return <TablePreview.Empty/>;
+	if (Cubits.lowStockReport.state.value instanceof ReportLoaded)
+	{
+		const result = Cubits.lowStockReport.result.value;
+		const lines = result?.lines ?? [];
 
-	return (
-		<div className="overflow-x-auto rounded-lg border border-border">
-			<table className="w-full text-sm">
-				<thead className="bg-muted text-muted-foreground whitespace-nowrap">
+		if (lines.length === 0)
+		{
+			return <TablePreview.Empty/>;
+		}
+
+		return (
+			<table className="w-full mt-5 border-collapse rounded-lg overflow-hidden">
+				<thead>
 				<tr>
+					<ReportTableTh ar="الرقم" en="No."/>
 					<ReportTableTh ar="رقم المادة" en="Item ID"/>
 					<ReportTableTh ar="اسم المادة" en="Item Name" align="start"/>
 					<ReportTableTh ar="الوحدة" en="Base Unit"/>
@@ -35,30 +46,60 @@ export function LowStockReportTable()
 				</tr>
 				</thead>
 				<tbody>
-				{ lines.map((line, index) => (
-					<tr key={ index }
-					    className="border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors">
-						<ReportTableTd isEven={ index % 2 === 0 }>{ line.itemId }</ReportTableTd>
-						<ReportTableTd isEven={ index % 2 === 0 } align="start">{ line.itemName }</ReportTableTd>
-						<ReportTableTd isEven={ index % 2 === 0 }>{ line.baseUnitName }</ReportTableTd>
-						<ReportTableTd isEven={ index % 2 === 0 }>
-							<span
-								dir="ltr">{ line.minQuantityLimit != null ? formatNumber(line.minQuantityLimit) : "-" }</span>
-						</ReportTableTd>
-						<ReportTableTd isEven={ index % 2 === 0 }>
-							<span
-								dir="ltr">{ line.maxQuantityLimit != null ? formatNumber(line.maxQuantityLimit) : "-" }</span>
-						</ReportTableTd>
-						<ReportTableTd isEven={ index % 2 === 0 } className="font-semibold text-destructive">
-							<span dir="ltr">{ formatNumber(line.quantityInStock) }</span>
-						</ReportTableTd>
-						<ReportTableTd isEven={ index % 2 === 0 } className="font-bold text-emerald-600">
-							<span dir="ltr">{ formatNumber(line.suggestedReorderQty) }</span>
-						</ReportTableTd>
-					</tr>
-				)) }
+				{ lines.map((line, idx) =>
+				{
+					const isEven = idx % 2 === 0;
+
+					return (
+						<tr key={ `${ line.itemId }-${ idx }` }>
+							<ReportTableTd isEven={ isEven }>
+								{ idx + 1 + ((result?.pageNumber ?? 1) - 1) * (result?.rowsPerPage ?? 100) }
+							</ReportTableTd>
+
+							<ReportTableTd
+								isEven={ isEven }
+								className="p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!"
+							>
+								<Link
+									to={ `/items/${ line.itemId }` }
+									target="_blank"
+									rel="noopener noreferrer"
+									className="block w-full h-full p-3"
+								>
+									{ line.itemId }
+								</Link>
+							</ReportTableTd>
+
+							<ReportTableTd isEven={ isEven } align="start">
+								{ line.itemName }
+							</ReportTableTd>
+
+							<ReportTableTd isEven={ isEven }>
+								{ line.baseUnitName }
+							</ReportTableTd>
+
+							<ReportTableTd isEven={ isEven }>
+								{ line.minQuantityLimit != null ? formatNumber(line.minQuantityLimit) : "-" }
+							</ReportTableTd>
+
+							<ReportTableTd isEven={ isEven }>
+								{ line.maxQuantityLimit != null ? formatNumber(line.maxQuantityLimit) : "-" }
+							</ReportTableTd>
+
+							<ReportTableTd isEven={ isEven } className="font-bold text-destructive!">
+								{ formatNumber(line.quantityInStock) }
+							</ReportTableTd>
+
+							<ReportTableTd isEven={ isEven } className="font-bold text-emerald-600!">
+								{ formatNumber(line.suggestedReorderQty) }
+							</ReportTableTd>
+						</tr>
+					);
+				}) }
 				</tbody>
 			</table>
-		</div>
-	);
+		);
+	}
+
+	return <TablePreview.Empty/>;
 }

@@ -1,7 +1,7 @@
 export class LowStockReportRequest
 {
-	storeId?: number;
-	storeName?: string;
+	storeId?: number | null;
+	storeName?: string | null;
 	pageNumber: number;
 	rowsPerPage: number;
 
