@@ -96,8 +96,7 @@ export default function FiscalYearsPage()
 
 		if (res.status === 200)
 		{
-			toast.success(`تم ${ newStatus === FiscalPeriodStatus.Locked ? "إغلاق" : "فتح" } فترة ${ period.name }`);
-			// Refresh list to update state
+			toast.success(`تم ${ newStatus === FiscalPeriodStatus.Open ? "فتح" : "إغلاق" } فترة ${ period.name }`);
 			Cubits.fiscalYears.init();
 		}
 		else
@@ -365,7 +364,7 @@ function PageTable({
 											<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
 												{ year.periods?.map((period) =>
 												{
-													const isPeriodLocked = period.status === FiscalPeriodStatus.Locked;
+													const isPeriodOpen = period.status === FiscalPeriodStatus.Open;
 
 													return (
 														<div
@@ -376,33 +375,33 @@ function PageTable({
 																<span
 																	className="font-bold text-sm">{ period.name }</span>
 																<span className="text-[11px] text-muted-foreground">
-									{ period.startDate } إلى { period.endDate }
-								</span>
+                                    { period.startDate } إلى { period.endDate }
+                                  </span>
 															</div>
 
 															<div className="flex items-center gap-2">
-								<span
-									className={ `text-[11px] font-semibold px-2 py-0.5 rounded-full ${
-										isPeriodLocked
-											? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
-											: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-									}` }
-								>
-								{ isPeriodLocked ? "مجمّدة" : "مفتوحة" }
-								</span>
+                                  <span
+									  className={ `text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+										  isPeriodOpen
+											  ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+											  : "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+									  }` }
+								  >
+                                    { isPeriodOpen ? "مفتوحة" : "مجمّدة" }
+                                  </span>
 
 																{ Services.auth.hasAuth(
 																	SystemPermissionsResources.FiscalPeriods,
 																	SystemPermissionsActions.Update
 																) && (
 																	<Switch
-																		checked={ isPeriodLocked }
+																		checked={ isPeriodOpen }
 																		disabled={ isClosed }
 																		onCheckedChange={ (checked) =>
 																			onPeriodStatusChange(
 																				period,
 																				year,
-																				checked ? FiscalPeriodStatus.Locked : FiscalPeriodStatus.Open
+																				checked ? FiscalPeriodStatus.Open : FiscalPeriodStatus.Locked
 																			)
 																		}
 																	/>
@@ -442,21 +441,21 @@ function StatusBadge({status}: { status: FiscalYearStatus })
 			return (
 				<span
 					className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-					مفتوحة 🟢
+          مفتوحة
         </span>
 			);
 		case FiscalYearStatus.Locked:
 			return (
 				<span
 					className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
-					مجمّدة 🟡
+          مجمّدة
         </span>
 			);
 		case FiscalYearStatus.Closed:
 			return (
 				<span
 					className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300">
-					مقفلة 🔴
+          مقفلة
         </span>
 			);
 		default:
