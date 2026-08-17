@@ -49,6 +49,7 @@ import type { LowStockReportResult } from "@/features/reports/lowStock/lowStockR
 import { PosTerminalDto } from "@/core/data/posTerminal.ts";
 import { CategoryDto } from "@/core/data/category.ts";
 import { BrandDto } from "@/core/data/brand.ts";
+import { FiscalYearDto } from "@/core/data/fiscalYear.ts";
 
 
 export class Cubits extends BaseCubits
@@ -74,6 +75,7 @@ export class Cubits extends BaseCubits
 	public static readonly users = new PageCubit<UserDto>(Services.usersApi);
 	public static readonly categories = new PageCubit<CategoryDto>(Services.categoriesApi);
 	public static readonly brands = new PageCubit<BrandDto>(Services.brandsApi);
+	public static readonly fiscalYears = new PageCubit<FiscalYearDto>(Services.fiscalYearsApi);
 
 	// filter fields
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");

@@ -10,12 +10,16 @@ export const SystemPermissionsResources = {
 	Taxes: "Taxes",
 	Units: "Units",
 
-	// Accounts
+	// Accounts & Fiscal Years
 	Accounts: "Accounts",
 	BalanceTransfers: "BalanceTransfers",
 	PaymentMethods: "PaymentMethods",
 	Vouchers: "Vouchers",
 	Partners: "Partners",
+	FiscalYears: "FiscalYears",
+	FiscalPeriods: "FiscalPeriods",
+	FiscalYearClose: "FiscalYearClose",
+	FiscalYearReopen: "FiscalYearReopen",
 
 	// Invoices & POS
 	Invoices: "Invoices",

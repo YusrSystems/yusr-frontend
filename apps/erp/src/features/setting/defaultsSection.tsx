@@ -24,7 +24,6 @@ export default function DefaultsSection({formData}: { formData: Setting })
 	return (
 		<div className="space-y-8 animate-in fade-in">
 			<FieldGroup className="gap-8">
-
 				<FieldsSection title={ t("settings.operationalDefaults", "إعدادات التشغيل الافتراضية") } columns={ 2 }>
 					<FormField
 						label={ t("settings.defaultCurrency", "العملة الافتراضية") }
@@ -75,29 +74,30 @@ export default function DefaultsSection({formData}: { formData: Setting })
 
 				<FieldsSection
 					title={ t("settings.systemAccounts", "الحسابات المحاسبية التلقائية للنظام") }
-					columns={ 3 }>
-					<FormField label={ t("settings.accountsReceivable", "حساب الذمم المدينة (Receivables)") }>
+					columns={ 3 }
+				>
+					<FormField label={ t("settings.accountsReceivable", "حساب الذمم المدينة") }>
 						<AccountsSearchableSelect
 							id={ formData.receivablesAccountId }
 							label={ formData.receivablesAccountName }
 						/>
 					</FormField>
 
-					<FormField label={ t("settings.accountsPayable", "حساب الذمم الدائنة (Payables)") }>
+					<FormField label={ t("settings.accountsPayable", "حساب الذمم الدائنة") }>
 						<AccountsSearchableSelect
 							id={ formData.payablesAccountId }
 							label={ formData.payablesAccountName }
 						/>
 					</FormField>
 
-					<FormField label={ t("settings.salesRevenue", "حساب إيرادات المبيعات (Sales Revenue)") }>
+					<FormField label={ t("settings.salesRevenue", "حساب إيرادات المبيعات") }>
 						<AccountsSearchableSelect
 							id={ formData.salesRevenueAccountId }
 							label={ formData.salesRevenueAccountName }
 						/>
 					</FormField>
 
-					<FormField label={ t("settings.cogs", "حساب تكلفة البضاعة المباعة (COGS)") }>
+					<FormField label={ t("settings.cogs", "حساب تكلفة البضاعة المباعة") }>
 						<AccountsSearchableSelect
 							id={ formData.cogsAccountId }
 							label={ formData.cogsAccountName }
@@ -105,28 +105,29 @@ export default function DefaultsSection({formData}: { formData: Setting })
 					</FormField>
 
 					<FormField
-						label={ t("settings.openingBalanceEquity", "حساب تسوية قيمة المخزون (Inventory Adjustment)") }>
+						label={ t("settings.openingBalanceEquity", "حساب تسوية قيمة المخزون") }
+					>
 						<AccountsSearchableSelect
 							id={ formData.inventoryAdjustmentAccountId }
 							label={ formData.inventoryAdjustmentAccountName }
 						/>
 					</FormField>
 
-					<FormField label={ t("settings.inventoryAsset", "حساب مخزون المستودع (Inventory Asset)") }>
+					<FormField label={ t("settings.inventoryAsset", "حساب مخزون المستودع") }>
 						<AccountsSearchableSelect
 							id={ formData.inventoryAssetAccountId }
 							label={ formData.inventoryAssetAccountName }
 						/>
 					</FormField>
 
-					<FormField label={ t("settings.outputTax", "حساب ضريبة المخرجات (Output Tax)") }>
+					<FormField label={ t("settings.outputTax", "حساب ضريبة المخرجات") }>
 						<AccountsSearchableSelect
 							id={ formData.outputTaxAccountId }
 							label={ formData.outputTaxAccountName }
 						/>
 					</FormField>
 
-					<FormField label={ t("settings.inputTax", "حساب ضريبة المدخلات (Input Tax)") }>
+					<FormField label={ t("settings.inputTax", "حساب ضريبة المدخلات") }>
 						<AccountsSearchableSelect
 							id={ formData.inputTaxAccountId }
 							label={ formData.inputTaxAccountName }
@@ -154,8 +155,13 @@ export default function DefaultsSection({formData}: { formData: Setting })
 						/>
 					</FormField>
 
+					<FormField label="حساب الأرباح والخسائر المبقاة (المرحلة)">
+						<AccountsSearchableSelect
+							id={ formData.retainedEarningsAccountId }
+							label={ formData.retainedEarningsAccountName }
+						/>
+					</FormField>
 				</FieldsSection>
-
 			</FieldGroup>
 		</div>
 	);

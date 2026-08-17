@@ -77,6 +77,8 @@ export class SettingDto extends Dto
 	public inventoryAdjustmentAccountName!: string;
 	public purchaseExpenseAccountId!: number;
 	public purchaseExpenseAccountName!: string;
+	public retainedEarningsAccountId?: number;
+	public retainedEarningsAccountName?: string;
 
 	// --- Partner Defaults ---
 	public defaultCustomerPartnerId?: number;
@@ -144,6 +146,8 @@ export class Setting extends ValidatableEntity<SettingDto>
 	public inventoryAdjustmentAccountName: Signal<string>;
 	public purchaseExpenseAccountId: Signal<number>;
 	public purchaseExpenseAccountName: Signal<string>;
+	public retainedEarningsAccountId: Signal<number | undefined>;
+	public retainedEarningsAccountName: Signal<string | undefined>;
 
 	// --- Partner Defaults ---
 	public defaultCustomerPartnerId: Signal<number | undefined>;
@@ -234,6 +238,8 @@ export class Setting extends ValidatableEntity<SettingDto>
 		this.inventoryAdjustmentAccountName = this.assign("inventoryAdjustmentAccountName", dto?.inventoryAdjustmentAccountName ?? "");
 		this.purchaseExpenseAccountId = this.assign("purchaseExpenseAccountId", dto?.purchaseExpenseAccountId ?? 0);
 		this.purchaseExpenseAccountName = this.assign("purchaseExpenseAccountName", dto?.purchaseExpenseAccountName ?? "");
+		this.retainedEarningsAccountId = this.assign("retainedEarningsAccountId", dto?.retainedEarningsAccountId);
+		this.retainedEarningsAccountName = this.assign("retainedEarningsAccountName", dto?.retainedEarningsAccountName ?? "");
 
 		// --- Partner Defaults ---
 		this.defaultCustomerPartnerId = this.assign("defaultCustomerPartnerId", dto?.defaultCustomerPartnerId);
