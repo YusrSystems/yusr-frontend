@@ -1,27 +1,28 @@
-import { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { signal } from "@preact/signals-react";
-import { Calendar, ChevronDown, ChevronLeft, Lock, LockKeyhole, LockKeyholeOpen, RotateCcw } from "lucide-react";
+import { Calendar, Lock, LockKeyhole, LockKeyholeOpen, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import {
-	Button,
 	ChangeableEntityMode,
+	ContextMenuItem,
 	CrudPage,
+	DropdownMenuItem,
 	PageError,
 	PageLoaded,
 	PageLoading,
-	Switch,
 	SystemPermissionsActions,
 	TablePreview,
 	UnauthorizedPage
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
-import { FiscalPeriodDto, FiscalPeriodStatus, FiscalYearDto, FiscalYearStatus } from "@/core/data/fiscalYear.ts";
+import { FiscalYearDto, FiscalYearStatus } from "@/core/data/fiscalYear.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 import { Services } from "@/core/services/services.ts";
 import ChangeFiscalYearDialog from "./changeFiscalYearDialog.tsx";
 import CloseFiscalYearModal from "./closeFiscalYearModal.tsx";
 import ReopenFiscalYearModal from "./reopenFiscalYearModal.tsx";
+import { FiscalYearStatusBadge } from "./components/fiscalYearStatusBadge.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
 
 
@@ -29,7 +30,6 @@ export default function FiscalYearsPage()
 {
 	useSignals();
 
-	const expandedYearIds = useMemo(() => signal<number[]>([]), []);
 	const yearToClose = useMemo(() => signal<FiscalYearDto | undefined>(undefined), []);
 	const yearToReopen = useMemo(() => signal<FiscalYearDto | undefined>(undefined), []);
 
@@ -52,18 +52,6 @@ export default function FiscalYearsPage()
 		return <UnauthorizedPage/>;
 	}
 
-	const toggleExpandYear = (id: number) =>
-	{
-		if (expandedYearIds.value.includes(id))
-		{
-			expandedYearIds.value = expandedYearIds.value.filter((x) => x !== id);
-		}
-		else
-		{
-			expandedYearIds.value = [...expandedYearIds.value, id];
-		}
-	};
-
 	const handleToggleLockYear = async (year: FiscalYearDto) =>
 	{
 		const newStatus = year.status === FiscalYearStatus.Open ? FiscalYearStatus.Locked : FiscalYearStatus.Open;
@@ -84,27 +72,6 @@ export default function FiscalYearsPage()
 		}
 	};
 
-	const handlePeriodStatusChange = async (period: FiscalPeriodDto, year: FiscalYearDto, newStatus: FiscalPeriodStatus) =>
-	{
-		if (year.status === FiscalYearStatus.Closed) return;
-
-		const res = await Services.fiscalYearsApi.UpdatePeriodStatus({
-			periodId: period.id,
-			status: newStatus,
-			rowVer: period.rowVer
-		});
-
-		if (res.status === 200)
-		{
-			toast.success(`تم ${ newStatus === FiscalPeriodStatus.Open ? "فتح" : "إغلاق" } فترة ${ period.name }`);
-			Cubits.fiscalYears.init();
-		}
-		else
-		{
-			toast.error("فشل في تحديث حالة الفترة المالية");
-		}
-	};
-
 	return (
 		<CrudPage<FiscalYearDto>>
 			<CrudPage.Header
@@ -121,14 +88,12 @@ export default function FiscalYearsPage()
 			<CrudPage.SearchInput onSearch={ (searchText) => Cubits.fiscalYears.search(searchText) }/>
 
 			<PageTable
-				expandedYearIds={ expandedYearIds }
-				onToggleExpandYear={ toggleExpandYear }
 				onToggleLockYear={ handleToggleLockYear }
 				onOpenCloseModal={ (year) => (yearToClose.value = year) }
 				onOpenReopenModal={ (year) => (yearToReopen.value = year) }
-				onPeriodStatusChange={ handlePeriodStatusChange }
 			/>
 
+			{/* Standard CrudPage Change Dialog */ }
 			<CrudPage.ChangeDialog
 				fetchEntity={ async (id: number) =>
 				{
@@ -156,12 +121,14 @@ export default function FiscalYearsPage()
 				) }
 			/>
 
+			{/* Standard CrudPage Delete Dialog */ }
 			<CrudPage.DeleteDialog
 				entityNameSelector={ (year) => year.name }
 				service={ Services.fiscalYearsApi }
-				onSuccess={ (entity) => Cubits.fiscalYears.delete(entity) }
+				onSuccess={ (year) => Cubits.fiscalYears.delete(year) }
 			/>
 
+			{/* Year-End Closing Modal */ }
 			{ yearToClose.value && (
 				<CloseFiscalYearModal
 					open={ !!yearToClose.value }
@@ -178,6 +145,7 @@ export default function FiscalYearsPage()
 				/>
 			) }
 
+			{/* Reopen Closed Year Modal */ }
 			{ yearToReopen.value && (
 				<ReopenFiscalYearModal
 					open={ !!yearToReopen.value }
@@ -213,21 +181,18 @@ function Cards()
 	);
 }
 
-function PageTable({
-	expandedYearIds,
-	onToggleExpandYear,
-	onToggleLockYear,
-	onOpenCloseModal,
-	onOpenReopenModal,
-	onPeriodStatusChange
-}: {
-	expandedYearIds: { value: number[] };
-	onToggleExpandYear: (id: number) => void;
+interface PageTableProps
+{
 	onToggleLockYear: (year: FiscalYearDto) => void;
 	onOpenCloseModal: (year: FiscalYearDto) => void;
 	onOpenReopenModal: (year: FiscalYearDto) => void;
-	onPeriodStatusChange: (period: FiscalPeriodDto, year: FiscalYearDto, newStatus: FiscalPeriodStatus) => void;
-})
+}
+
+function PageTable({
+	onToggleLockYear,
+	onOpenCloseModal,
+	onOpenReopenModal
+}: PageTableProps)
 {
 	useSignals();
 
@@ -241,184 +206,112 @@ function PageTable({
 		return <TablePreview.Error/>;
 	}
 
+	const getActions = (
+		year: FiscalYearDto,
+		_openEditDialog: (dto: FiscalYearDto) => void,
+		ItemComponent: typeof DropdownMenuItem | typeof ContextMenuItem
+	) =>
+	{
+		const items: React.ReactNode[] = [];
+		const isClosed = year.status === FiscalYearStatus.Closed;
+		const isLocked = year.status === FiscalYearStatus.Locked;
+
+		const canUpdate = Services.auth.hasAuth(
+			SystemPermissionsResources.FiscalYears,
+			SystemPermissionsActions.Update
+		);
+		const canClose = Services.auth.hasAuth(
+			SystemPermissionsResources.FiscalYearClose,
+			SystemPermissionsActions.Get
+		);
+		const canReopen = Services.auth.hasAuth(
+			SystemPermissionsResources.FiscalYearReopen,
+			SystemPermissionsActions.Get
+		);
+
+		if (!isClosed && canUpdate)
+		{
+			items.push(
+				<ItemComponent key="toggle-lock" onSelect={ () => onToggleLockYear(year) }>
+					{ isLocked ? (
+						<>
+							<LockKeyholeOpen className="w-4 h-4 me-2 text-emerald-600"/>
+							فك التجميد
+						</>
+					) : (
+						<>
+							<LockKeyhole className="w-4 h-4 me-2 text-amber-600"/>
+							تجميد
+						</>
+					) }
+				</ItemComponent>
+			);
+		}
+
+		if (!isClosed && canClose)
+		{
+			items.push(
+				<ItemComponent key="close-year" className="text-destructive font-semibold"
+				               onSelect={ () => onOpenCloseModal(year) }>
+					<Lock className="w-4 h-4 me-2"/>
+					إقفال السنة
+				</ItemComponent>
+			);
+		}
+
+		if (isClosed && canReopen)
+		{
+			items.push(
+				<ItemComponent key="reopen-year" className="text-amber-600 font-semibold"
+				               onSelect={ () => onOpenReopenModal(year) }>
+					<RotateCcw className="w-4 h-4 me-2"/>
+					إعادة الفتح
+				</ItemComponent>
+			);
+		}
+
+		return items;
+	};
+
 	if (Cubits.fiscalYears.state.value instanceof PageLoaded)
 	{
-		const years = Cubits.fiscalYears.entities.value;
-
 		return (
-			<div className="w-full border rounded-xl overflow-hidden bg-card shadow-sm">
-				<table className="w-full text-sm text-right">
-					<thead className="bg-muted text-muted-foreground font-semibold border-b">
-					<tr>
-						<th className="p-3 w-10 text-center"></th>
-						<th className="p-3 text-start">اسم السنة المالية</th>
-						<th className="p-3 text-start">الفترة الزمنية</th>
-						<th className="p-3 text-center w-32">الحالة</th>
-						<th className="p-3 text-end w-64">الإجراءات</th>
-					</tr>
-					</thead>
-					<tbody className="divide-y">
-					{ years.map((year) =>
-					{
-						const isExpanded = expandedYearIds.value.includes(year.id);
-						const isClosed = year.status === FiscalYearStatus.Closed;
-						const isLocked = year.status === FiscalYearStatus.Locked;
-
-						return (
-							<tr key={ year.id } className="group flex-col">
-								<td colSpan={ 5 } className="p-0">
-									<div
-										className="flex items-center justify-between p-3 hover:bg-muted/20 transition-colors">
-										<div className="flex items-center gap-3 flex-1 min-w-0">
-											<button
-												type="button"
-												onClick={ () => onToggleExpandYear(year.id) }
-												className="p-1 rounded-md hover:bg-muted text-muted-foreground transition-colors"
-											>
-												{ isExpanded ? <ChevronDown className="w-4 h-4"/> :
-													<ChevronLeft className="w-4 h-4"/> }
-											</button>
-
-											<span className="font-bold text-base text-foreground">{ year.name }</span>
-										</div>
-
-										<div className="text-start flex-1 min-w-0 text-muted-foreground text-sm">
-											{ year.startDate } ⬅ { year.endDate }
-										</div>
-
-										<div className="w-32 text-center shrink-0">
-											<StatusBadge status={ year.status }/>
-										</div>
-
-										<div className="w-64 text-end flex items-center justify-end gap-2 shrink-0">
-											{ !isClosed &&
-												Services.auth.hasAuth(
-													SystemPermissionsResources.FiscalYears,
-													SystemPermissionsActions.Update
-												) && (
-													<Button
-														type="button"
-														variant="outline"
-														size="sm"
-														className="h-8 gap-1 text-xs"
-														onClick={ () => onToggleLockYear(year) }
-													>
-														{ isLocked ? (
-															<>
-																<LockKeyholeOpen
-																	className="w-3.5 h-3.5 text-emerald-600"/>
-																فك التجميد
-															</>
-														) : (
-															<>
-																<LockKeyhole className="w-3.5 h-3.5 text-amber-600"/>
-																تجميد
-															</>
-														) }
-													</Button>
-												) }
-
-											{ !isClosed &&
-												Services.auth.hasAuth(
-													SystemPermissionsResources.FiscalYearClose,
-													SystemPermissionsActions.Get
-												) && (
-													<Button
-														type="button"
-														variant="destructive"
-														size="sm"
-														className="h-8 gap-1 text-xs"
-														onClick={ () => onOpenCloseModal(year) }
-													>
-														<Lock className="w-3.5 h-3.5"/>
-														إقفال السنة
-													</Button>
-												) }
-
-											{ isClosed &&
-												Services.auth.hasAuth(
-													SystemPermissionsResources.FiscalYearReopen,
-													SystemPermissionsActions.Get
-												) && (
-													<Button
-														type="button"
-														variant="outline"
-														size="sm"
-														className="h-8 gap-1 text-xs text-amber-600 border-amber-200 hover:bg-amber-50"
-														onClick={ () => onOpenReopenModal(year) }
-													>
-														<RotateCcw className="w-3.5 h-3.5"/>
-														إعادة الفتح
-													</Button>
-												) }
-										</div>
-									</div>
-
-									{/* Periods Breakdown (Expanded Row) */ }
-									{ isExpanded && (
-										<div
-											className="bg-muted/20 border-t border-border p-4 animate-in fade-in slide-in-from-top-1">
-											<h4 className="font-bold text-xs text-muted-foreground mb-3 px-2">
-												الفترات الشهرية لسنة { year.name }
-											</h4>
-											<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-												{ year.periods?.map((period) =>
-												{
-													const isPeriodOpen = period.status === FiscalPeriodStatus.Open;
-
-													return (
-														<div
-															key={ period.id }
-															className="flex items-center justify-between p-3 rounded-lg border border-border bg-card shadow-2xs"
-														>
-															<div className="flex flex-col gap-0.5">
-																<span
-																	className="font-bold text-sm">{ period.name }</span>
-																<span className="text-[11px] text-muted-foreground">
-                                    { period.startDate } إلى { period.endDate }
-                                  </span>
-															</div>
-
-															<div className="flex items-center gap-2">
-                                  <span
-									  className={ `text-[11px] font-semibold px-2 py-0.5 rounded-full ${
-										  isPeriodOpen
-											  ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-											  : "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
-									  }` }
-								  >
-                                    { isPeriodOpen ? "مفتوحة" : "مجمّدة" }
-                                  </span>
-
-																{ Services.auth.hasAuth(
-																	SystemPermissionsResources.FiscalPeriods,
-																	SystemPermissionsActions.Update
-																) && (
-																	<Switch
-																		checked={ isPeriodOpen }
-																		disabled={ isClosed }
-																		onCheckedChange={ (checked) =>
-																			onPeriodStatusChange(
-																				period,
-																				year,
-																				checked ? FiscalPeriodStatus.Open : FiscalPeriodStatus.Locked
-																			)
-																		}
-																	/>
-																) }
-															</div>
-														</div>
-													);
-												}) }
-											</div>
-										</div>
-									) }
-								</td>
-							</tr>
-						);
-					}) }
-					</tbody>
-				</table>
+			<CrudPage.Table>
+				<CrudPage.TableBody<FiscalYearDto>
+					isShareablePage={ true }
+					data={ Cubits.fiscalYears.entities.value }
+					headerRows={ [
+						{rowBody: "", rowStyles: "text-left w-12.5"},
+						{rowBody: "رقم السنة", rowStyles: "w-24"},
+						{rowBody: "اسم السنة المالية", rowStyles: "w-48"},
+						{rowBody: "تاريخ البداية", rowStyles: "w-32"},
+						{rowBody: "تاريخ النهاية", rowStyles: "w-32"},
+						{rowBody: "الحالة", rowStyles: "w-32 text-center"}
+					] }
+					tableRowMapper={ (year) => [
+						{rowBody: `#${ year.id }`, rowStyles: "font-mono"},
+						{rowBody: year.name, rowStyles: "font-semibold text-foreground"},
+						{rowBody: year.startDate, rowStyles: "text-muted-foreground"},
+						{rowBody: year.endDate, rowStyles: "text-muted-foreground"},
+						{
+							rowBody: <FiscalYearStatusBadge status={ year.status }/>,
+							rowStyles: "text-center"
+						}
+					] }
+					hasUpdatePermission={ Services.auth.hasAuth(
+						SystemPermissionsResources.FiscalYears,
+						SystemPermissionsActions.Update
+					) }
+					hasDeletePermission={ (year) =>
+						year.status !== FiscalYearStatus.Closed &&
+						Services.auth.hasAuth(
+							SystemPermissionsResources.FiscalYears,
+							SystemPermissionsActions.Delete
+						)
+					}
+					dropdownItems={ (year, openEditDialog) => getActions(year, openEditDialog, DropdownMenuItem) }
+					contextMenuItems={ (year, openEditDialog) => getActions(year, openEditDialog, ContextMenuItem) }
+				/>
 
 				<CrudPage.TablePagination
 					pageSize={ Cubits.fiscalYears.pageSize.value }
@@ -426,39 +319,9 @@ function PageTable({
 					currentPage={ Cubits.fiscalYears.currentPage.value }
 					onPageChanged={ (newPage) => Cubits.fiscalYears.changePage(newPage) }
 				/>
-			</div>
+			</CrudPage.Table>
 		);
 	}
 
 	return <TablePreview.Empty/>;
-}
-
-function StatusBadge({status}: { status: FiscalYearStatus })
-{
-	switch (status)
-	{
-		case FiscalYearStatus.Open:
-			return (
-				<span
-					className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-          مفتوحة
-        </span>
-			);
-		case FiscalYearStatus.Locked:
-			return (
-				<span
-					className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
-          مجمّدة
-        </span>
-			);
-		case FiscalYearStatus.Closed:
-			return (
-				<span
-					className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300">
-          مقفلة
-        </span>
-			);
-		default:
-			return null;
-	}
 }

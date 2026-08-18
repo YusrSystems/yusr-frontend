@@ -9,11 +9,13 @@ import {
 	FieldGroup,
 	FieldsSection,
 	SystemPermissionsActions,
-	TextField
+	TextField,
+	TitleSeparator
 } from "yusr-ui";
 import { FiscalYear, FiscalYearDto } from "@/core/data/fiscalYear.ts";
 import { useMemo } from "react";
 import { signal } from "@preact/signals-react";
+import { FiscalPeriodsList } from "./components/fiscalPeriodsList";
 
 
 export default function ChangeFiscalYearDialog({
@@ -40,35 +42,43 @@ export default function ChangeFiscalYearDialog({
 	const title = !isUpdateMode ? "إضافة سنة مالية جديدة" : "تعديل السنة المالية";
 
 	return (
-		<ChangeDialog className="sm:max-w-lg">
+		<ChangeDialog className={ isUpdateMode ? "sm:max-w-4xl" : "sm:max-w-lg" }>
 			<ChangeDialog.Header title={ title }/>
-			<FieldGroup>
-				<FieldsSection columns={ 1 }>
-					<TextField
-						label="اسم السنة المالية"
-						required
-						placeholder={ `مثال: ${ (new Date()).getFullYear() }` }
-						value={ entity.value.name }
-						error={ entity.value.getError("name") }
-					/>
-				</FieldsSection>
 
-				<FieldsSection columns={ 2 }>
-					<DateField
-						label="تاريخ البداية"
-						required
-						value={ entity.value.startDate }
-						error={ entity.value.getError("startDate") }
-					/>
+			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
+				<FieldGroup className="gap-6">
+					<FieldsSection title="البيانات الأساسية" columns={ 3 }>
+						<TextField
+							label="اسم السنة المالية"
+							required
+							placeholder={ `مثال: ${ (new Date()).getFullYear() }` }
+							value={ entity.value.name }
+							error={ entity.value.getError("name") }
+						/>
 
-					<DateField
-						label="تاريخ النهاية"
-						required
-						value={ entity.value.endDate }
-						error={ entity.value.getError("endDate") }
-					/>
-				</FieldsSection>
-			</FieldGroup>
+						<DateField
+							label="تاريخ البداية"
+							required
+							value={ entity.value.startDate }
+							error={ entity.value.getError("startDate") }
+						/>
+
+						<DateField
+							label="تاريخ النهاية"
+							required
+							value={ entity.value.endDate }
+							error={ entity.value.getError("endDate") }
+						/>
+					</FieldsSection>
+
+					{ isUpdateMode && dto && (
+						<div className="space-y-3">
+							<TitleSeparator title="الفترات الشهرية"/>
+							<FiscalPeriodsList year={ dto }/>
+						</div>
+					) }
+				</FieldGroup>
+			</div>
 
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
