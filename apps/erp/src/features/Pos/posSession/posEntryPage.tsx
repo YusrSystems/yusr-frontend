@@ -11,6 +11,8 @@ import {
 	CardHeader,
 	CardTitle,
 	NumberField,
+	PageError,
+	PageLoaded,
 	SelectField,
 	TextAreaField,
 	YusrBackground
@@ -43,31 +45,34 @@ export default function PosEntryPage()
 	useEffect(() =>
 	{
 		document.title = `نقطة البيع | ${ APP_NAME }`;
+		Cubits.posTerminals.init();
+	}, []);
 
-		const init = async () =>
+	useEffect(() =>
+	{
+		const posState = Cubits.posTerminals.state.value;
+
+		if (posState instanceof PageLoaded)
 		{
-			await Cubits.posTerminals.init();
 			const terminals = Cubits.posTerminals.entities.value;
 
-			let targetId: number | undefined = undefined;
-
-			if (terminals.length === 1)
+			if (terminals.length === 1 && !selectedTerminalId.value)
 			{
-				targetId = terminals[0]?.id;
-				PosTempCache.setTerminal(terminals[0] as PosTerminalDto);
+				const targetId = terminals[0]?.id;
+				if (targetId)
+				{
+					PosTempCache.setTerminal(terminals[0] as PosTerminalDto);
+					selectedTerminalId.value = targetId;
+					void checkActiveSession(targetId);
+				}
 			}
-
-			if (targetId)
-			{
-				selectedTerminalId.value = targetId;
-				await checkActiveSession(targetId);
-			}
-
 			isLoading.value = false;
-		};
-
-		void init();
-	}, []);
+		}
+		else if (posState instanceof PageError)
+		{
+			isLoading.value = false;
+		}
+	}, [Cubits.posTerminals.state.value]);
 
 	const checkActiveSession = async (terminalId: number) =>
 	{
@@ -81,7 +86,7 @@ export default function PosEntryPage()
 			}
 
 			const res = await Services.posSessionsApi.GetActiveSession(terminalId);
-			if (res.data)
+			if (res && res.data)
 			{
 				const session = res.data;
 				PosTempCache.setSession(terminalId, session);
@@ -106,6 +111,13 @@ export default function PosEntryPage()
 				isCloseDialogOpen.value = false;
 			}
 		}
+		catch (error)
+		{
+			console.error("Failed to check active session:", error);
+			PosTempCache.setSession(terminalId, null);
+			activeSession.value = null;
+			isCloseDialogOpen.value = false;
+		}
 		finally
 		{
 			isCheckingSession.value = false;
@@ -117,24 +129,34 @@ export default function PosEntryPage()
 		if (!selectedTerminalId.value) return;
 
 		isStarting.value = true;
-		const res = await Services.posSessionsApi.OpenSession({
-			posTerminalId: selectedTerminalId.value,
-			openingCash: openingCash.value,
-			openingNotes: openingNotes.value
-		});
-
-		if (res.status === 200 && res.data)
+		try
 		{
-			PosTempCache.setSession(selectedTerminalId.value, res.data);
-			const terminal = Cubits.posTerminals.entities.value.find(t => t.id === selectedTerminalId.value);
-			if (terminal)
-			{
-				PosTempCache.setTerminal(terminal);
-			}
+			const res = await Services.posSessionsApi.OpenSession({
+				posTerminalId: selectedTerminalId.value,
+				openingCash: openingCash.value,
+				openingNotes: openingNotes.value
+			});
 
-			navigate(`/pos/screen/${ selectedTerminalId.value }`, {replace: true});
+			if (res.status === 200 && res.data)
+			{
+				PosTempCache.setSession(selectedTerminalId.value, res.data);
+				const terminal = Cubits.posTerminals.entities.value.find(t => t.id === selectedTerminalId.value);
+				if (terminal)
+				{
+					PosTempCache.setTerminal(terminal);
+				}
+
+				navigate(`/pos/screen/${ selectedTerminalId.value }`, {replace: true});
+			}
 		}
-		isStarting.value = false;
+		catch (error)
+		{
+			console.error("Failed to open POS session:", error);
+		}
+		finally
+		{
+			isStarting.value = false;
+		}
 	};
 
 	const handleTerminalChange = async (val: number | undefined) =>

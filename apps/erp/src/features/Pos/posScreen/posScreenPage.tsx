@@ -184,8 +184,9 @@ export default function PosScreenPage()
 					navigate("/pos", {replace: true});
 				}
 			}
-			catch
+			catch (error)
 			{
+				console.error("Error loading session or terminal:", error);
 				navigate("/pos", {replace: true});
 			}
 			finally
