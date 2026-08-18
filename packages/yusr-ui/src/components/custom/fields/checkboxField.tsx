@@ -20,9 +20,14 @@ export function CheckboxField({id, checked, onCheckedChange, ...formFieldProps}:
 	return (
 		<FormField { ...formFieldProps }>
 			<div
-				className="flex items-center gap-3 rounded-lg border p-1.75 cursor-pointer border-border"
+				className={ `flex items-center gap-3 rounded-lg border p-1.75 border-border ${ formFieldProps.disabled ? "cursor-not-allowed" : "cursor-pointer" }` }
 				onClick={ () =>
 				{
+					if (formFieldProps.disabled)
+					{
+						return;
+					}
+
 					if (!(checked instanceof Signal))
 					{
 						return;
@@ -35,6 +40,7 @@ export function CheckboxField({id, checked, onCheckedChange, ...formFieldProps}:
 				<Checkbox
 					id={ id }
 					checked={ checked instanceof Signal ? checked.value : checked }
+					disabled={ formFieldProps.disabled }
 				/>
 			</div>
 		</FormField>
@@ -59,12 +65,15 @@ export function CheckboxFieldLabelComponent({
 
 	return (
 		<FormField error={ error }>
-			<Label className="flex items-center gap-2 cursor-pointer">
+			<Label
+				className={ `flex items-center gap-2 ${ props.disabled ? "cursor-not-allowed" : "cursor-pointer" }` }>
 				<div>
 					<BaseInput
 						checked={ checked?.value }
 						onChangeCapture={ (e: ChangeEvent<HTMLInputElement>) =>
 						{
+							if (props.disabled) return;
+
 							if (checked)
 							{
 								checked.value = e.target.checked;

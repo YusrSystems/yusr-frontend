@@ -116,6 +116,7 @@ export default function ItemsSettlementsPage()
 								updateDialogTitle={ `${ t("common:crudRow.edit") } ${ t("itemsSettlements.entityName") }` }
 								dto={ dto }
 								service={ Services.itemsSettlementsApi }
+								showIsOpeningBalance={ true }
 								onSuccess={ (data, mode) =>
 								{
 									if (mode === ChangeableEntityMode.Create)
@@ -201,6 +202,7 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("itemsSettlements.settlementId"), rowStyles: "w-32"},
 						{rowBody: t("common:status.title", "الحالة"), rowStyles: "w-24"},
+						{rowBody: t("itemsSettlements.type", "النوع"), rowStyles: "w-32"},
 						{rowBody: t("itemsSettlements.date"), rowStyles: "w-32"},
 						{rowBody: t("itemsSettlements.store"), rowStyles: "w-48"},
 						{rowBody: t("itemsSettlements.description"), rowStyles: ""},
@@ -222,6 +224,14 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 									{ getTransactionStatusName(settlement.transactionStatus) }
 								</span>
 							),
+							rowStyles: ""
+						},
+						{
+							rowBody: settlement.isOpeningBalance
+								? <span
+									className="text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap">{ t("common:openingBalance", "رصيد افتتاحي") }</span>
+								: <span
+									className="text-gray-600 bg-gray-100 px-2.5 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap">{ t("common:itemsSettlement", "تسوية مواد") }</span>,
 							rowStyles: ""
 						},
 						{rowBody: settlement.date, rowStyles: ""},

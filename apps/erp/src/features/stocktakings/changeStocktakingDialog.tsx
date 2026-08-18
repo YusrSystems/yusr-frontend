@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import {
 	ChangeableEntityMode,
 	ChangeDialog,
+	CheckboxField,
 	type CommonChangeDialogProps,
 	DateField,
 	FieldGroup,
@@ -24,11 +25,12 @@ import { TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function ChangeStocktakingDialog(
-	{dto, service, onSuccess, addDialogTitle, updateDialogTitle}:
+	{dto, service, onSuccess, addDialogTitle, updateDialogTitle, showIsOpeningBalance}:
 	& CommonChangeDialogProps<StocktakingDto>
 		& {
 		addDialogTitle: string;
 		updateDialogTitle: string;
+		showIsOpeningBalance?: boolean;
 	}
 )
 {
@@ -117,8 +119,20 @@ export default function ChangeStocktakingDialog(
 								} }
 							/>
 						</FormField>
-					</FieldsSection>
 
+						{ showIsOpeningBalance && (
+							<FormField
+								label={ t("common:isOpeningBalance", "هذه التسوية عبارة عن رصيد افتتاحي للمخزون") }
+								required
+							>
+								<CheckboxField
+									checked={ entity.value.isOpeningBalance }
+									disabled={ !isDraft }
+								/>
+							</FormField>
+						) }
+					</FieldsSection>
+					
 					<TextAreaField
 						label={ t("stocktakings.description") }
 						value={ entity.value.description }
