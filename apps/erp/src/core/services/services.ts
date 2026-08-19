@@ -22,12 +22,13 @@ import { BrandDto } from "@/core/data/brand.ts";
 import PosSessionApiService from "@/core/networking/posSessionApiService.ts";
 import PosCheckoutApiService from "@/core/networking/posCheckoutApiService.ts";
 import PosTerminalsApiService from "@/core/networking/posTerminalsApiService.ts";
+import FiscalYearsApiService from "@/core/networking/fiscalYearsApiService.ts";
 
 
 export class Services extends BaseServices
 {
 	public static override auth: ErpAuthService = new ErpAuthService();
-	public static override rolesApi = new RolesApiService<ErpRoleDto>;
+	public static override rolesApi = new RolesApiService<ErpRoleDto>();
 
 	public static readonly taxesApi = new BaseApiService<TaxDto>("Taxes");
 	public static readonly storesApi = new BaseApiService<StoreDto>("Stores");
@@ -52,6 +53,7 @@ export class Services extends BaseServices
 	public static readonly usersApi = new BaseApiService<UserDto>("Users");
 	public static readonly categoriesApi = new BaseApiService<CategoryDto>("Categories");
 	public static readonly brandsApi = new BaseApiService<BrandDto>("Brands");
+	public static readonly fiscalYearsApi = new FiscalYearsApiService();
 
 	static
 	{

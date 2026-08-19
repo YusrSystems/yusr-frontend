@@ -4,9 +4,9 @@ import { DateService } from "yusr-ui";
 export class StockValuationReportRequest
 {
 	asOfDate: string;
-	storeId?: number;
-	categoryId?: number;
-	brandId?: number;
+	storeId?: number | null;
+	itemCategoryIds?: number[] | null;
+	itemBrandId?: number | null;
 	pageNumber: number;
 	rowsPerPage: number;
 

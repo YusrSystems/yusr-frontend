@@ -1,10 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, Filter } from "lucide-react";
 import { Button, Collapsible, CollapsibleContent, CollapsibleTrigger } from "yusr-ui";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect.tsx";
 import { LowStockReportRequest } from "./lowStockReportRequest.ts";
+import { Cubits } from "@/core/services/cubits.ts";
 
 
 interface LowStockReportFieldsProps
@@ -16,11 +18,16 @@ interface LowStockReportFieldsProps
 export function LowStockReportFields({onSubmit, isLoading = false}: LowStockReportFieldsProps)
 {
 	useSignals();
+	const {t} = useTranslation(["erpCommon", "common"]);
 
+	const isOpen = useMemo(() => signal(true), []);
 	const storeId = useMemo(() => signal<number | undefined>(undefined), []);
 	const storeName = useMemo(() => signal<string | undefined>(undefined), []);
 
-	const [isOpen, setIsOpen] = useState(true);
+	useEffect(() =>
+	{
+		Cubits.stores.init();
+	}, []);
 
 	const handleClear = () =>
 	{
@@ -32,35 +39,49 @@ export function LowStockReportFields({onSubmit, isLoading = false}: LowStockRepo
 	const handleApply = () =>
 	{
 		onSubmit(new LowStockReportRequest({
-			storeId: storeId.value,
-			storeName: storeName.value
+			storeId: storeId.value ?? null,
+			storeName: storeName.value ?? null
 		}));
 	};
 
 	return (
-		<Collapsible open={ isOpen } onOpenChange={ setIsOpen }
-		             className="bg-card border border-border rounded-lg shadow-sm mb-4 print:hidden">
+		<Collapsible
+			open={ isOpen.value }
+			onOpenChange={ (open) => isOpen.value = open }
+			className="bg-card border border-border rounded-t-lg"
+		>
 			<CollapsibleTrigger asChild>
-				<Button variant="ghost"
-				        className="w-full flex justify-between items-center p-4 h-auto hover:bg-accent/50 rounded-lg">
-					<div className="flex items-center gap-2 text-primary">
-						<Filter className="h-5 w-5"/>
-						<span className="font-semibold">تصفية التقرير (Filters)</span>
-					</div>
+				<button
+					type="button"
+					className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium bg-muted"
+				>
+					<span className="flex items-center gap-2">
+						<Filter className="h-4 w-4"/>
+						{ t("common:filter.title") }
+					</span>
 					<ChevronDown
-						className={ `h-5 w-5 text-muted-foreground transition-transform duration-300 ${ isOpen ? "rotate-180" : "" }` }/>
-				</Button>
+						className={ `h-4 w-4 transition-transform duration-200 ${ isOpen.value ? "rotate-180" : "" }` }
+					/>
+				</button>
 			</CollapsibleTrigger>
-			<CollapsibleContent className="px-4 pb-4">
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2 items-end">
-					<div className="flex flex-col gap-1.5">
-						<label className="text-sm font-medium">المستودع (Store)</label>
-						<StoresSearchableSelect id={ storeId } label={ storeName }/>
+
+			<CollapsibleContent>
+				<div className="flex flex-col gap-4 p-4 border-t border-border">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+						<div className="flex flex-col gap-1.5">
+							<label className="text-sm font-medium">{ t("reports.store", "المستودع") }</label>
+							<StoresSearchableSelect id={ storeId } label={ storeName }/>
+						</div>
 					</div>
-				</div>
-				<div className="flex justify-end gap-2 mt-6">
-					<Button variant="outline" onClick={ handleClear } disabled={ isLoading }>مسح (Clear)</Button>
-					<Button onClick={ handleApply } disabled={ isLoading }>تطبيق (Apply)</Button>
+
+					<div className="flex justify-end gap-2">
+						<Button disabled={ isLoading } variant="outline" onClick={ handleClear }>
+							{ t("common:filter.clear") }
+						</Button>
+						<Button disabled={ isLoading } onClick={ handleApply }>
+							{ t("common:filter.apply") }
+						</Button>
+					</div>
 				</div>
 			</CollapsibleContent>
 		</Collapsible>

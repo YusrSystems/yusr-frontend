@@ -22,6 +22,7 @@ export class StocktakingDto extends Dto implements IStatusWorkflowDto, IRowVerDt
 	public items: StocktakingItemDto[] = [];
 	public rowVer!: number;
 	public transactionStatus: TransactionStatus = TransactionStatus.Draft;
+	public isOpeningBalance?: boolean;
 }
 
 export default class Stocktaking extends ChangeableEntity<StocktakingDto> implements IStatusWorkflowEntity, IRowVerEntity
@@ -33,6 +34,7 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto> implem
 	public items: Signal<StocktakingItem[]>;
 	public rowVer: Signal<number>;
 	public transactionStatus: Signal<TransactionStatus>;
+	public isOpeningBalance: Signal<boolean>;
 
 	constructor(dto: Partial<StocktakingDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
@@ -58,6 +60,7 @@ export default class Stocktaking extends ChangeableEntity<StocktakingDto> implem
 		this.items = this.assign("items", itemsList);
 		this.rowVer = this.assign("rowVer", dto?.rowVer);
 		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
+		this.isOpeningBalance = this.assign("isOpeningBalance", dto?.isOpeningBalance ?? false);
 	}
 
 	override validate(dto?: Partial<StocktakingDto>): boolean

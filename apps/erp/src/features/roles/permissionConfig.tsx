@@ -19,6 +19,10 @@ export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => 
 	[SystemPermissionsResources.BalanceTransfers]: t("permissions.resources.balanceTransfers"),
 	[SystemPermissionsResources.PaymentMethods]: t("permissions.resources.paymentMethods"),
 	[SystemPermissionsResources.Partners]: t("permissions.resources.partners", "الجهات"),
+	[SystemPermissionsResources.FiscalYears]: "السنوات المالية",
+	[SystemPermissionsResources.FiscalPeriods]: "الفترات الشهرية",
+	[SystemPermissionsResources.FiscalYearClose]: "إقفال السنة المالية",
+	[SystemPermissionsResources.FiscalYearReopen]: "إعادة فتح السنة المالية",
 	[SystemPermissionsResources.Items]: t("permissions.resources.items"),
 	[SystemPermissionsResources.Brands]: t("permissions.resources.brands", "العلامات التجارية"),
 	[SystemPermissionsResources.Categories]: t("permissions.resources.categories", "التصنيفات"),
@@ -78,85 +82,92 @@ export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => 
 	[SystemPermissionsActions.Delete]: t("permissions.actions.delete")
 });
 
-export const getPermissionSections = (t: TFunction<"erpCommon">) => [{
-	id: "tables",
-	title: t("permissions.sections.tables"),
-	icon: Database,
-	resources: [
-		SystemPermissionsResources.Invoices,
-		SystemPermissionsResources.Vouchers,
-		SystemPermissionsResources.Accounts,
-		SystemPermissionsResources.BalanceTransfers,
-		SystemPermissionsResources.PaymentMethods,
-		SystemPermissionsResources.Partners,
-		SystemPermissionsResources.Items,
-		SystemPermissionsResources.Brands,
-		SystemPermissionsResources.Categories,
-		SystemPermissionsResources.ItemTransfers,
-		SystemPermissionsResources.ItemsSettlements,
-		SystemPermissionsResources.Stocktakings,
-		SystemPermissionsResources.CostAdjustments,
-		SystemPermissionsResources.Units,
-		SystemPermissionsResources.PricingMethods,
-		SystemPermissionsResources.Stores,
-		SystemPermissionsResources.Taxes,
-		SystemPermissionsResources.PosTerminals,
-		SystemPermissionsResources.PosSessions,
-		SystemPermissionsResources.Users,
-		SystemPermissionsResources.Roles,
-		SystemPermissionsResources.Branches,
-		SystemPermissionsResources.Settings
-	]
-}, {
-	id: "invoices",
-	title: t("permissions.sections.invoices"),
-	icon: ShoppingCart,
-	resources: [
-		SystemPermissionsResources.InvoiceAddSettlement,
-		SystemPermissionsResources.InvoiceShowProfit,
-		SystemPermissionsResources.InvoiceShowItemProfit,
-		SystemPermissionsResources.InvoiceSellBelowSellingPrice,
-		SystemPermissionsResources.InvoiceSellBeyondAvailableQuantity,
-		SystemPermissionsResources.InvoiceSell,
-		SystemPermissionsResources.InvoicePurchase
-	]
-}, {
-	id: "accounts",
-	title: t("permissions.sections.accounts"),
-	icon: Wallet,
-	resources: [
-		SystemPermissionsResources.AccountShowBalance
-	]
-}, {
-	id: "reports",
-	title: t("permissions.sections.reports"),
-	icon: FileBarChart,
-	resources: [
-		SystemPermissionsResources.ReportInvoice,
-		SystemPermissionsResources.ReportInvoiceList,
-		SystemPermissionsResources.ReportVoucher,
-		SystemPermissionsResources.ReportVoucherList,
-		SystemPermissionsResources.ReportAccountStatement,
-		SystemPermissionsResources.ReportPartnerStatement,
-		SystemPermissionsResources.ReportAccountList,
-		SystemPermissionsResources.ReportBalanceTransfer,
-		SystemPermissionsResources.ReportItemStatement,
-		SystemPermissionsResources.ReportItemList,
-		SystemPermissionsResources.ReportItemMovement,
-		SystemPermissionsResources.ReportItemTaxStatement,
-		SystemPermissionsResources.ReportItemTransfer,
-		SystemPermissionsResources.ReportBalanceSheet,
-		SystemPermissionsResources.ReportVatReturn,
-		SystemPermissionsResources.ReportPl,
-		SystemPermissionsResources.ReportSalesProfitability,
-		SystemPermissionsResources.ReportTaxAudit,
-		SystemPermissionsResources.ReportStocktaking,
-		SystemPermissionsResources.ReportItemSettlement,
-		SystemPermissionsResources.ReportItemBarcode,
-		SystemPermissionsResources.ReportStockValuation,
-		SystemPermissionsResources.ReportLowStock
-	]
-}];
+export const getPermissionSections = (t: TFunction<"erpCommon">) => [
+	{
+		id: "tables",
+		title: t("permissions.sections.tables"),
+		icon: Database,
+		resources: [
+			SystemPermissionsResources.Invoices,
+			SystemPermissionsResources.Vouchers,
+			SystemPermissionsResources.Accounts,
+			SystemPermissionsResources.BalanceTransfers,
+			SystemPermissionsResources.PaymentMethods,
+			SystemPermissionsResources.Partners,
+			SystemPermissionsResources.FiscalYears,
+			SystemPermissionsResources.FiscalPeriods,
+			SystemPermissionsResources.FiscalYearClose,
+			SystemPermissionsResources.FiscalYearReopen,
+			SystemPermissionsResources.Items,
+			SystemPermissionsResources.Brands,
+			SystemPermissionsResources.Categories,
+			SystemPermissionsResources.ItemTransfers,
+			SystemPermissionsResources.ItemsSettlements,
+			SystemPermissionsResources.Stocktakings,
+			SystemPermissionsResources.CostAdjustments,
+			SystemPermissionsResources.Units,
+			SystemPermissionsResources.PricingMethods,
+			SystemPermissionsResources.Stores,
+			SystemPermissionsResources.Taxes,
+			SystemPermissionsResources.PosTerminals,
+			SystemPermissionsResources.PosSessions,
+			SystemPermissionsResources.Users,
+			SystemPermissionsResources.Roles,
+			SystemPermissionsResources.Branches,
+			SystemPermissionsResources.Settings
+		]
+	},
+	{
+		id: "invoices",
+		title: t("permissions.sections.invoices"),
+		icon: ShoppingCart,
+		resources: [
+			SystemPermissionsResources.InvoiceAddSettlement,
+			SystemPermissionsResources.InvoiceShowProfit,
+			SystemPermissionsResources.InvoiceShowItemProfit,
+			SystemPermissionsResources.InvoiceSellBelowSellingPrice,
+			SystemPermissionsResources.InvoiceSellBeyondAvailableQuantity,
+			SystemPermissionsResources.InvoiceSell,
+			SystemPermissionsResources.InvoicePurchase
+		]
+	},
+	{
+		id: "accounts",
+		title: t("permissions.sections.accounts"),
+		icon: Wallet,
+		resources: [SystemPermissionsResources.AccountShowBalance]
+	},
+	{
+		id: "reports",
+		title: t("permissions.sections.reports"),
+		icon: FileBarChart,
+		resources: [
+			SystemPermissionsResources.ReportInvoice,
+			SystemPermissionsResources.ReportInvoiceList,
+			SystemPermissionsResources.ReportVoucher,
+			SystemPermissionsResources.ReportVoucherList,
+			SystemPermissionsResources.ReportAccountStatement,
+			SystemPermissionsResources.ReportPartnerStatement,
+			SystemPermissionsResources.ReportAccountList,
+			SystemPermissionsResources.ReportBalanceTransfer,
+			SystemPermissionsResources.ReportItemStatement,
+			SystemPermissionsResources.ReportItemList,
+			SystemPermissionsResources.ReportItemMovement,
+			SystemPermissionsResources.ReportItemTaxStatement,
+			SystemPermissionsResources.ReportItemTransfer,
+			SystemPermissionsResources.ReportBalanceSheet,
+			SystemPermissionsResources.ReportVatReturn,
+			SystemPermissionsResources.ReportPl,
+			SystemPermissionsResources.ReportSalesProfitability,
+			SystemPermissionsResources.ReportTaxAudit,
+			SystemPermissionsResources.ReportStocktaking,
+			SystemPermissionsResources.ReportItemSettlement,
+			SystemPermissionsResources.ReportItemBarcode,
+			SystemPermissionsResources.ReportStockValuation,
+			SystemPermissionsResources.ReportLowStock
+		]
+	}
+];
 
 const getResourcePerms = (resource: string, allowedActions?: string[]) =>
 {
@@ -189,19 +200,17 @@ const getResourcePerms = (resource: string, allowedActions?: string[]) =>
 		return matched;
 	}
 
-	return [
-		resource,
-		...actions.map((a) => `${ resource }.${ a }`)
-	];
+	return [resource, ...actions.map((a) => `${ resource }.${ a }`)];
 };
 
 const single = (resource: string) =>
 {
 	const system = BaseServices.auth.systemPermissions.value;
-	const matched = system.filter((p) =>
-		p === resource ||
-		p === `${ resource }.${ SystemPermissionsActions.Get }` ||
-		p.startsWith(`${ resource }.`)
+	const matched = system.filter(
+		(p) =>
+			p === resource ||
+			p === `${ resource }.${ SystemPermissionsActions.Get }` ||
+			p.startsWith(`${ resource }.`)
 	);
 
 	if (matched.length > 0)
@@ -213,7 +222,12 @@ const single = (resource: string) =>
 };
 
 const crud = (resource: string) => getResourcePerms(resource);
-const readWrite = (resource: string) => getResourcePerms(resource, [SystemPermissionsActions.Get, SystemPermissionsActions.Add, SystemPermissionsActions.Update]);
+const readWrite = (resource: string) =>
+	getResourcePerms(resource, [
+		SystemPermissionsActions.Get,
+		SystemPermissionsActions.Add,
+		SystemPermissionsActions.Update
+	]);
 const readOnly = (resource: string) => getResourcePerms(resource, [SystemPermissionsActions.Get]);
 
 const selectAllStores = (role: ErpRole) =>
@@ -326,6 +340,8 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 			...crud(SystemPermissionsResources.Vouchers),
 			...crud(SystemPermissionsResources.Accounts),
 			...crud(SystemPermissionsResources.BalanceTransfers),
+			...readWrite(SystemPermissionsResources.FiscalYears),
+			...readWrite(SystemPermissionsResources.FiscalPeriods),
 			...readOnly(SystemPermissionsResources.Invoices),
 			...readOnly(SystemPermissionsResources.PaymentMethods),
 			...readOnly(SystemPermissionsResources.Partners),
@@ -355,7 +371,7 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 	{
 		id: "financial_manager",
 		name: t("roles.presets.financialManager", "مدير مالي / رئيس حسابات"),
-		description: t("roles.presets.financialManagerDesc", "إدارة مالية شاملة وتعديل التكاليف والقوائم والتقارير الختامية والضريبية"),
+		description: t("roles.presets.financialManagerDesc", "إدارة مالية شاملة وتعديل التكاليف والقوائم والتقارير الختامية والضريبية وإقفال السنة"),
 		permissions: () => [
 			// Tables
 			...crud(SystemPermissionsResources.Vouchers),
@@ -364,6 +380,10 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 			...crud(SystemPermissionsResources.PaymentMethods),
 			...crud(SystemPermissionsResources.Taxes),
 			...crud(SystemPermissionsResources.CostAdjustments),
+			...crud(SystemPermissionsResources.FiscalYears),
+			...crud(SystemPermissionsResources.FiscalPeriods),
+			...single(SystemPermissionsResources.FiscalYearClose),
+			...single(SystemPermissionsResources.FiscalYearReopen),
 			...readOnly(SystemPermissionsResources.Invoices),
 			...readOnly(SystemPermissionsResources.Items),
 			...readOnly(SystemPermissionsResources.Partners),
@@ -512,6 +532,8 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 			...readOnly(SystemPermissionsResources.BalanceTransfers),
 			...readOnly(SystemPermissionsResources.PaymentMethods),
 			...readOnly(SystemPermissionsResources.Partners),
+			...readOnly(SystemPermissionsResources.FiscalYears),
+			...readOnly(SystemPermissionsResources.FiscalPeriods),
 			...readOnly(SystemPermissionsResources.Items),
 			...readOnly(SystemPermissionsResources.Brands),
 			...readOnly(SystemPermissionsResources.Categories),

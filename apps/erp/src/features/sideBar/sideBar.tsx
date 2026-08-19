@@ -49,238 +49,292 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 	};
 
 	const data = {
-		navMain: [{
-			title: t("sidebar.dashboard"),
-			url: "/dashboard",
-			icon: <LayoutDashboardIcon/>,
-			hasAuth: true
-		}, {
-			title: "نقاط البيع",
-			url: "#",
-			icon: <MonitorSmartphone/>,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.PosTerminals,
-				SystemPermissionsActions.Get
-			),
-			subItems: [{
-				title: "شاشة البيع",
-				url: "/pos",
+		navMain: [
+			{
+				title: t("sidebar.dashboard"),
+				url: "/dashboard",
+				icon: <LayoutDashboardIcon/>,
+				hasAuth: true
+			},
+			{
+				title: "نقاط البيع",
+				url: "#",
+				icon: <MonitorSmartphone/>,
 				hasAuth: Services.auth.hasAuth(
 					SystemPermissionsResources.PosTerminals,
 					SystemPermissionsActions.Get
-				)
-			}, {
-				title: "أجهزة نقاط البيع",
-				url: "/posTerminals",
+				),
+				subItems: [
+					{
+						title: "شاشة البيع",
+						url: "/pos",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.PosTerminals,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: "أجهزة نقاط البيع",
+						url: "/posTerminals",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.PosTerminals,
+							SystemPermissionsActions.Get
+						)
+					}
+				]
+			},
+			{
+				title: t("sidebar.invoices"),
+				url: "/invoices",
+				icon: <ReceiptText/>,
+				hasAuth:
+					Services.auth.hasAuth(
+						SystemPermissionsResources.InvoiceSell,
+						SystemPermissionsActions.Get
+					) ||
+					Services.auth.hasAuth(
+						SystemPermissionsResources.InvoicePurchase,
+						SystemPermissionsActions.Get
+					),
+				subItems: [
+					{
+						title: t("sidebar.sellInvoices"),
+						url: "/sales",
+						hasAuth:
+							Services.auth.hasAuth(
+								SystemPermissionsResources.InvoiceSell,
+								SystemPermissionsActions.Get
+							) &&
+							Services.auth.hasAuth(
+								SystemPermissionsResources.Invoices,
+								SystemPermissionsActions.Get
+							)
+					},
+					{
+						title: t("sidebar.purchaseInvoices"),
+						url: "/purchases",
+						hasAuth:
+							Services.auth.hasAuth(
+								SystemPermissionsResources.InvoicePurchase,
+								SystemPermissionsActions.Get
+							) &&
+							Services.auth.hasAuth(
+								SystemPermissionsResources.Invoices,
+								SystemPermissionsActions.Get
+							)
+					},
+					{
+						title: t("sidebar.quotationInvoices"),
+						url: "/quotations",
+						hasAuth:
+							Services.auth.hasAuth(
+								SystemPermissionsResources.InvoiceSell,
+								SystemPermissionsActions.Get
+							) &&
+							Services.auth.hasAuth(
+								SystemPermissionsResources.Invoices,
+								SystemPermissionsActions.Get
+							)
+					}
+				]
+			},
+			{
+				title: t("sidebar.vouchers"),
+				url: "/vouchers",
+				icon: <ScrollText/>,
 				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.PosTerminals,
+					SystemPermissionsResources.Vouchers,
 					SystemPermissionsActions.Get
 				)
-			}]
-		}, {
-			title: t("sidebar.invoices"),
-			url: "/invoices",
-			icon: <ReceiptText/>,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.InvoiceSell,
-				SystemPermissionsActions.Get
-			) || Services.auth.hasAuth(
-				SystemPermissionsResources.InvoicePurchase,
-				SystemPermissionsActions.Get
-			),
-			subItems: [{
-				title: t("sidebar.sellInvoices"),
-				url: "/sales",
+			},
+			{
+				title: t("sidebar.clients"),
+				url: "/clients",
+				icon: <ShoppingBag/>,
 				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.InvoiceSell,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
-					SystemPermissionsResources.Invoices,
+					SystemPermissionsResources.Partners,
 					SystemPermissionsActions.Get
 				)
-			}, {
-				title: t("sidebar.purchaseInvoices"),
-				url: "/purchases",
+			},
+			{
+				title: t("sidebar.suppliers"),
+				url: "/suppliers",
+				icon: <Truck/>,
 				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.InvoicePurchase,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
-					SystemPermissionsResources.Invoices,
+					SystemPermissionsResources.Partners,
 					SystemPermissionsActions.Get
 				)
-			}, {
-				title: t("sidebar.quotationInvoices"),
-				url: "/quotations",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.InvoiceSell,
-					SystemPermissionsActions.Get
-				) && Services.auth.hasAuth(
-					SystemPermissionsResources.Invoices,
-					SystemPermissionsActions.Get
-				)
-			}]
-		}, {
-			title: t("sidebar.vouchers"),
-			url: "/vouchers",
-			icon: <ScrollText/>,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.Vouchers,
-				SystemPermissionsActions.Get
-			)
-		}, {
-			title: t("sidebar.clients"),
-			url: "/clients",
-			icon: <ShoppingBag/>,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.Partners,
-				SystemPermissionsActions.Get
-			)
-		}, {
-			title: t("sidebar.suppliers"),
-			url: "/suppliers",
-			icon: <Truck/>,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.Partners,
-				SystemPermissionsActions.Get
-			)
-		}, {
-			title: t("sidebar.accounts"),
-			url: "#",
-			icon: <WalletCards/>,
-			hasAuth: true,
-			subItems: [{
+			},
+			{
 				title: t("sidebar.accounts"),
-				url: "/accounts",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.Accounts,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.paymentMethods"),
-				url: "/paymentMethods",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.PaymentMethods,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.balanceTransfer"),
-				url: "/balanceTransfer",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.BalanceTransfers,
-					SystemPermissionsActions.Get
-				)
-			}]
-		}, {
-			title: t("sidebar.items"),
-			url: "#",
-			icon: <Package/>,
-			hasAuth: true,
-			subItems: [{
+				url: "#",
+				icon: <WalletCards/>,
+				hasAuth: true,
+				subItems: [
+					{
+						title: t("sidebar.accounts"),
+						url: "/accounts",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.Accounts,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: "السنوات والفترات المالية",
+						url: "/fiscalYears",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.FiscalYears,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: t("sidebar.paymentMethods"),
+						url: "/paymentMethods",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.PaymentMethods,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: t("sidebar.balanceTransfer"),
+						url: "/balanceTransfer",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.BalanceTransfers,
+							SystemPermissionsActions.Get
+						)
+					}
+				]
+			},
+			{
 				title: t("sidebar.items"),
-				url: "/items",
+				url: "#",
+				icon: <Package/>,
+				hasAuth: true,
+				subItems: [
+					{
+						title: t("sidebar.items"),
+						url: "/items",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.Items,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: t("sidebar.costAdjustments"),
+						url: "/costAdjustments",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.CostAdjustments,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: t("sidebar.itemTransfers"),
+						url: "/itemTransfers",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.ItemTransfers,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: t("sidebar.stocktakings"),
+						url: "/stocktakings",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.Stocktakings,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: t("sidebar.itemsSettlements"),
+						url: "/itemsSettlements",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.ItemsSettlements,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: t("sidebar.pricingMethods"),
+						url: "/pricingMethods",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.PricingMethods,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: t("sidebar.units"),
+						url: "/units",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.Units,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: t("sidebar.stores"),
+						url: "/stores",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.Stores,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: t("sidebar.taxes"),
+						url: "/taxes",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.Taxes,
+							SystemPermissionsActions.Get
+						)
+					}
+				]
+			},
+			{
+				title: t("sidebar.branches"),
+				url: "/branches",
+				icon: <Building2/>,
 				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.Items,
+					SystemPermissionsResources.Branches,
 					SystemPermissionsActions.Get
 				)
-			}, {
-				title: t("sidebar.costAdjustments"),
-				url: "/costAdjustments",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.CostAdjustments,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.itemTransfers"),
-				url: "/itemTransfers",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.ItemTransfers,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.stocktakings"),
-				url: "/stocktakings",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.Stocktakings,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.itemsSettlements"),
-				url: "/itemsSettlements",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.ItemsSettlements,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.pricingMethods"),
-				url: "/pricingMethods",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.PricingMethods,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.units"),
-				url: "/units",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.Units,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.stores"),
-				url: "/stores",
+			},
+			{
+				title: t("sidebar.users"),
+				url: "#",
+				icon: <UsersIcon/>,
+				hasAuth: true,
+				subItems: [
+					{
+						title: t("sidebar.roles"),
+						url: "/roles",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.Roles,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: t("sidebar.users"),
+						url: "/users",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.Users,
+							SystemPermissionsActions.Get
+						)
+					}
+				]
+			},
+			{
+				title: t("sidebar.reports"),
+				url: "/reports",
+				icon: <FileChartColumnIncreasing/>,
 				hasAuth: Services.auth.hasAuth(
 					SystemPermissionsResources.Stores,
 					SystemPermissionsActions.Get
 				)
-			}, {
-				title: t("sidebar.taxes"),
-				url: "/taxes",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.Taxes,
-					SystemPermissionsActions.Get
-				)
-			}]
-		}, {
-			title: t("sidebar.branches"),
-			url: "/branches",
-			icon: <Building2/>,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.Branches,
-				SystemPermissionsActions.Get
-			)
-		}, {
-			title: t("sidebar.users"),
-			url: "#",
-			icon: <UsersIcon/>,
-			hasAuth: true,
-			subItems: [{
-				title: t("sidebar.roles"),
-				url: "/roles",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.Roles,
-					SystemPermissionsActions.Get
-				)
-			}, {
-				title: t("sidebar.users"),
-				url: "/users",
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.Users,
-					SystemPermissionsActions.Get
-				)
-			}]
-		}, {
-			title: t("sidebar.reports"),
-			url: "/reports",
-			icon: <FileChartColumnIncreasing/>,
-			hasAuth: Services.auth.hasAuth(
-				SystemPermissionsResources.Stores,
-				SystemPermissionsActions.Get
-			)
-		}],
-		navSecondary: [{
-			title: t("sidebar.settings"),
-			url: "/settings",
-			icon: <SettingsIcon/>
-		}]
+			}
+		],
+		navSecondary: [
+			{
+				title: t("sidebar.settings"),
+				url: "/settings",
+				icon: <SettingsIcon/>
+			}
+		]
 	};
 
 	const displayCompany = {
