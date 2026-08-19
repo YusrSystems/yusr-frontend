@@ -94,7 +94,11 @@ export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, i
 											<span className="text-[10px] text-muted-foreground">{ item.unitName }</span>
 										</div>
 									</ReportTableTd>
-									<ReportTableTd isEven={ isEven } align="start">{ item.notes || "-" }</ReportTableTd>
+									<ReportTableTd isEven={ isEven } align="start">
+										<div className="text-[8px] whitespace-pre-wrap wrap-break-word">
+											{ item.notes || "-" }
+										</div>
+									</ReportTableTd>
 									<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity) }</ReportTableTd>
 									<ReportTableTd
 										isEven={ isEven }>{ formatNumber(item.taxExclusivePrice) }</ReportTableTd>
