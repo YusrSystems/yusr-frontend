@@ -57,33 +57,6 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 				hasAuth: true
 			},
 			{
-				title: "نقاط البيع",
-				url: "#",
-				icon: <MonitorSmartphone/>,
-				hasAuth: Services.auth.hasAuth(
-					SystemPermissionsResources.PosTerminals,
-					SystemPermissionsActions.Get
-				),
-				subItems: [
-					{
-						title: "شاشة البيع",
-						url: "/pos",
-						hasAuth: Services.auth.hasAuth(
-							SystemPermissionsResources.PosTerminals,
-							SystemPermissionsActions.Get
-						)
-					},
-					{
-						title: "أجهزة نقاط البيع",
-						url: "/posTerminals",
-						hasAuth: Services.auth.hasAuth(
-							SystemPermissionsResources.PosTerminals,
-							SystemPermissionsActions.Get
-						)
-					}
-				]
-			},
-			{
 				title: t("sidebar.invoices"),
 				url: "/invoices",
 				icon: <ReceiptText/>,
@@ -164,6 +137,33 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 					SystemPermissionsResources.Partners,
 					SystemPermissionsActions.Get
 				)
+			},
+			{
+				title: "نقاط البيع",
+				url: "#",
+				icon: <MonitorSmartphone/>,
+				hasAuth: Services.auth.hasAuth(
+					SystemPermissionsResources.PosTerminals,
+					SystemPermissionsActions.Get
+				),
+				subItems: [
+					{
+						title: "شاشة البيع",
+						url: "/pos",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.PosTerminals,
+							SystemPermissionsActions.Get
+						)
+					},
+					{
+						title: "أجهزة نقاط البيع",
+						url: "/posTerminals",
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.PosTerminals,
+							SystemPermissionsActions.Get
+						)
+					}
+				]
 			},
 			{
 				title: t("sidebar.accounts"),
