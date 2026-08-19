@@ -10,11 +10,12 @@ import {
 	NumberField,
 	NumberToWordsService,
 	SelectField,
+	Switch,
 	SystemPermissionsActions,
 	TextAreaField,
 	TextField
 } from "yusr-ui";
-import { Voucher, VoucherDto, VoucherType } from "@/core/data/voucher.ts";
+import { FrequencyType, Voucher, VoucherDto, VoucherType } from "@/core/data/voucher.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Services } from "@/core/services/services.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
@@ -29,6 +30,7 @@ import { CommissionType, PaymentMethod } from "@/core/data/paymentMethod.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { AccountClass, getAccountTypesByClasses } from "@/core/data/account.ts";
 import { TransactionStatus } from "#/types/transactionStatus.ts";
+import { CalendarClock, Info } from "lucide-react";
 
 
 export default function ChangeVoucherDialog({
@@ -112,6 +114,10 @@ export default function ChangeVoucherDialog({
 	const isDraft = entity.value.transactionStatus.value === TransactionStatus.Draft;
 	const isPosted = entity.value.transactionStatus.value === TransactionStatus.Posted;
 	const isVoided = entity.value.transactionStatus.value === TransactionStatus.Voided;
+
+	const count = entity.value.distributionCount.value ?? 1;
+	const totalAmount = entity.value.amount.value ?? 0;
+	const sliceAmount = count > 0 ? (totalAmount / count).toFixed(2) : "0";
 
 	return (
 		<ChangeDialog className="sm:max-w-5xl">
@@ -260,6 +266,95 @@ export default function ChangeVoucherDialog({
 						</div>
 					</FieldsSection>
 
+					<FieldsSection
+						title="توزيع المعاملة على فترات دورية"
+						columns={ 2 }
+					>
+						<div className="col-span-2 flex items-center justify-between p-3 rounded-lg border bg-muted/20">
+							<div className="flex items-center gap-3">
+								<CalendarClock className="h-5 w-5 text-primary"/>
+								<div>
+									<p className="font-semibold text-sm">توزيع القيمة دفترياً على فترات زمنية</p>
+									<p className="text-xs text-muted-foreground">
+										{ entity.value.type.value === VoucherType.Payment
+											? "توزيع المصروف كأصل مدفوع مقدماً يستهلك دورياً"
+											: "توزيع الإيراد كالتزام مؤجل يعترف به دورياً" }
+									</p>
+								</div>
+							</div>
+							<Switch
+								checked={ entity.value.isDistributed.value }
+								onCheckedChange={ (val) =>
+								{
+									entity.value.isDistributed.value = val;
+									if (!val)
+									{
+										entity.value.distributionFrequency.value = undefined;
+										entity.value.distributionCount.value = undefined;
+									}
+									else
+									{
+										entity.value.distributionFrequency.value = FrequencyType.Monthly;
+										entity.value.distributionCount.value = 12;
+									}
+								} }
+								disabled={ !isDraft }
+							/>
+						</div>
+
+						{ entity.value.isDistributed.value && (
+							<>
+								<SelectField
+									label="التكرار الدوري"
+									value={ entity.value.distributionFrequency }
+									disabled={ !isDraft }
+									options={ [
+										{label: "يومي", value: FrequencyType.Daily},
+										{label: "أسبوعي", value: FrequencyType.Weekly},
+										{label: "شهري", value: FrequencyType.Monthly},
+										{label: "سنوي", value: FrequencyType.Yearly}
+									] }
+								/>
+
+								<NumberField
+									label="عدد الفترات"
+									value={ entity.value.distributionCount }
+									disabled={ !isDraft }
+									placeholder="مثال: 12"
+								/>
+
+								<div
+									className="col-span-2 p-3 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg flex items-start gap-2 text-xs text-blue-800 dark:text-blue-300">
+									<Info className="h-4 w-4 shrink-0 mt-0.5"/>
+									<div>
+										سيتم دفع كامل المبلغ من البنك/الصندوق في تاريخ السند، ثم يقوم النظام بتوزيع حصة
+										كل فترة بقيمة <strong>{ sliceAmount } ريال</strong> على
+										مدار <strong>{ count } فترة</strong> تلقائياً.
+									</div>
+								</div>
+							</>
+						) }
+
+						{ /* --- Active Distribution Tracker (for View/Edit mode) --- */ }
+						{ !isDraft && (dto?.distributionCount ?? 0) > 1 && (
+							<div
+								className="col-span-2 grid grid-cols-3 gap-3 p-4 bg-muted/40 rounded-xl border text-center">
+								<div>
+									<p className="text-xs text-muted-foreground">الفترات المعتمدة</p>
+									<p className="text-lg font-bold text-primary">{ dto?.recognizedCount } / { dto?.distributionCount }</p>
+								</div>
+								<div>
+									<p className="text-xs text-muted-foreground">المبلغ المعترف به</p>
+									<p className="text-lg font-bold text-green-600 dark:text-green-400">{ (dto?.recognizedAmount ?? 0).toLocaleString() } ريال</p>
+								</div>
+								<div>
+									<p className="text-xs text-muted-foreground">المتبقي للتوزيع</p>
+									<p className="text-lg font-bold text-orange-600 dark:text-orange-400">{ (dto?.remainingUnrecognizedAmount ?? 0).toLocaleString() } ريال</p>
+								</div>
+							</div>
+						) }
+					</FieldsSection>
+
 					{ entity.value.invoiceId.value && (
 						<FieldsSection title={ t("vouchers.systemLinks") } columns={ 1 }>
 							<TextField
@@ -271,7 +366,7 @@ export default function ChangeVoucherDialog({
 						</FieldsSection>
 					) }
 
-					<FieldsSection title={ t("vouchers.partyInfo") } columns={ 2 }>
+					<FieldsSection columns={ 2 }>
 						<TextField
 							label={ t("vouchers.giver") }
 							value={ entity.value.giver }
@@ -280,15 +375,16 @@ export default function ChangeVoucherDialog({
 							label={ t("vouchers.recipient") }
 							value={ entity.value.recipient }
 						/>
-					</FieldsSection>
 
-					<FieldsSection columns={ 1 }>
-						<TextAreaField
-							label={ t("balanceTransfers.description") }
-							value={ entity.value.description }
-							collapsible
-							collapsedHeight={ 60 }
-						/>
+						<div className="col-span-2">
+							<TextAreaField
+								label={ t("balanceTransfers.description") }
+								value={ entity.value.description }
+								collapsible
+								collapsedHeight={ 60 }
+							/>
+						</div>
+
 					</FieldsSection>
 				</FieldGroup>
 			</div>
@@ -305,6 +401,11 @@ export default function ChangeVoucherDialog({
 							transformData={ (data) =>
 							{
 								data.transactionStatus = TransactionStatus.Draft;
+								if (!entity.value.isDistributed.value)
+								{
+									data.distributionFrequency = undefined;
+									data.distributionCount = undefined;
+								}
 								return data;
 							} }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
@@ -317,6 +418,11 @@ export default function ChangeVoucherDialog({
 							transformData={ (data) =>
 							{
 								data.transactionStatus = TransactionStatus.Posted;
+								if (!entity.value.isDistributed.value)
+								{
+									data.distributionFrequency = undefined;
+									data.distributionCount = undefined;
+								}
 								return data;
 							} }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }

@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useMemo } from "react";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
-import { FileText, Printer } from "lucide-react";
+import { CalendarClock, FileText, Printer } from "lucide-react";
 import { type VoucherDto, VoucherType } from "@/core/data/voucher.ts";
 import ChangeVoucherDialog from "@/features/vouchers/changeVoucherDialog.tsx";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
@@ -239,10 +239,19 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 						{rowBody: `#${ voucher.id }`, rowStyles: ""},
 						{
 							rowBody: (
-								<span
-									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(voucher.transactionStatus) }` }>
-									{ getTransactionStatusName(voucher.transactionStatus) }
-								</span>
+								<div className="flex flex-col gap-1">
+									<span
+										className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(voucher.transactionStatus) }` }>
+										{ getTransactionStatusName(voucher.transactionStatus) }
+									</span>
+									{ voucher.isDistributed && (
+										<span
+											className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+											<CalendarClock className="h-3 w-3"/>
+											{ voucher.recognizedCount }/{ voucher.distributionCount }
+										</span>
+									) }
+								</div>
 							),
 							rowStyles: ""
 						},

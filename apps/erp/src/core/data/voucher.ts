@@ -7,7 +7,7 @@ import {
 	type IStatusWorkflowEntity,
 	Validators
 } from "yusr-ui";
-import { Signal } from "@preact/signals-react";
+import { Signal, signal } from "@preact/signals-react";
 import { PaymentMethod, type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import type { TFunction } from "i18next";
 import { type IStatusWorkflowDto, TransactionStatus } from "#/types/transactionStatus.ts";
@@ -18,6 +18,14 @@ export enum VoucherType
 {
 	Payment = 1,
 	Receipt = 2
+}
+
+export enum FrequencyType
+{
+	Daily = 1,
+	Weekly = 2,
+	Monthly = 3,
+	Yearly = 4
 }
 
 export class VoucherDto extends Dto implements IStatusWorkflowDto, IRowVerDto
@@ -40,6 +48,16 @@ export class VoucherDto extends Dto implements IStatusWorkflowDto, IRowVerDto
 	public rowVer!: number;
 	public isDirectMode!: boolean;
 	public transactionStatus: TransactionStatus = TransactionStatus.Draft;
+
+	public distributionFrequency?: FrequencyType;
+	public distributionCount?: number;
+	public distributionHoldingAccountId?: number;
+	public distributionHoldingAccountName?: string;
+	public isDistributed?: boolean;
+	public recognizedCount?: number;
+	public recognizedAmount?: number;
+	public remainingUnrecognizedAmount?: number;
+	public nextRecognitionDate?: string;
 
 	public paymentMethod?: PaymentMethodDto;
 }
@@ -64,6 +82,16 @@ export class Voucher extends ChangeableEntity<VoucherDto> implements IStatusWork
 	public rowVer: Signal<number>;
 	public isDirectMode: Signal<boolean>;
 	public transactionStatus: Signal<TransactionStatus>;
+
+	public isDistributed: Signal<boolean>;
+	public distributionFrequency: Signal<FrequencyType | undefined>;
+	public distributionCount: Signal<number | undefined>;
+	public distributionHoldingAccountId: Signal<number | undefined>;
+	public distributionHoldingAccountName: Signal<string | undefined>;
+	public recognizedCount: Signal<number>;
+	public recognizedAmount: Signal<number>;
+	public remainingUnrecognizedAmount: Signal<number>;
+	public nextRecognitionDate: Signal<string | undefined>;
 
 	public paymentMethod: Signal<PaymentMethod>;
 
@@ -127,6 +155,16 @@ export class Voucher extends ChangeableEntity<VoucherDto> implements IStatusWork
 		this.rowVer = this.assign("rowVer", dto?.rowVer);
 		this.isDirectMode = this.assign("isDirectMode", dto?.isDirectMode ?? false);
 		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
+
+		this.isDistributed = signal<boolean>(dto?.distributionFrequency !== undefined && (dto?.distributionCount ?? 0) > 1);
+		this.distributionFrequency = this.assign("distributionFrequency", dto?.distributionFrequency ?? FrequencyType.Monthly);
+		this.distributionCount = this.assign("distributionCount", dto?.distributionCount ?? 12);
+		this.distributionHoldingAccountId = this.assign("distributionHoldingAccountId", dto?.distributionHoldingAccountId);
+		this.distributionHoldingAccountName = this.assign("distributionHoldingAccountName", dto?.distributionHoldingAccountName);
+		this.recognizedCount = this.assign("recognizedCount", dto?.recognizedCount ?? 0);
+		this.recognizedAmount = this.assign("recognizedAmount", dto?.recognizedAmount ?? 0);
+		this.remainingUnrecognizedAmount = this.assign("remainingUnrecognizedAmount", dto?.remainingUnrecognizedAmount ?? 0);
+		this.nextRecognitionDate = this.assign("nextRecognitionDate", dto?.nextRecognitionDate);
 
 		this.paymentMethod = this.assign("paymentMethod", new PaymentMethod(dto?.paymentMethod));
 	}
