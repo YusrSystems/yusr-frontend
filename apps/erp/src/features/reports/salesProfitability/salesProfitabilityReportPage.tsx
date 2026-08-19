@@ -13,19 +13,24 @@ import { APP_NAME } from "../../../../appConfig.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { Services } from "@/core/services/services.ts";
 
-
 export function SalesProfitabilityReportPage()
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
 
-	const lastRequest = useMemo(() => signal<SalesProfitabilityReportRequest>(new SalesProfitabilityReportRequest()), []);
+	const lastRequest = useMemo(() =>
+	{
+		const req = new SalesProfitabilityReportRequest();
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("fromDate")) req.fromDate = params.get("fromDate")!;
+		if (params.get("toDate")) req.toDate = params.get("toDate")!;
+		return signal<SalesProfitabilityReportRequest>(req);
+	}, []);
 
 	useEffect(() =>
 	{
 		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportSalesProfitability, SystemPermissionsActions.Get)) return;
 		void Cubits.SalesProfitabilityReport.getReportData(lastRequest.value, 1);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSubmit = (request: SalesProfitabilityReportRequest) =>
@@ -42,7 +47,6 @@ export function SalesProfitabilityReportPage()
 	};
 
 	const isLoading = Cubits.SalesProfitabilityReport.state.value instanceof ReportLoading;
-
 	const data = Cubits.SalesProfitabilityReport.result.value;
 
 	useEffect(() =>
@@ -55,7 +59,6 @@ export function SalesProfitabilityReportPage()
 		{
 			document.title = "تقرير ربحية المبيعات";
 		}
-
 		return () =>
 		{
 			document.title = APP_NAME;
@@ -86,15 +89,12 @@ export function SalesProfitabilityReportPage()
 				/>
 				<ReportPage.PrintButton/>
 			</ReportPage.ActionButtonsContainer>
-
 			<div className="print:hidden w-full shrink-0">
 				<SalesProfitabilityReportFields onSubmit={ handleSubmit } isLoading={ isLoading }/>
 			</div>
-
 			<div className="flex-1 min-h-0 flex flex-col print:block">
 				<SalesProfitabilityReport/>
 			</div>
-
 			{ Cubits.SalesProfitabilityReport.result.value && Cubits.SalesProfitabilityReport.result.value.totalCount > 0 && (
 				<CrudTablePagination
 					className="print:hidden w-full bg-card text-card-foreground border border-t-0 p-4 shadow-sm rounded-b-xl shrink-0"

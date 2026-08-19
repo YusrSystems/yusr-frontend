@@ -12,7 +12,6 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { Services } from "@/core/services/services.ts";
 import { APP_NAME } from "../../../../appConfig.ts";
 
-
 export function StockValuationReportPage()
 {
 	useSignals();

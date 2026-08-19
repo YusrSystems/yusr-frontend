@@ -14,20 +14,24 @@ import { Services } from "@/core/services/services.ts";
 import Invoice from "@/core/data/invoices/invoice.ts";
 import { useTranslation } from "react-i18next";
 
-
 export function TaxAuditReportPage()
 {
 	useSignals();
-
 	const {t} = useTranslation("accounting");
 
-	const lastRequest = useMemo(() => signal<TaxAuditReportRequest>(new TaxAuditReportRequest()), []);
+	const lastRequest = useMemo(() =>
+	{
+		const req = new TaxAuditReportRequest();
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("fromDate")) req.fromDate = params.get("fromDate")!;
+		if (params.get("toDate")) req.toDate = params.get("toDate")!;
+		return signal<TaxAuditReportRequest>(req);
+	}, []);
 
 	useEffect(() =>
 	{
 		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportTaxAudit, SystemPermissionsActions.Get)) return;
 		void Cubits.TaxAuditReport.getReportData(lastRequest.value, 1);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSubmit = (request: TaxAuditReportRequest) =>
@@ -44,7 +48,6 @@ export function TaxAuditReportPage()
 	};
 
 	const isLoading = Cubits.TaxAuditReport.state.value instanceof ReportLoading;
-
 	const data = Cubits.TaxAuditReport.result.value;
 
 	useEffect(() =>
@@ -57,7 +60,6 @@ export function TaxAuditReportPage()
 		{
 			document.title = "تقرير المراجعة الضريبية";
 		}
-
 		return () =>
 		{
 			document.title = APP_NAME;
@@ -86,15 +88,12 @@ export function TaxAuditReportPage()
 				/>
 				<ReportPage.PrintButton/>
 			</ReportPage.ActionButtonsContainer>
-
 			<div className="print:hidden w-full shrink-0">
 				<TaxAuditReportFields onSubmit={ handleSubmit } isLoading={ isLoading }/>
 			</div>
-
 			<div className="flex-1 min-h-0 flex flex-col print:block">
 				<TaxAuditReport/>
 			</div>
-
 			{ Cubits.TaxAuditReport.result.value && Cubits.TaxAuditReport.result.value.totalCount > 0 && (
 				<CrudTablePagination
 					className="print:hidden w-full bg-card text-card-foreground border border-t-0 p-4 shadow-sm rounded-b-xl shrink-0"

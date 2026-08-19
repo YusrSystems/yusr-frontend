@@ -11,18 +11,23 @@ import { APP_NAME } from "../../../../appConfig.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { Services } from "@/core/services/services.ts";
 
-
 export function ProfitAndLossReportPage()
 {
 	useSignals();
 
-	const lastRequest = useMemo(() => signal<ProfitAndLossReportRequest>(new ProfitAndLossReportRequest()), []);
+	const lastRequest = useMemo(() =>
+	{
+		const req = new ProfitAndLossReportRequest();
+		const params = new URLSearchParams(window.location.search);
+		if (params.get("fromDate")) req.fromDate = params.get("fromDate")!;
+		if (params.get("toDate")) req.toDate = params.get("toDate")!;
+		return signal<ProfitAndLossReportRequest>(req);
+	}, []);
 
 	useEffect(() =>
 	{
 		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportPl, SystemPermissionsActions.Get)) return;
 		void Cubits.ProfitAndLossReport.getReportData(lastRequest.value);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleSubmit = (request: ProfitAndLossReportRequest) =>
@@ -33,7 +38,6 @@ export function ProfitAndLossReportPage()
 	};
 
 	const isLoading = Cubits.ProfitAndLossReport.state.value instanceof ReportLoading;
-
 	const data = Cubits.ProfitAndLossReport.result.value;
 
 	useEffect(() =>
@@ -46,7 +50,6 @@ export function ProfitAndLossReportPage()
 		{
 			document.title = "تقرير الأرباح والخسائر";
 		}
-
 		return () =>
 		{
 			document.title = APP_NAME;
@@ -58,11 +61,9 @@ export function ProfitAndLossReportPage()
 			<ReportPage.ActionButtonsContainer>
 				<ReportPage.PrintButton/>
 			</ReportPage.ActionButtonsContainer>
-
 			<div className="print:hidden w-full shrink-0">
 				<ProfitAndLossReportFields onSubmit={ handleSubmit } isLoading={ isLoading }/>
 			</div>
-
 			<div className="flex-1 min-h-0 flex flex-col print:block">
 				<ProfitAndLossReport/>
 			</div>
