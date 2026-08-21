@@ -157,8 +157,8 @@ export class Voucher extends ChangeableEntity<VoucherDto> implements IStatusWork
 		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
 
 		this.isDistributed = signal<boolean>(dto?.distributionFrequency !== undefined && (dto?.distributionCount ?? 0) > 1);
-		this.distributionFrequency = this.assign("distributionFrequency", dto?.distributionFrequency ?? FrequencyType.Monthly);
-		this.distributionCount = this.assign("distributionCount", dto?.distributionCount ?? 12);
+		this.distributionFrequency = this.assign("distributionFrequency", dto?.distributionFrequency);
+		this.distributionCount = this.assign("distributionCount", dto?.distributionCount);
 		this.distributionHoldingAccountId = this.assign("distributionHoldingAccountId", dto?.distributionHoldingAccountId);
 		this.distributionHoldingAccountName = this.assign("distributionHoldingAccountName", dto?.distributionHoldingAccountName);
 		this.recognizedCount = this.assign("recognizedCount", dto?.recognizedCount ?? 0);
