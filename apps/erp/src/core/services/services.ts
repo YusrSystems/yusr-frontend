@@ -15,7 +15,6 @@ import type { PricingMethodDto } from "@/core/data/pricingMethod.ts";
 import { type AccountDto } from "@/core/data/account.ts";
 import type { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { type BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
-import { type VoucherDto } from "@/core/data/voucher.ts";
 import type { PartnerDto } from "@/core/data/partner.ts";
 import { CategoryDto } from "@/core/data/category.ts";
 import { BrandDto } from "@/core/data/brand.ts";
@@ -23,6 +22,7 @@ import PosSessionApiService from "@/core/networking/posSessionApiService.ts";
 import PosCheckoutApiService from "@/core/networking/posCheckoutApiService.ts";
 import PosTerminalsApiService from "@/core/networking/posTerminalsApiService.ts";
 import FiscalYearsApiService from "@/core/networking/fiscalYearsApiService.ts";
+import VouchersApiService from "@/core/networking/vouchersApiService.ts";
 
 
 export class Services extends BaseServices
@@ -43,7 +43,7 @@ export class Services extends BaseServices
 	public static readonly partnersApi = new BaseApiService<PartnerDto>("Partners");
 	public static readonly paymentMethodsApi = new BaseApiService<PaymentMethodDto>("PaymentMethods");
 	public static readonly balanceTransfersApi = new BaseApiService<BalanceTransferDto>("BalanceTransfers");
-	public static readonly voucherApi = new BaseApiService<VoucherDto>("Vouchers");
+	public static readonly voucherApi = new VouchersApiService();
 	public static readonly invoicesApi = new InvoicesApiService();
 	public static readonly settingApi = new SettingsApiService();
 	public static readonly dashboardApi = new DashboardApiService();

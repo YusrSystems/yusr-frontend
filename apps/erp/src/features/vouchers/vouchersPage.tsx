@@ -3,7 +3,9 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import {
 	Button,
 	ChangeableEntityMode,
+	ContextMenuItem,
 	CrudPage,
+	DropdownMenuItem,
 	FilterLabelWrapper,
 	FilterSection,
 	type FilterValueInputProps,
@@ -17,12 +19,13 @@ import {
 	UnauthorizedPage
 } from "yusr-ui";
 import { useTranslation } from "react-i18next";
-import { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Cubits } from "@/core/services/cubits.ts";
 import { useSignals } from "@preact/signals-react/runtime";
-import { CalendarClock, FileText, Printer } from "lucide-react";
+import { CalendarClock, CalendarOff, FileText, Printer } from "lucide-react";
 import { type VoucherDto, VoucherType } from "@/core/data/voucher.ts";
 import ChangeVoucherDialog from "@/features/vouchers/changeVoucherDialog.tsx";
+import TerminateVoucherDistributionDialog from "./terminateVoucherDistributionDialog.tsx";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { createPortal } from "react-dom";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
@@ -34,6 +37,7 @@ import { VouchersListReport } from "@/features/reports/vouchersList/vouchersList
 import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect.tsx";
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
+import { canTerminateVoucherDistribution } from "@/features/vouchers/canTerminateVoucherDistribution.tsx";
 
 
 export default function VouchersPage()
@@ -42,6 +46,7 @@ export default function VouchersPage()
 	const {t} = useTranslation("accounting");
 	useEffect(() => Cubits.vouchers.init(), []);
 	const printedVoucher = useMemo(() => signal<VoucherDto | undefined>(undefined), []);
+	const voucherToTerminate = useMemo(() => signal<VoucherDto | undefined>(undefined), []);
 
 	useEffect(() =>
 	{
@@ -108,25 +113,27 @@ export default function VouchersPage()
 
 				<CrudPage.SearchInput onSearch={ (searchText) => Cubits.vouchers.search(searchText) }/>
 
-				<PageTable onPrint={ (voucher) =>
-				{
-					printedVoucher.value = voucher;
-					const handleAfterPrint = () =>
+				<PageTable
+					onPrint={ (voucher) =>
 					{
-						printedVoucher.value = undefined;
-						window.removeEventListener("afterprint", handleAfterPrint);
-					};
-					window.addEventListener("afterprint", handleAfterPrint);
+						printedVoucher.value = voucher;
+						const handleAfterPrint = () =>
+						{
+							printedVoucher.value = undefined;
+							window.removeEventListener("afterprint", handleAfterPrint);
+						};
+						window.addEventListener("afterprint", handleAfterPrint);
 
-					requestAnimationFrame(() =>
-					{
 						requestAnimationFrame(() =>
 						{
-							window.print();
+							requestAnimationFrame(() =>
+							{
+								window.print();
+							});
 						});
-					});
-				} }/>
-
+					} }
+					onTerminateDistribution={ (voucher) => (voucherToTerminate.value = voucher) }
+				/>
 				<CrudPage.ChangeDialog
 					fetchEntity={ async (id: number) =>
 					{
@@ -175,6 +182,21 @@ export default function VouchersPage()
 				/>
 			</CrudPage>
 
+			{ voucherToTerminate.value && (
+				<TerminateVoucherDistributionDialog
+					open={ !!voucherToTerminate.value }
+					onOpenChange={ (open) =>
+					{
+						if (!open) voucherToTerminate.value = undefined;
+					} }
+					voucher={ voucherToTerminate.value }
+					onSuccess={ () =>
+					{
+						voucherToTerminate.value = undefined;
+					} }
+				/>
+			) }
+
 			{ createPortal(
 				<PortalReportContainer>
 					{ printedVoucher.value ? (
@@ -204,7 +226,13 @@ function Cards()
 	);
 }
 
-function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
+function PageTable({
+	onPrint,
+	onTerminateDistribution
+}: {
+	onPrint: (voucher: VoucherDto) => void;
+	onTerminateDistribution: (voucher: VoucherDto) => void;
+})
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
@@ -213,6 +241,39 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 	{
 		return <TablePreview.Loading/>;
 	}
+	if (Cubits.vouchers.state.value instanceof PageError)
+	{
+		return <TablePreview.Error/>;
+	}
+
+	const getActions = (
+		voucher: VoucherDto,
+		_openEditDialog: (dto: VoucherDto) => void,
+		ItemComponent: typeof DropdownMenuItem | typeof ContextMenuItem
+	) =>
+	{
+		const items: React.ReactNode[] = [];
+		const canUpdate = Services.auth.hasAuth(
+			SystemPermissionsResources.Vouchers,
+			SystemPermissionsActions.Update
+		);
+		const canTerminate = canUpdate && canTerminateVoucherDistribution(voucher);
+
+		if (canTerminate)
+		{
+			items.push(
+				<ItemComponent
+					key="terminate-distribution"
+					className="text-orange-600 font-semibold cursor-pointer"
+					onSelect={ () => onTerminateDistribution(voucher) }
+				>
+					<CalendarOff className="me-2 h-4 w-4"/>
+					إنهاء التوزيع الدوري
+				</ItemComponent>
+			);
+		}
+		return items;
+	};
 
 	if (Cubits.vouchers.state.value instanceof PageLoaded)
 	{
@@ -239,18 +300,29 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 						{rowBody: `#${ voucher.id }`, rowStyles: ""},
 						{
 							rowBody: (
-								<div className="flex flex-col gap-1">
+								<div className="flex flex-col items-start justify-center gap-1">
 									<span
-										className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(voucher.transactionStatus) }` }>
+										className={ `inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium w-fit whitespace-nowrap ${ getTransactionStatusColor(voucher.transactionStatus) }` }
+									>
 										{ getTransactionStatusName(voucher.transactionStatus) }
 									</span>
-									{ voucher.isDistributed && (
-										<span
-											className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
-											<CalendarClock className="h-3 w-3"/>
-											{ voucher.recognizedCount }/{ voucher.distributionCount }
-										</span>
-									) }
+									{ voucher.isDistributed && (() =>
+									{
+										const isComplete = (voucher.recognizedCount ?? 0) >= (voucher.distributionCount ?? 1);
+										return (
+											<span
+												className={ `inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold w-fit whitespace-nowrap border ${
+													isComplete
+														? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+														: "bg-sky-50 text-sky-700 dark:bg-sky-950/40 dark:text-sky-300 border-sky-200 dark:border-sky-800"
+												}` }
+											>
+												<CalendarClock className="h-3 w-3 shrink-0"/>
+												<span
+													className="font-mono">{ voucher.recognizedCount }/{ voucher.distributionCount }</span>
+											</span>
+										);
+									})() }
 								</div>
 							),
 							rowStyles: ""
@@ -296,6 +368,8 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 							SystemPermissionsActions.Delete
 						)
 					}
+					dropdownItems={ (voucher, openEditDialog) => getActions(voucher, openEditDialog, DropdownMenuItem) }
+					contextMenuItems={ (voucher, openEditDialog) => getActions(voucher, openEditDialog, ContextMenuItem) }
 				/>
 				<CrudPage.TablePagination
 					pageSize={ Cubits.vouchers.pageSize.value }
@@ -309,12 +383,6 @@ function PageTable({onPrint}: { onPrint: (voucher: VoucherDto) => void })
 			</CrudPage.Table>
 		);
 	}
-
-	if (Cubits.vouchers.state.value instanceof PageError)
-	{
-		return <TablePreview.Error/>;
-	}
-
 	return <TablePreview.Empty/>;
 }
 
