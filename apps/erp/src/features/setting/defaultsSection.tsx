@@ -148,7 +148,7 @@ export default function DefaultsSection({formData}: { formData: Setting })
 						/>
 					</FormField>
 
-					<FormField label={ t("settings.openingBalanceEquity", "حساب الأرصدة الافتتاحية (Equity)") }>
+					<FormField label={ t("settings.openingBalanceEquity", "حساب الأرصدة الافتتاحية") }>
 						<AccountsSearchableSelect
 							id={ formData.openingBalanceEquityAccountId }
 							label={ formData.openingBalanceEquityAccountName }
@@ -162,17 +162,24 @@ export default function DefaultsSection({formData}: { formData: Setting })
 						/>
 					</FormField>
 
-					<FormField label="حساب المصروفات المدفوعة مقدماً (Prepaid Asset)">
+					<FormField label="حساب المصروفات المدفوعة مقدماً">
 						<AccountsSearchableSelect
 							id={ formData.prepaidExpenseAccountId }
 							label={ formData.prepaidExpenseAccountName }
 						/>
 					</FormField>
 
-					<FormField label="حساب الإيرادات المؤجلة غير المكتسبة (Deferred Liability)">
+					<FormField label="حساب الإيرادات المؤجلة غير المكتسبة">
 						<AccountsSearchableSelect
 							id={ formData.deferredRevenueAccountId }
 							label={ formData.deferredRevenueAccountName }
+						/>
+					</FormField>
+
+					<FormField label="حساب عجز وزيادة الصندوق">
+						<AccountsSearchableSelect
+							id={ formData.posCashVarianceAccountId }
+							label={ formData.posCashVarianceAccountName }
 						/>
 					</FormField>
 				</FieldsSection>
