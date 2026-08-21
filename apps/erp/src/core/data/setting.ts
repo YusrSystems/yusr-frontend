@@ -83,6 +83,8 @@ export class SettingDto extends Dto
 	public prepaidExpenseAccountName?: string;
 	public deferredRevenueAccountId?: number;
 	public deferredRevenueAccountName?: string;
+	public posCashVarianceAccountId!: number;
+	public posCashVarianceAccountName!: string;
 
 	// --- Partner Defaults ---
 	public defaultCustomerPartnerId?: number;
@@ -156,6 +158,8 @@ export class Setting extends ValidatableEntity<SettingDto>
 	public prepaidExpenseAccountName: Signal<string | undefined>;
 	public deferredRevenueAccountId: Signal<number | undefined>;
 	public deferredRevenueAccountName: Signal<string | undefined>;
+	public posCashVarianceAccountId: Signal<number>;
+	public posCashVarianceAccountName: Signal<string>;
 
 	// --- Partner Defaults ---
 	public defaultCustomerPartnerId: Signal<number | undefined>;
@@ -252,6 +256,8 @@ export class Setting extends ValidatableEntity<SettingDto>
 		this.prepaidExpenseAccountName = this.assign("prepaidExpenseAccountName", dto?.prepaidExpenseAccountName ?? "");
 		this.deferredRevenueAccountId = this.assign("deferredRevenueAccountId", dto?.deferredRevenueAccountId);
 		this.deferredRevenueAccountName = this.assign("deferredRevenueAccountName", dto?.deferredRevenueAccountName ?? "");
+		this.posCashVarianceAccountId = this.assign("posCashVarianceAccountId", dto?.posCashVarianceAccountId ?? 0);
+		this.posCashVarianceAccountName = this.assign("posCashVarianceAccountName", dto?.posCashVarianceAccountName ?? "");
 
 		// --- Partner Defaults ---
 		this.defaultCustomerPartnerId = this.assign("defaultCustomerPartnerId", dto?.defaultCustomerPartnerId);
