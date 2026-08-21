@@ -161,6 +161,20 @@ export default function DefaultsSection({formData}: { formData: Setting })
 							label={ formData.retainedEarningsAccountName }
 						/>
 					</FormField>
+
+					<FormField label="حساب المصروفات المدفوعة مقدماً (Prepaid Asset)">
+						<AccountsSearchableSelect
+							id={ formData.prepaidExpenseAccountId }
+							label={ formData.prepaidExpenseAccountName }
+						/>
+					</FormField>
+
+					<FormField label="حساب الإيرادات المؤجلة غير المكتسبة (Deferred Liability)">
+						<AccountsSearchableSelect
+							id={ formData.deferredRevenueAccountId }
+							label={ formData.deferredRevenueAccountName }
+						/>
+					</FormField>
 				</FieldsSection>
 			</FieldGroup>
 		</div>

@@ -79,6 +79,10 @@ export class SettingDto extends Dto
 	public purchaseExpenseAccountName!: string;
 	public retainedEarningsAccountId?: number;
 	public retainedEarningsAccountName?: string;
+	public prepaidExpenseAccountId?: number;
+	public prepaidExpenseAccountName?: string;
+	public deferredRevenueAccountId?: number;
+	public deferredRevenueAccountName?: string;
 
 	// --- Partner Defaults ---
 	public defaultCustomerPartnerId?: number;
@@ -148,6 +152,10 @@ export class Setting extends ValidatableEntity<SettingDto>
 	public purchaseExpenseAccountName: Signal<string>;
 	public retainedEarningsAccountId: Signal<number | undefined>;
 	public retainedEarningsAccountName: Signal<string | undefined>;
+	public prepaidExpenseAccountId: Signal<number | undefined>;
+	public prepaidExpenseAccountName: Signal<string | undefined>;
+	public deferredRevenueAccountId: Signal<number | undefined>;
+	public deferredRevenueAccountName: Signal<string | undefined>;
 
 	// --- Partner Defaults ---
 	public defaultCustomerPartnerId: Signal<number | undefined>;
@@ -240,6 +248,10 @@ export class Setting extends ValidatableEntity<SettingDto>
 		this.purchaseExpenseAccountName = this.assign("purchaseExpenseAccountName", dto?.purchaseExpenseAccountName ?? "");
 		this.retainedEarningsAccountId = this.assign("retainedEarningsAccountId", dto?.retainedEarningsAccountId);
 		this.retainedEarningsAccountName = this.assign("retainedEarningsAccountName", dto?.retainedEarningsAccountName ?? "");
+		this.prepaidExpenseAccountId = this.assign("prepaidExpenseAccountId", dto?.prepaidExpenseAccountId);
+		this.prepaidExpenseAccountName = this.assign("prepaidExpenseAccountName", dto?.prepaidExpenseAccountName ?? "");
+		this.deferredRevenueAccountId = this.assign("deferredRevenueAccountId", dto?.deferredRevenueAccountId);
+		this.deferredRevenueAccountName = this.assign("deferredRevenueAccountName", dto?.deferredRevenueAccountName ?? "");
 
 		// --- Partner Defaults ---
 		this.defaultCustomerPartnerId = this.assign("defaultCustomerPartnerId", dto?.defaultCustomerPartnerId);
