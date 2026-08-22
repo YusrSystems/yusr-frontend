@@ -1,26 +1,17 @@
-import { YusrApiHelper, YusrBackground } from "yusr-ui";
-import { LoginForm } from "./loginForm";
-import { Services } from "@/core/services/services.ts";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { Navigate } from "react-router-dom";
+import { useSignals } from "@preact/signals-react/runtime";
+import { YusrBackground } from "yusr-ui";
+import { Services } from "@/core/services/services.ts";
+import { LoginForm } from "./loginForm";
 import { APP_NAME } from "../../../appConfig.ts";
 
 
 export default function LoginPage()
 {
+	useSignals();
 	const {t} = useTranslation("loginRegister");
-
-	useEffect(() =>
-	{
-		(async () =>
-		{
-			const result = await YusrApiHelper.Post(`/api/Logout`);
-			if (result.status === 200 || result.status === 204)
-			{
-				Services.auth.logout();
-			}
-		})();
-	}, []);
 
 	useEffect(() =>
 	{
@@ -30,6 +21,11 @@ export default function LoginPage()
 			document.title = APP_NAME;
 		};
 	}, [t]);
+
+	if (Services.auth.isAuthenticated)
+	{
+		return <Navigate to="/dashboard" replace/>;
+	}
 
 	return (
 		<div className="flex min-h-svh flex-col items-center justify-center p-6 md:p-10">

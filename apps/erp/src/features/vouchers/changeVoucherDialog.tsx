@@ -272,7 +272,7 @@ export default function ChangeVoucherDialog({
 								<div className="flex items-center gap-3">
 									<CalendarClock className="h-5 w-5 text-primary"/>
 									<div>
-										<p className="font-semibold text-sm">توزيع القيمة دفترياً على فترات زمنية</p>
+										<p className="font-semibold text-sm">توزيع القيمة دفتريًا على فترات زمنية</p>
 										<p className="text-xs text-muted-foreground">
 											{ entity.value.type.value === VoucherType.Payment
 												? "توزيع المصروف كأصل مدفوع مقدماً يستهلك دورياً"
