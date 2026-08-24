@@ -1,6 +1,7 @@
 import { Box, FolderKanban, Siren } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import {
 	ChangeableEntityMode,
 	ChangeDialog,
@@ -9,6 +10,7 @@ import {
 	FieldsSection,
 	FormField,
 	Loading,
+	type RequestResult,
 	StorageType,
 	SystemPermissionsActions,
 	TextAreaField,
@@ -25,12 +27,12 @@ import StoresSearchableSelect from "@/core/components/searchableSelect/storesSea
 import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect";
 import StoreItemSelector from "@/features/items/storeItemSelector";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import { CommercialMath } from "@/features/commercial/logic/commercialMath.ts";
-import { CommercialGlobalSettlement } from "@/features/commercial/components/commercialGlobalSettlement.tsx";
-import { CommercialSummaryCard } from "@/features/commercial/components/commercialSummaryCard.tsx";
-import { CommercialPolicyTab } from "@/features/commercial/components/commercialPolicyTab.tsx";
-import { CommercialAttachmentsTab } from "@/features/commercial/components/commercialAttachmentsTab.tsx";
-import { CommercialItemsTable } from "@/features/commercial/components/commercialItemsTable.tsx";
+import { CommercialMath } from "@/features/commercial/logic/commercialMath";
+import { CommercialGlobalSettlement } from "@/features/commercial/components/commercialGlobalSettlement";
+import { CommercialSummaryCard } from "@/features/commercial/components/commercialSummaryCard";
+import { CommercialPolicyTab } from "@/features/commercial/components/commercialPolicyTab";
+import { CommercialAttachmentsTab } from "@/features/commercial/components/commercialAttachmentsTab";
+import { CommercialItemsTable } from "@/features/commercial/components/commercialItemsTable";
 
 
 export default function ChangeQuotationDialog({
@@ -41,7 +43,11 @@ export default function ChangeQuotationDialog({
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
+	const [searchParams] = useSearchParams();
+	const copyFromId = searchParams.get("copyFromId");
+
 	const entity = useMemo(() => signal(dto ? Quotation.load(dto) : Quotation.create()), [dto]);
+	const isLoading = useMemo(() => signal(false), []);
 	const isSaving = useMemo(() => signal(false), []);
 
 	const {commitFiles} = useStorageFile(
@@ -49,6 +55,30 @@ export default function ChangeQuotationDialog({
 		(files) => (entity.value.files.value = files),
 		StorageType.Private
 	);
+
+	useEffect(() =>
+	{
+		if (entity.value.mode.value === ChangeableEntityMode.Create && copyFromId && Number(copyFromId) > 0)
+		{
+			isLoading.value = true;
+			const loadCopy = async () =>
+			{
+				try
+				{
+					const res: RequestResult<QuotationDto> = await service.Get(Number(copyFromId));
+					if (res?.data)
+					{
+						entity.value.loadFromCopy(res.data);
+					}
+				}
+				finally
+				{
+					isLoading.value = false;
+				}
+			};
+			void loadCopy();
+		}
+	}, [copyFromId, service]);
 
 	const currentStoreId = entity.value.storeId.value;
 	useEffect(() =>
@@ -85,12 +115,13 @@ export default function ChangeQuotationDialog({
 		return data;
 	};
 
-	const title =
-		entity.value.mode.value === ChangeableEntityMode.Create
+	const title = copyFromId
+		? `نسخ عرض السعر #${ copyFromId }`
+		: entity.value.mode.value === ChangeableEntityMode.Create
 			? t("invoices.addNewQuotationTitle")
 			: t("invoices.editQuotation");
 
-	if (entity.value.mode.value === ChangeableEntityMode.Update && entity.value.items.value.length <= 0)
+	if (isLoading.value)
 	{
 		return (
 			<ChangeDialog>

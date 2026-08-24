@@ -1,4 +1,4 @@
-import { ChangeableEntityMode, StorageFile } from "yusr-ui";
+import { ChangeableEntityMode, DateService, StorageFile } from "yusr-ui";
 import { type Signal } from "@preact/signals-react";
 import { ItemDto, ItemType } from "@/core/data/item";
 import { Services } from "@/core/services/services";
@@ -140,6 +140,50 @@ export class Quotation extends CommercialDocument<QuotationDto, QuotationItem, Q
 			this.hasChanges.value = this.items.value.some((t) => t.hasChanges.value);
 		};
 		this.items.value.forEach((s) => s.hasChanges.subscribe(checkChildren));
+	}
+
+	public static createCopy(source: QuotationDto): Quotation
+	{
+		const draft: Partial<QuotationDto> = {
+			...source,
+			id: 0,
+			date: DateService.formatDateOnly(new Date()),
+			status: QuotationStatus.Active,
+			items: (source.items || []).map((qi, idx) => ({
+				...qi,
+				id: 0,
+				index: idx,
+				quotationId: 0
+			})),
+			files: []
+		};
+
+		return Quotation.create(draft);
+	}
+
+	public loadFromCopy(source: QuotationDto): void
+	{
+		this.copyFromDocument(source);
+		this.expiryDate.value = source.expiryDate;
+		this.deliveryDate.value = source.deliveryDate;
+		this.delegateEmp.value = source.delegateEmp;
+		this.status.value = QuotationStatus.Active;
+		this.convertedInvoiceId.value = undefined;
+
+		this.items.value = (source.items || []).map((qi, idx) =>
+		{
+			const line = new QuotationItem({
+				...qi,
+				id: 0,
+				index: idx,
+				quotationId: 0
+			});
+			line.quantityMultiplier.value = qi.uoMDtos?.find((u) => u.id === qi.itemUoMId)?.quantityMultiplier ?? 1;
+			line.getDocument = () => this;
+			return line;
+		});
+
+		this.syncTotals();
 	}
 
 	protected override createLineFromItem(

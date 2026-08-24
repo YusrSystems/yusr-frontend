@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { FilePlusCorner, FileTextIcon, Loader2, Printer } from "lucide-react";
+import { Copy, FilePlusCorner, FileTextIcon, Loader2, Printer } from "lucide-react";
 import {
 	Button,
 	ChangeableEntityMode,
@@ -97,6 +97,11 @@ export default function QuotationsPage()
 	const handleConvertToSales = (quote: QuotationDto) =>
 	{
 		navigate(`/sales/new?fromQuotationId=${ quote.id }`);
+	};
+
+	const handleCopyQuotation = (quote: QuotationDto) =>
+	{
+		navigate(`/quotations/new?copyFromId=${ quote.id }`);
 	};
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Quotations, SystemPermissionsActions.Get))
@@ -230,7 +235,15 @@ export default function QuotationsPage()
 											<FilePlusCorner className="h-4 w-4 me-2"/>
 											تحويل إلى فاتورة مبيعات
 										</DropdownMenuItem>
-									) : null
+									) : null,
+									<DropdownMenuItem
+										key="copy"
+										className="text-blue-600 font-semibold"
+										onSelect={ () => handleCopyQuotation(quote) }
+									>
+										<Copy className="h-4 w-4 me-2"/>
+										نسخ عرض السعر
+									</DropdownMenuItem>
 								] }
 								contextMenuItems={ (quote) => [
 									quote.status === QuotationStatus.Active ? (
@@ -242,7 +255,15 @@ export default function QuotationsPage()
 											<FilePlusCorner className="h-4 w-4 me-2"/>
 											تحويل إلى فاتورة مبيعات
 										</ContextMenuItem>
-									) : null
+									) : null,
+									<ContextMenuItem
+										key="copy"
+										className="text-blue-600 font-semibold"
+										onSelect={ () => handleCopyQuotation(quote) }
+									>
+										<Copy className="h-4 w-4 me-2"/>
+										نسخ عرض السعر
+									</ContextMenuItem>
 								] }
 							/>
 							<CrudPage.TablePagination
