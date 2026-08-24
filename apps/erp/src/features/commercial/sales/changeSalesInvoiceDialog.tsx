@@ -1,6 +1,7 @@
 import { BanknoteArrowUp, Box, FolderKanban, Plus, Siren, Trash2 } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import {
 	Button,
 	ChangeableEntityMode,
@@ -28,6 +29,7 @@ import { signal, useComputed } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { SalesInvoice, SalesInvoiceDto, SalesInvoiceMode } from "@/core/data/commercial/salesInvoice";
 import { getSalesInvoiceTypeName, SalesInvoiceType } from "@/core/types/commercialEnums";
+import { ItemType } from "@/core/data/item";
 import { PartnerDto, PartnerType } from "@/core/data/partner";
 import { ImportExportType } from "@/core/types/importExportType";
 import { Voucher, VoucherType } from "@/core/data/voucher";
@@ -63,6 +65,9 @@ export default function ChangeSalesInvoiceDialog({
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
+	const [searchParams] = useSearchParams();
+	const fromQuotationId = searchParams.get("fromQuotationId");
+
 	const entity = useMemo(() => signal(dto ? SalesInvoice.load(dto) : SalesInvoice.create({type: fixedType})), [dto, fixedType]);
 	const isLoading = useMemo(() => signal(false), []);
 	const isSaving = useMemo(() => signal(false), []);
@@ -83,6 +88,39 @@ export default function ChangeSalesInvoiceDialog({
 		Cubits.accounts.init(getAccountTypesByClasses([AccountClass.Expense]));
 		Cubits.items.init();
 	}, []);
+
+	useEffect(() =>
+	{
+		if (entity.value.mode.value === ChangeableEntityMode.Create && fromQuotationId && Number(fromQuotationId) > 0)
+		{
+			isLoading.value = true;
+			const loadQuote = async () =>
+			{
+				try
+				{
+					const res = await Services.quotationsApi.Get(Number(fromQuotationId));
+					if (res?.data)
+					{
+						entity.value.loadFromQuotation(res.data);
+					}
+				}
+				finally
+				{
+					isLoading.value = false;
+				}
+			};
+			void loadQuote();
+		}
+	}, [fromQuotationId]);
+
+	const currentStoreId = entity.value.storeId.value;
+	useEffect(() =>
+	{
+		if (currentStoreId && !entity.value.isDisabled)
+		{
+			Cubits.items.init([ItemType.Product, ItemType.Service], {storeId: currentStoreId});
+		}
+	}, [currentStoreId]);
 
 	useEffect(() =>
 	{
@@ -162,6 +200,10 @@ export default function ChangeSalesInvoiceDialog({
 
 	const getDialogTitle = () =>
 	{
+		if (entity.value.basedOnQuotationId.value)
+		{
+			return `تحويل عرض السعر #${ entity.value.basedOnQuotationId.value } إلى فاتورة مبيعات`;
+		}
 		if (entity.value.invoiceMode.value === SalesInvoiceMode.Return)
 		{
 			return "إضافة إشعار دائن (مرتجع مبيعات)";
@@ -188,6 +230,10 @@ export default function ChangeSalesInvoiceDialog({
 		entity.value.items.value.some((t) => t.hasErrors) ||
 		entity.value.paymentVouchers.value.some((t) => t.hasErrors);
 	const costHasError = entity.value.costVouchers.value.some((t) => t.hasErrors);
+
+	const saveButtonLabel = entity.value.basedOnQuotationId.value
+		? "إنشاء واعتماد الفاتورة"
+		: undefined;
 
 	return (
 		<ChangeDialog className="sm:max-w-[100vw] sm:w-screen sm:h-screen">
@@ -281,14 +327,14 @@ export default function ChangeSalesInvoiceDialog({
 
 									<CommercialItemsTable
 										document={ entity.value }
-										isSalesDocument={ true }
+										type="sales"
 										allowReturnQuantityConstraint={ entity.value.invoiceMode.value === SalesInvoiceMode.Return }
 										renderExtraAction={ (item) =>
 											Services.auth.hasAuth(
 												SystemPermissionsResources.InvoiceShowItemProfit,
 												SystemPermissionsActions.Get
 											) ? (
-												<ItemProfitDialog invoiceItem={ item as any }/>
+												<ItemProfitDialog invoiceItem={ item }/>
 											) : null
 										}
 									/>
@@ -443,6 +489,7 @@ export default function ChangeSalesInvoiceDialog({
 				<ChangeDialog.SaveButton<SalesInvoice, SalesInvoiceDto>
 					entity={ entity }
 					service={ service }
+					label={ saveButtonLabel }
 					loadingSignal={ isSaving }
 					showConfirmationDialog={ () => hasCostVouchers.value }
 					confirmationDialog={

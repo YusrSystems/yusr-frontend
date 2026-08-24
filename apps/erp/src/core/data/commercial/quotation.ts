@@ -6,7 +6,6 @@ import { QuotationStatus } from "@/core/types/commercialEnums";
 import { CommercialDocument, type ICommercialDocumentDto } from "./commercialDocument";
 import { CommercialItem, type ICommercialItemDto } from "./commercialItem";
 import type { ItemUoMDto } from "@/core/data/itemUoM";
-import type { VoucherDto } from "@/core/data/voucher";
 
 
 export class QuotationItemDto implements ICommercialItemDto
@@ -151,11 +150,4 @@ export class Quotation extends CommercialDocument<QuotationDto, QuotationItem, Q
 	{
 		return QuotationItem.createFromItem(this, storeItem, selectedUoMId, selectedPricingMethodId);
 	}
-}
-
-export interface ConvertQuotationDto
-{
-	quotationId: number;
-	notes?: string;
-	paymentVouchers?: VoucherDto[];
 }

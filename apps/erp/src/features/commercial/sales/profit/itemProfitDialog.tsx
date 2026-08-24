@@ -4,13 +4,14 @@ import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
 import { useSignals } from "@preact/signals-react/runtime";
 import { CommercialMath, type ICommercialLineProfit } from "@/features/commercial/logic/commercialMath";
-import type { SalesInvoiceItem } from "@/core/data/commercial/salesInvoice";
 import { ProfitRow } from "./invoiceProfitDialog";
+import type { CommercialItem, ICommercialItemDto } from "@/core/data/commercial/commercialItem.ts";
+import type { ICommercialDocument } from "@/core/data/commercial/commercialDocument.ts";
 
 
 export interface ItemProfitDialogProps
 {
-	invoiceItem: SalesInvoiceItem;
+	invoiceItem: CommercialItem<ICommercialItemDto, ICommercialDocument>;
 }
 
 export function ItemProfitDialog({invoiceItem}: ItemProfitDialogProps)

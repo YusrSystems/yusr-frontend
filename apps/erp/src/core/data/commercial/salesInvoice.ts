@@ -13,7 +13,8 @@ import {
 } from "./commercialInvoiceDocument";
 import { CommercialItem, type ICommercialItemDto } from "./commercialItem";
 import type { ItemUoMDto } from "@/core/data/itemUoM";
-import { ImportExportType } from "@/core/types/importExportType.ts";
+import type { QuotationDto } from "./quotation";
+import type { ImportExportType } from "@/core/types/importExportType.ts";
 
 
 export { CommercialInvoiceMode as SalesInvoiceMode } from "./commercialInvoiceDocument";
@@ -53,6 +54,7 @@ export class SalesInvoiceDto implements ICommercialInvoiceDocumentDto
 	public invoiceMode: CommercialInvoiceMode = CommercialInvoiceMode.Normal;
 	public type!: SalesInvoiceType;
 	public originalSalesInvoiceId?: number;
+	public basedOnQuotationId?: number;
 	public posSessionId?: number;
 	public date!: string;
 	public delegateEmp?: string;
@@ -134,6 +136,7 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 {
 	public type: Signal<SalesInvoiceType>;
 	public originalSalesInvoiceId: Signal<number | undefined>;
+	public basedOnQuotationId: Signal<number | undefined>;
 	public posSessionId: Signal<number | undefined>;
 	public delegateEmp: Signal<string | undefined>;
 	public eInvoiceStatus: Signal<EInvoiceStatus>;
@@ -146,6 +149,7 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 		super(dto, mode);
 		this.type = this.assign("type", dto?.type ?? SalesInvoiceType.Invoice);
 		this.originalSalesInvoiceId = this.assign("originalSalesInvoiceId", dto?.originalSalesInvoiceId);
+		this.basedOnQuotationId = this.assign("basedOnQuotationId", dto?.basedOnQuotationId);
 		this.posSessionId = this.assign("posSessionId", dto?.posSessionId);
 		this.delegateEmp = this.assign("delegateEmp", dto?.delegateEmp);
 		this.eInvoiceStatus = this.assign("eInvoiceStatus", dto?.eInvoiceStatus ?? EInvoiceStatus.NotSent);
@@ -182,6 +186,33 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 					this.items.value.some((v) => v.hasChanges.value);
 			})
 		);
+	}
+
+	public loadFromQuotation(quotation: QuotationDto): void
+	{
+		this.copyFromDocument(quotation);
+
+		this.basedOnQuotationId.value = quotation.id;
+		this.delegateEmp.value = quotation.delegateEmp;
+		if (Services.auth.setting?.saleInvoicePolicy?.value)
+		{
+			this.policy.value = Services.auth.setting.saleInvoicePolicy.value;
+		}
+
+		this.items.value = (quotation.items || []).map((qi, idx) =>
+		{
+			const line = new SalesInvoiceItem({
+				...qi,
+				id: 0,
+				index: idx,
+				salesInvoiceId: 0
+			});
+			line.quantityMultiplier.value = qi.uoMDtos?.find((u) => u.id === qi.itemUoMId)?.quantityMultiplier ?? 1;
+			line.getDocument = () => this;
+			return line;
+		});
+
+		this.syncPaymentVouchers();
 	}
 
 	override validate(dto?: Partial<SalesInvoiceDto>): boolean

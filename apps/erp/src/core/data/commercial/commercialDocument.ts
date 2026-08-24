@@ -136,6 +136,19 @@ export abstract class CommercialDocument<
 		this.items = this.assign("items", [] as TItem[]);
 	}
 
+	public copyFromDocument(source: ICommercialDocumentDto): void
+	{
+		this.storeId.value = source.storeId;
+		this.storeName.value = source.storeName;
+		this.partnerId.value = source.partnerId;
+		this.partnerName.value = source.partnerName;
+		this.notes.value = source.notes;
+		this.policy.value = source.policy;
+		this.settlementPercent.value = source.settlementPercent;
+		this.settlementAmount.value = source.settlementAmount;
+		this.settlementReason.value = source.settlementReason;
+	}
+
 	public addItem(storeItem: ItemDto, selectedUoMId?: number, selectedPricingMethodId?: number)
 	{
 		const existingItem = this.items.value?.find(

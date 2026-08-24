@@ -22,9 +22,9 @@ import PosCheckoutApiService from "@/core/networking/posCheckoutApiService.ts";
 import PosTerminalsApiService from "@/core/networking/posTerminalsApiService.ts";
 import FiscalYearsApiService from "@/core/networking/fiscalYearsApiService.ts";
 import VouchersApiService from "@/core/networking/vouchersApiService.ts";
-import QuotationsApiService from "@/core/networking/quotationsApiService.ts";
 import PurchaseInvoicesApiService from "@/core/networking/purchaseInvoicesApiService.ts";
 import SalesInvoicesApiService from "@/core/networking/salesInvoicesApiService.ts";
+import type { QuotationDto } from "@/core/data/commercial/quotation.ts";
 
 
 export class Services extends BaseServices
@@ -48,7 +48,7 @@ export class Services extends BaseServices
 	public static readonly voucherApi = new VouchersApiService();
 	public static readonly salesInvoicesApi = new SalesInvoicesApiService();
 	public static readonly purchaseInvoicesApi = new PurchaseInvoicesApiService();
-	public static readonly quotationsApi = new QuotationsApiService();
+	public static readonly quotationsApi = new BaseApiService<QuotationDto>("Quotations");
 	public static readonly settingApi = new SettingsApiService();
 	public static readonly dashboardApi = new DashboardApiService();
 	public static readonly posSessionsApi = new PosSessionApiService();

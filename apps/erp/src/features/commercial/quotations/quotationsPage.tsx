@@ -94,19 +94,12 @@ export default function QuotationsPage()
 		}
 	};
 
-	const handleConvert = async (quote: QuotationDto) =>
+	const handleConvertToSales = (quote: QuotationDto) =>
 	{
-		const res = await Services.quotationsApi.ConvertToInvoice({
-			quotationId: quote.id,
-			notes: quote.notes
-		});
-		if (res.data)
-		{
-			navigate(`/sales/${ res.data.id }`);
-		}
+		navigate(`/sales/new?fromQuotationId=${ quote.id }`);
 	};
 
-	if (!Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Get))
+	if (!Services.auth.hasAuth(SystemPermissionsResources.Quotations, SystemPermissionsActions.Get))
 	{
 		return <UnauthorizedPage/>;
 	}
@@ -117,7 +110,7 @@ export default function QuotationsPage()
 				title={ t("invoices.quotationsManagement") }
 				addButtonTitle={ t("invoices.addNewQuotationTitle") }
 				isAddButtonVisible={ Services.auth.hasAuth(
-					SystemPermissionsResources.Invoices,
+					SystemPermissionsResources.Quotations,
 					SystemPermissionsActions.Add
 				) }
 			/>
@@ -217,16 +210,22 @@ export default function QuotationsPage()
 									];
 								} }
 								hasUpdatePermission={ Services.auth.hasAuth(
-									SystemPermissionsResources.Invoices,
+									SystemPermissionsResources.Quotations,
 									SystemPermissionsActions.Update
 								) }
-								hasDeletePermission={ (q) => q.status !== QuotationStatus.Converted }
+								hasDeletePermission={ (q) =>
+									q.status !== QuotationStatus.Converted &&
+									Services.auth.hasAuth(
+										SystemPermissionsResources.Quotations,
+										SystemPermissionsActions.Delete
+									)
+								}
 								dropdownItems={ (quote) => [
 									quote.status === QuotationStatus.Active ? (
 										<DropdownMenuItem
 											key="conv"
 											className="text-emerald-600 font-semibold"
-											onSelect={ () => handleConvert(quote) }
+											onSelect={ () => handleConvertToSales(quote) }
 										>
 											<FilePlusCorner className="h-4 w-4 me-2"/>
 											تحويل إلى فاتورة مبيعات
@@ -238,7 +237,7 @@ export default function QuotationsPage()
 										<ContextMenuItem
 											key="conv"
 											className="text-emerald-600 font-semibold"
-											onSelect={ () => handleConvert(quote) }
+											onSelect={ () => handleConvertToSales(quote) }
 										>
 											<FilePlusCorner className="h-4 w-4 me-2"/>
 											تحويل إلى فاتورة مبيعات
