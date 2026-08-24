@@ -1,6 +1,6 @@
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import React, { type PropsWithChildren, type ReactNode, useEffect, useMemo } from "react";
+import React, { type PropsWithChildren, type ReactNode, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { type Dto } from "#/stateManager";
 import { Button, type ButtonProps, ContextMenu, ContextMenuTrigger } from "#/components/pure";
@@ -254,6 +254,8 @@ CrudPage.ChangeDialog = function <TDto extends Dto>(
 	useSignals();
 	const {selectedDto, isChangeDialogOpen, navigate, basePath} = useCrudPageContext();
 	const params = useParams();
+	const fetchEntityRef = useRef(fetchEntity);
+	fetchEntityRef.current = fetchEntity;
 
 	useEffect(() =>
 	{
@@ -280,7 +282,7 @@ CrudPage.ChangeDialog = function <TDto extends Dto>(
 		// 2. Otherwise, fetch the existing entity by ID
 		async function loadEntity()
 		{
-			const entity = await fetchEntity?.(idNumber);
+			const entity = await fetchEntityRef.current?.(idNumber);
 			if (!entity)
 			{
 				navigate(basePath, {replace: true});
@@ -291,7 +293,7 @@ CrudPage.ChangeDialog = function <TDto extends Dto>(
 		}
 
 		void loadEntity();
-	}, [params.id, basePath, fetchEntity, isChangeDialogOpen, navigate, selectedDto]);
+	}, [params.id, basePath]);
 
 	return (
 		<>
