@@ -36,9 +36,9 @@ import { PartnersSearchableSelect } from "@/core/components/searchableSelect/par
 import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect";
 import { PortalReportContainer } from "@/features/report/reportContainer";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport";
-import { InvoiceReportRequest } from "@/features/reports/invoice/invoiceReportRequest.ts";
-import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult";
 import { APP_NAME } from "../../../../appConfig";
+import { QuotationReportRequest } from "@/features/reports/invoice/invoiceReportRequest.ts";
+import type { QuotationReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
 
 
 export default function QuotationsPage()
@@ -46,7 +46,7 @@ export default function QuotationsPage()
 	useSignals();
 	const {t} = useTranslation(["accounting", "erpCommon"]);
 	const navigate = useNavigate();
-	const printedInvoice = useMemo(() => signal<InvoiceReportResult | undefined>(undefined), []);
+	const printedInvoice = useMemo(() => signal<QuotationReportResult | undefined>(undefined), []);
 	const isPrinting = useMemo(() => signal<number | undefined>(undefined), []);
 
 	useEffect(() =>
@@ -67,9 +67,9 @@ export default function QuotationsPage()
 		isPrinting.value = quote.id;
 		try
 		{
-			const res = await YusrApiHelper.Post<InvoiceReportResult>(
+			const res = await YusrApiHelper.Post<QuotationReportResult>(
 				`/api/Reports/Quotation`,
-				new InvoiceReportRequest({invoiceId: quote.id})
+				new QuotationReportRequest({quotationId: quote.id})
 			);
 			if (res.data)
 			{

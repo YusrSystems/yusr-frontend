@@ -39,7 +39,7 @@ export interface CommercialItemsTableProps<
 >
 {
 	document: CommercialDocument<TDto, TItem, TItemDto>;
-	isSalesDocument?: boolean;
+	type: "sales" | "purchases" | "quotations";
 	showCostColumn?: boolean;
 	allowReturnQuantityConstraint?: boolean;
 	renderExtraAction?: (item: TItem, index: number) => React.ReactNode;
@@ -51,7 +51,7 @@ export function CommercialItemsTable<
 	TItemDto extends ICommercialItemDto
 >({
 	document,
-	isSalesDocument = true,
+	type,
 	showCostColumn = true,
 	allowReturnQuantityConstraint = false,
 	renderExtraAction
@@ -61,6 +61,8 @@ export function CommercialItemsTable<
 	const {t} = useTranslation(["accounting", "stocking"]);
 	const focusedQuantityIndex = useMemo(() => signal<number | undefined>(undefined), []);
 	const errorMessage = document.getError("items");
+
+	const isSalesDocument = type === "sales";
 
 	const hasSettlementPerm = Services.auth.hasAuth(
 		SystemPermissionsResources.InvoiceAddSettlement,
@@ -420,7 +422,7 @@ export function CommercialItemsTable<
 									{ renderExtraAction && (
 										<td className="px-2 pt-2 text-center">{ renderExtraAction(invoiceItem, index) }</td>
 									) }
-									{ document.mode.value !== ChangeableEntityMode.Update && (
+									{ (document.mode.value !== ChangeableEntityMode.Update || (type === "quotations" && !document.isDisabled)) && (
 										<td className="px-2 pt-2 text-center">
 											<button
 												type="button"

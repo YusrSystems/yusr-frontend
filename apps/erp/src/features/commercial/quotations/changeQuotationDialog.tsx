@@ -9,16 +9,14 @@ import {
 	FieldsSection,
 	FormField,
 	Loading,
-	SelectField,
 	StorageType,
 	SystemPermissionsActions,
-	TextField,
+	TextAreaField,
 	useStorageFile
 } from "yusr-ui";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Quotation, QuotationDto } from "@/core/data/commercial/quotation";
-import { QuotationStatus } from "@/core/types/commercialEnums";
 import { ItemType } from "@/core/data/item";
 import { PartnerType } from "@/core/data/partner";
 import { Services } from "@/core/services/services";
@@ -44,7 +42,6 @@ export default function ChangeQuotationDialog({
 	useSignals();
 	const {t} = useTranslation("accounting");
 	const entity = useMemo(() => signal(dto ? Quotation.load(dto) : Quotation.create()), [dto]);
-	const isLoading = useMemo(() => signal(false), []);
 	const isSaving = useMemo(() => signal(false), []);
 
 	const {commitFiles} = useStorageFile(
@@ -53,20 +50,24 @@ export default function ChangeQuotationDialog({
 		StorageType.Private
 	);
 
+	const currentStoreId = entity.value.storeId.value;
 	useEffect(() =>
 	{
-		Cubits.stores.init();
-		Cubits.partners.init([PartnerType.Customer]);
-		Cubits.items.init();
-	}, []);
-
-	useEffect(() =>
-	{
-		if (entity.value.storeId.value)
+		if (currentStoreId && !entity.value.isDisabled)
 		{
-			Cubits.items.init([ItemType.Product, ItemType.Service], {storeId: entity.value.storeId.value});
+			Cubits.items.init([ItemType.Product, ItemType.Service], {storeId: currentStoreId});
 		}
-	}, [entity.value.storeId.value]);
+	}, [currentStoreId]);
+
+	if (
+		(entity.value.mode.value === ChangeableEntityMode.Create &&
+			!Services.auth.hasAuth(SystemPermissionsResources.Quotations, SystemPermissionsActions.Add)) ||
+		(entity.value.mode.value === ChangeableEntityMode.Update &&
+			!Services.auth.hasAuth(SystemPermissionsResources.Quotations, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
 	const transformDataBeforeSave = async (data: QuotationDto): Promise<QuotationDto> =>
 	{
@@ -89,7 +90,7 @@ export default function ChangeQuotationDialog({
 			? t("invoices.addNewQuotationTitle")
 			: t("invoices.editQuotation");
 
-	if (isLoading.value)
+	if (entity.value.mode.value === ChangeableEntityMode.Update && entity.value.items.value.length <= 0)
 	{
 		return (
 			<ChangeDialog>
@@ -116,13 +117,12 @@ export default function ChangeQuotationDialog({
 								<div className="xl:col-span-8 2xl:col-span-9 space-y-4 min-w-0">
 									<FieldsSection columns={ {base: 1, md: 2, lg: 4} }>
 										<DateField
-											label={ t("invoices.invoiceDate") }
+											label={ "تاريخ عرض السعر" }
 											required
+											disabled={ entity.value.isDisabled }
 											value={ entity.value.date }
 											error={ entity.value.getError("date") }
 										/>
-										<DateField label="تاريخ الانتهاء (الصلاحية)" value={ entity.value.expiryDate }/>
-										<DateField label="تاريخ التوريد المتوقع" value={ entity.value.deliveryDate }/>
 										<FormField
 											label={ t("invoices.store") }
 											required
@@ -147,18 +147,23 @@ export default function ChangeQuotationDialog({
 												types={ [PartnerType.Customer] }
 											/>
 										</FormField>
-										<TextField label="مندوب المبيعات" value={ entity.value.delegateEmp }/>
-										<SelectField<QuotationStatus>
-											label="حالة عرض السعر"
-											value={ entity.value.status }
-											options={ [
-												{label: "ساري (Active)", value: QuotationStatus.Active},
-												{label: "تمت الفوترة (Converted)", value: QuotationStatus.Converted},
-												{label: "ملغي (Cancelled)", value: QuotationStatus.Cancelled}
-											] }
+										<DateField
+											label="تاريخ الانتهاء (الصلاحية)"
+											value={ entity.value.expiryDate }
+											disabled={ entity.value.isDisabled }
+										/>
+										<DateField
+											label="تاريخ التوريد المتوقع"
+											value={ entity.value.deliveryDate }
+											disabled={ entity.value.isDisabled }
 										/>
 										<div className="col-span-1 md:col-span-2 lg:col-span-4">
-											<TextField label={ t("invoices.notes") } value={ entity.value.notes }/>
+											<TextAreaField
+												label={ t("invoices.notes") }
+												value={ entity.value.notes }
+												collapsible
+												collapsedHeight={ 60 }
+											/>
 										</div>
 									</FieldsSection>
 
@@ -174,7 +179,7 @@ export default function ChangeQuotationDialog({
 
 									<CommercialItemsTable
 										document={ entity.value }
-										isSalesDocument={ true }
+										type="quotations"
 										showCostColumn={ true }
 									/>
 								</div>
