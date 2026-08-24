@@ -1,10 +1,10 @@
 import type { TFunction } from "i18next";
 import { Database, FileBarChart, ShoppingCart, Wallet } from "lucide-react";
 import { BaseServices, SystemPermissionsActions } from "yusr-ui";
-import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
-import type { ErpRole } from "@/core/data/erpRole.ts";
-import { Cubits } from "@/core/services/cubits.ts";
-import type { RolePreset } from "#/features/roles/changeRoleDialog.tsx";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import type { ErpRole } from "@/core/data/erpRole";
+import { Cubits } from "@/core/services/cubits";
+import type { RolePreset } from "#/features/roles/changeRoleDialog";
 
 
 export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => ({
@@ -14,6 +14,7 @@ export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => 
 	[SystemPermissionsResources.Users]: t("permissions.resources.users"),
 	[SystemPermissionsResources.Roles]: t("permissions.resources.roles"),
 	[SystemPermissionsResources.Invoices]: t("permissions.resources.invoices"),
+	[SystemPermissionsResources.Quotations]: t("permissions.resources.quotations", "عروض الأسعار"),
 	[SystemPermissionsResources.Vouchers]: t("permissions.resources.vouchers"),
 	[SystemPermissionsResources.Accounts]: t("permissions.resources.accounts"),
 	[SystemPermissionsResources.BalanceTransfers]: t("permissions.resources.balanceTransfers"),
@@ -36,6 +37,7 @@ export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => 
 	[SystemPermissionsResources.PosTerminals]: t("permissions.resources.posTerminals"),
 	[SystemPermissionsResources.PosSessions]: t("permissions.resources.posSessions", "جلسات نقاط البيع"),
 	[SystemPermissionsResources.CostAdjustments]: t("permissions.resources.costAdjustments"),
+	[SystemPermissionsResources.Obligations]: "الالتزامات",
 
 	// Invoice Permission Settings
 	[SystemPermissionsResources.InvoiceAddSettlement]: t("permissions.invoice.addSettlement"),
@@ -89,6 +91,7 @@ export const getPermissionSections = (t: TFunction<"erpCommon">) => [
 		icon: Database,
 		resources: [
 			SystemPermissionsResources.Invoices,
+			SystemPermissionsResources.Quotations,
 			SystemPermissionsResources.Vouchers,
 			SystemPermissionsResources.Accounts,
 			SystemPermissionsResources.BalanceTransfers,
@@ -253,6 +256,7 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 		permissions: () => [
 			// Tables
 			...crud(SystemPermissionsResources.Invoices),
+			...crud(SystemPermissionsResources.Quotations),
 			...crud(SystemPermissionsResources.Vouchers),
 			...readWrite(SystemPermissionsResources.Accounts),
 			...readWrite(SystemPermissionsResources.BalanceTransfers),
@@ -309,6 +313,7 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 		permissions: () => [
 			// Tables
 			...readWrite(SystemPermissionsResources.Invoices),
+			...readWrite(SystemPermissionsResources.Quotations),
 			...readWrite(SystemPermissionsResources.PosSessions),
 			...readOnly(SystemPermissionsResources.PosTerminals),
 			...readOnly(SystemPermissionsResources.Items),
@@ -343,6 +348,7 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 			...readWrite(SystemPermissionsResources.FiscalYears),
 			...readWrite(SystemPermissionsResources.FiscalPeriods),
 			...readOnly(SystemPermissionsResources.Invoices),
+			...readOnly(SystemPermissionsResources.Quotations),
 			...readOnly(SystemPermissionsResources.PaymentMethods),
 			...readOnly(SystemPermissionsResources.Partners),
 			...readOnly(SystemPermissionsResources.Taxes),
@@ -385,6 +391,7 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 			...single(SystemPermissionsResources.FiscalYearClose),
 			...single(SystemPermissionsResources.FiscalYearReopen),
 			...readOnly(SystemPermissionsResources.Invoices),
+			...readOnly(SystemPermissionsResources.Quotations),
 			...readOnly(SystemPermissionsResources.Items),
 			...readOnly(SystemPermissionsResources.Partners),
 			...readOnly(SystemPermissionsResources.Stores),
@@ -449,10 +456,11 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 	{
 		id: "sales_representative",
 		name: t("roles.presets.salesRepresentative", "مندوب / موظف مبيعات"),
-		description: t("roles.presets.salesRepresentativeDesc", "إصدار فواتير المبيعات وإضافة العملاء واستعراض الأصناف والأسعار"),
+		description: t("roles.presets.salesRepresentativeDesc", "إصدار فواتير المبيعات وعروض الأسعار وإضافة العملاء واستعراض الأصناف والأسعار"),
 		permissions: () => [
 			// Tables
 			...readWrite(SystemPermissionsResources.Invoices),
+			...readWrite(SystemPermissionsResources.Quotations),
 			...readWrite(SystemPermissionsResources.Partners),
 			...readOnly(SystemPermissionsResources.Items),
 			...readOnly(SystemPermissionsResources.Units),
@@ -527,6 +535,7 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 		permissions: () => [
 			// Tables
 			...readOnly(SystemPermissionsResources.Invoices),
+			...readOnly(SystemPermissionsResources.Quotations),
 			...readOnly(SystemPermissionsResources.Vouchers),
 			...readOnly(SystemPermissionsResources.Accounts),
 			...readOnly(SystemPermissionsResources.BalanceTransfers),
