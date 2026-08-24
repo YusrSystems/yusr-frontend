@@ -1,0 +1,342 @@
+import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Link, useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
+import { Signal, signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
+import { FilePlusCorner, FileTextIcon, Loader2, Printer } from "lucide-react";
+import {
+	Button,
+	ChangeableEntityMode,
+	cn,
+	ContextMenuItem,
+	CrudPage,
+	DropdownMenuItem,
+	FilterLabelWrapper,
+	FilterSection,
+	type FilterValueInputProps,
+	PageError,
+	PageLoaded,
+	PageLoading,
+	SystemPermissionsActions,
+	TablePreview,
+	UnauthorizedPage,
+	YusrApiHelper
+} from "yusr-ui";
+import { QuotationDto } from "@/core/data/commercial/quotation";
+import { getQuotationStatusBadge, QuotationStatus } from "@/core/types/commercialEnums";
+import { PartnerType } from "@/core/data/partner";
+import { Services } from "@/core/services/services";
+import { Cubits } from "@/core/services/cubits";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import ChangeQuotationDialog from "./changeQuotationDialog";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
+import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
+import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect";
+import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect";
+import { PortalReportContainer } from "@/features/report/reportContainer";
+import { InvoiceReport } from "@/features/reports/invoice/invoiceReport";
+import { InvoiceReportRequest } from "@/features/reports/invoice/invoiceReportRequest.ts";
+import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult";
+import { APP_NAME } from "../../../../appConfig";
+
+
+export default function QuotationsPage()
+{
+	useSignals();
+	const {t} = useTranslation(["accounting", "erpCommon"]);
+	const navigate = useNavigate();
+	const printedInvoice = useMemo(() => signal<InvoiceReportResult | undefined>(undefined), []);
+	const isPrinting = useMemo(() => signal<number | undefined>(undefined), []);
+
+	useEffect(() =>
+	{
+		document.title = `${ t("invoices.quotationsManagement") } | ${ APP_NAME }`;
+	}, [t]);
+
+	useEffect(() =>
+	{
+		Cubits.quotations.init();
+		Cubits.partners.init([PartnerType.Customer]);
+		Cubits.items.init();
+		Cubits.stores.init();
+	}, []);
+
+	const handlePrint = async (quote: QuotationDto) =>
+	{
+		isPrinting.value = quote.id;
+		try
+		{
+			const res = await YusrApiHelper.Post<InvoiceReportResult>(
+				`/api/Reports/Quotation`,
+				new InvoiceReportRequest({invoiceId: quote.id})
+			);
+			if (res.data)
+			{
+				printedInvoice.value = res.data;
+				requestAnimationFrame(() =>
+				{
+					requestAnimationFrame(() =>
+					{
+						window.print();
+						isPrinting.value = undefined;
+					});
+				});
+			}
+			else
+			{
+				isPrinting.value = undefined;
+			}
+		}
+		catch
+		{
+			isPrinting.value = undefined;
+		}
+	};
+
+	const handleConvert = async (quote: QuotationDto) =>
+	{
+		const res = await Services.quotationsApi.ConvertToInvoice({
+			quotationId: quote.id,
+			notes: quote.notes
+		});
+		if (res.data)
+		{
+			navigate(`/sales/${ res.data.id }`);
+		}
+	};
+
+	if (!Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Get))
+	{
+		return <UnauthorizedPage/>;
+	}
+
+	return (
+		<CrudPage<QuotationDto>>
+			<CrudPage.Header
+				title={ t("invoices.quotationsManagement") }
+				addButtonTitle={ t("invoices.addNewQuotationTitle") }
+				isAddButtonVisible={ Services.auth.hasAuth(
+					SystemPermissionsResources.Invoices,
+					SystemPermissionsActions.Add
+				) }
+			/>
+
+			<CrudPage.Cards
+				cards={ [
+					{
+						title: t("invoices.totalQuotations"),
+						data: (Cubits.quotations.count.value ?? 0).toString(),
+						icon: <FileTextIcon className="h-4 w-4 text-muted-foreground"/>
+					}
+				] }
+			/>
+
+			<FilterSection
+				fieldsCubit={ Cubits.quotationFilterFields }
+				onApply={ (groups) => Cubits.quotations.applyFilterGroups(groups) }
+				onClear={ () => Cubits.quotations.clearFilterGroups() }
+				renderCustomInput={ (props) => RenderQuotationFilterInput(props) }
+			/>
+
+			<CrudPage.SearchInput
+				className="rounded-t-none!"
+				onSearch={ (searchText) => Cubits.quotations.search(searchText) }
+			/>
+
+			{ (() =>
+			{
+				if (Cubits.quotations.state.value instanceof PageLoading) return <TablePreview.Loading/>;
+				if (Cubits.quotations.state.value instanceof PageError) return <TablePreview.Error/>;
+				if (Cubits.quotations.state.value instanceof PageLoaded)
+				{
+					return (
+						<CrudPage.Table>
+							<CrudPage.TableBody<QuotationDto>
+								isShareablePage={ true }
+								data={ Cubits.quotations.entities.value }
+								headerRows={ [
+									{rowBody: "", rowStyles: "text-left w-12.5"},
+									{rowBody: t("invoices.invoiceId"), rowStyles: "w-24"},
+									{rowBody: "الحالة", rowStyles: "w-32"},
+									{rowBody: t("invoices.date"), rowStyles: "w-32"},
+									{rowBody: "تاريخ الانتهاء", rowStyles: "w-32"},
+									{rowBody: t("invoices.partner", "العميل"), rowStyles: "w-48"},
+									{rowBody: t("invoices.store"), rowStyles: "w-32"},
+									{rowBody: t("invoices.total"), rowStyles: "w-32"},
+									{rowBody: "", rowStyles: "w-24"}
+								] }
+								tableRowMapper={ (quote) =>
+								{
+									const badge = getQuotationStatusBadge(quote.status, t);
+									return [
+										{rowBody: `#${ quote.id }`, rowStyles: ""},
+										{
+											rowBody: (
+												<span
+													className={ cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold", badge.className) }>
+													{ badge.label }
+												</span>
+											),
+											rowStyles: ""
+										},
+										{rowBody: quote.date, rowStyles: ""},
+										{rowBody: quote.expiryDate || "-", rowStyles: ""},
+										{
+											rowBody: (
+												<Link to={ `/clients/${ quote.partnerId }` }
+												      className="text-blue-600 hover:underline">
+													{ quote.partnerName || "-" }
+												</Link>
+											),
+											rowStyles: ""
+										},
+										{rowBody: quote.storeName || "-", rowStyles: ""},
+										{
+											rowBody: (
+												<div className="flex items-center gap-1 font-bold text-blue-600">
+													{ Number(quote.fullAmount ?? 0).toLocaleString("en-US", {minimumFractionDigits: 2}) }
+													<ErpCurrencyIcon/>
+												</div>
+											),
+											rowStyles: ""
+										},
+										{
+											rowBody: (
+												<Button size="sm" variant="outline"
+												        onClick={ () => handlePrint(quote) }>
+													{ isPrinting.value === quote.id ? (
+														<Loader2 className="h-4 w-4 animate-spin"/>
+													) : (
+														<Printer className="h-4 w-4"/>
+													) }
+												</Button>
+											),
+											rowStyles: ""
+										}
+									];
+								} }
+								hasUpdatePermission={ Services.auth.hasAuth(
+									SystemPermissionsResources.Invoices,
+									SystemPermissionsActions.Update
+								) }
+								hasDeletePermission={ (q) => q.status !== QuotationStatus.Converted }
+								dropdownItems={ (quote) => [
+									quote.status === QuotationStatus.Active ? (
+										<DropdownMenuItem
+											key="conv"
+											className="text-emerald-600 font-semibold"
+											onSelect={ () => handleConvert(quote) }
+										>
+											<FilePlusCorner className="h-4 w-4 me-2"/>
+											تحويل إلى فاتورة مبيعات
+										</DropdownMenuItem>
+									) : null
+								] }
+								contextMenuItems={ (quote) => [
+									quote.status === QuotationStatus.Active ? (
+										<ContextMenuItem
+											key="conv"
+											className="text-emerald-600 font-semibold"
+											onSelect={ () => handleConvert(quote) }
+										>
+											<FilePlusCorner className="h-4 w-4 me-2"/>
+											تحويل إلى فاتورة مبيعات
+										</ContextMenuItem>
+									) : null
+								] }
+							/>
+							<CrudPage.TablePagination
+								pageSize={ Cubits.quotations.pageSize.value }
+								totalNumber={ Cubits.quotations.count.value }
+								currentPage={ Cubits.quotations.currentPage.value }
+								onPageChanged={ (newPage) => Cubits.quotations.changePage(newPage) }
+							/>
+						</CrudPage.Table>
+					);
+				}
+				return <TablePreview.Empty/>;
+			})() }
+
+			<CrudPage.ChangeDialog
+				fetchEntity={ async (id: number) =>
+				{
+					if (!id || id <= 0) return undefined;
+					const result = await Services.quotationsApi.Get(id);
+					return result.data;
+				} }
+				changeDialog={ (dto: QuotationDto | undefined, closeDialog) => (
+					<ChangeQuotationDialog
+						dto={ dto }
+						service={ Services.quotationsApi }
+						onSuccess={ (data, mode) =>
+						{
+							if (mode === ChangeableEntityMode.Create)
+							{
+								Cubits.quotations.add(data);
+								closeDialog();
+							}
+							else
+							{
+								Cubits.quotations.update(data);
+							}
+						} }
+					/>
+				) }
+			/>
+
+			<CrudPage.DeleteDialog
+				entityNameSelector={ () => `"${ t("invoices.quotation") }"` }
+				service={ Services.quotationsApi }
+				onSuccess={ (entity) => Cubits.quotations.delete(entity) }
+			/>
+
+			{ printedInvoice.value &&
+				createPortal(
+					<PortalReportContainer>
+						<InvoiceReport data={ printedInvoice.value } isPortal={ true }/>
+					</PortalReportContainer>,
+					document.body
+				) }
+		</CrudPage>
+	);
+}
+
+function RenderQuotationFilterInput({rule, field}: FilterValueInputProps)
+{
+	useSignals();
+	if (field.propertyName === "PartnerId")
+	{
+		return (
+			<FilterLabelWrapper rule={ rule }>
+				{ (label) => (
+					<PartnersSearchableSelect
+						id={ rule.value as Signal<number | undefined> }
+						label={ label }
+						types={ [PartnerType.Customer] }
+						onSelect={ (entity) => (rule.value.value = entity ? entity.id : "") }
+					/>
+				) }
+			</FilterLabelWrapper>
+		);
+	}
+	if (field.propertyName === "StoreId")
+	{
+		return (
+			<FilterLabelWrapper rule={ rule }>
+				{ (label) => (
+					<StoresSearchableSelect
+						id={ rule.value as Signal<number | undefined> }
+						label={ label }
+						onSelect={ (entity) => (rule.value.value = entity ? entity.id : "") }
+					/>
+				) }
+			</FilterLabelWrapper>
+		);
+	}
+	if (field.propertyName === "Items")
+	{
+		return <ItemsMultiSearchableSelect onToggle={ (ids) => (rule.value.value = ids) }/>;
+	}
+	return undefined;
+}

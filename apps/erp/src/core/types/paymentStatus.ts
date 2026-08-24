@@ -1,6 +1,7 @@
-import { InvoiceDto } from "@/core/data/invoices/invoice.ts";
 import { Services } from "@/core/services/services.ts";
 import type { TFunction } from "i18next";
+import type { SalesInvoiceDto } from "@/core/data/commercial/salesInvoice.ts";
+import type { PurchaseInvoiceDto } from "@/core/data/commercial/purchaseInvoice.ts";
 
 
 export enum PaymentStatus
@@ -11,7 +12,10 @@ export enum PaymentStatus
 	Overpaid
 }
 
-export function getPaymentStatus(invoice: InvoiceDto, t: TFunction<"accounting">): { message: string; styles: string; }
+export function getPaymentStatus(invoice: SalesInvoiceDto | PurchaseInvoiceDto, t: TFunction<"accounting">): {
+	message: string;
+	styles: string;
+}
 {
 	if (invoice.paymentStatusId === PaymentStatus.NotPaid)
 	{
@@ -35,4 +39,4 @@ export function getPaymentStatus(invoice: InvoiceDto, t: TFunction<"accounting">
 		}),
 		styles: "bg-orange-100 text-orange-800"
 	};
-};
+}

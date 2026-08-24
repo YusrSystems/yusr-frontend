@@ -1,14 +1,27 @@
 import { formatNumber } from "@/features/report/utils/formating";
-import type { InvoiceReportResult } from "./invoiceReportResult";
+import {
+	type CommercialReportResult,
+	isPurchaseInvoiceReport,
+	isQuotationReport,
+	isSalesInvoiceReport
+} from "./invoiceReportResult";
 import { Services } from "@/core/services/services";
-import { InvoiceType } from "@/core/types/invoiceType";
+import type { ICommercialDocumentDto } from "@/core/data/commercial/commercialDocument";
 
 
-export function ThermalInvoiceReport({data, isPortal}: { data: InvoiceReportResult, isPortal: boolean })
+export function ThermalInvoiceReport({data, isPortal}: { data: CommercialReportResult; isPortal: boolean })
 {
-	const {invoice, partner} = data;
+	const {partner} = data;
 	const setting = Services.auth.setting;
-	const isPurchase = invoice.type === InvoiceType.Purchase || invoice.type === InvoiceType.PurchaseReturn;
+
+	const isPurchase = isPurchaseInvoiceReport(data);
+	const isQuote = isQuotationReport(data);
+	const isSales = isSalesInvoiceReport(data);
+
+	const doc: ICommercialDocumentDto = isQuote ? data.quotation : data.invoice;
+	const qrBytes = isSales ? data.qrBytes : undefined;
+	const isInvoice = "paidAmount" in data;
+
 	const partnerLabelAr = isPurchase ? "المورد" : "العميل";
 	const defaultPartnerName = isPurchase ? "مورد نقدي" : "عميل نقدي";
 
@@ -17,20 +30,20 @@ export function ThermalInvoiceReport({data, isPortal}: { data: InvoiceReportResu
 			className="thermal-report text-black bg-white text-[12px] leading-snug font-sans mx-auto max-w-[80mm] p-2 pb-8">
 			<style>{ `
                 @media print {
-                    @page { 
-                        margin: 0; 
-                        size: 80mm auto; 
+                    @page {
+                        margin: 0;
+                        size: 80mm auto;
                     }
-                    html, body { 
-                        background-color: white !important; 
+                    html, body {
+                        background-color: white !important;
                         color: black !important;
                         margin: 0 !important;
                         padding: 0 !important;
                     }
-                    .thermal-report { 
-                        width: 100% !important; 
+                    .thermal-report {
+                        width: 100% !important;
                         max-width: 100% !important;
-                        padding: 2mm 4mm !important; 
+                        padding: 2mm 4mm !important;
                         margin: 0 !important;
                     }
                     ${ isPortal ? `
@@ -46,8 +59,6 @@ export function ThermalInvoiceReport({data, isPortal}: { data: InvoiceReportResu
                     }
                     ` : "" }
                 }
-                
-                /* Force pure black and white for Thermal Printers (prevents dithering/slow printing) */
                 .thermal-report * {
                     border-color: black !important;
                     color: black !important;
@@ -56,27 +67,42 @@ export function ThermalInvoiceReport({data, isPortal}: { data: InvoiceReportResu
 
 			<div className="flex flex-col items-center text-center gap-1 mb-3 border-b border-dashed border-black pb-3">
 				{ setting?.logo.value?.url && (
-					<img src={ setting.logo.value.url } alt="Logo" className="w-16 h-16 object-contain mb-1"
-					     style={ {filter: "grayscale(100%) contrast(1000%)"} }/>
+					<img
+						src={ setting.logo.value.url }
+						alt="Logo"
+						className="w-16 h-16 object-contain mb-1"
+						style={ {filter: "grayscale(100%) contrast(1000%)"} }
+					/>
 				) }
 				<h2 className="font-bold text-lg">{ setting?.companyName.value }</h2>
 				{ setting?.vatNumber.value && <p>الرقم الضريبي: { setting.vatNumber.value }</p> }
-				{ setting?.branch.value &&
-                    <p>{ setting.branch.value.cityName.value } - { setting.branch.value.district.value }</p> }
+				{ setting?.branch.value && (
+					<p>
+						{ setting.branch.value.cityName.value } - { setting.branch.value.district.value }
+					</p>
+				) }
 				{ setting?.companyPhone.value && <p>{ setting.companyPhone.value }</p> }
 			</div>
 
 			<div className="flex flex-col items-center text-center gap-1 mb-3">
 				<h3 className="font-bold text-base">{ data.titleAr }</h3>
 				<h3 className="font-bold text-sm">{ data.titleEn }</h3>
-				<p className="mt-1 font-bold">رقم الفاتورة: { invoice.id }</p>
-				<p>التاريخ: { invoice.date }</p>
+				<p className="mt-1 font-bold">رقم المستند: { doc.id }</p>
+				<p>التاريخ: { doc.date }</p>
 			</div>
 
 			<div className="mb-3 border-b border-dashed border-black pb-3">
-				<p><span className="font-bold">المستودع:</span> { invoice.storeName }</p>
-				<p><span className="font-bold">{ partnerLabelAr }:</span> { partner.name || defaultPartnerName }</p>
-				{ partner.vatNumber && <p><span className="font-bold">الرقم الضريبي:</span> { partner.vatNumber }</p> }
+				<p>
+					<span className="font-bold">المستودع:</span> { doc.storeName }
+				</p>
+				<p>
+					<span className="font-bold">{ partnerLabelAr }:</span> { partner.name || defaultPartnerName }
+				</p>
+				{ partner.vatNumber && (
+					<p>
+						<span className="font-bold">الرقم الضريبي:</span> { partner.vatNumber }
+					</p>
+				) }
 			</div>
 
 			<table className="w-full mb-3 text-right">
@@ -89,8 +115,8 @@ export function ThermalInvoiceReport({data, isPortal}: { data: InvoiceReportResu
 				</tr>
 				</thead>
 				<tbody>
-				{ invoice.invoiceItems.map((item) => (
-					<tr key={ item.id } className="border-b border-black border-dashed last:border-b-0">
+				{ doc.items.map((item, idx) => (
+					<tr key={ item.id || idx } className="border-b border-black border-dashed last:border-b-0">
 						<td className="py-2">
 							<div className="font-bold">{ item.itemName }</div>
 							<div className="text-[10px]">{ item.unitName }</div>
@@ -124,42 +150,47 @@ export function ThermalInvoiceReport({data, isPortal}: { data: InvoiceReportResu
 				</div>
 			</div>
 
-			<div className="flex flex-col gap-1 mb-4 border-b border-dashed border-black pb-3">
-				{ data.tenderedAmount !== undefined && data.tenderedAmount !== null ? (
-					<>
-						<div className="flex justify-between font-bold">
-							<span>المبلغ المستلم:</span>
-							<span>{ formatNumber(data.tenderedAmount) }</span>
-						</div>
-						<div className="flex justify-between font-bold">
-							<span>الباقي للعميل:</span>
-							<span>{ formatNumber(data.changeAmount || 0) }</span>
-						</div>
-					</>
-				) : (
-					<>
-						<div className="flex justify-between font-bold">
-							<span>المدفوع:</span>
-							<span>{ formatNumber(data.paidAmount) }</span>
-						</div>
-						<div className="flex justify-between font-bold">
-							<span>المتبقي:</span>
-							<span>{ formatNumber(data.remainingAmount) }</span>
-						</div>
-					</>
-				) }
-			</div>
-
-			{ data.qrBytes && (
-				<div className="flex justify-center mb-4">
-					<img src={ `data:image/png;base64,${ data.qrBytes }` } alt="QR Code"
-					     className="w-36 h-36 object-contain"/>
+			{ isInvoice && (
+				<div className="flex flex-col gap-1 mb-4 border-b border-dashed border-black pb-3">
+					{ isSales && data.tenderedAmount !== undefined && data.tenderedAmount !== null ? (
+						<>
+							<div className="flex justify-between font-bold">
+								<span>المبلغ المستلم:</span>
+								<span>{ formatNumber(data.tenderedAmount) }</span>
+							</div>
+							<div className="flex justify-between font-bold">
+								<span>الباقي للعميل:</span>
+								<span>{ formatNumber(data.changeAmount || 0) }</span>
+							</div>
+						</>
+					) : (
+						<>
+							<div className="flex justify-between font-bold">
+								<span>المدفوع:</span>
+								<span>{ formatNumber((data as { paidAmount: number }).paidAmount) }</span>
+							</div>
+							<div className="flex justify-between font-bold">
+								<span>المتبقي:</span>
+								<span>{ formatNumber((data as { remainingAmount: number }).remainingAmount) }</span>
+							</div>
+						</>
+					) }
 				</div>
 			) }
 
-			{ invoice.policy && (
+			{ qrBytes && (
+				<div className="flex justify-center mb-4">
+					<img
+						src={ `data:image/png;base64,${ qrBytes }` }
+						alt="QR Code"
+						className="w-36 h-36 object-contain"
+					/>
+				</div>
+			) }
+
+			{ doc.policy && (
 				<div className="text-center text-[11px] font-bold whitespace-pre-wrap mt-4">
-					{ invoice.policy }
+					{ doc.policy }
 				</div>
 			) }
 		</div>

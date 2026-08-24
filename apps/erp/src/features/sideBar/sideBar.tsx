@@ -33,7 +33,7 @@ import {
 	useSidebar,
 	YusrApiHelper
 } from "yusr-ui";
-import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 
@@ -68,6 +68,10 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 					Services.auth.hasAuth(
 						SystemPermissionsResources.InvoicePurchase,
 						SystemPermissionsActions.Get
+					) ||
+					Services.auth.hasAuth(
+						SystemPermissionsResources.Invoices,
+						SystemPermissionsActions.Get
 					),
 				subItems: [
 					{
@@ -99,15 +103,10 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 					{
 						title: t("sidebar.quotationInvoices"),
 						url: "/quotations",
-						hasAuth:
-							Services.auth.hasAuth(
-								SystemPermissionsResources.InvoiceSell,
-								SystemPermissionsActions.Get
-							) &&
-							Services.auth.hasAuth(
-								SystemPermissionsResources.Invoices,
-								SystemPermissionsActions.Get
-							)
+						hasAuth: Services.auth.hasAuth(
+							SystemPermissionsResources.Invoices,
+							SystemPermissionsActions.Get
+						)
 					}
 				]
 			},

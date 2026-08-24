@@ -24,7 +24,7 @@ import { PosSessionDto } from "@/core/data/posSession";
 import { PosTerminalDto } from "@/core/data/posTerminal";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
 import { Clock, Loader2, Printer, ReceiptText, RotateCcw, Store, Undo2 } from "lucide-react";
-import { InvoiceReportRequest } from "@/core/data/report/invoiceReportRequest";
+import { InvoiceReportRequest } from "@/features/reports/invoice/invoiceReportRequest.ts";
 import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport";
 import { PortalReportContainer } from "@/features/report/reportContainer";

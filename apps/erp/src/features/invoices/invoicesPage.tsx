@@ -48,7 +48,7 @@ import { PartnersSearchableSelect } from "@/core/components/searchableSelect/par
 import { APP_NAME } from "../../../appConfig.ts";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport";
 import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult";
-import { InvoiceReportRequest } from "@/core/data/report/invoiceReportRequest";
+import { InvoiceReportRequest } from "@/features/reports/invoice/invoiceReportRequest.ts";
 import { Link } from "react-router-dom";
 
 

@@ -1,8 +1,8 @@
 import { Dto } from "yusr-ui";
 import { PosSessionStatus } from "../types/posSessionStatus";
 import { PaymentMethodCategory } from "../types/paymentMethodCategory";
-import { InvoiceType } from "../types/invoiceType";
-import { InvoiceItemDto } from "./invoices/invoiceItem";
+import type { SalesInvoiceType } from "@/core/types/commercialEnums.ts";
+import type { SalesInvoiceItemDto } from "@/core/data/commercial/salesInvoice.ts";
 
 
 export interface PosSessionCloseDto
@@ -65,7 +65,7 @@ export class PosPaymentLineDto
 export class PosCheckoutDto
 {
 	public posSessionId!: number;
-	public invoiceType!: InvoiceType;
+	public invoiceType!: SalesInvoiceType;
 	public originalInvoiceId?: number;
 	public partnerId!: number;
 	public fullAmount!: number;
@@ -73,6 +73,6 @@ export class PosCheckoutDto
 	public notes?: string;
 	public idempotencyKey?: string;
 
-	public items: InvoiceItemDto[] = [];
+	public items: SalesInvoiceItemDto[] = [];
 	public payments: PosPaymentLineDto[] = [];
 }

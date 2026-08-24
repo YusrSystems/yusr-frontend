@@ -6,17 +6,27 @@ import { ReportTableTh } from "@/features/report/components/reportTableTh";
 import { ReportTableTd } from "@/features/report/components/reportTableTd";
 import { ReportField } from "@/features/report/components/reportField";
 import { formatNumber } from "@/features/report/utils/formating";
-import type { InvoiceReportResult } from "./invoiceReportResult";
-import { InvoiceType } from "@/core/types/invoiceType";
+import {
+	type CommercialReportResult,
+	isPurchaseInvoiceReport,
+	isQuotationReport,
+	isSalesInvoiceReport
+} from "./invoiceReportResult";
 import { A4InvoiceSummary } from "./a4InvoiceSummary";
+import type { ICommercialDocumentDto } from "@/core/data/commercial/commercialDocument";
 
 
-export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, isPortal: boolean })
+export function A4InvoiceReport({data, isPortal}: { data: CommercialReportResult; isPortal: boolean })
 {
-	const {invoice, partner} = data;
-	const isStandard = !!partner.vatNumber;
+	const {partner} = data;
+	const isStandard = Boolean(partner.vatNumber);
 
-	const isPurchase = invoice.type === InvoiceType.Purchase || invoice.type === InvoiceType.PurchaseReturn;
+	const isPurchase = isPurchaseInvoiceReport(data);
+	const isQuote = isQuotationReport(data);
+
+	const doc: ICommercialDocumentDto = isQuote ? data.quotation : data.invoice;
+	const qrBytes = isSalesInvoiceReport(data) ? data.qrBytes : undefined;
+
 	const partnerLabelAr = isPurchase ? "المورد" : "العميل";
 	const partnerLabelEn = isPurchase ? "Supplier" : "Customer";
 
@@ -25,20 +35,25 @@ export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, i
 			<ReportHeader>
 				<ReportHeader.CompanySection/>
 				<ReportHeader.TitleSection titleAr={ data.titleAr } titleEn={ data.titleEn }>
-					<ReportHeader.Id id={ invoice.id }/>
+					<ReportHeader.Id id={ doc.id }/>
 				</ReportHeader.TitleSection>
 				<ReportHeader.MetaDataSection>
 					<div className="flex justify-end w-full h-full pb-6">
-						{ data.qrBytes && <img src={ `data:image/png;base64,${ data.qrBytes }` } alt="QR Code"
-                                               className="h-35 w-35 object-contain"/> }
+						{ qrBytes && (
+							<img
+								src={ `data:image/png;base64,${ qrBytes }` }
+								alt="QR Code"
+								className="h-35 w-35 object-contain"
+							/>
+						) }
 					</div>
 				</ReportHeader.MetaDataSection>
 			</ReportHeader>
 
 			<div className="flex flex-col gap-4 mt-6 print:break-inside-avoid">
 				<div className="grid grid-cols-2 gap-8">
-					<ReportField labelAr="المستودع" labelEn="Store" value={ invoice.storeName }/>
-					<ReportField labelAr="بتاريخ" labelEn="Date" value={ invoice.date }/>
+					<ReportField labelAr="المستودع" labelEn="Store" value={ doc.storeName || "-" }/>
+					<ReportField labelAr="بتاريخ" labelEn="Date" value={ doc.date }/>
 				</div>
 
 				<div className="border border-border rounded-lg overflow-hidden print:break-inside-avoid">
@@ -49,11 +64,21 @@ export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, i
 					<div className="p-4 grid grid-cols-2 gap-3">
 						<ReportField labelAr="الاسم" labelEn="Name" value={ partner.name || "-" }/>
 						{ isStandard ? (
-							<ReportField labelAr="العنوان" labelEn="Address"
-							             value={ [partner.buildingNumber, partner.street, partner.district, partner.cityName].filter(Boolean).join(" - ") || "-" }/>
+							<ReportField
+								labelAr="العنوان"
+								labelEn="Address"
+								value={
+									[partner.buildingNumber, partner.street, partner.district, partner.cityName]
+										.filter(Boolean)
+										.join(" - ") || "-"
+								}
+							/>
 						) : (
-							<ReportField labelAr="رقم الجوال" labelEn="Phone Number"
-							             value={ partner.phone || partner.mobile || "-" }/>
+							<ReportField
+								labelAr="رقم الجوال"
+								labelEn="Phone Number"
+								value={ partner.phone || partner.mobile || "-" }
+							/>
 						) }
 						{ isStandard && (
 							<>
@@ -81,12 +106,12 @@ export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, i
 						</tr>
 						</thead>
 						<tbody>
-						{ invoice.invoiceItems.map((item, idx) =>
+						{ doc.items.map((item, idx) =>
 						{
 							const isEven = idx % 2 === 0;
 							const taxAmount = item.taxInclusiveTotalPrice - item.taxExclusiveTotalPrice;
 							return (
-								<tr key={ item.id }>
+								<tr key={ item.id || idx }>
 									<ReportTableTd isEven={ isEven }>{ idx + 1 }</ReportTableTd>
 									<ReportTableTd isEven={ isEven } align="start">
 										<div className="flex flex-col">
@@ -104,11 +129,13 @@ export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, i
 										isEven={ isEven }>{ formatNumber(item.taxExclusivePrice) }</ReportTableTd>
 									<ReportTableTd isEven={ isEven }>{ formatNumber(item.settlement) }</ReportTableTd>
 									<ReportTableTd isEven={ isEven } className="whitespace-nowrap">
-										{ formatNumber(taxAmount) } <span
-										className="text-[10px] text-muted-foreground">({ item.totalTaxesPerc }%)</span>
+										{ formatNumber(taxAmount) }{ " " }
+										<span
+											className="text-[10px] text-muted-foreground">({ item.totalTaxesPerc }%)</span>
 									</ReportTableTd>
-									<ReportTableTd isEven={ isEven }
-									               className="font-bold">{ formatNumber(item.taxInclusiveTotalPrice) }</ReportTableTd>
+									<ReportTableTd isEven={ isEven } className="font-bold">
+										{ formatNumber(item.taxInclusiveTotalPrice) }
+									</ReportTableTd>
 								</tr>
 							);
 						}) }
@@ -117,15 +144,16 @@ export function A4InvoiceReport({data, isPortal}: { data: InvoiceReportResult, i
 
 					<div className="flex justify-between mt-6 print:break-inside-avoid gap-3 items-start">
 						<div className="flex-1 pt-2">
-							{ invoice.policy && (
+							{ doc.policy && (
 								<div
 									className="text-[10px] text-muted-foreground whitespace-pre-wrap bg-muted/10 p-3 rounded-lg border border-border/50">
-									<span className="text-xs font-bold text-foreground block mb-1">الشروط والأحكام / Terms & Conditions:</span>
-									{ invoice.policy }
+									<span className="text-xs font-bold text-foreground block mb-1">
+										الشروط والأحكام / Terms & Conditions:
+									</span>
+									{ doc.policy }
 								</div>
 							) }
 						</div>
-
 						<A4InvoiceSummary data={ data }/>
 					</div>
 				</ReportPageBody>

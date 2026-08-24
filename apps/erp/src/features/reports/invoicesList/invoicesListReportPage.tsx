@@ -1,97 +1,84 @@
-import ReportPage from "@/features/report/reportPage.tsx";
-import { InvoicesListReport } from "@/features/reports/invoicesList/invoicesListReport.tsx";
-import { useEffect, useMemo } from "react";
-import { Cubits } from "@/core/services/cubits.ts";
-import {
-	CrudTablePagination,
-	FilterSection,
-	FormField,
-	MultiSearchableSelect,
-	SystemPermissionsActions
-} from "yusr-ui";
+import ReportPage from "@/features/report/reportPage";
+import { InvoicesListReport } from "@/features/reports/invoicesList/invoicesListReport";
+import { useEffect, useState } from "react";
+import { Cubits } from "@/core/services/cubits";
+import { Button, CrudTablePagination, FilterSection, SystemPermissionsActions } from "yusr-ui";
 import { useSignals } from "@preact/signals-react/runtime";
-import { effect, useSignal } from "@preact/signals-react";
 import { useTranslation } from "react-i18next";
-import { InvoiceType } from "@/core/types/invoiceType.ts";
-import { RenderInvoiceFilterInput } from "@/features/invoices/invoicesPage.tsx";
-import Invoice, { type InvoiceDto } from "@/core/data/invoices/invoice.ts";
-import { APP_NAME } from "../../../../appConfig.ts";
-import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
-import { Services } from "@/core/services/services.ts";
+import { APP_NAME } from "../../../../appConfig";
+import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import { Services } from "@/core/services/services";
+import { SalesInvoiceDto } from "@/core/data/commercial/salesInvoice";
+import { PurchaseInvoiceDto } from "@/core/data/commercial/purchaseInvoice";
+import {
+	getPurchaseInvoiceTypeName,
+	getSalesInvoiceTypeName,
+	PurchaseInvoiceType,
+	SalesInvoiceType
+} from "@/core/types/commercialEnums";
 
 
 export function InvoicesListReportPage()
 {
 	useSignals();
-	const {t} = useTranslation("accounting");
+	const {t} = useTranslation(["accounting", "erpCommon"]);
+	const [domain, setDomain] = useState<"sales" | "purchases">("sales");
 
-	const selectedTypes = useSignal<number[]>([]);
-	const selectedTypeLabels = useSignal<Record<number, string>>({});
-
-	const invoiceTypeOptions = useMemo(() => [
-		{id: InvoiceType.Sell, name: t("invoices.sellInvoice")},
-		{id: InvoiceType.Purchase, name: t("invoices.purchaseInvoice")},
-		{id: InvoiceType.SellReturn, name: t("invoices.sellReturn")},
-		{id: InvoiceType.PurchaseReturn, name: t("invoices.purchaseReturn")},
-		{id: InvoiceType.Quotation, name: t("invoices.quotation")}
-	], [t]);
+	useEffect(() =>
+	{
+		document.title = `${ t("erpCommon:reports.InvoicesList") } | ${ APP_NAME }`;
+	}, [t]);
 
 	useEffect(() =>
 	{
 		if (!Services.auth.hasAuth(SystemPermissionsResources.ReportInvoiceList, SystemPermissionsActions.Get)) return;
-		// Initial Load
-		Cubits.invoices.init(selectedTypes.value, undefined, 1000);
-
-		// Subscribe to subsequent changes to selectedTypes
-		let isFirst = true;
-		const dispose = effect(() =>
+		if (domain === "sales")
 		{
-			const types = selectedTypes.value;
-			if (isFirst)
-			{
-				isFirst = false;
-				return;
-			}
-
-			if (!Services.auth.hasAuth(SystemPermissionsResources.ReportInvoiceList, SystemPermissionsActions.Get)) return;
-
-			// Call filter while preserving search text, query params, and filter groups
-			void Cubits.invoices.filter(
-				1,
-				undefined,
-				Cubits.invoices.searchText.value,
-				types,
-				undefined,
-				undefined
-			);
-		});
-
-		return () => dispose();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() =>
-	{
-		document.title = "قائمة الفواتير";
-
-		return () =>
+			Cubits.salesInvoices.init([SalesInvoiceType.Invoice, SalesInvoiceType.CreditNote, SalesInvoiceType.DebitNote], undefined, 1000);
+		}
+		else
 		{
-			document.title = APP_NAME;
-		};
-	}, []);
+			Cubits.purchaseInvoices.init([PurchaseInvoiceType.Bill, PurchaseInvoiceType.CreditNote, PurchaseInvoiceType.DebitNote], undefined, 1000);
+		}
+	}, [domain]);
+
+	const cubit = domain === "sales" ? Cubits.salesInvoices : Cubits.purchaseInvoices;
+	const filterFields = domain === "sales" ? Cubits.salesInvoiceFilterFields : Cubits.purchaseInvoiceFilterFields;
 
 	return (
 		<ReportPage permissionResource={ SystemPermissionsResources.ReportInvoiceList }>
-
 			<ReportPage.ActionButtonsContainer>
-				<ReportPage.ExcelButton<InvoiceDto>
-					fileName="تقرير_المستندات_والفواتير"
-					getRows={ async () => Cubits.invoices.entities.value ?? [] }
+				<div className="flex bg-muted/40 rounded-lg p-1 border me-auto">
+					<Button
+						variant={ domain === "sales" ? "default" : "ghost" }
+						size="sm"
+						onClick={ () => setDomain("sales") }
+					>
+						فواتير المبيعات
+					</Button>
+					<Button
+						variant={ domain === "purchases" ? "default" : "ghost" }
+						size="sm"
+						onClick={ () => setDomain("purchases") }
+					>
+						فواتير المشتريات
+					</Button>
+				</div>
+
+				<ReportPage.ExcelButton<SalesInvoiceDto | PurchaseInvoiceDto>
+					fileName={ domain === "sales" ? "تقرير_قائمة_فواتير_المبيعات" : "تقرير_قائمة_فواتير_المشتريات" }
+					getRows={ async () => cubit.entities.value ?? [] }
 					columns={ [
 						{header: "التاريخ", accessor: (r) => r.date},
-						{header: "نوع الفاتورة", accessor: (r) => Invoice.getTypeName(r.type, t)},
-						{header: "الجهة", accessor: (r) => r.partnerName},
-						{header: "المستودع", accessor: (r) => r.storeName},
+						{
+							header: "نوع الفاتورة",
+							accessor: (r) =>
+								domain === "sales"
+									? getSalesInvoiceTypeName((r as SalesInvoiceDto).type, t)
+									: getPurchaseInvoiceTypeName((r as PurchaseInvoiceDto).type, t)
+						},
+						{header: "الجهة", accessor: (r) => r.partnerName ?? ""},
+						{header: "المستودع", accessor: (r) => r.storeName ?? ""},
 						{header: "المبلغ الإجمالي", accessor: (r) => r.fullAmount.toString()},
 						{header: "المبلغ المدفوع", accessor: (r) => r.paidAmount.toString()},
 						{header: "قيمة التسوية", accessor: (r) => r.settlementAmount.toString()},
@@ -102,56 +89,34 @@ export function InvoicesListReportPage()
 			</ReportPage.ActionButtonsContainer>
 
 			<div className="print:hidden w-full shrink-0 flex flex-col gap-4">
-				<div className="w-full ">
-					<FormField
-						label={ t("invoices.invoiceType") }>
-						<MultiSearchableSelect>
-							<MultiSearchableSelect.Trigger
-								labels={ selectedTypeLabels }
-							/>
-							<MultiSearchableSelect.Content>
-								<MultiSearchableSelect.Command>
-									{ invoiceTypeOptions.map((opt) => (
-										<MultiSearchableSelect.Option
-											key={ opt.id }
-											item={ opt }
-											ids={ selectedTypes }
-											labels={ selectedTypeLabels }
-											labelSelector="name"
-										>
-											<MultiSearchableSelect.OptionBody label={ opt.name }/>
-										</MultiSearchableSelect.Option>
-									)) }
-								</MultiSearchableSelect.Command>
-								<MultiSearchableSelect.Footer ids={ selectedTypes } labels={ selectedTypeLabels }/>
-							</MultiSearchableSelect.Content>
-						</MultiSearchableSelect>
-					</FormField>
-				</div>
-
 				<FilterSection
-					fieldsCubit={ Cubits.invoiceFilterFields }
-					onApply={ (groups) => Cubits.invoices.applyFilterGroups(groups) }
-					onClear={ () => Cubits.invoices.clearFilterGroups() }
-					renderCustomInput={ RenderInvoiceFilterInput }
+					fieldsCubit={ filterFields }
+					onApply={ (groups) => cubit.applyFilterGroups(groups) }
+					onClear={ () => cubit.clearFilterGroups() }
 				/>
 			</div>
 
 			<div className="flex-1 min-h-0 flex flex-col print:block">
-				<InvoicesListReport/>
+				<InvoicesListReport
+					cubit={ cubit }
+					getTypeName={ (type) =>
+						domain === "sales"
+							? getSalesInvoiceTypeName(type as SalesInvoiceType, t)
+							: getPurchaseInvoiceTypeName(type as PurchaseInvoiceType, t)
+					}
+					titleAr={ domain === "sales" ? "قائمة فواتير المبيعات" : "قائمة فواتير المشتريات" }
+					titleEn={ domain === "sales" ? "Sales Invoices List" : "Purchase Invoices List" }
+					routePrefix={ domain === "sales" ? "sales" : "purchases" }
+				/>
 			</div>
 
 			<CrudTablePagination
 				className="print:hidden w-full bg-card text-card-foreground border border-t-0 p-4 shadow-sm rounded-b-xl shrink-0"
-				pageSize={ Cubits.invoices.pageSize.value }
-				totalNumber={ Cubits.invoices.count.value }
-				currentPage={ Cubits.invoices.currentPage.value }
-				onPageChanged={ (newPage) =>
-				{
-					Cubits.invoices.changePage(newPage);
-				} }
+				pageSize={ cubit.pageSize.value }
+				totalNumber={ cubit.count.value }
+				currentPage={ cubit.currentPage.value }
+				onPageChanged={ (newPage) => cubit.changePage(newPage) }
 			/>
-
 		</ReportPage>
 	);
 }

@@ -41,7 +41,8 @@ export class VoucherDto extends Dto implements IStatusWorkflowDto, IRowVerDto
 	public paymentMethodId!: number;
 	public paymentMethodName!: string;
 	public description?: string;
-	public invoiceId?: number;
+	public salesInvoiceId?: number;
+	public purchaseInvoiceId?: number;
 	public giver?: string;
 	public recipient?: string;
 	public notes?: string;
@@ -75,7 +76,8 @@ export class Voucher extends ChangeableEntity<VoucherDto> implements IStatusWork
 	public paymentMethodId: Signal<number>;
 	public paymentMethodName: Signal<string>;
 	public description: Signal<string | undefined>;
-	public invoiceId: Signal<number | undefined>;
+	public salesInvoiceId: Signal<number | undefined>;
+	public purchaseInvoiceId: Signal<number | undefined>;
 	public giver: Signal<string | undefined>;
 	public recipient: Signal<string | undefined>;
 	public notes: Signal<string | undefined>;
@@ -148,7 +150,8 @@ export class Voucher extends ChangeableEntity<VoucherDto> implements IStatusWork
 		this.paymentMethodId = this.assign("paymentMethodId", dto?.paymentMethodId);
 		this.paymentMethodName = this.assign("paymentMethodName", dto?.paymentMethodName ?? "");
 		this.description = this.assign("description", dto?.description);
-		this.invoiceId = this.assign("invoiceId", dto?.invoiceId);
+		this.salesInvoiceId = this.assign("salesInvoiceId", dto?.salesInvoiceId);
+		this.purchaseInvoiceId = this.assign("purchaseInvoiceId", dto?.purchaseInvoiceId);
 		this.giver = this.assign("giver", dto?.giver);
 		this.recipient = this.assign("recipient", dto?.recipient);
 		this.notes = this.assign("notes", dto?.notes);
