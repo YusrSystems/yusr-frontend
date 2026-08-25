@@ -1,7 +1,6 @@
 import { Box, FolderKanban, Siren } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSearchParams } from "react-router-dom";
 import {
 	ChangeableEntityMode,
 	ChangeDialog,
@@ -10,7 +9,6 @@ import {
 	FieldsSection,
 	FormField,
 	Loading,
-	type RequestResult,
 	StorageType,
 	SystemPermissionsActions,
 	TextAreaField,
@@ -19,20 +17,20 @@ import {
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Quotation, QuotationDto } from "@/core/data/commercial/quotation";
-import { ItemType } from "@/core/data/item";
 import { PartnerType } from "@/core/data/partner";
 import { Services } from "@/core/services/services";
-import { Cubits } from "@/core/services/cubits";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect";
 import StoreItemSelector from "@/features/items/storeItemSelector";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import { CommercialMath } from "@/features/commercial/logic/commercialMath";
 import { CommercialGlobalSettlement } from "@/features/commercial/components/commercialGlobalSettlement";
 import { CommercialSummaryCard } from "@/features/commercial/components/commercialSummaryCard";
 import { CommercialPolicyTab } from "@/features/commercial/components/commercialPolicyTab";
 import { CommercialAttachmentsTab } from "@/features/commercial/components/commercialAttachmentsTab";
 import { CommercialItemsTable } from "@/features/commercial/components/commercialItemsTable";
+import { useStoreItemsSync } from "../hooks/useStoreItemsSync";
+import { useCommercialUrlLoader } from "../hooks/useCommercialUrlLoader";
+import { prepareCommercialPayload } from "../logic/commercialPayload";
 
 
 export default function ChangeQuotationDialog({
@@ -43,76 +41,43 @@ export default function ChangeQuotationDialog({
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
-	const [searchParams] = useSearchParams();
-	const copyFromId = searchParams.get("copyFromId");
-
 	const entity = useMemo(() => signal(dto ? Quotation.load(dto) : Quotation.create()), [dto]);
 	const isLoading = useMemo(() => signal(false), []);
 	const isSaving = useMemo(() => signal(false), []);
-
 	const {commitFiles} = useStorageFile(
 		() => entity.value.files.value ?? [],
 		(files) => (entity.value.files.value = files),
 		StorageType.Private
 	);
 
-	useEffect(() =>
-	{
-		if (entity.value.mode.value === ChangeableEntityMode.Create && copyFromId && Number(copyFromId) > 0)
-		{
-			isLoading.value = true;
-			const loadCopy = async () =>
-			{
-				try
-				{
-					const res: RequestResult<QuotationDto> = await service.Get(Number(copyFromId));
-					if (res?.data)
-					{
-						entity.value.loadFromCopy(res.data);
-					}
-				}
-				finally
-				{
-					isLoading.value = false;
-				}
-			};
-			void loadCopy();
-		}
-	}, [copyFromId, service]);
+	const canAdd = Services.auth.hasAuth(SystemPermissionsResources.Quotations, SystemPermissionsActions.Add);
+	const canUpdate = Services.auth.hasAuth(SystemPermissionsResources.Quotations, SystemPermissionsActions.Update);
 
-	const currentStoreId = entity.value.storeId.value;
-	useEffect(() =>
-	{
-		if (currentStoreId && !entity.value.isDisabled)
-		{
-			Cubits.items.init([ItemType.Product, ItemType.Service], {storeId: currentStoreId});
-		}
-	}, [currentStoreId]);
+	const {copyFromId} = useCommercialUrlLoader<QuotationDto>({
+		mode: entity.value.mode,
+		isLoading,
+		hasAddAuth: canAdd,
+		fetchCopyDetails: (id) => service.Get(id),
+		onLoadCopy: (data) => entity.value.loadFromCopy(data)
+	});
+
+	useStoreItemsSync(
+		entity.value.storeId,
+		entity.value.isDisabled,
+		entity.value.mode.value === ChangeableEntityMode.Create ? canAdd : canUpdate
+	);
 
 	if (
-		(entity.value.mode.value === ChangeableEntityMode.Create &&
-			!Services.auth.hasAuth(SystemPermissionsResources.Quotations, SystemPermissionsActions.Add)) ||
-		(entity.value.mode.value === ChangeableEntityMode.Update &&
-			!Services.auth.hasAuth(SystemPermissionsResources.Quotations, SystemPermissionsActions.Update))
+		(entity.value.mode.value === ChangeableEntityMode.Create && !canAdd) ||
+		(entity.value.mode.value === ChangeableEntityMode.Update && !canUpdate)
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const transformDataBeforeSave = async (data: QuotationDto): Promise<QuotationDto> =>
+	const transformDataBeforeSave = async (): Promise<QuotationDto> =>
 	{
-		data.fullAmount = CommercialMath.calcDocumentTaxInclusivePrice(
-			entity.value.items.value.map((i) => ({
-				taxExclusivePrice: i.taxExclusivePrice.value,
-				taxInclusivePrice: i.taxInclusivePrice.value,
-				settlement: i.settlement.value,
-				quantity: i.quantity.value,
-				totalTaxesPerc: i.totalTaxesPerc.value
-			}))
-		);
-		data.items.forEach((ii, index) => (ii.index = index));
-		data.files = await commitFiles(entity.value.files.value, "Quotations");
-		return data;
+		return prepareCommercialPayload(entity.value, commitFiles, "Quotations");
 	};
 
 	const title = copyFromId

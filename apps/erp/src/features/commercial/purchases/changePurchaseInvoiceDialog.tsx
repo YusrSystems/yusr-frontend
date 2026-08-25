@@ -1,7 +1,6 @@
 import { Box, FolderKanban, Siren } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSearchParams } from "react-router-dom";
 import {
 	ChangeableEntityMode,
 	ChangeDialog,
@@ -10,14 +9,13 @@ import {
 	FieldsSection,
 	FormField,
 	Loading,
-	type RequestResult,
 	SelectField,
 	StorageType,
 	SystemPermissionsActions,
 	TextField,
 	useStorageFile
 } from "yusr-ui";
-import { signal, useComputed } from "@preact/signals-react";
+import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { PurchaseInvoice, PurchaseInvoiceDto, PurchaseInvoiceMode } from "@/core/data/commercial/purchaseInvoice";
 import { getPurchaseInvoiceTypeName, PurchaseInvoiceType } from "@/core/types/commercialEnums";
@@ -35,9 +33,11 @@ import { CommercialSummaryCard } from "../components/commercialSummaryCard";
 import { CommercialPolicyTab } from "../components/commercialPolicyTab";
 import { CommercialAttachmentsTab } from "../components/commercialAttachmentsTab";
 import { CommercialPaymentVouchers } from "../components/commercialPaymentVouchers";
-import { CommercialMath } from "../logic/commercialMath";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
-import { ItemType } from "@/core/data/item";
+import { useInvoiceOrigin } from "../hooks/useInvoiceOrigin";
+import { useStoreItemsSync } from "../hooks/useStoreItemsSync";
+import { useCommercialUrlLoader } from "../hooks/useCommercialUrlLoader";
+import { prepareCommercialPayload } from "../logic/commercialPayload";
 
 
 export default function ChangePurchaseInvoiceDialog({
@@ -51,133 +51,48 @@ export default function ChangePurchaseInvoiceDialog({
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
-	const [searchParams] = useSearchParams();
-	const copyFromId = searchParams.get("copyFromId");
-	const returnFromId = searchParams.get("returnFromId");
-
 	const entity = useMemo(() => signal(dto ? PurchaseInvoice.load(dto) : PurchaseInvoice.create({type: fixedType})), [dto, fixedType]);
 	const isLoading = useMemo(() => signal(false), []);
 	const isSaving = useMemo(() => signal(false), []);
 	const selectedPartner = useMemo(() => signal<PartnerDto | undefined>(undefined), []);
-
 	const {commitFiles} = useStorageFile(
 		() => entity.value.files.value ?? [],
 		(files) => (entity.value.files.value = files),
 		StorageType.Private
 	);
 
-	useEffect(() =>
-	{
-		const canCreate = Services.auth.hasAuth(
-			SystemPermissionsResources.Invoices,
-			SystemPermissionsActions.Add
-		);
+	const canAdd = Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Add);
+	const canUpdate = Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Update);
 
-		if (!canCreate) return;
-
-		if (entity.value.mode.value === ChangeableEntityMode.Create && returnFromId && Number(returnFromId) > 0)
-		{
-			isLoading.value = true;
-			const loadReturn = async () =>
-			{
-				try
-				{
-					const res: RequestResult<PurchaseInvoiceDto> = await Services.purchaseInvoicesApi.GetReturnInvoiceInitialDetails(Number(returnFromId));
-					if (res?.data)
-					{
-						entity.value.loadFromReturn(res.data);
-					}
-				}
-				finally
-				{
-					isLoading.value = false;
-				}
-			};
-			void loadReturn();
-		}
-	}, [returnFromId]);
-
-	useEffect(() =>
-	{
-		const canCreate = Services.auth.hasAuth(
-			SystemPermissionsResources.Invoices,
-			SystemPermissionsActions.Add
-		);
-
-		if (!canCreate) return;
-
-		if (entity.value.mode.value === ChangeableEntityMode.Create && copyFromId && Number(copyFromId) > 0)
-		{
-			isLoading.value = true;
-			const loadCopy = async () =>
-			{
-				try
-				{
-					const res: RequestResult<PurchaseInvoiceDto> = await Services.purchaseInvoicesApi.Get(Number(copyFromId));
-					if (res?.data)
-					{
-						entity.value.loadFromCopy(res.data);
-					}
-				}
-				finally
-				{
-					isLoading.value = false;
-				}
-			};
-			void loadCopy();
-		}
-	}, [copyFromId]);
-
-	const currentStoreId = entity.value.storeId.value;
-	useEffect(() =>
-	{
-		const hasAuth =
-			(entity.value.mode.value === ChangeableEntityMode.Create &&
-				Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Add)) ||
-			(entity.value.mode.value === ChangeableEntityMode.Update &&
-				Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Update));
-
-		if (currentStoreId && !entity.value.isDisabled && hasAuth)
-		{
-			Cubits.items.init([ItemType.Product, ItemType.Service], {storeId: currentStoreId});
-		}
-	}, [currentStoreId]);
-
-	const invoiceOrigin = useComputed(() =>
-	{
-		const partnerCountryId = selectedPartner.value?.city?.countryId;
-		const settingsCountryId = Services.auth.setting?.branch?.value?.city.value?.countryId.value;
-		if (partnerCountryId === undefined || settingsCountryId === undefined)
-		{
-			return {canBeImportInvoice: false};
-		}
-		return {canBeImportInvoice: partnerCountryId !== settingsCountryId};
+	const {returnFromId, copyFromId} = useCommercialUrlLoader<PurchaseInvoiceDto>({
+		mode: entity.value.mode,
+		isLoading,
+		hasAddAuth: canAdd,
+		fetchReturnDetails: (id) => Services.purchaseInvoicesApi.GetReturnInvoiceInitialDetails(id),
+		fetchCopyDetails: (id) => Services.purchaseInvoicesApi.Get(id),
+		onLoadReturn: (data) => entity.value.loadFromReturn(data),
+		onLoadCopy: (data) => entity.value.loadFromCopy(data)
 	});
 
+	useStoreItemsSync(
+		entity.value.storeId,
+		entity.value.isDisabled,
+		entity.value.mode.value === ChangeableEntityMode.Create ? canAdd : canUpdate
+	);
+
+	const invoiceOrigin = useInvoiceOrigin(selectedPartner);
+
 	if (
-		(entity.value.mode.value === ChangeableEntityMode.Create &&
-			!Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Add)) ||
-		(entity.value.mode.value === ChangeableEntityMode.Update &&
-			!Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Update))
+		(entity.value.mode.value === ChangeableEntityMode.Create && !canAdd) ||
+		(entity.value.mode.value === ChangeableEntityMode.Update && !canUpdate)
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const transformDataBeforeSave = async (data: PurchaseInvoiceDto): Promise<PurchaseInvoiceDto> =>
+	const transformDataBeforeSave = async (): Promise<PurchaseInvoiceDto> =>
 	{
-		data.fullAmount = CommercialMath.calcDocumentTaxInclusivePrice(
-			entity.value.items.value.map((i) => ({
-				taxExclusivePrice: i.taxExclusivePrice.value,
-				taxInclusivePrice: i.taxInclusivePrice.value,
-				settlement: i.settlement.value,
-				quantity: i.quantity.value,
-				totalTaxesPerc: i.totalTaxesPerc.value
-			}))
-		);
-		data.items.forEach((ii, index) => (ii.index = index));
-		data.files = await commitFiles(entity.value.files.value, "PurchaseInvoices");
-		return data;
+		return prepareCommercialPayload(entity.value, commitFiles, "PurchaseInvoices");
 	};
 
 	const getDialogTitle = () =>
@@ -340,6 +255,7 @@ export default function ChangePurchaseInvoiceDialog({
 											<SelectField<ImportExportType>
 												label={ t("invoices.importInvoice") }
 												required
+												disabled={ entity.value.isDisabled }
 												value={ entity.value.importExportType }
 												error={ entity.value.getError("importExportType") }
 												options={ [

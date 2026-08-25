@@ -2,10 +2,9 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
-import { Signal, signal } from "@preact/signals-react";
+import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Copy, FileTextIcon, Loader2, Printer, Undo2 } from "lucide-react";
-import type { TFunction } from "i18next";
 import {
 	Button,
 	ChangeableEntityMode,
@@ -13,17 +12,13 @@ import {
 	ContextMenuItem,
 	CrudPage,
 	DropdownMenuItem,
-	FilterLabelWrapper,
 	FilterSection,
-	type FilterValueInputProps,
 	PageError,
 	PageLoaded,
 	PageLoading,
-	SelectField,
 	SystemPermissionsActions,
 	TablePreview,
-	UnauthorizedPage,
-	YusrApiHelper
+	UnauthorizedPage
 } from "yusr-ui";
 import { PurchaseInvoiceDto } from "@/core/data/commercial/purchaseInvoice";
 import {
@@ -32,22 +27,21 @@ import {
 	PurchaseInvoiceType
 } from "@/core/types/commercialEnums";
 import { getReturnStatus, InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus";
-import { getPaymentStatus, PaymentStatus } from "@/core/types/paymentStatus";
+import { getPaymentStatus } from "@/core/types/paymentStatus";
 import { PartnerType } from "@/core/data/partner";
 import { Services } from "@/core/services/services";
 import { Cubits } from "@/core/services/cubits";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import ChangePurchaseInvoiceDialog from "./changePurchaseInvoiceDialog";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
-import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
-import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect";
-import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect";
 import { PortalReportContainer } from "@/features/report/reportContainer";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport";
 import type { PurchaseInvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult";
 import { InvoicesListReport } from "@/features/reports/invoicesList/invoicesListReport";
 import { APP_NAME } from "../../../../appConfig";
 import { PurchaseInvoiceReportRequest } from "@/features/reports/invoice/invoiceReportRequest.ts";
+import { useCommercialPrint } from "../hooks/useCommercialPrint";
+import { renderCommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
 
 
 export default function PurchaseInvoicesPage({initialType}: { initialType?: PurchaseInvoiceType })
@@ -56,8 +50,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 	const {t} = useTranslation(["accounting", "erpCommon"]);
 	const navigate = useNavigate();
 	const activeTypeTab = useMemo(() => signal<PurchaseInvoiceType | 0>(initialType ?? 0), [initialType]);
-	const printedInvoice = useMemo(() => signal<PurchaseInvoiceReportResult | undefined>(undefined), []);
-	const isPrinting = useMemo(() => signal<number | undefined>(undefined), []);
+	const {printedReport, isPrinting, handlePrint} = useCommercialPrint<PurchaseInvoiceReportResult>();
 
 	useEffect(() =>
 	{
@@ -81,36 +74,13 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 		Cubits.paymentMethods.init();
 	}, []);
 
-	const handlePrint = async (invoice: PurchaseInvoiceDto) =>
+	const printInvoice = (invoice: PurchaseInvoiceDto) =>
 	{
-		isPrinting.value = invoice.id;
-		try
-		{
-			const res = await YusrApiHelper.Post<PurchaseInvoiceReportResult>(
-				`/api/Reports/PurchaseInvoice`,
-				new PurchaseInvoiceReportRequest({purchaseInvoiceId: invoice.id})
-			);
-			if (res.data)
-			{
-				printedInvoice.value = res.data;
-				requestAnimationFrame(() =>
-				{
-					requestAnimationFrame(() =>
-					{
-						window.print();
-						isPrinting.value = undefined;
-					});
-				});
-			}
-			else
-			{
-				isPrinting.value = undefined;
-			}
-		}
-		catch
-		{
-			isPrinting.value = undefined;
-		}
+		void handlePrint(
+			invoice.id,
+			"/api/Reports/PurchaseInvoice",
+			new PurchaseInvoiceReportRequest({purchaseInvoiceId: invoice.id})
+		);
 	};
 
 	const handleReturnPurchase = (dto: PurchaseInvoiceDto) =>
@@ -183,7 +153,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 				fieldsCubit={ Cubits.purchaseInvoiceFilterFields }
 				onApply={ (groups) => Cubits.purchaseInvoices.applyFilterGroups(groups) }
 				onClear={ () => Cubits.purchaseInvoices.clearFilterGroups() }
-				renderCustomInput={ (props) => RenderPurchaseInvoiceFilterInput(props, t) }
+				renderCustomInput={ (props) => renderCommercialFilterInput(props, [PartnerType.Supplier]) }
 			/>
 
 			<CrudPage.SearchInput
@@ -220,7 +190,6 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 									const badge = getPurchaseInvoiceTypeBadge(inv.type, t);
 									const paymentStat = getPaymentStatus(inv, t);
 									const returnStat = getReturnStatus(inv, t);
-
 									return [
 										{rowBody: `#${ inv.id }`, rowStyles: ""},
 										{
@@ -269,7 +238,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 										},
 										{
 											rowBody: (
-												<Button size="sm" variant="outline" onClick={ () => handlePrint(inv) }>
+												<Button size="sm" variant="outline" onClick={ () => printInvoice(inv) }>
 													{ isPrinting.value === inv.id ? (
 														<Loader2 className="h-4 w-4 animate-spin"/>
 													) : (
@@ -379,7 +348,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 				) }
 			/>
 
-			{ !printedInvoice.value &&
+			{ !printedReport.value &&
 				createPortal(
 					<PortalReportContainer>
 						<InvoicesListReport<PurchaseInvoiceDto>
@@ -393,86 +362,13 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 					</PortalReportContainer>,
 					document.body
 				) }
-			{ printedInvoice.value &&
+			{ printedReport.value &&
 				createPortal(
 					<PortalReportContainer>
-						<InvoiceReport data={ printedInvoice.value } isPortal={ true }/>
+						<InvoiceReport data={ printedReport.value } isPortal={ true }/>
 					</PortalReportContainer>,
 					document.body
 				) }
 		</CrudPage>
 	);
-}
-
-function RenderPurchaseInvoiceFilterInput({rule, field}: FilterValueInputProps, t: TFunction<"accounting">)
-{
-	useSignals();
-	if (field.propertyName === "PartnerId")
-	{
-		return (
-			<FilterLabelWrapper rule={ rule }>
-				{ (label) => (
-					<PartnersSearchableSelect
-						id={ rule.value as Signal<number | undefined> }
-						label={ label }
-						types={ [PartnerType.Supplier] }
-						onSelect={ (entity) => (rule.value.value = entity ? entity.id : "") }
-					/>
-				) }
-			</FilterLabelWrapper>
-		);
-	}
-	if (field.propertyName === "StoreId")
-	{
-		return (
-			<FilterLabelWrapper rule={ rule }>
-				{ (label) => (
-					<StoresSearchableSelect
-						id={ rule.value as Signal<number | undefined> }
-						label={ label }
-						onSelect={ (entity) => (rule.value.value = entity ? entity.id : "") }
-					/>
-				) }
-			</FilterLabelWrapper>
-		);
-	}
-	if (field.propertyName === "ReturnStatusId")
-	{
-		return (
-			<SelectField<InvoiceReturnStatus>
-				required
-				value={ rule.value as Signal<InvoiceReturnStatus | undefined> }
-				onValueChange={ (type) => (rule.value.value = type) }
-				options={ [
-					{label: t("invoices.notReturned"), value: InvoiceReturnStatus.NotReturned},
-					{label: t("invoices.partialReturned"), value: InvoiceReturnStatus.PartialReturned},
-					{label: t("invoices.fullyReturned"), value: InvoiceReturnStatus.FullyReturned}
-				] }
-			/>
-		);
-	}
-	if (field.propertyName === "PaymentStatus")
-	{
-		return (
-			<SelectField<PaymentStatus>
-				required
-				value={ rule.value as Signal<PaymentStatus | undefined> }
-				onValueChange={ (type) => (rule.value.value = type) }
-				options={ [
-					{label: t("invoices.notPaid"), value: PaymentStatus.NotPaid},
-					{
-						label: t("invoices.partiallyPaid", {amount: "", currency: ""}),
-						value: PaymentStatus.PartiallyPaid
-					},
-					{label: t("invoices.fullyPaid"), value: PaymentStatus.FullyPaid},
-					{label: t("invoices.overpaid"), value: PaymentStatus.Overpaid}
-				] }
-			/>
-		);
-	}
-	if (field.propertyName === "Items")
-	{
-		return <ItemsMultiSearchableSelect onToggle={ (ids) => (rule.value.value = ids) }/>;
-	}
-	return undefined;
 }

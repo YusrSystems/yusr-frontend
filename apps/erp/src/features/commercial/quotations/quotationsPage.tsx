@@ -1,8 +1,7 @@
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
-import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Copy, FilePlusCorner, FileTextIcon, Loader2, Printer } from "lucide-react";
 import {
@@ -12,16 +11,13 @@ import {
 	ContextMenuItem,
 	CrudPage,
 	DropdownMenuItem,
-	FilterLabelWrapper,
 	FilterSection,
-	type FilterValueInputProps,
 	PageError,
 	PageLoaded,
 	PageLoading,
 	SystemPermissionsActions,
 	TablePreview,
-	UnauthorizedPage,
-	YusrApiHelper
+	UnauthorizedPage
 } from "yusr-ui";
 import { QuotationDto } from "@/core/data/commercial/quotation";
 import { getQuotationStatusBadge, QuotationStatus } from "@/core/types/commercialEnums";
@@ -31,14 +27,13 @@ import { Cubits } from "@/core/services/cubits";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import ChangeQuotationDialog from "./changeQuotationDialog";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
-import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
-import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect";
-import ItemsMultiSearchableSelect from "@/core/components/searchableSelect/itemsMultiSearchableSelect";
 import { PortalReportContainer } from "@/features/report/reportContainer";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport";
 import { APP_NAME } from "../../../../appConfig";
 import { QuotationReportRequest } from "@/features/reports/invoice/invoiceReportRequest.ts";
 import type { QuotationReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
+import { useCommercialPrint } from "../hooks/useCommercialPrint";
+import { renderCommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
 
 
 export default function QuotationsPage()
@@ -46,8 +41,7 @@ export default function QuotationsPage()
 	useSignals();
 	const {t} = useTranslation(["accounting", "erpCommon"]);
 	const navigate = useNavigate();
-	const printedInvoice = useMemo(() => signal<QuotationReportResult | undefined>(undefined), []);
-	const isPrinting = useMemo(() => signal<number | undefined>(undefined), []);
+	const {printedReport, isPrinting, handlePrint} = useCommercialPrint<QuotationReportResult>();
 
 	useEffect(() =>
 	{
@@ -62,36 +56,13 @@ export default function QuotationsPage()
 		Cubits.stores.init();
 	}, []);
 
-	const handlePrint = async (quote: QuotationDto) =>
+	const printQuotation = (quote: QuotationDto) =>
 	{
-		isPrinting.value = quote.id;
-		try
-		{
-			const res = await YusrApiHelper.Post<QuotationReportResult>(
-				`/api/Reports/Quotation`,
-				new QuotationReportRequest({quotationId: quote.id})
-			);
-			if (res.data)
-			{
-				printedInvoice.value = res.data;
-				requestAnimationFrame(() =>
-				{
-					requestAnimationFrame(() =>
-					{
-						window.print();
-						isPrinting.value = undefined;
-					});
-				});
-			}
-			else
-			{
-				isPrinting.value = undefined;
-			}
-		}
-		catch
-		{
-			isPrinting.value = undefined;
-		}
+		void handlePrint(
+			quote.id,
+			"/api/Reports/Quotation",
+			new QuotationReportRequest({quotationId: quote.id})
+		);
 	};
 
 	const handleConvertToSales = (quote: QuotationDto) =>
@@ -134,7 +105,7 @@ export default function QuotationsPage()
 				fieldsCubit={ Cubits.quotationFilterFields }
 				onApply={ (groups) => Cubits.quotations.applyFilterGroups(groups) }
 				onClear={ () => Cubits.quotations.clearFilterGroups() }
-				renderCustomInput={ (props) => RenderQuotationFilterInput(props) }
+				renderCustomInput={ (props) => renderCommercialFilterInput(props, [PartnerType.Customer]) }
 			/>
 
 			<CrudPage.SearchInput
@@ -202,7 +173,7 @@ export default function QuotationsPage()
 										{
 											rowBody: (
 												<Button size="sm" variant="outline"
-												        onClick={ () => handlePrint(quote) }>
+												        onClick={ () => printQuotation(quote) }>
 													{ isPrinting.value === quote.id ? (
 														<Loader2 className="h-4 w-4 animate-spin"/>
 													) : (
@@ -311,52 +282,13 @@ export default function QuotationsPage()
 				onSuccess={ (entity) => Cubits.quotations.delete(entity) }
 			/>
 
-			{ printedInvoice.value &&
+			{ printedReport.value &&
 				createPortal(
 					<PortalReportContainer>
-						<InvoiceReport data={ printedInvoice.value } isPortal={ true }/>
+						<InvoiceReport data={ printedReport.value } isPortal={ true }/>
 					</PortalReportContainer>,
 					document.body
 				) }
 		</CrudPage>
 	);
-}
-
-function RenderQuotationFilterInput({rule, field}: FilterValueInputProps)
-{
-	useSignals();
-	if (field.propertyName === "PartnerId")
-	{
-		return (
-			<FilterLabelWrapper rule={ rule }>
-				{ (label) => (
-					<PartnersSearchableSelect
-						id={ rule.value as Signal<number | undefined> }
-						label={ label }
-						types={ [PartnerType.Customer] }
-						onSelect={ (entity) => (rule.value.value = entity ? entity.id : "") }
-					/>
-				) }
-			</FilterLabelWrapper>
-		);
-	}
-	if (field.propertyName === "StoreId")
-	{
-		return (
-			<FilterLabelWrapper rule={ rule }>
-				{ (label) => (
-					<StoresSearchableSelect
-						id={ rule.value as Signal<number | undefined> }
-						label={ label }
-						onSelect={ (entity) => (rule.value.value = entity ? entity.id : "") }
-					/>
-				) }
-			</FilterLabelWrapper>
-		);
-	}
-	if (field.propertyName === "Items")
-	{
-		return <ItemsMultiSearchableSelect onToggle={ (ids) => (rule.value.value = ids) }/>;
-	}
-	return undefined;
 }
