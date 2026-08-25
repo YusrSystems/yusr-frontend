@@ -235,9 +235,16 @@ export abstract class CommercialItem<
 		this.quantity.value = newQty;
 		this.recalculateTotals();
 		const doc = this.getDocument();
-		if (doc && doc.settlementAmount.value)
+		if (doc)
 		{
-			doc.changeSettlementAmount(doc.settlementAmount.value);
+			if (doc.settlementAmount.value)
+			{
+				doc.changeSettlementAmount(doc.settlementAmount.value);
+			}
+			else
+			{
+				doc.syncTotals();
+			}
 		}
 	}
 
@@ -246,10 +253,14 @@ export abstract class CommercialItem<
 		this.settlement.value = newSettlement ?? 0;
 		this.recalculateTotals();
 		const doc = this.getDocument();
-		if (doc && resetDocSettlements)
+		if (doc)
 		{
-			doc.settlementAmount.value = 0;
-			doc.settlementPercent.value = 0;
+			if (resetDocSettlements)
+			{
+				doc.settlementAmount.value = 0;
+				doc.settlementPercent.value = 0;
+			}
+			doc.syncTotals();
 		}
 	}
 
@@ -261,13 +272,17 @@ export abstract class CommercialItem<
 			CommercialMath.calcTaxExclusivePrice(taxInclusivePrice, this.totalTaxesPerc.value);
 		this.recalculateTotals();
 		const doc = this.getDocument();
-		if (doc && doc.settlementPercent.value)
+		if (doc)
 		{
-			doc.changeSettlementPercent(doc.settlementPercent.value);
-		}
-		if (doc && doc.settlementAmount.value)
-		{
-			doc.changeSettlementAmount(doc.settlementAmount.value);
+			if (doc.settlementPercent.value)
+			{
+				doc.changeSettlementPercent(doc.settlementPercent.value);
+			}
+			if (doc.settlementAmount.value)
+			{
+				doc.changeSettlementAmount(doc.settlementAmount.value);
+			}
+			doc.syncTotals();
 		}
 	}
 

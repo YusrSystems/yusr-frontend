@@ -73,6 +73,8 @@ export class Cubits extends BaseCubits
 	public static readonly vouchers = new PageCubit<VoucherDto>(Services.voucherApi);
 	public static readonly salesInvoices = new PageCubit<SalesInvoiceDto>(Services.salesInvoicesApi);
 	public static readonly purchaseInvoices = new PageCubit<PurchaseInvoiceDto>(Services.purchaseInvoicesApi);
+	public static readonly originalSalesInvoices = new PageCubit<SalesInvoiceDto>(Services.salesInvoicesApi);
+	public static readonly originalPurchaseInvoices = new PageCubit<PurchaseInvoiceDto>(Services.purchaseInvoicesApi);
 	public static readonly quotations = new PageCubit<QuotationDto>(Services.quotationsApi);
 	public static readonly partners = new PageCubit<PartnerDto>(Services.partnersApi);
 	public static readonly posTerminals = new PageCubit<PosTerminalDto>(Services.posTerminalsApi);

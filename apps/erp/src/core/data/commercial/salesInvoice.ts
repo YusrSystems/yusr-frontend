@@ -1,4 +1,4 @@
-import { ChangeableEntityMode, StorageFile, SystemPermissionsActions } from "yusr-ui";
+import { ChangeableEntityMode, DateService, StorageFile, SystemPermissionsActions } from "yusr-ui";
 import { type Signal } from "@preact/signals-react";
 import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { Voucher, VoucherDto, VoucherType } from "@/core/data/voucher";
@@ -191,7 +191,6 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 	public loadFromQuotation(quotation: QuotationDto): void
 	{
 		this.copyFromDocument(quotation);
-
 		this.basedOnQuotationId.value = quotation.id;
 		this.delegateEmp.value = quotation.delegateEmp;
 		if (Services.auth.setting?.saleInvoicePolicy?.value)
@@ -200,6 +199,55 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 		}
 
 		this.items.value = (quotation.items || []).map((qi, idx) =>
+		{
+			const line = new SalesInvoiceItem({
+				...qi,
+				id: 0,
+				index: idx,
+				salesInvoiceId: 0
+			});
+			line.quantityMultiplier.value = qi.uoMDtos?.find((u) => u.id === qi.itemUoMId)?.quantityMultiplier ?? 1;
+			line.getDocument = () => this;
+			return line;
+		});
+
+		this.syncPaymentVouchers();
+	}
+
+	public loadFromReturn(source: SalesInvoiceDto): void
+	{
+		this.copyFromDocument(source);
+		this.type.value = SalesInvoiceType.CreditNote;
+		this.originalSalesInvoiceId.value = source.id;
+		this.delegateEmp.value = source.delegateEmp;
+		this.date.value = DateService.formatDateOnly(new Date());
+		this.invoiceMode.value = CommercialInvoiceMode.Return;
+
+		this.items.value = (source.items || []).map((qi, idx) =>
+		{
+			const line = new SalesInvoiceItem({
+				...qi,
+				id: 0,
+				index: idx,
+				salesInvoiceId: 0
+			});
+			line.quantityMultiplier.value = qi.uoMDtos?.find((u) => u.id === qi.itemUoMId)?.quantityMultiplier ?? 1;
+			line.getDocument = () => this;
+			return line;
+		});
+
+		this.syncPaymentVouchers();
+	}
+
+	public loadFromCopy(source: SalesInvoiceDto): void
+	{
+		this.copyFromDocument(source);
+		this.type.value = SalesInvoiceType.Invoice;
+		this.originalSalesInvoiceId.value = undefined;
+		this.basedOnQuotationId.value = undefined;
+		this.date.value = DateService.formatDateOnly(new Date());
+
+		this.items.value = (source.items || []).map((qi, idx) =>
 		{
 			const line = new SalesInvoiceItem({
 				...qi,

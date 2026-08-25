@@ -27,6 +27,7 @@ import { Services } from "@/core/services/services";
 import { Cubits } from "@/core/services/cubits";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect";
+import { PurchaseInvoicesSearchableSelect } from "@/core/components/searchableSelect/purchaseInvoicesSearchableSelect";
 import StoreItemSelector from "@/features/items/storeItemSelector";
 import { CommercialItemsTable } from "../components/commercialItemsTable";
 import { CommercialGlobalSettlement } from "../components/commercialGlobalSettlement";
@@ -196,6 +197,42 @@ export default function ChangePurchaseInvoiceDialog({
 		return `تعديل ${ getPurchaseInvoiceTypeName(entity.value.type.value, t) }`;
 	};
 
+	const handleSelectOriginalInvoice = async (originalInvoice?: PurchaseInvoiceDto) =>
+	{
+		if (!originalInvoice)
+		{
+			entity.value.originalPurchaseInvoiceId.value = undefined;
+			return;
+		}
+
+		if (entity.value.type.value === PurchaseInvoiceType.CreditNote)
+		{
+			isLoading.value = true;
+			try
+			{
+				const res = await Services.purchaseInvoicesApi.GetReturnInvoiceInitialDetails(originalInvoice.id);
+				if (res?.data)
+				{
+					entity.value.loadFromReturn(res.data);
+				}
+			}
+			finally
+			{
+				isLoading.value = false;
+			}
+		}
+		else if (entity.value.type.value === PurchaseInvoiceType.DebitNote)
+		{
+			entity.value.originalPurchaseInvoiceId.value = originalInvoice.id;
+			entity.value.storeId.value = originalInvoice.storeId;
+			entity.value.storeName.value = originalInvoice.storeName;
+			entity.value.partnerId.value = originalInvoice.partnerId;
+			entity.value.partnerName.value = originalInvoice.partnerName;
+			entity.value.vendorInvoiceNumber.value = originalInvoice.vendorInvoiceNumber;
+			entity.value.vendorInvoiceDate.value = originalInvoice.vendorInvoiceDate;
+		}
+	};
+
 	if (isLoading.value || (entity.value.mode.value === ChangeableEntityMode.Update && entity.value.items.value.length <= 0))
 	{
 		return (
@@ -210,6 +247,10 @@ export default function ChangePurchaseInvoiceDialog({
 		entity.value.hasErrors ||
 		entity.value.items.value.some((t) => t.hasErrors) ||
 		entity.value.paymentVouchers.value.some((t) => t.hasErrors);
+
+	const isCreditOrDebit =
+		entity.value.type.value === PurchaseInvoiceType.CreditNote ||
+		entity.value.type.value === PurchaseInvoiceType.DebitNote;
 
 	return (
 		<ChangeDialog className="sm:max-w-[100vw] sm:w-screen sm:h-screen">
@@ -269,11 +310,22 @@ export default function ChangePurchaseInvoiceDialog({
 												} }
 											/>
 										</FormField>
-										<TextField
-											label={ t("invoices.relatedInvoiceNumber") }
-											disabled
-											value={ entity.value.originalPurchaseInvoiceId }
-										/>
+										{ isCreditOrDebit && !returnFromId && entity.value.mode.value === ChangeableEntityMode.Create ? (
+											<FormField label={ t("invoices.relatedInvoiceNumber") } required>
+												<PurchaseInvoicesSearchableSelect
+													id={ entity.value.originalPurchaseInvoiceId }
+													label={ signal(entity.value.originalPurchaseInvoiceId.value ? `#${ entity.value.originalPurchaseInvoiceId.value }` : undefined) }
+													onSelect={ handleSelectOriginalInvoice }
+													cubit={ Cubits.originalPurchaseInvoices }
+												/>
+											</FormField>
+										) : (
+											<TextField
+												label={ t("invoices.relatedInvoiceNumber") }
+												disabled
+												value={ entity.value.originalPurchaseInvoiceId }
+											/>
+										) }
 										<TextField
 											label="رقم فاتورة المورد"
 											value={ entity.value.vendorInvoiceNumber }
