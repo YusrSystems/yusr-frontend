@@ -5,6 +5,7 @@ import { PaymentStatus } from "@/core/types/paymentStatus";
 import { ImportExportType } from "@/core/types/importExportType";
 import { Voucher, VoucherDto, VoucherType } from "@/core/data/voucher";
 import { Services } from "@/core/services/services";
+import { CommercialMath } from "@/features/commercial/logic/commercialMath";
 import { CommercialDocument, type ICommercialDocumentDto } from "./commercialDocument";
 import type { CommercialItem, ICommercialItemDto } from "./commercialItem";
 
@@ -105,7 +106,7 @@ export abstract class CommercialInvoiceDocument<
 			partnerId: this.partnerId.value,
 			partnerName: this.partnerName.value,
 			type: this.getInitialVoucherType(),
-			amount
+			amount: CommercialMath.round2(amount)
 		});
 		this.assignVoucherDocumentId(voucher);
 		return voucher;
@@ -113,13 +114,15 @@ export abstract class CommercialInvoiceDocument<
 
 	public updatePaidAmount()
 	{
-		this.paidAmount.value = this.paymentVouchers.value.reduce((sum, v) => sum + (v.amount.value ?? 0), 0);
+		this.paidAmount.value = CommercialMath.round2(
+			this.paymentVouchers.value.reduce((sum, v) => sum + (v.amount.value ?? 0), 0)
+		);
 	}
 
 	public syncPaymentVouchers()
 	{
 		if (this.mode.value === ChangeableEntityMode.Update) return;
-		const taxInclusivePrice = this.fullAmount.value;
+		const taxInclusivePrice = CommercialMath.round2(this.fullAmount.value);
 		const vouchers = this.paymentVouchers.value;
 
 		if (taxInclusivePrice === 0)
@@ -133,14 +136,30 @@ export abstract class CommercialInvoiceDocument<
 		else if (vouchers.length === 1 && vouchers[0])
 		{
 			const voucher = vouchers[0];
-			voucher.amount.value = taxInclusivePrice;
+			voucher.amount.value = CommercialMath.round2(taxInclusivePrice);
 			if (!voucher.partnerId.value)
 			{
 				voucher.partnerId.value = this.partnerId.value;
 				voucher.partnerName.value = this.partnerName.value;
 			}
 		}
-		this.paidAmount.value = taxInclusivePrice;
+		else
+		{
+			const totalVouchers = CommercialMath.round2(
+				vouchers.reduce((sum, v) => sum + (v.amount.value ?? 0), 0)
+			);
+			if (totalVouchers > taxInclusivePrice)
+			{
+				let runningSum = 0;
+				vouchers.forEach((v) =>
+				{
+					const maxForThis = CommercialMath.round2(Math.max(0, taxInclusivePrice - runningSum));
+					v.amount.value = CommercialMath.round2(Math.min(v.amount.value ?? 0, maxForThis));
+					runningSum = CommercialMath.round2(runningSum + v.amount.value);
+				});
+			}
+		}
+		this.updatePaidAmount();
 	}
 
 	override validate(dto?: Partial<TDto>): boolean

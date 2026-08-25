@@ -211,7 +211,7 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 			return line;
 		});
 
-		this.syncPaymentVouchers();
+		this.syncTotals();
 	}
 
 	public loadFromReturn(source: SalesInvoiceDto): void
@@ -236,7 +236,7 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 			return line;
 		});
 
-		this.syncPaymentVouchers();
+		this.syncTotals();
 	}
 
 	public loadFromCopy(source: SalesInvoiceDto): void
@@ -260,7 +260,7 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 			return line;
 		});
 
-		this.syncPaymentVouchers();
+		this.syncTotals();
 	}
 
 	override validate(dto?: Partial<SalesInvoiceDto>): boolean

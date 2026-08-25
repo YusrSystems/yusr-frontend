@@ -185,7 +185,7 @@ export class PurchaseInvoice extends CommercialInvoiceDocument<PurchaseInvoiceDt
 			return line;
 		});
 
-		this.syncPaymentVouchers();
+		this.syncTotals();
 	}
 
 	public loadFromReturn(source: PurchaseInvoiceDto): void
@@ -212,7 +212,7 @@ export class PurchaseInvoice extends CommercialInvoiceDocument<PurchaseInvoiceDt
 			return line;
 		});
 
-		this.syncPaymentVouchers();
+		this.syncTotals();
 	}
 
 	protected override getInitialVoucherType(): VoucherType
