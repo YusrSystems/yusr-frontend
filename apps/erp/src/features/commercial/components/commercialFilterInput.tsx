@@ -10,12 +10,19 @@ import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus";
 import { PaymentStatus } from "@/core/types/paymentStatus";
 
 
-export function renderCommercialFilterInput(
-	props: FilterValueInputProps,
-	partnerTypes: PartnerType[] = [PartnerType.Customer]
-)
+export interface CommercialFilterInputProps extends FilterValueInputProps
 {
-	const {rule, field} = props;
+	partnerTypes?: PartnerType[];
+}
+
+export function CommercialFilterInput({
+	rule,
+	field,
+	partnerTypes = [PartnerType.Customer]
+}: CommercialFilterInputProps)
+{
+	useSignals();
+	const {t} = useTranslation("accounting");
 
 	if (field.propertyName === "PartnerId")
 	{
@@ -50,12 +57,38 @@ export function renderCommercialFilterInput(
 
 	if (field.propertyName === "ReturnStatusId")
 	{
-		return <ReturnStatusSelectInput rule={ rule }/>;
+		return (
+			<SelectField<InvoiceReturnStatus>
+				required
+				value={ rule.value as Signal<InvoiceReturnStatus | undefined> }
+				onValueChange={ (type) => (rule.value.value = type) }
+				options={ [
+					{label: t("invoices.notReturned"), value: InvoiceReturnStatus.NotReturned},
+					{label: t("invoices.partialReturned"), value: InvoiceReturnStatus.PartialReturned},
+					{label: t("invoices.fullyReturned"), value: InvoiceReturnStatus.FullyReturned}
+				] }
+			/>
+		);
 	}
 
 	if (field.propertyName === "PaymentStatus")
 	{
-		return <PaymentStatusSelectInput rule={ rule }/>;
+		return (
+			<SelectField<PaymentStatus>
+				required
+				value={ rule.value as Signal<PaymentStatus | undefined> }
+				onValueChange={ (type) => (rule.value.value = type) }
+				options={ [
+					{label: t("invoices.notPaid"), value: PaymentStatus.NotPaid},
+					{
+						label: t("invoices.partiallyPaid", {amount: "", currency: ""}),
+						value: PaymentStatus.PartiallyPaid
+					},
+					{label: t("invoices.fullyPaid"), value: PaymentStatus.FullyPaid},
+					{label: t("invoices.overpaid"), value: PaymentStatus.Overpaid}
+				] }
+			/>
+		);
 	}
 
 	if (field.propertyName === "Items" || field.propertyName === "InvoiceItems")
@@ -63,47 +96,5 @@ export function renderCommercialFilterInput(
 		return <ItemsMultiSearchableSelect onToggle={ (ids) => (rule.value.value = ids) }/>;
 	}
 
-	return undefined;
-}
-
-function ReturnStatusSelectInput({rule}: { rule: FilterValueInputProps["rule"] })
-{
-	useSignals();
-	const {t} = useTranslation("accounting");
-
-	return (
-		<SelectField<InvoiceReturnStatus>
-			required
-			value={ rule.value as Signal<InvoiceReturnStatus | undefined> }
-			onValueChange={ (type) => (rule.value.value = type) }
-			options={ [
-				{label: t("invoices.notReturned"), value: InvoiceReturnStatus.NotReturned},
-				{label: t("invoices.partialReturned"), value: InvoiceReturnStatus.PartialReturned},
-				{label: t("invoices.fullyReturned"), value: InvoiceReturnStatus.FullyReturned}
-			] }
-		/>
-	);
-}
-
-function PaymentStatusSelectInput({rule}: { rule: FilterValueInputProps["rule"] })
-{
-	useSignals();
-	const {t} = useTranslation("accounting");
-
-	return (
-		<SelectField<PaymentStatus>
-			required
-			value={ rule.value as Signal<PaymentStatus | undefined> }
-			onValueChange={ (type) => (rule.value.value = type) }
-			options={ [
-				{label: t("invoices.notPaid"), value: PaymentStatus.NotPaid},
-				{
-					label: t("invoices.partiallyPaid", {amount: "", currency: ""}),
-					value: PaymentStatus.PartiallyPaid
-				},
-				{label: t("invoices.fullyPaid"), value: PaymentStatus.FullyPaid},
-				{label: t("invoices.overpaid"), value: PaymentStatus.Overpaid}
-			] }
-		/>
-	);
+	return null;
 }

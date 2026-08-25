@@ -33,7 +33,7 @@ import { APP_NAME } from "../../../../appConfig";
 import { QuotationReportRequest } from "@/features/reports/invoice/invoiceReportRequest.ts";
 import type { QuotationReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
 import { useCommercialPrint } from "../hooks/useCommercialPrint";
-import { renderCommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
+import { CommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
 
 
 export default function QuotationsPage()
@@ -105,7 +105,8 @@ export default function QuotationsPage()
 				fieldsCubit={ Cubits.quotationFilterFields }
 				onApply={ (groups) => Cubits.quotations.applyFilterGroups(groups) }
 				onClear={ () => Cubits.quotations.clearFilterGroups() }
-				renderCustomInput={ (props) => renderCommercialFilterInput(props, [PartnerType.Customer]) }
+				renderCustomInput={ (props) => <CommercialFilterInput { ...props }
+				                                                      partnerTypes={ [PartnerType.Customer] }/> }
 			/>
 
 			<CrudPage.SearchInput

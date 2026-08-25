@@ -45,7 +45,7 @@ import { SalesInvoiceReportRequest } from "@/features/reports/invoice/invoiceRep
 import type { SalesInvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
 import { AccountClass, getAccountTypesByClasses } from "@/core/data/account";
 import { useCommercialPrint } from "../hooks/useCommercialPrint";
-import { renderCommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
+import { CommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
 
 
 export default function SalesInvoicesPage({initialType}: { initialType?: SalesInvoiceType })
@@ -175,7 +175,8 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 				fieldsCubit={ Cubits.salesInvoiceFilterFields }
 				onApply={ (groups) => Cubits.salesInvoices.applyFilterGroups(groups) }
 				onClear={ () => Cubits.salesInvoices.clearFilterGroups() }
-				renderCustomInput={ (props) => renderCommercialFilterInput(props, [PartnerType.Customer]) }
+				renderCustomInput={ (props) => <CommercialFilterInput { ...props }
+				                                                      partnerTypes={ [PartnerType.Customer] }/> }
 			/>
 			<CrudPage.SearchInput
 				className="rounded-t-none!"

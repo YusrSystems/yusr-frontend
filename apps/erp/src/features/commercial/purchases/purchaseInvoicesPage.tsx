@@ -41,7 +41,7 @@ import { InvoicesListReport } from "@/features/reports/invoicesList/invoicesList
 import { APP_NAME } from "../../../../appConfig";
 import { PurchaseInvoiceReportRequest } from "@/features/reports/invoice/invoiceReportRequest.ts";
 import { useCommercialPrint } from "../hooks/useCommercialPrint";
-import { renderCommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
+import { CommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
 
 
 export default function PurchaseInvoicesPage({initialType}: { initialType?: PurchaseInvoiceType })
@@ -153,7 +153,8 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 				fieldsCubit={ Cubits.purchaseInvoiceFilterFields }
 				onApply={ (groups) => Cubits.purchaseInvoices.applyFilterGroups(groups) }
 				onClear={ () => Cubits.purchaseInvoices.clearFilterGroups() }
-				renderCustomInput={ (props) => renderCommercialFilterInput(props, [PartnerType.Supplier]) }
+				renderCustomInput={ (props) => <CommercialFilterInput { ...props }
+				                                                      partnerTypes={ [PartnerType.Supplier] }/> }
 			/>
 
 			<CrudPage.SearchInput
