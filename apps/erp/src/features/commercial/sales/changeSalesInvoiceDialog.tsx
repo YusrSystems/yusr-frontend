@@ -52,6 +52,7 @@ import { useInvoiceOrigin } from "../hooks/useInvoiceOrigin";
 import { useStoreItemsSync } from "../hooks/useStoreItemsSync";
 import { useCommercialUrlLoader } from "../hooks/useCommercialUrlLoader";
 import { prepareCommercialPayload } from "../logic/commercialPayload";
+import type { QuotationDto } from "@/core/data/commercial/quotation.ts";
 
 
 export default function ChangeSalesInvoiceDialog({
@@ -79,7 +80,7 @@ export default function ChangeSalesInvoiceDialog({
 	const canAdd = Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Add);
 	const canUpdate = Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Update);
 
-	const {returnFromId, copyFromId} = useCommercialUrlLoader<SalesInvoiceDto>({
+	const {returnFromId, copyFromId} = useCommercialUrlLoader<SalesInvoiceDto, QuotationDto>({
 		mode: entity.value.mode,
 		isLoading,
 		hasAddAuth: canAdd,

@@ -2,22 +2,30 @@ import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { type Signal } from "@preact/signals-react";
 import { ChangeableEntityMode, type RequestResult } from "yusr-ui";
+import type { ICommercialDocumentDto } from "@/core/data/commercial/commercialDocument";
+import type { QuotationDto } from "@/core/data/commercial/quotation";
 
 
-export interface UseCommercialUrlLoaderOptions<TDto>
+export interface UseCommercialUrlLoaderOptions<
+	TDto extends ICommercialDocumentDto,
+	TQuotationDto extends ICommercialDocumentDto = QuotationDto
+>
 {
 	mode: Signal<ChangeableEntityMode>;
 	isLoading: Signal<boolean>;
 	hasAddAuth: boolean;
 	fetchReturnDetails?: (id: number) => Promise<RequestResult<TDto>>;
 	fetchCopyDetails?: (id: number) => Promise<RequestResult<TDto>>;
-	fetchQuotationDetails?: (id: number) => Promise<RequestResult<any>>;
+	fetchQuotationDetails?: (id: number) => Promise<RequestResult<TQuotationDto>>;
 	onLoadReturn?: (dto: TDto) => void;
 	onLoadCopy?: (dto: TDto) => void;
-	onLoadQuotation?: (dto: any) => void;
+	onLoadQuotation?: (dto: TQuotationDto) => void;
 }
 
-export function useCommercialUrlLoader<TDto>({
+export function useCommercialUrlLoader<
+	TDto extends ICommercialDocumentDto,
+	TQuotationDto extends ICommercialDocumentDto = QuotationDto
+>({
 	mode,
 	isLoading,
 	hasAddAuth,
@@ -27,7 +35,7 @@ export function useCommercialUrlLoader<TDto>({
 	onLoadReturn,
 	onLoadCopy,
 	onLoadQuotation
-}: UseCommercialUrlLoaderOptions<TDto>)
+}: UseCommercialUrlLoaderOptions<TDto, TQuotationDto>)
 {
 	const [searchParams] = useSearchParams();
 	const returnFromId = searchParams.get("returnFromId");
