@@ -109,7 +109,7 @@ export class Quotation extends CommercialDocument<QuotationDto, QuotationItem, Q
 
 	public override get isDisabled(): boolean
 	{
-		return this.status.value === QuotationStatus.Converted || this.status.value === QuotationStatus.Cancelled;
+		return this.status.value === QuotationStatus.Converted;
 	}
 
 	constructor(dto?: Partial<QuotationDto>, mode: ChangeableEntityMode = ChangeableEntityMode.Create)

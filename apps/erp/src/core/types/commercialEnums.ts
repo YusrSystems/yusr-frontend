@@ -19,7 +19,6 @@ export enum QuotationStatus
 {
 	Active = 1,
 	Converted = 2,
-	Cancelled = 3
 }
 
 export function getSalesInvoiceTypeName(type: SalesInvoiceType, t?: TFunction<"accounting">): string
@@ -91,7 +90,7 @@ export function getPurchaseInvoiceTypeBadge(
 			};
 		case PurchaseInvoiceType.CreditNote:
 			return {
-				label: t ? t("invoices.purchaseCreditNoteBadge", "إشعار دائن") : "إشعار دائن",
+				label: t ? t("invoices.purchaseCreditNoteBadge", "إشعار دائن (مرتجع)") : "إشعار دائن (مرتجع)",
 				className: "bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300"
 			};
 		case PurchaseInvoiceType.DebitNote:
@@ -118,11 +117,6 @@ export function getQuotationStatusBadge(
 			return {
 				label: t ? t("quotations.statusConverted", "تمت الفوترة") : "تمت الفوترة",
 				className: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-			};
-		case QuotationStatus.Cancelled:
-			return {
-				label: t ? t("quotations.statusCancelled", "ملغي") : "ملغي",
-				className: "bg-zinc-100 text-zinc-800 dark:bg-zinc-950 dark:text-zinc-300"
 			};
 	}
 }

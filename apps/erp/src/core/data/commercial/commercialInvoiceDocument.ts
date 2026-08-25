@@ -119,7 +119,6 @@ export abstract class CommercialInvoiceDocument<
 	public syncPaymentVouchers()
 	{
 		if (this.mode.value === ChangeableEntityMode.Update) return;
-		this.syncTotals();
 		const taxInclusivePrice = this.fullAmount.value;
 		const vouchers = this.paymentVouchers.value;
 

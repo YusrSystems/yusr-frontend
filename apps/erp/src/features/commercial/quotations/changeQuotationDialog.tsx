@@ -121,7 +121,7 @@ export default function ChangeQuotationDialog({
 			? t("invoices.addNewQuotationTitle")
 			: t("invoices.editQuotation");
 
-	if (isLoading.value)
+	if (isLoading.value || (entity.value.mode.value === ChangeableEntityMode.Update && entity.value.items.value.length <= 0))
 	{
 		return (
 			<ChangeDialog>

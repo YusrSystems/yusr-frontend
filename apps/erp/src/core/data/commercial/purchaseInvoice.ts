@@ -1,7 +1,10 @@
-import { ChangeableEntityMode, StorageFile } from "yusr-ui";
+import { ChangeableEntityMode, DateService, StorageFile } from "yusr-ui";
 import { type Signal } from "@preact/signals-react";
+import { InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus";
+import { PaymentStatus } from "@/core/types/paymentStatus";
+import { ImportExportType } from "@/core/types/importExportType";
 import { Voucher, VoucherDto, VoucherType } from "@/core/data/voucher";
-import { ItemDto } from "@/core/data/item";
+import { ItemDto, ItemType } from "@/core/data/item";
 import { CommercialMath } from "@/features/commercial/logic/commercialMath";
 import { Services } from "@/core/services/services";
 import { PurchaseInvoiceType } from "@/core/types/commercialEnums";
@@ -12,7 +15,6 @@ import {
 } from "./commercialInvoiceDocument";
 import { CommercialItem, type ICommercialItemDto } from "./commercialItem";
 import type { ItemUoMDto } from "@/core/data/itemUoM";
-import { ImportExportType } from "@/core/types/importExportType.ts";
 
 
 export { CommercialInvoiceMode as PurchaseInvoiceMode } from "./commercialInvoiceDocument";
@@ -23,7 +25,7 @@ export class PurchaseInvoiceItemDto implements ICommercialItemDto
 	public index!: number;
 	public purchaseInvoiceId!: number;
 	public itemId!: number;
-	public itemType!: number;
+	public itemType!: ItemType;
 	public itemUoMId!: number;
 	public pricingMethodId!: number;
 	public quantity!: number;
@@ -61,8 +63,8 @@ export class PurchaseInvoiceDto implements ICommercialInvoiceDocumentDto
 	public settlementReason?: string;
 	public settlementAmount!: number;
 	public settlementPercent!: number;
-	public returnStatusId!: number;
-	public paymentStatusId!: number;
+	public returnStatusId!: InvoiceReturnStatus;
+	public paymentStatusId!: PaymentStatus;
 	public storeId!: number;
 	public partnerId!: number;
 	public notes?: string;
@@ -158,6 +160,59 @@ export class PurchaseInvoice extends CommercialInvoiceDocument<PurchaseInvoiceDt
 				return item;
 			})
 		);
+	}
+
+	public loadFromCopy(source: PurchaseInvoiceDto): void
+	{
+		this.copyFromDocument(source);
+		this.type.value = PurchaseInvoiceType.Bill;
+		this.originalPurchaseInvoiceId.value = undefined;
+		this.vendorInvoiceNumber.value = undefined;
+		this.vendorInvoiceDate.value = undefined;
+		this.date.value = DateService.formatDateOnly(new Date());
+
+		this.items.value = (source.items || []).map((qi, idx) =>
+		{
+			const line = new PurchaseInvoiceItem({
+				...qi,
+				id: 0,
+				index: idx,
+				purchaseInvoiceId: 0
+			});
+			line.quantityMultiplier.value = qi.uoMDtos?.find((u) => u.id === qi.itemUoMId)?.quantityMultiplier ?? 1;
+			line.lastBuyPrice.value = qi.cost;
+			line.getDocument = () => this;
+			return line;
+		});
+
+		this.syncPaymentVouchers();
+	}
+
+	public loadFromReturn(source: PurchaseInvoiceDto): void
+	{
+		this.copyFromDocument(source);
+		this.type.value = PurchaseInvoiceType.CreditNote;
+		this.originalPurchaseInvoiceId.value = source.id;
+		this.vendorInvoiceNumber.value = source.vendorInvoiceNumber;
+		this.vendorInvoiceDate.value = source.vendorInvoiceDate;
+		this.date.value = DateService.formatDateOnly(new Date());
+		this.invoiceMode.value = CommercialInvoiceMode.Return;
+
+		this.items.value = (source.items || []).map((qi, idx) =>
+		{
+			const line = new PurchaseInvoiceItem({
+				...qi,
+				id: 0,
+				index: idx,
+				purchaseInvoiceId: 0
+			});
+			line.quantityMultiplier.value = qi.uoMDtos?.find((u) => u.id === qi.itemUoMId)?.quantityMultiplier ?? 1;
+			line.lastBuyPrice.value = qi.cost;
+			line.getDocument = () => this;
+			return line;
+		});
+
+		this.syncPaymentVouchers();
 	}
 
 	protected override getInitialVoucherType(): VoucherType

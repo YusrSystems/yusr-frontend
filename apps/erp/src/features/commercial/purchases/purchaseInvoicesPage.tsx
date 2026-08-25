@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -12,7 +12,6 @@ import {
 	cn,
 	ContextMenuItem,
 	CrudPage,
-	CrudTablePagination,
 	DropdownMenuItem,
 	FilterLabelWrapper,
 	FilterSection,
@@ -26,7 +25,7 @@ import {
 	UnauthorizedPage,
 	YusrApiHelper
 } from "yusr-ui";
-import { PurchaseInvoiceDto, PurchaseInvoiceMode } from "@/core/data/commercial/purchaseInvoice";
+import { PurchaseInvoiceDto } from "@/core/data/commercial/purchaseInvoice";
 import {
 	getPurchaseInvoiceTypeBadge,
 	getPurchaseInvoiceTypeName,
@@ -55,6 +54,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "erpCommon"]);
+	const navigate = useNavigate();
 	const activeTypeTab = useMemo(() => signal<PurchaseInvoiceType | 0>(initialType ?? 0), [initialType]);
 	const printedInvoice = useMemo(() => signal<PurchaseInvoiceReportResult | undefined>(undefined), []);
 	const isPrinting = useMemo(() => signal<number | undefined>(undefined), []);
@@ -71,10 +71,15 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 				? [PurchaseInvoiceType.Bill, PurchaseInvoiceType.CreditNote, PurchaseInvoiceType.DebitNote]
 				: [activeTypeTab.value];
 		Cubits.purchaseInvoices.init(types);
+	}, [activeTypeTab.value]);
+
+	useEffect(() =>
+	{
 		Cubits.partners.init([PartnerType.Supplier]);
 		Cubits.items.init();
 		Cubits.stores.init();
-	}, [activeTypeTab.value]);
+		Cubits.paymentMethods.init();
+	}, []);
 
 	const handlePrint = async (invoice: PurchaseInvoiceDto) =>
 	{
@@ -108,7 +113,17 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 		}
 	};
 
-	if (!Services.auth.hasAuth(SystemPermissionsResources.InvoicePurchase, SystemPermissionsActions.Get))
+	const handleReturnPurchase = (dto: PurchaseInvoiceDto) =>
+	{
+		navigate(`/purchases/new?returnFromId=${ dto.id }`);
+	};
+
+	const handleCopyPurchase = (dto: PurchaseInvoiceDto) =>
+	{
+		navigate(`/purchases/new?copyFromId=${ dto.id }`);
+	};
+
+	if (!Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Get))
 	{
 		return <UnauthorizedPage/>;
 	}
@@ -148,7 +163,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 							إشعارات مدينة
 						</Button>
 					</div>
-					{ Services.auth.hasAuth(SystemPermissionsResources.InvoicePurchase, SystemPermissionsActions.Add) && (
+					{ Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Add) && (
 						<CrudPage.AddButton title={ t("invoices.addNewTitle") }/>
 					) }
 				</CrudPage.HeaderButtonsContainer>
@@ -267,73 +282,64 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 									];
 								} }
 								hasUpdatePermission={ Services.auth.hasAuth(
-									SystemPermissionsResources.InvoicePurchase,
+									SystemPermissionsResources.Invoices,
 									SystemPermissionsActions.Update
 								) }
 								hasDeletePermission={ false }
-								onEditClicked={ (entity) => (entity.invoiceMode = PurchaseInvoiceMode.Normal) }
-								dropdownItems={ (dto, openEditDialog) => [
+								dropdownItems={ (dto) => [
 									...(dto.type === PurchaseInvoiceType.Bill && dto.returnStatusId !== InvoiceReturnStatus.FullyReturned
 										? [
 											<DropdownMenuItem
 												key="ret"
 												className="text-orange-700 font-semibold"
-												onSelect={ () =>
-												{
-													dto.invoiceMode = PurchaseInvoiceMode.Return;
-													openEditDialog(dto);
-												} }
+												onSelect={ () => handleReturnPurchase(dto) }
 											>
 												<Undo2 className="h-4 w-4 me-2"/>
 												{ t("invoices.return") }
 											</DropdownMenuItem>
 										]
 										: []),
-									<DropdownMenuItem
-										key="copy"
-										className="text-blue-600 font-semibold"
-										onSelect={ () =>
-										{
-											dto.invoiceMode = PurchaseInvoiceMode.Copy;
-											openEditDialog(dto);
-										} }
-									>
-										<Copy className="h-4 w-4 me-2"/>
-										{ t("invoices.copyInvoice") }
-									</DropdownMenuItem>
+									...(dto.type !== PurchaseInvoiceType.CreditNote
+										? [
+											<DropdownMenuItem
+												key="copy"
+												className="text-blue-600 font-semibold"
+												onSelect={ () => handleCopyPurchase(dto) }
+											>
+												<Copy className="h-4 w-4 me-2"/>
+												{ t("invoices.copyInvoice") }
+											</DropdownMenuItem>
+										]
+										: [])
 								] }
-								contextMenuItems={ (dto, openEditDialog) => [
+								contextMenuItems={ (dto) => [
 									...(dto.type === PurchaseInvoiceType.Bill && dto.returnStatusId !== InvoiceReturnStatus.FullyReturned
 										? [
 											<ContextMenuItem
 												key="ret"
 												className="text-orange-700 font-semibold"
-												onSelect={ () =>
-												{
-													dto.invoiceMode = PurchaseInvoiceMode.Return;
-													openEditDialog(dto);
-												} }
+												onSelect={ () => handleReturnPurchase(dto) }
 											>
 												<Undo2 className="h-4 w-4 me-2"/>
 												{ t("invoices.return") }
 											</ContextMenuItem>
 										]
 										: []),
-									<ContextMenuItem
-										key="copy"
-										className="text-blue-600 font-semibold"
-										onSelect={ () =>
-										{
-											dto.invoiceMode = PurchaseInvoiceMode.Copy;
-											openEditDialog(dto);
-										} }
-									>
-										<Copy className="h-4 w-4 me-2"/>
-										{ t("invoices.copyInvoice") }
-									</ContextMenuItem>
+									...(dto.type !== PurchaseInvoiceType.CreditNote
+										? [
+											<ContextMenuItem
+												key="copy"
+												className="text-blue-600 font-semibold"
+												onSelect={ () => handleCopyPurchase(dto) }
+											>
+												<Copy className="h-4 w-4 me-2"/>
+												{ t("invoices.copyInvoice") }
+											</ContextMenuItem>
+										]
+										: [])
 								] }
 							/>
-							<CrudTablePagination
+							<CrudPage.TablePagination
 								pageSize={ Cubits.purchaseInvoices.pageSize.value }
 								totalNumber={ Cubits.purchaseInvoices.count.value }
 								currentPage={ Cubits.purchaseInvoices.currentPage.value }
