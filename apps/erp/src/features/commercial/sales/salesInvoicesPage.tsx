@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -29,7 +29,7 @@ import {
 	UnauthorizedPage,
 	YusrApiHelper
 } from "yusr-ui";
-import { SalesInvoiceDto, SalesInvoiceMode } from "@/core/data/commercial/salesInvoice";
+import { SalesInvoiceDto } from "@/core/data/commercial/salesInvoice";
 import { getSalesInvoiceTypeBadge, getSalesInvoiceTypeName, SalesInvoiceType } from "@/core/types/commercialEnums";
 import { EInvoiceStatus } from "@/core/types/eInvoiceStatus";
 import { getReturnStatus, InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus";
@@ -51,12 +51,14 @@ import { APP_NAME } from "../../../../appConfig";
 import { toast } from "sonner";
 import { SalesInvoiceReportRequest } from "@/features/reports/invoice/invoiceReportRequest.ts";
 import type { SalesInvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
+import { AccountClass, getAccountTypesByClasses } from "@/core/data/account";
 
 
 export default function SalesInvoicesPage({initialType}: { initialType?: SalesInvoiceType })
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "erpCommon"]);
+	const navigate = useNavigate();
 	const activeTypeTab = useMemo(() => signal<SalesInvoiceType | 0>(initialType ?? 0), [initialType]);
 	const printedInvoice = useMemo(() => signal<SalesInvoiceReportResult | undefined>(undefined), []);
 	const isPrinting = useMemo(() => signal<number | undefined>(undefined), []);
@@ -74,10 +76,15 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 				? [SalesInvoiceType.Invoice, SalesInvoiceType.CreditNote, SalesInvoiceType.DebitNote]
 				: [activeTypeTab.value];
 		Cubits.salesInvoices.init(types);
-		Cubits.partners.init([PartnerType.Customer]);
-		Cubits.items.init();
-		Cubits.stores.init();
 	}, [activeTypeTab.value]);
+
+	useEffect(() =>
+	{
+		Cubits.partners.init([PartnerType.Customer]);
+		Cubits.stores.init();
+		Cubits.paymentMethods.init();
+		Cubits.accounts.init(getAccountTypesByClasses([AccountClass.Expense]));
+	}, []);
 
 	const handlePrint = async (invoice: SalesInvoiceDto) =>
 	{
@@ -109,6 +116,16 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 		{
 			isPrinting.value = undefined;
 		}
+	};
+
+	const handleReturnSales = (dto: SalesInvoiceDto) =>
+	{
+		navigate(`/sales/new?returnFromId=${ dto.id }`);
+	};
+
+	const handleCopySales = (dto: SalesInvoiceDto) =>
+	{
+		navigate(`/sales/new?copyFromId=${ dto.id }`);
 	};
 
 	const resendEInvoice = async (invoice: SalesInvoiceDto) =>
@@ -175,7 +192,6 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 					) }
 				</CrudPage.HeaderButtonsContainer>
 			</CrudPage.HeaderContainer>
-
 			<CrudPage.Cards
 				cards={ [
 					{
@@ -185,19 +201,16 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 					}
 				] }
 			/>
-
 			<FilterSection
 				fieldsCubit={ Cubits.salesInvoiceFilterFields }
 				onApply={ (groups) => Cubits.salesInvoices.applyFilterGroups(groups) }
 				onClear={ () => Cubits.salesInvoices.clearFilterGroups() }
 				renderCustomInput={ (props) => RenderSalesInvoiceFilterInput(props, t) }
 			/>
-
 			<CrudPage.SearchInput
 				className="rounded-t-none!"
 				onSearch={ (searchText) => Cubits.salesInvoices.search(searchText) }
 			/>
-
 			{ (() =>
 			{
 				if (Cubits.salesInvoices.state.value instanceof PageLoading) return <TablePreview.Loading/>;
@@ -229,7 +242,6 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 									const badge = getSalesInvoiceTypeBadge(inv.type, t);
 									const paymentStat = getPaymentStatus(inv, t);
 									const returnStat = getReturnStatus(inv, t);
-
 									return [
 										{rowBody: `#${ inv.id }`, rowStyles: ""},
 										{
@@ -346,66 +358,57 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 									SystemPermissionsActions.Update
 								) }
 								hasDeletePermission={ false }
-								onEditClicked={ (entity) => (entity.invoiceMode = SalesInvoiceMode.Normal) }
-								dropdownItems={ (dto, openEditDialog) => [
+								dropdownItems={ (dto) => [
 									...(dto.type === SalesInvoiceType.Invoice && dto.returnStatusId !== InvoiceReturnStatus.FullyReturned
 										? [
 											<DropdownMenuItem
 												key="ret"
 												className="text-orange-700 font-semibold"
-												onSelect={ () =>
-												{
-													dto.invoiceMode = SalesInvoiceMode.Return;
-													openEditDialog(dto);
-												} }
+												onSelect={ () => handleReturnSales(dto) }
 											>
 												<Undo2 className="h-4 w-4 me-2"/>
 												{ t("invoices.return") }
 											</DropdownMenuItem>
 										]
 										: []),
-									<DropdownMenuItem
-										key="copy"
-										className="text-blue-600 font-semibold"
-										onSelect={ () =>
-										{
-											dto.invoiceMode = SalesInvoiceMode.Copy;
-											openEditDialog(dto);
-										} }
-									>
-										<Copy className="h-4 w-4 me-2"/>
-										{ t("invoices.copyInvoice") }
-									</DropdownMenuItem>
+									...(dto.type !== SalesInvoiceType.CreditNote
+										? [
+											<DropdownMenuItem
+												key="copy"
+												className="text-blue-600 font-semibold"
+												onSelect={ () => handleCopySales(dto) }
+											>
+												<Copy className="h-4 w-4 me-2"/>
+												{ t("invoices.copyInvoice") }
+											</DropdownMenuItem>
+										]
+										: [])
 								] }
-								contextMenuItems={ (dto, openEditDialog) => [
+								contextMenuItems={ (dto) => [
 									...(dto.type === SalesInvoiceType.Invoice && dto.returnStatusId !== InvoiceReturnStatus.FullyReturned
 										? [
 											<ContextMenuItem
 												key="ret"
 												className="text-orange-700 font-semibold"
-												onSelect={ () =>
-												{
-													dto.invoiceMode = SalesInvoiceMode.Return;
-													openEditDialog(dto);
-												} }
+												onSelect={ () => handleReturnSales(dto) }
 											>
 												<Undo2 className="h-4 w-4 me-2"/>
 												{ t("invoices.return") }
 											</ContextMenuItem>
 										]
 										: []),
-									<ContextMenuItem
-										key="copy"
-										className="text-blue-600 font-semibold"
-										onSelect={ () =>
-										{
-											dto.invoiceMode = SalesInvoiceMode.Copy;
-											openEditDialog(dto);
-										} }
-									>
-										<Copy className="h-4 w-4 me-2"/>
-										{ t("invoices.copyInvoice") }
-									</ContextMenuItem>
+									...(dto.type !== SalesInvoiceType.CreditNote
+										? [
+											<ContextMenuItem
+												key="copy"
+												className="text-blue-600 font-semibold"
+												onSelect={ () => handleCopySales(dto) }
+											>
+												<Copy className="h-4 w-4 me-2"/>
+												{ t("invoices.copyInvoice") }
+											</ContextMenuItem>
+										]
+										: [])
 								] }
 							/>
 							<CrudTablePagination
@@ -419,7 +422,6 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 				}
 				return <TablePreview.Empty/>;
 			})() }
-
 			<CrudPage.ChangeDialog
 				fetchEntity={ async (id: number) =>
 				{
@@ -447,7 +449,6 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 					/>
 				) }
 			/>
-
 			{ !printedInvoice.value &&
 				createPortal(
 					<PortalReportContainer>

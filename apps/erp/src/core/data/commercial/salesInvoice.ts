@@ -177,15 +177,15 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 			)
 		);
 
-		this.costVouchers.value.forEach((t) =>
-			t.hasChanges.subscribe(() =>
-			{
-				this.hasChanges.value =
-					this.costVouchers.value.some((v) => v.hasChanges.value) ||
-					this.paymentVouchers.value.some((v) => v.hasChanges.value) ||
-					this.items.value.some((v) => v.hasChanges.value);
-			})
-		);
+		const checkChildren = () =>
+		{
+			this.hasChanges.value =
+				this.costVouchers.value.some((v) => v.hasChanges.value) ||
+				this.paymentVouchers.value.some((v) => v.hasChanges.value) ||
+				this.items.value.some((v) => v.hasChanges.value);
+		};
+		this.items.value.forEach((s) => s.hasChanges.subscribe(checkChildren));
+		this.costVouchers.value.forEach((t) => t.hasChanges.subscribe(checkChildren));
 	}
 
 	public loadFromQuotation(quotation: QuotationDto): void
@@ -222,7 +222,7 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 		this.delegateEmp.value = source.delegateEmp;
 		this.date.value = DateService.formatDateOnly(new Date());
 		this.invoiceMode.value = CommercialInvoiceMode.Return;
-
+		this.costVouchers.value = [];
 		this.items.value = (source.items || []).map((qi, idx) =>
 		{
 			const line = new SalesInvoiceItem({

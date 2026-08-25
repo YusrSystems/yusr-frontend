@@ -33,12 +33,12 @@ import { ItemType } from "@/core/data/item";
 import { PartnerDto, PartnerType } from "@/core/data/partner";
 import { ImportExportType } from "@/core/types/importExportType";
 import { Voucher, VoucherType } from "@/core/data/voucher";
-import { AccountClass, getAccountTypesByClasses } from "@/core/data/account";
 import { Services } from "@/core/services/services";
 import { Cubits } from "@/core/services/cubits";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
 import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect";
+import { SalesInvoicesSearchableSelect } from "@/core/components/searchableSelect/salesInvoicesSearchableSelect";
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect";
 import StoreItemSelector from "@/features/items/storeItemSelector";
@@ -50,8 +50,8 @@ import { CommercialPolicyTab } from "@/features/commercial/components/commercial
 import { CommercialAttachmentsTab } from "@/features/commercial/components/commercialAttachmentsTab";
 import { CommercialPaymentVouchers } from "@/features/commercial/components/commercialPaymentVouchers";
 import { CommercialMath } from "@/features/commercial/logic/commercialMath";
-import { ItemProfitDialog } from "./profit/itemProfitDialog.tsx";
-import InvoiceProfitDialog from "./profit/invoiceProfitDialog.tsx";
+import { ItemProfitDialog } from "./profit/itemProfitDialog";
+import InvoiceProfitDialog from "./profit/invoiceProfitDialog";
 
 
 export default function ChangeSalesInvoiceDialog({
@@ -67,13 +67,13 @@ export default function ChangeSalesInvoiceDialog({
 	const {t} = useTranslation("accounting");
 	const [searchParams] = useSearchParams();
 	const fromQuotationId = searchParams.get("fromQuotationId");
-
+	const copyFromId = searchParams.get("copyFromId");
+	const returnFromId = searchParams.get("returnFromId");
 	const entity = useMemo(() => signal(dto ? SalesInvoice.load(dto) : SalesInvoice.create({type: fixedType})), [dto, fixedType]);
 	const isLoading = useMemo(() => signal(false), []);
 	const isSaving = useMemo(() => signal(false), []);
 	const hasCostVouchers = useMemo(() => signal(false), []);
 	const selectedPartner = useMemo(() => signal<PartnerDto | undefined>(undefined), []);
-
 	const {commitFiles} = useStorageFile(
 		() => entity.value.files.value ?? [],
 		(files) => (entity.value.files.value = files),
@@ -82,15 +82,70 @@ export default function ChangeSalesInvoiceDialog({
 
 	useEffect(() =>
 	{
-		Cubits.paymentMethods.init();
-		Cubits.stores.init();
-		Cubits.partners.init([PartnerType.Customer]);
-		Cubits.accounts.init(getAccountTypesByClasses([AccountClass.Expense]));
-		Cubits.items.init();
-	}, []);
+		const canCreate = Services.auth.hasAuth(
+			SystemPermissionsResources.Invoices,
+			SystemPermissionsActions.Add
+		);
+		if (!canCreate) return;
+		if (entity.value.mode.value === ChangeableEntityMode.Create && returnFromId && Number(returnFromId) > 0)
+		{
+			isLoading.value = true;
+			const loadReturn = async () =>
+			{
+				try
+				{
+					const res: RequestResult<SalesInvoiceDto> = await Services.salesInvoicesApi.GetReturnInvoiceInitialDetails(Number(returnFromId));
+					if (res?.data)
+					{
+						hasCostVouchers.value = (res.data.costVouchers || []).length > 0;
+						entity.value.loadFromReturn(res.data);
+					}
+				}
+				finally
+				{
+					isLoading.value = false;
+				}
+			};
+			void loadReturn();
+		}
+	}, [returnFromId]);
 
 	useEffect(() =>
 	{
+		const canCreate = Services.auth.hasAuth(
+			SystemPermissionsResources.Invoices,
+			SystemPermissionsActions.Add
+		);
+		if (!canCreate) return;
+		if (entity.value.mode.value === ChangeableEntityMode.Create && copyFromId && Number(copyFromId) > 0)
+		{
+			isLoading.value = true;
+			const loadCopy = async () =>
+			{
+				try
+				{
+					const res: RequestResult<SalesInvoiceDto> = await Services.salesInvoicesApi.Get(Number(copyFromId));
+					if (res?.data)
+					{
+						entity.value.loadFromCopy(res.data);
+					}
+				}
+				finally
+				{
+					isLoading.value = false;
+				}
+			};
+			void loadCopy();
+		}
+	}, [copyFromId]);
+
+	useEffect(() =>
+	{
+		const canCreate = Services.auth.hasAuth(
+			SystemPermissionsResources.Invoices,
+			SystemPermissionsActions.Add
+		);
+		if (!canCreate) return;
 		if (entity.value.mode.value === ChangeableEntityMode.Create && fromQuotationId && Number(fromQuotationId) > 0)
 		{
 			isLoading.value = true;
@@ -116,60 +171,16 @@ export default function ChangeSalesInvoiceDialog({
 	const currentStoreId = entity.value.storeId.value;
 	useEffect(() =>
 	{
-		if (currentStoreId && !entity.value.isDisabled)
+		const hasAuth =
+			(entity.value.mode.value === ChangeableEntityMode.Create &&
+				Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Add)) ||
+			(entity.value.mode.value === ChangeableEntityMode.Update &&
+				Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Update));
+		if (currentStoreId && !entity.value.isDisabled && hasAuth)
 		{
 			Cubits.items.init([ItemType.Product, ItemType.Service], {storeId: currentStoreId});
 		}
 	}, [currentStoreId]);
-
-	useEffect(() =>
-	{
-		if (entity.value.mode.value === ChangeableEntityMode.Create) return;
-		if (entity.value.id.value)
-		{
-			isLoading.value = true;
-			const load = async () =>
-			{
-				let res: RequestResult<SalesInvoiceDto>;
-				if (entity.value.invoiceMode.value !== SalesInvoiceMode.Return)
-				{
-					res = await Services.salesInvoicesApi.Get(entity.value.id.value);
-				}
-				else
-				{
-					res = await Services.salesInvoicesApi.GetReturnInvoiceInitialDetails(entity.value.id.value);
-				}
-				if (res?.data)
-				{
-					if (entity.value.invoiceMode.value === SalesInvoiceMode.Normal)
-					{
-						entity.value = SalesInvoice.load(res.data);
-					}
-					else if (entity.value.invoiceMode.value === SalesInvoiceMode.Return)
-					{
-						res.data.originalSalesInvoiceId = entity.value.id.value;
-						res.data.type = SalesInvoiceType.CreditNote;
-						hasCostVouchers.value = res.data.costVouchers.length > 0;
-						res.data.costVouchers = [];
-						res.data.paymentVouchers = res.data.paymentVouchers.map((v) => ({...v, id: 0}));
-						entity.value = SalesInvoice.create(res.data);
-						entity.value.invoiceMode.value = SalesInvoiceMode.Return;
-						entity.value.syncPaymentVouchers();
-					}
-					else if (entity.value.invoiceMode.value === SalesInvoiceMode.Copy)
-					{
-						res.data.id = 0;
-						res.data.idempotencyKey = crypto.randomUUID();
-						entity.value = SalesInvoice.create(res.data);
-						entity.value.invoiceMode.value = SalesInvoiceMode.Copy;
-						entity.value.syncPaymentVouchers();
-					}
-				}
-				isLoading.value = false;
-			};
-			void load();
-		}
-	}, [entity.value.id.value, entity.value.mode.value]);
 
 	const invoiceOrigin = useComputed(() =>
 	{
@@ -181,6 +192,16 @@ export default function ChangeSalesInvoiceDialog({
 		}
 		return {canBeExportInvoice: partnerCountryId !== settingsCountryId};
 	});
+
+	if (
+		(entity.value.mode.value === ChangeableEntityMode.Create &&
+			!Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Add)) ||
+		(entity.value.mode.value === ChangeableEntityMode.Update &&
+			!Services.auth.hasAuth(SystemPermissionsResources.Invoices, SystemPermissionsActions.Update))
+	)
+	{
+		return <ChangeDialog.Unauthorized/>;
+	}
 
 	const transformDataBeforeSave = async (data: SalesInvoiceDto): Promise<SalesInvoiceDto> =>
 	{
@@ -204,9 +225,13 @@ export default function ChangeSalesInvoiceDialog({
 		{
 			return `تحويل عرض السعر #${ entity.value.basedOnQuotationId.value } إلى فاتورة مبيعات`;
 		}
-		if (entity.value.invoiceMode.value === SalesInvoiceMode.Return)
+		if (returnFromId || entity.value.invoiceMode.value === SalesInvoiceMode.Return)
 		{
 			return "إضافة إشعار دائن (مرتجع مبيعات)";
+		}
+		if (copyFromId)
+		{
+			return `نسخ فاتورة المبيعات #${ copyFromId }`;
 		}
 		if (entity.value.mode.value === ChangeableEntityMode.Create)
 		{
@@ -215,7 +240,42 @@ export default function ChangeSalesInvoiceDialog({
 		return `تعديل ${ getSalesInvoiceTypeName(entity.value.type.value, t) }`;
 	};
 
-	if (isLoading.value)
+	const handleSelectOriginalInvoice = async (originalInvoice?: SalesInvoiceDto) =>
+	{
+		if (!originalInvoice)
+		{
+			entity.value.originalSalesInvoiceId.value = undefined;
+			return;
+		}
+		if (entity.value.type.value === SalesInvoiceType.CreditNote)
+		{
+			isLoading.value = true;
+			try
+			{
+				const res = await Services.salesInvoicesApi.GetReturnInvoiceInitialDetails(originalInvoice.id);
+				if (res?.data)
+				{
+					hasCostVouchers.value = (res.data.costVouchers || []).length > 0;
+					entity.value.loadFromReturn(res.data);
+				}
+			}
+			finally
+			{
+				isLoading.value = false;
+			}
+		}
+		else if (entity.value.type.value === SalesInvoiceType.DebitNote)
+		{
+			entity.value.originalSalesInvoiceId.value = originalInvoice.id;
+			entity.value.storeId.value = originalInvoice.storeId;
+			entity.value.storeName.value = originalInvoice.storeName;
+			entity.value.partnerId.value = originalInvoice.partnerId;
+			entity.value.partnerName.value = originalInvoice.partnerName;
+			entity.value.delegateEmp.value = originalInvoice.delegateEmp;
+		}
+	};
+
+	if (isLoading.value || (entity.value.mode.value === ChangeableEntityMode.Update && entity.value.items.value.length <= 0))
 	{
 		return (
 			<ChangeDialog>
@@ -230,7 +290,9 @@ export default function ChangeSalesInvoiceDialog({
 		entity.value.items.value.some((t) => t.hasErrors) ||
 		entity.value.paymentVouchers.value.some((t) => t.hasErrors);
 	const costHasError = entity.value.costVouchers.value.some((t) => t.hasErrors);
-
+	const isCreditOrDebit =
+		entity.value.type.value === SalesInvoiceType.CreditNote ||
+		entity.value.type.value === SalesInvoiceType.DebitNote;
 	const saveButtonLabel = entity.value.basedOnQuotationId.value
 		? "إنشاء واعتماد الفاتورة"
 		: undefined;
@@ -252,6 +314,7 @@ export default function ChangeSalesInvoiceDialog({
 										<DateField
 											label={ t("invoices.invoiceDate") }
 											required
+											disabled={ entity.value.isDisabled }
 											value={ entity.value.date }
 											error={ entity.value.getError("date") }
 										/>
@@ -292,16 +355,29 @@ export default function ChangeSalesInvoiceDialog({
 												} }
 											/>
 										</FormField>
-										<TextField
-											label={ t("invoices.relatedInvoiceNumber") }
-											disabled
-											value={ entity.value.originalSalesInvoiceId }
-										/>
-										<TextField label="مندوب المبيعات" value={ entity.value.delegateEmp }/>
+										{ isCreditOrDebit && !returnFromId && entity.value.mode.value === ChangeableEntityMode.Create ? (
+											<FormField label={ t("invoices.relatedInvoiceNumber") } required>
+												<SalesInvoicesSearchableSelect
+													id={ entity.value.originalSalesInvoiceId }
+													label={ signal(entity.value.originalSalesInvoiceId.value ? `#${ entity.value.originalSalesInvoiceId.value }` : undefined) }
+													onSelect={ handleSelectOriginalInvoice }
+													cubit={ Cubits.originalSalesInvoices }
+												/>
+											</FormField>
+										) : (
+											<TextField
+												label={ t("invoices.relatedInvoiceNumber") }
+												disabled
+												value={ entity.value.originalSalesInvoiceId }
+											/>
+										) }
+										<TextField label="مندوب المبيعات" value={ entity.value.delegateEmp }
+										           disabled={ entity.value.isDisabled }/>
 										{ invoiceOrigin.value.canBeExportInvoice && (
 											<SelectField<ImportExportType>
 												label={ t("invoices.importInvoice") }
 												required
+												disabled={ entity.value.isDisabled }
 												value={ entity.value.importExportType }
 												error={ entity.value.getError("importExportType") }
 												options={ [
@@ -314,7 +390,6 @@ export default function ChangeSalesInvoiceDialog({
 											<TextField label={ t("invoices.notes") } value={ entity.value.notes }/>
 										</div>
 									</FieldsSection>
-
 									{ !entity.value.isDisabled && entity.value.invoiceMode.value !== SalesInvoiceMode.Return && (
 										<StoreItemSelector
 											storeId={ entity.value.storeId }
@@ -324,7 +399,6 @@ export default function ChangeSalesInvoiceDialog({
 											} }
 										/>
 									) }
-
 									<CommercialItemsTable
 										document={ entity.value }
 										type="sales"
@@ -339,14 +413,12 @@ export default function ChangeSalesInvoiceDialog({
 										}
 									/>
 								</div>
-
 								<div className="xl:col-span-4 2xl:col-span-3">
 									<div className="sticky top-4 space-y-4">
 										{ Services.auth.hasAuth(
 											SystemPermissionsResources.InvoiceAddSettlement,
 											SystemPermissionsActions.Get
 										) && <CommercialGlobalSettlement document={ entity.value }/> }
-
 										<CommercialSummaryCard
 											document={ entity.value }
 											renderFooter={
@@ -358,7 +430,6 @@ export default function ChangeSalesInvoiceDialog({
 												) : null
 											}
 										/>
-
 										<CommercialPaymentVouchers document={ entity.value }/>
 									</div>
 								</div>
