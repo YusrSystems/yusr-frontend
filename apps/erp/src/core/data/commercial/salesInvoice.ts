@@ -57,7 +57,6 @@ export class SalesInvoiceDto implements ICommercialInvoiceDocumentDto
 	public basedOnQuotationId?: number;
 	public posSessionId?: number;
 	public date!: string;
-	public delegateEmp?: string;
 	public eInvoiceStatus!: EInvoiceStatus;
 	public fullAmount!: number;
 	public paidAmount!: number;
@@ -95,7 +94,7 @@ export class SalesInvoiceItem extends CommercialItem<SalesInvoiceItemDto, SalesI
 	constructor(dto?: Partial<SalesInvoiceItemDto>)
 	{
 		super(dto, ChangeableEntityMode.Create);
-		this.salesInvoiceId = this.assign("salesInvoiceId", dto?.salesInvoiceId ?? 0);
+		this.salesInvoiceId = this.assign("salesInvoiceId", dto?.salesInvoiceId);
 	}
 
 	public static createFromItem(
@@ -138,7 +137,6 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 	public originalSalesInvoiceId: Signal<number | undefined>;
 	public basedOnQuotationId: Signal<number | undefined>;
 	public posSessionId: Signal<number | undefined>;
-	public delegateEmp: Signal<string | undefined>;
 	public eInvoiceStatus: Signal<EInvoiceStatus>;
 	public canBePrinted: Signal<boolean | undefined>;
 	public costVouchers: Signal<Voucher[]>;
@@ -151,12 +149,11 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 		this.originalSalesInvoiceId = this.assign("originalSalesInvoiceId", dto?.originalSalesInvoiceId);
 		this.basedOnQuotationId = this.assign("basedOnQuotationId", dto?.basedOnQuotationId);
 		this.posSessionId = this.assign("posSessionId", dto?.posSessionId);
-		this.delegateEmp = this.assign("delegateEmp", dto?.delegateEmp);
 		this.eInvoiceStatus = this.assign("eInvoiceStatus", dto?.eInvoiceStatus ?? EInvoiceStatus.NotSent);
 		this.canBePrinted = this.assign("canBePrinted", dto?.canBePrinted);
 		this.ignoreWarnings = this.assign("ignoreWarnings", dto?.ignoreWarnings ?? false);
 
-		this.partnerId.value = dto?.partnerId ?? (Services.auth.setting?.defaultCustomerPartnerId.value || 0);
+		this.partnerId.value = dto?.partnerId ?? (Services.auth.setting?.defaultCustomerPartnerId.value);
 		this.partnerName.value = dto?.partnerName ?? Services.auth.setting?.defaultCustomerPartnerName.value;
 		this.policy.value = dto?.policy ?? Services.auth.setting?.saleInvoicePolicy?.value;
 
@@ -192,7 +189,6 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 	{
 		this.copyFromDocument(quotation);
 		this.basedOnQuotationId.value = quotation.id;
-		this.delegateEmp.value = quotation.delegateEmp;
 		if (Services.auth.setting?.saleInvoicePolicy?.value)
 		{
 			this.policy.value = Services.auth.setting.saleInvoicePolicy.value;
@@ -219,7 +215,6 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 		this.copyFromDocument(source);
 		this.type.value = SalesInvoiceType.CreditNote;
 		this.originalSalesInvoiceId.value = source.id;
-		this.delegateEmp.value = source.delegateEmp;
 		this.date.value = DateService.formatDateOnly(new Date());
 		this.invoiceMode.value = CommercialInvoiceMode.Return;
 		this.costVouchers.value = [];

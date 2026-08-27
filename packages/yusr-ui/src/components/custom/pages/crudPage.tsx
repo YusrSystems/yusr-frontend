@@ -94,13 +94,14 @@ CrudPage.HeaderButtonsContainer = function ({className, children}: { className?:
 CrudPage.AddButton = function ({title, onClick}: { title: string } & ButtonProps)
 {
 	useSignals();
-	const {selectedDto, isChangeDialogOpen} = useCrudPageContext();
+	const {selectedDto, isChangeDialogOpen, navigate, basePath} = useCrudPageContext();
 	return (
 		<Button
 			variant="default"
 			onClick={ (e) =>
 			{
 				selectedDto.value = undefined;
+				navigate(`${ basePath }/new`);
 				isChangeDialogOpen.value = true;
 				onClick?.(e);
 			} }
@@ -257,6 +258,12 @@ CrudPage.ChangeDialog = function <TDto extends Dto>(
 	const fetchEntityRef = useRef(fetchEntity);
 	fetchEntityRef.current = fetchEntity;
 
+	const handleClose = () =>
+	{
+		isChangeDialogOpen.value = false;
+		navigate(basePath, {replace: true});
+	};
+
 	useEffect(() =>
 	{
 		if (!params.id)
@@ -305,16 +312,17 @@ CrudPage.ChangeDialog = function <TDto extends Dto>(
 						isChangeDialogOpen.value = open;
 						if (!open)
 						{
-							navigate(basePath, {replace: true});
+							handleClose();
+						}
+						else
+						{
+							isChangeDialogOpen.value = true;
 						}
 					} }
 				>
 					{ changeDialog(
 						selectedDto.value as TDto,
-						() =>
-						{
-							isChangeDialogOpen.value = false;
-						}
+						handleClose
 					) }
 				</Dialog>
 			) }

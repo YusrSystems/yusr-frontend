@@ -20,6 +20,7 @@ import {
 	SelectField,
 	StorageType,
 	SystemPermissionsActions,
+	TextAreaField,
 	TextField,
 	useStorageFile
 } from "yusr-ui";
@@ -169,7 +170,6 @@ export default function ChangeSalesInvoiceDialog({
 			entity.value.storeName.value = originalInvoice.storeName;
 			entity.value.partnerId.value = originalInvoice.partnerId;
 			entity.value.partnerName.value = originalInvoice.partnerName;
-			entity.value.delegateEmp.value = originalInvoice.delegateEmp;
 		}
 	};
 
@@ -253,24 +253,26 @@ export default function ChangeSalesInvoiceDialog({
 												} }
 											/>
 										</FormField>
-										{ isCreditOrDebit && !returnFromId && entity.value.mode.value === ChangeableEntityMode.Create ? (
-											<FormField label={ t("invoices.relatedInvoiceNumber") } required>
-												<SalesInvoicesSearchableSelect
-													id={ entity.value.originalSalesInvoiceId }
-													label={ signal(entity.value.originalSalesInvoiceId.value ? `#${ entity.value.originalSalesInvoiceId.value }` : undefined) }
-													onSelect={ handleSelectOriginalInvoice }
-													cubit={ Cubits.originalSalesInvoices }
+
+										{ isCreditOrDebit && !returnFromId && (
+											entity.value.mode.value === ChangeableEntityMode.Create ? (
+												<FormField label={ t("invoices.relatedInvoiceNumber") } required>
+													<SalesInvoicesSearchableSelect
+														id={ entity.value.originalSalesInvoiceId }
+														label={ signal(entity.value.originalSalesInvoiceId.value ? `#${ entity.value.originalSalesInvoiceId.value }` : undefined) }
+														onSelect={ handleSelectOriginalInvoice }
+														cubit={ Cubits.originalSalesInvoices }
+													/>
+												</FormField>
+											) : (
+												<TextField
+													label={ t("invoices.relatedInvoiceNumber") }
+													disabled
+													value={ entity.value.originalSalesInvoiceId }
 												/>
-											</FormField>
-										) : (
-											<TextField
-												label={ t("invoices.relatedInvoiceNumber") }
-												disabled
-												value={ entity.value.originalSalesInvoiceId }
-											/>
+											)
 										) }
-										<TextField label="مندوب المبيعات" value={ entity.value.delegateEmp }
-										           disabled={ entity.value.isDisabled }/>
+
 										{ invoiceOrigin.value.canBeExportInvoice && (
 											<SelectField<ImportExportType>
 												label={ t("invoices.importInvoice") }
@@ -285,7 +287,12 @@ export default function ChangeSalesInvoiceDialog({
 											/>
 										) }
 										<div className="col-span-1 md:col-span-2 lg:col-span-4">
-											<TextField label={ t("invoices.notes") } value={ entity.value.notes }/>
+											<TextAreaField
+												label={ t("invoices.notes") }
+												value={ entity.value.notes }
+												collapsible
+												collapsedHeight={ 60 }
+											/>
 										</div>
 									</FieldsSection>
 									{ !entity.value.isDisabled && entity.value.invoiceMode.value !== SalesInvoiceMode.Return && (

@@ -91,7 +91,7 @@ export class PurchaseInvoiceItem extends CommercialItem<PurchaseInvoiceItemDto, 
 	constructor(dto?: Partial<PurchaseInvoiceItemDto>)
 	{
 		super(dto, ChangeableEntityMode.Create);
-		this.purchaseInvoiceId = this.assign("purchaseInvoiceId", dto?.purchaseInvoiceId ?? 0);
+		this.purchaseInvoiceId = this.assign("purchaseInvoiceId", dto?.purchaseInvoiceId);
 	}
 
 	public static createFromItem(
@@ -148,7 +148,7 @@ export class PurchaseInvoice extends CommercialInvoiceDocument<PurchaseInvoiceDt
 		this.vendorInvoiceNumber = this.assign("vendorInvoiceNumber", dto?.vendorInvoiceNumber);
 		this.vendorInvoiceDate = this.assign("vendorInvoiceDate", dto?.vendorInvoiceDate);
 
-		this.partnerId.value = dto?.partnerId ?? (Services.auth.setting?.defaultSupplierPartnerId.value || 0);
+		this.partnerId.value = dto?.partnerId ?? (Services.auth.setting?.defaultSupplierPartnerId.value);
 		this.partnerName.value = dto?.partnerName ?? Services.auth.setting?.defaultSupplierPartnerName.value;
 
 		this.items = this.assign(

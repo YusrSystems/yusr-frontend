@@ -12,6 +12,7 @@ import {
 	SelectField,
 	StorageType,
 	SystemPermissionsActions,
+	TextAreaField,
 	TextField,
 	useStorageFile
 } from "yusr-ui";
@@ -225,31 +226,34 @@ export default function ChangePurchaseInvoiceDialog({
 												} }
 											/>
 										</FormField>
-										{ isCreditOrDebit && !returnFromId && entity.value.mode.value === ChangeableEntityMode.Create ? (
-											<FormField label={ t("invoices.relatedInvoiceNumber") } required>
-												<PurchaseInvoicesSearchableSelect
-													id={ entity.value.originalPurchaseInvoiceId }
-													label={ signal(entity.value.originalPurchaseInvoiceId.value ? `#${ entity.value.originalPurchaseInvoiceId.value }` : undefined) }
-													onSelect={ handleSelectOriginalInvoice }
-													cubit={ Cubits.originalPurchaseInvoices }
+										{ isCreditOrDebit && !returnFromId && (
+											entity.value.mode.value === ChangeableEntityMode.Create ? (
+												<FormField
+													label={ t("invoices.relatedInvoiceNumber") }
+													required
+												>
+													<PurchaseInvoicesSearchableSelect
+														id={ entity.value.originalPurchaseInvoiceId }
+														label={ signal(entity.value.originalPurchaseInvoiceId.value ? `#${ entity.value.originalPurchaseInvoiceId.value }` : undefined) }
+														onSelect={ handleSelectOriginalInvoice }
+														cubit={ Cubits.originalPurchaseInvoices }
+													/>
+												</FormField>
+											) : (
+												<TextField
+													label={ t("invoices.relatedInvoiceNumber") }
+													disabled
+													value={ entity.value.originalPurchaseInvoiceId }
 												/>
-											</FormField>
-										) : (
-											<TextField
-												label={ t("invoices.relatedInvoiceNumber") }
-												disabled
-												value={ entity.value.originalPurchaseInvoiceId }
-											/>
+											)
 										) }
 										<TextField
 											label="رقم فاتورة المورد"
 											value={ entity.value.vendorInvoiceNumber }
-											disabled={ entity.value.isDisabled }
 										/>
 										<DateField
 											label="تاريخ فاتورة المورد"
 											value={ entity.value.vendorInvoiceDate }
-											disabled={ entity.value.isDisabled }
 										/>
 										{ invoiceOrigin.value.canBeImportInvoice && (
 											<SelectField<ImportExportType>
@@ -271,7 +275,12 @@ export default function ChangePurchaseInvoiceDialog({
 											/>
 										) }
 										<div className="col-span-1 md:col-span-2 lg:col-span-4">
-											<TextField label={ t("invoices.notes") } value={ entity.value.notes }/>
+											<TextAreaField
+												label={ t("invoices.notes") }
+												value={ entity.value.notes }
+												collapsible
+												collapsedHeight={ 60 }
+											/>
 										</div>
 									</FieldsSection>
 

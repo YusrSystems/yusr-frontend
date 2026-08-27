@@ -43,7 +43,6 @@ export class QuotationDto implements ICommercialDocumentDto
 	public date!: string;
 	public expiryDate?: string;
 	public deliveryDate?: string;
-	public delegateEmp?: string;
 	public fullAmount!: number;
 	public settlementReason?: string;
 	public settlementAmount!: number;
@@ -72,7 +71,7 @@ export class QuotationItem extends CommercialItem<QuotationItemDto, Quotation>
 	constructor(dto?: Partial<QuotationItemDto>)
 	{
 		super(dto, ChangeableEntityMode.Create);
-		this.quotationId = this.assign("quotationId", dto?.quotationId ?? 0);
+		this.quotationId = this.assign("quotationId", dto?.quotationId);
 	}
 
 	public static createFromItem(
@@ -103,7 +102,6 @@ export class Quotation extends CommercialDocument<QuotationDto, QuotationItem, Q
 {
 	public expiryDate: Signal<string | undefined>;
 	public deliveryDate: Signal<string | undefined>;
-	public delegateEmp: Signal<string | undefined>;
 	public status: Signal<QuotationStatus>;
 	public convertedInvoiceId: Signal<number | undefined>;
 
@@ -117,11 +115,10 @@ export class Quotation extends CommercialDocument<QuotationDto, QuotationItem, Q
 		super(dto, mode);
 		this.expiryDate = this.assign("expiryDate", dto?.expiryDate);
 		this.deliveryDate = this.assign("deliveryDate", dto?.deliveryDate);
-		this.delegateEmp = this.assign("delegateEmp", dto?.delegateEmp);
 		this.status = this.assign("status", dto?.status ?? QuotationStatus.Active);
 		this.convertedInvoiceId = this.assign("convertedInvoiceId", dto?.convertedInvoiceId);
 
-		this.partnerId.value = dto?.partnerId ?? (Services.auth.setting?.defaultCustomerPartnerId.value || 0);
+		this.partnerId.value = dto?.partnerId ?? (Services.auth.setting?.defaultCustomerPartnerId.value);
 		this.partnerName.value = dto?.partnerName ?? Services.auth.setting?.defaultCustomerPartnerName.value;
 		this.policy.value = dto?.policy ?? Services.auth.setting?.quotationInvoicePolicy?.value;
 
@@ -166,7 +163,6 @@ export class Quotation extends CommercialDocument<QuotationDto, QuotationItem, Q
 		this.copyFromDocument(source);
 		this.expiryDate.value = source.expiryDate;
 		this.deliveryDate.value = source.deliveryDate;
-		this.delegateEmp.value = source.delegateEmp;
 		this.status.value = QuotationStatus.Active;
 		this.convertedInvoiceId.value = undefined;
 

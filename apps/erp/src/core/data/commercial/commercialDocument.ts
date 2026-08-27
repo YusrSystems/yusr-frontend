@@ -117,13 +117,13 @@ export abstract class CommercialDocument<
 		this.settlementPercent = this.assign("settlementPercent", dto?.settlementPercent ?? 0);
 		this.storeId = this.assign(
 			"storeId",
-			dto?.storeId ?? Services.auth.setting?.mainStoreId.value ?? 0
+			dto?.storeId ?? Services.auth.setting?.mainStoreId.value
 		);
 		this.storeName = this.assign(
 			"storeName",
 			dto?.storeName ?? Services.auth.setting?.mainStoreName.value
 		);
-		this.partnerId = this.assign("partnerId", dto?.partnerId ?? 0);
+		this.partnerId = this.assign("partnerId", dto?.partnerId);
 		this.partnerName = this.assign("partnerName", dto?.partnerName);
 		this.notes = this.assign("notes", dto?.notes);
 		this.policy = this.assign("policy", dto?.policy);
