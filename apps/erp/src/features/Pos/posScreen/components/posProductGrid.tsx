@@ -270,7 +270,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 									item.totalTaxes ?? 0
 								);
 
-								const imageUrl = item.itemImages?.[0]?.url;
+								const imageUrl = item.files?.[0]?.url;
 
 								return (
 									<div

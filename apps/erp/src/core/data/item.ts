@@ -51,7 +51,7 @@ export class ItemDto extends Dto
 	public uoMs: ItemUoMDto[] = [];
 	public itemTaxes: ItemTaxDto[] = [];
 	public itemStores: ItemStoreDto[] = [];
-	public itemImages: StorageFile[] = [];
+	public files: StorageFile[] = [];
 }
 
 export default class Item extends ChangeableEntity<ItemDto>
@@ -86,7 +86,7 @@ export default class Item extends ChangeableEntity<ItemDto>
 	public uoMs: Signal<ItemUoM[]>;
 	public itemTaxes: Signal<ItemTax[]>;
 	public itemStores: Signal<ItemStore[]>;
-	public itemImages: Signal<StorageFile[]>;
+	public files: Signal<StorageFile[]>;
 
 	constructor(dto: Partial<ItemDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
@@ -122,8 +122,8 @@ export default class Item extends ChangeableEntity<ItemDto>
 				)]
 			},
 			{
-				field: "itemImages",
-				selector: (d) => d.itemImages,
+				field: "files",
+				selector: (d) => d.files,
 				validators: [Validators.arrayMaxLength(5)]
 			}
 		], mode);
@@ -163,7 +163,7 @@ export default class Item extends ChangeableEntity<ItemDto>
 		}).toJson()]).map(m => new ItemUoM(m)));
 		this.itemTaxes = this.assign("itemTaxes", (dto?.itemTaxes ?? []).map(t => new ItemTax(t)));
 		this.itemStores = this.assign("itemStores", (dto?.itemStores ?? []).map(s => new ItemStore(s)));
-		this.itemImages = this.assign("itemImages", dto?.itemImages ?? []);
+		this.files = this.assign("files", dto?.files ?? []);
 
 		const checkChildren = () =>
 		{

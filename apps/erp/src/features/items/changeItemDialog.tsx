@@ -80,8 +80,8 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 	}, [Cubits.taxes.entities.value]);
 
 	const {commitFiles} = useStorageFile(
-		() => entity.value.itemImages.value,
-		(v) => (entity.value.itemImages.value = v),
+		() => entity.value.files.value,
+		(v) => (entity.value.files.value = v),
 		StorageType.Public
 	);
 
@@ -97,15 +97,15 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 
 	const basicHasError = BASIC_FIELDS.some((f) => entity.value.getError(f).value)
 		|| entity.value.itemTaxes.value.some((t) => t.hasErrors)
-		|| Boolean(entity.value.getError("itemImages").value);
+		|| Boolean(entity.value.getError("files").value);
 	const storageHasError = entity.value.itemStores.value.some((t) => t.hasErrors);
 	const pricingHasError = PRICING_FIELDS.some((f) => entity.value.getError(f).value)
 		|| entity.value.uoMs.value.some((t) => t.hasErrors);
 
 	const transformDataBeforeSave = async (): Promise<ItemDto> =>
 	{
-		entity.value.itemImages.value = await commitFiles(
-			entity.value.itemImages.value,
+		entity.value.files.value = await commitFiles(
+			entity.value.files.value,
 			`Items`
 		);
 

@@ -222,7 +222,7 @@ function PageTable()
 						{
 							rowBody: (
 								<ImagePreview
-									files={ item.itemImages }
+									files={ item.files }
 									size={ 40 }
 									fallback={
 										<div className="w-10 h-10 rounded bg-muted flex items-center justify-center">
