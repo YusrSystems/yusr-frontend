@@ -1,4 +1,4 @@
-import { BanknoteArrowUp, Box, FolderKanban, Plus, Siren, Trash2 } from "lucide-react";
+import { BanknoteArrowUp, Box, CheckCircle2, FolderKanban, Plus, Siren, Trash2 } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -27,6 +27,7 @@ import {
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { SalesInvoice, SalesInvoiceDto, SalesInvoiceMode } from "@/core/data/commercial/salesInvoice";
+import { QuotationDto } from "@/core/data/commercial/quotation";
 import { getSalesInvoiceTypeName, SalesInvoiceType } from "@/core/types/commercialEnums";
 import { PartnerDto, PartnerType } from "@/core/data/partner";
 import { ImportExportType } from "@/core/types/importExportType";
@@ -53,7 +54,7 @@ import { useInvoiceOrigin } from "../hooks/useInvoiceOrigin";
 import { useStoreItemsSync } from "../hooks/useStoreItemsSync";
 import { useCommercialUrlLoader } from "../hooks/useCommercialUrlLoader";
 import { prepareCommercialPayload } from "../logic/commercialPayload";
-import type { QuotationDto } from "@/core/data/commercial/quotation.ts";
+import type { SaveButtonProps } from "#/components/custom/buttons/saveButton.tsx";
 
 
 export default function ChangeSalesInvoiceDialog({
@@ -68,6 +69,7 @@ export default function ChangeSalesInvoiceDialog({
 	useSignals();
 	const {t} = useTranslation("accounting");
 	const entity = useMemo(() => signal(dto ? SalesInvoice.load(dto) : SalesInvoice.create({type: fixedType})), [dto, fixedType]);
+	const isFullyReturned = useMemo(() => signal(false), []);
 	const isLoading = useMemo(() => signal(false), []);
 	const isSaving = useMemo(() => signal(false), []);
 	const hasCostVouchers = useMemo(() => signal(false), []);
@@ -91,6 +93,7 @@ export default function ChangeSalesInvoiceDialog({
 		onLoadReturn: (data) =>
 		{
 			hasCostVouchers.value = (data.costVouchers || []).length > 0;
+			isFullyReturned.value = (data.items || []).length === 0;
 			entity.value.loadFromReturn(data);
 		},
 		onLoadCopy: (data) => entity.value.loadFromCopy(data),
@@ -155,6 +158,7 @@ export default function ChangeSalesInvoiceDialog({
 				if (res?.data)
 				{
 					hasCostVouchers.value = (res.data.costVouchers || []).length > 0;
+					isFullyReturned.value = (res.data.items || []).length === 0;
 					entity.value.loadFromReturn(res.data);
 				}
 			}
@@ -183,11 +187,33 @@ export default function ChangeSalesInvoiceDialog({
 		);
 	}
 
+	if (isFullyReturned.value)
+	{
+		return (
+			<ChangeDialog>
+				<ChangeDialog.Header title={ getDialogTitle() }/>
+				<div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
+					<div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+						<CheckCircle2 className="h-8 w-8 text-green-600"/>
+					</div>
+					<h3 className="text-lg font-semibold">{ t("invoices.fullyReturned") }</h3>
+					<p className="text-sm text-muted-foreground">{ t("invoices.fullyReturnedMessage") }</p>
+				</div>
+				<DialogFooter>
+					<DialogClose asChild>
+						<Button variant="outline">{ t("invoices.close") }</Button>
+					</DialogClose>
+				</DialogFooter>
+			</ChangeDialog>
+		);
+	}
+
 	const basicHasError =
 		entity.value.hasErrors ||
 		entity.value.items.value.some((t) => t.hasErrors) ||
 		entity.value.paymentVouchers.value.some((t) => t.hasErrors);
 	const costHasError = entity.value.costVouchers.value.some((t) => t.hasErrors);
+
 	const isCreditOrDebit =
 		entity.value.type.value === SalesInvoiceType.CreditNote ||
 		entity.value.type.value === SalesInvoiceType.DebitNote;
@@ -298,6 +324,7 @@ export default function ChangeSalesInvoiceDialog({
 											/>
 										</div>
 									</FieldsSection>
+
 									{ !entity.value.isDisabled && entity.value.invoiceMode.value !== SalesInvoiceMode.Return && (
 										<StoreItemSelector
 											storeId={ entity.value.storeId }
@@ -307,6 +334,7 @@ export default function ChangeSalesInvoiceDialog({
 											} }
 										/>
 									) }
+
 									<CommercialItemsTable
 										document={ entity.value }
 										type="sales"
@@ -360,6 +388,7 @@ export default function ChangeSalesInvoiceDialog({
 										const newVoucher = Voucher.create({
 											salesInvoiceId: entity.value.id.value,
 											paymentMethodId: Services.auth.setting?.mainPaymentMethodId?.value,
+											paymentMethodName: Services.auth.setting?.mainPaymentMethodName?.value,
 											type: VoucherType.Payment,
 											amount: 0,
 											isDirectMode: true
@@ -465,51 +494,101 @@ export default function ChangeSalesInvoiceDialog({
 			/>
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
-				<ChangeDialog.SaveButton<SalesInvoice, SalesInvoiceDto>
-					entity={ entity }
-					service={ service }
+				<SalesInvoiceSaveButton
 					label={ saveButtonLabel }
-					loadingSignal={ isSaving }
 					showConfirmationDialog={ () => hasCostVouchers.value }
-					confirmationDialog={
-						<DialogContent dir="rtl" className="sm:max-w-xl">
-							<DialogHeader>
-								<DialogTitle>الفاتورة الأصلية تحتوي على سندات تكاليف</DialogTitle>
-								<DialogDescription>
-									تم العثور على سندات تكاليف مرتبطة بالفاتورة الأصلية. يرجى تحديد كيفية التعامل معها.
-								</DialogDescription>
-							</DialogHeader>
-							<DialogFooter>
-								<DialogClose asChild>
-									<Button variant="outline">إلغاء</Button>
-								</DialogClose>
-								<Button
-									variant="outline"
-									onClick={ async () =>
-									{
-										entity.value.deleteOriginalInvoiceCostVouchers.value = false;
-										await service.Add(await transformDataBeforeSave());
-									} }
-								>
-									إبقاء التكاليف
-								</Button>
-								<Button
-									variant="destructive"
-									onClick={ async () =>
-									{
-										entity.value.deleteOriginalInvoiceCostVouchers.value = true;
-										await service.Add(await transformDataBeforeSave());
-									} }
-								>
-									حذف التكاليف
-								</Button>
-							</DialogFooter>
-						</DialogContent>
-					}
-					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
-					transformData={ transformDataBeforeSave }
+					confirmationDialog={ <ConfirmationDialogContent/> }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>
 	);
+
+	function ConfirmationDialogContent()
+	{
+		return (
+			<DialogContent dir="rtl" className="sm:max-w-xl">
+				<DialogHeader>
+					<DialogTitle>الفاتورة الأصلية تحتوي على سندات تكاليف</DialogTitle>
+					<DialogDescription asChild>
+						<div className="mt-4 space-y-5 text-start text-[15px] leading-7 text-foreground">
+							<p>
+								تم العثور على <strong>سندات تكاليف</strong> مرتبطة بالفاتورة الأصلية.
+								لا يمكن إنشاء فاتورة المرتجع قبل تحديد كيفية التعامل مع هذه السندات.
+							</p>
+							<div className="rounded-lg border p-4 space-y-4">
+								<div>
+									<h4 className="font-semibold text-foreground">
+										إبقاء التكاليف وإنشاء المرتجع
+									</h4>
+									<p className="text-foreground/80">
+										سيتم الاحتفاظ بجميع سندات التكاليف كما هي، ثم إنشاء فاتورة المرتجع.
+									</p>
+								</div>
+								<div>
+									<h4 className="font-semibold text-destructive">
+										حذف التكاليف وإنشاء المرتجع
+									</h4>
+									<p className="text-foreground/80">
+										سيتم حذف جميع سندات التكاليف المرتبطة بالفاتورة الأصلية بشكل نهائي،
+										ثم إنشاء فاتورة المرتجع.
+									</p>
+								</div>
+								<div>
+									<h4 className="font-semibold text-foreground">
+										إلغاء
+									</h4>
+									<p className="text-foreground/80">
+										لن يتم إنشاء فاتورة المرتجع، ولن يتم إجراء أي تغييرات.
+									</p>
+								</div>
+							</div>
+						</div>
+					</DialogDescription>
+				</DialogHeader>
+				<DialogFooter>
+					<DialogClose asChild>
+						<Button variant="outline" disabled={ isSaving.value }>إلغاء</Button>
+					</DialogClose>
+					<SalesInvoiceSaveButton
+						label="إبقاء التكاليف وإنشاء المرتجع"
+						transformData={ (data) =>
+						{
+							data.deleteOriginalInvoiceCostVouchers = false;
+							return data;
+						} }
+					/>
+					<SalesInvoiceSaveButton
+						variant="destructive"
+						label="حذف التكاليف وإنشاء المرتجع"
+						transformData={ (data) =>
+						{
+							data.deleteOriginalInvoiceCostVouchers = true;
+							return data;
+						} }
+					/>
+				</DialogFooter>
+			</DialogContent>
+		);
+	}
+
+	function SalesInvoiceSaveButton({
+		transformData,
+		...props
+	}: Omit<SaveButtonProps<SalesInvoice, SalesInvoiceDto>, "entity" | "service" | "onSuccess">)
+	{
+		return (
+			<ChangeDialog.SaveButton<SalesInvoice, SalesInvoiceDto>
+				entity={ entity }
+				service={ service }
+				loadingSignal={ isSaving }
+				onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+				transformData={ async () =>
+				{
+					const base = await transformDataBeforeSave();
+					return transformData ? await transformData(base) : base;
+				} }
+				{ ...props }
+			/>
+		);
+	}
 }
