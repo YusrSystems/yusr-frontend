@@ -168,6 +168,8 @@ export default function ChangePurchaseInvoiceDialog({
 		entity.value.type.value === PurchaseInvoiceType.CreditNote ||
 		entity.value.type.value === PurchaseInvoiceType.DebitNote;
 
+	const isHeaderContractLocked = entity.value.isDisabled || isCreditOrDebit;
+
 	return (
 		<ChangeDialog className="sm:max-w-[100vw] sm:w-screen sm:h-screen">
 			<ChangeDialog.Header title={ getDialogTitle() }/>
@@ -197,7 +199,7 @@ export default function ChangePurchaseInvoiceDialog({
 											<StoresSearchableSelect
 												id={ entity.value.storeId }
 												label={ entity.value.storeName }
-												disabled={ entity.value.isDisabled }
+												disabled={ isHeaderContractLocked }
 												onSelect={ () =>
 												{
 													entity.value.items.value = [];
@@ -213,7 +215,7 @@ export default function ChangePurchaseInvoiceDialog({
 											<PartnersSearchableSelect
 												id={ entity.value.partnerId }
 												label={ entity.value.partnerName }
-												disabled={ entity.value.isDisabled }
+												disabled={ isHeaderContractLocked }
 												types={ [PartnerType.Supplier] }
 												onSelect={ (partner) =>
 												{
@@ -259,7 +261,7 @@ export default function ChangePurchaseInvoiceDialog({
 											<SelectField<ImportExportType>
 												label={ t("invoices.importInvoice") }
 												required
-												disabled={ entity.value.isDisabled }
+												disabled={ isHeaderContractLocked }
 												value={ entity.value.importExportType }
 												error={ entity.value.getError("importExportType") }
 												options={ [

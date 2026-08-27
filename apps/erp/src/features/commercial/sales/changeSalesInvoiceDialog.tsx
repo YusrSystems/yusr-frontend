@@ -191,6 +191,9 @@ export default function ChangeSalesInvoiceDialog({
 	const isCreditOrDebit =
 		entity.value.type.value === SalesInvoiceType.CreditNote ||
 		entity.value.type.value === SalesInvoiceType.DebitNote;
+
+	const isHeaderContractLocked = entity.value.isDisabled || isCreditOrDebit;
+
 	const saveButtonLabel = entity.value.basedOnQuotationId.value
 		? "إنشاء واعتماد الفاتورة"
 		: undefined;
@@ -224,7 +227,7 @@ export default function ChangeSalesInvoiceDialog({
 											<StoresSearchableSelect
 												id={ entity.value.storeId }
 												label={ entity.value.storeName }
-												disabled={ entity.value.isDisabled }
+												disabled={ isHeaderContractLocked }
 												onSelect={ () =>
 												{
 													entity.value.items.value = [];
@@ -240,7 +243,7 @@ export default function ChangeSalesInvoiceDialog({
 											<PartnersSearchableSelect
 												id={ entity.value.partnerId }
 												label={ entity.value.partnerName }
-												disabled={ entity.value.isDisabled }
+												disabled={ isHeaderContractLocked }
 												types={ [PartnerType.Customer] }
 												onSelect={ (partner) =>
 												{
@@ -277,7 +280,7 @@ export default function ChangeSalesInvoiceDialog({
 											<SelectField<ImportExportType>
 												label={ t("invoices.importInvoice") }
 												required
-												disabled={ entity.value.isDisabled }
+												disabled={ isHeaderContractLocked }
 												value={ entity.value.importExportType }
 												error={ entity.value.getError("importExportType") }
 												options={ [
