@@ -172,7 +172,7 @@ export function CommercialItemsTable<
 		);
 	}
 
-	const fixedColCount = 7;
+	const fixedColCount = 10;
 	const actionColCount = (renderExtraAction ? 1 : 0) + 1;
 	const visibleCount = COLUMNS.filter((c) => isVisible(c.key)).length;
 	const totalColSpan = fixedColCount + visibleCount + actionColCount;
