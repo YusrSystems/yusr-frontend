@@ -1,12 +1,12 @@
 import { type RequestResult, YusrApiHelper } from "yusr-ui";
 import { PosCheckoutDto } from "../data/posSession";
-import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
+import type { SalesInvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
 
 
 export default class PosCheckoutApiService
 {
-	async Checkout(data: PosCheckoutDto): Promise<RequestResult<InvoiceReportResult>>
+	async Checkout(data: PosCheckoutDto): Promise<RequestResult<SalesInvoiceReportResult>>
 	{
-		return await YusrApiHelper.Post<InvoiceReportResult>(`/api/PosCheckout`, data);
+		return await YusrApiHelper.Post<SalesInvoiceReportResult>(`/api/PosCheckout`, data);
 	}
 }

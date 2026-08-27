@@ -12,7 +12,8 @@ import {
 	SelectInput,
 	TextAreaField
 } from "yusr-ui";
-import Invoice from "@/core/data/invoices/invoice";
+import { SalesInvoice } from "@/core/data/commercial/salesInvoice";
+import { SalesInvoiceType } from "@/core/types/commercialEnums";
 import { PosTerminalDto } from "@/core/data/posTerminal";
 import { PosCheckoutDto, PosPaymentLineDto, PosSessionDto } from "@/core/data/posSession";
 import { Services } from "@/core/services/services";
@@ -33,20 +34,18 @@ import {
 	User,
 	Wallet
 } from "lucide-react";
-import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath";
 import { toast } from "sonner";
-import { InvoiceType } from "@/core/types/invoiceType";
-import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
+import type { SalesInvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
 
 
 interface PosCheckoutDialogProps
 {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-	invoice: Invoice;
+	invoice: SalesInvoice;
 	terminal: PosTerminalDto;
 	session: PosSessionDto;
-	onSuccess: (reportResult: InvoiceReportResult) => void;
+	onSuccess: (reportResult: SalesInvoiceReportResult) => void;
 }
 
 const getPaymentIcon = (category: number) =>
@@ -89,9 +88,9 @@ export default function PosCheckoutDialog({
 	const payments = useMemo(() => signal<PosPaymentLineDto[]>([]), []);
 	const notes = useMemo(() => signal(""), []);
 
-	const isReturnMode = invoice.type.value === InvoiceType.SellReturn;
+	const isReturnMode = invoice.type.value === SalesInvoiceType.CreditNote;
 
-	const totalAmount = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(invoice.invoiceItems.value);
+	const totalAmount = invoice.fullAmount.value;
 
 	const totalPaid = payments.value.reduce((sum, p) => sum + (p.amount || 0), 0);
 	const remaining = Number((totalAmount - totalPaid).toFixed(2));
@@ -107,7 +106,7 @@ export default function PosCheckoutDialog({
 			// If in Return mode and invoice has pre-filled payment vouchers from original invoice
 			if (isReturnMode && invoice.paymentVouchers.value.length > 0)
 			{
-				payments.value = invoice.paymentVouchers.value.map(v => ({
+				payments.value = invoice.paymentVouchers.value.map((v) => ({
 					paymentMethodId: v.paymentMethodId.value ?? terminal.allowedPaymentMethods?.[0]?.id ?? 1,
 					amount: v.amount.value ?? totalAmount,
 					referenceNumber: ""
@@ -163,7 +162,7 @@ export default function PosCheckoutDialog({
 
 		if (field === "amount")
 		{
-			const method = terminal.allowedPaymentMethods?.find(m => m.id === current.paymentMethodId);
+			const method = terminal.allowedPaymentMethods?.find((m) => m.id === current.paymentMethodId);
 			const isCash = method?.category === 1;
 			const allowOverpay = isCash && !isReturnMode;
 
@@ -190,7 +189,7 @@ export default function PosCheckoutDialog({
 			return;
 		}
 
-		if (invoice.invoiceItems.value.length === 0)
+		if (invoice.items.value.length === 0)
 		{
 			toast.error("السلة فارغة");
 			return;
@@ -204,7 +203,9 @@ export default function PosCheckoutDialog({
 
 		isSubmitting.value = true;
 
-		const formattedItems = invoice.invoiceItems.value.map((item, index) =>
+		invoice.syncTotals();
+
+		const formattedItems = invoice.items.value.map((item, index) =>
 		{
 			const itemDto = item.toJson();
 			itemDto.index = index;
@@ -214,14 +215,14 @@ export default function PosCheckoutDialog({
 		const dto: PosCheckoutDto = {
 			posSessionId: session.id,
 			invoiceType: invoice.type.value,
-			originalInvoiceId: invoice.originalInvoiceId.value || undefined,
+			originalInvoiceId: invoice.originalSalesInvoiceId.value || undefined,
 			partnerId: invoice.partnerId.value,
 			fullAmount: totalAmount || 0,
 			settlementAmount: invoice.settlementAmount.value || 0,
 			notes: notes.value || undefined,
 			idempotencyKey: crypto.randomUUID(),
 			items: formattedItems,
-			payments: payments.value.filter(p => p.amount > 0)
+			payments: payments.value.filter((p) => p.amount > 0)
 		};
 
 		try
@@ -255,7 +256,7 @@ export default function PosCheckoutDialog({
 					<DialogTitle
 						className={ cn("text-2xl flex items-center gap-2", isReturnMode && "text-red-600 dark:text-red-400") }>
 						{ isReturnMode ? <Undo2 className="w-6 h-6"/> : null }
-						{ isReturnMode ? `إرجاع المبلغ للفاتورة #${ invoice.originalInvoiceId.value }` : "إتمام الدفع" }
+						{ isReturnMode ? `إرجاع المبلغ للفاتورة #${ invoice.originalSalesInvoiceId.value }` : "إتمام الدفع" }
 					</DialogTitle>
 				</DialogHeader>
 
@@ -272,7 +273,7 @@ export default function PosCheckoutDialog({
 						<div className="flex flex-col gap-4 max-h-[400px] overflow-y-auto pr-2">
 							{ payments.value.map((payment, index) =>
 							{
-								const method = terminal.allowedPaymentMethods?.find(m => m.id === payment.paymentMethodId);
+								const method = terminal.allowedPaymentMethods?.find((m) => m.id === payment.paymentMethodId);
 								const isCash = method?.category === 1;
 								const allowOverpay = isCash && !isReturnMode;
 								const othersTotal = payments.value.reduce((sum, p, i) => (i === index ? sum : sum + (p.amount || 0)), 0);
@@ -290,7 +291,7 @@ export default function PosCheckoutDialog({
 												<SelectInput<number>
 													value={ signal(payment.paymentMethodId) }
 													onValueChange={ (val) => handleUpdatePayment(index, "paymentMethodId", val) }
-													options={ terminal.allowedPaymentMethods?.map(pm => ({
+													options={ terminal.allowedPaymentMethods?.map((pm) => ({
 														label: pm.name,
 														value: pm.id
 													})) || [] }

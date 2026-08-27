@@ -1,7 +1,4 @@
-import type { BaseReportRequest } from "../../../core/data/report/baseReportRequest.ts";
-
-
-export class SalesInvoiceReportRequest implements BaseReportRequest
+export class SalesInvoiceReportRequest
 {
 	public invoiceId: number;
 
@@ -12,7 +9,7 @@ export class SalesInvoiceReportRequest implements BaseReportRequest
 	}
 }
 
-export class PurchaseInvoiceReportRequest implements BaseReportRequest
+export class PurchaseInvoiceReportRequest
 {
 	public purchaseInvoiceId: number;
 
@@ -23,7 +20,7 @@ export class PurchaseInvoiceReportRequest implements BaseReportRequest
 	}
 }
 
-export class QuotationReportRequest implements BaseReportRequest
+export class QuotationReportRequest
 {
 	public quotationId: number;
 

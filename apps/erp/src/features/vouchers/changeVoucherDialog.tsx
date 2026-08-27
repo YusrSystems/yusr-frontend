@@ -155,7 +155,8 @@ export default function ChangeVoucherDialog({
 									entity.value.isDirectMode.value = true;
 									entity.value.partnerId.value = undefined;
 									entity.value.partnerName.value = undefined;
-									entity.value.invoiceId.value = undefined;
+									entity.value.salesInvoiceId.value = undefined;
+									entity.value.purchaseInvoiceId.value = undefined;
 								} }
 								className="flex-1 rounded-md text-xs font-semibold"
 								disabled={ !isDraft }
@@ -367,11 +368,22 @@ export default function ChangeVoucherDialog({
 							) }
 						</FieldsSection>
 
-						{ entity.value.invoiceId.value && (
-							<FieldsSection title={ t("vouchers.systemLinks") } columns={ 1 }>
+						{ entity.value.salesInvoiceId.value && (
+							<FieldsSection title="رقم فاتورة البيع" columns={ 1 }>
 								<TextField
 									label={ t("vouchers.relatedInvoice") }
-									value={ signal(`#${ entity.value.invoiceId.value }`) }
+									value={ signal(`#${ entity.value.salesInvoiceId.value }`) }
+									disabled={ true }
+									className="bg-muted w-1/2"
+								/>
+							</FieldsSection>
+						) }
+
+						{ entity.value.purchaseInvoiceId.value && (
+							<FieldsSection title="رقم فاتورة الشراء" columns={ 1 }>
+								<TextField
+									label={ t("vouchers.relatedInvoice") }
+									value={ signal(`#${ entity.value.purchaseInvoiceId.value }`) }
 									disabled={ true }
 									className="bg-muted w-1/2"
 								/>

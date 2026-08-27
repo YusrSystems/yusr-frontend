@@ -1,10 +1,10 @@
-import { InvoiceType } from "@/core/types/invoiceType.ts";
+import type { DocumentType } from "@/core/types/documentType";
 
 
 export interface TaxAuditReportLine
 {
 	invoiceId: number;
-	invoiceType: InvoiceType;
+	type: DocumentType;
 	date: string;
 	partnerName: string;
 	partnerVatNumber?: string;

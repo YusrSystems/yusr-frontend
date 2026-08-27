@@ -9,8 +9,9 @@ import { PosSessionDto } from "@/core/data/posSession";
 import { PosTerminalDto } from "@/core/data/posTerminal";
 import CloseSessionDialog from "../posSession/closeSessionDialog";
 import { APP_NAME } from "../../../../appConfig";
-import Invoice, { InvoiceDto, InvoiceMode } from "@/core/data/invoices/invoice";
-import { InvoiceType } from "@/core/types/invoiceType";
+import { SalesInvoice, type SalesInvoiceDto, SalesInvoiceMode } from "@/core/data/commercial/salesInvoice";
+import { SalesInvoiceType } from "@/core/types/commercialEnums";
+
 import PosProductGrid from "./components/posProductGrid";
 import PosCart from "./components/posCart";
 import PosCheckoutDialog from "./components/posCheckoutDialog";
@@ -19,8 +20,7 @@ import { toast } from "sonner";
 import { createPortal } from "react-dom";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport.tsx";
-import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
-import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath.ts";
+import type { SalesInvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
 import { PosTempCache } from "@/features/Pos/posTempCache.ts";
 
 
@@ -38,9 +38,8 @@ export default function PosScreenPage()
 	const isRecentInvoicesDialogOpen = useMemo(() => signal(false), []);
 	const isOutdatedSession = useMemo(() => signal(false), []);
 
-	// We use the Invoice class to handle all cart math automatically
-	const cartInvoice = useMemo(() => signal<Invoice | null>(null), []);
-	const printedInvoice = useMemo(() => signal<InvoiceReportResult | undefined>(undefined), []);
+	const cartInvoice = useMemo(() => signal<SalesInvoice | null>(null), []);
+	const printedInvoice = useMemo(() => signal<SalesInvoiceReportResult | undefined>(undefined), []);
 
 	useEffect(() =>
 	{
@@ -52,10 +51,9 @@ export default function PosScreenPage()
 		return () => window.removeEventListener("afterprint", handleAfterPrint);
 	}, [printedInvoice]);
 
-	const triggerImmediatePrint = (report: InvoiceReportResult) =>
+	const triggerImmediatePrint = (report: SalesInvoiceReportResult) =>
 	{
 		printedInvoice.value = report;
-		// Wait for DOM to render the portal before triggering print dialog
 		requestAnimationFrame(() =>
 		{
 			requestAnimationFrame(() =>
@@ -70,16 +68,15 @@ export default function PosScreenPage()
 		if (!activeTerminal.value) return;
 
 		const channel = new BroadcastChannel(`pos_customer_channel_${ activeTerminal.value.id }`);
-
 		const invoice = cartInvoice.value;
-		if (!invoice || invoice.invoiceItems.value.length === 0)
+
+		if (!invoice || invoice.items.value.length === 0)
 		{
 			channel.postMessage({type: "RESET", items: [], totalAmount: 0});
 			return;
 		}
 
-		// Calculate Totals
-		const items = invoice.invoiceItems.value.map((i) => ({
+		const items = invoice.items.value.map((i) => ({
 			name: i.itemName.value,
 			quantity: Number(i.quantity.value),
 			unitPrice: Number(i.taxInclusivePrice.value),
@@ -87,12 +84,11 @@ export default function PosScreenPage()
 			unitName: i.unitName.value
 		}));
 
-		const finalTotal = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(invoice.invoiceItems.value);
+		const finalTotal = invoice.fullAmount.value;
 		const mainTaxPerc = Number(Services.auth.setting?.mainTax?.value?.percentage) || 0;
-		const baseTaxExclusive = finalTotal / (1 + mainTaxPerc / 100);
+		const baseTaxExclusive = mainTaxPerc > 0 ? finalTotal / (1 + mainTaxPerc / 100) : finalTotal;
 		const baseTaxAmount = finalTotal - baseTaxExclusive;
 
-		// Broadcast live cart to Customer Display
 		channel.postMessage({
 			type: "CART_UPDATED",
 			items,
@@ -105,8 +101,8 @@ export default function PosScreenPage()
 		return () => channel.close();
 	}, [
 		cartInvoice.value,
-		cartInvoice.value?.invoiceItems.value,
-		cartInvoice.value?.invoiceItems.value.map((i) => i.quantity.value + i.taxInclusiveTotalPrice.value).join(","),
+		cartInvoice.value?.items.value,
+		cartInvoice.value?.items.value.map((i) => i.quantity.value + i.taxInclusiveTotalPrice.value).join(","),
 		cartInvoice.value?.settlementAmount.value
 	]);
 
@@ -176,8 +172,7 @@ export default function PosScreenPage()
 						isCloseDialogOpen.value = true;
 					}
 
-					// Initialize empty cart
-					initNewCart(terminal);
+					initNewCart(terminal, session.id);
 				}
 				else
 				{
@@ -198,39 +193,39 @@ export default function PosScreenPage()
 		fetchSessionAndTerminal();
 	}, [terminalIdParam]);
 
-	const initNewCart = (terminal: PosTerminalDto) =>
+	const initNewCart = (terminal: PosTerminalDto, sessionId?: number) =>
 	{
-		cartInvoice.value = Invoice.create({
-			type: InvoiceType.Sell,
+		cartInvoice.value = SalesInvoice.create({
+			type: SalesInvoiceType.Invoice,
 			storeId: terminal.storeId,
 			storeName: terminal.storeName,
 			partnerId: terminal.defaultPartnerId ?? Services.auth.setting?.defaultCustomerPartnerId?.value,
-			partnerName: terminal.defaultPartnerName ?? Services.auth.setting?.defaultCustomerPartnerName?.value
+			partnerName: terminal.defaultPartnerName ?? Services.auth.setting?.defaultCustomerPartnerName?.value,
+			posSessionId: sessionId ?? activeSession.value?.id
 		});
 	};
 
-	// Process Receipt-Linked Return Flow (No full-screen reload)
-	const handleProcessReturn = (invoiceDto: InvoiceDto) =>
+	const handleProcessReturn = (invoiceDto: SalesInvoiceDto) =>
 	{
 		if (!activeTerminal.value) return;
 
 		const fetchReturnDetails = async () =>
 		{
-			const res = await Services.invoicesApi.GetReturnInvoiceInitialDetails(invoiceDto.id);
+			const res = await Services.salesInvoicesApi.GetReturnInvoiceInitialDetails(invoiceDto.id);
 
 			if (res.data)
 			{
 				const returnDetails = res.data;
 
-				// Construct return invoice instance
 				returnDetails.date = DateService.formatDateOnly(new Date());
-				returnDetails.originalInvoiceId = invoiceDto.id;
-				returnDetails.type = InvoiceType.SellReturn;
+				returnDetails.originalSalesInvoiceId = invoiceDto.id;
+				returnDetails.type = SalesInvoiceType.CreditNote;
+				returnDetails.posSessionId = activeSession.value?.id;
 				returnDetails.costVouchers = [];
-				returnDetails.paymentVouchers = returnDetails.paymentVouchers.map(v => ({...v, id: 0}));
+				returnDetails.paymentVouchers = (returnDetails.paymentVouchers ?? []).map((v) => ({...v, id: 0}));
 
-				const returnInvoice = Invoice.create(returnDetails);
-				returnInvoice.invoiceMode.value = InvoiceMode.Return;
+				const returnInvoice = SalesInvoice.create(returnDetails);
+				returnInvoice.invoiceMode.value = SalesInvoiceMode.Return;
 
 				cartInvoice.value = returnInvoice;
 				return `تم تحميل مواد الفاتورة #${ invoiceDto.id } لإتمام المرتجع`;
@@ -284,7 +279,7 @@ export default function PosScreenPage()
 							size="lg"
 							variant="destructive"
 							className="w-full h-12 font-bold gap-2 text-base mt-2"
-							onClick={ () => isCloseDialogOpen.value = true }
+							onClick={ () => (isCloseDialogOpen.value = true) }
 						>
 							<LogOut className="w-5 h-5"/>
 							إغلاق الوردية الآن
@@ -333,7 +328,7 @@ export default function PosScreenPage()
 					<Button
 						variant="outline"
 						className="gap-2 h-9"
-						onClick={ () => isRecentInvoicesDialogOpen.value = true }
+						onClick={ () => (isRecentInvoicesDialogOpen.value = true) }
 						disabled={ isOutdatedSession.value }
 					>
 						<ReceiptText className="w-4 h-4 text-primary"/>
@@ -343,7 +338,7 @@ export default function PosScreenPage()
 					<Button
 						variant="destructive"
 						className="gap-2 h-9"
-						onClick={ () => isCloseDialogOpen.value = true }
+						onClick={ () => (isCloseDialogOpen.value = true) }
 					>
 						<LogOut className="w-4 h-4"/>
 						إغلاق الوردية
@@ -363,7 +358,7 @@ export default function PosScreenPage()
 								toast.error("يجب إغلاق الوردية السابقة أولاً");
 								return;
 							}
-							if (cartInvoice.value?.type.value === InvoiceType.SellReturn)
+							if (cartInvoice.value?.type.value === SalesInvoiceType.CreditNote)
 							{
 								toast.error("لا يمكن إضافة منتجات جديدة في وضع المرتجع. يرجى إلغاء المرتجع أولاً.");
 								return;
@@ -393,7 +388,7 @@ export default function PosScreenPage()
 
 			<CloseSessionDialog
 				open={ isCloseDialogOpen.value }
-				onOpenChange={ (open) => isCloseDialogOpen.value = open }
+				onOpenChange={ (open) => (isCloseDialogOpen.value = open) }
 				session={ activeSession.value }
 				onSuccess={ () =>
 				{
@@ -404,7 +399,7 @@ export default function PosScreenPage()
 			{ isCheckoutDialogOpen.value && (
 				<PosCheckoutDialog
 					open={ isCheckoutDialogOpen.value }
-					onOpenChange={ (open) => isCheckoutDialogOpen.value = open }
+					onOpenChange={ (open) => (isCheckoutDialogOpen.value = open) }
 					invoice={ cartInvoice.value }
 					terminal={ activeTerminal.value }
 					session={ activeSession.value }
@@ -440,7 +435,7 @@ export default function PosScreenPage()
 			{ isRecentInvoicesDialogOpen.value && (
 				<PosRecentInvoicesDialog
 					open={ isRecentInvoicesDialogOpen.value }
-					onOpenChange={ (open) => isRecentInvoicesDialogOpen.value = open }
+					onOpenChange={ (open) => (isRecentInvoicesDialogOpen.value = open) }
 					terminal={ activeTerminal.value }
 					session={ activeSession.value }
 					onProcessReturn={ handleProcessReturn }

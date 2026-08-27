@@ -1,21 +1,21 @@
 import { useSignals } from "@preact/signals-react/runtime";
-import Invoice from "@/core/data/invoices/invoice";
+import { signal } from "@preact/signals-react";
+import { useEffect, useMemo } from "react";
 import { Button, NumberInput, SelectInput } from "yusr-ui";
 import { Minus, Plus, RotateCcw, ShoppingCart, Trash2, Undo2, User } from "lucide-react";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
-import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath";
 import { PartnersSearchableSelect } from "@/core/components/searchableSelect/partnersSearchableSelect";
 import { PartnerType } from "@/core/data/partner";
 import { Services } from "@/core/services/services";
-import { useEffect, useMemo } from "react";
-import { signal } from "@preact/signals-react";
 import { ItemType } from "@/core/data/item";
-import { InvoiceType } from "@/core/types/invoiceType";
+import { SalesInvoice } from "@/core/data/commercial/salesInvoice";
+import { SalesInvoiceType } from "@/core/types/commercialEnums";
+import { CommercialMath } from "@/features/commercial/logic/commercialMath";
 
 
 interface PosCartProps
 {
-	invoice: Invoice;
+	invoice: SalesInvoice;
 	onCheckout: () => void;
 	onCancelReturn?: () => void;
 }
@@ -24,22 +24,23 @@ export default function PosCart({invoice, onCheckout, onCancelReturn}: PosCartPr
 {
 	useSignals();
 
-	const items = invoice.invoiceItems.value;
-	const isReturnMode = invoice.type.value === InvoiceType.SellReturn;
+	const items = invoice.items.value;
+	const isReturnMode = invoice.type.value === SalesInvoiceType.CreditNote;
 
-	// basePrice = tax-inclusive total BEFORE settlement. We still need this
-	// as a cap so a discount can never exceed the order's original total.
-	const basePrice = InvoiceItemsMath.CalcInvoiceBaseTaxInclusivePrice(items);
+	const basePrice = CommercialMath.calcDocumentBaseTaxInclusivePrice(
+		items.map((i) => ({
+			taxExclusivePrice: i.taxExclusivePrice.value,
+			taxInclusivePrice: i.taxInclusivePrice.value,
+			settlement: 0,
+			quantity: i.quantity.value,
+			totalTaxesPerc: i.totalTaxesPerc.value
+		}))
+	);
 
-	// finalTotal = the tax-inclusive total AFTER settlement (discount/addition)
-	// is applied. This is our "source of truth" number.
-	const finalTotal = InvoiceItemsMath.CalcInvoiceTaxInclusivePrice(items);
+	const finalTotal = invoice.fullAmount.value;
 
-	// Wrapped in Number() to ensure it's treated as a number for arithmetic operations
 	const mainTaxPerc = Number(Services.auth.setting?.mainTax?.value?.percentage) || 0;
-
-	// Formula for VAT calculations
-	const baseTaxExclusive = finalTotal / (1 + mainTaxPerc / 100);
+	const baseTaxExclusive = mainTaxPerc > 0 ? finalTotal / (1 + mainTaxPerc / 100) : finalTotal;
 	const baseTaxAmount = finalTotal - baseTaxExclusive;
 
 	const isAddition = useMemo(() => signal(false), []);
@@ -77,7 +78,7 @@ export default function PosCart({invoice, onCheckout, onCancelReturn}: PosCartPr
 					className="bg-red-500/10 border-b border-red-500/20 p-3 flex items-center justify-between text-red-600 dark:text-red-400 shrink-0">
 					<div className="flex items-center gap-2 font-bold text-xs">
 						<Undo2 className="w-4 h-4 animate-pulse"/>
-						<span>وضع مرتجع المبيعات (الفاتورة #{ invoice.originalInvoiceId.value })</span>
+						<span>وضع مرتجع المبيعات (الفاتورة #{ invoice.originalSalesInvoiceId.value })</span>
 					</div>
 					{ onCancelReturn && (
 						<Button
@@ -117,16 +118,21 @@ export default function PosCart({invoice, onCheckout, onCancelReturn}: PosCartPr
 					</div>
 				) : (
 					items.map((item, index) => (
-						<div key={ `${ item.itemId.value }-${ index }` }
-						     className={ `flex flex-col p-3 border rounded-lg shadow-sm transition-colors ${
-								 isReturnMode ? "bg-red-500/5 border-red-500/20" : "bg-background border-border"
-							 }` }>
+						<div
+							key={ `${ item.itemId.value }-${ index }` }
+							className={ `flex flex-col p-3 border rounded-lg shadow-sm transition-colors ${
+								isReturnMode ? "bg-red-500/5 border-red-500/20" : "bg-background border-border"
+							}` }
+						>
 							<div className="flex justify-between items-start mb-2">
 								<div className="flex flex-col pr-2">
 									<span className="font-semibold text-sm leading-tight">{ item.itemName.value }</span>
 								</div>
 								<span
-									className={ `font-bold flex items-center gap-1 shrink-0 ${ isReturnMode ? "text-red-600 dark:text-red-400" : "text-primary" }` }>
+									className={ `font-bold flex items-center gap-1 shrink-0 ${
+										isReturnMode ? "text-red-600 dark:text-red-400" : "text-primary"
+									}` }
+								>
 									{ item.taxInclusiveTotalPrice.value.toLocaleString(undefined, {
 										minimumFractionDigits: 2,
 										maximumFractionDigits: 2
@@ -136,16 +142,18 @@ export default function PosCart({invoice, onCheckout, onCancelReturn}: PosCartPr
 
 							{/* Combined Controls Row (Quantity, Unit, Pricing Method, Trash) */ }
 							<div className="flex items-end gap-2 mt-auto pt-1">
-
 								{/* Quantity Controls */ }
 								<div className="flex flex-col gap-1 shrink-0">
 									<span className="text-[10px] text-muted-foreground font-medium px-1">الكمية</span>
 									<div className="flex items-center bg-muted rounded-md border border-border h-9">
 										<button
+											type="button"
 											className="w-7 h-full flex items-center justify-center hover:bg-background rounded-r-md transition-colors"
 											onClick={ () =>
 											{
-												const maxAllowed = isReturnMode ? item.originalQuantity.value : Number.MAX_SAFE_INTEGER;
+												const maxAllowed = isReturnMode
+													? item.originalQuantity.value
+													: Number.MAX_SAFE_INTEGER;
 												if (item.quantity.value < maxAllowed)
 												{
 													item.changeQuantity(Number(item.quantity.value) + 1);
@@ -158,6 +166,7 @@ export default function PosCart({invoice, onCheckout, onCancelReturn}: PosCartPr
 											{ item.quantity.value }
 										</div>
 										<button
+											type="button"
 											className="w-7 h-full flex items-center justify-center hover:bg-background rounded-l-md transition-colors"
 											onClick={ () =>
 											{
@@ -184,10 +193,12 @@ export default function PosCart({invoice, onCheckout, onCancelReturn}: PosCartPr
 										<SelectInput<number>
 											value={ item.itemUoMId }
 											disabled={ item.itemType.value === ItemType.Service }
-											options={ item.uoMDtos.value?.map((m) => ({
-												label: m.unitName.value,
-												value: m.id.value
-											})) || [] }
+											options={
+												item.uoMDtos.value?.map((m) => ({
+													label: m.unitName.value,
+													value: m.id.value
+												})) || []
+											}
 											onValueChange={ (uomId) =>
 											{
 												if (uomId)
@@ -201,7 +212,9 @@ export default function PosCart({invoice, onCheckout, onCancelReturn}: PosCartPr
 
 								{/* Pricing Method Display / Selector */ }
 								<div className="flex-1 min-w-0 flex flex-col gap-1">
-									<span className="text-[10px] text-muted-foreground font-medium px-1 truncate">طريقة التسعير</span>
+									<span className="text-[10px] text-muted-foreground font-medium px-1 truncate">
+										طريقة التسعير
+									</span>
 									{ isReturnMode ? (
 										<div
 											className="h-9 px-3 flex items-center bg-muted/50 border border-border rounded-md text-sm text-muted-foreground cursor-not-allowed truncate">
@@ -211,16 +224,22 @@ export default function PosCart({invoice, onCheckout, onCancelReturn}: PosCartPr
 										<SelectInput<number>
 											value={ item.pricingMethodId }
 											disabled={ item.itemType.value === ItemType.Service }
-											options={ item.uoMDtos.value?.find(u => u.id.value === item.itemUoMId.value)?.prices.value?.map((p) => ({
-												label: p.pricingMethodName.value,
-												value: p.pricingMethodId.value
-											})) || [] }
+											options={
+												item.uoMDtos.value
+													?.find((u) => u.id.value === item.itemUoMId.value)
+													?.prices.value?.map((p) => ({
+													label: p.pricingMethodName.value,
+													value: p.pricingMethodId.value
+												})) || []
+											}
 											onValueChange={ (pmId) =>
 											{
 												if (pmId)
 												{
-													const uom = item.uoMDtos.value?.find(u => u.id.value === item.itemUoMId.value);
-													const pmName = uom?.prices.value?.find(p => p.pricingMethodId.value === pmId)?.pricingMethodName.value;
+													const uom = item.uoMDtos.value?.find((u) => u.id.value === item.itemUoMId.value);
+													const pmName = uom?.prices.value?.find(
+														(p) => p.pricingMethodId.value === pmId
+													)?.pricingMethodName.value;
 													item.changePricingMethod(pmId, pmName);
 												}
 											} }
@@ -230,6 +249,7 @@ export default function PosCart({invoice, onCheckout, onCancelReturn}: PosCartPr
 
 								{/* Delete Button */ }
 								<button
+									type="button"
 									className="p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors shrink-0 h-9 flex items-center justify-center"
 									onClick={ () => invoice.removeItem(index) }
 								>
@@ -246,18 +266,22 @@ export default function PosCart({invoice, onCheckout, onCancelReturn}: PosCartPr
 				<div className="space-y-3 mb-4 text-sm">
 					<div className="flex justify-between items-center text-muted-foreground">
 						<span>المجموع (بدون ضريبة)</span>
-						<span>{ baseTaxExclusive.toLocaleString(undefined, {
-							minimumFractionDigits: 2,
-							maximumFractionDigits: 2
-						}) } <ErpCurrencyIcon className="w-3 h-3 inline"/></span>
+						<span>
+							{ baseTaxExclusive.toLocaleString(undefined, {
+								minimumFractionDigits: 2,
+								maximumFractionDigits: 2
+							}) } <ErpCurrencyIcon className="w-3 h-3 inline"/>
+						</span>
 					</div>
 
 					<div className="flex justify-between items-center text-muted-foreground">
 						<span>الضريبة ({ mainTaxPerc }%)</span>
-						<span>{ baseTaxAmount.toLocaleString(undefined, {
-							minimumFractionDigits: 2,
-							maximumFractionDigits: 2
-						}) } <ErpCurrencyIcon className="w-3 h-3 inline"/></span>
+						<span>
+							{ baseTaxAmount.toLocaleString(undefined, {
+								minimumFractionDigits: 2,
+								maximumFractionDigits: 2
+							}) } <ErpCurrencyIcon className="w-3 h-3 inline"/>
+						</span>
 					</div>
 
 					{ !isReturnMode && (

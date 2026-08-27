@@ -3,8 +3,10 @@ export enum DocumentType
 	None,
 	Sales,
 	SalesReturn,
+	SalesDebitNote,
 	Purchase,
 	PurchaseReturn,
+	PurchaseDebitNote,
 	Payment,
 	Receipt,
 	BalanceTransfer,
@@ -14,14 +16,18 @@ export enum DocumentType
 	OpeningQuantity,
 	ItemTransfer,
 	ItemsSettlement,
+	YearEndClosing,
+	VoucherDistribution
 }
 
 const DOCUMENT_TYPE_NAMES: Record<DocumentType, string> = {
 	[DocumentType.None]: "غير معروف",
 	[DocumentType.Sales]: "فاتورة مبيعات",
 	[DocumentType.SalesReturn]: "مرتجع مبيعات",
+	[DocumentType.SalesDebitNote]: "إشعار مدين مبيعات",
 	[DocumentType.Purchase]: "فاتورة مشتريات",
 	[DocumentType.PurchaseReturn]: "مرتجع مشتريات",
+	[DocumentType.PurchaseDebitNote]: "إشعار مدين مشتريات",
 	[DocumentType.Payment]: "سند صرف",
 	[DocumentType.Receipt]: "سند قبض",
 	[DocumentType.BalanceTransfer]: "نقل رصيد",
@@ -30,14 +36,18 @@ const DOCUMENT_TYPE_NAMES: Record<DocumentType, string> = {
 	[DocumentType.OpeningQuantity]: "كمية افتتاحية",
 	[DocumentType.ManualAdjustment]: "تسوية يدوية",
 	[DocumentType.ItemTransfer]: "نقل مواد",
-	[DocumentType.ItemsSettlement]: "تسوية مواد"
+	[DocumentType.ItemsSettlement]: "تسوية مواد",
+	[DocumentType.YearEndClosing]: "إقفال نهاية السنة",
+	[DocumentType.VoucherDistribution]: "توزيع سندات"
 };
 
 const DOCUMENT_ROUTES: Partial<Record<DocumentType, string>> = {
 	[DocumentType.Sales]: "sales",
 	[DocumentType.SalesReturn]: "sales",
+	[DocumentType.SalesDebitNote]: "sales",
 	[DocumentType.Purchase]: "purchases",
 	[DocumentType.PurchaseReturn]: "purchases",
+	[DocumentType.PurchaseDebitNote]: "purchases",
 	[DocumentType.Payment]: "vouchers",
 	[DocumentType.Receipt]: "vouchers",
 	[DocumentType.BalanceTransfer]: "balanceTransfer",

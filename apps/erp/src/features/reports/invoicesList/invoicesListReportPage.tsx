@@ -67,7 +67,7 @@ export function InvoicesListReportPage()
 
 				<ReportPage.ExcelButton<SalesInvoiceDto | PurchaseInvoiceDto>
 					fileName={ domain === "sales" ? "تقرير_قائمة_فواتير_المبيعات" : "تقرير_قائمة_فواتير_المشتريات" }
-					getRows={ async () => cubit.entities.value ?? [] }
+					getRows={ async () => (domain === "sales" ? Cubits.salesInvoices.entities.value : Cubits.purchaseInvoices.entities.value) ?? [] }
 					columns={ [
 						{header: "التاريخ", accessor: (r) => r.date},
 						{
@@ -97,17 +97,23 @@ export function InvoicesListReportPage()
 			</div>
 
 			<div className="flex-1 min-h-0 flex flex-col print:block">
-				<InvoicesListReport
-					cubit={ cubit }
-					getTypeName={ (type) =>
-						domain === "sales"
-							? getSalesInvoiceTypeName(type as SalesInvoiceType, t)
-							: getPurchaseInvoiceTypeName(type as PurchaseInvoiceType, t)
-					}
-					titleAr={ domain === "sales" ? "قائمة فواتير المبيعات" : "قائمة فواتير المشتريات" }
-					titleEn={ domain === "sales" ? "Sales Invoices List" : "Purchase Invoices List" }
-					routePrefix={ domain === "sales" ? "sales" : "purchases" }
-				/>
+				{ domain === "sales" ? (
+					<InvoicesListReport<SalesInvoiceDto>
+						cubit={ Cubits.salesInvoices }
+						getTypeName={ (type) => getSalesInvoiceTypeName(type, t) }
+						titleAr="قائمة فواتير المبيعات"
+						titleEn="Sales Invoices List"
+						routePrefix="sales"
+					/>
+				) : (
+					<InvoicesListReport<PurchaseInvoiceDto>
+						cubit={ Cubits.purchaseInvoices }
+						getTypeName={ (type) => getPurchaseInvoiceTypeName(type, t) }
+						titleAr="قائمة فواتير المشتريات"
+						titleEn="Purchase Invoices List"
+						routePrefix="purchases"
+					/>
+				) }
 			</div>
 
 			<CrudTablePagination
