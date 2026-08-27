@@ -34,7 +34,7 @@ export interface ICommercialDocument
 	settlementPercent: Signal<number>;
 	fullAmount: Signal<number>;
 	storeId: Signal<number>;
-	partnerId: Signal<number>;
+	partnerId: Signal<number | undefined>;
 	isDisabled: boolean;
 
 	changeSettlementPercent(settlementPercent: number): void;
@@ -58,7 +58,7 @@ export abstract class CommercialDocument<
 	public settlementAmount: Signal<number>;
 	public settlementPercent: Signal<number>;
 	public storeId: Signal<number>;
-	public partnerId: Signal<number>;
+	public partnerId: Signal<number | undefined>;
 	public notes: Signal<string | undefined>;
 	public policy: Signal<string | undefined>;
 	public createdAt: Signal<string | Date | undefined>;
