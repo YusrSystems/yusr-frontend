@@ -1,6 +1,6 @@
 import { ChangeableEntity, ChangeableEntityMode, DateService, Dto, i18n, StorageFile, Validators } from "yusr-ui";
 import { type Signal } from "@preact/signals-react";
-import { ItemDto } from "@/core/data/item";
+import { ItemDto, ItemType } from "@/core/data/item";
 import { CommercialMath } from "@/features/commercial/logic/commercialMath";
 import { Services } from "@/core/services/services";
 import type { CommercialItem, ICommercialItemDto } from "./commercialItem";
@@ -158,6 +158,10 @@ export abstract class CommercialDocument<
 		);
 		if (existingItem)
 		{
+			if (existingItem.itemType.value === ItemType.Service)
+			{
+				return;
+			}
 			return existingItem.incrementQuantity();
 		}
 		const newItem = this.createLineFromItem(storeItem, selectedUoMId, selectedPricingMethodId);

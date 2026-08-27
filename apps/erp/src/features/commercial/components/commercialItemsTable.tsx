@@ -340,7 +340,7 @@ export function CommercialItemsTable<
 													} }
 													disabled={
 														invoiceItem.itemType.value === ItemType.Service
-															? false
+															? true
 															: allowReturnQuantityConstraint
 																? false
 																: document.isDisabled
