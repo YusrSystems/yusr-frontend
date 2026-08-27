@@ -242,7 +242,9 @@ export abstract class CommercialDocument<
 
 	public syncTotals()
 	{
-		const taxInclusivePrice = CommercialMath.calcDocumentTaxInclusivePrice(
+		this.items.value?.forEach((item) => item.recalculateTotals());
+
+		this.fullAmount.value = CommercialMath.calcDocumentTaxInclusivePrice(
 			this.items.value.map((i) => ({
 				taxExclusivePrice: i.taxExclusivePrice.value,
 				taxInclusivePrice: i.taxInclusivePrice.value,
@@ -251,11 +253,12 @@ export abstract class CommercialDocument<
 				totalTaxesPerc: i.totalTaxesPerc.value
 			}))
 		);
-		this.fullAmount.value = taxInclusivePrice;
 	}
 
 	override validate(dto?: Partial<TDto>): boolean
 	{
+		this.syncTotals();
+
 		const docValid = super.validate(dto);
 		const itemsValid = this.items.value.every((t) => t.validate());
 		return docValid && itemsValid;

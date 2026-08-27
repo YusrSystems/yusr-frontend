@@ -214,8 +214,17 @@ export abstract class CommercialItem<
 			taxInclusivePrice,
 			originalTaxInclusivePrice: taxInclusivePrice,
 			settlement: 0,
-			taxExclusiveTotalPrice: CommercialMath.round2(taxExclusivePrice * quantity),
-			taxInclusiveTotalPrice: CommercialMath.round2(taxInclusivePrice * quantity),
+			taxExclusiveTotalPrice: CommercialMath.calcTaxExclusiveTotalPrice(
+				taxExclusivePrice,
+				0,
+				quantity,
+				item.totalTaxes ?? 0
+			),
+			taxInclusiveTotalPrice: CommercialMath.calcTaxInclusiveTotalPrice(
+				taxInclusivePrice,
+				0,
+				quantity
+			),
 			taxable: item.taxable ?? false,
 			taxIncluded: item.taxIncluded ?? false,
 			totalTaxesPerc: item.totalTaxes ?? 0,
