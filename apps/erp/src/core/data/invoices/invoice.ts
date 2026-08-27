@@ -270,6 +270,10 @@ export default class Invoice extends ChangeableEntity<InvoiceDto>
 
 	override validate(dto?: Partial<InvoiceDto>): boolean
 	{
+		this.invoiceItems.value.forEach((item) => {
+			item.recalculateTotals();
+		});
+
 		const invoiceResult = super.validate(dto);
 		const itemsResult = this.invoiceItems.value.every((t) => t.validate());
 		const costsResult = this.costVouchers.value.every((v) => v.validate());

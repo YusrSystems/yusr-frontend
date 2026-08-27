@@ -295,7 +295,7 @@ export class InvoiceItem extends ChangeableEntity<InvoiceItemDto>
 		this.applyPricingMethodPrice();
 	}
 
-	private recalculateTotals()
+	public recalculateTotals()
 	{
 		this.taxExclusiveTotalPrice.value = InvoiceItemsMath.CalcTaxExclusiveTotalPrice(
 			this.taxExclusivePrice.value,
