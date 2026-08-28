@@ -11,13 +11,12 @@ import type { TaxAuditReportLine } from "./taxAuditReportResult";
 import { APP_NAME } from "../../../../appConfig.ts";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import { Services } from "@/core/services/services.ts";
-import Invoice from "@/core/data/invoices/invoice.ts";
-import { useTranslation } from "react-i18next";
+import { getDocumentTypeName } from "@/core/types/documentType";
+
 
 export function TaxAuditReportPage()
 {
 	useSignals();
-	const {t} = useTranslation("accounting");
 
 	const lastRequest = useMemo(() =>
 	{
@@ -74,7 +73,8 @@ export function TaxAuditReportPage()
 					getRows={ async () => Cubits.TaxAuditReport.result.value?.lines ?? [] }
 					columns={ [
 						{header: "التاريخ", accessor: (r) => r.date},
-						{header: "نوع المستند", accessor: (r) => Invoice.getTypeName(r.invoiceType, t)},
+						// ✅ استخدام getDocumentTypeName(r.type)
+						{header: "نوع المستند", accessor: (r) => getDocumentTypeName(r.type)},
 						{header: "رقم المستند", accessor: (r) => r.invoiceId.toString()},
 						{header: "الجهة", accessor: (r) => r.partnerName ?? ""},
 						{header: "الرقم الضريبي", accessor: (r) => r.partnerVatNumber ?? ""},

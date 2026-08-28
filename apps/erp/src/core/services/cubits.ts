@@ -9,7 +9,6 @@ import { TaxDto } from "../data/tax";
 import { UnitDto } from "../data/unit";
 import { Services } from "./services";
 import { VoucherDto } from "@/core/data/voucher.ts";
-import { type InvoiceDto } from "@/core/data/invoices/invoice.ts";
 import type { StoreDto } from "@/core/data/store.ts";
 import { type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { type CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
@@ -50,6 +49,9 @@ import { PosTerminalDto } from "@/core/data/posTerminal.ts";
 import { CategoryDto } from "@/core/data/category.ts";
 import { BrandDto } from "@/core/data/brand.ts";
 import { FiscalYearDto } from "@/core/data/fiscalYear.ts";
+import type { SalesInvoiceDto } from "@/core/data/commercial/salesInvoice.ts";
+import type { PurchaseInvoiceDto } from "@/core/data/commercial/purchaseInvoice.ts";
+import type { QuotationDto } from "@/core/data/commercial/quotation.ts";
 
 
 export class Cubits extends BaseCubits
@@ -69,7 +71,11 @@ export class Cubits extends BaseCubits
 	public static readonly balanceTransfers = new PageCubit<BalanceTransferDto>(Services.balanceTransfersApi);
 	public static override roles = new PageCubit<ErpRoleDto>(Services.rolesApi);
 	public static readonly vouchers = new PageCubit<VoucherDto>(Services.voucherApi);
-	public static readonly invoices = new PageCubit<InvoiceDto>(Services.invoicesApi);
+	public static readonly salesInvoices = new PageCubit<SalesInvoiceDto>(Services.salesInvoicesApi);
+	public static readonly purchaseInvoices = new PageCubit<PurchaseInvoiceDto>(Services.purchaseInvoicesApi);
+	public static readonly originalSalesInvoices = new PageCubit<SalesInvoiceDto>(Services.salesInvoicesApi);
+	public static readonly originalPurchaseInvoices = new PageCubit<PurchaseInvoiceDto>(Services.purchaseInvoicesApi);
+	public static readonly quotations = new PageCubit<QuotationDto>(Services.quotationsApi);
 	public static readonly partners = new PageCubit<PartnerDto>(Services.partnersApi);
 	public static readonly posTerminals = new PageCubit<PosTerminalDto>(Services.posTerminalsApi);
 	public static readonly users = new PageCubit<UserDto>(Services.usersApi);
@@ -80,7 +86,9 @@ export class Cubits extends BaseCubits
 	// filter fields
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");
 	public static readonly itemFilterFields = new FilterFieldsCubit("Items");
-	public static readonly invoiceFilterFields = new FilterFieldsCubit("Invoices");
+	public static readonly salesInvoiceFilterFields = new FilterFieldsCubit("SalesInvoices");
+	public static readonly purchaseInvoiceFilterFields = new FilterFieldsCubit("PurchaseInvoices");
+	public static readonly quotationFilterFields = new FilterFieldsCubit("Quotations");
 	public static readonly partnerFilterFields = new FilterFieldsCubit("Partners");
 	public static readonly voucherFilterFields = new FilterFieldsCubit("Vouchers");
 

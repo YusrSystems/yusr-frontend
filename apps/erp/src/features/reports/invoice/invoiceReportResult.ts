@@ -1,26 +1,70 @@
-import { InvoiceDto } from "@/core/data/invoices/invoice";
 import { PartnerDto } from "@/core/data/partner";
 import { InvoicePrintSize } from "@/core/data/setting";
+import { SalesInvoiceDto } from "@/core/data/commercial/salesInvoice";
+import { PurchaseInvoiceDto } from "@/core/data/commercial/purchaseInvoice";
+import { QuotationDto } from "@/core/data/commercial/quotation";
 
 
-export interface InvoiceReportResult
+export interface IBaseCommercialReportResult
 {
-	invoice: InvoiceDto;
 	partner: PartnerDto;
 	totalBeforeTax: number;
 	totalTaxAmount: number;
 	totalAfterTax: number;
+	settlementAmount: number;
+	settlementPercent: number;
+	settlementReason?: string;
+	titleAr: string;
+	titleEn: string;
+	invoicePrintSize: InvoicePrintSize;
+}
+
+export interface SalesInvoiceReportResult extends IBaseCommercialReportResult
+{
+	invoice: SalesInvoiceDto;
 	paidAmount: number;
 	remainingAmount: number;
 	tenderedAmount?: number;
 	changeAmount?: number;
-	titleAr: string;
-	titleEn: string;
 	isSimplified: boolean;
-	settlementAmount: number;
-	settlementPercent: number;
-	settlementReason?: string;
-	qr: string;
-	qrBytes: string;
-	invoicePrintSize: InvoicePrintSize;
+	qr?: string;
+	qrBytes?: string;
+}
+
+export interface PurchaseInvoiceReportResult extends IBaseCommercialReportResult
+{
+	invoice: PurchaseInvoiceDto;
+	paidAmount: number;
+	remainingAmount: number;
+}
+
+export interface QuotationReportResult extends IBaseCommercialReportResult
+{
+	quotation: QuotationDto;
+}
+
+export type CommercialReportResult =
+	| SalesInvoiceReportResult
+	| PurchaseInvoiceReportResult
+	| QuotationReportResult;
+
+export function isSalesInvoiceReport(
+	result: CommercialReportResult
+): result is SalesInvoiceReportResult
+{
+	return "invoice" in result && "qrBytes" in result;
+}
+
+export function isPurchaseInvoiceReport(
+	result: CommercialReportResult
+): result is PurchaseInvoiceReportResult
+{
+	return "invoice" in result && !("qrBytes" in result);
+}
+
+export function isQuotationReport(
+	result: CommercialReportResult
+): result is QuotationReportResult
+{
+	return "quotation" in result;
 }

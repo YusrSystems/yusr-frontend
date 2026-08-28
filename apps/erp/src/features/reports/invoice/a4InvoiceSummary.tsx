@@ -1,12 +1,13 @@
-import type { InvoiceReportResult } from "./invoiceReportResult";
-import { SummaryRow } from "@/features/report/components/summaryRow.tsx";
-import { formatNumber } from "@/features/report/utils/formating.ts";
+import type { CommercialReportResult } from "./invoiceReportResult";
+import { SummaryRow } from "@/features/report/components/summaryRow";
+import { formatNumber } from "@/features/report/utils/formating";
 
 
-export function A4InvoiceSummary({data}: { data: InvoiceReportResult })
+export function A4InvoiceSummary({data}: { data: CommercialReportResult })
 {
 	const labelClassName = "text-[10px]! max-w-40! w-40!";
 	const valueClassName = "flex-1 text-[14px] text-center font-bold";
+	const isInvoice = "paidAmount" in data;
 
 	return (
 		<div className="max-w-md mt-2 border border-border rounded-lg overflow-hidden ms-auto divide-y divide-border">
@@ -19,7 +20,6 @@ export function A4InvoiceSummary({data}: { data: InvoiceReportResult })
 					<SummaryRow.Value className={ valueClassName } value={ formatNumber(data.settlementAmount) }/>
 				</SummaryRow>
 			) }
-
 			{ data.settlementPercent > 0 && (
 				<SummaryRow>
 					<div>
@@ -29,7 +29,6 @@ export function A4InvoiceSummary({data}: { data: InvoiceReportResult })
 					<SummaryRow.Value className={ valueClassName } value={ formatNumber(data.settlementPercent) }/>
 				</SummaryRow>
 			) }
-
 			{ data.settlementReason && (
 				<SummaryRow>
 					<div>
@@ -39,7 +38,6 @@ export function A4InvoiceSummary({data}: { data: InvoiceReportResult })
 					<SummaryRow.Value className={ `${ valueClassName } text-[10px]!` } value={ data.settlementReason }/>
 				</SummaryRow>
 			) }
-
 			<SummaryRow>
 				<div>
 					<SummaryRow.Label className={ labelClassName } label="الإجمالي قبل الضريبة"/>
@@ -47,7 +45,6 @@ export function A4InvoiceSummary({data}: { data: InvoiceReportResult })
 				</div>
 				<SummaryRow.Value className={ valueClassName } value={ formatNumber(data.totalBeforeTax) }/>
 			</SummaryRow>
-
 			<SummaryRow>
 				<div>
 					<SummaryRow.Label className={ labelClassName } label="قيمة الضريبة"/>
@@ -55,7 +52,6 @@ export function A4InvoiceSummary({data}: { data: InvoiceReportResult })
 				</div>
 				<SummaryRow.Value className={ valueClassName } value={ formatNumber(data.totalTaxAmount) }/>
 			</SummaryRow>
-
 			<SummaryRow>
 				<div>
 					<SummaryRow.Label className={ labelClassName } label="الإجمالي بعد الضريبة"/>
@@ -64,24 +60,28 @@ export function A4InvoiceSummary({data}: { data: InvoiceReportResult })
 				<SummaryRow.Value className={ `${ valueClassName } text-base!` }
 				                  value={ formatNumber(data.totalAfterTax) }/>
 			</SummaryRow>
-
-			<SummaryRow>
-				<div>
-					<SummaryRow.Label className={ labelClassName } label="المبلغ المدفوع"/>
-					<SummaryRow.Label className={ labelClassName } label="Paid Amount"/>
-				</div>
-				<SummaryRow.Value className={ `${ valueClassName } text-green-600` }
-				                  value={ formatNumber(data.paidAmount) }/>
-			</SummaryRow>
-
-			<SummaryRow>
-				<div>
-					<SummaryRow.Label className={ labelClassName } label="المتبقي من الفاتورة"/>
-					<SummaryRow.Label className={ labelClassName } label="Remain Amount"/>
-				</div>
-				<SummaryRow.Value className={ `${ valueClassName } text-red-600` }
-				                  value={ formatNumber(data.remainingAmount) }/>
-			</SummaryRow>
+			{ isInvoice && (
+				<>
+					<SummaryRow>
+						<div>
+							<SummaryRow.Label className={ labelClassName } label="المبلغ المدفوع"/>
+							<SummaryRow.Label className={ labelClassName } label="Paid Amount"/>
+						</div>
+						<SummaryRow.Value className={ `${ valueClassName } text-green-600` }
+						                  value={ formatNumber((data as { paidAmount: number }).paidAmount) }/>
+					</SummaryRow>
+					<SummaryRow>
+						<div>
+							<SummaryRow.Label className={ labelClassName } label="المتبقي من الفاتورة"/>
+							<SummaryRow.Label className={ labelClassName } label="Remain Amount"/>
+						</div>
+						<SummaryRow.Value className={ `${ valueClassName } text-red-600` }
+						                  value={ formatNumber((data as {
+							                  remainingAmount: number
+						                  }).remainingAmount) }/>
+					</SummaryRow>
+				</>
+			) }
 		</div>
 	);
 }

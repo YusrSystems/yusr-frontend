@@ -3,7 +3,6 @@ import ItemsApiService from "../networking/itemApiService";
 import UnitsApiService from "../networking/unitApiService";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
-import InvoicesApiService from "@/core/networking/invoiceApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
 import { TaxDto } from "@/core/data/tax.ts";
 import type { StoreDto } from "@/core/data/store.ts";
@@ -23,6 +22,9 @@ import PosCheckoutApiService from "@/core/networking/posCheckoutApiService.ts";
 import PosTerminalsApiService from "@/core/networking/posTerminalsApiService.ts";
 import FiscalYearsApiService from "@/core/networking/fiscalYearsApiService.ts";
 import VouchersApiService from "@/core/networking/vouchersApiService.ts";
+import PurchaseInvoicesApiService from "@/core/networking/purchaseInvoicesApiService.ts";
+import SalesInvoicesApiService from "@/core/networking/salesInvoicesApiService.ts";
+import type { QuotationDto } from "@/core/data/commercial/quotation.ts";
 
 
 export class Services extends BaseServices
@@ -44,7 +46,9 @@ export class Services extends BaseServices
 	public static readonly paymentMethodsApi = new BaseApiService<PaymentMethodDto>("PaymentMethods");
 	public static readonly balanceTransfersApi = new BaseApiService<BalanceTransferDto>("BalanceTransfers");
 	public static readonly voucherApi = new VouchersApiService();
-	public static readonly invoicesApi = new InvoicesApiService();
+	public static readonly salesInvoicesApi = new SalesInvoicesApiService();
+	public static readonly purchaseInvoicesApi = new PurchaseInvoicesApiService();
+	public static readonly quotationsApi = new BaseApiService<QuotationDto>("Quotations");
 	public static readonly settingApi = new SettingsApiService();
 	public static readonly dashboardApi = new DashboardApiService();
 	public static readonly posSessionsApi = new PosSessionApiService();

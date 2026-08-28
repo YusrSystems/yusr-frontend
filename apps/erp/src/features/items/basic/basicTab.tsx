@@ -43,8 +43,8 @@ export default function BasicTab(
 		handleSetPrimary,
 		getFileSrc
 	} = useStorageFile(
-		() => entity.itemImages.value,
-		(v) => (entity.itemImages.value = v),
+		() => entity.files.value,
+		(v) => (entity.files.value = v),
 		StorageType.Public
 	);
 
@@ -149,7 +149,7 @@ export default function BasicTab(
 				<div className="w-full lg:w-108 shrink-0 bg-muted/10 p-4 rounded-lg border">
 					<StorageFileField
 						label={ t("items.itemImages") }
-						file={ entity.itemImages.value }
+						file={ entity.files.value }
 						fileInputRef={ fileInputRef }
 						onFileChange={ handleFileChange }
 						onRemove={ handleRemoveFile }
@@ -163,7 +163,7 @@ export default function BasicTab(
 							onClick: (index) => handleSetPrimary(index)
 						}] }
 
-						error={ entity.getError("itemImages") }
+						error={ entity.getError("files") }
 					/>
 				</div>
 			</div>

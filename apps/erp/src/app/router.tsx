@@ -3,12 +3,12 @@ import BalanceTransfersPage from "@/features/balanceTransfer/balanceTransfersPag
 import LegalDocViewer from "@/features/legal/legaldocviewer";
 import { PaymentMethodsPage } from "@/features/paymentMethods/paymentMethodsPage";
 import { ErpRolesPage } from "@/features/roles/erpRolesPage";
-import VouchersPage from "@/features/vouchers/vouchersPage.tsx";
+import VouchersPage from "@/features/vouchers/vouchersPage";
 import { createBrowserRouter } from "react-router-dom";
 import { BaseFilterableApiService, BranchesPage, ErrorFallback, NotFoundPage, UsersPage } from "yusr-ui";
 import DashboardPage from "../features/dashboard/dashboardPage";
 import ItemsPage from "../features/items/itemsPage";
-import ItemsSettlementsPage from "../features/stocktakings/itemsSettlementsPage.tsx";
+import ItemsSettlementsPage from "../features/stocktakings/itemsSettlementsPage";
 import ItemTransfersPage from "../features/itemTransfers/itemTransfersPage";
 import LandingPage from "../features/landing/landingPage";
 import LoginPage from "../features/login/loginPage";
@@ -22,40 +22,41 @@ import TaxesPage from "../features/taxes/taxesPage";
 import TenantInfoSharingPage from "../features/tenantInfoSharing/tenantInfoSharingPage";
 import UnitsPage from "../features/units/unitsPage";
 import AppLayout from "./appLayout";
-import SellInvoicesPage from "@/features/invoices/sellInvoicesPage";
-import PurchaseInvoicesPage from "@/features/invoices/purchaseInvoices.tsx";
-import QuotationInvoicesPage from "@/features/invoices/quotationInvoicesPage.tsx";
-import AuthGate from "@/app/authGate.tsx";
-import CostAdjustmentsPage from "@/features/costAdjustments/costAdjustmentsPage.tsx";
-import { ItemsListReportPage } from "@/features/reports/itemsList/itemsListReportPage.tsx";
-import { ItemsMovementReportPage } from "@/features/reports/itemsMovement/itemsMovementReportPage.tsx";
-import { VatReturnReportPage } from "@/features/reports/vatReturn/vatReturnReportPage.tsx";
-import { InvoicesListReportPage } from "@/features/reports/invoicesList/invoicesListReportPage.tsx";
-import { ProfitAndLossReportPage } from "@/features/reports/profitAndLoss/profitAndLossReportPage.tsx";
-import { BalanceSheetReportPage } from "@/features/reports/balanceSheet/balanceSheetReportPage.tsx";
-import { ItemStatementReportPage } from "@/features/reports/itemStatement/itemStatementReportPage.tsx";
-import { AccountStatementReportPage } from "@/features/reports/accountStatement/accountStatementReportPage.tsx";
-import { PartnerStatementReportPage } from "@/features/reports/partnerStatement/partnerStatementReportPage.tsx";
-import { AccountsListReportPage } from "@/features/reports/accountsList/accountsListReportPage.tsx";
-import AccountsPage from "@/features/accounts/accountsPage.tsx";
-import PartnersPage from "@/features/partners/partnersPage.tsx";
-import { PartnerType } from "@/core/data/partner.ts";
-import { SalesProfitabilityReportPage } from "@/features/reports/salesProfitability/salesProfitabilityReportPage.tsx";
-import { TaxAuditReportPage } from "@/features/reports/taxAudit/taxAuditReportPage.tsx";
-import { StockValuationReportPage } from "@/features/reports/stockValuation/stockValuationReportPage.tsx";
-import { LowStockReportPage } from "@/features/reports/lowStock/lowStockReportPage.tsx";
-import PosTerminalsPage from "@/features/Pos/posTerminals/posTerminalsPage.tsx";
-import PosEntryPage from "@/features/Pos/posSession/posEntryPage.tsx";
-import PosScreenPage from "@/features/Pos/posScreen/posScreenPage.tsx";
-import { VouchersListReportPage } from "@/features/reports/vouchersList/vouchersListReportPage.tsx";
-import PosCustomerDisplayPage from "@/features/Pos/posScreen/posCustomerDisplayPage.tsx";
-import FiscalYearsPage from "@/features/fiscalYears/fiscalYearsPage.tsx";
+import AuthGate from "@/app/authGate";
+import CostAdjustmentsPage from "@/features/costAdjustments/costAdjustmentsPage";
+import { ItemsListReportPage } from "@/features/reports/itemsList/itemsListReportPage";
+import { ItemsMovementReportPage } from "@/features/reports/itemsMovement/itemsMovementReportPage";
+import { VatReturnReportPage } from "@/features/reports/vatReturn/vatReturnReportPage";
+import { InvoicesListReportPage } from "@/features/reports/invoicesList/invoicesListReportPage";
+import { ProfitAndLossReportPage } from "@/features/reports/profitAndLoss/profitAndLossReportPage";
+import { BalanceSheetReportPage } from "@/features/reports/balanceSheet/balanceSheetReportPage";
+import { ItemStatementReportPage } from "@/features/reports/itemStatement/itemStatementReportPage";
+import { AccountStatementReportPage } from "@/features/reports/accountStatement/accountStatementReportPage";
+import { PartnerStatementReportPage } from "@/features/reports/partnerStatement/partnerStatementReportPage";
+import { AccountsListReportPage } from "@/features/reports/accountsList/accountsListReportPage";
+import AccountsPage from "@/features/accounts/accountsPage";
+import PartnersPage from "@/features/partners/partnersPage";
+import { PartnerType } from "@/core/data/partner";
+import { SalesProfitabilityReportPage } from "@/features/reports/salesProfitability/salesProfitabilityReportPage";
+import { TaxAuditReportPage } from "@/features/reports/taxAudit/taxAuditReportPage";
+import { StockValuationReportPage } from "@/features/reports/stockValuation/stockValuationReportPage";
+import { LowStockReportPage } from "@/features/reports/lowStock/lowStockReportPage";
+import PosTerminalsPage from "@/features/Pos/posTerminals/posTerminalsPage";
+import PosEntryPage from "@/features/Pos/posSession/posEntryPage";
+import PosScreenPage from "@/features/Pos/posScreen/posScreenPage";
+import { VouchersListReportPage } from "@/features/reports/vouchersList/vouchersListReportPage";
+import PosCustomerDisplayPage from "@/features/Pos/posScreen/posCustomerDisplayPage";
+import FiscalYearsPage from "@/features/fiscalYears/fiscalYearsPage";
+import SalesInvoicesPage from "@/features/commercial/sales/salesInvoicesPage.tsx";
+import PurchaseInvoicesPage from "@/features/commercial/purchases/purchaseInvoicesPage.tsx";
+import QuotationsPage from "@/features/commercial/quotations/quotationsPage.tsx";
 
 
 const refreshPage = () =>
 {
 	window.location.reload();
 };
+
 export const router = createBrowserRouter([
 	{
 		errorElement: <ErrorFallback reset={ refreshPage }/>,
@@ -107,12 +108,12 @@ export const router = createBrowserRouter([
 							},
 							{path: "/reports", element: <ReportsPage/>},
 
-							// invoices
-							{path: "/sales/:id?", element: <SellInvoicesPage/>},
+							// Commercial Documents
+							{path: "/sales/:id?", element: <SalesInvoicesPage/>},
 							{path: "/purchases/:id?", element: <PurchaseInvoicesPage/>},
-							{path: "/quotations/:id?", element: <QuotationInvoicesPage/>},
+							{path: "/quotations/:id?", element: <QuotationsPage/>},
 
-							// reports
+							// Reports
 							{path: "/reports/itemsList", element: <ItemsListReportPage/>},
 							{path: "/reports/accountsList", element: <AccountsListReportPage/>},
 							{path: "/reports/vouchersList", element: <VouchersListReportPage/>},
@@ -133,11 +134,11 @@ export const router = createBrowserRouter([
 								element: <PartnerStatementReportPage/>
 							},
 							{
-								path: "reports/stockValuation",
+								path: "/reports/stockValuation",
 								element: <StockValuationReportPage/>
 							},
 							{
-								path: "reports/lowStock",
+								path: "/reports/lowStock",
 								element: <LowStockReportPage/>
 							}
 						]

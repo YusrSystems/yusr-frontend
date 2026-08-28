@@ -5,8 +5,7 @@ import { Cubits } from "@/core/services/cubits";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ReportLoaded, ReportLoading, TablePreview } from "yusr-ui";
 import { Link } from "react-router-dom";
-import Invoice from "@/core/data/invoices/invoice.ts";
-import { useTranslation } from "react-i18next";
+import { getDocumentRoute, getDocumentTypeName } from "@/core/types/documentType";
 
 
 const linkClassName = "p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!";
@@ -14,8 +13,6 @@ const linkClassName = "p-0! text-blue-600! hover:bg-blue-100/50! hover:underline
 export function TaxAuditReportTable()
 {
 	useSignals();
-
-	const {t} = useTranslation("accounting");
 
 	if (Cubits.TaxAuditReport.state.value instanceof ReportLoading)
 	{
@@ -47,12 +44,13 @@ export function TaxAuditReportTable()
 				{ lines.map((row, idx) =>
 				{
 					const isEven = idx % 2 === 0;
-					const routePath = Invoice.getRouteName(row.invoiceType);
+					// ✅ جلب المسار واسم النوع من دوال DocumentType الجديدة
+					const routePath = getDocumentRoute(row.type);
 
 					return (
 						<tr key={ `${ row.invoiceId }-${ idx }` }>
 							<ReportTableTd className="min-w-20" isEven={ isEven }>{ row.date }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ Invoice.getTypeName(row.invoiceType, t) }</ReportTableTd>
+							<ReportTableTd isEven={ isEven }>{ getDocumentTypeName(row.type) }</ReportTableTd>
 
 							{ routePath ? (
 								<ReportTableTd isEven={ isEven } className={ linkClassName }>

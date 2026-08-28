@@ -16,16 +16,13 @@ import {
 	type FilterRuleDto,
 	FormField,
 	NumberField,
-	TablePreview,
-	YusrApiHelper
+	TablePreview
 } from "yusr-ui";
-import { InvoiceDto } from "@/core/data/invoices/invoice";
 import { PosSessionDto } from "@/core/data/posSession";
 import { PosTerminalDto } from "@/core/data/posTerminal";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
 import { Clock, Loader2, Printer, ReceiptText, RotateCcw, Store, Undo2 } from "lucide-react";
-import { InvoiceReportRequest } from "@/core/data/report/invoiceReportRequest";
-import type { InvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult";
+import { InvoiceReportRequest } from "@/features/reports/invoice/invoiceReportRequest.ts";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport";
 import { PortalReportContainer } from "@/features/report/reportContainer";
 import { getPaymentStatus } from "@/core/types/paymentStatus";
@@ -35,7 +32,9 @@ import { PartnerType } from "@/core/data/partner";
 import { useTranslation } from "react-i18next";
 import { Cubits } from "@/core/services/cubits.ts";
 import { getReturnStatus, InvoiceReturnStatus } from "@/core/types/invoiceReturnStatus.ts";
-
+import type { SalesInvoiceDto } from "@/core/data/commercial/salesInvoice.ts";
+import type { SalesInvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
+import { useCommercialPrint } from "@/features/commercial/hooks/useCommercialPrint"; // تأكد من مسار الاستيراد الصحيح عندك
 
 interface PosRecentInvoicesDialogProps
 {
@@ -43,7 +42,7 @@ interface PosRecentInvoicesDialogProps
 	onOpenChange: (open: boolean) => void;
 	terminal: PosTerminalDto;
 	session: PosSessionDto;
-	onProcessReturn?: (invoice: InvoiceDto) => void;
+	onProcessReturn?: (invoice: SalesInvoiceDto) => void;
 }
 
 export default function PosRecentInvoicesDialog({
@@ -63,9 +62,7 @@ export default function PosRecentInvoicesDialog({
 	const filterPartnerId = useMemo(() => signal<number | undefined>(undefined), []);
 
 	const isLoading = useMemo(() => signal<boolean>(false), []);
-
-	const isPrinting = useMemo(() => signal<number | undefined>(undefined), []);
-	const printedInvoice = useMemo(() => signal<InvoiceReportResult | undefined>(undefined), []);
+	const {printedReport, isPrinting, handlePrint} = useCommercialPrint<SalesInvoiceReportResult>();
 
 	const fetchInvoices = async () =>
 	{
@@ -100,9 +97,9 @@ export default function PosRecentInvoicesDialog({
 
 			const groups: FilterGroupDto[] = [{id: 0, rules}];
 
-			await Cubits.invoices.filter(
-				Cubits.invoices.currentPage.value,
-				Cubits.invoices.pageSize.value,
+			await Cubits.salesInvoices.filter(
+				Cubits.salesInvoices.currentPage.value,
+				Cubits.salesInvoices.pageSize.value,
 				undefined,
 				[InvoiceType.Sell, InvoiceType.SellReturn],
 				undefined,
@@ -124,46 +121,13 @@ export default function PosRecentInvoicesDialog({
 		}
 	}, [open, activeTab.value, filterDate.value, filterInvoiceId.value, filterPartnerId.value]);
 
-	useEffect(() =>
+	const onPrintInvoice = (inv: SalesInvoiceDto) =>
 	{
-		const handleAfterPrint = () =>
-		{
-			printedInvoice.value = undefined;
-		};
-		window.addEventListener("afterprint", handleAfterPrint);
-		return () => window.removeEventListener("afterprint", handleAfterPrint);
-	}, [printedInvoice]);
-
-	const handlePrint = async (inv: InvoiceDto) =>
-	{
-		isPrinting.value = inv.id;
-		try
-		{
-			const res = await YusrApiHelper.Post<InvoiceReportResult>(
-				`/api/Reports/Invoice`,
-				new InvoiceReportRequest({invoiceId: inv.id})
-			);
-			if (res.data)
-			{
-				printedInvoice.value = res.data;
-				requestAnimationFrame(() =>
-				{
-					requestAnimationFrame(() =>
-					{
-						window.print();
-						isPrinting.value = undefined;
-					});
-				});
-			}
-			else
-			{
-				isPrinting.value = undefined;
-			}
-		}
-		catch
-		{
-			isPrinting.value = undefined;
-		}
+		void handlePrint(
+			inv.id,
+			"/api/Reports/SalesInvoice",
+			new InvoiceReportRequest({invoiceId: inv.id})
+		);
 	};
 
 	const handleClearFilters = () =>
@@ -266,7 +230,7 @@ export default function PosRecentInvoicesDialog({
 								<Loader2 className="w-6 h-6 animate-spin text-primary"/>
 								<span>جاري جلب الفواتير...</span>
 							</div>
-						) : Cubits.invoices.entities.value.length === 0 ? (
+						) : Cubits.salesInvoices.entities.value.length === 0 ? (
 							<TablePreview.Empty title="لا توجد فواتير مطابقة"/>
 						) : (
 							<div className="border border-border rounded-lg overflow-hidden shadow-xs">
@@ -284,7 +248,7 @@ export default function PosRecentInvoicesDialog({
 									</tr>
 									</thead>
 									<tbody className="divide-y divide-border">
-									{ Cubits.invoices.entities.value.map((inv) =>
+									{ Cubits.salesInvoices.entities.value.map((inv) =>
 									{
 										const isReturn = inv.type === InvoiceType.SellReturn;
 										const paymentStatus = getPaymentStatus(inv, t);
@@ -334,7 +298,7 @@ export default function PosRecentInvoicesDialog({
 															variant="outline"
 															title="طباعة الإيصال"
 															disabled={ isPrinting.value === inv.id }
-															onClick={ () => handlePrint(inv) }
+															onClick={ () => onPrintInvoice(inv) }
 														>
 															{ isPrinting.value === inv.id ? (
 																<Loader2 className="w-3.5 h-3.5 animate-spin"/>
@@ -376,9 +340,9 @@ export default function PosRecentInvoicesDialog({
 						className="w-full border-t border-border bg-muted/20 flex items-center justify-between shrink-0">
 						<CrudTablePagination
 							className="w-full"
-							pageSize={ Cubits.invoices.pageSize.value }
-							totalNumber={ Cubits.invoices.count.value }
-							currentPage={ Cubits.invoices.currentPage.value }
+							pageSize={ Cubits.salesInvoices.pageSize.value }
+							totalNumber={ Cubits.salesInvoices.count.value }
+							currentPage={ Cubits.salesInvoices.currentPage.value }
 							onPageChanged={ () =>
 							{
 								void fetchInvoices();
@@ -389,10 +353,10 @@ export default function PosRecentInvoicesDialog({
 			</Dialog>
 
 			{/* Thermal Receipt Print Portal */ }
-			{ printedInvoice.value &&
+			{ printedReport.value &&
 				createPortal(
 					<PortalReportContainer>
-						<InvoiceReport data={ printedInvoice.value } isPortal={ true } forceThermal={ true }/>
+						<InvoiceReport data={ printedReport.value } isPortal={ true } forceThermal={ true }/>
 					</PortalReportContainer>,
 					document.body
 				) }

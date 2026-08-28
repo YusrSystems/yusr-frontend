@@ -1,14 +1,12 @@
-import { SummaryRow } from "@/features/report/components/summaryRow.tsx";
+import { SummaryRow } from "@/features/report/components/summaryRow";
 import { useSignals } from "@preact/signals-react/runtime";
-import { Cubits } from "@/core/services/cubits.ts";
-import { formatNumber } from "@/features/report/utils/formating.ts";
+import { formatNumber } from "@/features/report/utils/formating";
+import type { ICommercialInvoiceDocumentDto } from "@/core/data/commercial/commercialInvoiceDocument";
 
 
-export function InvoicesListReportSummary()
+export function InvoicesListReportSummary({invoices}: { invoices: ICommercialInvoiceDocumentDto[] })
 {
 	useSignals();
-
-	const invoices = Cubits.invoices.entities.value;
 	const count = invoices.length;
 
 	let totalAmount = 0;
@@ -45,7 +43,6 @@ export function InvoicesListReportSummary()
 				</div>
 				<SummaryRow.Value value={ formatNumber(totalPaidAmount) }/>
 			</SummaryRow>
-
 		</div>
 	);
 }

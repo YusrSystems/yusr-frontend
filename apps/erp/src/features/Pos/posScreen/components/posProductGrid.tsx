@@ -16,10 +16,10 @@ import { Loader2, Package, ScanBarcode, Star } from "lucide-react";
 import React, { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
-import InvoiceItemsMath from "@/features/invoices/logic/invoiceItemsMath";
 import { Services } from "@/core/services/services";
 import { toast } from "sonner";
 import PosCategoryFilterBar from "./posCategoryFilterBar";
+import { CommercialMath } from "@/features/commercial/logic/commercialMath.ts";
 
 
 interface PosProductGridProps
@@ -264,13 +264,13 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 								const quantity = item.storeQuantity ?? 0;
 								const formattedQty = Number.isInteger(quantity) ? quantity : quantity.toFixed(2);
 
-								const {taxInclusivePrice} = InvoiceItemsMath.GetPrices(
+								const {taxInclusivePrice} = CommercialMath.getPrices(
 									item.taxIncluded ?? false,
 									basePrice,
 									item.totalTaxes ?? 0
 								);
 
-								const imageUrl = item.itemImages?.[0]?.url;
+								const imageUrl = item.files?.[0]?.url;
 
 								return (
 									<div

@@ -1,5 +1,6 @@
-import { InvoiceDto } from "@/core/data/invoices/invoice.ts";
 import type { TFunction } from "i18next";
+import type { SalesInvoiceDto } from "@/core/data/commercial/salesInvoice.ts";
+import type { PurchaseInvoiceDto } from "@/core/data/commercial/purchaseInvoice.ts";
 
 
 export enum InvoiceReturnStatus
@@ -9,7 +10,10 @@ export enum InvoiceReturnStatus
 	FullyReturned = 2
 }
 
-export function getReturnStatus(invoice: InvoiceDto, t: TFunction<"accounting">): { message: string; styles: string; }
+export function getReturnStatus(invoice: SalesInvoiceDto | PurchaseInvoiceDto, t: TFunction<"accounting">): {
+	message: string;
+	styles: string;
+}
 {
 	if (invoice.returnStatusId === InvoiceReturnStatus.NotReturned)
 	{

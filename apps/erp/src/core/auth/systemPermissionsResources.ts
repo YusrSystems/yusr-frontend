@@ -3,54 +3,39 @@ import { YusrSystemPermissionsResources } from "yusr-ui";
 
 export const SystemPermissionsResources = {
 	...YusrSystemPermissionsResources,
-
-	// Core
-	PricingMethods: "PricingMethods",
-	Stores: "Stores",
-	Taxes: "Taxes",
-	Units: "Units",
-
-	// Accounts & Fiscal Years
+	Invoices: "Invoices",
+	Quotations: "Quotations",
+	Vouchers: "Vouchers",
 	Accounts: "Accounts",
 	BalanceTransfers: "BalanceTransfers",
 	PaymentMethods: "PaymentMethods",
-	Vouchers: "Vouchers",
 	Partners: "Partners",
 	FiscalYears: "FiscalYears",
 	FiscalPeriods: "FiscalPeriods",
 	FiscalYearClose: "FiscalYearClose",
 	FiscalYearReopen: "FiscalYearReopen",
-
-	// Invoices & POS
-	Invoices: "Invoices",
-	Obligations: "Obligations",
-	PosTerminals: "PosTerminals",
-	PosSessions: "PosSessions",
-
-	// Items
 	Items: "Items",
 	Brands: "Brands",
 	Categories: "Categories",
-	ItemsSettlements: "ItemsSettlements",
 	ItemTransfers: "ItemTransfers",
+	ItemsSettlements: "ItemsSettlements",
 	Stocktakings: "Stocktakings",
 	CostAdjustments: "CostAdjustments",
-
-	// Invoice Permission Settings
+	Units: "Units",
+	PricingMethods: "PricingMethods",
+	Stores: "Stores",
+	Taxes: "Taxes",
+	PosTerminals: "PosTerminals",
+	PosSessions: "PosSessions",
+	Obligations: "Obligations",
 	InvoiceAddSettlement: "InvoiceAddSettlement",
 	InvoiceShowProfit: "InvoiceShowProfit",
 	InvoiceShowItemProfit: "InvoiceShowItemProfit",
 	InvoiceSellBelowSellingPrice: "InvoiceSellBelowSellingPrice",
 	InvoiceSellBeyondAvailableQuantity: "InvoiceSellBeyondAvailableQuantity",
-
-	// Allowed Invoice Types
 	InvoiceSell: "InvoiceSell",
 	InvoicePurchase: "InvoicePurchase",
-
-	// Allowed Account Types
 	AccountShowBalance: "AccountShowBalance",
-
-	// Reports
 	ReportInvoice: "ReportInvoice",
 	ReportInvoiceList: "ReportInvoiceList",
 	ReportVoucher: "ReportVoucher",
@@ -67,11 +52,11 @@ export const SystemPermissionsResources = {
 	ReportBalanceSheet: "ReportBalanceSheet",
 	ReportVatReturn: "ReportVatReturn",
 	ReportPl: "ReportPl",
+	ReportSalesProfitability: "ReportSalesProfitability",
+	ReportTaxAudit: "ReportTaxAudit",
 	ReportStocktaking: "ReportStocktaking",
 	ReportItemSettlement: "ReportItemSettlement",
 	ReportItemBarcode: "ReportItemBarcode",
-	ReportSalesProfitability: "ReportSalesProfitability",
-	ReportTaxAudit: "ReportTaxAudit",
 	ReportStockValuation: "ReportStockValuation",
 	ReportLowStock: "ReportLowStock"
 } as const;
