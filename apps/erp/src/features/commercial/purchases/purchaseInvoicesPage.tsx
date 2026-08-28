@@ -54,8 +54,21 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 
 	useEffect(() =>
 	{
-		document.title = `${ t("invoices.purchasesManagement") } | ${ APP_NAME }`;
-	}, [t]);
+		const printed = printedReport.value;
+		if (printed?.invoice)
+		{
+			document.title = `${ printed.invoice.id } - ${ getPurchaseInvoiceTypeName(printed.invoice.type, t) } - ${ printed.partner?.name || printed.invoice.partnerName || "" }`;
+		}
+		else
+		{
+			document.title = `${ t("invoices.purchasesManagement") } | ${ APP_NAME }`;
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [printedReport.value, t]);
 
 	useEffect(() =>
 	{

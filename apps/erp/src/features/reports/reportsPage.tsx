@@ -20,6 +20,7 @@ import { Cubits } from "@/core/services/cubits.ts";
 import { AppNavigator } from "@/app/appNavigator.ts";
 import { APP_NAME } from "../../../appConfig.ts";
 
+
 interface Report
 {
 	comp: React.ReactNode;
@@ -211,11 +212,12 @@ export default function ReportsPage()
 	const renderQuarterShortcuts = (path: string) => (
 		<div className="grid grid-cols-2 gap-2">
 			{ [1, 2, 3, 4].map(q => (
-				<Button key={ q } variant="outline" size="sm" className="w-full h-8 text-[11px] px-0" onClick={ async () =>
-				{
-					const dates = getQuarter(q);
-					await AppNavigator.navigate(`${ path }?fromDate=${ dates.fromDate }&toDate=${ dates.toDate }`);
-				} }>{ qTitles[q - 1] }</Button>
+				<Button key={ q } variant="outline" size="sm" className="w-full h-8 text-[11px] px-0"
+				        onClick={ async () =>
+						{
+							const dates = getQuarter(q);
+							await AppNavigator.navigate(`${ path }?fromDate=${ dates.fromDate }&toDate=${ dates.toDate }`);
+						} }>{ qTitles[q - 1] }</Button>
 			)) }
 			<Button variant="outline" size="sm" className="col-span-2 w-full h-8 text-xs" onClick={ async () =>
 			{
@@ -289,12 +291,6 @@ export default function ReportsPage()
 			name: "تقرير المراجعة الضريبية",
 			description: "تفاصيل الفواتير والضرائب للمراجعة",
 			icon: FileSearch
-		}, {
-			comp: <Button variant="outline" className="w-full h-8 text-xs"
-			              onClick={ async () => await AppNavigator.navigate("/reports/itemsTaxStatement") }>{ t("reports.create", "عرض التقرير") }</Button>,
-			name: t("reports.itemsTaxStatement"),
-			description: t("reports.itemsTaxStatementDescription"),
-			icon: Percent
 		}]
 	}, {
 		label: t("reports.inventory"),

@@ -64,6 +64,24 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 
 	useEffect(() =>
 	{
+		const printed = printedReport.value;
+		if (printed?.invoice)
+		{
+			document.title = `${ printed.invoice.id } - ${ getSalesInvoiceTypeName(printed.invoice.type, t) } - ${ printed.partner?.name || printed.invoice.partnerName || "" }`;
+		}
+		else
+		{
+			document.title = `${ t("invoices.salesManagement") } | ${ APP_NAME }`;
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [printedReport.value, t]);
+
+	useEffect(() =>
+	{
 		const types =
 			activeTypeTab.value === 0
 				? [SalesInvoiceType.Invoice, SalesInvoiceType.CreditNote, SalesInvoiceType.DebitNote]

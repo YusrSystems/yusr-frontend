@@ -45,8 +45,21 @@ export default function QuotationsPage()
 
 	useEffect(() =>
 	{
-		document.title = `${ t("invoices.quotationsManagement") } | ${ APP_NAME }`;
-	}, [t]);
+		const printed = printedReport.value;
+		if (printed?.quotation)
+		{
+			document.title = `${ printed.quotation.id } - ${ t("invoices.quotation", "عرض سعر") } - ${ printed.partner?.name || printed.quotation.partnerName || "" }`;
+		}
+		else
+		{
+			document.title = `${ t("invoices.quotationsManagement") } | ${ APP_NAME }`;
+		}
+
+		return () =>
+		{
+			document.title = APP_NAME;
+		};
+	}, [printedReport.value, t]);
 
 	useEffect(() =>
 	{
