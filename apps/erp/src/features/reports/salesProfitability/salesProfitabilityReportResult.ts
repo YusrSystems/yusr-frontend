@@ -1,18 +1,12 @@
 import type { TFunction } from "i18next";
+import { DocumentType, getDocumentRoute, getDocumentTypeName } from "@/core/types/documentType.ts";
 
-
-export enum ProfitAndLossRowDocumentType
-{
-	Sell = 1,
-	SellReturn = 2,
-	Payment = 3
-}
 
 export interface SalesProfitabilityLine
 {
 	id: number;
 	documentId: number;
-	documentType: ProfitAndLossRowDocumentType;
+	documentType: DocumentType;
 	date: string;
 	partnerName: string;
 	glAccountName: string;
@@ -37,31 +31,26 @@ export interface SalesProfitabilityReportResult
 	rowsPerPage: number;
 }
 
-export function getProfitAndLossRowDocumentTypeName(type: ProfitAndLossRowDocumentType, t: TFunction<"accounting">): string
+export function getProfitAndLossRowDocumentTypeName(type: DocumentType, t?: TFunction<"accounting">): string
 {
 	switch (type)
 	{
-		case ProfitAndLossRowDocumentType.Sell:
-			return t("invoices.sellInvoice");
-		case ProfitAndLossRowDocumentType.SellReturn:
-			return t("invoices.sellReturn");
-		case ProfitAndLossRowDocumentType.Payment:
-			return t("vouchers.paymentVoucher");
+		case DocumentType.Sales:
+			return t ? t("invoices.sellInvoice") : "فاتورة مبيعات";
+		case DocumentType.SalesReturn:
+			return t ? t("invoices.sellReturn") : "مرتجع مبيعات";
+		case DocumentType.SalesDebitNote:
+			return t ? t("invoices.sellDebitNote", "إشعار مدين مبيعات") : "إشعار مدين مبيعات";
+		case DocumentType.Payment:
+			return t ? t("vouchers.paymentVoucher") : "سند صرف";
+		case DocumentType.Receipt:
+			return t ? t("vouchers.receiptVoucher") : "سند قبض";
 		default:
-			return "Unknown";
+			return getDocumentTypeName(type);
 	}
 }
 
-export function getProfitAndLossRowDocumentRoute(type: ProfitAndLossRowDocumentType): string | undefined
+export function getProfitAndLossRowDocumentRoute(type: DocumentType): string | undefined
 {
-	switch (type)
-	{
-		case ProfitAndLossRowDocumentType.Sell:
-		case ProfitAndLossRowDocumentType.SellReturn:
-			return "sales";
-		case ProfitAndLossRowDocumentType.Payment:
-			return "vouchers";
-		default:
-			return undefined;
-	}
+	return getDocumentRoute(type);
 }
