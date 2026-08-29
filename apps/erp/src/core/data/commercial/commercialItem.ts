@@ -152,6 +152,8 @@ export abstract class CommercialItem<
 		);
 		this.quantityMultiplier = signal<number>(1);
 		this.lastBuyPrice = signal<number>(0);
+
+		this.recalculateTotals();
 	}
 
 	public static buildLineDto<TResult extends ICommercialItemDto>({
