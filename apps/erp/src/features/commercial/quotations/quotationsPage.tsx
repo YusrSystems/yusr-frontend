@@ -118,8 +118,7 @@ export default function QuotationsPage()
 				fieldsCubit={ Cubits.quotationFilterFields }
 				onApply={ (groups) => Cubits.quotations.applyFilterGroups(groups) }
 				onClear={ () => Cubits.quotations.clearFilterGroups() }
-				renderCustomInput={ (props) => <CommercialFilterInput { ...props }
-				                                                      partnerTypes={ [PartnerType.Customer] }/> }
+				renderCustomInput={ (props) => CommercialFilterInput({...props, partnerTypes: [PartnerType.Customer]}) }
 			/>
 
 			<CrudPage.SearchInput

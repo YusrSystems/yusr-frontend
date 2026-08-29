@@ -193,8 +193,7 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 				fieldsCubit={ Cubits.salesInvoiceFilterFields }
 				onApply={ (groups) => Cubits.salesInvoices.applyFilterGroups(groups) }
 				onClear={ () => Cubits.salesInvoices.clearFilterGroups() }
-				renderCustomInput={ (props) => <CommercialFilterInput { ...props }
-				                                                      partnerTypes={ [PartnerType.Customer] }/> }
+				renderCustomInput={ (props) => CommercialFilterInput({...props, partnerTypes: [PartnerType.Customer]}) }
 			/>
 			<CrudPage.SearchInput
 				className="rounded-t-none!"

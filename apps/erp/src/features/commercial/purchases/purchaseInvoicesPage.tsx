@@ -166,8 +166,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 				fieldsCubit={ Cubits.purchaseInvoiceFilterFields }
 				onApply={ (groups) => Cubits.purchaseInvoices.applyFilterGroups(groups) }
 				onClear={ () => Cubits.purchaseInvoices.clearFilterGroups() }
-				renderCustomInput={ (props) => <CommercialFilterInput { ...props }
-				                                                      partnerTypes={ [PartnerType.Supplier] }/> }
+				renderCustomInput={ (props) => CommercialFilterInput({...props, partnerTypes: [PartnerType.Supplier]}) }
 			/>
 
 			<CrudPage.SearchInput

@@ -395,7 +395,7 @@ function ValueInput(
 	const {t} = useTranslation("common");
 
 	const custom = renderCustomInput?.({rule, field});
-	if (custom !== undefined) return <>{ custom }</>;
+	if (custom != undefined) return <>{ custom }</>;
 
 	const isArrayOp = rule.operator.value === FilterOperator.Includes || rule.operator.value === FilterOperator.NotIncludes;
 
