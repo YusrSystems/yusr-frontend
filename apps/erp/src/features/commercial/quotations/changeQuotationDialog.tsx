@@ -31,6 +31,8 @@ import { CommercialItemsTable } from "@/features/commercial/components/commercia
 import { useStoreItemsSync } from "../hooks/useStoreItemsSync";
 import { useCommercialUrlLoader } from "../hooks/useCommercialUrlLoader";
 import { prepareCommercialPayload } from "../logic/commercialPayload";
+import { ItemProfitDialog } from "@/features/commercial/components/profit/itemProfitDialog.tsx";
+import InvoiceProfitDialog from "@/features/commercial/components/profit/invoiceProfitDialog.tsx";
 
 
 export default function ChangeQuotationDialog({
@@ -177,6 +179,14 @@ export default function ChangeQuotationDialog({
 										document={ entity.value }
 										type="quotations"
 										showCostColumn={ true }
+										renderExtraAction={ (item) =>
+											Services.auth.hasAuth(
+												SystemPermissionsResources.InvoiceShowItemProfit,
+												SystemPermissionsActions.Get
+											) ? (
+												<ItemProfitDialog invoiceItem={ item }/>
+											) : null
+										}
 									/>
 								</div>
 
@@ -187,7 +197,18 @@ export default function ChangeQuotationDialog({
 											SystemPermissionsActions.Get
 										) && <CommercialGlobalSettlement document={ entity.value }/> }
 
-										<CommercialSummaryCard document={ entity.value } showPaymentSummary={ false }/>
+										<CommercialSummaryCard
+											document={ entity.value }
+											showPaymentSummary={ false }
+											renderFooter={
+												Services.auth.hasAuth(
+													SystemPermissionsResources.InvoiceShowProfit,
+													SystemPermissionsActions.Get
+												) ? (
+													<InvoiceProfitDialog invoice={ entity.value }/>
+												) : null
+											}
+										/>
 									</div>
 								</div>
 							</div>

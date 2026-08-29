@@ -261,8 +261,6 @@ export abstract class CommercialDocument<
 
 	override validate(dto?: Partial<TDto>): boolean
 	{
-		this.syncTotals();
-
 		const docValid = super.validate(dto);
 		const itemsValid = this.items.value.every((t) => t.validate());
 		return docValid && itemsValid;

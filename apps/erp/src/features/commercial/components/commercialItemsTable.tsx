@@ -62,7 +62,7 @@ export function CommercialItemsTable<
 	const focusedQuantityIndex = useMemo(() => signal<number | undefined>(undefined), []);
 	const errorMessage = document.getError("items");
 
-	const isSalesDocument = type === "sales";
+	const isSalesDocument = type === "sales" || type === "quotations";
 
 	const hasSettlementPerm = Services.auth.hasAuth(
 		SystemPermissionsResources.InvoiceAddSettlement,

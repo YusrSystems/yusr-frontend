@@ -7,9 +7,15 @@ import {
 	CommercialMath,
 	type ICommercialDocumentProfit,
 	type ICommercialMathLine
-} from "@/features/commercial/logic/commercialMath";
-import type { SalesInvoice } from "@/core/data/commercial/salesInvoice";
-import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
+} from "@/features/commercial/logic/commercialMath.ts";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import {
+	CommercialDocument,
+	type ICommercialDocument,
+	type ICommercialDocumentDto
+} from "@/core/data/commercial/commercialDocument.ts";
+import type { CommercialItem, ICommercialItemDto } from "@/core/data/commercial/commercialItem.ts";
+import { SalesInvoice } from "@/core/data/commercial/salesInvoice.ts";
 
 
 interface ProfitRowProps
@@ -40,12 +46,20 @@ export function ProfitRow({label, value, showCurrency = true, variant = "default
 	);
 }
 
-export interface InvoiceProfitDialogProps
+export interface InvoiceProfitDialogProps<
+	TDto extends ICommercialDocumentDto,
+	TItem extends CommercialItem<TItemDto, ICommercialDocument>,
+	TItemDto extends ICommercialItemDto
+>
 {
-	invoice: SalesInvoice;
+	invoice: CommercialDocument<TDto, TItem, TItemDto>;
 }
 
-export default function InvoiceProfitDialog({invoice}: InvoiceProfitDialogProps)
+export default function InvoiceProfitDialog<
+	TDto extends ICommercialDocumentDto,
+	TItem extends CommercialItem<TItemDto, ICommercialDocument>,
+	TItemDto extends ICommercialItemDto
+>({invoice}: InvoiceProfitDialogProps<TDto, TItem, TItemDto>)
 {
 	useSignals();
 	const {t, i18n} = useTranslation("accounting");
@@ -60,10 +74,14 @@ export default function InvoiceProfitDialog({invoice}: InvoiceProfitDialogProps)
 		cost: i.cost.value
 	}));
 
-	const directCostsAmount = (invoice.costVouchers.value || []).reduce(
-		(sum, v) => sum + (v.amount.value ?? 0),
-		0
-	);
+	const hasDirectCosts = invoice instanceof SalesInvoice;
+
+	const directCostsAmount = hasDirectCosts
+		? (invoice.costVouchers.value || []).reduce(
+			(sum, v) => sum + (v.amount.value ?? 0),
+			0
+		)
+		: 0;
 
 	const profit: ICommercialDocumentProfit = CommercialMath.calcDocumentProfit(
 		mathLines,
@@ -94,7 +112,9 @@ export default function InvoiceProfitDialog({invoice}: InvoiceProfitDialogProps)
 						           value={ profit.taxInclusiveTotalPrice }/>
 						<ProfitRow label={ t("invoices.totalCosts") } value={ profit.totalCost }/>
 						<ProfitRow label={ t("invoices.totalTaxesAmount") } value={ profit.totalTaxesAmount }/>
-						<ProfitRow label={ t("invoices.invoiceCosts") } value={ profit.directCosts }/>
+						{ hasDirectCosts && (
+							<ProfitRow label={ t("invoices.invoiceCosts") } value={ profit.directCosts }/>
+						) }
 						<ProfitRow label={ t("invoices.netProfit") } value={ profit.profit } variant="profit"/>
 					</div>
 				</DialogContent>

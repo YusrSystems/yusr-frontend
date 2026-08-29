@@ -96,5 +96,5 @@ export function CommercialFilterInput({
 		return <ItemsMultiSearchableSelect onToggle={ (ids) => (rule.value.value = ids) }/>;
 	}
 
-	return null;
+	return undefined;
 }
