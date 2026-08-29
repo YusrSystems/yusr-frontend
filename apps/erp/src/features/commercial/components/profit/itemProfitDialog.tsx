@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "yusr-ui";
 import { useSignals } from "@preact/signals-react/runtime";
-import { CommercialMath, type ICommercialLineProfit } from "@/features/commercial/logic/commercialMath";
-import { ProfitRow } from "./invoiceProfitDialog";
+import { CommercialMath, type ICommercialLineProfit } from "@/features/commercial/logic/commercialMath.ts";
+import { ProfitRow } from "./invoiceProfitDialog.tsx";
 import type { CommercialItem, ICommercialItemDto } from "@/core/data/commercial/commercialItem.ts";
 import type { ICommercialDocument } from "@/core/data/commercial/commercialDocument.ts";
 

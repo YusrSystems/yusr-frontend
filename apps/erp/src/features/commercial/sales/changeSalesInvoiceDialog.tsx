@@ -48,8 +48,8 @@ import { CommercialSummaryCard } from "@/features/commercial/components/commerci
 import { CommercialPolicyTab } from "@/features/commercial/components/commercialPolicyTab";
 import { CommercialAttachmentsTab } from "@/features/commercial/components/commercialAttachmentsTab";
 import { CommercialPaymentVouchers } from "@/features/commercial/components/commercialPaymentVouchers";
-import { ItemProfitDialog } from "./profit/itemProfitDialog";
-import InvoiceProfitDialog from "./profit/invoiceProfitDialog";
+import { ItemProfitDialog } from "@/features/commercial/components/profit/itemProfitDialog";
+import InvoiceProfitDialog from "@/features/commercial/components/profit/invoiceProfitDialog";
 import { useInvoiceOrigin } from "../hooks/useInvoiceOrigin";
 import { useStoreItemsSync } from "../hooks/useStoreItemsSync";
 import { useCommercialUrlLoader } from "../hooks/useCommercialUrlLoader";
