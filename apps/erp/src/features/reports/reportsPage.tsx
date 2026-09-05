@@ -96,13 +96,11 @@ function ReportGroupSection({group}: ReportGroupSectionProps)
 export default function ReportsPage()
 {
 	const {t} = useTranslation("erpCommon");
-
 	useEffect(() =>
 	{
 		Cubits.items.init();
 		Cubits.stores.init();
 	}, []);
-
 	useEffect(() =>
 	{
 		document.title = `${ t("reports.title") } | ${ APP_NAME }`;
@@ -111,12 +109,10 @@ export default function ReportsPage()
 			document.title = APP_NAME;
 		};
 	}, [t]);
-
 	const formatDate = (d: Date) =>
 	{
 		return `${ d.getFullYear() }-${ String(d.getMonth() + 1).padStart(2, "0") }-${ String(d.getDate()).padStart(2, "0") }`;
 	};
-
 	const getThisWeek = () =>
 	{
 		const now = new Date();
@@ -125,7 +121,6 @@ export default function ReportsPage()
 		const end = new Date(now.getFullYear(), now.getMonth(), first + 6);
 		return {fromDate: formatDate(start), toDate: formatDate(end)};
 	};
-
 	const getThisMonth = () =>
 	{
 		const now = new Date();
@@ -133,7 +128,6 @@ export default function ReportsPage()
 		const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 		return {fromDate: formatDate(start), toDate: formatDate(end)};
 	};
-
 	const getThisYear = () =>
 	{
 		const now = new Date();
@@ -141,7 +135,6 @@ export default function ReportsPage()
 		const end = new Date(now.getFullYear(), 11, 31);
 		return {fromDate: formatDate(start), toDate: formatDate(end)};
 	};
-
 	const getQuarter = (q: number) =>
 	{
 		const now = new Date();
@@ -150,22 +143,17 @@ export default function ReportsPage()
 		const end = new Date(now.getFullYear(), startMonth + 3, 0);
 		return {fromDate: formatDate(start), toDate: formatDate(end)};
 	};
-
 	const getToday = () => formatDate(new Date());
-
 	const getEndOfLastMonth = () =>
 	{
 		const now = new Date();
 		return formatDate(new Date(now.getFullYear(), now.getMonth(), 0));
 	};
-
 	const getEndOfLastYear = () =>
 	{
 		const now = new Date();
 		return formatDate(new Date(now.getFullYear() - 1, 11, 31));
 	};
-
-	// Three buttons side-by-side using grid
 	const renderDateShortcuts = (path: string) => (
 		<div className="grid grid-cols-3 gap-2">
 			<Button variant="outline" size="sm" className="w-full h-8 text-[11px] px-0" onClick={ async () =>
@@ -185,8 +173,6 @@ export default function ReportsPage()
 			} }>{ t("shortcuts.thisYear", "هذا العام") }</Button>
 		</div>
 	);
-
-	// Today takes full row, last month/year take second row
 	const renderAsOfDateShortcuts = (path: string) => (
 		<div className="grid grid-cols-2 gap-2">
 			<Button variant="outline" size="sm" className="col-span-2 w-full h-8 text-xs" onClick={ async () =>
@@ -206,8 +192,6 @@ export default function ReportsPage()
 			} }>{ t("shortcuts.endOfLastYear", "نهاية العام الماضي") }</Button>
 		</div>
 	);
-
-	// Q1, Q2, Q3, Q4 in 2x2 grid, This Year spanning full width
 	const qTitles = ["الربع الأول", "الربع الثاني", "الربع الثالث", "الربع الرابع"];
 	const renderQuarterShortcuts = (path: string) => (
 		<div className="grid grid-cols-2 gap-2">
@@ -226,7 +210,6 @@ export default function ReportsPage()
 			} }>{ t("shortcuts.thisYear", "هذا العام") }</Button>
 		</div>
 	);
-
 	const reportGroups: ReportGroup[] = [{
 		label: t("reports.financial"),
 		icon: BarChart2,
@@ -247,6 +230,11 @@ export default function ReportsPage()
 			name: t("reports.salesProfitability", "تقرير ربحية المبيعات"),
 			description: t("reports.salesProfitabilityDescription", "عرض ربحية المبيعات مع التكاليف المباشرة"),
 			icon: LineChart
+		}, {
+			comp: renderDateShortcuts("/reports/itemsProfitability"),
+			name: "تقرير ربحية المواد",
+			description: "عرض صافي المبيعات والتكلفة والأرباح ونسبة الهامش لكل مادة",
+			icon: TrendingUp
 		}, {
 			comp: renderAsOfDateShortcuts("/reports/balanceSheet"),
 			name: t("reports.balanceSheet"),
@@ -326,7 +314,6 @@ export default function ReportsPage()
 			icon: AlertTriangle
 		}]
 	}];
-
 	return (
 		<div className="flex flex-col gap-8 p-6">
 			<div>

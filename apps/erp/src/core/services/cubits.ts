@@ -17,7 +17,6 @@ import type { ItemsMovementReportRequest } from "@/features/reports/itemsMovemen
 import type { ItemsMovementReportResult } from "@/features/reports/itemsMovement/itemsMovementReportResult.ts";
 import type { VatReturnReportRequest } from "@/features/reports/vatReturn/vatReturnReportRequest.ts";
 import type { VatReturnReportResult } from "@/features/reports/vatReturn/vatReturnReportResult.ts";
-
 import type { BalanceSheetReportResult } from "@/features/reports/balanceSheet/balanceSheetReportResult.ts";
 import type { BalanceSheetReportRequest } from "@/features/reports/balanceSheet/balanceSheetReportRequest.ts";
 import type { ProfitAndLossReportRequest } from "@/features/reports/profitAndLoss/profitAndLossReportRequest.ts";
@@ -39,6 +38,12 @@ import type {
 import type {
 	SalesProfitabilityReportResult
 } from "@/features/reports/salesProfitability/salesProfitabilityReportResult.ts";
+import type {
+	ItemsProfitabilityReportRequest
+} from "@/features/reports/itemsProfitability/itemsProfitabilityReportRequest.ts";
+import type {
+	ItemsProfitabilityReportResult
+} from "@/features/reports/itemsProfitability/itemsProfitabilityReportResult.ts";
 import type { TaxAuditReportRequest } from "@/features/reports/taxAudit/taxAuditReportRequest.ts";
 import type { TaxAuditReportResult } from "@/features/reports/taxAudit/taxAuditReportResult.ts";
 import type { StockValuationReportRequest } from "@/features/reports/stockValuation/stockValuationReportRequest.ts";
@@ -101,6 +106,7 @@ export class Cubits extends BaseCubits
 	public static readonly BalanceSheetReport = new ReportCubit<BalanceSheetReportRequest, BalanceSheetReportResult>("BalanceSheet");
 	public static readonly ProfitAndLossReport = new ReportCubit<ProfitAndLossReportRequest, ProfitAndLossReportResult>("ProfitAndLoss");
 	public static readonly SalesProfitabilityReport = new PageReportCubit<SalesProfitabilityReportRequest, SalesProfitabilityReportResult>("SalesProfitability");
+	public static readonly ItemsProfitabilityReport = new PageReportCubit<ItemsProfitabilityReportRequest, ItemsProfitabilityReportResult>("ItemsProfitability");
 	public static readonly TaxAuditReport = new PageReportCubit<TaxAuditReportRequest, TaxAuditReportResult>("TaxAudit");
 	public static readonly stockValuationReport = new PageReportCubit<StockValuationReportRequest, StockValuationReportResult>("StockValuation");
 	public static readonly lowStockReport = new PageReportCubit<LowStockReportRequest, LowStockReportResult>("LowStock");

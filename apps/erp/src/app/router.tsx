@@ -38,6 +38,7 @@ import AccountsPage from "@/features/accounts/accountsPage";
 import PartnersPage from "@/features/partners/partnersPage";
 import { PartnerType } from "@/core/data/partner";
 import { SalesProfitabilityReportPage } from "@/features/reports/salesProfitability/salesProfitabilityReportPage";
+import { ItemsProfitabilityReportPage } from "@/features/reports/itemsProfitability/itemsProfitabilityReportPage";
 import { TaxAuditReportPage } from "@/features/reports/taxAudit/taxAuditReportPage";
 import { StockValuationReportPage } from "@/features/reports/stockValuation/stockValuationReportPage";
 import { LowStockReportPage } from "@/features/reports/lowStock/lowStockReportPage";
@@ -56,7 +57,6 @@ const refreshPage = () =>
 {
 	window.location.reload();
 };
-
 export const router = createBrowserRouter([
 	{
 		errorElement: <ErrorFallback reset={ refreshPage }/>,
@@ -123,6 +123,7 @@ export const router = createBrowserRouter([
 							{path: "/reports/profitAndLoss", element: <ProfitAndLossReportPage/>},
 							{path: "/reports/balanceSheet", element: <BalanceSheetReportPage/>},
 							{path: "/reports/salesProfitability", element: <SalesProfitabilityReportPage/>},
+							{path: "/reports/itemsProfitability", element: <ItemsProfitabilityReportPage/>},
 							{path: "/reports/taxAudit", element: <TaxAuditReportPage/>},
 							{path: "/reports/itemStatement/:itemId?/:itemName?", element: <ItemStatementReportPage/>},
 							{
@@ -149,7 +150,6 @@ export const router = createBrowserRouter([
 		]
 	}
 ]);
-
 router.subscribe((state) =>
 {
 	if (state.historyAction === "PUSH" || state.historyAction === "POP")
