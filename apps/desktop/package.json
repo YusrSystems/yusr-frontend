@@ -8,7 +8,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc && electron dist/main.js",
-    "build:win": "tsc && electron-builder --win"
+    "build:win": "tsc && electron-builder --win nsis",
+    "build:appx": "tsc && electron-builder --win appx",
+    "build:all": "tsc && electron-builder --win nsis appx"
   },
   "dependencies": {
     "@whiskeysockets/baileys": "^6.7.19",
@@ -26,14 +28,45 @@
     "appId": "com.yusr.erp",
     "productName": "Yusr ERP",
     "directories": {
-      "output": "release"
+      "output": "release",
+      "buildResources": "build"
     },
     "files": [
       "dist/**/*",
       "node_modules/**/*"
     ],
     "win": {
-      "target": "nsis"
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "appx",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "appx": {
+      "applicationId": "Braa.Yusr",
+      "identityName": "Braa.Yusr",
+      "publisher": "CN=FEA22BBC-A274-4B32-81DB-71E07765AB0B",
+      "publisherDisplayName": "Braa",
+      "backgroundColor": "#2563eb",
+      "showNameOnTiles": true,
+      "languages": [
+        "ar",
+        "en"
+      ]
     }
   }
 }
