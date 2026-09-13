@@ -14,7 +14,6 @@ import {
 import { Tax, type TaxDto } from "./tax";
 import { InvoiceType } from "@/core/types/invoiceType.ts";
 
-
 export enum EInvoicingEnvironmentType
 {
 	Production = 0,
@@ -39,22 +38,15 @@ export class SettingDto extends Dto
 	public crn?: string;
 	public vatNumber?: string;
 	public referralsCount!: number;
-
 	public currencyId!: number;
 	public currency!: CurrencyDto;
-
 	public logo?: StorageFile;
-
 	public startDate!: Date;
 	public endDate!: Date;
-
 	public branchId!: number;
 	public branch?: BranchDto;
-
 	public mainTaxId!: number;
 	public mainTax?: TaxDto;
-
-	// --- System Accounts ---
 	public receivablesAccountId!: number;
 	public receivablesAccountName!: string;
 	public payablesAccountId!: number;
@@ -85,21 +77,18 @@ export class SettingDto extends Dto
 	public deferredRevenueAccountName?: string;
 	public posCashVarianceAccountId!: number;
 	public posCashVarianceAccountName!: string;
-
-	// --- Partner Defaults ---
 	public defaultCustomerPartnerId?: number;
 	public defaultCustomerPartnerName?: string;
 	public defaultSupplierPartnerId?: number;
 	public defaultSupplierPartnerName?: string;
-
 	public mainPaymentMethodId?: number;
 	public mainPaymentMethodName?: string;
-
 	public mainStoreId?: number;
 	public mainStoreName?: string;
-
 	public saleInvoicePolicy?: string;
 	public quotationInvoicePolicy?: string;
+	public whatsappSalesInvoiceTemplate?: string;
+	public whatsappQuotationTemplate?: string;
 	public invoicePrintSize!: InvoicePrintSize;
 	public eInvoicingEnvironmentType!: EInvoicingEnvironmentType;
 }
@@ -114,22 +103,15 @@ export class Setting extends ValidatableEntity<SettingDto>
 	public crn: Signal<string | undefined>;
 	public vatNumber: Signal<string | undefined>;
 	public referralsCount: Signal<number>;
-
 	public currencyId: Signal<number>;
 	public currency: Signal<Currency>;
-
 	public logo: Signal<StorageFile | undefined>;
-
 	public startDate: Signal<Date>;
 	public endDate: Signal<Date>;
-
 	public branchId: Signal<number>;
 	public branch: Signal<Branch | undefined>;
-
 	public mainTaxId: Signal<number>;
 	public mainTax: Signal<Tax | undefined>;
-
-	// --- System Accounts ---
 	public receivablesAccountId: Signal<number>;
 	public receivablesAccountName: Signal<string>;
 	public payablesAccountId: Signal<number>;
@@ -160,23 +142,19 @@ export class Setting extends ValidatableEntity<SettingDto>
 	public deferredRevenueAccountName: Signal<string | undefined>;
 	public posCashVarianceAccountId: Signal<number>;
 	public posCashVarianceAccountName: Signal<string>;
-
-	// --- Partner Defaults ---
 	public defaultCustomerPartnerId: Signal<number | undefined>;
 	public defaultCustomerPartnerName: Signal<string | undefined>;
 	public defaultSupplierPartnerId: Signal<number | undefined>;
 	public defaultSupplierPartnerName: Signal<string | undefined>;
-
 	public mainPaymentMethodId: Signal<number | undefined>;
 	public mainPaymentMethodName: Signal<string | undefined>;
-
 	public mainStoreId: Signal<number | undefined>;
 	public mainStoreName: Signal<string | undefined>;
-
 	public saleInvoicePolicy: Signal<string | undefined>;
 	public quotationInvoicePolicy: Signal<string | undefined>;
+	public whatsappSalesInvoiceTemplate: Signal<string | undefined>;
+	public whatsappQuotationTemplate: Signal<string | undefined>;
 	public invoicePrintSize: Signal<InvoicePrintSize>;
-
 	public eInvoicingEnvironmentType: Signal<EInvoicingEnvironmentType>;
 
 	constructor(dto: Partial<SettingDto>)
@@ -208,7 +186,6 @@ export class Setting extends ValidatableEntity<SettingDto>
 				validators: [Validators.required(i18n.t("erpCommon:settings.currencyRequired"))]
 			}
 		]);
-
 		this.registrationKey = this.assign("registrationKey", dto?.registrationKey ?? "");
 		this.email = this.assign("email", dto?.email ?? "");
 		this.companyName = this.assign("companyName", dto?.companyName ?? "");
@@ -226,8 +203,6 @@ export class Setting extends ValidatableEntity<SettingDto>
 		this.branch = this.assign("branch", new Branch(dto?.branch));
 		this.mainTaxId = this.assign("mainTaxId", dto?.mainTaxId ?? 0);
 		this.mainTax = this.assign("mainTax", new Tax(dto?.mainTax));
-
-		// --- System Accounts ---
 		this.receivablesAccountId = this.assign("receivablesAccountId", dto?.receivablesAccountId ?? 0);
 		this.receivablesAccountName = this.assign("receivablesAccountName", dto?.receivablesAccountName ?? "");
 		this.payablesAccountId = this.assign("payablesAccountId", dto?.payablesAccountId ?? 0);
@@ -258,19 +233,18 @@ export class Setting extends ValidatableEntity<SettingDto>
 		this.deferredRevenueAccountName = this.assign("deferredRevenueAccountName", dto?.deferredRevenueAccountName ?? "");
 		this.posCashVarianceAccountId = this.assign("posCashVarianceAccountId", dto?.posCashVarianceAccountId ?? 0);
 		this.posCashVarianceAccountName = this.assign("posCashVarianceAccountName", dto?.posCashVarianceAccountName ?? "");
-
-		// --- Partner Defaults ---
 		this.defaultCustomerPartnerId = this.assign("defaultCustomerPartnerId", dto?.defaultCustomerPartnerId);
 		this.defaultCustomerPartnerName = this.assign("defaultCustomerPartnerName", dto?.defaultCustomerPartnerName);
 		this.defaultSupplierPartnerId = this.assign("defaultSupplierPartnerId", dto?.defaultSupplierPartnerId);
 		this.defaultSupplierPartnerName = this.assign("defaultSupplierPartnerName", dto?.defaultSupplierPartnerName);
-
 		this.mainPaymentMethodId = this.assign("mainPaymentMethodId", dto?.mainPaymentMethodId);
 		this.mainPaymentMethodName = this.assign("mainPaymentMethodName", dto?.mainPaymentMethodName);
 		this.mainStoreId = this.assign("mainStoreId", dto?.mainStoreId);
 		this.mainStoreName = this.assign("mainStoreName", dto?.mainStoreName);
 		this.saleInvoicePolicy = this.assign("saleInvoicePolicy", dto?.saleInvoicePolicy);
 		this.quotationInvoicePolicy = this.assign("quotationInvoicePolicy", dto?.quotationInvoicePolicy);
+		this.whatsappSalesInvoiceTemplate = this.assign("whatsappSalesInvoiceTemplate", dto?.whatsappSalesInvoiceTemplate);
+		this.whatsappQuotationTemplate = this.assign("whatsappQuotationTemplate", dto?.whatsappQuotationTemplate);
 		this.invoicePrintSize = this.assign("invoicePrintSize", dto?.invoicePrintSize ?? InvoicePrintSize.A4);
 		this.eInvoicingEnvironmentType = this.assign(
 			"eInvoicingEnvironmentType",

@@ -78,6 +78,7 @@ export class SalesInvoiceDto implements ICommercialInvoiceDocumentDto
 	public rowVer!: number;
 	public idempotencyKey?: string;
 	public partnerName?: string;
+	public partnerMobile?: string;
 	public storeName?: string;
 	public items: SalesInvoiceItemDto[] = [];
 	public costVouchers: VoucherDto[] = [];

@@ -23,6 +23,7 @@ export interface ICommercialDocumentDto extends Dto
 	updatedBy?: number;
 	rowVer?: number;
 	partnerName?: string;
+	partnerMobile?: string;
 	storeName?: string;
 	files: StorageFile[];
 	items: ICommercialItemDto[];
@@ -67,6 +68,7 @@ export abstract class CommercialDocument<
 	public updatedBy: Signal<number | undefined>;
 	public rowVer: Signal<number | undefined>;
 	public partnerName: Signal<string | undefined>;
+	public partnerMobile: Signal<string | undefined>;
 	public storeName: Signal<string | undefined>;
 	public files: Signal<StorageFile[]>;
 	public items: Signal<TItem[]>;
@@ -125,6 +127,7 @@ export abstract class CommercialDocument<
 		);
 		this.partnerId = this.assign("partnerId", dto?.partnerId);
 		this.partnerName = this.assign("partnerName", dto?.partnerName);
+		this.partnerMobile = this.assign("partnerMobile", dto?.partnerMobile);
 		this.notes = this.assign("notes", dto?.notes);
 		this.policy = this.assign("policy", dto?.policy);
 		this.createdAt = this.assign("createdAt", dto?.createdAt);
@@ -142,6 +145,7 @@ export abstract class CommercialDocument<
 		this.storeName.value = source.storeName;
 		this.partnerId.value = source.partnerId;
 		this.partnerName.value = source.partnerName;
+		this.partnerMobile.value = source.partnerMobile;
 		this.notes.value = source.notes;
 		this.policy.value = source.policy;
 		this.settlementPercent.value = source.settlementPercent;

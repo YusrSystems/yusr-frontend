@@ -46,6 +46,8 @@ import type { SalesInvoiceReportResult } from "@/features/reports/invoice/invoic
 import { AccountClass, getAccountTypesByClasses } from "@/core/data/account";
 import { useCommercialPrint } from "../hooks/useCommercialPrint";
 import { CommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
+import CommercialSendWhatsappDialog from "@/features/commercial/components/commercialSendWhatsappDialog";
+import { FaWhatsapp } from "react-icons/fa";
 
 
 export default function SalesInvoicesPage({initialType}: { initialType?: SalesInvoiceType })
@@ -55,6 +57,7 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 	const navigate = useNavigate();
 	const activeTypeTab = useMemo(() => signal<SalesInvoiceType | 0>(initialType ?? 0), [initialType]);
 	const resendingEInvoice = useMemo(() => signal(false), []);
+	const whatsappDialogInvoice = useMemo(() => signal<SalesInvoiceDto | undefined>(undefined), []);
 	const {printedReport, isPrinting, handlePrint} = useCommercialPrint<SalesInvoiceReportResult>();
 
 	useEffect(() =>
@@ -315,27 +318,41 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 											: []),
 										{
 											rowBody: (
-												<Tooltip delayDuration={ 200 }>
-													<TooltipTrigger asChild>
-														<Button
-															size="sm"
-															variant="outline"
-															disabled={ !inv.canBePrinted }
-															onClick={ () => printInvoice(inv) }
-														>
-															{ isPrinting.value === inv.id ? (
-																<Loader2 className="h-4 w-4 animate-spin"/>
-															) : (
-																<Printer className="h-4 w-4"/>
-															) }
-														</Button>
-													</TooltipTrigger>
-													{ !inv.canBePrinted && (
-														<TooltipContent side="top">
-															<p>{ t("invoices.invoiceMustBeSentBeforePrint") }</p>
-														</TooltipContent>
-													) }
-												</Tooltip>
+												<div className="flex items-center justify-end gap-2">
+													{/* WHATSAPP BUTTON */ }
+													<Button
+														size="sm"
+														variant="outline"
+														className="text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700"
+														onClick={ () => (whatsappDialogInvoice.value = inv) }
+														title="إرسال عبر الواتساب"
+													>
+														<FaWhatsapp className="h-6 w-6"/>
+													</Button>
+
+													{/* PRINT BUTTON */ }
+													<Tooltip delayDuration={ 200 }>
+														<TooltipTrigger asChild>
+															<Button
+																size="sm"
+																variant="outline"
+																disabled={ !inv.canBePrinted }
+																onClick={ () => printInvoice(inv) }
+															>
+																{ isPrinting.value === inv.id ? (
+																	<Loader2 className="h-4 w-4 animate-spin"/>
+																) : (
+																	<Printer className="h-4 w-4"/>
+																) }
+															</Button>
+														</TooltipTrigger>
+														{ !inv.canBePrinted && (
+															<TooltipContent side="top">
+																<p>{ t("invoices.invoiceMustBeSentBeforePrint") }</p>
+															</TooltipContent>
+														) }
+													</Tooltip>
+												</div>
 											),
 											rowStyles: ""
 										}
@@ -351,7 +368,7 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 										? [
 											<DropdownMenuItem
 												key="ret"
-												className="text-orange-700 font-semibold"
+												className="text-orange-700 font-semibold cursor-pointer"
 												onSelect={ () => handleReturnSales(dto) }
 											>
 												<Undo2 className="h-4 w-4 me-2"/>
@@ -363,21 +380,29 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 										? [
 											<DropdownMenuItem
 												key="copy"
-												className="text-blue-600 font-semibold"
+												className="text-blue-600 font-semibold cursor-pointer"
 												onSelect={ () => handleCopySales(dto) }
 											>
 												<Copy className="h-4 w-4 me-2"/>
 												{ t("invoices.copyInvoice") }
 											</DropdownMenuItem>
 										]
-										: [])
+										: []),
+									<DropdownMenuItem
+										key="whatsapp"
+										className="text-green-600 font-semibold cursor-pointer"
+										onSelect={ () => (whatsappDialogInvoice.value = dto) }
+									>
+										<FaWhatsapp className="h-4 w-4 me-2"/>
+										إرسال عبر واتساب
+									</DropdownMenuItem>
 								] }
 								contextMenuItems={ (dto) => [
 									...(dto.type === SalesInvoiceType.Invoice && dto.returnStatusId !== InvoiceReturnStatus.FullyReturned
 										? [
 											<ContextMenuItem
 												key="ret"
-												className="text-orange-700 font-semibold"
+												className="text-orange-700 font-semibold cursor-pointer"
 												onSelect={ () => handleReturnSales(dto) }
 											>
 												<Undo2 className="h-4 w-4 me-2"/>
@@ -389,14 +414,22 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 										? [
 											<ContextMenuItem
 												key="copy"
-												className="text-blue-600 font-semibold"
+												className="text-blue-600 font-semibold cursor-pointer"
 												onSelect={ () => handleCopySales(dto) }
 											>
 												<Copy className="h-4 w-4 me-2"/>
 												{ t("invoices.copyInvoice") }
 											</ContextMenuItem>
 										]
-										: [])
+										: []),
+									<ContextMenuItem
+										key="whatsapp"
+										className="text-green-600 font-semibold cursor-pointer"
+										onSelect={ () => (whatsappDialogInvoice.value = dto) }
+									>
+										<FaWhatsapp className="h-4 w-4 me-2"/>
+										إرسال عبر واتساب
+									</ContextMenuItem>
 								] }
 							/>
 							<CrudTablePagination
@@ -437,6 +470,25 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 					/>
 				) }
 			/>
+
+			{ whatsappDialogInvoice.value && (
+				<CommercialSendWhatsappDialog
+					open={ !!whatsappDialogInvoice.value }
+					onOpenChange={ (open) =>
+					{
+						if (!open) whatsappDialogInvoice.value = undefined;
+					} }
+					documentId={ whatsappDialogInvoice.value.id }
+					documentType={ "sales" }
+					totalAmount={ whatsappDialogInvoice.value.fullAmount }
+					documentDate={ whatsappDialogInvoice.value.date }
+					partnerName={ whatsappDialogInvoice.value.partnerName }
+					partnerMobile={ whatsappDialogInvoice.value.partnerMobile }
+					partnerId={ whatsappDialogInvoice.value.partnerId }
+					paidAmount={whatsappDialogInvoice.value.paidAmount}
+				/>
+			) }
+
 			{ !printedReport.value &&
 				createPortal(
 					<PortalReportContainer>
