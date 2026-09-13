@@ -1,0 +1,39 @@
+{
+  "name": "yusr-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Yusr ERP Desktop Client with Native WhatsApp and PDF Engine",
+  "author": "Yusr Systems",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc && electron dist/main.js",
+    "build:win": "tsc && electron-builder --win"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.19",
+    "pino": "^9.6.0",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "electron": "^43.0.0",
+    "electron-builder": "^25.1.8",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "build": {
+    "appId": "com.yusr.erp",
+    "productName": "Yusr ERP",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "node_modules/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
