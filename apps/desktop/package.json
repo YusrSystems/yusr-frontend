@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.13.0",
-    "electron": "^43.0.0",
+    "electron": "43.0.0",
     "electron-builder": "^25.1.8",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
@@ -27,6 +27,7 @@
   "build": {
     "appId": "com.yusr.erp",
     "productName": "Yusr ERP",
+    "electronVersion": "34.2.0",
     "npmRebuild": false,
     "directories": {
       "output": "release",
@@ -62,6 +63,7 @@
       "identityName": "Braa.Yusr",
       "publisher": "CN=FEA22BBC-A274-4B32-81DB-71E07765AB0B",
       "publisherDisplayName": "Braa",
+      "displayName": "يسر | Yusr",
       "backgroundColor": "#2563eb",
       "showNameOnTiles": true,
       "languages": [
