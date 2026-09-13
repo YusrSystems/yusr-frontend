@@ -59,6 +59,7 @@ export class QuotationDto implements ICommercialDocumentDto
 	public updatedBy!: number;
 	public rowVer!: number;
 	public partnerName?: string;
+	public partnerMobile?: string;
 	public storeName?: string;
 	public items: QuotationItemDto[] = [];
 	public files: StorageFile[] = [];

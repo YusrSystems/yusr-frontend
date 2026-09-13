@@ -1,15 +1,18 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
+import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Copy, FilePlusCorner, FileTextIcon, Loader2, Printer } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa6";
 import {
 	Button,
 	ChangeableEntityMode,
 	cn,
 	ContextMenuItem,
 	CrudPage,
+	CrudTablePagination,
 	DropdownMenuItem,
 	FilterSection,
 	PageError,
@@ -34,6 +37,7 @@ import { QuotationReportRequest } from "@/features/reports/invoice/invoiceReport
 import type { QuotationReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
 import { useCommercialPrint } from "../hooks/useCommercialPrint";
 import { CommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
+import CommercialSendWhatsappDialog from "@/features/commercial/components/commercialSendWhatsappDialog";
 
 
 export default function QuotationsPage()
@@ -42,6 +46,7 @@ export default function QuotationsPage()
 	const {t} = useTranslation(["accounting", "erpCommon"]);
 	const navigate = useNavigate();
 	const {printedReport, isPrinting, handlePrint} = useCommercialPrint<QuotationReportResult>();
+	const whatsappDialogQuotation = useMemo(() => signal<QuotationDto | undefined>(undefined), []);
 
 	useEffect(() =>
 	{
@@ -185,14 +190,28 @@ export default function QuotationsPage()
 										},
 										{
 											rowBody: (
-												<Button size="sm" variant="outline"
-												        onClick={ () => printQuotation(quote) }>
-													{ isPrinting.value === quote.id ? (
-														<Loader2 className="h-4 w-4 animate-spin"/>
-													) : (
-														<Printer className="h-4 w-4"/>
-													) }
-												</Button>
+												<div className="flex items-center justify-end gap-2">
+													{/* WHATSAPP BUTTON */ }
+													<Button
+														size="sm"
+														variant="outline"
+														className="text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700"
+														onClick={ () => (whatsappDialogQuotation.value = quote) }
+														title="إرسال عبر الواتساب"
+													>
+														<FaWhatsapp className="h-4 w-4"/>
+													</Button>
+
+													{/* PRINT BUTTON */ }
+													<Button size="sm" variant="outline"
+													        onClick={ () => printQuotation(quote) }>
+														{ isPrinting.value === quote.id ? (
+															<Loader2 className="h-4 w-4 animate-spin"/>
+														) : (
+															<Printer className="h-4 w-4"/>
+														) }
+													</Button>
+												</div>
 											),
 											rowStyles: ""
 										}
@@ -227,6 +246,14 @@ export default function QuotationsPage()
 									>
 										<Copy className="h-4 w-4 me-2"/>
 										نسخ عرض السعر
+									</DropdownMenuItem>,
+									<DropdownMenuItem
+										key="whatsapp"
+										className="text-green-600 font-semibold cursor-pointer"
+										onSelect={ () => (whatsappDialogQuotation.value = quote) }
+									>
+										<FaWhatsapp className="h-4 w-4 me-2"/>
+										إرسال عبر واتساب
 									</DropdownMenuItem>
 								] }
 								contextMenuItems={ (quote) => [
@@ -247,10 +274,18 @@ export default function QuotationsPage()
 									>
 										<Copy className="h-4 w-4 me-2"/>
 										نسخ عرض السعر
+									</ContextMenuItem>,
+									<ContextMenuItem
+										key="whatsapp"
+										className="text-green-600 font-semibold cursor-pointer"
+										onSelect={ () => (whatsappDialogQuotation.value = quote) }
+									>
+										<FaWhatsapp className="h-4 w-4 me-2"/>
+										إرسال عبر واتساب
 									</ContextMenuItem>
 								] }
 							/>
-							<CrudPage.TablePagination
+							<CrudTablePagination
 								pageSize={ Cubits.quotations.pageSize.value }
 								totalNumber={ Cubits.quotations.count.value }
 								currentPage={ Cubits.quotations.currentPage.value }
@@ -294,6 +329,24 @@ export default function QuotationsPage()
 				service={ Services.quotationsApi }
 				onSuccess={ (entity) => Cubits.quotations.delete(entity) }
 			/>
+
+			{/* WHATSAPP DIALOG */ }
+			{ whatsappDialogQuotation.value && (
+				<CommercialSendWhatsappDialog
+					open={ !!whatsappDialogQuotation.value }
+					onOpenChange={ (open) =>
+					{
+						if (!open) whatsappDialogQuotation.value = undefined;
+					} }
+					documentId={ whatsappDialogQuotation.value.id }
+					documentType={ "quotations" }
+					totalAmount={ whatsappDialogQuotation.value.fullAmount }
+					documentDate={ whatsappDialogQuotation.value.date }
+					partnerName={ whatsappDialogQuotation.value.partnerName }
+					partnerMobile={ whatsappDialogQuotation.value?.partnerMobile }
+					partnerId={ whatsappDialogQuotation.value.partnerId }
+				/>
+			) }
 
 			{ printedReport.value &&
 				createPortal(
