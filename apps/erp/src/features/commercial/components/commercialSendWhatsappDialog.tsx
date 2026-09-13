@@ -21,20 +21,27 @@ import { Services } from "@/core/services/services";
 import { QuotationReportRequest, SalesInvoiceReportRequest } from "@/features/reports/invoice/invoiceReportRequest";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport";
 import type { CommercialReportResult } from "@/features/reports/invoice/invoiceReportResult";
+import {
+	applyWhatsappTemplateVariables,
+	DEFAULT_WHATSAPP_QUOTATION_TEMPLATE,
+	DEFAULT_WHATSAPP_SALES_TEMPLATE
+} from "@/features/commercial/logic/whatsappTemplateHelper";
 
+type CommercialSendWhatsappDialogDocumentType = "sales" | "quotations";
 
 interface CommercialSendWhatsappDialogProps
 {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	documentId: number;
-	documentType: "sales" | "quotations";
+	documentType: CommercialSendWhatsappDialogDocumentType;
 	totalAmount: number;
 	documentDate: string;
 	partnerName?: string;
 	partnerMobile?: string;
 	partnerId?: number;
-	defaultTemplate?: string;
+	paidAmount?: number;
+	remainingAmount?: number;
 }
 
 type ConnectionState = "checking" | "disconnected" | "connecting" | "connected";
@@ -130,18 +137,24 @@ function normalizeAndValidatePhone(rawPhone?: string): { isValid: boolean; norma
 /**
  * Returns Arabic file name according to document type
  */
-function getArabicFileName(documentType: string | number, documentId: number): string
+function getArabicFileName(documentType: CommercialSendWhatsappDialogDocumentType, documentId: number): string
 {
-	const typeStr = String(documentType).toLowerCase();
-	if (typeStr === "quotation" || typeStr === "quotations" || documentType === 4)
+	if (documentType === "quotations")
 	{
 		return `عرض_سعر_${ documentId }.pdf`;
 	}
-	if (typeStr === "purchases" || typeStr === "purchase")
-	{
-		return `فاتورة_شراء_${ documentId }.pdf`;
-	}
+
 	return `فاتورة_مبيعات_${ documentId }.pdf`;
+}
+
+function getDocumentTypeNameArabic(documentType: CommercialSendWhatsappDialogDocumentType): string
+{
+	if (documentType === "quotations")
+	{
+		return "عرض سعر";
+	}
+
+	return "فاتورة مبيعات";
 }
 
 export default function CommercialSendWhatsappDialog({
@@ -153,7 +166,8 @@ export default function CommercialSendWhatsappDialog({
 	documentDate,
 	partnerName,
 	partnerMobile,
-	defaultTemplate
+	paidAmount = 0,
+	remainingAmount
 }: CommercialSendWhatsappDialogProps)
 {
 	useSignals();
@@ -190,28 +204,40 @@ export default function CommercialSendWhatsappDialog({
 		void checkStatus();
 	}, [open, isDesktopApp]);
 
-	// Initialize message template and normalize the phone directly from invoice props
+	// Initialize message template with reusable variables engine and normalize customer phone
 	useEffect(() =>
 	{
 		if (!open) return;
 
-		// Pre-populate and normalize phone number from invoice props (mobile prioritized)
 		const raw = partnerMobile || "";
 		const parsedPhone = normalizeAndValidatePhone(raw);
 		phoneNumber.value = parsedPhone.normalized || raw;
 
-		let txt = defaultTemplate || "مرفق لكم المستند رقم {{document_number}} بقيمة {{total_amount}}";
-		txt = txt.replace(/{{customer_name}}/g, partnerName || "عميلنا العزيز");
-		txt = txt.replace(/{{document_number}}/g, documentId.toString());
-		txt = txt.replace(/{{total_amount}}/g, totalAmount.toLocaleString("en-US", {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2
-		}));
-		txt = txt.replace(/{{date}}/g, documentDate);
-		txt = txt.replace(/{{company_name}}/g, Services.auth.setting?.companyName.value || "");
-		message.value = txt;
+		const isQuote = documentType === "quotations";
+		const configuredTemplate = isQuote
+			? Services.auth.setting?.whatsappQuotationTemplate?.value
+			: Services.auth.setting?.whatsappSalesInvoiceTemplate?.value;
 
-	}, [open, partnerMobile, partnerName, documentId, totalAmount, documentDate, defaultTemplate]);
+		const fallback = isQuote
+			? DEFAULT_WHATSAPP_QUOTATION_TEMPLATE
+			: DEFAULT_WHATSAPP_SALES_TEMPLATE;
+
+		const rawTemplate = (configuredTemplate && configuredTemplate.trim()) ? configuredTemplate : fallback;
+
+		message.value = applyWhatsappTemplateVariables(rawTemplate, {
+			customerName: partnerName,
+			documentNumber: documentId,
+			documentType: getDocumentTypeNameArabic(documentType),
+			totalAmount,
+			currency: Services.auth.setting?.currency?.value?.name?.value || "ر.س",
+			date: documentDate,
+			companyName: Services.auth.setting?.companyName.value || "",
+			companyPhone: Services.auth.setting?.companyPhone.value || "",
+			paidAmount,
+			remainingAmount
+		});
+
+	}, [open, partnerMobile, partnerName, documentId, totalAmount, documentDate, documentType, paidAmount, remainingAmount]);
 
 	const handleConnect = async () =>
 	{
@@ -252,7 +278,6 @@ export default function CommercialSendWhatsappDialog({
 
 	const handleSend = async () =>
 	{
-		// 1. Strict phone validation
 		const phoneResult = normalizeAndValidatePhone(phoneNumber.value);
 		if (!phoneResult.isValid)
 		{
@@ -260,13 +285,11 @@ export default function CommercialSendWhatsappDialog({
 			return;
 		}
 
-		// Update input with the normalized value
 		phoneNumber.value = phoneResult.normalized;
 
 		isSending.value = true;
 		try
 		{
-			// 2. Fetch report data strictly on send button click
 			let endpoint = "/api/Reports/SalesInvoice";
 			let reqBody: unknown = new SalesInvoiceReportRequest({invoiceId: documentId});
 
@@ -284,7 +307,6 @@ export default function CommercialSendWhatsappDialog({
 
 			reportData.value = reportRes.data;
 
-			// 3. Wait for React to mount and render the hidden report element
 			await new Promise((resolve) =>
 			{
 				requestAnimationFrame(() =>
@@ -299,7 +321,6 @@ export default function CommercialSendWhatsappDialog({
 				throw new Error("فشل في تجهيز قالب الفاتورة للطباعة.");
 			}
 
-			// 4. Capture stylesheets and HTML
 			const styles = Array.from(document.querySelectorAll("style, link[rel='stylesheet']"))
 				.map((el) =>
 				{
@@ -330,7 +351,7 @@ export default function CommercialSendWhatsappDialog({
 							margin: 0 !important; 
 							padding: 6mm !important; 
 							width: 100% !important; 
-							box-sizing: border-box !important;
+							box-sizing: border-box !important; 
 							-webkit-print-color-adjust: exact !important; 
 							print-color-adjust: exact !important; 
 						}
@@ -481,7 +502,7 @@ export default function CommercialSendWhatsappDialog({
 				</DialogContent>
 			</Dialog>
 
-			{/* Hidden mount for rendering exact print styling when sending */ }
+			{/* Hidden mount for rendering exact print styling when sending */}
 			<div
 				ref={ reportContainerRef }
 				style={ {

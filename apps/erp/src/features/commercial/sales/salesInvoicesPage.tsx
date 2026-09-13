@@ -485,6 +485,7 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 					partnerName={ whatsappDialogInvoice.value.partnerName }
 					partnerMobile={ whatsappDialogInvoice.value.partnerMobile }
 					partnerId={ whatsappDialogInvoice.value.partnerId }
+					paidAmount={whatsappDialogInvoice.value.paidAmount}
 				/>
 			) }
 
