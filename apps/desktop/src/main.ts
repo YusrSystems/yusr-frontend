@@ -250,6 +250,24 @@ function createWindow()
 		}
 	});
 
+	// Normalize User-Agent to standard Chromium (remove "Electron/X.X.X") to prevent Google OAuth 403: disallowed_useragent
+	const cleanUserAgent = mainWindow.webContents.userAgent.replace(/Electron\/\S+\s?/, "");
+	mainWindow.webContents.userAgent = cleanUserAgent;
+
+	// Ensure any child popup window (such as Google Sign-in) also uses the clean User-Agent
+	mainWindow.webContents.on("did-create-window", (childWindow) =>
+	{
+		childWindow.webContents.userAgent = cleanUserAgent;
+	});
+
+	// Synchronize window title whenever document.title updates
+	mainWindow.webContents.on("page-title-updated", (event, title) =>
+	{
+		event.preventDefault();
+		mainWindow?.setTitle(title);
+	});
+
+	// Keyboard shortcuts: DevTools (F12, Ctrl+Shift+I) and Page Reload (F5, Ctrl+R)
 	mainWindow.webContents.on("before-input-event", (event, input) =>
 	{
 		if (input.type === "keyDown")
@@ -274,7 +292,27 @@ function createWindow()
 
 	mainWindow.webContents.setWindowOpenHandler(({url}) =>
 	{
-		// Open external web links in default system browser rather than Electron windows
+		// Allow Google Sign-In popups to open as linked in-app child windows so OAuth postMessage can resolve
+		if (
+			url.startsWith("https://accounts.google.com") ||
+			url.startsWith("https://accounts.youtube.com")
+		)
+		{
+			return {
+				action: "allow",
+				overrideBrowserWindowOptions: {
+					parent: mainWindow ?? undefined,
+					modal: false,
+					autoHideMenuBar: true,
+					webPreferences: {
+						nodeIntegration: false,
+						contextIsolation: true
+					}
+				}
+			};
+		}
+
+		// Open standard external links in default system browser
 		if (url.startsWith("http://") || url.startsWith("https://"))
 		{
 			void shell.openExternal(url);
