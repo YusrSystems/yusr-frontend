@@ -27,6 +27,7 @@
   "build": {
     "appId": "com.yusr.erp",
     "productName": "Yusr ERP",
+    "npmRebuild": false,
     "directories": {
       "output": "release",
       "buildResources": "build"
