@@ -15,12 +15,12 @@ import {
 	YusrApiHelper
 } from "yusr-ui";
 import { AlertCircle, Loader2, QrCode, Send } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa6";
 import { toast } from "sonner";
 import { Services } from "@/core/services/services";
 import { QuotationReportRequest, SalesInvoiceReportRequest } from "@/features/reports/invoice/invoiceReportRequest";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport";
 import type { CommercialReportResult } from "@/features/reports/invoice/invoiceReportResult";
-import { FaWhatsapp } from "react-icons/fa";
 
 
 interface CommercialSendWhatsappDialogProps
@@ -127,6 +127,23 @@ function normalizeAndValidatePhone(rawPhone?: string): { isValid: boolean; norma
 	return {isValid: true, normalized: cleaned};
 }
 
+/**
+ * Returns Arabic file name according to document type
+ */
+function getArabicFileName(documentType: string | number, documentId: number): string
+{
+	const typeStr = String(documentType).toLowerCase();
+	if (typeStr === "quotation" || typeStr === "quotations" || documentType === 4)
+	{
+		return `عرض_سعر_${ documentId }.pdf`;
+	}
+	if (typeStr === "purchases" || typeStr === "purchase")
+	{
+		return `فاتورة_شراء_${ documentId }.pdf`;
+	}
+	return `فاتورة_مبيعات_${ documentId }.pdf`;
+}
+
 export default function CommercialSendWhatsappDialog({
 	open,
 	onOpenChange,
@@ -173,14 +190,15 @@ export default function CommercialSendWhatsappDialog({
 		void checkStatus();
 	}, [open, isDesktopApp]);
 
-	// Initialize message template and normalize the phone directly from the invoice
+	// Initialize message template and normalize the phone directly from invoice props
 	useEffect(() =>
 	{
 		if (!open) return;
 
-		// Pre-populate and normalize phone number from invoice props
-		const parsedPhone = normalizeAndValidatePhone(partnerMobile);
-		phoneNumber.value = parsedPhone.normalized || partnerMobile || "";
+		// Pre-populate and normalize phone number from invoice props (mobile prioritized)
+		const raw = partnerMobile || "";
+		const parsedPhone = normalizeAndValidatePhone(raw);
+		phoneNumber.value = parsedPhone.normalized || raw;
 
 		let txt = defaultTemplate || "مرفق لكم المستند رقم {{document_number}} بقيمة {{total_amount}}";
 		txt = txt.replace(/{{customer_name}}/g, partnerName || "عميلنا العزيز");
@@ -332,12 +350,15 @@ export default function CommercialSendWhatsappDialog({
 				</body>
 				</html>`;
 
-			// 5. Send via Electron native WhatsApp socket
+			// 5. Arabic file name based on document type
+			const arabicFileName = getArabicFileName(documentType, documentId);
+
+			// 6. Send via Electron native WhatsApp socket
 			await window.desktopAPI!.sendWhatsappInvoice({
 				phoneNumber: phoneResult.normalized,
 				message: message.value,
 				htmlContent,
-				fileName: `Invoice_${ documentId }.pdf`
+				fileName: arabicFileName
 			});
 
 			toast.success("تم إرسال الفاتورة عبر الواتساب بنجاح!");

@@ -19,6 +19,10 @@ if (!gotTheLock)
 	app.quit();
 }
 
+// Set formal application identity for Windows Taskbar & Jump Lists
+app.setName("يُسر");
+app.setAppUserModelId("com.yusr.erp");
+
 let mainWindow: BrowserWindow | null = null;
 let waSocket: WASocket | null = null;
 let isConnected = false;
@@ -31,7 +35,9 @@ let reconnectAttempts = 0;
 const MAX_RECONNECT_DELAY_MS = 30000;
 const INITIAL_RECONNECT_DELAY_MS = 2000;
 const sessionDir = path.join(app.getPath("userData"), "whatsapp_auth");
-const DEFAULT_ERP_URL = "http://localhost:5173";
+
+// Use local Vite dev server in development, production cloud URL when packaged
+const DEFAULT_ERP_URL = app.isPackaged ? "https://erp.yusrsys.com" : "http://localhost:5173";
 
 function hasSavedSession(): boolean
 {
@@ -412,12 +418,13 @@ app.whenReady().then(() =>
 		}
 
 		const jid = `${ sanitizedPhone }@s.whatsapp.net`;
-		const pdfResult = await renderHtmlToPdf(htmlContent);
+		const resolvedFileName = fileName || "فاتورة.pdf";
+		const pdfResult = await renderHtmlToPdf(htmlContent, resolvedFileName);
 
 		await waSocket.sendMessage(jid, {
 			document: pdfResult.buffer,
 			mimetype: "application/pdf",
-			fileName: fileName || "Invoice.pdf",
+			fileName: resolvedFileName,
 			caption: message || ""
 		});
 
