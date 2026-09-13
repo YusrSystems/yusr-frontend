@@ -10,3 +10,9 @@ coverage
 .pnpm-store
 .vscode/*
 !.vscode/extensions.json
+
+release/
+
+# Repomix outputs
+**/repomix-output.*
+**/repomix-output.xml
