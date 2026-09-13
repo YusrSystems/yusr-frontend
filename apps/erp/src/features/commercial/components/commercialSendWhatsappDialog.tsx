@@ -233,8 +233,7 @@ export default function CommercialSendWhatsappDialog({
 			date: documentDate,
 			companyName: Services.auth.setting?.companyName.value || "",
 			companyPhone: Services.auth.setting?.companyPhone.value || "",
-			paidAmount,
-			remainingAmount
+			paidAmount
 		});
 
 	}, [open, partnerMobile, partnerName, documentId, totalAmount, documentDate, documentType, paidAmount, remainingAmount]);
