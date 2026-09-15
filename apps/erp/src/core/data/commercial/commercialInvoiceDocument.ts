@@ -23,6 +23,7 @@ export class CommercialInvoiceMode
 
 export interface ICommercialInvoiceDocumentDto extends ICommercialDocumentDto
 {
+	dueDate?: string;
 	paidAmount: number;
 	returnStatusId: InvoiceReturnStatus;
 	paymentStatusId: PaymentStatus;
@@ -39,6 +40,7 @@ export abstract class CommercialInvoiceDocument<
 	TItemDto extends ICommercialItemDto
 > extends CommercialDocument<TDto, TItem, TItemDto>
 {
+	public dueDate: Signal<string | undefined>;
 	public paidAmount: Signal<number>;
 	public returnStatusId: Signal<InvoiceReturnStatus>;
 	public paymentStatusId: Signal<PaymentStatus>;
@@ -59,6 +61,7 @@ export abstract class CommercialInvoiceDocument<
 	)
 	{
 		super(dto, mode);
+		this.dueDate = this.assign("dueDate", dto?.dueDate);
 		this.paidAmount = this.assign("paidAmount", dto?.paidAmount ?? 0);
 		this.returnStatusId = this.assign("returnStatusId", dto?.returnStatusId ?? InvoiceReturnStatus.NotReturned);
 		this.paymentStatusId = this.assign("paymentStatusId", dto?.paymentStatusId ?? PaymentStatus.NotPaid);

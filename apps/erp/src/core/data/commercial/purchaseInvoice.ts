@@ -58,6 +58,7 @@ export class PurchaseInvoiceDto implements ICommercialInvoiceDocumentDto
 	public vendorInvoiceNumber?: string;
 	public vendorInvoiceDate?: string;
 	public date!: string;
+	public dueDate?: string;
 	public fullAmount!: number;
 	public paidAmount!: number;
 	public settlementReason?: string;
@@ -170,6 +171,7 @@ export class PurchaseInvoice extends CommercialInvoiceDocument<PurchaseInvoiceDt
 		this.vendorInvoiceNumber.value = undefined;
 		this.vendorInvoiceDate.value = undefined;
 		this.date.value = DateService.formatDateOnly(new Date());
+		this.dueDate.value = undefined;
 
 		this.items.value = (source.items || []).map((qi, idx) =>
 		{
@@ -196,6 +198,7 @@ export class PurchaseInvoice extends CommercialInvoiceDocument<PurchaseInvoiceDt
 		this.vendorInvoiceNumber.value = source.vendorInvoiceNumber;
 		this.vendorInvoiceDate.value = source.vendorInvoiceDate;
 		this.date.value = DateService.formatDateOnly(new Date());
+		this.dueDate.value = undefined;
 		this.invoiceMode.value = CommercialInvoiceMode.Return;
 
 		this.items.value = (source.items || []).map((qi, idx) =>

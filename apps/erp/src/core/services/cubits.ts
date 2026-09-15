@@ -50,6 +50,10 @@ import type { StockValuationReportRequest } from "@/features/reports/stockValuat
 import type { StockValuationReportResult } from "@/features/reports/stockValuation/stockValuationReportResult.ts";
 import type { LowStockReportRequest } from "@/features/reports/lowStock/lowStockReportRequest.ts";
 import type { LowStockReportResult } from "@/features/reports/lowStock/lowStockReportResult.ts";
+import type {
+	ReceivablesAgingReportRequest
+} from "@/features/reports/receivablesAging/receivablesAgingReportRequest.ts";
+import type { ReceivablesAgingReportResult } from "@/features/reports/receivablesAging/receivablesAgingReportResult.ts";
 import { PosTerminalDto } from "@/core/data/posTerminal.ts";
 import { CategoryDto } from "@/core/data/category.ts";
 import { BrandDto } from "@/core/data/brand.ts";
@@ -110,7 +114,7 @@ export class Cubits extends BaseCubits
 	public static readonly TaxAuditReport = new PageReportCubit<TaxAuditReportRequest, TaxAuditReportResult>("TaxAudit");
 	public static readonly stockValuationReport = new PageReportCubit<StockValuationReportRequest, StockValuationReportResult>("StockValuation");
 	public static readonly lowStockReport = new PageReportCubit<LowStockReportRequest, LowStockReportResult>("LowStock");
-
+	public static readonly receivablesAgingReport = new PageReportCubit<ReceivablesAgingReportRequest, ReceivablesAgingReportResult>("ReceivablesAging");
 	static
 	{
 		BaseCubits.roles = Cubits.roles;

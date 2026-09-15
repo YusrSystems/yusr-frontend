@@ -57,6 +57,7 @@ export class SalesInvoiceDto implements ICommercialInvoiceDocumentDto
 	public basedOnQuotationId?: number;
 	public posSessionId?: number;
 	public date!: string;
+	public dueDate?: string;
 	public eInvoiceStatus!: EInvoiceStatus;
 	public fullAmount!: number;
 	public paidAmount!: number;
@@ -217,6 +218,7 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 		this.type.value = SalesInvoiceType.CreditNote;
 		this.originalSalesInvoiceId.value = source.id;
 		this.date.value = DateService.formatDateOnly(new Date());
+		this.dueDate.value = undefined;
 		this.invoiceMode.value = CommercialInvoiceMode.Return;
 		this.costVouchers.value = [];
 		this.items.value = (source.items || []).map((qi, idx) =>
@@ -242,6 +244,7 @@ export class SalesInvoice extends CommercialInvoiceDocument<SalesInvoiceDto, Sal
 		this.originalSalesInvoiceId.value = undefined;
 		this.basedOnQuotationId.value = undefined;
 		this.date.value = DateService.formatDateOnly(new Date());
+		this.dueDate.value = undefined;
 
 		this.items.value = (source.items || []).map((qi, idx) =>
 		{

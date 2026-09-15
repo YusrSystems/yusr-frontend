@@ -2,6 +2,7 @@ import {
 	AlertTriangle,
 	ArrowRightLeft,
 	BarChart2,
+	Clock,
 	FileSearch,
 	FileText,
 	LineChart,
@@ -240,6 +241,11 @@ export default function ReportsPage()
 			name: t("reports.balanceSheet"),
 			description: t("reports.balanceSheetDescription"),
 			icon: FileText
+		}, {
+			comp: renderAsOfDateShortcuts("/reports/receivablesAging"),
+			name: "أعمار ديون العملاء",
+			description: "تحليل وتصنيف الذمم المدينة المستحقة على العملاء حسب فترات التأخير",
+			icon: Clock
 		}, {
 			comp: <Button variant="outline" className="w-full h-8 text-xs"
 			              onClick={ async () => await AppNavigator.navigate("/reports/accountsList") }>{ t("reports.create", "عرض التقرير") }</Button>,

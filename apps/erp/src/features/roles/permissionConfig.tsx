@@ -78,8 +78,7 @@ export const getLabels = (t: TFunction<"erpCommon">): Record<string, string> => 
 	[SystemPermissionsResources.ReportItemBarcode]: t("permissions.report.itemBarcode"),
 	[SystemPermissionsResources.ReportStockValuation]: t("permissions.report.stockValuation", "تقرير تقييم المخزون"),
 	[SystemPermissionsResources.ReportLowStock]: t("permissions.report.lowStock", "تقرير النواقص"),
-
-	// Actions
+	[SystemPermissionsResources.ReportReceivablesAging]: "تقرير أعمار ديون العملاء",
 	[SystemPermissionsActions.Add]: t("permissions.actions.add"),
 	[SystemPermissionsActions.Update]: t("permissions.actions.update"),
 	[SystemPermissionsActions.Delete]: t("permissions.actions.delete")
@@ -169,7 +168,8 @@ export const getPermissionSections = (t: TFunction<"erpCommon">) => [
 			SystemPermissionsResources.ReportItemSettlement,
 			SystemPermissionsResources.ReportItemBarcode,
 			SystemPermissionsResources.ReportStockValuation,
-			SystemPermissionsResources.ReportLowStock
+			SystemPermissionsResources.ReportLowStock,
+			SystemPermissionsResources.ReportReceivablesAging
 		]
 	}
 ];
@@ -287,7 +287,8 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 			...single(SystemPermissionsResources.ReportItemBarcode),
 			...single(SystemPermissionsResources.ReportSalesProfitability),
 			...single(SystemPermissionsResources.ReportItemsProfitability),
-			...single(SystemPermissionsResources.ReportLowStock)
+			...single(SystemPermissionsResources.ReportLowStock),
+			...single(SystemPermissionsResources.ReportReceivablesAging)
 		],
 		onApply: selectAllStores
 	},
@@ -346,7 +347,8 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 			...single(SystemPermissionsResources.ReportPl),
 			...single(SystemPermissionsResources.ReportTaxAudit),
 			...single(SystemPermissionsResources.ReportInvoice),
-			...single(SystemPermissionsResources.ReportInvoiceList)
+			...single(SystemPermissionsResources.ReportInvoiceList),
+			...single(SystemPermissionsResources.ReportReceivablesAging)
 		]
 	},
 	{
@@ -389,7 +391,8 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 			...single(SystemPermissionsResources.ReportVoucherList),
 			...single(SystemPermissionsResources.ReportInvoice),
 			...single(SystemPermissionsResources.ReportInvoiceList),
-			...single(SystemPermissionsResources.ReportStockValuation)
+			...single(SystemPermissionsResources.ReportStockValuation),
+			...single(SystemPermissionsResources.ReportReceivablesAging)
 		],
 		onApply: selectAllStores
 	},
@@ -438,7 +441,8 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 			...single(SystemPermissionsResources.InvoiceAddSettlement),
 			...single(SystemPermissionsResources.ReportInvoice),
 			...single(SystemPermissionsResources.ReportItemList),
-			...single(SystemPermissionsResources.ReportItemBarcode)
+			...single(SystemPermissionsResources.ReportItemBarcode),
+			...single(SystemPermissionsResources.ReportReceivablesAging)
 		],
 		onApply: selectAllStores
 	},
@@ -537,7 +541,8 @@ export const getRolePresets = (t: TFunction<"erpCommon">): RolePreset<ErpRole>[]
 			...single(SystemPermissionsResources.ReportItemSettlement),
 			...single(SystemPermissionsResources.ReportItemBarcode),
 			...single(SystemPermissionsResources.ReportStockValuation),
-			...single(SystemPermissionsResources.ReportLowStock)
+			...single(SystemPermissionsResources.ReportLowStock),
+			...single(SystemPermissionsResources.ReportReceivablesAging)
 		],
 		onApply: selectAllStores
 	}

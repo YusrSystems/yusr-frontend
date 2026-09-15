@@ -42,6 +42,7 @@ import { ItemsProfitabilityReportPage } from "@/features/reports/itemsProfitabil
 import { TaxAuditReportPage } from "@/features/reports/taxAudit/taxAuditReportPage";
 import { StockValuationReportPage } from "@/features/reports/stockValuation/stockValuationReportPage";
 import { LowStockReportPage } from "@/features/reports/lowStock/lowStockReportPage";
+import { ReceivablesAgingReportPage } from "@/features/reports/receivablesAging/receivablesAgingReportPage";
 import PosTerminalsPage from "@/features/Pos/posTerminals/posTerminalsPage";
 import PosEntryPage from "@/features/Pos/posSession/posEntryPage";
 import PosScreenPage from "@/features/Pos/posScreen/posScreenPage";
@@ -141,6 +142,10 @@ export const router = createBrowserRouter([
 							{
 								path: "/reports/lowStock",
 								element: <LowStockReportPage/>
+							},
+							{
+								path: "/reports/receivablesAging",
+								element: <ReceivablesAgingReportPage/>
 							}
 						]
 					}

@@ -191,6 +191,12 @@ export default function ChangePurchaseInvoiceDialog({
 											value={ entity.value.date }
 											error={ entity.value.getError("date") }
 										/>
+										<DateField
+											label="تاريخ الاستحقاق"
+											disabled={ entity.value.invoiceMode.value === PurchaseInvoiceMode.Return }
+											value={ entity.value.dueDate }
+											error={ entity.value.getError("dueDate") }
+										/>
 										<FormField
 											label={ t("invoices.store") }
 											required
