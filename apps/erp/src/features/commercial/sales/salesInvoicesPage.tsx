@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
-import { Copy, FileTextIcon, Loader2, Printer, RotateCw, Undo2 } from "lucide-react";
+import { Calendar, Copy, FileTextIcon, Loader2, Printer, RotateCw, Undo2 } from "lucide-react";
 import {
 	Button,
 	ChangeableEntityMode,
@@ -12,6 +12,7 @@ import {
 	ContextMenuItem,
 	CrudPage,
 	CrudTablePagination,
+	DateService,
 	DropdownMenuItem,
 	FilterSection,
 	PageError,
@@ -59,6 +60,7 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 	const resendingEInvoice = useMemo(() => signal(false), []);
 	const whatsappDialogInvoice = useMemo(() => signal<SalesInvoiceDto | undefined>(undefined), []);
 	const {printedReport, isPrinting, handlePrint} = useCommercialPrint<SalesInvoiceReportResult>();
+	const today = useMemo(() => DateService.formatDateOnly(new Date()), []);
 
 	useEffect(() =>
 	{
@@ -233,6 +235,13 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 									const badge = getSalesInvoiceTypeBadge(inv.type, t);
 									const paymentStat = getPaymentStatus(inv, t);
 									const returnStat = getReturnStatus(inv, t);
+									const isOverdue = Boolean(
+										inv.dueDate &&
+										inv.dueDate < today &&
+										inv.paidAmount < inv.fullAmount &&
+										inv.type === SalesInvoiceType.Invoice
+									);
+
 									return [
 										{rowBody: `#${ inv.id }`, rowStyles: ""},
 										{
@@ -240,7 +249,28 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 												className={ cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold", badge.className) }>{ badge.label }</span>,
 											rowStyles: ""
 										},
-										{rowBody: inv.date, rowStyles: ""},
+										{
+											rowBody: (
+												<div className="flex flex-col gap-1">
+													<span className="font-medium text-foreground">{ inv.date }</span>
+													{ inv.dueDate && (
+														<span
+															className={ cn(
+																"inline-flex items-center gap-1 text-xs font-semibold px-1.5 py-0.5 rounded border w-fit",
+																isOverdue
+																	? "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-400 dark:border-red-800"
+																	: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800"
+															) }
+															title={ isOverdue ? "فاتورة متأخرة عن موعد السداد" : "تاريخ الاستحقاق" }
+														>
+															<Calendar className="h-3.5 w-3.5 shrink-0"/>
+															<span>{ t("invoices.due", "استحقاق") }: { inv.dueDate }</span>
+														</span>
+													) }
+												</div>
+											),
+											rowStyles: ""
+										},
 										{
 											rowBody: (
 												<Link to={ `/clients/${ inv.partnerId }` }
@@ -485,7 +515,7 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 					partnerName={ whatsappDialogInvoice.value.partnerName }
 					partnerMobile={ whatsappDialogInvoice.value.partnerMobile }
 					partnerId={ whatsappDialogInvoice.value.partnerId }
-					paidAmount={whatsappDialogInvoice.value.paidAmount}
+					paidAmount={ whatsappDialogInvoice.value.paidAmount }
 				/>
 			) }
 
