@@ -38,6 +38,7 @@ export function getProfitAndLossRowDocumentTypeName(type: DocumentType, t?: TFun
 		case DocumentType.Sales:
 			return t ? t("invoices.sellInvoice") : "فاتورة مبيعات";
 		case DocumentType.SalesReturn:
+		case (DocumentType as unknown as { SalesCreditNote?: DocumentType }).SalesCreditNote:
 			return t ? t("invoices.sellReturn") : "مرتجع مبيعات";
 		case DocumentType.SalesDebitNote:
 			return t ? t("invoices.sellDebitNote", "إشعار مدين مبيعات") : "إشعار مدين مبيعات";
@@ -45,6 +46,8 @@ export function getProfitAndLossRowDocumentTypeName(type: DocumentType, t?: TFun
 			return t ? t("vouchers.paymentVoucher") : "سند صرف";
 		case DocumentType.Receipt:
 			return t ? t("vouchers.receiptVoucher") : "سند قبض";
+		case (DocumentType as unknown as { VoucherDistribution?: DocumentType }).VoucherDistribution:
+			return t ? t("vouchers.distribution", "توزيع دوري") : "توزيع دوري";
 		default:
 			return getDocumentTypeName(type);
 	}
@@ -52,5 +55,10 @@ export function getProfitAndLossRowDocumentTypeName(type: DocumentType, t?: TFun
 
 export function getProfitAndLossRowDocumentRoute(type: DocumentType): string | undefined
 {
+	if (type === (DocumentType as unknown as { VoucherDistribution?: DocumentType }).VoucherDistribution)
+	{
+		return getDocumentRoute(DocumentType.Payment);
+	}
+
 	return getDocumentRoute(type);
 }
