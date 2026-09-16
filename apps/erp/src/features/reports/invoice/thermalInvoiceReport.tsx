@@ -22,6 +22,9 @@ export function ThermalInvoiceReport({data, isPortal}: { data: CommercialReportR
 	const qrBytes = isSales ? data.qrBytes : undefined;
 	const isInvoice = "paidAmount" in data;
 
+	const secondaryDate = isQuote ? data.quotation.expiryDate : data.invoice.dueDate;
+	const secondaryDateLabelAr = isQuote ? "تاريخ الصلاحية" : "تاريخ الاستحقاق";
+
 	const partnerLabelAr = isPurchase ? "المورد" : "العميل";
 	const defaultPartnerName = isPurchase ? "مورد نقدي" : "عميل نقدي";
 
@@ -89,6 +92,9 @@ export function ThermalInvoiceReport({data, isPortal}: { data: CommercialReportR
 				<h3 className="font-bold text-sm">{ data.titleEn }</h3>
 				<p className="mt-1 font-bold">رقم المستند: { doc.id }</p>
 				<p>التاريخ: { doc.date }</p>
+				{ secondaryDate && (
+					<p>{ secondaryDateLabelAr }: { secondaryDate }</p>
+				) }
 			</div>
 
 			<div className="mb-3 border-b border-dashed border-black pb-3">

@@ -27,6 +27,10 @@ export function A4InvoiceReport({data, isPortal}: { data: CommercialReportResult
 	const doc: ICommercialDocumentDto = isQuote ? data.quotation : data.invoice;
 	const qrBytes = isSalesInvoiceReport(data) ? data.qrBytes : undefined;
 
+	const secondaryDate = isQuote ? data.quotation.expiryDate : data.invoice.dueDate;
+	const secondaryDateLabelAr = isQuote ? "تاريخ الصلاحية" : "تاريخ الاستحقاق";
+	const secondaryDateLabelEn = isQuote ? "Expiry Date" : "Due Date";
+
 	const partnerLabelAr = isPurchase ? "المورد" : "العميل";
 	const partnerLabelEn = isPurchase ? "Supplier" : "Customer";
 
@@ -51,9 +55,16 @@ export function A4InvoiceReport({data, isPortal}: { data: CommercialReportResult
 			</ReportHeader>
 
 			<div className="flex flex-col gap-4 mt-6 print:break-inside-avoid">
-				<div className="grid grid-cols-2 gap-8">
+				<div className={ `grid ${ secondaryDate ? "grid-cols-3 gap-4" : "grid-cols-2 gap-8" }` }>
 					<ReportField labelAr="المستودع" labelEn="Store" value={ doc.storeName || "-" }/>
 					<ReportField labelAr="بتاريخ" labelEn="Date" value={ doc.date }/>
+					{ secondaryDate && (
+						<ReportField
+							labelAr={ secondaryDateLabelAr }
+							labelEn={ secondaryDateLabelEn }
+							value={ secondaryDate }
+						/>
+					) }
 				</div>
 
 				<div className="border border-border rounded-lg overflow-hidden print:break-inside-avoid">
