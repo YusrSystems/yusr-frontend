@@ -1,11 +1,11 @@
-import { arSA, enUS } from "date-fns/locale";
+import { ar, enUS } from "date-fns/locale";
 import { ChevronDownIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "#/utils/cn.ts";
 import { Button } from "../../pure/button";
 import { Calendar, Popover, PopoverContent, PopoverTrigger } from "#/components/pure";
-import { signal, type Signal } from "@preact/signals-react";
+import { type Signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { DateService } from "#/services";
 
@@ -15,12 +15,20 @@ export interface DateInputProps
 	value?: Signal<string | undefined>;
 	onChange?: (date: string | undefined) => void;
 	placeholder?: string;
-	locale?: any;
+	locale?: unknown;
 	startYear?: number;
 	endYear?: number;
 	minDate?: Date;
 	maxDate?: Date;
 	disabled?: boolean;
+}
+
+function assignSignalValue(signal?: Signal<string | undefined>, nextValue?: string)
+{
+	if (signal)
+	{
+		signal.value = nextValue;
+	}
 }
 
 export function DateInput({
@@ -36,14 +44,17 @@ export function DateInput({
 }: DateInputProps)
 {
 	useSignals();
-	const isOpen: Signal<boolean> = useMemo(() =>
-	{
-		return signal(false);
-	}, []);
+	const [isOpen, setIsOpen] = useState(false);
+
+	// Force Gregorian calendar on Arabic locale
+	const arGregorian = useMemo(() => ({
+		...ar,
+		code: "ar-u-ca-gregory"
+	}), []);
 
 	const {t, i18n} = useTranslation("common");
 	const defaultPlaceholder = placeholder || t("dateInput.placeholder");
-	const dateFnsLocale = locale ?? (i18n.language === "ar" ? arSA : enUS);
+	const dateFnsLocale = locale ?? (i18n.language === "ar" ? arGregorian : enUS);
 
 	const disabledDays = [];
 	if (minDate)
@@ -58,17 +69,13 @@ export function DateInput({
 	const selectedDate = value?.value ? DateService.parseDateOnly(value.value) : undefined;
 
 	return (
-		<Popover open={ isOpen.value } onOpenChange={ () =>
-		{
-			isOpen.value = !isOpen.value;
-		} }>
+		<Popover open={ isOpen } onOpenChange={ setIsOpen }>
 			<PopoverTrigger asChild>
 				<Button
 					variant="outline"
 					className={ cn(
 						"w-full justify-between text-left font-normal",
 						!value && "text-muted-foreground"
-						// isInvalid && "border-red-600 ring-red-600 text-red-900"
 					) }
 					disabled={ disabled }
 				>
@@ -86,20 +93,14 @@ export function DateInput({
 						{
 							const formatted = DateService.formatDateOnly(date);
 							onChange?.(formatted);
-							if (value)
-							{
-								value.value = formatted;
-							}
+							assignSignalValue(value, formatted);
 						}
 						else
 						{
 							onChange?.(undefined);
-							if (value?.value)
-							{
-								value.value = undefined;
-							}
+							assignSignalValue(value, undefined);
 						}
-						isOpen.value = false;
+						setIsOpen(false);
 					} }
 					locale={ dateFnsLocale }
 					captionLayout="dropdown"

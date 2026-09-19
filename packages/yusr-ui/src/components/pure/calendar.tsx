@@ -20,6 +20,7 @@ function Calendar(
 )
 {
 	const defaultClassNames = getDefaultClassNames();
+	const resolvedLocaleCode = locale?.code || "ar-u-ca-gregory";
 
 	return (
 		<DayPicker
@@ -33,7 +34,12 @@ function Calendar(
 			captionLayout={ captionLayout }
 			locale={ locale }
 			formatters={ {
-				formatMonthDropdown: (date) => date.toLocaleString(locale?.code, {month: "short"}),
+				formatMonthDropdown: (date) =>
+					date.toLocaleString(resolvedLocaleCode, {month: "short", calendar: "gregory"}),
+				formatMonthCaption: (date) =>
+					date.toLocaleString(resolvedLocaleCode, {month: "long", year: "numeric", calendar: "gregory"}),
+				formatYearCaption: (date) =>
+					date.toLocaleString(resolvedLocaleCode, {year: "numeric", calendar: "gregory"}),
 				...formatters
 			} }
 			classNames={ {
@@ -145,6 +151,7 @@ function CalendarDayButton(
 )
 {
 	const defaultClassNames = getDefaultClassNames();
+	const resolvedLocaleCode = locale?.code || "ar-u-ca-gregory";
 
 	const ref = React.useRef<HTMLButtonElement>(null);
 	React.useEffect(() =>
@@ -160,7 +167,7 @@ function CalendarDayButton(
 			ref={ ref }
 			variant="ghost"
 			size="icon"
-			data-day={ day.date.toLocaleDateString(locale?.code) }
+			data-day={ day.date.toLocaleDateString(resolvedLocaleCode, {calendar: "gregory"}) }
 			data-selected-single={ modifiers.selected
 				&& !modifiers.range_start
 				&& !modifiers.range_end
