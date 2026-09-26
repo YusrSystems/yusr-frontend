@@ -94,12 +94,13 @@ export function PermissionCard(
 	return (
 		<Card className="shadow-none border-2">
 			<CardHeader className="flex flex-row items-center justify-between border-b py-3 px-4">
-				<div className="flex items-center gap-2">
-					<ShieldCheck className="w-4 h-4 text-primary"/>
-					<span className="font-bold text-sm">{ label }</span>
+				<div className="flex items-center gap-2 min-w-0">
+					<ShieldCheck className="w-4 h-4 text-primary shrink-0"/>
+					<span className="font-bold text-sm truncate">{ label }</span>
 				</div>
 				{ masterPermission && !isMasterRequired && (
 					<Checkbox
+						className="shrink-0 ms-2"
 						checked={ hasMaster }
 						onCheckedChange={ () => toggleGetPermission(resourceId) }
 					/>
@@ -113,11 +114,12 @@ export function PermissionCard(
 							!hasMaster ? "opacity-40 select-none" : "hover:bg-muted"
 						}` }
 					>
-						<div className="flex items-center gap-3">
-							{ action.icon }
-							<Label className="text-xs cursor-pointer">{ action.label }</Label>
+						<div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+							<span className="shrink-0">{ action.icon }</span>
+							<Label className="text-xs cursor-pointer truncate">{ action.label }</Label>
 						</div>
 						<Checkbox
+							className="shrink-0 ms-2"
 							disabled={ !hasMaster }
 							checked={ selectedPermissions.value.includes(action.id) }
 							onCheckedChange={ () => handleToggle(action.id) }

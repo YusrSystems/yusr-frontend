@@ -36,7 +36,7 @@ export function ChangeDialog({className = "sm:max-w-sm", children}: ChangeDialog
 	const {i18n} = useTranslation("common");
 
 	return (
-		<DialogContent dir={ i18n.dir() } className={ cn(className, "scroll-auto") }>
+		<DialogContent dir={ i18n.dir() } className={ cn("max-h-[94dvh] flex flex-col overflow-hidden", className) }>
 			{ children }
 		</DialogContent>
 	);
@@ -65,7 +65,7 @@ ChangeDialog.Unauthorized = function ()
 ChangeDialog.Header = function ({title, description, children}: ChangeDialogHeaderProps)
 {
 	return (
-		<>
+		<div className="shrink-0 space-y-4">
 			<DialogHeader>
 				<DialogTitle>{ title }</DialogTitle>
 				<DialogDescription>{ description ?? "" }</DialogDescription>
@@ -73,14 +73,14 @@ ChangeDialog.Header = function ({title, description, children}: ChangeDialogHead
 			</DialogHeader>
 
 			<Separator/>
-		</>
+		</div>
 	);
 };
 
 ChangeDialog.Footer = function ({children}: PropsWithChildren)
 {
 	return (
-		<DialogFooter>
+		<DialogFooter className="shrink-0 mt-auto">
 			{ children }
 		</DialogFooter>
 	);
@@ -109,8 +109,9 @@ ChangeDialog.Tabbed = function ({tabs, className}: { tabs: ChangeDialogTabProps[
 	const safeTab = Math.min(currentTab, tabs.length - 1);
 
 	return (
-		<div className={ cn("flex flex-col h-[80vh]", className) }>
-			<div className="flex justify-start border-b mb-4 shrink-0 bg-muted/20 rounded-t-lg">
+		<div className={ cn("flex flex-col flex-1 min-h-0 overflow-hidden", className) }>
+			<div
+				className="flex justify-start border-b mb-3 sm:mb-4 shrink-0 bg-muted/20 rounded-t-lg overflow-x-auto no-scrollbar max-w-full">
 				{ tabs.map((tab, i) => (
 					<TabButton
 						key={ i }
@@ -123,8 +124,7 @@ ChangeDialog.Tabbed = function ({tabs, className}: { tabs: ChangeDialogTabProps[
 					/>
 				)) }
 			</div>
-
-			<div className="flex-1 overflow-y-auto px-2 pb-2">
+			<div className="flex-1 min-h-0 overflow-y-auto px-1 sm:px-2 pb-2">
 				{ tabs[safeTab]?.content }
 			</div>
 		</div>

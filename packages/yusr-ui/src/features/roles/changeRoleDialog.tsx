@@ -125,7 +125,7 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 	};
 
 	return (
-		<ChangeDialog className="sm:max-w-6xl">
+		<ChangeDialog className="sm:max-w-6xl max-h-[94dvh] flex flex-col overflow-hidden">
 			<ChangeDialog.Header
 				title={ entity.value.mode.value === ChangeableEntityMode.Create
 					? t("commonEntities:roles.addNewTitle")
@@ -152,7 +152,7 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 			label: section.title,
 			hasError: index === 0 ? !!entity.value.getError("name").value : undefined,
 			content: (
-				<div className="space-y-4">
+				<div className="space-y-4 min-w-0">
 					{ index === 0 && (
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<TextField
@@ -179,7 +179,7 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 							) }
 						</div>
 					) }
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 min-w-0">
 						{ categorizePermissions(BaseServices.auth.systemPermissions.value, section.resources, delimiter).map((
 							item
 						) => (
