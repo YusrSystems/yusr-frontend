@@ -12,8 +12,7 @@ import {
 	DialogTitle
 } from "../../pure/dialog";
 import { Separator } from "#/components/pure";
-import { SaveButton, type SaveButtonProps } from "../buttons/saveButton";
-import { TabButton, UnauthorizedPage } from "#/components/custom";
+import { SaveButton, type SaveButtonProps, TabButton, UnauthorizedPage } from "#/components/custom";
 
 
 export type ChangeDialogProps =

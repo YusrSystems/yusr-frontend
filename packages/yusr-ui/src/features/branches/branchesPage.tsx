@@ -8,21 +8,26 @@ import { type BranchDto } from "#/entities";
 import { BaseCubits, BaseServices } from "#/services";
 import { ChangeableEntityMode, PageError, PageLoaded, PageLoading } from "#/stateManager";
 import { ChangeBranchDialog } from "./changeBranchDialog";
+import { branchesApi } from "./branches.api";
 
 
 export function BranchesPage({onUpdate}: { onUpdate?: (dto: BranchDto) => void; })
 {
+	useSignals();
 	const {t} = useTranslation("commonEntities");
+
+	useEffect(() =>
+	{
+		if (BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Branches, SystemPermissionsActions.Get))
+		{
+			void BaseCubits.branches.init();
+		}
+	}, []);
 
 	if (!BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Branches, SystemPermissionsActions.Get))
 	{
 		return <UnauthorizedPage/>;
 	}
-
-	useEffect(() =>
-	{
-		BaseCubits.branches.init();
-	}, []);
 
 	return (
 		<CrudPage<BranchDto>>
@@ -42,33 +47,34 @@ export function BranchesPage({onUpdate}: { onUpdate?: (dto: BranchDto) => void; 
 			<PageTable/>
 
 			<CrudPage.ChangeDialog<BranchDto>
-				changeDialog={ (dto, closeDialog) =>
+				fetchEntity={ async (id) =>
 				{
-					return (
-						<ChangeBranchDialog
-							dto={ dto }
-							service={ BaseServices.branchesApi }
-							onSuccess={ (data, mode) =>
-							{
-								if (mode === ChangeableEntityMode.Create)
-								{
-									BaseCubits.branches.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									BaseCubits.branches.update(data);
-									onUpdate?.(data);
-								}
-							} }
-						/>
-					);
+					const res = await branchesApi.get(id);
+					return res.data;
 				} }
+				changeDialog={ (dto, closeDialog) => (
+					<ChangeBranchDialog
+						dto={ dto }
+						onSuccess={ (data, mode) =>
+						{
+							if (mode === ChangeableEntityMode.Create)
+							{
+								BaseCubits.branches.add(data);
+								closeDialog();
+							}
+							else if (mode === ChangeableEntityMode.Update)
+							{
+								BaseCubits.branches.update(data);
+								onUpdate?.(data);
+							}
+						} }
+					/>
+				) }
 			/>
 
-			<CrudPage.DeleteDialog
+			<CrudPage.DeleteDialog<BranchDto>
 				entityNameSelector={ (entity) => entity.name }
-				service={ BaseServices.branchesApi }
+				resource={ branchesApi }
 				onSuccess={ (entity) => BaseCubits.branches.delete(entity) }
 			/>
 		</CrudPage>
@@ -112,16 +118,14 @@ function PageTable()
 						{rowBody: t("branches.branchName"), rowStyles: "w-50"},
 						{rowBody: t("branches.city"), rowStyles: "w-50"}
 					] }
-					tableRowMapper={ (
-						branch
-					) => [{rowBody: `#${ branch.id }`, rowStyles: ""}, {
-						rowBody: branch.name,
-						rowStyles: "font-semibold"
-					}, {
-						rowBody: branch.cityName,
-						rowStyles:
-							"inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800"
-					}] }
+					tableRowMapper={ (branch) => [
+						{rowBody: `#${ branch.id }`, rowStyles: ""},
+						{rowBody: branch.name, rowStyles: "font-semibold"},
+						{
+							rowBody: branch.cityName ?? "-",
+							rowStyles: "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800"
+						}
+					] }
 					hasUpdatePermission={ BaseServices.auth.hasAuth(
 						YusrSystemPermissionsResources.Branches,
 						SystemPermissionsActions.Update
@@ -130,15 +134,6 @@ function PageTable()
 						YusrSystemPermissionsResources.Branches,
 						SystemPermissionsActions.Delete
 					) }
-				/>
-				<CrudPage.TablePagination
-					pageSize={ BaseCubits.branches.pageSize.value }
-					totalNumber={ BaseCubits.branches.count.value }
-					currentPage={ BaseCubits.branches.currentPage.value }
-					onPageChanged={ (newPage) =>
-					{
-						BaseCubits.branches.changePage(newPage);
-					} }
 				/>
 			</CrudPage.Table>
 		);

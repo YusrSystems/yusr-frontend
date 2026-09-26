@@ -1,142 +1,107 @@
-import { type Signal, signal } from "@preact/signals-react";
+import { signal, type Signal } from "@preact/signals-react";
 import { Cubit } from "./cubit";
 import type { Dto } from "./dto";
-import { PageEmpty, PageError, PageInitial, PageLoaded, PageLoading, type PageState } from "./pageStates";
-import type { ApiResponse } from "#/api/apiClient";
+import { PageEmpty, PageInitial, PageLoaded, PageLoading, type PageState } from "./pageStates";
+import type { ISimpleListResource } from "#/api";
 
 
-export type SimpleListFn<TDto> = (
-	queryParams?: Record<string, string | number | boolean>
-) => Promise<ApiResponse<TDto[]>>;
-
-export interface ISimpleListProvider<TDto>
-{
-	list: SimpleListFn<TDto>;
-}
-
-export class ListCubit<TDto extends Dto & { name?: string }> extends Cubit<PageState>
+export class ListCubit<TDto extends Dto> extends Cubit<PageState>
 {
 	public allEntities: Signal<TDto[]>;
 	public entities: Signal<TDto[]>;
 	public count: Signal<number>;
 	public searchText: Signal<string | undefined>;
-	protected listProvider: ISimpleListProvider<TDto>;
-	protected currentQueryParams: Signal<Record<string, string | number | boolean> | undefined>;
+	protected resource: ISimpleListResource<TDto>;
+	protected queryParams: Signal<Record<string, string | number | boolean> | undefined>;
 
-	constructor(resourceOrListFn: ISimpleListProvider<TDto> | SimpleListFn<TDto>)
+	constructor(resource: ISimpleListResource<TDto>)
 	{
 		super(new PageInitial());
-		this.listProvider = typeof resourceOrListFn === "function"
-			? {list: resourceOrListFn}
-			: resourceOrListFn;
+		this.resource = resource;
 		this.allEntities = signal<TDto[]>([]);
 		this.entities = signal<TDto[]>([]);
 		this.count = signal<number>(0);
 		this.searchText = signal<string | undefined>(undefined);
-		this.currentQueryParams = signal<Record<string, string | number | boolean> | undefined>(undefined);
+		this.queryParams = signal<Record<string, string | number | boolean> | undefined>(undefined);
 	}
 
-	async init(
-		_types?: number[],
-		queryParams?: Record<string, string | number | boolean>
-	): Promise<void>
+	async init(queryParams?: Record<string, string | number | boolean>): Promise<void>
 	{
-		this.currentQueryParams.value = queryParams;
+		this.queryParams.value = queryParams;
 		this.emit(new PageLoading());
 
-		try
+		const response = await this.resource.list(queryParams);
+
+		if (!response.ok || !response.data || response.data.length === 0)
 		{
-			const res = await this.listProvider.list(queryParams);
+			this.allEntities.value = [];
+			this.entities.value = [];
+			this.count.value = 0;
+			this.emit(new PageEmpty());
+			return;
+		}
 
-			if (!res.ok)
-			{
-				this.emit(new PageError());
-				return;
-			}
+		this.allEntities.value = response.data;
+		this.entities.value = response.data;
+		this.count.value = response.data.length;
+		this.emit(new PageLoaded());
+	}
 
-			const items = res.data ?? [];
-			this.allEntities.value = items;
-			this.applyLocalSearch(this.searchText.value);
+	search(text?: string, searchSelector?: (item: TDto) => string): void
+	{
+		const query = text?.trim().toLowerCase();
+		this.searchText.value = text;
 
-			if (this.entities.value.length === 0)
-			{
-				this.emit(new PageEmpty());
-			}
-			else
+		if (!query)
+		{
+			this.entities.value = [...this.allEntities.value];
+			this.count.value = this.allEntities.value.length;
+			if (this.entities.value.length > 0)
 			{
 				this.emit(new PageLoaded());
 			}
+			return;
 		}
-		catch
-		{
-			this.emit(new PageError());
-		}
-	}
 
-	search(searchText: string | undefined): void
-	{
-		this.searchText.value = searchText;
-		this.applyLocalSearch(searchText);
+		const filtered = this.allEntities.value.filter((item: any) =>
+		{
+			if (searchSelector)
+			{
+				return searchSelector(item).toLowerCase().includes(query);
+			}
 
-		if (this.entities.value.length === 0)
-		{
-			this.emit(new PageEmpty());
-		}
-		else
-		{
-			this.emit(new PageLoaded());
-		}
+			const name = item.name ?? item.title ?? item.username ?? "";
+			const id = item.id ? String(item.id) : "";
+			return name.toLowerCase().includes(query) || id.includes(query);
+		});
+
+		this.entities.value = filtered;
+		this.count.value = filtered.length;
+		this.emit(filtered.length > 0 ? new PageLoaded() : new PageEmpty());
 	}
 
 	add(dto: TDto): void
 	{
 		this.allEntities.value = [dto, ...this.allEntities.value];
-		this.applyLocalSearch(this.searchText.value);
+		this.search(this.searchText.value);
 		this.emit(new PageLoaded());
 	}
 
 	update(dto: TDto): void
 	{
 		this.allEntities.value = this.allEntities.value.map((e) => (e.id === dto.id ? dto : e));
-		this.applyLocalSearch(this.searchText.value);
-		this.emit(new PageLoaded());
+		this.search(this.searchText.value);
 	}
 
-	delete(dto: TDto): void
+	delete(target: TDto | number): void
 	{
-		this.allEntities.value = this.allEntities.value.filter((e) => e.id !== dto.id);
-		this.applyLocalSearch(this.searchText.value);
+		const id = typeof target === "number" ? target : target.id;
+		this.allEntities.value = this.allEntities.value.filter((e) => e.id !== id);
+		this.search(this.searchText.value);
 
-		if (this.entities.value.length === 0)
+		if (this.allEntities.value.length === 0)
 		{
 			this.emit(new PageEmpty());
 		}
-		else
-		{
-			this.emit(new PageLoaded());
-		}
-	}
-
-	private applyLocalSearch(text?: string): void
-	{
-		if (!text || !text.trim())
-		{
-			this.entities.value = this.allEntities.value;
-			this.count.value = this.allEntities.value.length;
-			return;
-		}
-
-		const query = text.trim().toLowerCase();
-		const filtered = this.allEntities.value.filter((item) =>
-		{
-			if (typeof item.name === "string")
-			{
-				return item.name.toLowerCase().includes(query);
-			}
-			return JSON.stringify(item).toLowerCase().includes(query);
-		});
-
-		this.entities.value = filtered;
-		this.count.value = filtered.length;
 	}
 }

@@ -8,6 +8,7 @@ export * from "./background/yusrBackground";
 export * from "./buttons/copyButton";
 export * from "./buttons/tabButton";
 export * from "./buttons/youtubeButton";
+export * from "./buttons/saveButton";
 
 // Cards
 export * from "./cards";
@@ -18,6 +19,8 @@ export * from "./containers/yusrApp";
 
 // Dialogs
 export * from "./dialogs/changeDialog";
+export * from "./dialogs/deleteDialog";
+export * from "./dialogs/apiFeedbackDialog";
 export * from "./dialogs/commonChangeDialogProps.ts";
 
 // Currency

@@ -1,8 +1,6 @@
 import { Loader2, OctagonAlert } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { BaseApiService } from "#/networking";
-import type { Dto } from "#/stateManager";
 import {
 	Button,
 	DialogClose,
@@ -12,34 +10,43 @@ import {
 	DialogTitle,
 	Separator
 } from "#/components/pure";
+import type { ApiResponse, RequestOptions } from "#/api";
 
 
-export type DeleteDialogProps<TDto extends Dto> = {
+export interface IDeleteResource
+{
+	delete: (id: number, options?: RequestOptions) => Promise<ApiResponse<boolean>>;
+}
+
+export type DeleteDialogProps = {
 	entityName: string;
 	id: number;
-	service: BaseApiService<TDto>;
+	resource: IDeleteResource;
 	onSuccess?: () => void;
 };
 
-export function DeleteDialog<TDto extends Dto>(
-	{entityName, id, service, onSuccess}: DeleteDialogProps<TDto>
+export function DeleteDialog(
+	{entityName, id, resource, onSuccess}: DeleteDialogProps
 )
 {
-	const {t} = useTranslation();
+	const {t} = useTranslation("common");
 	const [loading, setLoading] = useState(false);
 
-	async function Delete()
+	async function handleDelete()
 	{
 		setLoading(true);
-
-		const res = await service.Delete(id);
-
-		if (res.status === 200)
+		try
 		{
-			onSuccess?.();
+			const res = await resource.delete(id);
+			if (res.ok)
+			{
+				onSuccess?.();
+			}
 		}
-
-		setLoading(false);
+		finally
+		{
+			setLoading(false);
+		}
 	}
 
 	return (
@@ -48,26 +55,21 @@ export function DeleteDialog<TDto extends Dto>(
 				<DialogTitle>{ t("deleteDialog.title", {entityName}) }</DialogTitle>
 				<DialogDescription></DialogDescription>
 			</DialogHeader>
-
-			<Separator></Separator>
-
+			<Separator/>
 			<div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
 				<OctagonAlert className="h-7 w-7 text-destructive"/>
 			</div>
-
 			<span className="font-bold text-center text-xl">
-        { t("deleteDialog.confirmMessage", {entityName, id}) }
-      </span>
-
+				{ t("deleteDialog.confirmMessage", {entityName, id}) }
+			</span>
 			<span className="text-center text-[15px]">
-        { t("deleteDialog.warningMessage", {entityName}) }
-      </span>
-
+				{ t("deleteDialog.warningMessage", {entityName}) }
+			</span>
 			<DialogFooter>
 				<DialogClose asChild>
 					<Button variant="outline">{ t("deleteDialog.cancel") }</Button>
 				</DialogClose>
-				<Button variant="destructive" onClick={ Delete } disabled={ loading }>
+				<Button variant="destructive" onClick={ handleDelete } disabled={ loading }>
 					{ loading && <Loader2 className="ml-2 h-4 w-4 animate-spin"/> }
 					{ t("deleteDialog.confirm") }
 				</Button>

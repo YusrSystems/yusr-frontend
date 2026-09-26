@@ -15,13 +15,19 @@ import { Branch, BranchDto } from "#/entities";
 import { BaseCubits, BaseServices } from "#/services";
 import { ChangeableEntityMode } from "#/stateManager";
 import { signal } from "@preact/signals-react";
+import { branchesApi } from "./branches.api";
 
 
-export function ChangeBranchDialog({dto, service, onSuccess}: CommonChangeDialogProps<BranchDto>)
+export function ChangeBranchDialog({dto, onSuccess}: CommonChangeDialogProps<BranchDto>)
 {
 	useSignals();
+	const {t} = useTranslation(["commonEntities", "common"]);
+	const entity = useMemo(() => signal<Branch>(dto ? Branch.load(dto) : Branch.create()), [dto]);
 
-	const entity = useMemo(() => signal<Branch>(dto ? Branch.load(dto) : Branch.create()), []);
+	useEffect(() =>
+	{
+		BaseCubits.cities.init();
+	}, []);
 
 	if (
 		(entity.value.mode.value === ChangeableEntityMode.Create
@@ -33,10 +39,8 @@ export function ChangeBranchDialog({dto, service, onSuccess}: CommonChangeDialog
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	useEffect(() => BaseCubits.cities.init(), []);
-
-	const {t} = useTranslation(["commonEntities", "common"]);
-	const title = entity.value.mode.value === ChangeableEntityMode.Create
+	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
+	const title = !isUpdateMode
 		? t("branches.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("branches.entityName") }`;
 
@@ -90,7 +94,7 @@ export function ChangeBranchDialog({dto, service, onSuccess}: CommonChangeDialog
 
 				<ChangeDialog.SaveButton<Branch, BranchDto>
 					entity={ entity }
-					service={ service }
+					resource={ branchesApi }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>

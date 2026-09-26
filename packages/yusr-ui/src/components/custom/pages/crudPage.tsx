@@ -6,7 +6,7 @@ import { type Dto } from "#/stateManager";
 import { Button, type ButtonProps, ContextMenu, ContextMenuTrigger } from "#/components/pure";
 import { Dialog, DialogContent } from "../../pure/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../pure/table";
-import { DeleteDialog, type DeleteDialogProps } from "../dialogs/deleteDialog";
+import { DeleteDialog, type IDeleteResource } from "../dialogs/deleteDialog";
 import {
 	CrudTableHeader,
 	type CrudTableHeaderProps,
@@ -331,10 +331,9 @@ CrudPage.ChangeDialog = function <TDto extends Dto>(
 };
 
 CrudPage.DeleteDialog = function <TDto extends Dto>(
-	{entityNameSelector, onSuccess, ...props}:
-	& Omit<DeleteDialogProps<TDto>, "id" | "entityName" | "onSuccess">
-		& {
+	{entityNameSelector, resource, onSuccess}: {
 		entityNameSelector: (dto: TDto) => string;
+		resource: IDeleteResource;
 		onSuccess?: (dto: TDto) => void;
 	}
 )
@@ -351,12 +350,12 @@ CrudPage.DeleteDialog = function <TDto extends Dto>(
 	return (
 		<Dialog
 			open={ isDeleteDialogOpen.value }
-			onOpenChange={ (open) => isDeleteDialogOpen.value = open }
+			onOpenChange={ (open) => (isDeleteDialogOpen.value = open) }
 		>
 			<DialogContent dir={ i18n.dir() } className="sm:max-w-sm">
 				<DeleteDialog
-					{ ...props }
 					id={ selectedDto.value.id }
+					resource={ resource }
 					entityName={ entityNameSelector(selectedDto.value as TDto) ?? "" }
 					onSuccess={ () =>
 					{

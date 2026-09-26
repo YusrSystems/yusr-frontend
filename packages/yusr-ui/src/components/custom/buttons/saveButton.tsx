@@ -1,12 +1,13 @@
-import { type Signal, signal } from "@preact/signals-react";
+import { Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Loader2 } from "lucide-react";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { BaseApiService } from "#/networking";
 import { type ChangeableEntity, ChangeableEntityMode, type Dto } from "#/stateManager";
-import { type RequestResult, ResultStatus, StatusWorkflow } from "#/types";
+import { ResultStatus, StatusWorkflow } from "#/types";
+import { RowVer } from "#/types/rowVer.ts";
 import {
+	Button,
 	Dialog,
 	DialogClose,
 	DialogContent,
@@ -15,14 +16,19 @@ import {
 	DialogHeader,
 	DialogTitle
 } from "../../pure";
-import { Button } from "../../pure/button";
-import { RowVer } from "#/types/rowVer.ts";
+import type { ApiResponse, RequestOptions } from "#/api";
 
+
+export interface ISaveResource<TDto>
+{
+	add: (dto: TDto, options?: RequestOptions) => Promise<ApiResponse<TDto>>;
+	update: (dto: TDto, options?: RequestOptions) => Promise<ApiResponse<TDto>>;
+}
 
 export interface SaveButtonProps<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>
 {
 	entity: Signal<TEntity>;
-	service: BaseApiService<TDto>;
+	resource?: ISaveResource<TDto>;
 	label?: string;
 	variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
 	className?: string;
@@ -38,7 +44,7 @@ export interface SaveButtonProps<TEntity extends ChangeableEntity<TDto>, TDto ex
 export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
 	{
 		entity,
-		service,
+		resource,
 		label,
 		variant = "default",
 		className,
@@ -64,7 +70,7 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 
 	const loading = loadingSignal ?? internalLoading;
 
-	async function Save()
+	async function executeSave(): Promise<void>
 	{
 		if (!entity.value.validate())
 		{
@@ -77,71 +83,86 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 			return;
 		}
 
+		if (!resource)
+		{
+			return;
+		}
+
 		loading.value = true;
 
-		let result: RequestResult<TDto>;
-		const dto = entity.value.toJson();
-		const payload = transformData ? await transformData(dto) : dto;
-
-		result = entity.value.mode.value === ChangeableEntityMode.Create
-			? await service.Add(payload)
-			: await service.Update(payload);
-
-		if (result?.data)
+		try
 		{
-			entity.value.resetChanged();
-			entity.value.resetDirty();
-		}
+			const dto = entity.value.toJson();
+			const payload = transformData ? await transformData(dto) : dto;
+			const isCreate = entity.value.mode.value === ChangeableEntityMode.Create;
 
-		loading.value = false;
+			const result = isCreate
+				? await resource.add(payload, {silent: true})
+				: await resource.update(payload, {silent: true});
 
-		if (result.status === ResultStatus.UnprocessableEntity)
-		{
-			errors.value = result.errors;
-			showErrors.value = true;
-			return;
-		}
-
-		if (result.status === ResultStatus.PreconditionFailed)
-		{
-			warnings.value = result.warnings;
-			showWarnings.value = true;
-			return;
-		}
-
-		if (result.status === ResultStatus.Ok && result.data != undefined)
-		{
-			if (StatusWorkflow.isEntity(entity.value) && StatusWorkflow.isDto(result.data))
+			if (result.status === ResultStatus.UnprocessableEntity || (!result.ok && result.status === 422))
 			{
-				entity.value.transactionStatus.value = result.data.transactionStatus;
+				errors.value = result.errors.length > 0 ? result.errors : [result.title || t("saveButton.errors")];
+				showErrors.value = true;
+				return;
 			}
 
-			if (RowVer.isEntity(entity.value) && RowVer.isDto(result.data))
+			if (result.status === ResultStatus.PreconditionFailed || (!result.ok && result.status === 412))
 			{
-				entity.value.rowVer.value = result.data.rowVer;
+				warnings.value = result.warnings.length > 0 ? result.warnings : [result.title || t("saveButton.warnings")];
+				showWarnings.value = true;
+				return;
 			}
 
-			onSuccess?.(result.data);
+			if (result.ok && result.data !== undefined)
+			{
+				entity.value.resetChanged();
+				entity.value.resetDirty();
+
+				if (StatusWorkflow.isEntity(entity.value) && StatusWorkflow.isDto(result.data))
+				{
+					entity.value.transactionStatus.value = result.data.transactionStatus;
+				}
+				if (RowVer.isEntity(entity.value) && RowVer.isDto(result.data))
+				{
+					entity.value.rowVer.value = result.data.rowVer;
+				}
+
+				onSuccess?.(result.data);
+			}
+		}
+		finally
+		{
+			loading.value = false;
 		}
 	}
 
-	async function handleIgnoreWarnings()
+	async function handleIgnoreWarnings(): Promise<void>
 	{
 		showWarnings.value = false;
 		pendingIgnore.value = true;
 		entity.value.ignoreWarnings.value = true;
-		await Save();
-		pendingIgnore.value = false;
+		try
+		{
+			await executeSave();
+		}
+		finally
+		{
+			pendingIgnore.value = false;
+		}
 	}
 
-	const defaultLabel = service ? t("saveButton.saveChanges") : t("saveButton.save");
+	const defaultLabel = entity.value.mode.value === ChangeableEntityMode.Update
+		? t("saveButton.saveChanges")
+		: t("saveButton.save");
 	const buttonLabel = label ?? defaultLabel;
+	const isButtonDisabled = loading.value || pendingIgnore.value || (checkEntityChanges && !entity.value.hasChanges.value) || disabled;
 
 	return (
 		<>
 			<Button
-				disabled={ loading.value || pendingIgnore.value || (checkEntityChanges && !entity.value.hasChanges.value) || disabled }
-				onClick={ () => Save() }
+				disabled={ isButtonDisabled }
+				onClick={ () => void executeSave() }
 				variant={ variant }
 				className={ className }
 			>
@@ -149,13 +170,15 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 				{ buttonLabel }
 			</Button>
 
-			<Dialog open={ showWarnings.value } onOpenChange={ (open) => showWarnings.value = open }>
+			<Dialog open={ showWarnings.value } onOpenChange={ (open) => (showWarnings.value = open) }>
 				<DialogContent dir={ i18n.dir() }>
 					<DialogHeader>
 						<DialogTitle>{ t("saveButton.warnings") }</DialogTitle>
 						<DialogDescription asChild>
 							<ul className="mt-2 space-y-1 text-sm text-start">
-								{ warnings.value.map((w, i) => <li key={ i } className="text-orange-600">• { w }</li>) }
+								{ warnings.value.map((w, i) => (
+									<li key={ i } className="text-orange-600">• { w }</li>
+								)) }
 							</ul>
 						</DialogDescription>
 					</DialogHeader>
@@ -163,39 +186,41 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 						<DialogClose asChild>
 							<Button variant="outline">{ t("saveButton.cancel") }</Button>
 						</DialogClose>
-						<Button onClick={ handleIgnoreWarnings }>
+						<Button onClick={ () => void handleIgnoreWarnings() }>
 							{ t("saveButton.ignoreWarnings") }
 						</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
 
-			<Dialog open={ showErrors.value } onOpenChange={ (open) => showErrors.value = open }>
+			<Dialog open={ showErrors.value } onOpenChange={ (open) => (showErrors.value = open) }>
 				<DialogContent dir={ i18n.dir() }>
 					<DialogHeader>
 						<DialogTitle>{ t("saveButton.errors") }</DialogTitle>
 						<DialogDescription asChild>
 							<ul className="mt-2 space-y-1 text-sm text-start">
-								{ errors.value.map((w, i) => <li key={ i } className="text-red-600">• { w }</li>) }
+								{ errors.value.map((e, i) => (
+									<li key={ i } className="text-red-600">• { e }</li>
+								)) }
 							</ul>
 						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter>
 						<DialogClose asChild>
-							<Button variant="outline">{ t("saveButton.cancel") }</Button>
+							<Button variant="outline">{ t("changeDialog.close") }</Button>
 						</DialogClose>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
 
-			{ showConfirmationDialogSignal.value &&
-                <Dialog
-
-                    open={ showConfirmationDialogSignal.value }
-                    onOpenChange={ (open) => showConfirmationDialogSignal.value = open }>
+			{ showConfirmationDialogSignal.value && (
+				<Dialog
+					open={ showConfirmationDialogSignal.value }
+					onOpenChange={ (open) => (showConfirmationDialogSignal.value = open) }
+				>
 					{ confirmationDialog }
-                </Dialog>
-			}
+				</Dialog>
+			) }
 		</>
 	);
 }
