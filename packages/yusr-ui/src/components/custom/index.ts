@@ -20,7 +20,6 @@ export * from "./containers/yusrApp";
 // Dialogs
 export * from "./dialogs/changeDialog";
 export * from "./dialogs/deleteDialog";
-export * from "./dialogs/apiFeedbackDialog";
 export * from "./dialogs/commonChangeDialogProps.ts";
 
 // Currency

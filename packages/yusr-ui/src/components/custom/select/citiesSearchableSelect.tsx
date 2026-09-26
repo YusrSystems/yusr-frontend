@@ -14,7 +14,15 @@ export function CitiesSearchableSelect({...props}: SearchableSelectProps<CityDto
 		<SearchableSelect>
 			<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
 			<SearchableSelect.Content>
-				<SearchableSelect.SearchInput onSearch={ (searchInput) => BaseCubits.cities.search(searchInput) }/>
+				<SearchableSelect.SearchInput
+					onSearch={ (searchInput) =>
+					{
+						BaseCubits.cities.search(
+							searchInput,
+							(city) => `${ city.name } ${ city.country?.name ?? "" }`
+						);
+					} }
+				/>
 				<SearchableSelect.Command>
 					<SearchableSelect.NullOption { ...props } />
 					<CommandItems/>
@@ -53,7 +61,7 @@ const Option = React.memo(
 			>
 				<div className="flex flex-col flex-1 truncate min-w-0">
 					<span className="truncate text-sm">{ props.item.name }</span>
-					<span className="truncate text-xs text-muted-foreground">{ props.item.country.name }</span>
+					<span className="truncate text-xs text-muted-foreground">{ props.item.country?.name }</span>
 				</div>
 			</SearchableSelect.Option>
 		);

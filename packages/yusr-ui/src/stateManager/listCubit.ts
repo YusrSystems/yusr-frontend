@@ -2,7 +2,7 @@ import { signal, type Signal } from "@preact/signals-react";
 import { Cubit } from "./cubit";
 import type { Dto } from "./dto";
 import { PageEmpty, PageInitial, PageLoaded, PageLoading, type PageState } from "./pageStates";
-import type { ISimpleListResource } from "#/api";
+import type { IReadOnlyListResource } from "../api/createReadOnlyListResource";
 
 
 export class ListCubit<TDto extends Dto> extends Cubit<PageState>
@@ -11,10 +11,10 @@ export class ListCubit<TDto extends Dto> extends Cubit<PageState>
 	public entities: Signal<TDto[]>;
 	public count: Signal<number>;
 	public searchText: Signal<string | undefined>;
-	protected resource: ISimpleListResource<TDto>;
+	protected resource: IReadOnlyListResource<TDto>;
 	protected queryParams: Signal<Record<string, string | number | boolean> | undefined>;
 
-	constructor(resource: ISimpleListResource<TDto>)
+	constructor(resource: IReadOnlyListResource<TDto>)
 	{
 		super(new PageInitial());
 		this.resource = resource;
@@ -70,7 +70,7 @@ export class ListCubit<TDto extends Dto> extends Cubit<PageState>
 				return searchSelector(item).toLowerCase().includes(query);
 			}
 
-			const name = item.name ?? item.title ?? item.username ?? "";
+			const name = item.name ?? item.title ?? item.username ?? item.code ?? "";
 			const id = item.id ? String(item.id) : "";
 			return name.toLowerCase().includes(query) || id.includes(query);
 		});

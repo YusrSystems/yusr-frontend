@@ -14,7 +14,15 @@ export function CurrenciesSearchableSelect({...props}: SearchableSelectProps<Cur
 		<SearchableSelect>
 			<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
 			<SearchableSelect.Content>
-				<SearchableSelect.SearchInput onSearch={ (searchInput) => BaseCubits.currencies.search(searchInput) }/>
+				<SearchableSelect.SearchInput
+					onSearch={ (searchInput) =>
+					{
+						BaseCubits.currencies.search(
+							searchInput,
+							(currency) => `${ currency.name } ${ currency.code }`
+						);
+					} }
+				/>
 				<SearchableSelect.Command>
 					<SearchableSelect.NullOption { ...props } />
 					<CommandItems/>
