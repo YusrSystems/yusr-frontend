@@ -8,17 +8,17 @@ import {
 	categorizePermissions,
 	ChangeDialog,
 	type ChangeDialogTabProps,
-	type CommonChangeDialogProps,
 	Loading,
 	PermissionCard,
 	SelectField,
 	TextField
 } from "#/components/custom";
 import type { Role, RoleDto } from "#/entities";
-import { SystemApiService } from "#/networking";
 import { BaseServices } from "#/services";
-import type { RequestResult } from "#/types";
 import { ChangeableEntityMode } from "#/stateManager";
+import type { ISimpleListResource } from "#/api";
+import { rolesApi } from "./roles.api";
+import { systemApi } from "#/features/system/system.api.ts";
 
 
 export const ActionIcons: Record<string, React.ReactNode> = {
@@ -42,21 +42,24 @@ export type RolePreset<TRole = any> = {
 	onApply?: (entity: TRole) => void;
 };
 
-export type ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto> = {
+export type ChangeRoleDialogProps<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto> = {
+	dto?: TRoleDto;
+	resource?: ISimpleListResource<TRoleDto>;
+	onSuccess?: (newData: TRoleDto, mode: ChangeableEntityMode) => void;
 	labels: Record<string, string>;
 	permissionSections: PermissionSection[];
 	presets?: RolePreset<TRole>[];
 	onApplyPreset?: (preset: RolePreset<TRole>, entity: TRole) => void;
 	createEntity: (dto?: TRoleDto) => TRole;
 	onMount?: () => void;
-	onGet?: (entity: TRole, result: RequestResult<TRoleDto>) => void;
-	extraTabs?(entity: TRole): ChangeDialogTabProps[];
+	onGet?: (entity: TRole, data: TRoleDto) => void;
+	extraTabs?: (entity: TRole) => ChangeDialogTabProps[];
 };
 
 export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends RoleDto>(
 	{
 		dto,
-		service,
+		resource = rolesApi as unknown as ISimpleListResource<TRoleDto>,
 		onSuccess,
 		labels,
 		permissionSections,
@@ -66,13 +69,11 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 		onGet,
 		onMount,
 		extraTabs
-	}:
-	& CommonChangeDialogProps<TRoleDto>
-		& ChangeRoleDialog<TRole, TRoleDto>
+	}: ChangeRoleDialogProps<TRole, TRoleDto>
 )
 {
 	const {t} = useTranslation(["commonEntities", "common"]);
-	const entity = useMemo(() => signal<TRole>(createEntity(dto)), []);
+	const entity = useMemo(() => signal<TRole>(createEntity(dto)), [dto]);
 	const selectedPresetId = useMemo(() => signal<string | undefined>(undefined), []);
 	const delimiter = ".";
 	const isLoading = useMemo(() => signal(false), []);
@@ -84,29 +85,26 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 			isLoading.value = true;
 			if (BaseServices.auth.systemPermissions.value.length === 0)
 			{
-				const res = await new SystemApiService().GetSystemPermissions();
+				const res = await systemApi.getPermissions();
 				BaseServices.auth.systemPermissions.value = res.data ?? [];
 			}
-
 			if (entity.value.mode.value === ChangeableEntityMode.Create && BaseServices.auth.systemPermissions.value.length > 0)
 			{
 				entity.value.permissions.value = BaseServices.auth.systemPermissions.value;
 			}
-
 			if (entity.value.mode.value === ChangeableEntityMode.Update && entity.value?.id.value)
 			{
-				const res = await service.Get(entity.value.id.value);
-				if (res.data != undefined)
+				const res = await resource.get(entity.value.id.value);
+				if (res.data !== undefined)
 				{
 					entity.value.id.value = res.data.id;
 					entity.value.name.value = res.data.name;
 					entity.value.permissions.value = res.data.permissions;
-					onGet?.(entity.value, res);
+					onGet?.(entity.value, res.data);
 				}
 			}
 			isLoading.value = false;
 		};
-
 		void fetch();
 		onMount?.();
 	}, [entity.value?.id.value]);
@@ -116,14 +114,12 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 		if (!presetId || !presets) return;
 		const preset = presets.find((p) => p.id === presetId);
 		if (!preset) return;
-
 		const perms = typeof preset.permissions === "function" ? preset.permissions() : preset.permissions;
 		entity.value.permissions.value = [...perms];
 		if (!entity.value.name.value?.trim())
 		{
 			entity.value.name.value = preset.name;
 		}
-
 		preset.onApply?.(entity.value);
 		onApplyPreset?.(preset, entity.value);
 	};
@@ -140,7 +136,7 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 				<ChangeDialog.Close/>
 				<ChangeDialog.SaveButton<TRole, TRoleDto>
 					entity={ entity }
-					service={ service }
+					resource={ resource }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
@@ -150,7 +146,6 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 	function DialogBody()
 	{
 		useSignals();
-
 		const permissionTabs: ChangeDialogTabProps[] = permissionSections.map((section, index) => ({
 			active: index === 0,
 			icon: section.icon,
@@ -218,7 +213,6 @@ export function ChangeRoleDialog<TRole extends Role<TRoleDto>, TRoleDto extends 
 		}
 
 		const tabs = [...permissionTabs, ...(extraTabs?.(entity.value) ?? [])];
-
 		return <ChangeDialog.Tabbed tabs={ tabs }/>;
 	}
 }

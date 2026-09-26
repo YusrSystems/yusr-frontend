@@ -13,15 +13,14 @@ import {
 import { Store, StoreDto } from "@/core/data/store.ts";
 import { useMemo } from "react";
 import { signal } from "@preact/signals-react";
+import { storesApi } from "./stores.api";
 
 
-export default function ChangeStoreDialog({dto, service, onSuccess}: CommonChangeDialogProps<StoreDto>)
+export default function ChangeStoreDialog({dto, onSuccess}: CommonChangeDialogProps<StoreDto>)
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
-	const entity = useMemo(() => signal<Store>(dto ? Store.load(dto) : Store.create()), []);
+	const entity = useMemo(() => signal<Store>(dto ? Store.load(dto) : Store.create()), [dto]);
 
 	if (
 		(entity.value.mode.value === ChangeableEntityMode.Create
@@ -33,7 +32,8 @@ export default function ChangeStoreDialog({dto, service, onSuccess}: CommonChang
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.value.mode.value === ChangeableEntityMode.Create
+	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
+	const title = !isUpdateMode
 		? t("stores.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("stores.entityName") }`;
 
@@ -48,13 +48,11 @@ export default function ChangeStoreDialog({dto, service, onSuccess}: CommonChang
 					error={ entity.value.getError("name") }
 				/>
 			</FieldGroup>
-
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
-
 				<ChangeDialog.SaveButton<Store, StoreDto>
 					entity={ entity }
-					service={ service }
+					resource={ storesApi }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>

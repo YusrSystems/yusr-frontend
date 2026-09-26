@@ -1,39 +1,32 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { InputField, InputFieldOld, type InputFieldProps, type InputFieldPropsOld } from "./inputField";
+import { InputField, type InputFieldProps } from "./inputField";
+import { cn } from "#/utils/cn.ts";
 
-export function PasswordFieldOld(props: InputFieldPropsOld)
-{
-  const [show, setShow] = useState(false);
-
-  return (
-    <div className="relative">
-      <InputFieldOld { ...props } type={ show ? "text" : "password" } className="pl-10" />
-      <button
-        type="button"
-        onClick={ () => setShow(!show) }
-        className="absolute left-3 top-8.5 text-gray-500 hover:text-gray-700"
-      >
-        { show ? <EyeOff size={ 16 } /> : <Eye size={ 16 } /> }
-      </button>
-    </div>
-  );
-}
 
 export function PasswordField(props: InputFieldProps)
 {
-  const [show, setShow] = useState(false);
+	const [show, setShow] = useState(false);
+	const hasLabel = Boolean(props.label);
 
-  return (
-    <div className="relative">
-      <InputField { ...props } type={ show ? "text" : "password" } className="pl-10" />
-      <button
-        type="button"
-        onClick={ () => setShow(!show) }
-        className="absolute left-3 top-8.5 text-gray-500 hover:text-gray-700"
-      >
-        { show ? <EyeOff size={ 16 } /> : <Eye size={ 16 } /> }
-      </button>
-    </div>
-  );
+	return (
+		<div className="relative w-full">
+			<InputField
+				{ ...props }
+				type={ show ? "text" : "password" }
+				className={ cn("pe-10", props.className) }
+			/>
+			<button
+				type="button"
+				onClick={ () => setShow(!show) }
+				className={ cn(
+					"absolute inset-e-2.5 text-muted-foreground hover:text-foreground transition-colors",
+					hasLabel ? "top-8.5" : "top-1/2 -translate-y-1/2"
+				) }
+				aria-label={ show ? "Hide password" : "Show password" }
+			>
+				{ show ? <EyeOff size={ 16 }/> : <Eye size={ 16 }/> }
+			</button>
+		</div>
+	);
 }

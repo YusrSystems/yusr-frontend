@@ -27,31 +27,35 @@ export interface ISaveResource<TDto>
 
 export interface SaveButtonProps<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>
 {
-	entity: Signal<TEntity>;
+	entity?: Signal<TEntity>;
 	resource?: ISaveResource<TDto>;
+	action?: () => Promise<ApiResponse<any>>;
+	onSave?: () => void | Promise<void>;
+	onSuccess?: (newData: TDto) => void;
+	transformData?: (data: TDto) => TDto | Promise<TDto>;
 	label?: string;
 	variant?: "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
 	className?: string;
 	disabled?: boolean;
 	checkEntityChanges?: boolean;
-	onSuccess?: (newData: TDto) => void;
-	transformData?: (data: TDto) => TDto | Promise<TDto>;
 	showConfirmationDialog?: (entity: TEntity) => boolean;
 	confirmationDialog?: React.ReactNode;
 	loadingSignal?: Signal<boolean>;
 }
 
-export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends Dto>(
+export function SaveButton<TEntity extends ChangeableEntity<TDto> = any, TDto extends Dto = any>(
 	{
 		entity,
 		resource,
+		action,
+		onSave,
+		onSuccess,
+		transformData,
 		label,
 		variant = "default",
 		className,
 		disabled,
 		checkEntityChanges = true,
-		onSuccess,
-		transformData,
 		showConfirmationDialog,
 		confirmationDialog,
 		loadingSignal
@@ -72,6 +76,51 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 
 	async function executeSave(): Promise<void>
 	{
+		if (action)
+		{
+			loading.value = true;
+			try
+			{
+				const res = await action();
+				if (res.status === ResultStatus.UnprocessableEntity || (!res.ok && res.status === 422))
+				{
+					errors.value = res.errors.length > 0 ? res.errors : [res.title || t("saveButton.errors")];
+					showErrors.value = true;
+					return;
+				}
+				if (res.status === ResultStatus.PreconditionFailed || (!res.ok && res.status === 412))
+				{
+					warnings.value = res.warnings.length > 0 ? res.warnings : [res.title || t("saveButton.warnings")];
+					showWarnings.value = true;
+					return;
+				}
+			}
+			finally
+			{
+				loading.value = false;
+			}
+			return;
+		}
+
+		if (onSave)
+		{
+			loading.value = true;
+			try
+			{
+				await onSave();
+			}
+			finally
+			{
+				loading.value = false;
+			}
+			return;
+		}
+
+		if (!entity || !resource)
+		{
+			return;
+		}
+
 		if (!entity.value.validate())
 		{
 			return;
@@ -80,11 +129,6 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 		if (showConfirmationDialog?.(entity.value))
 		{
 			showConfirmationDialogSignal.value = true;
-			return;
-		}
-
-		if (!resource)
-		{
 			return;
 		}
 
@@ -141,7 +185,10 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 	{
 		showWarnings.value = false;
 		pendingIgnore.value = true;
-		entity.value.ignoreWarnings.value = true;
+		if (entity?.value?.ignoreWarnings)
+		{
+			entity.value.ignoreWarnings.value = true;
+		}
 		try
 		{
 			await executeSave();
@@ -152,11 +199,12 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto>, TDto extends 
 		}
 	}
 
-	const defaultLabel = entity.value.mode.value === ChangeableEntityMode.Update
-		? t("saveButton.saveChanges")
-		: t("saveButton.save");
+	const isUpdate = entity?.value?.mode?.value === ChangeableEntityMode.Update;
+	const defaultLabel = isUpdate ? t("saveButton.saveChanges") : t("saveButton.save");
 	const buttonLabel = label ?? defaultLabel;
-	const isButtonDisabled = loading.value || pendingIgnore.value || (checkEntityChanges && !entity.value.hasChanges.value) || disabled;
+
+	const hasChanges = entity?.value?.hasChanges ? entity.value.hasChanges.value : true;
+	const isButtonDisabled = loading.value || pendingIgnore.value || (!action && checkEntityChanges && !hasChanges) || disabled;
 
 	return (
 		<>

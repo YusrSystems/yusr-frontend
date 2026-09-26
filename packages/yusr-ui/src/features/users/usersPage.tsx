@@ -8,20 +8,26 @@ import { UserDto } from "#/entities";
 import { BaseCubits, BaseServices } from "#/services";
 import { ChangeableEntityMode, PageError, PageLoaded, PageLoading } from "#/stateManager";
 import { ChangeUserDialog } from "#/features";
+import { usersApi } from "./users.api";
 
 
 export function UsersPage()
 {
+	useSignals();
+	const {t} = useTranslation("commonEntities");
+
+	useEffect(() =>
+	{
+		if (BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Users, SystemPermissionsActions.Get))
+		{
+			void BaseCubits.users.init();
+		}
+	}, []);
+
 	if (!BaseServices.auth.hasAuth(YusrSystemPermissionsResources.Users, SystemPermissionsActions.Get))
 	{
 		return <UnauthorizedPage/>;
 	}
-
-	const {t} = useTranslation("commonEntities");
-	useEffect(() =>
-	{
-		BaseCubits.users.init();
-	}, []);
 
 	return (
 		<CrudPage<UserDto>>
@@ -39,35 +45,29 @@ export function UsersPage()
 			<CrudPage.SearchInput onSearch={ (searchText) => BaseCubits.users.search(searchText) }/>
 
 			<PageTable/>
-
-			<CrudPage.ChangeDialog
-				changeDialog={ (dto: UserDto | undefined, closeDialog) =>
-				{
-					return (
-						<ChangeUserDialog
-							dto={ dto }
-							service={ BaseServices.usersApi }
-							onSuccess={ (data, mode) =>
+			<CrudPage.ChangeDialog<UserDto>
+				changeDialog={ (dto, closeDialog) => (
+					<ChangeUserDialog
+						dto={ dto }
+						onSuccess={ (data, mode) =>
+						{
+							if (mode === ChangeableEntityMode.Create)
 							{
-								if (mode === ChangeableEntityMode.Create)
-								{
-									BaseCubits.users.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									BaseCubits.users.update(data);
-									BaseServices.auth.setLoggedInUser(data);
-								}
-							} }
-						/>
-					);
-				} }
+								BaseCubits.users.add(data);
+								closeDialog();
+							}
+							else if (mode === ChangeableEntityMode.Update)
+							{
+								BaseCubits.users.update(data);
+								BaseServices.auth.setLoggedInUser(data);
+							}
+						} }
+					/>
+				) }
 			/>
-
-			<CrudPage.DeleteDialog
+			<CrudPage.DeleteDialog<UserDto>
 				entityNameSelector={ (entity) => entity.username }
-				service={ BaseServices.usersApi }
+				resource={ usersApi }
 				onSuccess={ (entity) => BaseCubits.users.delete(entity) }
 			/>
 		</CrudPage>
@@ -98,7 +98,6 @@ function PageTable()
 	{
 		return <TablePreview.Loading/>;
 	}
-
 	if (BaseCubits.users.state.value instanceof PageLoaded)
 	{
 		return (
@@ -109,19 +108,22 @@ function PageTable()
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("users.userId"), rowStyles: "w-30"},
 						{rowBody: t("users.username"), rowStyles: "w-70"},
+						{rowBody: t("users.role"), rowStyles: "w-40"},
+						{rowBody: t("users.branch"), rowStyles: "w-40"},
 						{rowBody: t("users.isActive"), rowStyles: ""}
 					] }
-					tableRowMapper={ (
-						user
-					) => [{rowBody: `#${ user.id }`, rowStyles: ""}, {
-						rowBody: user.username,
-						rowStyles: "font-semibold"
-					}, {
-						rowBody: user.isActive ? t("users.active") : t("users.inactive"),
-						rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-							user.isActive ? "bg-green-300" : "bg-red-300"
-						} text-slate-800`
-					}] }
+					tableRowMapper={ (user) => [
+						{rowBody: `#${ user.id }`, rowStyles: ""},
+						{rowBody: user.username, rowStyles: "font-semibold"},
+						{rowBody: user.roleName || "-", rowStyles: ""},
+						{rowBody: user.branchName || "-", rowStyles: ""},
+						{
+							rowBody: user.isActive ? t("users.active") : t("users.inactive"),
+							rowStyles: `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+								user.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+							}`
+						}
+					] }
 					hasUpdatePermission={ BaseServices.auth.hasAuth(
 						YusrSystemPermissionsResources.Users,
 						SystemPermissionsActions.Update
@@ -131,23 +133,12 @@ function PageTable()
 						SystemPermissionsActions.Delete
 					) }
 				/>
-				<CrudPage.TablePagination
-					pageSize={ BaseCubits.users.pageSize.value }
-					totalNumber={ BaseCubits.users.count.value }
-					currentPage={ BaseCubits.users.currentPage.value }
-					onPageChanged={ (newPage) =>
-					{
-						BaseCubits.users.changePage(newPage);
-					} }
-				/>
 			</CrudPage.Table>
 		);
 	}
-
 	if (BaseCubits.users.state.value instanceof PageError)
 	{
 		return <TablePreview.Error/>;
 	}
-
 	return <TablePreview.Empty/>;
 }

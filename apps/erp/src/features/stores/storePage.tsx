@@ -18,12 +18,21 @@ import {
 import ChangeStoreDialog from "./changeStoreDialog";
 import { Cubits } from "@/core/services/cubits";
 import { APP_NAME } from "../../../appConfig.ts";
+import { storesApi } from "./stores.api";
 
 
 export default function StoresPage()
 {
+	useSignals();
 	const {t} = useTranslation("stocking");
-	useEffect(() => Cubits.stores.init(), []);
+
+	useEffect(() =>
+	{
+		if (Services.auth.hasAuth(SystemPermissionsResources.Stores, SystemPermissionsActions.Get))
+		{
+			void Cubits.stores.init();
+		}
+	}, []);
 
 	useEffect(() =>
 	{
@@ -54,37 +63,27 @@ export default function StoresPage()
 			<PageTable/>
 
 			<CrudPage.ChangeDialog
-				fetchEntity={ async (id: number) =>
-				{
-					const result = await Services.storesApi.Get(id);
-					return result.data;
-				} }
-				changeDialog={ (dto: StoreDto | undefined, closeDialog) =>
-				{
-					return (
-						<ChangeStoreDialog
-							dto={ dto }
-							service={ Services.storesApi }
-							onSuccess={ (data, mode) =>
+				changeDialog={ (dto: StoreDto | undefined, closeDialog) => (
+					<ChangeStoreDialog
+						dto={ dto }
+						onSuccess={ (data, mode) =>
+						{
+							if (mode === ChangeableEntityMode.Create)
 							{
-								if (mode === ChangeableEntityMode.Create)
-								{
-									Cubits.stores.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									Cubits.stores.update(data);
-								}
-							} }
-						/>
-					);
-				} }
+								Cubits.stores.add(data);
+								closeDialog();
+							}
+							else if (mode === ChangeableEntityMode.Update)
+							{
+								Cubits.stores.update(data);
+							}
+						} }
+					/>
+				) }
 			/>
-
-			<CrudPage.DeleteDialog
+			<CrudPage.DeleteDialog<StoreDto>
 				entityNameSelector={ (store) => store.name }
-				service={ Services.storesApi }
+				resource={ storesApi }
 				onSuccess={ (entity) => Cubits.stores.delete(entity) }
 			/>
 		</CrudPage>
@@ -125,44 +124,28 @@ function PageTable()
 					data={ Cubits.stores.entities.value }
 					headerRows={ [
 						{rowBody: "", rowStyles: "text-left w-12.5"},
-						{
-							rowBody: t("stores.storeId"),
-							rowStyles: "w-30"
-						},
+						{rowBody: t("stores.storeId"), rowStyles: "w-30"},
 						{rowBody: t("stores.storeName"), rowStyles: "w-70"}
 					] }
-					tableRowMapper={ (
-						store
-					) => [
+					tableRowMapper={ (store) => [
 						{rowBody: `#${ store.id }`, rowStyles: ""},
 						{rowBody: store.name, rowStyles: "font-semibold"}
 					] }
 					hasUpdatePermission={ Services.auth.hasAuth(
-						SystemPermissionsResources.Taxes,
+						SystemPermissionsResources.Stores,
 						SystemPermissionsActions.Update
 					) }
 					hasDeletePermission={ Services.auth.hasAuth(
-						SystemPermissionsResources.Taxes,
+						SystemPermissionsResources.Stores,
 						SystemPermissionsActions.Delete
 					) }
-				/>
-				<CrudPage.TablePagination
-					pageSize={ Cubits.stores.pageSize.value }
-					totalNumber={ Cubits.stores.count.value }
-					currentPage={ Cubits.stores.currentPage.value }
-					onPageChanged={ (newPage) =>
-					{
-						Cubits.stores.changePage(newPage);
-					} }
 				/>
 			</CrudPage.Table>
 		);
 	}
-
 	if (Cubits.stores.state.value instanceof PageError)
 	{
 		return <TablePreview.Error/>;
 	}
-
 	return <TablePreview.Empty/>;
 }

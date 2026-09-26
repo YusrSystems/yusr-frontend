@@ -1,12 +1,10 @@
-import { BaseApiService, BaseServices, RolesApiService, UserDto } from "yusr-ui";
+import { BaseApiService, BaseServices, UserDto } from "yusr-ui";
 import ItemsApiService from "../networking/itemApiService";
 import UnitsApiService from "../networking/unitApiService";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
 import { TaxDto } from "@/core/data/tax.ts";
-import type { StoreDto } from "@/core/data/store.ts";
-import type { ErpRoleDto } from "@/core/data/erpRole.ts";
 import { type StocktakingDto } from "@/core/data/stocktaking.ts";
 import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
 import type { CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
@@ -25,15 +23,16 @@ import VouchersApiService from "@/core/networking/vouchersApiService.ts";
 import PurchaseInvoicesApiService from "@/core/networking/purchaseInvoicesApiService.ts";
 import SalesInvoicesApiService from "@/core/networking/salesInvoicesApiService.ts";
 import type { QuotationDto } from "@/core/data/commercial/quotation.ts";
+import { erpRolesApi } from "@/features/roles/roles.api";
+import { storesApi } from "@/features/stores/stores.api";
 
 
 export class Services extends BaseServices
 {
 	public static override auth: ErpAuthService = new ErpAuthService();
-	public static override rolesApi = new RolesApiService<ErpRoleDto>();
-
+	public static readonly erpRolesApi = erpRolesApi;
+	public static readonly storesApi = storesApi;
 	public static readonly taxesApi = new BaseApiService<TaxDto>("Taxes");
-	public static readonly storesApi = new BaseApiService<StoreDto>("Stores");
 	public static readonly unitsApi = new UnitsApiService();
 	public static readonly pricingMethodsApi = new BaseApiService<PricingMethodDto>("PricingMethods");
 	public static readonly stocktakingApi = new BaseApiService<StocktakingDto>("Stocktakings");
@@ -62,6 +61,5 @@ export class Services extends BaseServices
 	static
 	{
 		BaseServices.auth = Services.auth;
-		BaseServices.rolesApi = Services.rolesApi;
 	}
 }

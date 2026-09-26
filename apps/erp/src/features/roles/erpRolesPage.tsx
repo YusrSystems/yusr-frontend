@@ -1,6 +1,5 @@
 import { ErpRole, ErpRoleDto } from "@/core/data/erpRole";
 import { Cubits } from "@/core/services/cubits";
-import { Services } from "@/core/services/services";
 import { WarehouseIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { RolesPage } from "yusr-ui";
@@ -8,6 +7,7 @@ import { getLabels, getPermissionSections, getRolePresets } from "./permissionCo
 import StorePermissionsList from "./storePermissionsList";
 import { APP_NAME } from "../../../appConfig.ts";
 import { useEffect } from "react";
+import { erpRolesApi } from "./roles.api";
 
 
 export function ErpRolesPage()
@@ -28,30 +28,29 @@ export function ErpRolesPage()
 			labels={ getLabels(t) }
 			permissionSections={ getPermissionSections(t) }
 			presets={ getRolePresets(t) }
-			rolesApiService={ Services.rolesApi }
+			resource={ erpRolesApi }
 			cubit={ Cubits.roles }
-			createEntity={ (dto) =>
-				dto
-					? ErpRole.load(dto)
-					: ErpRole.create() }
-			onMount={ () => Cubits.stores.init(undefined, {authOnly: false}) }
-			onGet={ (entity, result) =>
+			createEntity={ (dto) => (dto ? ErpRole.load(dto) : ErpRole.create()) }
+			onMount={ () => Cubits.stores.init({authOnly: false}) }
+			onGet={ (entity, data) =>
 			{
-				if (result.data != undefined)
+				if (data)
 				{
-					entity.authorizedStores.value = result.data?.authorizedStores;
+					entity.authorizedStores.value = data.authorizedStores ?? [];
 				}
 			} }
-			extraTabs={ (entity) => [{
-				active: false,
-				icon: WarehouseIcon,
-				label: t("permissions.resources.authorizedStores"),
-				content: (
-					<StorePermissionsList
-						authorizedStoreIds={ entity.authorizedStores }
-					/>
-				)
-			}] }
+			extraTabs={ (entity) => [
+				{
+					active: false,
+					icon: WarehouseIcon,
+					label: t("permissions.resources.authorizedStores"),
+					content: (
+						<StorePermissionsList
+							authorizedStoreIds={ entity.authorizedStores }
+						/>
+					)
+				}
+			] }
 		/>
 	);
 }

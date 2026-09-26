@@ -1,5 +1,5 @@
-import { StoreDto } from "@/core/data/store";
-import { createSimpleListResource } from "#/api";
+import { createSimpleListResource } from "yusr-ui";
+import { type StoreDto } from "@/core/data/store";
 
 
 export const storesApi = createSimpleListResource<StoreDto>("Stores");

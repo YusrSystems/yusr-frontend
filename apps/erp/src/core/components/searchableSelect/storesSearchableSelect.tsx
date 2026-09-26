@@ -1,5 +1,4 @@
 import { Cubits } from "@/core/services/cubits";
-import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
 import {
@@ -10,12 +9,12 @@ import {
 	type SearchableSelectProps
 } from "yusr-ui";
 import { StoreDto } from "../../data/store";
+import { storesApi } from "@/features/stores/stores.api";
 
 
 export default function StoresSearchableSelect({...props}: SearchableSelectProps<StoreDto>)
 {
 	useSignals();
-
 	return (
 		<SearchableSelect>
 			<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
@@ -41,20 +40,22 @@ export default function StoresSearchableSelect({...props}: SearchableSelectProps
 		{
 			return <SearchableSelect.Loading/>;
 		}
-
 		if (Cubits.stores.state.value instanceof PageLoaded && Cubits.stores.entities.value.length > 0)
 		{
 			return Cubits.stores.entities.value.map((entity) => (
 				<Option key={ entity.id } item={ entity } { ...props } />
 			));
 		}
-
 		return (
 			<SearchableSelect.AddOptionButton
 				onCreate={ async (searchText) =>
 				{
-					await Services.storesApi.Add({name: searchText} as StoreDto);
-					Cubits.stores.init();
+					if (!searchText) return;
+					const res = await storesApi.add({name: searchText} as StoreDto);
+					if (res.ok && res.data)
+					{
+						Cubits.stores.add(res.data);
+					}
 				} }
 			/>
 		);
@@ -76,8 +77,8 @@ const Option = React.memo(
 				<SearchableSelect.DeleteOptionButton
 					onDelete={ async () =>
 					{
-						const result = await Services.storesApi.Delete(props.item.id);
-						if (result.status === 200)
+						const result = await storesApi.delete(props.item.id);
+						if (result.ok)
 						{
 							Cubits.stores.delete(props.item);
 						}
