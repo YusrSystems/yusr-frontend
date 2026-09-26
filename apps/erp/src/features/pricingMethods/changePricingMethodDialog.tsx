@@ -13,17 +13,16 @@ import {
 import PricingMethod, { type PricingMethodDto } from "@/core/data/pricingMethod.ts";
 import { useMemo } from "react";
 import { signal } from "@preact/signals-react";
+import { pricingMethodsApi } from "./pricingMethods.api";
 
 
 export default function ChangePricingMethodDialog(
-	{dto, service, onSuccess}: CommonChangeDialogProps<PricingMethodDto>
+	{dto, onSuccess}: CommonChangeDialogProps<PricingMethodDto>
 )
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
-	const entity = useMemo(() => signal<PricingMethod>(dto ? PricingMethod.load(dto) : PricingMethod.create()), []);
+	const entity = useMemo(() => signal<PricingMethod>(dto ? PricingMethod.load(dto) : PricingMethod.create()), [dto]);
 
 	if (
 		(entity.value.mode.value === ChangeableEntityMode.Create
@@ -35,7 +34,8 @@ export default function ChangePricingMethodDialog(
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.value.mode.value === ChangeableEntityMode.Create
+	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
+	const title = !isUpdateMode
 		? t("pricingMethods.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("pricingMethods.entityName") }`;
 
@@ -55,7 +55,7 @@ export default function ChangePricingMethodDialog(
 
 				<ChangeDialog.SaveButton<PricingMethod, PricingMethodDto>
 					entity={ entity }
-					service={ service }
+					resource={ pricingMethodsApi }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>

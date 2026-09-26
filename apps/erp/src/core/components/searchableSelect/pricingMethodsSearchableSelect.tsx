@@ -1,6 +1,5 @@
 import type { PricingMethodDto } from "@/core/data/pricingMethod";
 import { Cubits } from "@/core/services/cubits";
-import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
 import {
@@ -10,6 +9,7 @@ import {
 	type SearchableSelectOptionProps,
 	type SearchableSelectProps
 } from "yusr-ui";
+import { pricingMethodsApi } from "@/features/pricingMethods/pricingMethods.api";
 
 
 export default function PricingMethodsSearchableSelect(
@@ -58,8 +58,12 @@ export default function PricingMethodsSearchableSelect(
 			<SearchableSelect.AddOptionButton
 				onCreate={ async (searchText) =>
 				{
-					await Services.pricingMethodsApi.Add({name: searchText} as PricingMethodDto);
-					Cubits.pricingMethods.init();
+					if (!searchText) return;
+					const res = await pricingMethodsApi.add({name: searchText} as PricingMethodDto);
+					if (res.ok && res.data)
+					{
+						Cubits.pricingMethods.add(res.data);
+					}
 				} }
 			/>
 		);
@@ -81,8 +85,8 @@ const Option = React.memo(
 				<SearchableSelect.DeleteOptionButton
 					onDelete={ async () =>
 					{
-						const result = await Services.unitsApi.Delete(props.item.id);
-						if (result.status === 200)
+						const result = await pricingMethodsApi.delete(props.item.id);
+						if (result.ok)
 						{
 							Cubits.pricingMethods.delete(props.item);
 						}

@@ -18,12 +18,21 @@ import {
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import ChangePricingMethodDialog from "./changePricingMethodDialog";
 import { APP_NAME } from "../../../appConfig.ts";
+import { pricingMethodsApi } from "./pricingMethods.api";
 
 
 export default function PricingMethodsPage()
 {
+	useSignals();
 	const {t} = useTranslation("stocking");
-	useEffect(() => Cubits.pricingMethods.init(), []);
+
+	useEffect(() =>
+	{
+		if (Services.auth.hasAuth(SystemPermissionsResources.PricingMethods, SystemPermissionsActions.Get))
+		{
+			void Cubits.pricingMethods.init();
+		}
+	}, []);
 
 	useEffect(() =>
 	{
@@ -56,32 +65,28 @@ export default function PricingMethodsPage()
 			<PageTable/>
 
 			<CrudPage.ChangeDialog
-				changeDialog={ (dto: PricingMethodDto | undefined, closeDialog) =>
-				{
-					return (
-						<ChangePricingMethodDialog
-							dto={ dto }
-							service={ Services.pricingMethodsApi }
-							onSuccess={ (data, mode) =>
+				changeDialog={ (dto: PricingMethodDto | undefined, closeDialog) => (
+					<ChangePricingMethodDialog
+						dto={ dto }
+						onSuccess={ (data, mode) =>
+						{
+							if (mode === ChangeableEntityMode.Create)
 							{
-								if (mode === ChangeableEntityMode.Create)
-								{
-									Cubits.pricingMethods.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									Cubits.pricingMethods.update(data);
-								}
-							} }
-						/>
-					);
-				} }
+								Cubits.pricingMethods.add(data);
+								closeDialog();
+							}
+							else if (mode === ChangeableEntityMode.Update)
+							{
+								Cubits.pricingMethods.update(data);
+							}
+						} }
+					/>
+				) }
 			/>
 
 			<CrudPage.DeleteDialog<PricingMethodDto>
 				entityNameSelector={ (pricingMethod) => pricingMethod.name }
-				service={ Services.pricingMethodsApi }
+				resource={ pricingMethodsApi }
 				onSuccess={ (entity) => Cubits.pricingMethods.delete(entity) }
 			/>
 		</CrudPage>
@@ -119,16 +124,15 @@ function PageTable()
 			<CrudPage.Table>
 				<CrudPage.TableBody<PricingMethodDto>
 					data={ Cubits.pricingMethods.entities.value }
-					headerRows={ [{rowBody: "", rowStyles: "text-left w-12.5"}, {
-						rowBody: t("pricingMethods.methodId"),
-						rowStyles: "w-30"
-					}, {rowBody: t("pricingMethods.methodName"), rowStyles: "w-70"}] }
-					tableRowMapper={ (
-						pricingMethod
-					) => [{rowBody: `#${ pricingMethod.id }`, rowStyles: ""}, {
-						rowBody: pricingMethod.name,
-						rowStyles: "font-semibold"
-					}] }
+					headerRows={ [
+						{rowBody: "", rowStyles: "text-left w-12.5"},
+						{rowBody: t("pricingMethods.methodId"), rowStyles: "w-30"},
+						{rowBody: t("pricingMethods.methodName"), rowStyles: "w-70"}
+					] }
+					tableRowMapper={ (pricingMethod) => [
+						{rowBody: `#${ pricingMethod.id }`, rowStyles: ""},
+						{rowBody: pricingMethod.name, rowStyles: "font-semibold"}
+					] }
 					hasUpdatePermission={ Services.auth.hasAuth(
 						SystemPermissionsResources.PricingMethods,
 						SystemPermissionsActions.Update
@@ -137,15 +141,6 @@ function PageTable()
 						SystemPermissionsResources.PricingMethods,
 						SystemPermissionsActions.Delete
 					) }
-				/>
-				<CrudPage.TablePagination
-					pageSize={ Cubits.pricingMethods.pageSize.value }
-					totalNumber={ Cubits.pricingMethods.count.value }
-					currentPage={ Cubits.pricingMethods.currentPage.value }
-					onPageChanged={ (newPage) =>
-					{
-						Cubits.pricingMethods.changePage(newPage);
-					} }
 				/>
 			</CrudPage.Table>
 		);

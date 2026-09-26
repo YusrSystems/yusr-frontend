@@ -18,12 +18,21 @@ import {
 } from "yusr-ui";
 import ChangeTaxDialog from "./changeTaxDialog";
 import { APP_NAME } from "../../../appConfig.ts";
+import { taxesApi } from "./taxes.api";
 
 
 export default function TaxesPage()
 {
+	useSignals();
 	const {t} = useTranslation("accounting");
-	useEffect(() => Cubits.taxes.init(), []);
+
+	useEffect(() =>
+	{
+		if (Services.auth.hasAuth(SystemPermissionsResources.Taxes, SystemPermissionsActions.Get))
+		{
+			void Cubits.taxes.init();
+		}
+	}, []);
 
 	useEffect(() =>
 	{
@@ -54,32 +63,28 @@ export default function TaxesPage()
 			<PageTable/>
 
 			<CrudPage.ChangeDialog<TaxDto>
-				changeDialog={ (dto, closeDialog) =>
-				{
-					return (
-						<ChangeTaxDialog
-							dto={ dto }
-							service={ Services.taxesApi }
-							onSuccess={ (data, mode) =>
+				changeDialog={ (dto, closeDialog) => (
+					<ChangeTaxDialog
+						dto={ dto }
+						onSuccess={ (data, mode) =>
+						{
+							if (mode === ChangeableEntityMode.Create)
 							{
-								if (mode === ChangeableEntityMode.Create)
-								{
-									Cubits.taxes.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									Cubits.taxes.update(data);
-								}
-							} }
-						/>
-					);
-				} }
+								Cubits.taxes.add(data);
+								closeDialog();
+							}
+							else if (mode === ChangeableEntityMode.Update)
+							{
+								Cubits.taxes.update(data);
+							}
+						} }
+					/>
+				) }
 			/>
 
 			<CrudPage.DeleteDialog<TaxDto>
 				entityNameSelector={ (tax) => tax.name }
-				service={ Services.taxesApi }
+				resource={ taxesApi }
 				onSuccess={ (dto) => Cubits.taxes.delete(dto) }
 			/>
 		</CrudPage>
@@ -124,9 +129,7 @@ function PageTable()
 						{rowBody: t("taxes.percentage"), rowStyles: "w-30"},
 						{rowBody: t("taxes.isPrimary"), rowStyles: ""}
 					] }
-					tableRowMapper={ (
-						tax
-					) => [
+					tableRowMapper={ (tax) => [
 						{rowBody: `#${ tax.id }`, rowStyles: ""},
 						{rowBody: tax.name, rowStyles: "font-semibold"},
 						{
@@ -148,15 +151,6 @@ function PageTable()
 						SystemPermissionsResources.Taxes,
 						SystemPermissionsActions.Delete
 					) }
-				/>
-				<CrudPage.TablePagination
-					pageSize={ Cubits.taxes.pageSize.value }
-					totalNumber={ Cubits.taxes.count.value }
-					currentPage={ Cubits.taxes.currentPage.value }
-					onPageChanged={ (newPage) =>
-					{
-						Cubits.taxes.changePage(newPage);
-					} }
 				/>
 			</CrudPage.Table>
 		);

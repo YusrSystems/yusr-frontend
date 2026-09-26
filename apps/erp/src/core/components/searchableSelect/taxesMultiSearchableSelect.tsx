@@ -16,7 +16,13 @@ export default function TaxesMultiSearchableSelect(
 			<MultiSearchableSelect.Trigger disabled={ props.disabled }/>
 			<MultiSearchableSelect.Content>
 				<MultiSearchableSelect.SearchInput
-					onSearch={ (text) => Cubits.taxes.search(text) }
+					onSearch={ (text) =>
+					{
+						Cubits.taxes.search(
+							text,
+							(tax) => `${ tax.name } ${ tax.percentage }%`
+						);
+					} }
 				/>
 				<MultiSearchableSelect.Command>
 					<CommandItems/>
@@ -43,7 +49,10 @@ export default function TaxesMultiSearchableSelect(
 					key={ tax.id }
 					item={ tax }
 				>
-					<MultiSearchableSelect.OptionBody label={ tax.name }/>
+					<div className="flex items-center justify-between w-full">
+						<span className="font-normal">{ tax.name }</span>
+						<span className="text-xs text-muted-foreground font-mono">%{ tax.percentage }</span>
+					</div>
 				</MultiSearchableSelect.Option>
 			));
 		}

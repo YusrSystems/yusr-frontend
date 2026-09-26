@@ -18,12 +18,21 @@ import {
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources.ts";
 import ChangeUnitDialog from "./changeUnitDialog";
 import { APP_NAME } from "../../../appConfig.ts";
+import { unitsApi } from "./units.api";
 
 
 export default function UnitsPage()
 {
+	useSignals();
 	const {t} = useTranslation("stocking");
-	useEffect(() => Cubits.units.init(), []);
+
+	useEffect(() =>
+	{
+		if (Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Get))
+		{
+			void Cubits.units.init();
+		}
+	}, []);
 
 	useEffect(() =>
 	{
@@ -54,32 +63,32 @@ export default function UnitsPage()
 			<PageTable/>
 
 			<CrudPage.ChangeDialog
-				changeDialog={ (dto: UnitDto | undefined, closeDialog) =>
+				fetchEntity={ async (id: number) =>
 				{
-					return (
-						<ChangeUnitDialog
-							dto={ dto }
-							service={ Services.unitsApi }
-							onSuccess={ (data, mode) =>
-							{
-								if (mode === ChangeableEntityMode.Create)
-								{
-									Cubits.units.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									Cubits.units.update(data);
-								}
-							} }
-						/>
-					);
+					const result = await unitsApi.get(id);
+					return result.data;
 				} }
+				changeDialog={ (dto: UnitDto | undefined, closeDialog) => (
+					<ChangeUnitDialog
+						dto={ dto }
+						onSuccess={ (data, mode) =>
+						{
+							if (mode === ChangeableEntityMode.Create)
+							{
+								Cubits.units.add(data);
+								closeDialog();
+							}
+							else if (mode === ChangeableEntityMode.Update)
+							{
+								Cubits.units.update(data);
+							}
+						} }
+					/>
+				) }
 			/>
-
-			<CrudPage.DeleteDialog
+			<CrudPage.DeleteDialog<UnitDto>
 				entityNameSelector={ (unit) => unit.name }
-				service={ Services.unitsApi }
+				resource={ unitsApi }
 				onSuccess={ (entity) => Cubits.units.delete(entity) }
 			/>
 		</CrudPage>
@@ -117,13 +126,15 @@ function PageTable()
 			<CrudPage.Table>
 				<CrudPage.TableBody<UnitDto>
 					data={ Cubits.units.entities.value }
-					headerRows={ [{rowBody: "", rowStyles: "text-left w-12.5"}, {
-						rowBody: t("units.unitId"),
-						rowStyles: "w-30"
-					}, {rowBody: t("units.unitName"), rowStyles: "w-70"}] }
-					tableRowMapper={ (
-						unit
-					) => [{rowBody: `#${ unit.id }`, rowStyles: ""}, {rowBody: unit.name, rowStyles: "font-semibold"}] }
+					headerRows={ [
+						{rowBody: "", rowStyles: "text-left w-12.5"},
+						{rowBody: t("units.unitId"), rowStyles: "w-30"},
+						{rowBody: t("units.unitName"), rowStyles: "w-70"}
+					] }
+					tableRowMapper={ (unit) => [
+						{rowBody: `#${ unit.id }`, rowStyles: ""},
+						{rowBody: unit.name, rowStyles: "font-semibold"}
+					] }
 					hasUpdatePermission={ Services.auth.hasAuth(
 						SystemPermissionsResources.Units,
 						SystemPermissionsActions.Update
@@ -132,15 +143,6 @@ function PageTable()
 						SystemPermissionsResources.Units,
 						SystemPermissionsActions.Delete
 					) }
-				/>
-				<CrudPage.TablePagination
-					pageSize={ Cubits.units.pageSize.value }
-					totalNumber={ Cubits.units.count.value }
-					currentPage={ Cubits.units.currentPage.value }
-					onPageChanged={ (newPage) =>
-					{
-						Cubits.units.changePage(newPage);
-					} }
 				/>
 			</CrudPage.Table>
 		);

@@ -16,15 +16,14 @@ import {
 import { Tax, TaxDto } from "@/core/data/tax.ts";
 import { useMemo } from "react";
 import { signal } from "@preact/signals-react";
+import { taxesApi } from "./taxes.api";
 
 
-export default function ChangeTaxDialog({dto, service, onSuccess}: CommonChangeDialogProps<TaxDto>)
+export default function ChangeTaxDialog({dto, onSuccess}: CommonChangeDialogProps<TaxDto>)
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
-	const entity = useMemo(() => signal<Tax>(dto ? Tax.load(dto) : Tax.create()), []);
+	const entity = useMemo(() => signal<Tax>(dto ? Tax.load(dto) : Tax.create()), [dto]);
 
 	if (
 		(entity.value.mode.value === ChangeableEntityMode.Create
@@ -36,7 +35,8 @@ export default function ChangeTaxDialog({dto, service, onSuccess}: CommonChangeD
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.value.mode.value === ChangeableEntityMode.Create
+	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
+	const title = !isUpdateMode
 		? t("taxes.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("taxes.entityName") }`;
 
@@ -74,11 +74,8 @@ export default function ChangeTaxDialog({dto, service, onSuccess}: CommonChangeD
 
 				<ChangeDialog.SaveButton<Tax, TaxDto>
 					entity={ entity }
-					service={ service }
-					onSuccess={ (data) =>
-					{
-						onSuccess?.(data, entity.value.mode.value);
-					} }
+					resource={ taxesApi }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>

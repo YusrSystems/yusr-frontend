@@ -1,6 +1,5 @@
 import type { UnitDto } from "@/core/data/unit";
 import { Cubits } from "@/core/services/cubits";
-import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
 import {
@@ -10,6 +9,7 @@ import {
 	type SearchableSelectOptionProps,
 	type SearchableSelectProps
 } from "yusr-ui";
+import { unitsApi } from "@/features/units/units.api";
 
 
 export default function UnitsSearchableSelect({...props}: SearchableSelectProps<UnitDto>)
@@ -53,8 +53,12 @@ export default function UnitsSearchableSelect({...props}: SearchableSelectProps<
 			<SearchableSelect.AddOptionButton
 				onCreate={ async (searchText) =>
 				{
-					await Services.unitsApi.Add({name: searchText} as UnitDto);
-					Cubits.units.init();
+					if (!searchText) return;
+					const res = await unitsApi.add({name: searchText} as UnitDto);
+					if (res.ok && res.data)
+					{
+						Cubits.units.add(res.data);
+					}
 				} }
 			/>
 		);
@@ -76,8 +80,8 @@ const Option = React.memo(
 				<SearchableSelect.DeleteOptionButton
 					onDelete={ async () =>
 					{
-						const result = await Services.unitsApi.Delete(props.item.id);
-						if (result.status === 200)
+						const result = await unitsApi.delete(props.item.id);
+						if (result.ok)
 						{
 							Cubits.units.delete(props.item);
 						}

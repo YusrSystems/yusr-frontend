@@ -1,14 +1,11 @@
 import { BaseApiService, BaseServices, UserDto } from "yusr-ui";
 import ItemsApiService from "../networking/itemApiService";
-import UnitsApiService from "../networking/unitApiService";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
-import { TaxDto } from "@/core/data/tax.ts";
 import { type StocktakingDto } from "@/core/data/stocktaking.ts";
 import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
 import type { CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
-import type { PricingMethodDto } from "@/core/data/pricingMethod.ts";
 import { type AccountDto } from "@/core/data/account.ts";
 import type { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { type BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
@@ -25,6 +22,9 @@ import SalesInvoicesApiService from "@/core/networking/salesInvoicesApiService.t
 import type { QuotationDto } from "@/core/data/commercial/quotation.ts";
 import { erpRolesApi } from "@/features/roles/roles.api";
 import { storesApi } from "@/features/stores/stores.api";
+import { pricingMethodsApi } from "@/features/pricingMethods/pricingMethods.api";
+import { taxesApi } from "@/features/taxes/taxes.api";
+import { unitsApi } from "@/features/units/units.api";
 
 
 export class Services extends BaseServices
@@ -32,9 +32,9 @@ export class Services extends BaseServices
 	public static override auth: ErpAuthService = new ErpAuthService();
 	public static readonly erpRolesApi = erpRolesApi;
 	public static readonly storesApi = storesApi;
-	public static readonly taxesApi = new BaseApiService<TaxDto>("Taxes");
-	public static readonly unitsApi = new UnitsApiService();
-	public static readonly pricingMethodsApi = new BaseApiService<PricingMethodDto>("PricingMethods");
+	public static readonly pricingMethodsApi = pricingMethodsApi;
+	public static readonly taxesApi = taxesApi;
+	public static readonly unitsApi = unitsApi;
 	public static readonly stocktakingApi = new BaseApiService<StocktakingDto>("Stocktakings");
 	public static readonly itemsSettlementsApi = new BaseApiService<StocktakingDto>("ItemSettlements");
 	public static readonly itemTransfersApi = new BaseApiService<ItemTransferDto>("ItemTransfers");

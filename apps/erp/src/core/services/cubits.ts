@@ -63,14 +63,17 @@ import type { PurchaseInvoiceDto } from "@/core/data/commercial/purchaseInvoice.
 import type { QuotationDto } from "@/core/data/commercial/quotation.ts";
 import { erpRolesApi } from "@/features/roles/roles.api";
 import { storesApi } from "@/features/stores/stores.api";
+import { pricingMethodsApi } from "@/features/pricingMethods/pricingMethods.api";
+import { taxesApi } from "@/features/taxes/taxes.api";
+import { unitsApi } from "@/features/units/units.api";
 
 
 export class Cubits extends BaseCubits
 {
 	public static readonly stores = new ListCubit<StoreDto>(storesApi);
-	public static readonly taxes = new PageCubit<TaxDto>(Services.taxesApi);
-	public static readonly units = new PageCubit<UnitDto>(Services.unitsApi);
-	public static readonly pricingMethods = new PageCubit<PricingMethodDto>(Services.pricingMethodsApi);
+	public static readonly pricingMethods = new ListCubit<PricingMethodDto>(pricingMethodsApi);
+	public static readonly taxes = new ListCubit<TaxDto>(taxesApi);
+	public static readonly units = new ListCubit<UnitDto>(unitsApi);
 	public static readonly stocktaking = new PageCubit<StocktakingDto>(Services.stocktakingApi);
 	public static readonly itemsSettlements = new PageCubit<StocktakingDto>(Services.itemsSettlementsApi);
 	public static readonly itemTransfers = new PageCubit<ItemTransferDto>(Services.itemTransfersApi);

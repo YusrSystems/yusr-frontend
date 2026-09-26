@@ -13,15 +13,14 @@ import {
 } from "yusr-ui";
 import { useMemo } from "react";
 import { signal } from "@preact/signals-react";
+import { unitsApi } from "./units.api";
 
 
-export default function ChangeUnitDialog({dto, service, onSuccess}: CommonChangeDialogProps<UnitDto>)
+export default function ChangeUnitDialog({dto, onSuccess}: CommonChangeDialogProps<UnitDto>)
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
-	const entity = useMemo(() => signal<Unit>(dto ? Unit.load(dto) : Unit.create()), []);
+	const entity = useMemo(() => signal<Unit>(dto ? Unit.load(dto) : Unit.create()), [dto]);
 
 	if (
 		(entity.value.mode.value === ChangeableEntityMode.Create
@@ -33,7 +32,8 @@ export default function ChangeUnitDialog({dto, service, onSuccess}: CommonChange
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const title = entity.value.mode.value === ChangeableEntityMode.Create
+	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
+	const title = !isUpdateMode
 		? t("units.addNewTitle")
 		: `${ t("common:crudRow.edit") } ${ t("units.entityName") }`;
 
@@ -53,7 +53,7 @@ export default function ChangeUnitDialog({dto, service, onSuccess}: CommonChange
 
 				<ChangeDialog.SaveButton<Unit, UnitDto>
 					entity={ entity }
-					service={ service }
+					resource={ unitsApi }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>

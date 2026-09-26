@@ -19,7 +19,15 @@ export default function TaxesSearchableSelect({...props}: SearchableSelectProps<
 		<SearchableSelect>
 			<SearchableSelect.Trigger label={ props.label } disabled={ props.disabled }/>
 			<SearchableSelect.Content>
-				<SearchableSelect.SearchInput onSearch={ (searchInput) => Cubits.taxes.search(searchInput) }/>
+				<SearchableSelect.SearchInput
+					onSearch={ (searchInput) =>
+					{
+						Cubits.taxes.search(
+							searchInput,
+							(tax) => `${ tax.name } ${ tax.percentage }%`
+						);
+					} }
+				/>
 				<SearchableSelect.Command>
 					<SearchableSelect.NullOption { ...props } />
 					<CommandItems/>
@@ -56,7 +64,10 @@ const Option = React.memo(
 				labelSelector="name"
 				{ ...props }
 			>
-				<SearchableSelect.OptionBody label={ props.item.name }/>
+				<div className="flex items-center justify-between w-full">
+					<span className="font-normal">{ props.item.name }</span>
+					<span className="text-xs text-muted-foreground font-mono">%{ props.item.percentage }</span>
+				</div>
 			</SearchableSelect.Option>
 		);
 	}
