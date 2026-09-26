@@ -22,19 +22,18 @@ export class ApiClient
 {
 	static async get<T>(url: string, options?: RequestOptions): Promise<ApiResponse<T>>
 	{
-		const response = await fetch(url, {
+		return this.executeRequest<T>(url, {
 			method: "GET",
 			credentials: "include",
 			...options,
 			headers: this.defaultHeaders(options?.headers)
-		});
-		return this.handleResponse<T>(response, options);
+		}, options);
 	}
 
 	static async post<T>(url: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>>
 	{
 		const isFormData = body instanceof FormData;
-		const response = await fetch(url, {
+		return this.executeRequest<T>(url, {
 			method: "POST",
 			credentials: "include",
 			...options,
@@ -43,14 +42,13 @@ export class ApiClient
 				...(!isFormData && body !== undefined ? {"Content-Type": "application/json"} : {})
 			}),
 			body: isFormData ? body : body !== undefined ? JSON.stringify(body) : undefined
-		});
-		return this.handleResponse<T>(response, options);
+		}, options);
 	}
 
 	static async put<T>(url: string, body?: unknown, options?: RequestOptions): Promise<ApiResponse<T>>
 	{
 		const isFormData = body instanceof FormData;
-		const response = await fetch(url, {
+		return this.executeRequest<T>(url, {
 			method: "PUT",
 			credentials: "include",
 			...options,
@@ -59,19 +57,58 @@ export class ApiClient
 				...(!isFormData && body !== undefined ? {"Content-Type": "application/json"} : {})
 			}),
 			body: isFormData ? body : body !== undefined ? JSON.stringify(body) : undefined
-		});
-		return this.handleResponse<T>(response, options);
+		}, options);
 	}
 
 	static async delete<T>(url: string, options?: RequestOptions): Promise<ApiResponse<T>>
 	{
-		const response = await fetch(url, {
+		return this.executeRequest<T>(url, {
 			method: "DELETE",
 			credentials: "include",
 			...options,
 			headers: this.defaultHeaders(options?.headers)
-		});
-		return this.handleResponse<T>(response, options);
+		}, options);
+	}
+
+	private static async executeRequest<T>(
+		url: string,
+		init: RequestInit,
+		options?: RequestOptions
+	): Promise<ApiResponse<T>>
+	{
+		try
+		{
+			const response = await fetch(url, init);
+			return await this.handleResponse<T>(response, options);
+		}
+		catch (error: any)
+		{
+			if (error?.name === "AbortError")
+			{
+				return {
+					data: undefined,
+					status: 0,
+					ok: false,
+					title: "Request Aborted",
+					errors: ["Request was aborted"],
+					warnings: []
+				};
+			}
+
+			if (!options?.silent)
+			{
+				toast.error("فشل الاتصال بالخادم، يرجى التحقق من اتصال الإنترنت");
+			}
+
+			return {
+				data: undefined,
+				status: 0,
+				ok: false,
+				title: "Network Error",
+				errors: [error?.message || "فشل الاتصال بالخادم"],
+				warnings: []
+			};
+		}
 	}
 
 	private static defaultHeaders(extra?: HeadersInit): HeadersInit

@@ -18,6 +18,7 @@ import {
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import {
+	apiClient,
 	Sidebar,
 	SideBarCompanyData,
 	SidebarContent,
@@ -30,8 +31,7 @@ import {
 	SideBarSecondaryMenu,
 	SideBarUserData,
 	SystemPermissionsActions,
-	useSidebar,
-	YusrApiHelper
+	useSidebar
 } from "yusr-ui";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import { Services } from "@/core/services/services";
@@ -343,13 +343,9 @@ export function SideBar({...props}: React.ComponentProps<typeof Sidebar>)
 
 	const LogoutHandler = async () =>
 	{
-		const result = await YusrApiHelper.Post(`/api/Logout`);
-
-		if (result.status === 200 || result.status === 204)
-		{
-			await AppNavigator.navigate("/login", true);
-			Services.auth.logout();
-		}
+		await apiClient.post<{ message: string }>("/api/Logout");
+		Services.auth.logout();
+		await AppNavigator.navigate("/login", true);
 	};
 
 	const {i18n} = useTranslation("common");

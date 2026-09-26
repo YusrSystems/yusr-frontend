@@ -1,14 +1,9 @@
 import { AppNavigator } from "@/app/appNavigator";
-import { Setting, SettingDto } from "@/core/data/setting";
+import { Setting, type SettingDto } from "@/core/data/setting";
 import { Services } from "@/core/services/services";
-import { Cubit, User, UserDto, YusrApiHelper } from "yusr-ui";
+import { apiClient, Cubit, User, type UserDto } from "yusr-ui";
 import { Registration } from "@/core/data/registration.ts";
-import {
-	type RegistrationState,
-	RegistrationStateError,
-	RegistrationStateInitial,
-	RegistrationStateLoading
-} from "./registrationState";
+import { type RegistrationState, RegistrationStateInitial, RegistrationStateLoading } from "./registrationState";
 
 
 export class RegistrationCubit extends Cubit<RegistrationState>
@@ -37,37 +32,30 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 		{
 			return;
 		}
-		this.emit(new RegistrationStateLoading());
-		try
-		{
-			const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
-				`/api/Register`,
-				this.formData.toJson()
-			);
 
-			if (result.status === 200 && result.data)
-			{
-				Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
-				await AppNavigator.navigate("/dashboard", true);
-				return;
-			}
-			else
-			{
-				this.emit(new RegistrationStateError());
-			}
-		}
-		catch
+		this.emit(new RegistrationStateLoading());
+
+		const result = await apiClient.post<{ user: UserDto; setting: SettingDto }>(
+			"/api/Register",
+			this.formData.toJson()
+		);
+
+		if (result.ok && result.data)
 		{
-			this.emit(new RegistrationStateError());
+			Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
+			await AppNavigator.navigate("/dashboard", true);
+			return;
 		}
+
+		this.emit(new RegistrationStateInitial());
 	}
 
-	public async externalAuthRegister(
-		token: string)
+	public async externalAuthRegister(token: string)
 	{
 		this.emit(new RegistrationStateLoading());
-		const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
-			`/api/Login/external-login`,
+
+		const result = await apiClient.post<{ user: UserDto; setting: SettingDto }>(
+			"/api/Login/external-login",
 			{
 				provider: "google",
 				token,
@@ -75,17 +63,13 @@ export class RegistrationCubit extends Cubit<RegistrationState>
 			}
 		);
 
-		this.emit(new RegistrationStateInitial());
-
-		if (result.status === 200 && result.data)
+		if (result.ok && result.data)
 		{
 			Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
 			await AppNavigator.navigate("/dashboard", true);
 			return;
 		}
-		else
-		{
-			this.emit(new RegistrationStateError());
-		}
+
+		this.emit(new RegistrationStateInitial());
 	}
 }
