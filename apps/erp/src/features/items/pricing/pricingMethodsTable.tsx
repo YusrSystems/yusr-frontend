@@ -39,10 +39,10 @@ export function PricingMethodsTable({entity}: { entity: Item })
 
 	return (
 		<div className="space-y-4 pt-5 border-t">
-			<div className="flex justify-between items-center pb-2">
+			<div className="flex justify-between items-center pb-2 gap-2">
 				<h3 className="font-semibold text-base flex items-center gap-2">
-					<Package className="w-4 h-4 text-muted-foreground"/>
-					{ t("items.packagingUnits", "وحدات المادة") }
+					<Package className="w-4 h-4 text-muted-foreground shrink-0"/>
+					<span>{ t("items.packagingUnits", "وحدات المادة") }</span>
 				</h3>
 				{ !isService && (
 					<Button type="button" size="sm" onClick={ addUoMUnit } className="h-8 shrink-0 text-xs">
@@ -55,20 +55,21 @@ export function PricingMethodsTable({entity}: { entity: Item })
 				{ entity.uoMs.value.map((uoM, uoMIdx) => (
 					<div
 						key={ `${ uoM.id.value }-${ uoMIdx }` }
-						className="rounded-md border bg-card shadow-sm transition-all duration-200"
+						className="rounded-md border bg-card shadow-sm transition-all duration-200 overflow-hidden"
 					>
-						<div className="flex items-center justify-between px-4 py-2.5 bg-muted/30 border-b">
-							<div className="flex items-center gap-2.5">
+						<div
+							className="flex items-center justify-between px-3 sm:px-4 py-2.5 bg-muted/30 border-b gap-2">
+							<div className="flex items-center gap-2 min-w-0 flex-1">
 								<div
-									className="flex items-center justify-center w-5 h-5 rounded bg-primary/10 text-primary text-[11px] font-bold">
+									className="flex items-center justify-center w-5 h-5 rounded bg-primary/10 text-primary text-[11px] font-bold shrink-0">
 									{ uoMIdx + 1 }
 								</div>
-								<span className="font-medium text-sm">
+								<span className="font-medium text-sm truncate">
 									{ uoM.unitName.value || t("items.newUnit", "وحدة جديدة") }
 								</span>
 								{ uoM.unitId.value === entity.sellUnitId.value && (
 									<span
-										className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+										className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-primary/10 text-primary shrink-0">
 										{ t("items.baseUnit", "الوحدة الأساسية") }
 									</span>
 								) }
@@ -79,7 +80,7 @@ export function PricingMethodsTable({entity}: { entity: Item })
 									type="button"
 									variant="ghost"
 									size="icon"
-									className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+									className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
 									onClick={ () => removeUoMUnit(uoMIdx) }
 									title={ t("items.deleteUnit", "حذف الوحدة") }
 								>
@@ -88,7 +89,7 @@ export function PricingMethodsTable({entity}: { entity: Item })
 							) }
 						</div>
 
-						<div className="p-4 space-y-4">
+						<div className="p-3 sm:p-4 space-y-4">
 							<div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
 								<FormField label={ t("items.unit") } error={ uoM.getError("unitId") }>
 									<UnitsSearchableSelect
@@ -122,7 +123,7 @@ export function PricingMethodsTable({entity}: { entity: Item })
 										<Button
 											type="button"
 											variant="outline"
-											className="rounded-s-none border-s-0 bg-muted/30 hover:bg-muted text-muted-foreground"
+											className="rounded-s-none border-s-0 bg-muted/30 hover:bg-muted text-muted-foreground shrink-0"
 											onClick={ () => uoM.generateBarcode() }
 											title="توليد"
 										>
@@ -136,18 +137,18 @@ export function PricingMethodsTable({entity}: { entity: Item })
 							</div>
 
 							<div className="pt-2">
-								<div className="rounded-md border border-border/60 bg-background overflow-hidden">
-									<table className="w-full text-sm text-start">
+								<div className="rounded-md border border-border/60 bg-background overflow-x-auto">
+									<table className="w-full min-w-[420px] text-sm text-start">
 										<thead>
 										<tr className="bg-muted/30 border-b border-border/60 text-muted-foreground">
 											<th className="py-2.5 px-3 w-10 text-center font-medium text-xs">#</th>
-											<th className="py-2.5 px-3 text-start font-medium text-xs">
+											<th className="py-2.5 px-3 text-start font-medium text-xs min-w-[140px]">
 												<span className="flex items-center gap-1.5">
-													<Receipt className="w-3.5 h-3.5"/>
+													<Receipt className="w-3.5 h-3.5 shrink-0"/>
 													{ t("items.pricingMethod", "فئة البيع") }
 												</span>
 											</th>
-											<th className="py-2.5 px-3 text-start font-medium text-xs w-[35%]">
+											<th className="py-2.5 px-3 text-start font-medium text-xs min-w-[120px]">
 												{ t("items.sellingPrice", {unit: entity.sellUnitName.value}) }
 											</th>
 											{ canSeeBarcode && (

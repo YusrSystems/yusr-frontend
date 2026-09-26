@@ -57,9 +57,9 @@ export default function BasicTab({entity}: { entity: Item })
 
 	return (
 		<div className="space-y-6 animate-in fade-in">
-			<div className="flex flex-col lg:flex-row gap-8">
-				<div className="flex-1 space-y-4">
-					<FieldsSection columns={ 2 }>
+			<div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8">
+				<div className="flex-1 space-y-4 min-w-0">
+					<FieldsSection columns={ {base: 1, md: 2} }>
 						<TextField
 							label={ t("items.itemName") }
 							required
@@ -142,7 +142,7 @@ export default function BasicTab({entity}: { entity: Item })
 					/>
 				</div>
 
-				<div className="w-full lg:w-108 shrink-0 bg-muted/10 p-4 rounded-lg border">
+				<div className="w-full lg:w-108 shrink-0 bg-muted/10 p-3 sm:p-4 rounded-lg border overflow-hidden">
 					<StorageFileField
 						label={ t("items.itemImages") }
 						file={ entity.files.value }
@@ -158,7 +158,6 @@ export default function BasicTab({entity}: { entity: Item })
 							className: "bg-yellow-500 text-white",
 							onClick: (index) => handleSetPrimary(index)
 						}] }
-
 						error={ entity.getError("files") }
 					/>
 				</div>

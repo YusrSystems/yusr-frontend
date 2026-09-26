@@ -64,47 +64,40 @@ export function StorageFileField(
 	useSignals();
 	const {t} = useTranslation("common");
 
-	// 1. Normalize to array
 	const filesArray = useMemo(() =>
 	{
 		return Array.isArray(file) ? file : file ? [file] : [];
 	}, [file]);
 
-	// 2. Filter active files using YOUR hook's logic
 	const activeFiles = useMemo(() =>
 	{
 		return filesArray.filter((f) => showPreview(f));
 	}, [filesArray, showPreview]);
 
-	// 3. Handle file input change and reset the input
 	const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) =>
 	{
 		onFileChange(e);
-		// Reset input so the same file can be selected again if removed
 		if (e.target)
 		{
 			e.target.value = "";
 		}
 	}, [onFileChange]);
 
-	// 4. Render Preview (Image or PDF)
 	const renderPreview = useCallback((f: StorageFile) =>
 	{
 		const isPdf = isPDF(f);
 		const src = getFileSrc(f);
-
 		if (isPdf)
 		{
 			return (
 				<div className="flex flex-col items-center justify-center w-full h-full bg-muted/30">
 					<FileText className="h-12 w-12 text-red-500 mb-2"/>
 					<span className="text-[10px] font-medium text-muted-foreground px-2 truncate w-full text-center">
-            { t("storageFileField.pdfDocument") }
-          </span>
+						{ t("storageFileField.pdfDocument") }
+					</span>
 				</div>
 			);
 		}
-
 		return (
 			<img
 				src={ src }
@@ -116,27 +109,21 @@ export function StorageFileField(
 	}, [getFileSrc, t]);
 
 	return (
-		<FormField
-			error={ error }
-		>
-
-			<div className="space-y-3 flex flex-col items-center justify-center">
+		<FormField error={ error }>
+			<div className="space-y-3 flex flex-col items-center justify-center w-full">
 				{ label && (
-					<label className="text-xs font-medium text-muted-foreground pb-10">{ label }</label>
+					<label className="text-xs font-medium text-muted-foreground">{ label }</label>
 				) }
-
 				{ activeFiles.length > 0
 					? (
-						<div className="space-y-2 w-100 max-w-100 mt-3">
+						<div className="space-y-2 w-full max-w-full sm:w-100 sm:max-w-100 mt-2">
 							<Carousel opts={ {direction: dir, align: "start", dragFree: true} }
 							          className="w-full relative group">
 								<CarouselContent>
 									{ activeFiles.map((f, index) =>
 									{
-										// Generate a safe, unique key
 										const uniqueKey = f.url || (f.base64File ? f.base64File.substring(0, 40) : `fallback-key-${ index }`);
 										const originalIndex = filesArray.indexOf(f);
-
 										return (
 											<CarouselItem key={ uniqueKey } className="basis-full">
 												<div className="p-1">
@@ -178,10 +165,8 @@ export function StorageFileField(
 																</DialogContent>
 															</Dialog>
 
-															{ /* Action Buttons */ }
 															<div
 																className="absolute top-2 right-2 flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity z-30">
-																{ /* Delete */ }
 																<Button
 																	type="button"
 																	size="icon"
@@ -196,7 +181,6 @@ export function StorageFileField(
 																	<X className="h-4 w-4"/>
 																</Button>
 
-																{ /* Download */ }
 																<Button
 																	type="button"
 																	size="icon"
@@ -212,7 +196,6 @@ export function StorageFileField(
 																	<Download className="h-4 w-4"/>
 																</Button>
 
-																{ /* Extra actions */ }
 																{ extraActions?.map((action, i) => (
 																	<Button
 																		key={ i }
@@ -237,7 +220,6 @@ export function StorageFileField(
 										);
 									}) }
 								</CarouselContent>
-
 								{ activeFiles.length > 1 && (
 									<>
 										<CarouselPrevious
@@ -247,7 +229,6 @@ export function StorageFileField(
 									</>
 								) }
 							</Carousel>
-
 							<Button
 								type="button"
 								variant="outline"
@@ -261,11 +242,10 @@ export function StorageFileField(
 						</div>
 					)
 					: (
-						/* Empty State */
 						<div
 							onClick={ () => fileInputRef.current?.click() }
 							className={ cn(
-								"flex flex-col items-center justify-center w-100 mt-3 h-50 border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/50 transition-colors bg-muted/5",
+								"flex flex-col items-center justify-center w-full max-w-full sm:w-100 mt-2 h-44 sm:h-50 border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/50 transition-colors bg-muted/5",
 								isInvalid && "border-red-500 bg-red-50"
 							) }
 						>
@@ -276,7 +256,6 @@ export function StorageFileField(
 								className="text-[10px] text-muted-foreground/60 mt-1">{ t("storageFileField.uploadHint") }</span>
 						</div>
 					) }
-
 				{ mode === "edit" && (
 					<InputOld
 						type="file"
@@ -288,7 +267,6 @@ export function StorageFileField(
 					/>
 				) }
 			</div>
-
 		</FormField>
 	);
 }

@@ -21,7 +21,7 @@ export default function StorageTab({entity}: { entity: Item; })
 
 	return (
 		<div className="space-y-6 animate-in fade-in">
-			<div className="grid grid-cols-2 gap-6">
+			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
 				<NumberField
 					label={ t("items.minQuantity") }
 					value={ entity.minQuantity }
@@ -43,17 +43,15 @@ export default function StorageTab({entity}: { entity: Item; })
 			</div>
 
 			<div className="pt-4">
-				<div className="flex justify-between items-center mb-4">
-					<h3 className="font-bold">{ t("items.storageMethods") }</h3>
-					<Button type="button" size="sm" onClick={ addStore }>
+				<div className="flex justify-between items-center mb-4 gap-2">
+					<h3 className="font-bold text-sm sm:text-base">{ t("items.storageMethods") }</h3>
+					<Button type="button" size="sm" onClick={ addStore } className="shrink-0 text-xs">
 						<Plus className="w-4 h-4 me-2"/> { t("items.addStorageMethod") }
 					</Button>
 				</div>
 
-				<div
-					className="bg-muted/20 rounded-lg border overflow-hidden"
-				>
-					<table className="w-full text-sm text-right">
+				<div className="bg-muted/20 rounded-lg border overflow-x-auto">
+					<table className="w-full min-w-[500px] text-sm text-right">
 						<thead className="bg-muted/50 text-muted-foreground">
 						<tr>
 							<th className="p-3 w-16 text-start">{ t("items.number") }</th>

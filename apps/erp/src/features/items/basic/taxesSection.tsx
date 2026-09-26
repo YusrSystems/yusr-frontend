@@ -53,8 +53,8 @@ export default function TaxesSection({entity}: { entity: Item; })
 				)
 				: (
 					<div className="space-y-3 animate-in fade-in slide-in-from-top-2">
-						<div className="bg-muted/20 rounded-lg border overflow-hidden">
-							<table className="w-full text-sm text-right">
+						<div className="bg-muted/20 rounded-lg border overflow-x-auto">
+							<table className="w-full min-w-[380px] text-sm text-right">
 								<thead className="bg-muted/50 text-muted-foreground">
 								<tr>
 									<th className="p-3 w-16">{ t("items.number") }</th>
@@ -69,7 +69,7 @@ export default function TaxesSection({entity}: { entity: Item; })
 									return (
 										<tr key={ index } className="border-t border-muted">
 											<td className="p-3 font-bold">{ index + 1 }</td>
-											<td className="p-3">
+											<td className="p-3 min-w-[160px]">
 												<FormField
 													label=""
 													error={ tax.getError("taxId") }
@@ -84,7 +84,7 @@ export default function TaxesSection({entity}: { entity: Item; })
 													/>
 												</FormField>
 											</td>
-											<td className="p-3">
+											<td className="p-3 min-w-[100px]">
 												<TextField
 													label=""
 													value={ tax.taxPercentage }
@@ -96,7 +96,7 @@ export default function TaxesSection({entity}: { entity: Item; })
 													type="button"
 													variant="ghost"
 													size="icon"
-													className={ `text-red-500 hover:text-red-700 hover:bg-red-100` }
+													className="text-red-500 hover:text-red-700 hover:bg-red-100"
 													onClick={ () =>
 													{
 														entity.itemTaxes.value = entity.itemTaxes.value.filter((_, i) => i !== index);

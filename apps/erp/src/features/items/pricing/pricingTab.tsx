@@ -15,7 +15,7 @@ export default function PricingTab({entity}: { entity: Item; })
 
 	return (
 		<div className="space-y-6 animate-in fade-in">
-			<FieldsSection columns={ 3 }>
+			<FieldsSection columns={ {base: 1, sm: 2, md: 3} }>
 				<FormField
 					label={ t("items.baseUnit") }
 					required={ entity.type.value !== ItemType.Service }

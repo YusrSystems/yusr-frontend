@@ -117,7 +117,7 @@ export default function ChangeItemDialog({dto, onSuccess}: CommonChangeDialogPro
 	}
 
 	return (
-		<ChangeDialog className="sm:max-w-[80%]">
+		<ChangeDialog className="sm:max-w-[80%] max-h-[94dvh] flex flex-col overflow-hidden">
 			<ChangeDialog.Header title={ title }/>
 			<ChangeDialog.Tabbed
 				tabs={ [
