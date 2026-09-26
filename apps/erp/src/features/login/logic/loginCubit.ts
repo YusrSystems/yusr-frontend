@@ -1,8 +1,8 @@
 import { AppNavigator } from "@/app/appNavigator";
-import { Setting, SettingDto } from "@/core/data/setting";
+import { Setting, type SettingDto } from "@/core/data/setting";
 import { Services } from "@/core/services/services";
 import { signal } from "@preact/signals-react";
-import { Cubit, LoginRequest, User, UserDto, YusrApiHelper } from "yusr-ui";
+import { apiClient, Cubit, LoginRequest, User, type UserDto } from "yusr-ui";
 import { LoginInitialState, LoginLoadingState } from "./loginState";
 
 
@@ -16,9 +16,11 @@ export default class LoginCubit extends Cubit<LoginInitialState>
 		username: localStorage.getItem(usernameStorageItemName) ?? "",
 		password: ""
 	});
+
 	public rememberMe = signal(
 		!!(localStorage.getItem(emailStorageItemName) || localStorage.getItem(usernameStorageItemName))
 	);
+
 	private readonly _origin: string;
 
 	constructor(origin: string)
@@ -37,30 +39,27 @@ export default class LoginCubit extends Cubit<LoginInitialState>
 		this.performRememberMe();
 		this.emit(new LoginLoadingState());
 
-		const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
-			`/api/Login`,
+		const result = await apiClient.post<{ user: UserDto; setting: SettingDto }>(
+			"/api/Login",
 			this.formData.toJson()
 		);
 
-		if (result.status === 200 && result.data)
+		if (result.ok && result.data)
 		{
 			Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
 			await AppNavigator.navigate(this._origin, true);
 			return;
 		}
-		else
-		{
-			this.emit(new LoginInitialState());
-		}
+
+		this.emit(new LoginInitialState());
 	}
 
-	public async externalAuthRegister(
-		token: string)
+	public async externalAuthRegister(token: string)
 	{
 		this.emit(new LoginLoadingState());
 
-		const result = await YusrApiHelper.Post<{ user: UserDto; setting: SettingDto; }>(
-			`/api/Login/external-login`,
+		const result = await apiClient.post<{ user: UserDto; setting: SettingDto }>(
+			"/api/Login/external-login",
 			{
 				provider: "google",
 				token,
@@ -68,16 +67,14 @@ export default class LoginCubit extends Cubit<LoginInitialState>
 			}
 		);
 
-		if (result.status === 200 && result.data)
+		if (result.ok && result.data)
 		{
 			Services.auth.login(new User(result.data.user), new Setting(result.data.setting));
-			await AppNavigator.navigate("/dashboard", true);
+			await AppNavigator.navigate(this._origin, true);
 			return;
 		}
-		else
-		{
-			this.emit(new LoginInitialState());
-		}
+
+		this.emit(new LoginInitialState());
 	}
 
 	private performRememberMe(): void

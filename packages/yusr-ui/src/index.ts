@@ -8,6 +8,7 @@ export * from "./hooks/index";
 export * from "./utils/cn";
 
 export * from "./auth";
+export * from "./api";
 export * from "./entities";
 export * from "./features";
 export * from "./networking";
