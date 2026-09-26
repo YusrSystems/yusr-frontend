@@ -1,5 +1,4 @@
 import { BaseApiService, BaseServices, UserDto } from "yusr-ui";
-import ItemsApiService from "../networking/itemApiService";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
@@ -10,8 +9,6 @@ import { type AccountDto } from "@/core/data/account.ts";
 import type { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { type BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import type { PartnerDto } from "@/core/data/partner.ts";
-import { CategoryDto } from "@/core/data/category.ts";
-import { BrandDto } from "@/core/data/brand.ts";
 import PosSessionApiService from "@/core/networking/posSessionApiService.ts";
 import PosCheckoutApiService from "@/core/networking/posCheckoutApiService.ts";
 import PosTerminalsApiService from "@/core/networking/posTerminalsApiService.ts";
@@ -25,6 +22,9 @@ import { storesApi } from "@/features/stores/stores.api";
 import { pricingMethodsApi } from "@/features/pricingMethods/pricingMethods.api";
 import { taxesApi } from "@/features/taxes/taxes.api";
 import { unitsApi } from "@/features/units/units.api";
+import { brandsApi } from "@/features/brands/brands.api";
+import { categoriesApi } from "@/features/itemCategories/categories.api";
+import { itemsApi } from "@/features/items/items.api";
 
 
 export class Services extends BaseServices
@@ -35,11 +35,13 @@ export class Services extends BaseServices
 	public static readonly pricingMethodsApi = pricingMethodsApi;
 	public static readonly taxesApi = taxesApi;
 	public static readonly unitsApi = unitsApi;
+	public static readonly brandsApi = brandsApi;
+	public static readonly categoriesApi = categoriesApi;
+	public static readonly itemsApi = itemsApi;
 	public static readonly stocktakingApi = new BaseApiService<StocktakingDto>("Stocktakings");
 	public static readonly itemsSettlementsApi = new BaseApiService<StocktakingDto>("ItemSettlements");
 	public static readonly itemTransfersApi = new BaseApiService<ItemTransferDto>("ItemTransfers");
 	public static readonly costAdjustmentsApi = new BaseApiService<CostAdjustmentDto>("CostAdjustments");
-	public static readonly itemsApi = new ItemsApiService();
 	public static readonly accountsApi = new BaseApiService<AccountDto>("Accounts");
 	public static readonly partnersApi = new BaseApiService<PartnerDto>("Partners");
 	public static readonly paymentMethodsApi = new BaseApiService<PaymentMethodDto>("PaymentMethods");
@@ -54,8 +56,6 @@ export class Services extends BaseServices
 	public static readonly posCheckoutApi = new PosCheckoutApiService();
 	public static readonly posTerminalsApi = new PosTerminalsApiService();
 	public static readonly usersApi = new BaseApiService<UserDto>("Users");
-	public static readonly categoriesApi = new BaseApiService<CategoryDto>("Categories");
-	public static readonly brandsApi = new BaseApiService<BrandDto>("Brands");
 	public static readonly fiscalYearsApi = new FiscalYearsApiService();
 
 	static

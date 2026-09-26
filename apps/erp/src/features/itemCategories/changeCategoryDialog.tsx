@@ -1,4 +1,3 @@
-import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import {
 	ChangeableEntityMode,
@@ -13,11 +12,11 @@ import { Category, CategoryDto } from "@/core/data/category.ts";
 import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";
+import { categoriesApi } from "./categories.api";
 
 
 export default function ChangeCategoryDialog({
 	dto,
-	service = Services.categoriesApi,
 	onSuccess,
 	initDto
 }: CommonChangeDialogProps<CategoryDto> & {
@@ -25,7 +24,6 @@ export default function ChangeCategoryDialog({
 })
 {
 	useSignals();
-
 	const entity = useMemo(
 		() => signal<Category>(dto ? Category.load(dto) : Category.create(initDto)),
 		[dto, initDto]
@@ -33,7 +31,7 @@ export default function ChangeCategoryDialog({
 
 	useEffect(() =>
 	{
-		Cubits.categories.init();
+		void Cubits.categories.init();
 	}, []);
 
 	const parentOptions = useMemo(() =>
@@ -74,7 +72,7 @@ export default function ChangeCategoryDialog({
 				<ChangeDialog.Close/>
 				<ChangeDialog.SaveButton<Category, CategoryDto>
 					entity={ entity }
-					service={ service }
+					resource={ categoriesApi }
 					transformData={ (data) =>
 					{
 						if (data.parentCategoryId === 0)

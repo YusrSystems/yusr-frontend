@@ -12,13 +12,13 @@ import {
 	TextField
 } from "yusr-ui";
 import { Cubits } from "@/core/services/cubits.ts";
-import { Services } from "@/core/services/services.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useMemo, useState } from "react";
 import { signal } from "@preact/signals-react";
 import { BrandDto } from "@/core/data/brand.ts";
 import { Edit2, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { brandsApi } from "@/features/brands/brands.api";
 
 
 export default function BrandsMultiSearchableSelect(
@@ -27,9 +27,7 @@ export default function BrandsMultiSearchableSelect(
 {
 	useSignals();
 	const {i18n} = useTranslation();
-
 	const [searchText, setSearchText] = useState("");
-
 	const isDialogOpen = useMemo(() => signal(false), []);
 	const editingBrand = useMemo(() => signal<BrandDto | undefined>(undefined), []);
 	const brandName = useMemo(() => signal(""), []);
@@ -55,8 +53,8 @@ export default function BrandsMultiSearchableSelect(
 
 	const handleDelete = async (brand: BrandDto) =>
 	{
-		const res = await Services.brandsApi.Delete(brand.id);
-		if (res.status === 200)
+		const res = await brandsApi.delete(brand.id);
+		if (res.ok)
 		{
 			Cubits.brands.delete(brand);
 			if (props.ids?.value.includes(brand.id))
@@ -79,11 +77,11 @@ export default function BrandsMultiSearchableSelect(
 		{
 			if (editingBrand.value)
 			{
-				const res = await Services.brandsApi.Update({
+				const res = await brandsApi.update({
 					...editingBrand.value,
 					name: brandName.value
 				});
-				if (res.data)
+				if (res.ok && res.data)
 				{
 					Cubits.brands.update(res.data);
 					if (props.ids?.value.includes(res.data.id) && props.labels?.value)
@@ -95,8 +93,8 @@ export default function BrandsMultiSearchableSelect(
 			}
 			else
 			{
-				const res = await Services.brandsApi.Add({name: brandName.value} as BrandDto);
-				if (res.data)
+				const res = await brandsApi.add({name: brandName.value} as BrandDto);
+				if (res.ok && res.data)
 				{
 					Cubits.brands.add(res.data);
 					if (props.ids)
@@ -134,12 +132,10 @@ export default function BrandsMultiSearchableSelect(
 					<MultiSearchableSelect.Command>
 						<CommandItems searchText={ searchText }/>
 					</MultiSearchableSelect.Command>
-
 					<MultiSearchableSelect.Footer/>
 				</MultiSearchableSelect.Content>
 			</MultiSearchableSelect>
-
-			<Dialog open={ isDialogOpen.value } onOpenChange={ (open) => isDialogOpen.value = open }>
+			<Dialog open={ isDialogOpen.value } onOpenChange={ (open) => (isDialogOpen.value = open) }>
 				<DialogContent dir={ i18n.dir() } className="sm:max-w-md">
 					<DialogHeader>
 						<DialogTitle>{ editingBrand.value ? "تعديل العلامة التجارية" : "إضافة علامة تجارية جديدة" }</DialogTitle>
@@ -152,7 +148,7 @@ export default function BrandsMultiSearchableSelect(
 						/>
 					</div>
 					<DialogFooter>
-						<Button variant="outline" onClick={ () => isDialogOpen.value = false }>
+						<Button variant="outline" onClick={ () => (isDialogOpen.value = false) }>
 							إلغاء
 						</Button>
 						<Button
@@ -174,11 +170,9 @@ export default function BrandsMultiSearchableSelect(
 		{
 			return <MultiSearchableSelect.Loading/>;
 		}
-
 		if (Cubits.brands.state.value instanceof PageLoaded)
 		{
 			const hasExactMatch = Cubits.brands.entities.value.some(c => c.name.toLowerCase() === searchText.toLowerCase());
-
 			return (
 				<>
 					{ Cubits.brands.entities.value.map((brand) => (
@@ -195,14 +189,16 @@ export default function BrandsMultiSearchableSelect(
 										e.stopPropagation();
 										handleOpenEdit(brand);
 									} } className="p-1 text-muted-foreground hover:text-primary transition-colors">
-										<Edit2 className="w-3.5 h-3.5"/></button>
+										<Edit2 className="w-3.5 h-3.5"/>
+									</button>
 									<button type="button" onClick={ (e) =>
 									{
 										e.preventDefault();
 										e.stopPropagation();
 										handleDelete(brand);
 									} } className="p-1 text-muted-foreground hover:text-destructive transition-colors">
-										<Trash2 className="w-3.5 h-3.5"/></button>
+										<Trash2 className="w-3.5 h-3.5"/>
+									</button>
 								</div>
 							</div>
 						</MultiSearchableSelect.Option>
@@ -223,7 +219,6 @@ export default function BrandsMultiSearchableSelect(
 				</>
 			);
 		}
-
 		return <MultiSearchableSelect.Empty/>;
 	}
 }

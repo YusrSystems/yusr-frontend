@@ -41,6 +41,7 @@ import TaxesMultiSearchableSelect from "@/core/components/searchableSelect/taxes
 import CategoriesMultiSearchableSelect from "@/features/itemCategories/categoriesMultiSearchableSelect.tsx";
 import BrandsSearchableSelect from "@/core/components/searchableSelect/brandsSearchableSelect.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
+import { itemsApi } from "./items.api";
 
 
 export default function ItemsPage()
@@ -51,7 +52,10 @@ export default function ItemsPage()
 
 	useEffect(() =>
 	{
-		Cubits.items.init();
+		if (Services.auth.hasAuth(SystemPermissionsResources.Items, SystemPermissionsActions.Get))
+		{
+			void Cubits.items.init();
+		}
 	}, []);
 
 	useEffect(() =>
@@ -112,35 +116,30 @@ export default function ItemsPage()
 				<CrudPage.ChangeDialog
 					fetchEntity={ async (id: number) =>
 					{
-						const result = await Services.itemsApi.Get(id);
+						const result = await itemsApi.get(id);
 						return result.data;
 					} }
-					changeDialog={ (dto: ItemDto | undefined, closeDialog) =>
-					{
-						return (
-							<ChangeItemDialog
-								dto={ dto }
-								service={ Services.itemsApi }
-								onSuccess={ (data, mode) =>
+					changeDialog={ (dto: ItemDto | undefined, closeDialog) => (
+						<ChangeItemDialog
+							dto={ dto }
+							onSuccess={ (data, mode) =>
+							{
+								if (mode === ChangeableEntityMode.Create)
 								{
-									if (mode === ChangeableEntityMode.Create)
-									{
-										Cubits.items.add(data);
-										closeDialog();
-									}
-									else if (mode === ChangeableEntityMode.Update)
-									{
-										Cubits.items.update(data);
-									}
-								} }
-							/>
-						);
-					} }
+									Cubits.items.add(data);
+									closeDialog();
+								}
+								else if (mode === ChangeableEntityMode.Update)
+								{
+									Cubits.items.update(data);
+								}
+							} }
+						/>
+					) }
 				/>
-
-				<CrudPage.DeleteDialog
+				<CrudPage.DeleteDialog<ItemDto>
 					entityNameSelector={ (item) => item.name }
-					service={ Services.itemsApi }
+					resource={ itemsApi }
 					onSuccess={ (entity) => Cubits.items.delete(entity) }
 				/>
 			</CrudPage>
@@ -215,9 +214,7 @@ function PageTable()
 							? [{rowBody: "", rowStyles: "w-32"}]
 							: [])
 					] }
-					tableRowMapper={ (
-						item
-					) => [
+					tableRowMapper={ (item) => [
 						{rowBody: `#${ item.id }`, rowStyles: ""},
 						{
 							rowBody: (

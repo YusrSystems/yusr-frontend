@@ -1,10 +1,21 @@
 import { type Signal, signal } from "@preact/signals-react";
-import type { BaseFilterableApiService } from "#/networking";
 import { Cubit } from "./cubit";
 import type { Dto } from "./dto";
 import { PageEmpty, PageInitial, PageLoaded, PageLoading, type PageState } from "./pageStates";
 import type { FilterGroupDto } from "#/filter";
 
+
+export interface IFilterableResource<TDto extends Dto>
+{
+	filter: (
+		pageNumber: number,
+		rowsPerPage: number,
+		searchText?: string,
+		types?: number[],
+		queryParams?: Record<string, string | number | boolean>,
+		groups?: FilterGroupDto[]
+	) => Promise<{ data?: TDto[]; count?: number }>;
+}
 
 export class PageCubit<TDto extends Dto> extends Cubit<PageState>
 {
@@ -13,15 +24,15 @@ export class PageCubit<TDto extends Dto> extends Cubit<PageState>
 	public searchText: Signal<string | undefined>;
 	entities: Signal<TDto[]>;
 	count: Signal<number>;
-	protected _service: BaseFilterableApiService<TDto>;
+	protected resource: IFilterableResource<TDto>;
 	protected types: Signal<number[] | undefined>;
 	protected queryParams: Signal<Record<string, string | number | boolean> | undefined>;
 	protected groups: Signal<FilterGroupDto[] | undefined>;
 
-	constructor(service: BaseFilterableApiService<TDto>, pageSize: number = 100)
+	constructor(resource: IFilterableResource<TDto>, pageSize: number = 100)
 	{
 		super(new PageInitial());
-		this._service = service;
+		this.resource = resource;
 		this.pageSize = signal(pageSize);
 		this.currentPage = signal(1);
 		this.searchText = signal(undefined);
@@ -50,7 +61,7 @@ export class PageCubit<TDto extends Dto> extends Cubit<PageState>
 
 		this.emit(new PageLoading());
 
-		const result = await this._service.Filter(
+		const result = await this.resource.filter(
 			this.currentPage.value,
 			this.pageSize.value,
 			this.searchText.value,
@@ -59,7 +70,7 @@ export class PageCubit<TDto extends Dto> extends Cubit<PageState>
 			this.groups.value
 		);
 
-		if (!result.data?.length)
+		if (!result?.data?.length)
 		{
 			this.entities.value = [];
 			this.count.value = 0;
@@ -108,7 +119,7 @@ export class PageCubit<TDto extends Dto> extends Cubit<PageState>
 
 	update(dto: TDto)
 	{
-		this.entities.value = this.entities.value.map((e) => e.id === dto.id ? dto : e);
+		this.entities.value = this.entities.value.map((e) => (e.id === dto.id ? dto : e));
 	}
 
 	delete(dto: TDto)

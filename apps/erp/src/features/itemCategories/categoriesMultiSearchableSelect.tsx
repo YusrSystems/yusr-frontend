@@ -1,12 +1,12 @@
 import { Dialog, MultiSearchableSelect, type MultiSearchableSelectRootProps } from "yusr-ui";
 import { Cubits } from "@/core/services/cubits.ts";
-import { Services } from "@/core/services/services.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { effect, signal } from "@preact/signals-react";
 import { CategoryDto } from "@/core/data/category.ts";
 import ChangeCategoryDialog from "./changeCategoryDialog";
 import { CategoriesMultiCommandItems } from "./components/categoriesMultiCommandItems";
+import { categoriesApi } from "./categories.api";
 
 
 export default function CategoriesMultiSearchableSelect(
@@ -14,48 +14,38 @@ export default function CategoriesMultiSearchableSelect(
 )
 {
 	useSignals();
-
 	const [searchText, setSearchText] = useState("");
 	const [expanded, setExpanded] = useState<number[]>([]);
-
 	const isDialogOpen = useMemo(() => signal(false), []);
 	const newSearchText = useMemo(() => signal(""), []);
 	const editingCategory = useMemo(() => signal<CategoryDto | undefined>(undefined), []);
-
 	const prevIds = useRef<number[]>(props.ids?.value ?? []);
 
 	useEffect(() =>
 	{
 		if (!props.ids || !props.labels) return;
-
 		return effect(() =>
 		{
 			const currentIds = props.ids!.value;
 			const added = currentIds.filter(id => !prevIds.current.includes(id));
-
 			if (added.length > 0)
 			{
 				queueMicrotask(() =>
 				{
 					const latestIds = props.ids!.value;
 					const newlyAdded = latestIds.filter(id => !prevIds.current.includes(id));
-
 					if (newlyAdded.length === 0) return;
-
 					let idsToKeep = [...latestIds];
 					let changed = false;
-
 					for (const addedId of newlyAdded)
 					{
 						const category = Cubits.categories.entities.value.find(c => c.id === addedId);
 						if (!category) continue;
-
 						if (category.parentCategoryId)
 						{
 							const parentId = category.parentCategoryId;
 							const siblings = Cubits.categories.entities.value.filter(c => c.parentCategoryId === parentId);
 							const siblingIds = siblings.map(c => c.id);
-
 							if (prevIds.current.includes(parentId))
 							{
 								idsToKeep = idsToKeep.filter(id => id !== parentId && id !== addedId);
@@ -87,7 +77,6 @@ export default function CategoriesMultiSearchableSelect(
 							const childrenIds = Cubits.categories.entities.value
 								.filter(c => c.parentCategoryId === category.id)
 								.map(c => c.id);
-
 							const childrenToRemove = idsToKeep.filter(id => childrenIds.includes(id));
 							if (childrenToRemove.length > 0)
 							{
@@ -96,7 +85,6 @@ export default function CategoriesMultiSearchableSelect(
 							}
 						}
 					}
-
 					if (changed)
 					{
 						const newLabels: Record<number, string> = {};
@@ -112,7 +100,6 @@ export default function CategoriesMultiSearchableSelect(
 								newLabels[id] = props.labels!.value[id];
 							}
 						}
-
 						prevIds.current = idsToKeep;
 						props.ids!.value = idsToKeep;
 						props.labels!.value = newLabels;
@@ -124,7 +111,6 @@ export default function CategoriesMultiSearchableSelect(
 				});
 				return;
 			}
-
 			prevIds.current = currentIds;
 		});
 	}, [props.ids, props.labels]);
@@ -151,8 +137,8 @@ export default function CategoriesMultiSearchableSelect(
 
 	const handleDelete = async (category: CategoryDto) =>
 	{
-		const res = await Services.categoriesApi.Delete(category.id);
-		if (res.status === 200)
+		const res = await categoriesApi.delete(category.id);
+		if (res.ok)
 		{
 			Cubits.categories.delete(category);
 			if (props.ids?.value.includes(category.id))
@@ -191,7 +177,6 @@ export default function CategoriesMultiSearchableSelect(
 							onDelete={ handleDelete }
 						/>
 					</MultiSearchableSelect.Command>
-
 					<MultiSearchableSelect.Footer/>
 				</MultiSearchableSelect.Content>
 			</MultiSearchableSelect>
@@ -200,7 +185,6 @@ export default function CategoriesMultiSearchableSelect(
 				<Dialog open={ isDialogOpen.value } onOpenChange={ (open) => (isDialogOpen.value = open) }>
 					<ChangeCategoryDialog
 						initDto={ {name: newSearchText.value} }
-						service={ Services.categoriesApi }
 						onSuccess={ (data) =>
 						{
 							Cubits.categories.add(data);
@@ -230,7 +214,6 @@ export default function CategoriesMultiSearchableSelect(
 				>
 					<ChangeCategoryDialog
 						dto={ editingCategory.value }
-						service={ Services.categoriesApi }
 						onSuccess={ (data) =>
 						{
 							Cubits.categories.update(data);

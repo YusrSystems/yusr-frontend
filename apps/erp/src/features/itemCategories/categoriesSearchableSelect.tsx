@@ -1,5 +1,4 @@
 import { Cubits } from "@/core/services/cubits";
-import { Services } from "@/core/services/services.ts";
 import { CategoryDto } from "@/core/data/category.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useMemo, useState } from "react";
@@ -7,6 +6,7 @@ import { signal } from "@preact/signals-react";
 import { Dialog, SearchableSelect, type SearchableSelectProps } from "yusr-ui";
 import ChangeCategoryDialog from "./changeCategoryDialog";
 import { CategoriesSearchableCommandItems } from "./components/categoriesSearchableCommandItems";
+import { categoriesApi } from "./categories.api";
 
 
 export default function CategoriesSearchableSelect({
@@ -16,7 +16,6 @@ export default function CategoriesSearchableSelect({
 	useSignals();
 	const [searchText, setSearchText] = useState("");
 	const [expanded, setExpanded] = useState<number[]>([]);
-
 	const isAddOpen = useMemo(() => signal(false), []);
 	const newSearchText = useMemo(() => signal(""), []);
 	const editingCategory = useMemo(() => signal<CategoryDto | undefined>(undefined), []);
@@ -41,8 +40,8 @@ export default function CategoriesSearchableSelect({
 
 	const handleDelete = async (category: CategoryDto) =>
 	{
-		const res = await Services.categoriesApi.Delete(category.id);
-		if (res.status === 200)
+		const res = await categoriesApi.delete(category.id);
+		if (res.ok)
 		{
 			Cubits.categories.delete(category);
 			if (props.id?.value === category.id)
@@ -84,7 +83,6 @@ export default function CategoriesSearchableSelect({
 				<Dialog open={ isAddOpen.value } onOpenChange={ (open) => (isAddOpen.value = open) }>
 					<ChangeCategoryDialog
 						initDto={ {name: newSearchText.value} }
-						service={ Services.categoriesApi }
 						onSuccess={ (data) =>
 						{
 							Cubits.categories.add(data);
@@ -107,7 +105,6 @@ export default function CategoriesSearchableSelect({
 				>
 					<ChangeCategoryDialog
 						dto={ editingCategory.value }
-						service={ Services.categoriesApi }
 						onSuccess={ (data) =>
 						{
 							Cubits.categories.update(data);

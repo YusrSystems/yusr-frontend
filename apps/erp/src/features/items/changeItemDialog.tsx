@@ -1,7 +1,6 @@
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
 import type { ItemDto } from "@/core/data/item";
 import Item from "@/core/data/item";
-import type ServiceIds from "@/core/data/serviceIds";
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { signal } from "@preact/signals-react";
@@ -22,19 +21,18 @@ import { ItemType } from "@/core/data/item.ts";
 import BasicTab from "./basic/basicTab";
 import PricingTab from "./pricing/pricingTab";
 import StorageTab from "./storage/storageTab";
+import { itemsApi } from "./items.api";
 
 
 const BASIC_FIELDS = ["name", "type"] as const;
 const PRICING_FIELDS = ["sellUnitId", "uoMs"] as const;
 
-export default function ChangeItemDialog({dto, service, onSuccess}: CommonChangeDialogProps<ItemDto>)
+export default function ChangeItemDialog({dto, onSuccess}: CommonChangeDialogProps<ItemDto>)
 {
 	useSignals();
 
 	const {t} = useTranslation(["stocking", "common"]);
-	const servicesIds = useMemo(() => signal<ServiceIds>(), []);
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
-	const entity = useMemo(() => signal<Item>(dto ? Item.load(dto) : Item.create()), []);
+	const entity = useMemo(() => signal<Item>(dto ? Item.load(dto) : Item.create()), [dto]);
 	const isLoading = useMemo(() => signal<boolean>(false), []);
 
 	useEffect(() =>
@@ -42,22 +40,15 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 		const fetch = async () =>
 		{
 			isLoading.value = true;
-
-			Cubits.taxes.init();
-			Cubits.pricingMethods.init();
-			Cubits.categories.init();
-			Cubits.brands.init();
-
-			const result = await Services.unitsApi.GetServiceIds();
-			if (result.data)
-			{
-				servicesIds.value = result.data;
-			}
+			void Cubits.taxes.init();
+			void Cubits.pricingMethods.init();
+			void Cubits.categories.init();
+			void Cubits.brands.init();
 
 			if (entity.value.mode.value === ChangeableEntityMode.Update && entity.value?.id)
 			{
-				const res = await service.Get(entity.value.id.value);
-				if (res.data != undefined)
+				const res = await itemsApi.get(entity.value.id.value);
+				if (res.ok && res.data)
 				{
 					entity.value = Item.load(res.data);
 				}
@@ -87,9 +78,9 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 
 	if (
 		(entity.value.mode.value === ChangeableEntityMode.Create
-			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Add))
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Items, SystemPermissionsActions.Add))
 		|| (entity.value.mode.value === ChangeableEntityMode.Update
-			&& !Services.auth.hasAuth(SystemPermissionsResources.Units, SystemPermissionsActions.Update))
+			&& !Services.auth.hasAuth(SystemPermissionsResources.Items, SystemPermissionsActions.Update))
 	)
 	{
 		return <ChangeDialog.Unauthorized/>;
@@ -102,14 +93,13 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 	const pricingHasError = PRICING_FIELDS.some((f) => entity.value.getError(f).value)
 		|| entity.value.uoMs.value.some((t) => t.hasErrors);
 
-	const transformDataBeforeSave = async (): Promise<ItemDto> =>
+	const transformDataBeforeSave = async (data: ItemDto): Promise<ItemDto> =>
 	{
-		entity.value.files.value = await commitFiles(
+		data.files = await commitFiles(
 			entity.value.files.value,
-			`Items`
+			"Items"
 		);
-
-		return entity.value.toJson();
+		return data;
 	};
 
 	const title = entity.value.mode.value === ChangeableEntityMode.Create
@@ -136,7 +126,7 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 						icon: Box,
 						active: true,
 						hasError: basicHasError,
-						content: <BasicTab entity={ entity.value } serviceIds={ servicesIds }/>
+						content: <BasicTab entity={ entity.value }/>
 					},
 					...(entity.value.type.value !== ItemType.Service
 						? [{
@@ -162,9 +152,9 @@ export default function ChangeItemDialog({dto, service, onSuccess}: CommonChange
 
 				<ChangeDialog.SaveButton<Item, ItemDto>
 					entity={ entity }
-					service={ service }
-					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+					resource={ itemsApi }
 					transformData={ transformDataBeforeSave }
+					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
 		</ChangeDialog>

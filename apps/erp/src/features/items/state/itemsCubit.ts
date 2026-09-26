@@ -1,13 +1,13 @@
 import type { BarcodeResult, ItemDto } from "@/core/data/item";
-import { Services } from "@/core/services/services";
 import { PageCubit } from "yusr-ui";
+import { itemsApi } from "../items.api";
 
 
 export class ItemsCubit extends PageCubit<ItemDto>
 {
 	constructor()
 	{
-		super(Services.itemsApi);
+		super(itemsApi);
 	}
 
 	public filterByStoreAndDate(storeId?: number | null, targetDate?: string | null): void
@@ -55,12 +55,11 @@ export class ItemsCubit extends PageCubit<ItemDto>
 
 	async getByBarcode(barcode: string, storeId: number): Promise<BarcodeResult | undefined>
 	{
-		const res = await Services.itemsApi.GetByBarcode(barcode, storeId);
-		if (res.status === 200 && res.data)
+		const res = await itemsApi.getByBarcode(barcode, storeId);
+		if (res.ok && res.data)
 		{
 			return res.data;
 		}
 		return undefined;
 	}
-
 }

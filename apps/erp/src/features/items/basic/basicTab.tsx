@@ -1,6 +1,4 @@
 import Item, { ItemCategoryDto } from "@/core/data/item";
-import type ServiceIds from "@/core/data/serviceIds";
-import type { Signal } from "@preact/signals-react";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { Star } from "lucide-react";
@@ -25,12 +23,7 @@ import { useEffect, useMemo } from "react";
 import CategoriesMultiSearchableSelect from "@/features/itemCategories/categoriesMultiSearchableSelect.tsx";
 
 
-export default function BasicTab(
-	{entity, serviceIds}: {
-		entity: Item;
-		serviceIds: Signal<ServiceIds | undefined>;
-	}
-)
+export default function BasicTab({entity}: { entity: Item })
 {
 	useSignals();
 	const {t} = useTranslation("stocking");
@@ -87,18 +80,18 @@ export default function BasicTab(
 								entity.minQuantity.value = 0;
 								entity.maxQuantity.value = 0;
 								entity.location.value = undefined;
-								entity.sellUnitId.value = numericType === ItemType.Service ? serviceIds.value?.unitId : undefined;
+								entity.sellUnitId.value = numericType === ItemType.Service ? 1 : undefined;
 								entity.sellUnitName.value = numericType === ItemType.Service ? t("items.service") : undefined;
 								entity.uoMs.value = numericType === ItemType.Service
 									? [ItemUoM.create({
-										unitId: serviceIds.value?.unitId,
+										unitId: 1,
 										unitName: t("items.service"),
 										quantityMultiplier: 1,
 										barcode: ItemUoM.generateBarcode(),
 										prices: [
 											{
 												itemUoMId: 0,
-												pricingMethodId: serviceIds.value?.pricingMethodId,
+												pricingMethodId: 1,
 												pricingMethodName: t("items.service"),
 												price: 0
 											} as ItemPriceDto
@@ -111,10 +104,10 @@ export default function BasicTab(
 										barcode: ItemUoM.generateBarcode()
 									})];
 							} }
-							options={ [{label: t("items.product"), value: ItemType.Product}, {
-								label: t("items.service"),
-								value: ItemType.Service
-							}] }
+							options={ [
+								{label: t("items.product"), value: ItemType.Product},
+								{label: t("items.service"), value: ItemType.Service}
+							] }
 						/>
 
 						<FormField label={ t("items.category", "التصنيف") }>
@@ -129,7 +122,10 @@ export default function BasicTab(
 							label={ t("items.status") }
 							required
 							value={ entity.statusId }
-							options={ [{label: t("items.active"), value: 1}, {label: t("items.inactive"), value: 0}] }
+							options={ [
+								{label: t("items.active"), value: 1},
+								{label: t("items.inactive"), value: 0}
+							] }
 						/>
 					</FieldsSection>
 

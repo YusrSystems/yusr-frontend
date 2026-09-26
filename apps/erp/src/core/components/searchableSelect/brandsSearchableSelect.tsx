@@ -1,5 +1,4 @@
 import { Cubits } from "@/core/services/cubits";
-import { Services } from "@/core/services/services.ts";
 import { BrandDto } from "@/core/data/brand.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import React, { useMemo } from "react";
@@ -19,6 +18,7 @@ import {
 	TextField
 } from "yusr-ui";
 import { useTranslation } from "react-i18next";
+import { brandsApi } from "@/features/brands/brands.api";
 
 
 export default function BrandsSearchableSelect(
@@ -27,7 +27,6 @@ export default function BrandsSearchableSelect(
 {
 	useSignals();
 	const {i18n} = useTranslation();
-
 	const isDialogOpen = useMemo(() => signal(false), []);
 	const editingBrand = useMemo(() => signal<BrandDto | undefined>(undefined), []);
 	const brandName = useMemo(() => signal(""), []);
@@ -51,8 +50,8 @@ export default function BrandsSearchableSelect(
 
 	const handleDelete = async (brand: BrandDto) =>
 	{
-		const res = await Services.brandsApi.Delete(brand.id);
-		if (res.status === 200)
+		const res = await brandsApi.delete(brand.id);
+		if (res.ok)
 		{
 			Cubits.brands.delete(brand);
 			if (props.id?.value === brand.id)
@@ -70,11 +69,11 @@ export default function BrandsSearchableSelect(
 		{
 			if (editingBrand.value)
 			{
-				const res = await Services.brandsApi.Update({
+				const res = await brandsApi.update({
 					...editingBrand.value,
 					name: brandName.value
 				});
-				if (res.data)
+				if (res.ok && res.data)
 				{
 					Cubits.brands.update(res.data);
 					if (props.id?.value === res.data.id && props.label)
@@ -86,8 +85,8 @@ export default function BrandsSearchableSelect(
 			}
 			else
 			{
-				const res = await Services.brandsApi.Add({name: brandName.value} as BrandDto);
-				if (res.data)
+				const res = await brandsApi.add({name: brandName.value} as BrandDto);
+				if (res.ok && res.data)
 				{
 					Cubits.brands.add(res.data);
 					if (props.id) props.id.value = res.data.id;
@@ -120,7 +119,6 @@ export default function BrandsSearchableSelect(
 					</SearchableSelect.Command>
 				</SearchableSelect.Content>
 			</SearchableSelect>
-
 			<Dialog open={ isDialogOpen.value } onOpenChange={ (open) => isDialogOpen.value = open }>
 				<DialogContent dir={ i18n.dir() } className="sm:max-w-md">
 					<DialogHeader>
@@ -134,7 +132,7 @@ export default function BrandsSearchableSelect(
 						/>
 					</div>
 					<DialogFooter>
-						<Button variant="outline" onClick={ () => isDialogOpen.value = false }>
+						<Button variant="outline" onClick={ () => (isDialogOpen.value = false) }>
 							إلغاء
 						</Button>
 						<Button
@@ -156,7 +154,6 @@ export default function BrandsSearchableSelect(
 		{
 			return <SearchableSelect.Loading/>;
 		}
-
 		if (Cubits.brands.state.value instanceof PageLoaded && Cubits.brands.entities.value.length > 0)
 		{
 			return Cubits.brands.entities.value.map((entity) => (
@@ -169,7 +166,6 @@ export default function BrandsSearchableSelect(
 				/>
 			));
 		}
-
 		return (
 			<SearchableSelect.AddOptionButton
 				onCreate={ async (searchText, closeCommand) =>
