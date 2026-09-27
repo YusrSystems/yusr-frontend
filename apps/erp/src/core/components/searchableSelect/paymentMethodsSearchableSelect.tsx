@@ -1,5 +1,4 @@
 import { Cubits } from "@/core/services/cubits";
-import { Services } from "@/core/services/services.ts";
 import { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { useSignals } from "@preact/signals-react/runtime";
 import React from "react";
@@ -10,7 +9,7 @@ import {
 	type SearchableSelectOptionProps,
 	type SearchableSelectProps
 } from "yusr-ui";
-
+import { paymentMethodsApi } from "@/features/paymentMethods/paymentMethod.api.ts";
 
 export default function PaymentMethodsSearchableSelect(
 	{...props}: SearchableSelectProps<PaymentMethodDto>
@@ -70,8 +69,8 @@ const Option = React.memo(
 				<SearchableSelect.DeleteOptionButton
 					onDelete={ async () =>
 					{
-						const result = await Services.paymentMethodsApi.Delete(props.item.id);
-						if (result.status === 200)
+						const result = await paymentMethodsApi.delete(props.item.id);
+						if (result.ok)
 						{
 							Cubits.paymentMethods.delete(props.item);
 						}

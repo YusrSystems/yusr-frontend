@@ -19,13 +19,20 @@ import { CommissionType, type PaymentMethodDto } from "@/core/data/paymentMethod
 import { getPaymentMethodCategoryName } from "@/core/types/paymentMethodCategory.ts";
 import ChangePaymentMethodDialog from "./changePaymentMethodDialog";
 import { APP_NAME } from "../../../appConfig.ts";
-
+import { paymentMethodsApi } from "@/features/paymentMethods/paymentMethod.api.ts";
 
 export function PaymentMethodsPage()
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
-	useEffect(() => Cubits.paymentMethods.init(), []);
+
+	useEffect(() =>
+	{
+		if (Services.auth.hasAuth(SystemPermissionsResources.PaymentMethods, SystemPermissionsActions.Get))
+		{
+			void Cubits.paymentMethods.init();
+		}
+	}, []);
 
 	useEffect(() =>
 	{
@@ -58,32 +65,27 @@ export function PaymentMethodsPage()
 
 			<PageTable/>
 			<CrudPage.ChangeDialog
-				changeDialog={ (dto: PaymentMethodDto | undefined, closeDialog) =>
-				{
-					return (
-						<ChangePaymentMethodDialog
-							dto={ dto }
-							service={ Services.paymentMethodsApi }
-							onSuccess={ (data, mode) =>
+				changeDialog={ (dto: PaymentMethodDto | undefined, closeDialog) => (
+					<ChangePaymentMethodDialog
+						dto={ dto }
+						onSuccess={ (data, mode) =>
+						{
+							if (mode === ChangeableEntityMode.Create)
 							{
-								if (mode === ChangeableEntityMode.Create)
-								{
-									Cubits.paymentMethods.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									Cubits.paymentMethods.update(data);
-								}
-							} }
-						/>
-					);
-				} }
+								Cubits.paymentMethods.add(data);
+								closeDialog();
+							}
+							else if (mode === ChangeableEntityMode.Update)
+							{
+								Cubits.paymentMethods.update(data);
+							}
+						} }
+					/>
+				) }
 			/>
-
-			<CrudPage.DeleteDialog
-				entityNameSelector={ (PaymentMethod) => PaymentMethod.name }
-				service={ Services.paymentMethodsApi }
+			<CrudPage.DeleteDialog<PaymentMethodDto>
+				entityNameSelector={ (pm) => pm.name }
+				resource={ paymentMethodsApi }
 				onSuccess={ (entity) => Cubits.paymentMethods.delete(entity) }
 			/>
 		</CrudPage>
@@ -110,6 +112,7 @@ function PageTable()
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
+
 	if (Cubits.paymentMethods.state.value instanceof PageLoading)
 	{
 		return <TablePreview.Loading/>;
@@ -130,26 +133,25 @@ function PageTable()
 						{rowBody: t("paymentMethods.commissionType"), rowStyles: "w-30"},
 						{rowBody: t("paymentMethods.commissionValue"), rowStyles: "w-30"}
 					] }
-					tableRowMapper={ (
-						paymentMethod
-					) => [{rowBody: `#${ paymentMethod.id }`, rowStyles: ""}, {
-						rowBody: paymentMethod.name,
-						rowStyles: "font-semibold"
-					}, {
-						rowBody: getPaymentMethodCategoryName(paymentMethod.category),
-						rowStyles: "text-sm text-muted-foreground"
-					}, {
-						rowBody: paymentMethod.glAccountName,
-						rowStyles: ""
-					}, {
-						rowBody: paymentMethod.commissionType === CommissionType.Percent
-							? t("paymentMethods.percentage")
-							: t("paymentMethods.fixedAmount"),
-						rowStyles: "text-sm text-muted-foreground"
-					}, {
-						rowBody: paymentMethod.commissionAmount.toString(),
-						rowStyles: "font-medium text-blue-600"
-					}] }
+					tableRowMapper={ (paymentMethod) => [
+						{rowBody: `#${ paymentMethod.id }`, rowStyles: ""},
+						{rowBody: paymentMethod.name, rowStyles: "font-semibold"},
+						{
+							rowBody: getPaymentMethodCategoryName(paymentMethod.category),
+							rowStyles: "text-sm text-muted-foreground"
+						},
+						{rowBody: paymentMethod.glAccountName, rowStyles: ""},
+						{
+							rowBody: paymentMethod.commissionType === CommissionType.Percent
+								? t("paymentMethods.percentage")
+								: t("paymentMethods.fixedAmount"),
+							rowStyles: "text-sm text-muted-foreground"
+						},
+						{
+							rowBody: paymentMethod.commissionAmount.toString(),
+							rowStyles: "font-medium text-blue-600"
+						}
+					] }
 					hasUpdatePermission={ Services.auth.hasAuth(
 						SystemPermissionsResources.PaymentMethods,
 						SystemPermissionsActions.Update
@@ -158,16 +160,6 @@ function PageTable()
 						SystemPermissionsResources.PaymentMethods,
 						SystemPermissionsActions.Delete
 					) }
-				/>
-
-				<CrudPage.TablePagination
-					pageSize={ Cubits.paymentMethods.pageSize.value }
-					totalNumber={ Cubits.paymentMethods.count.value }
-					currentPage={ Cubits.paymentMethods.currentPage.value }
-					onPageChanged={ (newPage) =>
-					{
-						Cubits.paymentMethods.changePage(newPage);
-					} }
 				/>
 			</CrudPage.Table>
 		);

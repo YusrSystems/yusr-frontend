@@ -2,8 +2,6 @@ import { BaseApiService, BaseServices, UserDto } from "yusr-ui";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
-import type { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
-import { type BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import PosSessionApiService from "@/core/networking/posSessionApiService.ts";
 import PosCheckoutApiService from "@/core/networking/posCheckoutApiService.ts";
 import PosTerminalsApiService from "@/core/networking/posTerminalsApiService.ts";
@@ -25,6 +23,8 @@ import { costAdjustmentsApi } from "@/features/costAdjustments/costAdjustments.a
 import { itemTransfersApi } from "@/features/itemTransfers/itemTransfers.api";
 import { accountsApi } from "@/features/accounts/accounts.api";
 import { partnersApi } from "@/features/partners/partners.api";
+import { balanceTransfersApi } from "@/features/balanceTransfer/balanceTransfers.api";
+import { paymentMethodsApi } from "@/features/paymentMethods/paymentMethod.api.ts";
 
 export class Services extends BaseServices
 {
@@ -43,8 +43,8 @@ export class Services extends BaseServices
 	public static readonly itemTransfersApi = itemTransfersApi;
 	public static readonly accountsApi = accountsApi;
 	public static readonly partnersApi = partnersApi;
-	public static readonly paymentMethodsApi = new BaseApiService<PaymentMethodDto>("PaymentMethods");
-	public static readonly balanceTransfersApi = new BaseApiService<BalanceTransferDto>("BalanceTransfers");
+	public static readonly paymentMethodsApi = paymentMethodsApi;
+	public static readonly balanceTransfersApi = balanceTransfersApi;
 	public static readonly voucherApi = new VouchersApiService();
 	public static readonly salesInvoicesApi = new SalesInvoicesApiService();
 	public static readonly purchaseInvoicesApi = new PurchaseInvoicesApiService();

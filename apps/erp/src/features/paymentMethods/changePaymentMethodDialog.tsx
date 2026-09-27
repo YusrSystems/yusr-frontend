@@ -20,22 +20,20 @@ import { getPaymentMethodCategoryOptions } from "@/core/types/paymentMethodCateg
 import { useEffect, useMemo } from "react";
 import { Cubits } from "@/core/services/cubits";
 import { signal } from "@preact/signals-react";
-
+import { paymentMethodsApi } from "@/features/paymentMethods/paymentMethod.api.ts";
 
 export default function ChangePaymentMethodDialog(
-	{dto, service, onSuccess}: CommonChangeDialogProps<PaymentMethodDto>
+	{dto, onSuccess}: CommonChangeDialogProps<PaymentMethodDto>
 )
 {
 	useSignals();
+	const entity = useMemo(() => signal<PaymentMethod>(dto ? PaymentMethod.load(dto) : PaymentMethod.create()), [dto]);
+	const {t} = useTranslation(["accounting", "common"]);
+
 	useEffect(() =>
 	{
-		Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true});
+		void Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true});
 	}, []);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
-	const entity = useMemo(() => signal<PaymentMethod>(dto ? PaymentMethod.load(dto) : PaymentMethod.create()), []);
-
-	const {t} = useTranslation(["accounting", "common"]);
 
 	if (
 		(entity.value.mode.value === ChangeableEntityMode.Create
@@ -114,13 +112,10 @@ export default function ChangePaymentMethodDialog(
 						required
 						value={ entity.value.commissionType }
 						error={ entity.value.getError("commissionType") }
-						options={ [{
-							label: t("paymentMethods.percentage"),
-							value: CommissionType.Percent
-						}, {
-							label: t("paymentMethods.fixedAmount"),
-							value: CommissionType.Amount
-						}] }
+						options={ [
+							{label: t("paymentMethods.percentage"), value: CommissionType.Percent},
+							{label: t("paymentMethods.fixedAmount"), value: CommissionType.Amount}
+						] }
 					/>
 					<FormField
 						label={ t("paymentMethods.commissionValue") }
@@ -148,7 +143,7 @@ export default function ChangePaymentMethodDialog(
 				<ChangeDialog.Close/>
 				<ChangeDialog.SaveButton<PaymentMethod, PaymentMethodDto>
 					entity={ entity }
-					service={ service }
+					resource={ paymentMethodsApi }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
