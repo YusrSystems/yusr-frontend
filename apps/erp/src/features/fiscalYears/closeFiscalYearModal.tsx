@@ -14,8 +14,8 @@ import {
 	TextAreaField
 } from "yusr-ui";
 import { CloseFiscalYearDto, FiscalYearDto, YearEndClosingPreviewDto } from "@/core/data/fiscalYear.ts";
-import { Services } from "@/core/services/services.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
+import { fiscalYearsApi } from "./fiscalYears.api";
 
 
 interface CloseFiscalYearModalProps
@@ -47,18 +47,13 @@ export default function CloseFiscalYearModal({
 			isLoading.value = true;
 			diagnostics.value = undefined;
 			closingNotes.value = "";
-
-			Services.fiscalYearsApi
-				.GetClosingDiagnostics(fiscalYear.id)
+			fiscalYearsApi
+				.getClosingDiagnostics(fiscalYear.id)
 				.then((res) =>
 				{
-					if (res.status === 200 && res.data)
+					if (res.ok && res.data)
 					{
 						diagnostics.value = res.data;
-					}
-					else
-					{
-						toast.error("حدث خطأ أثناء فحص تشخيصات إقفال السنة المالية");
 					}
 				})
 				.finally(() =>
@@ -81,21 +76,13 @@ export default function CloseFiscalYearModal({
 
 		try
 		{
-			const res = await Services.fiscalYearsApi.CloseYear(dto);
-			if (res.status === 200 && res.data)
+			const res = await fiscalYearsApi.closeYear(dto);
+			if (res.ok && res.data)
 			{
 				toast.success(`تم إقفال السنة المالية ${ fiscalYear.name } بنجاح`);
 				onSuccess(res.data);
 				onOpenChange(false);
 			}
-			else
-			{
-				toast.error("فشل في إقفال السنة المالية");
-			}
-		}
-		catch
-		{
-			toast.error("حدث خطأ غير متوقع أثناء إقفال السنة المالية");
 		}
 		finally
 		{
@@ -145,8 +132,8 @@ export default function CloseFiscalYearModal({
 									className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 rounded-xl p-4 text-emerald-800 dark:text-emerald-300 flex items-center gap-3">
 									<CheckCircle2 className="w-6 h-6 shrink-0 text-emerald-600 dark:text-emerald-400"/>
 									<span className="text-sm font-semibold">
-                    تم فحص تشخيصات السنة المالية بنجاح. لا توجد أي عوائق تمنع الإقفال.
-                  </span>
+										تم فحص تشخيصات السنة المالية بنجاح. لا توجد أي عوائق تمنع الإقفال.
+									</span>
 								</div>
 
 								<div className="bg-card border border-border rounded-xl p-4 space-y-3">
@@ -157,32 +144,32 @@ export default function CloseFiscalYearModal({
 												className="text-xs text-muted-foreground block">إجمالي الإيرادات</span>
 											<span
 												className="font-bold text-base text-emerald-600 dark:text-emerald-400">
-                        { diag.totalRevenue.toLocaleString("en-US", {minimumFractionDigits: 2}) }
+												{ diag.totalRevenue.toLocaleString("en-US", {minimumFractionDigits: 2}) }
 												<ErpCurrencyIcon className="w-3.5 h-3.5 inline mr-1"/>
-                      </span>
+											</span>
 										</div>
 
 										<div className="p-3 bg-muted/40 rounded-lg">
 											<span
 												className="text-xs text-muted-foreground block">إجمالي المصروفات</span>
 											<span className="font-bold text-base text-destructive">
-                        { diag.totalExpense.toLocaleString("en-US", {minimumFractionDigits: 2}) }
+												{ diag.totalExpense.toLocaleString("en-US", {minimumFractionDigits: 2}) }
 												<ErpCurrencyIcon className="w-3.5 h-3.5 inline mr-1"/>
-                      </span>
+											</span>
 										</div>
 
 										<div className="p-3 bg-muted/40 rounded-lg">
-                      <span className="text-xs text-muted-foreground block">
-                        { diag.isProfit ? "صافي الربح" : "صافي الخسارة" }
-                      </span>
+											<span className="text-xs text-muted-foreground block">
+												{ diag.isProfit ? "صافي الربح" : "صافي الخسارة" }
+											</span>
 											<span
 												className={ `font-bold text-base ${
 													diag.isProfit ? "text-emerald-600 dark:text-emerald-400" : "text-destructive"
 												}` }
 											>
-                        { diag.netIncome.toLocaleString("en-US", {minimumFractionDigits: 2}) }
+												{ diag.netIncome.toLocaleString("en-US", {minimumFractionDigits: 2}) }
 												<ErpCurrencyIcon className="w-3.5 h-3.5 inline mr-1"/>
-                      </span>
+											</span>
 										</div>
 									</div>
 

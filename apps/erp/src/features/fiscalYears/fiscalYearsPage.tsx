@@ -24,6 +24,7 @@ import CloseFiscalYearModal from "./closeFiscalYearModal.tsx";
 import ReopenFiscalYearModal from "./reopenFiscalYearModal.tsx";
 import { FiscalYearStatusBadge } from "./components/fiscalYearStatusBadge.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
+import { fiscalYearsApi } from "./fiscalYears.api";
 
 
 export default function FiscalYearsPage()
@@ -35,7 +36,10 @@ export default function FiscalYearsPage()
 
 	useEffect(() =>
 	{
-		Cubits.fiscalYears.init();
+		if (Services.auth.hasAuth(SystemPermissionsResources.FiscalYears, SystemPermissionsActions.Get))
+		{
+			void Cubits.fiscalYears.init();
+		}
 	}, []);
 
 	useEffect(() =>
@@ -55,20 +59,15 @@ export default function FiscalYearsPage()
 	const handleToggleLockYear = async (year: FiscalYearDto) =>
 	{
 		const newStatus = year.status === FiscalYearStatus.Open ? FiscalYearStatus.Locked : FiscalYearStatus.Open;
-		const res = await Services.fiscalYearsApi.ToggleLock({
+		const res = await fiscalYearsApi.toggleLock({
 			fiscalYearId: year.id,
 			status: newStatus,
 			rowVer: year.rowVer
 		});
-
-		if (res.status === 200 && res.data)
+		if (res.ok && res.data)
 		{
 			toast.success(`تم ${ newStatus === FiscalYearStatus.Locked ? "تجميد" : "فك تجميد" } السنة المالية ${ year.name }`);
 			Cubits.fiscalYears.update(res.data);
-		}
-		else
-		{
-			toast.error("فشل في تغيير حالة السنة المالية");
 		}
 	};
 
@@ -92,18 +91,15 @@ export default function FiscalYearsPage()
 				onOpenCloseModal={ (year) => (yearToClose.value = year) }
 				onOpenReopenModal={ (year) => (yearToReopen.value = year) }
 			/>
-
-			{/* Standard CrudPage Change Dialog */ }
 			<CrudPage.ChangeDialog
 				fetchEntity={ async (id: number) =>
 				{
-					const result = await Services.fiscalYearsApi.Get(id);
+					const result = await fiscalYearsApi.get(id);
 					return result.data;
 				} }
 				changeDialog={ (dto: FiscalYearDto | undefined, closeDialog) => (
 					<ChangeFiscalYearDialog
 						dto={ dto }
-						service={ Services.fiscalYearsApi }
 						onSuccess={ (data, mode) =>
 						{
 							if (mode === ChangeableEntityMode.Create)
@@ -115,20 +111,15 @@ export default function FiscalYearsPage()
 							{
 								Cubits.fiscalYears.update(data);
 							}
-							Cubits.fiscalYears.init();
 						} }
 					/>
 				) }
 			/>
-
-			{/* Standard CrudPage Delete Dialog */ }
-			<CrudPage.DeleteDialog
+			<CrudPage.DeleteDialog<FiscalYearDto>
 				entityNameSelector={ (year) => year.name }
-				service={ Services.fiscalYearsApi }
+				resource={ fiscalYearsApi }
 				onSuccess={ (year) => Cubits.fiscalYears.delete(year) }
 			/>
-
-			{/* Year-End Closing Modal */ }
 			{ yearToClose.value && (
 				<CloseFiscalYearModal
 					open={ !!yearToClose.value }
@@ -144,8 +135,6 @@ export default function FiscalYearsPage()
 					} }
 				/>
 			) }
-
-			{/* Reopen Closed Year Modal */ }
 			{ yearToReopen.value && (
 				<ReopenFiscalYearModal
 					open={ !!yearToReopen.value }
@@ -311,13 +300,6 @@ function PageTable({
 					}
 					dropdownItems={ (year, openEditDialog) => getActions(year, openEditDialog, DropdownMenuItem) }
 					contextMenuItems={ (year, openEditDialog) => getActions(year, openEditDialog, ContextMenuItem) }
-				/>
-
-				<CrudPage.TablePagination
-					pageSize={ Cubits.fiscalYears.pageSize.value }
-					totalNumber={ Cubits.fiscalYears.count.value }
-					currentPage={ Cubits.fiscalYears.currentPage.value }
-					onPageChanged={ (newPage) => Cubits.fiscalYears.changePage(newPage) }
 				/>
 			</CrudPage.Table>
 		);

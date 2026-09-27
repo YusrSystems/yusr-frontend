@@ -74,7 +74,9 @@ import { itemTransfersApi } from "@/features/itemTransfers/itemTransfers.api";
 import { accountsApi } from "@/features/accounts/accounts.api";
 import { partnersApi } from "@/features/partners/partners.api";
 import { balanceTransfersApi } from "@/features/balanceTransfer/balanceTransfers.api";
+import { fiscalYearsApi } from "@/features/fiscalYears/fiscalYears.api";
 import { paymentMethodsApi } from "@/features/paymentMethods/paymentMethod.api.ts";
+
 
 export class Cubits extends BaseCubits
 {
@@ -85,6 +87,7 @@ export class Cubits extends BaseCubits
 	public static readonly brands = new ListCubit<BrandDto>(brandsApi);
 	public static readonly categories = new ListCubit<CategoryDto>(categoriesApi);
 	public static readonly paymentMethods = new ListCubit<PaymentMethodDto>(paymentMethodsApi);
+	public static readonly fiscalYears = new ListCubit<FiscalYearDto>(fiscalYearsApi);
 	public static readonly stocktaking = new PageCubit<StocktakingDto>(stocktakingsApi);
 	public static readonly itemsSettlements = new PageCubit<StocktakingDto>(itemsSettlementsApi);
 	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(costAdjustmentsApi);
@@ -102,13 +105,14 @@ export class Cubits extends BaseCubits
 	public static readonly originalPurchaseInvoices = new PageCubit<PurchaseInvoiceDto>(Services.purchaseInvoicesApi);
 	public static readonly quotations = new PageCubit<QuotationDto>(Services.quotationsApi);
 	public static readonly posTerminals = new PageCubit<PosTerminalDto>(Services.posTerminalsApi);
-	public static readonly fiscalYears = new PageCubit<FiscalYearDto>(Services.fiscalYearsApi);
+
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");
 	public static readonly itemFilterFields = new FilterFieldsCubit("Items");
 	public static readonly salesInvoiceFilterFields = new FilterFieldsCubit("SalesInvoices");
 	public static readonly purchaseInvoiceFilterFields = new FilterFieldsCubit("PurchaseInvoices");
 	public static readonly quotationFilterFields = new FilterFieldsCubit("Quotations");
 	public static readonly partnerFilterFields = new FilterFieldsCubit("Partners");
+
 	public static readonly voucherFilterFields = new FilterFieldsCubit("Vouchers");
 	public static readonly ItemsMovementReport = new PageReportCubit<ItemsMovementReportRequest, ItemsMovementReportResult>("ItemsMovement");
 	public static readonly AccountStatementReport = new PageReportCubit<AccountStatementReportRequest, AccountStatementReportResult>("AccountStatement");

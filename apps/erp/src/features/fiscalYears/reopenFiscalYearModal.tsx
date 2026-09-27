@@ -5,7 +5,7 @@ import { AlertTriangle, Loader2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "yusr-ui";
 import { FiscalYearDto, ReopenFiscalYearDto } from "@/core/data/fiscalYear.ts";
-import { Services } from "@/core/services/services.ts";
+import { fiscalYearsApi } from "./fiscalYears.api";
 
 
 interface ReopenFiscalYearModalProps
@@ -39,21 +39,13 @@ export default function ReopenFiscalYearModal({
 
 		try
 		{
-			const res = await Services.fiscalYearsApi.ReopenYear(dto);
-			if (res.status === 200 && res.data)
+			const res = await fiscalYearsApi.reopenYear(dto);
+			if (res.ok && res.data)
 			{
 				toast.success(`تم إعادة فتح السنة المالية ${ fiscalYear.name } بنجاح`);
 				onSuccess(res.data);
 				onOpenChange(false);
 			}
-			else
-			{
-				toast.error("فشل في إعادة فتح السنة المالية");
-			}
-		}
-		catch
-		{
-			toast.error("حدث خطأ أثناء إعادة فتح السنة المالية");
 		}
 		finally
 		{
@@ -78,8 +70,8 @@ export default function ReopenFiscalYearModal({
 					className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl p-4 text-amber-800 dark:text-amber-300 flex items-start gap-3 my-2 text-xs leading-relaxed">
 					<AlertTriangle className="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5"/>
 					<span>
-            سيؤدي هذا الإجراء إلى عكس قيد الإقفال السنوي واستعادة أرصدة الحسابات الاسمية (الإيرادات والمصروفات).
-          </span>
+						سيؤدي هذا الإجراء إلى عكس قيد الإقفال السنوي واستعادة أرصدة الحسابات الاسمية (الإيرادات والمصروفات).
+					</span>
 				</div>
 
 				<DialogFooter>

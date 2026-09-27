@@ -6,6 +6,7 @@ import { FiscalPeriodDto, FiscalPeriodStatus, FiscalYearDto, FiscalYearStatus } 
 import { Services } from "@/core/services/services";
 import { Cubits } from "@/core/services/cubits";
 import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResources";
+import { fiscalYearsApi } from "../fiscalYears.api";
 
 
 interface FiscalPeriodsListProps
@@ -32,24 +33,21 @@ export function FiscalPeriodsList({year}: FiscalPeriodsListProps)
 
 		try
 		{
-			const res = await Services.fiscalYearsApi.UpdatePeriodStatus({
+			const res = await fiscalYearsApi.updatePeriodStatus({
 				periodId: period.id,
 				status: newStatus,
 				rowVer: period.rowVer
 			});
 
-			if (res.status === 200)
+			if (res.ok && res.data)
 			{
 				toast.success(`تم ${ newStatus === FiscalPeriodStatus.Open ? "فتح" : "إغلاق" } فترة ${ period.name }`);
-
-				// 1. Update local state
+				const updatedPeriod = res.data;
 				const updatedPeriods = periods.map((p) =>
-					p.id === period.id ? {...p, status: newStatus} : p
+					p.id === period.id ? updatedPeriod : p
 				);
 				setPeriods(updatedPeriods);
 				year.periods = updatedPeriods;
-
-				// 2. Update global Cubits state
 				Cubits.fiscalYears.entities.value = Cubits.fiscalYears.entities.value.map((y) =>
 				{
 					if (y.id === year.id)
@@ -59,14 +57,6 @@ export function FiscalPeriodsList({year}: FiscalPeriodsListProps)
 					return y;
 				});
 			}
-			else
-			{
-				toast.error("فشل في تحديث حالة الفترة المالية");
-			}
-		}
-		catch
-		{
-			toast.error("حدث خطأ غير متوقع أثناء تحديث حالة الفترة المالية");
 		}
 		finally
 		{
@@ -79,8 +69,6 @@ export function FiscalPeriodsList({year}: FiscalPeriodsListProps)
 			<p className="text-xs text-muted-foreground">
 				التحكم بحالة الفترات الشهرية (فتح / تجميد):
 			</p>
-
-			{/* 4 صفوف × 3 فترات في كل صف */ }
 			<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
 				{ periods.map((period) =>
 				{

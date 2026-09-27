@@ -5,7 +5,6 @@ import SettingsApiService from "@/core/networking/settingsApiService.ts";
 import PosSessionApiService from "@/core/networking/posSessionApiService.ts";
 import PosCheckoutApiService from "@/core/networking/posCheckoutApiService.ts";
 import PosTerminalsApiService from "@/core/networking/posTerminalsApiService.ts";
-import FiscalYearsApiService from "@/core/networking/fiscalYearsApiService.ts";
 import VouchersApiService from "@/core/networking/vouchersApiService.ts";
 import PurchaseInvoicesApiService from "@/core/networking/purchaseInvoicesApiService.ts";
 import SalesInvoicesApiService from "@/core/networking/salesInvoicesApiService.ts";
@@ -25,6 +24,8 @@ import { accountsApi } from "@/features/accounts/accounts.api";
 import { partnersApi } from "@/features/partners/partners.api";
 import { balanceTransfersApi } from "@/features/balanceTransfer/balanceTransfers.api";
 import { paymentMethodsApi } from "@/features/paymentMethods/paymentMethod.api.ts";
+import { fiscalYearsApi } from "@/features/fiscalYears/fiscalYears.api";
+
 
 export class Services extends BaseServices
 {
@@ -45,6 +46,7 @@ export class Services extends BaseServices
 	public static readonly partnersApi = partnersApi;
 	public static readonly paymentMethodsApi = paymentMethodsApi;
 	public static readonly balanceTransfersApi = balanceTransfersApi;
+	public static readonly fiscalYearsApi = fiscalYearsApi;
 	public static readonly voucherApi = new VouchersApiService();
 	public static readonly salesInvoicesApi = new SalesInvoicesApiService();
 	public static readonly purchaseInvoicesApi = new PurchaseInvoicesApiService();
@@ -55,7 +57,6 @@ export class Services extends BaseServices
 	public static readonly posCheckoutApi = new PosCheckoutApiService();
 	public static readonly posTerminalsApi = new PosTerminalsApiService();
 	public static readonly usersApi = new BaseApiService<UserDto>("Users");
-	public static readonly fiscalYearsApi = new FiscalYearsApiService();
 
 	static
 	{

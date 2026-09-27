@@ -16,11 +16,11 @@ import { FiscalYear, FiscalYearDto } from "@/core/data/fiscalYear.ts";
 import { useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { FiscalPeriodsList } from "./components/fiscalPeriodsList";
+import { fiscalYearsApi } from "./fiscalYears.api";
 
 
 export default function ChangeFiscalYearDialog({
 	dto,
-	service,
 	onSuccess
 }: CommonChangeDialogProps<FiscalYearDto>)
 {
@@ -84,7 +84,7 @@ export default function ChangeFiscalYearDialog({
 				<ChangeDialog.Close/>
 				<ChangeDialog.SaveButton<FiscalYear, FiscalYearDto>
 					entity={ entity }
-					service={ service }
+					resource={ fiscalYearsApi }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
