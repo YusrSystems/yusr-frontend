@@ -68,6 +68,7 @@ import { taxesApi } from "@/features/taxes/taxes.api";
 import { unitsApi } from "@/features/units/units.api";
 import { brandsApi } from "@/features/brands/brands.api";
 import { categoriesApi } from "@/features/itemCategories/categories.api";
+import { itemsSettlementsApi, stocktakingsApi } from "@/features/stocktakings/stocktakings.api";
 
 
 export class Cubits extends BaseCubits
@@ -78,8 +79,8 @@ export class Cubits extends BaseCubits
 	public static readonly units = new ListCubit<UnitDto>(unitsApi);
 	public static readonly brands = new ListCubit<BrandDto>(brandsApi);
 	public static readonly categories = new ListCubit<CategoryDto>(categoriesApi);
-	public static readonly stocktaking = new PageCubit<StocktakingDto>(Services.stocktakingApi);
-	public static readonly itemsSettlements = new PageCubit<StocktakingDto>(Services.itemsSettlementsApi);
+	public static readonly stocktaking = new PageCubit<StocktakingDto>(stocktakingsApi);
+	public static readonly itemsSettlements = new PageCubit<StocktakingDto>(itemsSettlementsApi);
 	public static readonly itemTransfers = new PageCubit<ItemTransferDto>(Services.itemTransfersApi);
 	public static readonly items = new ItemsCubit();
 	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(Services.costAdjustmentsApi);

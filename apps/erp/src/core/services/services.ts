@@ -2,7 +2,6 @@ import { BaseApiService, BaseServices, UserDto } from "yusr-ui";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
-import { type StocktakingDto } from "@/core/data/stocktaking.ts";
 import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
 import type { CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
 import { type AccountDto } from "@/core/data/account.ts";
@@ -25,6 +24,7 @@ import { unitsApi } from "@/features/units/units.api";
 import { brandsApi } from "@/features/brands/brands.api";
 import { categoriesApi } from "@/features/itemCategories/categories.api";
 import { itemsApi } from "@/features/items/items.api";
+import { itemsSettlementsApi, stocktakingsApi } from "@/features/stocktakings/stocktakings.api";
 
 
 export class Services extends BaseServices
@@ -38,8 +38,8 @@ export class Services extends BaseServices
 	public static readonly brandsApi = brandsApi;
 	public static readonly categoriesApi = categoriesApi;
 	public static readonly itemsApi = itemsApi;
-	public static readonly stocktakingApi = new BaseApiService<StocktakingDto>("Stocktakings");
-	public static readonly itemsSettlementsApi = new BaseApiService<StocktakingDto>("ItemSettlements");
+	public static readonly stocktakingApi = stocktakingsApi;
+	public static readonly itemsSettlementsApi = itemsSettlementsApi;
 	public static readonly itemTransfersApi = new BaseApiService<ItemTransferDto>("ItemTransfers");
 	public static readonly costAdjustmentsApi = new BaseApiService<CostAdjustmentDto>("CostAdjustments");
 	public static readonly accountsApi = new BaseApiService<AccountDto>("Accounts");

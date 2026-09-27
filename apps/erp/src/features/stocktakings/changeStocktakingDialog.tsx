@@ -16,6 +16,7 @@ import {
 	FieldGroup,
 	FieldsSection,
 	FormField,
+	type ICrudResource,
 	Loading,
 	TextAreaField
 } from "yusr-ui";
@@ -25,9 +26,9 @@ import { TransactionStatus } from "#/types/transactionStatus.ts";
 
 
 export default function ChangeStocktakingDialog(
-	{dto, service, onSuccess, addDialogTitle, updateDialogTitle, showIsOpeningBalance}:
-	& CommonChangeDialogProps<StocktakingDto>
-		& {
+	{dto, resource, onSuccess, addDialogTitle, updateDialogTitle, showIsOpeningBalance}:
+		CommonChangeDialogProps<StocktakingDto> & {
+		resource: ICrudResource<StocktakingDto>;
 		addDialogTitle: string;
 		updateDialogTitle: string;
 		showIsOpeningBalance?: boolean;
@@ -37,8 +38,7 @@ export default function ChangeStocktakingDialog(
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
 	const isLoading = useMemo(() => signal<boolean>(false), []);
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
-	const entity = useMemo(() => signal<Stocktaking>(dto ? Stocktaking.load(dto) : Stocktaking.create()), []);
+	const entity = useMemo(() => signal<Stocktaking>(dto ? Stocktaking.load(dto) : Stocktaking.create()), [dto]);
 
 	useEffect(() =>
 	{
@@ -47,7 +47,7 @@ export default function ChangeStocktakingDialog(
 			return;
 		}
 
-		Cubits.stores.init();
+		void Cubits.stores.init();
 	}, [entity.value.mode.value]);
 
 	useEffect(() =>
@@ -132,7 +132,7 @@ export default function ChangeStocktakingDialog(
 							</FormField>
 						) }
 					</FieldsSection>
-					
+
 					<TextAreaField
 						label={ t("stocktakings.description") }
 						value={ entity.value.description }
@@ -153,7 +153,7 @@ export default function ChangeStocktakingDialog(
 					<>
 						<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
 							entity={ entity }
-							service={ service }
+							resource={ resource }
 							variant="outline"
 							label={ t("common:saveAsDraft", "حفظ كمسودة") }
 							transformData={ (data) =>
@@ -166,7 +166,7 @@ export default function ChangeStocktakingDialog(
 						/>
 						<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
 							entity={ entity }
-							service={ service }
+							resource={ resource }
 							label={ t("common:saveAndPost", "حفظ واعتماد") }
 							transformData={ (data) =>
 							{
@@ -182,7 +182,7 @@ export default function ChangeStocktakingDialog(
 				{ (isPosted || isVoided) && (
 					<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
 						entity={ entity }
-						service={ service }
+						resource={ resource }
 						label={ t("common:save", "حفظ") }
 						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 					/>

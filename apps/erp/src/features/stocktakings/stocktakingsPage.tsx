@@ -24,15 +24,23 @@ import { signal } from "@preact/signals-react";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
 import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "#/types/transactionStatus.ts";
+import { stocktakingsApi } from "./stocktakings.api";
 
 
 export default function StocktakingsPage()
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
-	useEffect(() => Cubits.stocktaking.init(), []);
 
-	const printedStocktaking = useMemo(() => signal<StocktakingDto | undefined>(), []);
+	useEffect(() =>
+	{
+		if (Services.auth.hasAuth(SystemPermissionsResources.Stocktakings, SystemPermissionsActions.Get))
+		{
+			void Cubits.stocktaking.init();
+		}
+	}, []);
+
+	const printedStocktaking = useMemo(() => signal<StocktakingDto | undefined>(undefined), []);
 
 	useEffect(() =>
 	{
@@ -84,34 +92,35 @@ export default function StocktakingsPage()
 				} }/>
 
 				<CrudPage.ChangeDialog
-					changeDialog={ (dto: StocktakingDto | undefined, closeDialog) =>
+					fetchEntity={ async (id: number) =>
 					{
-						return (
-							<ChangeStocktakingDialog
-								addDialogTitle={ t("stocktakings.addNewTitle") }
-								updateDialogTitle={ `${ t("common:crudRow.edit") } ${ t("stocktakings.entityName") }` }
-								dto={ dto }
-								service={ Services.stocktakingApi }
-								onSuccess={ (data, mode) =>
-								{
-									if (mode === ChangeableEntityMode.Create)
-									{
-										Cubits.stocktaking.add(data);
-										closeDialog();
-									}
-									else if (mode === ChangeableEntityMode.Update)
-									{
-										Cubits.stocktaking.update(data);
-									}
-								} }
-							/>
-						);
+						const result = await stocktakingsApi.get(id);
+						return result.data;
 					} }
+					changeDialog={ (dto: StocktakingDto | undefined, closeDialog) => (
+						<ChangeStocktakingDialog
+							addDialogTitle={ t("stocktakings.addNewTitle") }
+							updateDialogTitle={ `${ t("common:crudRow.edit") } ${ t("stocktakings.entityName") }` }
+							dto={ dto }
+							resource={ stocktakingsApi }
+							onSuccess={ (data, mode) =>
+							{
+								if (mode === ChangeableEntityMode.Create)
+								{
+									Cubits.stocktaking.add(data);
+									closeDialog();
+								}
+								else if (mode === ChangeableEntityMode.Update)
+								{
+									Cubits.stocktaking.update(data);
+								}
+							} }
+						/>
+					) }
 				/>
-
-				<CrudPage.DeleteDialog
+				<CrudPage.DeleteDialog<StocktakingDto>
 					entityNameSelector={ () => `"${ t("stocktakings.entityName") }"` }
-					service={ Services.stocktakingApi }
+					resource={ stocktakingsApi }
 					onSuccess={ (entity) =>
 					{
 						if (entity.transactionStatus !== TransactionStatus.Draft)
@@ -182,14 +191,13 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 							? [{rowBody: "", rowStyles: "w-32"}]
 							: [])
 					] }
-					tableRowMapper={ (
-						stocktaking
-					) => [
+					tableRowMapper={ (stocktaking) => [
 						{rowBody: `#${ stocktaking.id }`, rowStyles: ""},
 						{
 							rowBody: (
 								<span
-									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(stocktaking.transactionStatus) }` }>
+									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(stocktaking.transactionStatus) }` }
+								>
 									{ getTransactionStatusName(stocktaking.transactionStatus) }
 								</span>
 							),
@@ -204,9 +212,7 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 						)
 							? [{
 								rowBody: (
-									<Button
-										onClick={ () => onPrint(stocktaking) }
-									>
+									<Button onClick={ () => onPrint(stocktaking) }>
 										<Printer className="h-4 w-4"/>
 									</Button>
 								),
@@ -230,10 +236,7 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 					pageSize={ Cubits.stocktaking.pageSize.value }
 					totalNumber={ Cubits.stocktaking.count.value }
 					currentPage={ Cubits.stocktaking.currentPage.value }
-					onPageChanged={ (newPage) =>
-					{
-						Cubits.stocktaking.changePage(newPage);
-					} }
+					onPageChanged={ (newPage) => Cubits.stocktaking.changePage(newPage) }
 				/>
 			</CrudPage.Table>
 		);

@@ -172,6 +172,7 @@ export function PricingMethodsTable({entity}: { entity: Item })
 															<PricingMethodsSearchableSelect
 																id={ price.pricingMethodId }
 																label={ price.pricingMethodName }
+																disabled={ isService }
 																onSelect={ (m) => (price.pricingMethodName.value = m?.name ?? "") }
 															/>
 														</FormField>
