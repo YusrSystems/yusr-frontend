@@ -19,12 +19,21 @@ import {
 } from "yusr-ui";
 import ChangeCostAdjustmentDialog from "./changeCostAdjustmentDialog";
 import { APP_NAME } from "../../../appConfig.ts";
+import { costAdjustmentsApi } from "./costAdjustments.api";
 
 
 export default function CostAdjustmentsPage()
 {
+	useSignals();
 	const {t} = useTranslation("stocking");
-	useEffect(() => Cubits.costAdjustments.init(), []);
+
+	useEffect(() =>
+	{
+		if (Services.auth.hasAuth(SystemPermissionsResources.CostAdjustments, SystemPermissionsActions.Get))
+		{
+			void Cubits.costAdjustments.init();
+		}
+	}, []);
 
 	useEffect(() =>
 	{
@@ -55,27 +64,28 @@ export default function CostAdjustmentsPage()
 			<PageTable/>
 
 			<CrudPage.ChangeDialog
-				changeDialog={ (dto: CostAdjustmentDto | undefined, closeDialog) =>
+				fetchEntity={ async (id: number) =>
 				{
-					return (
-						<ChangeCostAdjustmentDialog
-							dto={ dto }
-							service={ Services.costAdjustmentsApi }
-							onSuccess={ (data, mode) =>
-							{
-								if (mode === ChangeableEntityMode.Create)
-								{
-									Cubits.costAdjustments.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									Cubits.costAdjustments.update(data);
-								}
-							} }
-						/>
-					);
+					const result = await costAdjustmentsApi.get(id);
+					return result.data;
 				} }
+				changeDialog={ (dto: CostAdjustmentDto | undefined, closeDialog) => (
+					<ChangeCostAdjustmentDialog
+						dto={ dto }
+						onSuccess={ (data, mode) =>
+						{
+							if (mode === ChangeableEntityMode.Create)
+							{
+								Cubits.costAdjustments.add(data);
+								closeDialog();
+							}
+							else if (mode === ChangeableEntityMode.Update)
+							{
+								Cubits.costAdjustments.update(data);
+							}
+						} }
+					/>
+				) }
 			/>
 		</CrudPage>
 	);
@@ -124,9 +134,7 @@ function PageTable()
 						{rowBody: t("costAdjustments.newCost"), rowStyles: "w-32"},
 						{rowBody: t("costAdjustments.notes"), rowStyles: ""}
 					] }
-					tableRowMapper={ (
-						adjustment
-					) => [
+					tableRowMapper={ (adjustment) => [
 						{rowBody: `#${ adjustment.id }`, rowStyles: ""},
 						{rowBody: adjustment.date, rowStyles: ""},
 						{rowBody: adjustment.storeName, rowStyles: "font-semibold"},
@@ -161,10 +169,7 @@ function PageTable()
 					pageSize={ Cubits.costAdjustments.pageSize.value }
 					totalNumber={ Cubits.costAdjustments.count.value }
 					currentPage={ Cubits.costAdjustments.currentPage.value }
-					onPageChanged={ (newPage) =>
-					{
-						Cubits.costAdjustments.changePage(newPage);
-					} }
+					onPageChanged={ (newPage) => Cubits.costAdjustments.changePage(newPage) }
 				/>
 			</CrudPage.Table>
 		);

@@ -22,16 +22,16 @@ import { ItemType } from "@/core/data/item.ts";
 import ItemTransfer, { ItemTransferDto } from "../../core/data/itemTransfer";
 import ItemTransferTable from "./itemTransferTable";
 import { TransactionStatus } from "#/types/transactionStatus.ts";
+import { itemTransfersApi } from "./itemTransfers.api";
 
 
 export default function ChangeItemTransferDialog(
-	{dto, service, onSuccess}: CommonChangeDialogProps<ItemTransferDto>
+	{dto, onSuccess}: CommonChangeDialogProps<ItemTransferDto>
 )
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
-	const entity = useMemo(() => signal<ItemTransfer>(dto ? ItemTransfer.load(dto) : ItemTransfer.create()), []);
+	const entity = useMemo(() => signal<ItemTransfer>(dto ? ItemTransfer.load(dto) : ItemTransfer.create()), [dto]);
 	const isLoading = useMemo(() => signal<boolean>(false), []);
 	const title = entity.value.mode.value === ChangeableEntityMode.Create
 		? t("itemTransfers.addNewTitle")
@@ -44,8 +44,8 @@ export default function ChangeItemTransferDialog(
 			isLoading.value = true;
 			const fetch = async () =>
 			{
-				const res = await service.Get(entity.value.id.value);
-				if (res.data != undefined)
+				const res = await itemTransfersApi.get(entity.value.id.value);
+				if (res.ok && res.data)
 				{
 					entity.value = ItemTransfer.load(res.data);
 				}
@@ -55,9 +55,8 @@ export default function ChangeItemTransferDialog(
 		}
 		else
 		{
-			Cubits.stores.init();
+			void Cubits.stores.init();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
 	}, []);
 
 	useEffect(() =>
@@ -160,7 +159,7 @@ export default function ChangeItemTransferDialog(
 					<>
 						<ChangeDialog.SaveButton<ItemTransfer, ItemTransferDto>
 							entity={ entity }
-							service={ service }
+							resource={ itemTransfersApi }
 							variant="outline"
 							label={ t("common:saveAsDraft", "حفظ كمسودة") }
 							transformData={ (data) =>
@@ -173,7 +172,7 @@ export default function ChangeItemTransferDialog(
 						/>
 						<ChangeDialog.SaveButton<ItemTransfer, ItemTransferDto>
 							entity={ entity }
-							service={ service }
+							resource={ itemTransfersApi }
 							label={ t("common:saveAndPost", "حفظ واعتماد") }
 							transformData={ (data) =>
 							{
@@ -189,7 +188,7 @@ export default function ChangeItemTransferDialog(
 				{ (isPosted || isVoided) && (
 					<ChangeDialog.SaveButton<ItemTransfer, ItemTransferDto>
 						entity={ entity }
-						service={ service }
+						resource={ itemTransfersApi }
 						label={ t("common:saveButton.saveChanges") }
 						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 					/>

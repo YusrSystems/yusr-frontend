@@ -21,22 +21,21 @@ import {
 } from "yusr-ui";
 import { signal } from "@preact/signals-react";
 import { ItemType } from "@/core/data/item.ts";
+import { costAdjustmentsApi } from "./costAdjustments.api";
 
 
 export default function ChangeCostAdjustmentDialog({
 	dto,
-	service,
 	onSuccess
 }: CommonChangeDialogProps<CostAdjustmentDto>)
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: signal created once on mount, not re-synced with props
-	const entity = useMemo(() => signal<CostAdjustment>(dto ? CostAdjustment.load(dto) : CostAdjustment.create()), []);
+	const entity = useMemo(() => signal<CostAdjustment>(dto ? CostAdjustment.load(dto) : CostAdjustment.create()), [dto]);
 
 	useEffect(() =>
 	{
-		Cubits.stores.init();
+		void Cubits.stores.init();
 	}, []);
 
 	useEffect(() =>
@@ -151,7 +150,7 @@ export default function ChangeCostAdjustmentDialog({
 
 				<ChangeDialog.SaveButton<CostAdjustment, CostAdjustmentDto>
 					entity={ entity }
-					service={ service }
+					resource={ costAdjustmentsApi }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>

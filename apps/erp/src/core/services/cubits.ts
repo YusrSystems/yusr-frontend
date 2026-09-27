@@ -11,8 +11,8 @@ import { Services } from "./services";
 import { VoucherDto } from "@/core/data/voucher.ts";
 import { StoreDto } from "@/core/data/store.ts";
 import { type PaymentMethodDto } from "@/core/data/paymentMethod.ts";
-import { type CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
-import type { ItemTransferDto } from "@/core/data/itemTransfer.ts";
+import { CostAdjustmentDto } from "@/core/data/costAdjustment.ts";
+import { ItemTransferDto } from "@/core/data/itemTransfer.ts";
 import type { ItemsMovementReportRequest } from "@/features/reports/itemsMovement/itemsMovementReportRequest.ts";
 import type { ItemsMovementReportResult } from "@/features/reports/itemsMovement/itemsMovementReportResult.ts";
 import type { VatReturnReportRequest } from "@/features/reports/vatReturn/vatReturnReportRequest.ts";
@@ -69,6 +69,8 @@ import { unitsApi } from "@/features/units/units.api";
 import { brandsApi } from "@/features/brands/brands.api";
 import { categoriesApi } from "@/features/itemCategories/categories.api";
 import { itemsSettlementsApi, stocktakingsApi } from "@/features/stocktakings/stocktakings.api";
+import { costAdjustmentsApi } from "@/features/costAdjustments/costAdjustments.api";
+import { itemTransfersApi } from "@/features/itemTransfers/itemTransfers.api";
 
 
 export class Cubits extends BaseCubits
@@ -81,9 +83,9 @@ export class Cubits extends BaseCubits
 	public static readonly categories = new ListCubit<CategoryDto>(categoriesApi);
 	public static readonly stocktaking = new PageCubit<StocktakingDto>(stocktakingsApi);
 	public static readonly itemsSettlements = new PageCubit<StocktakingDto>(itemsSettlementsApi);
-	public static readonly itemTransfers = new PageCubit<ItemTransferDto>(Services.itemTransfersApi);
+	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(costAdjustmentsApi);
+	public static readonly itemTransfers = new PageCubit<ItemTransferDto>(itemTransfersApi);
 	public static readonly items = new ItemsCubit();
-	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(Services.costAdjustmentsApi);
 	public static readonly paymentMethods = new PageCubit<PaymentMethodDto>(Services.paymentMethodsApi);
 	public static readonly accounts = new PageCubit<AccountDto>(Services.accountsApi);
 	public static readonly parentAccounts = new PageCubit<AccountDto>(Services.accountsApi);

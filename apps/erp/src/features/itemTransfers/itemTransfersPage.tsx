@@ -24,13 +24,21 @@ import { createPortal } from "react-dom";
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
 import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "#/types/transactionStatus.ts";
+import { itemTransfersApi } from "./itemTransfers.api";
 
 
 export default function ItemTransfersPage()
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
-	useEffect(() => Cubits.itemTransfers.init(), []);
+
+	useEffect(() =>
+	{
+		if (Services.auth.hasAuth(SystemPermissionsResources.ItemTransfers, SystemPermissionsActions.Get))
+		{
+			void Cubits.itemTransfers.init();
+		}
+	}, []);
 
 	useEffect(() =>
 	{
@@ -41,7 +49,7 @@ export default function ItemTransfersPage()
 		};
 	}, [t]);
 
-	const printedTransfer = useMemo(() => signal<ItemTransferDto | undefined>(), []);
+	const printedTransfer = useMemo(() => signal<ItemTransferDto | undefined>(undefined), []);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.ItemTransfers, SystemPermissionsActions.Get))
 	{
@@ -79,35 +87,30 @@ export default function ItemTransfersPage()
 				<CrudPage.ChangeDialog
 					fetchEntity={ async (id: number) =>
 					{
-						const result = await Services.itemTransfersApi.Get(id);
+						const result = await itemTransfersApi.get(id);
 						return result.data;
 					} }
-					changeDialog={ (dto: ItemTransferDto | undefined, closeDialog) =>
-					{
-						return (
-							<ChangeItemTransferDialog
-								dto={ dto }
-								service={ Services.itemTransfersApi }
-								onSuccess={ (data, mode) =>
+					changeDialog={ (dto: ItemTransferDto | undefined, closeDialog) => (
+						<ChangeItemTransferDialog
+							dto={ dto }
+							onSuccess={ (data, mode) =>
+							{
+								if (mode === ChangeableEntityMode.Create)
 								{
-									if (mode === ChangeableEntityMode.Create)
-									{
-										Cubits.itemTransfers.add(data);
-										closeDialog();
-									}
-									else if (mode === ChangeableEntityMode.Update)
-									{
-										Cubits.itemTransfers.update(data);
-									}
-								} }
-							/>
-						);
-					} }
+									Cubits.itemTransfers.add(data);
+									closeDialog();
+								}
+								else if (mode === ChangeableEntityMode.Update)
+								{
+									Cubits.itemTransfers.update(data);
+								}
+							} }
+						/>
+					) }
 				/>
-
-				<CrudPage.DeleteDialog
+				<CrudPage.DeleteDialog<ItemTransferDto>
 					entityNameSelector={ () => `"${ t("itemTransfers.entityName") }"` }
-					service={ Services.itemTransfersApi }
+					resource={ itemTransfersApi }
 					onSuccess={ (entity) =>
 					{
 						if (entity.transactionStatus !== TransactionStatus.Draft)
@@ -180,14 +183,13 @@ function PageTable({onPrint}: { onPrint: (transfer: ItemTransferDto) => void })
 							? [{rowBody: "", rowStyles: "w-32"}]
 							: [])
 					] }
-					tableRowMapper={ (
-						transfer
-					) => [
+					tableRowMapper={ (transfer) => [
 						{rowBody: `#${ transfer.id }`},
 						{
 							rowBody: (
 								<span
-									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(transfer.transactionStatus) }` }>
+									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(transfer.transactionStatus) }` }
+								>
 									{ getTransactionStatusName(transfer.transactionStatus) }
 								</span>
 							),
@@ -203,9 +205,7 @@ function PageTable({onPrint}: { onPrint: (transfer: ItemTransferDto) => void })
 						)
 							? [{
 								rowBody: (
-									<Button
-										onClick={ () => onPrint(transfer) }
-									>
+									<Button onClick={ () => onPrint(transfer) }>
 										<Printer className="h-4 w-4"/>
 									</Button>
 								),
@@ -229,10 +229,7 @@ function PageTable({onPrint}: { onPrint: (transfer: ItemTransferDto) => void })
 					pageSize={ Cubits.itemTransfers.pageSize.value }
 					totalNumber={ Cubits.itemTransfers.count.value }
 					currentPage={ Cubits.itemTransfers.currentPage.value }
-					onPageChanged={ (newPage) =>
-					{
-						Cubits.itemTransfers.changePage(newPage);
-					} }
+					onPageChanged={ (newPage) => Cubits.itemTransfers.changePage(newPage) }
 				/>
 			</CrudPage.Table>
 		);
