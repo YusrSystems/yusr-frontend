@@ -2,12 +2,13 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
-import { ChevronDown, ChevronLeft, FolderTree, List, Printer, WalletIcon } from "lucide-react";
+import { ChevronDown, ChevronLeft, FileText, FolderTree, List, Printer, WalletIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	Button,
 	ChangeableEntityMode,
+	cn,
 	CrudPage,
 	FilterSection,
 	PageError,
@@ -29,6 +30,7 @@ import type { Signal } from "@preact/signals-react";
 import { AppNavigator } from "@/app/appNavigator.ts";
 import { APP_NAME } from "../../../appConfig.ts";
 import { accountsApi } from "./accounts.api";
+
 
 interface TreeNodeData
 {
@@ -74,31 +76,36 @@ export default function AccountsPage()
 	return (
 		<>
 			<CrudPage<AccountDto>>
-				<CrudPage.HeaderContainer>
+				<CrudPage.HeaderContainer
+					className="flex flex-col sm:flex-row justify-between mb-6 sm:mb-8 gap-3 sm:items-center">
 					<div className="flex flex-col sm:flex-row sm:items-center gap-3">
 						<h1>{ viewMode === "table" ? t("accounts.title") : "شجرة الحسابات" }</h1>
 						<YoutubeButton videoId="WNCe2c2kqCw"/>
 					</div>
 
-					<CrudPage.HeaderButtonsContainer>
-						<div className="flex bg-muted/40 rounded-lg p-1 border">
+					<CrudPage.HeaderButtonsContainer className="flex flex-wrap items-center gap-2 sm:gap-3">
+						<div className="flex bg-muted/40 rounded-lg p-1 border shrink-0">
 							<Button
 								variant={ viewMode === "table" ? "default" : "ghost" }
 								size="sm"
 								onClick={ () => setViewMode("table") }
-								className="gap-1.5"
+								className="gap-1.5 h-8 px-2.5 sm:px-3 text-xs"
+								title={ t("erpCommon:reports.tableView", "عرض جدول") }
 							>
 								<List className="h-4 w-4"/>
-								<span>{ t("erpCommon:reports.tableView", "عرض جدول") }</span>
+								<span
+									className="hidden sm:inline">{ t("erpCommon:reports.tableView", "عرض جدول") }</span>
 							</Button>
 							<Button
 								variant={ viewMode === "tree" ? "default" : "ghost" }
 								size="sm"
 								onClick={ () => setViewMode("tree") }
-								className="gap-1.5"
+								className="gap-1.5 h-8 px-2.5 sm:px-3 text-xs"
+								title={ t("erpCommon:reports.treeView", "عرض شجرة") }
 							>
 								<FolderTree className="h-4 w-4"/>
-								<span>{ t("erpCommon:reports.treeView", "عرض شجرة") }</span>
+								<span
+									className="hidden sm:inline">{ t("erpCommon:reports.treeView", "عرض شجرة") }</span>
 							</Button>
 						</div>
 
@@ -339,8 +346,8 @@ function PageTree()
 	};
 
 	return (
-		<div className="border rounded-b-xl p-6 bg-card text-foreground overflow-y-auto">
-			<ul className="space-y-1">
+		<div className="border rounded-b-xl p-3 sm:p-6 bg-card text-foreground overflow-x-auto">
+			<ul className="space-y-1 min-w-[320px]">
 				{ roots.map((node) => (
 					<TreeNode
 						key={ node.id }
@@ -386,35 +393,42 @@ function TreeNode({
 		<li className="flex flex-col">
 			<div
 				onClick={ () => hasChildren && onToggle(node.id) }
-				style={ {paddingRight: `${ level * 20 }px`} }
-				className={ `flex items-center justify-between py-2.5 border-b border-muted/30 hover:bg-muted/10 rounded-md transition-colors px-3 ${
+				style={ {paddingInlineStart: `${ level * 14 }px`} }
+				className={ cn(
+					"flex items-center justify-between py-2 sm:py-2.5 border-b border-muted/30 hover:bg-muted/10 rounded-md transition-colors px-2 sm:px-3 gap-2 min-w-0",
 					node.isVirtual ? "cursor-pointer" : "cursor-default"
-				}` }
+				) }
 			>
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
 					{ hasChildren ? (
-						<div className="h-5 w-5 flex items-center justify-center ms-3 shrink-0">
-							{ isExpanded ? <ChevronDown className="h-4 w-4"/> : <ChevronLeft className="h-4 w-4"/> }
+						<div className="h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center shrink-0">
+							{ isExpanded ? <ChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4"/> :
+								<ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 rtl:rotate-0 ltr:rotate-180"/> }
 						</div>
 					) : (
-						<div className="h-5 w-5 shrink-0"/>
+						<div className="h-4 w-4 sm:h-5 sm:w-5 shrink-0"/>
 					) }
-					<span className={ `text-sm ${ node.isVirtual ? "font-bold text-primary" : "font-normal" }` }>
+					<span
+						title={ node.name }
+						className={ cn("text-xs sm:text-sm truncate", node.isVirtual ? "font-bold text-primary" : "font-normal") }
+					>
 						{ node.name }
 					</span>
 					{ !node.isVirtual && (
-						<span className="text-[10px] text-muted-foreground px-1.5 py-0.5 rounded bg-muted/60">
+						<span
+							className="text-[9px] sm:text-[10px] text-muted-foreground px-1 sm:px-1.5 py-0.5 rounded bg-muted/60 shrink-0">
 							#{ node.id }
 						</span>
 					) }
 				</div>
 
-				<div className="flex items-center justify-between">
+				<div className="flex items-center gap-2 sm:gap-3 shrink-0">
 					{ canShowStatement && !node.isVirtual && (
 						<Button
 							variant="outline"
 							size="sm"
-							className="h-7 text-xs"
+							className="h-7 px-2 text-xs"
+							title={ t("accountStatement.button") }
 							onClick={ (e) =>
 							{
 								e.stopPropagation();
@@ -423,16 +437,21 @@ function TreeNode({
 								);
 							} }
 						>
-							{ t("accountStatement.button") }
+							<span className="hidden sm:inline">{ t("accountStatement.button") }</span>
+							<FileText className="h-3.5 w-3.5 sm:hidden"/>
 						</Button>
 					) }
 
 					{ canShowBalance && (
 						<span
-							className={ `text-sm text-end font-mono font-semibold min-w-40 max-w-40 ${ getBalanceColorClass(node.balance, node.accountClass) }` }>
+							className={ cn(
+								"text-xs sm:text-sm text-end font-mono font-semibold whitespace-nowrap min-w-fit sm:min-w-32",
+								getBalanceColorClass(node.balance, node.accountClass)
+							) }
+						>
 							{ node.balance.toLocaleString("en-US", {minimumFractionDigits: 2}) }
-							<span className="text-[10px] font-sans mr-1">
-								<ErpCurrencyIcon className="inline h-4 w-4"/>
+							<span className="text-[10px] font-sans mr-1 inline-flex items-center">
+								<ErpCurrencyIcon className="inline h-3.5 w-3.5 sm:h-4 sm:w-4"/>
 							</span>
 						</span>
 					) }
@@ -440,7 +459,7 @@ function TreeNode({
 			</div>
 
 			{ hasChildren && isExpanded && (
-				<ul className="mt-1">
+				<ul className="mt-0.5">
 					{ node.children.map((child) => (
 						<TreeNode
 							key={ child.id }

@@ -32,6 +32,7 @@ import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";
 import { accountsApi } from "./accounts.api";
 
+
 export default function ChangeAccountDialog(
 	{dto, onSuccess, initDto}: CommonChangeDialogProps<AccountDto> & {
 		initDto?: AccountDto;
@@ -126,9 +127,9 @@ export default function ChangeAccountDialog(
 	}
 
 	return (
-		<ChangeDialog className="sm:max-w-2xl">
+		<ChangeDialog className="sm:max-w-2xl max-h-[94dvh] flex flex-col overflow-hidden">
 			<ChangeDialog.Header title={ title }/>
-			<div className="max-h-[70vh] overflow-y-auto px-2 pb-2">
+			<div className="flex-1 min-h-0 overflow-y-auto px-1 sm:px-2 pb-2">
 				<FieldGroup>
 					<FieldsSection columns={ 1 }>
 						<TextField
@@ -164,7 +165,7 @@ export default function ChangeAccountDialog(
 							/>
 						</FormField>
 
-						<div className="grid grid-cols-2 gap-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 							<NumberField
 								label={ t("accounts.openingBalance", "الرصيد الافتتاحي") }
 								value={ entity.value.openingBalance }
@@ -189,9 +190,12 @@ export default function ChangeAccountDialog(
 				</FieldGroup>
 			</div>
 			<ChangeDialog.Footer>
-				<div className="flex items-center justify-between w-full">
-					<YoutubeButton videoId="WNCe2c2kqCw"/>
-					<div className="flex justify-end gap-3">
+				<div
+					className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between w-full gap-2 sm:gap-3">
+					<div className="shrink-0 flex items-center">
+						<YoutubeButton videoId="WNCe2c2kqCw"/>
+					</div>
+					<div className="flex justify-end gap-2 sm:gap-3">
 						<ChangeDialog.Close/>
 						<ChangeDialog.SaveButton<Account, AccountDto>
 							entity={ entity }
