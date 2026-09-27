@@ -73,9 +73,10 @@ import { costAdjustmentsApi } from "@/features/costAdjustments/costAdjustments.a
 import { itemTransfersApi } from "@/features/itemTransfers/itemTransfers.api";
 import { accountsApi } from "@/features/accounts/accounts.api";
 import { partnersApi } from "@/features/partners/partners.api";
+import { paymentMethodsApi } from "@/features/paymentMethods/paymentMethod.api.ts";
 import { balanceTransfersApi } from "@/features/balanceTransfer/balanceTransfers.api";
 import { fiscalYearsApi } from "@/features/fiscalYears/fiscalYears.api";
-import { paymentMethodsApi } from "@/features/paymentMethods/paymentMethod.api.ts";
+import { vouchersApi } from "@/features/vouchers/vouchers.api";
 
 
 export class Cubits extends BaseCubits
@@ -97,8 +98,8 @@ export class Cubits extends BaseCubits
 	public static readonly accounts = new PageCubit<AccountDto>(accountsApi);
 	public static readonly parentAccounts = new PageCubit<AccountDto>(accountsApi);
 	public static readonly partners = new PageCubit<PartnerDto>(partnersApi);
+	public static readonly vouchers = new PageCubit<VoucherDto>(vouchersApi);
 	public static override roles = new ListCubit<ErpRoleDto>(erpRolesApi);
-	public static readonly vouchers = new PageCubit<VoucherDto>(Services.voucherApi);
 	public static readonly salesInvoices = new PageCubit<SalesInvoiceDto>(Services.salesInvoicesApi);
 	public static readonly purchaseInvoices = new PageCubit<PurchaseInvoiceDto>(Services.purchaseInvoicesApi);
 	public static readonly originalSalesInvoices = new PageCubit<SalesInvoiceDto>(Services.salesInvoicesApi);

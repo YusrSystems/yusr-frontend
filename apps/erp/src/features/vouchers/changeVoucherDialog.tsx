@@ -33,17 +33,16 @@ import { TransactionStatus } from "#/types/transactionStatus.ts";
 import { CalendarClock, CalendarOff, Info } from "lucide-react";
 import TerminateVoucherDistributionDialog from "./terminateVoucherDistributionDialog.tsx";
 import { canTerminateVoucherDistribution } from "@/features/vouchers/canTerminateVoucherDistribution.tsx";
+import { vouchersApi } from "./vouchers.api";
 
 
 export default function ChangeVoucherDialog({
 	dto,
-	service,
 	onSuccess
 }: CommonChangeDialogProps<VoucherDto>)
 {
 	useSignals();
-
-	const entity = useMemo(() => signal<Voucher>(dto ? Voucher.load(dto) : Voucher.create()), []);
+	const entity = useMemo(() => signal<Voucher>(dto ? Voucher.load(dto) : Voucher.create()), [dto]);
 	const {t} = useTranslation(["accounting", "common"]);
 	const amountToWords = useMemo(() => signal<string>(""), []);
 	const selectedPaymentMethod = useMemo(() => signal<PaymentMethod | undefined>(entity.value.paymentMethod.value), [entity.value.paymentMethod.value]);
@@ -51,8 +50,8 @@ export default function ChangeVoucherDialog({
 
 	useEffect(() =>
 	{
-		Cubits.paymentMethods.init();
-		Cubits.partners.init();
+		void Cubits.paymentMethods.init();
+		void Cubits.partners.init();
 	}, []);
 
 	useEffect(() =>
@@ -325,8 +324,7 @@ export default function ChangeVoucherDialog({
 										<Info className="h-4 w-4 shrink-0 mt-0.5"/>
 										<div>
 											سيتم دفع كامل المبلغ من البنك/الصندوق في تاريخ السند، ثم يقوم النظام بتوزيع
-											حصة
-											كل فترة بقيمة <strong>{ sliceAmount } ريال</strong> على
+											حصة كل فترة بقيمة <strong>{ sliceAmount } ريال</strong> على
 											مدار <strong>{ count } فترة</strong> تلقائياً.
 										</div>
 									</div>
@@ -416,7 +414,7 @@ export default function ChangeVoucherDialog({
 						<>
 							<ChangeDialog.SaveButton<Voucher, VoucherDto>
 								entity={ entity }
-								service={ service }
+								resource={ vouchersApi }
 								variant="outline"
 								label={ t("common:saveAsDraft", "حفظ كمسودة") }
 								transformData={ (data) =>
@@ -434,7 +432,7 @@ export default function ChangeVoucherDialog({
 							/>
 							<ChangeDialog.SaveButton<Voucher, VoucherDto>
 								entity={ entity }
-								service={ service }
+								resource={ vouchersApi }
 								label={ t("common:saveAndPost", "حفظ واعتماد") }
 								transformData={ (data) =>
 								{
@@ -455,7 +453,7 @@ export default function ChangeVoucherDialog({
 					{ (isPosted || isVoided) && (
 						<ChangeDialog.SaveButton<Voucher, VoucherDto>
 							entity={ entity }
-							service={ service }
+							resource={ vouchersApi }
 							label={ t("common:saveButton.saveChanges") }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 						/>

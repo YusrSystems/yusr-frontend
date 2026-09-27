@@ -38,13 +38,22 @@ import { PartnersSearchableSelect } from "@/core/components/searchableSelect/par
 import AccountsSearchableSelect from "@/core/components/searchableSelect/accountsSearchableSelect.tsx";
 import PaymentMethodsSearchableSelect from "@/core/components/searchableSelect/paymentMethodsSearchableSelect.tsx";
 import { canTerminateVoucherDistribution } from "@/features/vouchers/canTerminateVoucherDistribution.tsx";
+import { vouchersApi } from "./vouchers.api";
 
 
 export default function VouchersPage()
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
-	useEffect(() => Cubits.vouchers.init(), []);
+
+	useEffect(() =>
+	{
+		if (Services.auth.hasAuth(SystemPermissionsResources.Vouchers, SystemPermissionsActions.Get))
+		{
+			void Cubits.vouchers.init();
+		}
+	}, []);
+
 	const printedVoucher = useMemo(() => signal<VoucherDto | undefined>(undefined), []);
 	const voucherToTerminate = useMemo(() => signal<VoucherDto | undefined>(undefined), []);
 
@@ -138,35 +147,30 @@ export default function VouchersPage()
 					fetchEntity={ async (id: number) =>
 					{
 						if (!id || isNaN(id) || id <= 0) return undefined;
-						const result = await Services.voucherApi.Get(id);
+						const result = await vouchersApi.get(id);
 						return result.data;
 					} }
-					changeDialog={ (dto: VoucherDto | undefined, closeDialog) =>
-					{
-						return (
-							<ChangeVoucherDialog
-								dto={ dto }
-								service={ Services.voucherApi }
-								onSuccess={ (data, mode) =>
+					changeDialog={ (dto: VoucherDto | undefined, closeDialog) => (
+						<ChangeVoucherDialog
+							dto={ dto }
+							onSuccess={ (data, mode) =>
+							{
+								if (mode === ChangeableEntityMode.Create)
 								{
-									if (mode === ChangeableEntityMode.Create)
-									{
-										Cubits.vouchers.add(data);
-										closeDialog();
-									}
-									else if (mode === ChangeableEntityMode.Update)
-									{
-										Cubits.vouchers.update(data);
-									}
-								} }
-							/>
-						);
-					} }
+									Cubits.vouchers.add(data);
+									closeDialog();
+								}
+								else if (mode === ChangeableEntityMode.Update)
+								{
+									Cubits.vouchers.update(data);
+								}
+							} }
+						/>
+					) }
 				/>
-
-				<CrudPage.DeleteDialog
+				<CrudPage.DeleteDialog<VoucherDto>
 					entityNameSelector={ () => `"${ t("vouchers.entityName") }"` }
-					service={ Services.voucherApi }
+					resource={ vouchersApi }
 					onSuccess={ (entity) =>
 					{
 						if (entity.transactionStatus !== TransactionStatus.Draft)

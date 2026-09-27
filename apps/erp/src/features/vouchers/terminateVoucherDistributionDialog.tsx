@@ -15,8 +15,8 @@ import {
 	DialogTitle
 } from "yusr-ui";
 import { VoucherDto } from "@/core/data/voucher.ts";
-import { Services } from "@/core/services/services.ts";
 import { Cubits } from "@/core/services/cubits.ts";
+import { vouchersApi } from "./vouchers.api";
 
 
 export interface TerminateVoucherDistributionDialogProps
@@ -44,8 +44,8 @@ export default function TerminateVoucherDistributionDialog({
 		isTerminating.value = true;
 		try
 		{
-			const res = await Services.voucherApi.TerminateDistribution(voucher.id, voucher.rowVer);
-			if (res.status === 200 && res.data)
+			const res = await vouchersApi.terminateDistribution(voucher.id, voucher.rowVer);
+			if (res.ok && res.data)
 			{
 				toast.success(`تم إنهاء التوزيع الدوري للسند رقم #${ voucher.id } بنجاح`);
 				Cubits.vouchers.update(res.data);
