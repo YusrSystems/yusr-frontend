@@ -61,89 +61,91 @@ export default function ChangeCostAdjustmentDialog({
 		: `${ t("common:crudRow.edit") } ${ t("costAdjustments.entityName") }`;
 
 	return (
-		<ChangeDialog className="sm:max-w-3xl">
+		<ChangeDialog className="sm:max-w-3xl max-h-[94dvh] flex flex-col overflow-hidden">
 			<ChangeDialog.Header title={ title }/>
 
-			<FieldGroup>
-				<FieldsSection columns={ 3 }>
-					<DateField
-						label={ t("costAdjustments.date") }
-						required
-						value={ entity.value.date }
-						error={ entity.value.getError("date") }
-						disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
-					/>
-
-					<FormField
-						label={ t("costAdjustments.store", "المستودع") }
-						required
-						error={ entity.value.getError("storeId") }
-					>
-						<StoresSearchableSelect
-							id={ entity.value.storeId }
-							label={ entity.value.storeName }
+			<div className="flex-1 min-h-0 overflow-y-auto px-1 sm:px-2 pb-2">
+				<FieldGroup>
+					<FieldsSection columns={ {base: 1, md: 3} }>
+						<DateField
+							label={ t("costAdjustments.date") }
+							required
+							value={ entity.value.date }
+							error={ entity.value.getError("date") }
 							disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
-							onSelect={ () =>
-							{
-								entity.value.itemId.value = undefined;
-								entity.value.itemName.value = "";
-								entity.value.oldCost.value = 0;
-								entity.value.quantity.value = 0;
-								entity.value.newCost.value = 0;
-							} }
 						/>
-					</FormField>
 
-					<FormField
-						label={ t("costAdjustments.item") }
-						required
-						error={ entity.value.getError("itemId") }
-					>
-						<ItemsSearchableSelect
-							id={ entity.value.itemId }
-							label={ entity.value.itemName }
-							disabled={ entity.value.mode.value === ChangeableEntityMode.Update || !entity.value.storeId.value }
-							onSelect={ (item) =>
-							{
-								if (item)
+						<FormField
+							label={ t("costAdjustments.store", "المستودع") }
+							required
+							error={ entity.value.getError("storeId") }
+						>
+							<StoresSearchableSelect
+								id={ entity.value.storeId }
+								label={ entity.value.storeName }
+								disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+								onSelect={ () =>
 								{
-									entity.value.itemName.value = item.name;
-									const storeDetails = item.itemStores?.find(s => s.storeId === entity.value.storeId.value);
-									entity.value.oldCost.value = storeDetails?.averageCost ?? 0;
-									entity.value.quantity.value = storeDetails?.quantity ?? 0;
-									entity.value.newCost.value = storeDetails?.averageCost ?? 0;
-								}
-							} }
+									entity.value.itemId.value = undefined;
+									entity.value.itemName.value = "";
+									entity.value.oldCost.value = 0;
+									entity.value.quantity.value = 0;
+									entity.value.newCost.value = 0;
+								} }
+							/>
+						</FormField>
+
+						<FormField
+							label={ t("costAdjustments.item") }
+							required
+							error={ entity.value.getError("itemId") }
+						>
+							<ItemsSearchableSelect
+								id={ entity.value.itemId }
+								label={ entity.value.itemName }
+								disabled={ entity.value.mode.value === ChangeableEntityMode.Update || !entity.value.storeId.value }
+								onSelect={ (item) =>
+								{
+									if (item)
+									{
+										entity.value.itemName.value = item.name;
+										const storeDetails = item.itemStores?.find(s => s.storeId === entity.value.storeId.value);
+										entity.value.oldCost.value = storeDetails?.averageCost ?? 0;
+										entity.value.quantity.value = storeDetails?.quantity ?? 0;
+										entity.value.newCost.value = storeDetails?.averageCost ?? 0;
+									}
+								} }
+							/>
+						</FormField>
+					</FieldsSection>
+
+					<FieldsSection columns={ {base: 1, md: 3} }>
+						<NumberField
+							label={ t("costAdjustments.quantity") }
+							value={ entity.value.quantity }
+							disabled
 						/>
-					</FormField>
-				</FieldsSection>
+						<NumberField
+							label={ t("costAdjustments.oldCost") }
+							value={ entity.value.oldCost }
+							disabled
+						/>
+						<NumberField
+							label={ t("costAdjustments.newCost") }
+							required
+							min={ 0 }
+							value={ entity.value.newCost }
+							error={ entity.value.getError("newCost") }
+							disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
+						/>
+					</FieldsSection>
 
-				<FieldsSection columns={ 3 }>
-					<NumberField
-						label={ t("costAdjustments.quantity") }
-						value={ entity.value.quantity }
-						disabled
+					<TextField
+						label={ t("costAdjustments.notes") }
+						value={ entity.value.notes }
 					/>
-					<NumberField
-						label={ t("costAdjustments.oldCost") }
-						value={ entity.value.oldCost }
-						disabled
-					/>
-					<NumberField
-						label={ t("costAdjustments.newCost") }
-						required
-						min={ 0 }
-						value={ entity.value.newCost }
-						error={ entity.value.getError("newCost") }
-						disabled={ entity.value.mode.value === ChangeableEntityMode.Update }
-					/>
-				</FieldsSection>
-
-				<TextField
-					label={ t("costAdjustments.notes") }
-					value={ entity.value.notes }
-				/>
-			</FieldGroup>
+				</FieldGroup>
+			</div>
 
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
