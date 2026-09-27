@@ -10,7 +10,6 @@ import {
 	type SearchableSelectProps
 } from "yusr-ui";
 import { Cubits } from "@/core/services/cubits.ts";
-import { Services } from "@/core/services/services.ts";
 import { signal } from "@preact/signals-react";
 import ChangePartnerDialog from "@/features/partners/changePartnerDialog.tsx";
 
@@ -47,19 +46,18 @@ export function PartnersSearchableSelect({
 			</SearchableSelect>
 
 			{ showAddButton && (
-				<Dialog open={ isAddOpen.value } onOpenChange={ (open) => isAddOpen.value = open }>
+				<Dialog open={ isAddOpen.value } onOpenChange={ (open) => (isAddOpen.value = open) }>
 					{ isAddOpen.value && (
 						<ChangePartnerDialog
 							initDto={ {name: newSearchText.value, type: types[0]} as PartnerDto }
 							selectTypes={ types }
-							service={ Services.partnersApi }
 							onSuccess={ (data) =>
 							{
 								if (props.id) props.id.value = data.id;
 								if (props.label) props.label.value = data.name;
 								props.onSelect?.(data);
 								isAddOpen.value = false;
-								Cubits.partners.init(types);
+								void Cubits.partners.init(types);
 							} }
 						/>
 					) }
@@ -78,7 +76,6 @@ export function PartnersSearchableSelect({
 						<ChangePartnerDialog
 							dto={ editingEntity.value }
 							selectTypes={ types }
-							service={ Services.partnersApi }
 							onSuccess={ (data) =>
 							{
 								if (props.id?.value === data.id && props.label)
@@ -114,7 +111,7 @@ export function PartnersSearchableSelect({
 					key={ entity.id }
 					item={ entity }
 					showEditButton={ showEditButton }
-					onEdit={ () => editingEntity.value = entity }
+					onEdit={ () => (editingEntity.value = entity) }
 					{ ...props }
 				/>
 			));

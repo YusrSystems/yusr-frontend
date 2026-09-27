@@ -24,7 +24,7 @@ import ChangePartnerDialog from "./changePartnerDialog";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { AppNavigator } from "@/app/appNavigator.ts";
 import { APP_NAME } from "../../../appConfig.ts";
-
+import { partnersApi } from "./partners.api";
 
 export default function PartnersPage({type}: { type: PartnerType })
 {
@@ -33,13 +33,11 @@ export default function PartnersPage({type}: { type: PartnerType })
 
 	useEffect(() =>
 	{
-		Cubits.partners.init([type]);
+		if (Services.auth.hasAuth(SystemPermissionsResources.Partners, SystemPermissionsActions.Get))
+		{
+			void Cubits.partners.init([type]);
+		}
 	}, [type]);
-
-	if (!Services.auth.hasAuth(SystemPermissionsResources.Partners, SystemPermissionsActions.Get))
-	{
-		return <UnauthorizedPage/>;
-	}
 
 	const isCustomerMode = type === PartnerType.Customer;
 	const pageTitle = isCustomerMode
@@ -59,7 +57,7 @@ export default function PartnersPage({type}: { type: PartnerType })
 		};
 	}, [pageTitle]);
 
-	if (!Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Get))
+	if (!Services.auth.hasAuth(SystemPermissionsResources.Partners, SystemPermissionsActions.Get))
 	{
 		return <UnauthorizedPage/>;
 	}
@@ -122,13 +120,12 @@ export default function PartnersPage({type}: { type: PartnerType })
 			<CrudPage.ChangeDialog
 				fetchEntity={ async (id: number) =>
 				{
-					const result = await Services.partnersApi.Get(id);
+					const result = await partnersApi.get(id);
 					return result.data;
 				} }
 				changeDialog={ (dto: PartnerDto | undefined, closeDialog) => (
 					<ChangePartnerDialog
 						dto={ dto }
-						service={ Services.partnersApi }
 						initDto={ {type: type} as PartnerDto }
 						onSuccess={ (data, mode) =>
 						{
@@ -141,15 +138,14 @@ export default function PartnersPage({type}: { type: PartnerType })
 							{
 								Cubits.partners.update(data);
 							}
-							Cubits.partners.init([type]);
+							void Cubits.partners.init([type]);
 						} }
 					/>
 				) }
 			/>
-
-			<CrudPage.DeleteDialog
+			<CrudPage.DeleteDialog<PartnerDto>
 				entityNameSelector={ (partner) => partner.name }
-				service={ Services.partnersApi }
+				resource={ partnersApi }
 				onSuccess={ (entity) => Cubits.partners.delete(entity) }
 			/>
 		</CrudPage>
@@ -183,10 +179,7 @@ function PageTable()
 							SystemPermissionsResources.ReportPartnerStatement,
 							SystemPermissionsActions.Get
 						)
-							?
-							[
-								{rowBody: "", rowStyles: "w-32"}
-							]
+							? [{rowBody: "", rowStyles: "w-32"}]
 							: [])
 					] }
 					tableRowMapper={ (partner) =>
@@ -221,8 +214,7 @@ function PageTable()
 									<div className="flex items-center gap-2 font-mono">
 										<span>{ absBalance.toLocaleString("en-US", {minimumFractionDigits: 2}) }</span>
 										<ErpCurrencyIcon/>
-										<span
-											className="text-xs font-sans px-1.5 py-0.5 shrink-0">
+										<span className="text-xs font-sans px-1.5 py-0.5 shrink-0">
 										   { partner.balance !== 0 && (isDebit ? t("erpCommon:accounting.debit", "مدين") : t("erpCommon:accounting.credit", "دائن")) }
 										</span>
 									</div>
@@ -233,8 +225,7 @@ function PageTable()
 								SystemPermissionsResources.ReportPartnerStatement,
 								SystemPermissionsActions.Get
 							)
-								?
-								[
+								? [
 									{
 										rowBody: <Button
 											variant="outline"

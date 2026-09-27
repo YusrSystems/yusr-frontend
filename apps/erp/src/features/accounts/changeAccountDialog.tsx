@@ -30,19 +30,17 @@ import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import React, { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";
-
+import { accountsApi } from "./accounts.api";
 
 export default function ChangeAccountDialog(
-	{dto, service, onSuccess, initDto}: CommonChangeDialogProps<AccountDto> & {
+	{dto, onSuccess, initDto}: CommonChangeDialogProps<AccountDto> & {
 		initDto?: AccountDto;
 	}
 )
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
-
-	const entity = useMemo(() => signal<Account>(dto ? Account.load(dto) : Account.create(initDto)), []);
-
+	const entity = useMemo(() => signal<Account>(dto ? Account.load(dto) : Account.create(initDto)), [dto, initDto]);
 	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
 
 	const title = !isUpdateMode
@@ -197,7 +195,7 @@ export default function ChangeAccountDialog(
 						<ChangeDialog.Close/>
 						<ChangeDialog.SaveButton<Account, AccountDto>
 							entity={ entity }
-							service={ service }
+							resource={ accountsApi }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 						/>
 					</div>
@@ -206,10 +204,6 @@ export default function ChangeAccountDialog(
 		</ChangeDialog>
 	);
 }
-
-// ----------------------------------------------------------------------------------
-// Custom Component (With temporary translations built directly in)
-// ----------------------------------------------------------------------------------
 
 interface AccountTypeOptionItemProps
 {

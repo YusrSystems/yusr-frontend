@@ -28,7 +28,7 @@ import { AccountsListReport } from "@/features/reports/accountsList/accountsList
 import type { Signal } from "@preact/signals-react";
 import { AppNavigator } from "@/app/appNavigator.ts";
 import { APP_NAME } from "../../../appConfig.ts";
-
+import { accountsApi } from "./accounts.api";
 
 interface TreeNodeData
 {
@@ -60,7 +60,10 @@ export default function AccountsPage()
 
 	useEffect(() =>
 	{
-		Cubits.accounts.init();
+		if (Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Get))
+		{
+			void Cubits.accounts.init();
+		}
 	}, []);
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.Accounts, SystemPermissionsActions.Get))
@@ -141,13 +144,12 @@ export default function AccountsPage()
 				<CrudPage.ChangeDialog
 					fetchEntity={ async (id: number) =>
 					{
-						const result = await Services.accountsApi.Get(id);
+						const result = await accountsApi.get(id);
 						return result.data;
 					} }
 					changeDialog={ (dto: AccountDto | undefined, closeDialog) => (
 						<ChangeAccountDialog
 							dto={ dto }
-							service={ Services.accountsApi }
 							onSuccess={ (data, mode) =>
 							{
 								if (mode === ChangeableEntityMode.Create)
@@ -159,15 +161,15 @@ export default function AccountsPage()
 								{
 									Cubits.accounts.update(data);
 								}
-								Cubits.accounts.init();
+								void Cubits.accounts.init();
 							} }
 						/>
 					) }
 				/>
 
-				<CrudPage.DeleteDialog
+				<CrudPage.DeleteDialog<AccountDto>
 					entityNameSelector={ (account) => account.name }
-					service={ Services.accountsApi }
+					resource={ accountsApi }
 					onSuccess={ (entity) => Cubits.accounts.delete(entity) }
 				/>
 			</CrudPage>

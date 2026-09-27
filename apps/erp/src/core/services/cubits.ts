@@ -1,6 +1,6 @@
 import type { BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import { ItemsCubit } from "@/features/items/state/itemsCubit";
-import { BaseCubits, FilterFieldsCubit, ListCubit, PageCubit, PageReportCubit, ReportCubit } from "yusr-ui";
+import { BaseCubits, FilterFieldsCubit, ListCubit, PageCubit, PageReportCubit, ReportCubit, UserDto } from "yusr-ui";
 import { AccountDto } from "../data/account";
 import { ErpRoleDto } from "../data/erpRole";
 import { PricingMethodDto } from "../data/pricingMethod";
@@ -31,7 +31,7 @@ import type {
 	PartnerStatementReportRequest
 } from "@/features/reports/partnerStatement/partnerStatementReportRequest.ts";
 import type { PartnerStatementReportResult } from "@/features/reports/partnerStatement/partnerStatementReportResult.ts";
-import type { PartnerDto } from "@/core/data/partner.ts";
+import { PartnerDto } from "@/core/data/partner.ts";
 import type {
 	SalesProfitabilityReportRequest
 } from "@/features/reports/salesProfitability/salesProfitabilityReportRequest.ts";
@@ -71,7 +71,8 @@ import { categoriesApi } from "@/features/itemCategories/categories.api";
 import { itemsSettlementsApi, stocktakingsApi } from "@/features/stocktakings/stocktakings.api";
 import { costAdjustmentsApi } from "@/features/costAdjustments/costAdjustments.api";
 import { itemTransfersApi } from "@/features/itemTransfers/itemTransfers.api";
-
+import { accountsApi } from "@/features/accounts/accounts.api";
+import { partnersApi } from "@/features/partners/partners.api";
 
 export class Cubits extends BaseCubits
 {
@@ -86,9 +87,10 @@ export class Cubits extends BaseCubits
 	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(costAdjustmentsApi);
 	public static readonly itemTransfers = new PageCubit<ItemTransferDto>(itemTransfersApi);
 	public static readonly items = new ItemsCubit();
+	public static readonly accounts = new PageCubit<AccountDto>(accountsApi);
+	public static readonly parentAccounts = new PageCubit<AccountDto>(accountsApi);
+	public static readonly partners = new PageCubit<PartnerDto>(partnersApi);
 	public static readonly paymentMethods = new PageCubit<PaymentMethodDto>(Services.paymentMethodsApi);
-	public static readonly accounts = new PageCubit<AccountDto>(Services.accountsApi);
-	public static readonly parentAccounts = new PageCubit<AccountDto>(Services.accountsApi);
 	public static readonly balanceTransfers = new PageCubit<BalanceTransferDto>(Services.balanceTransfersApi);
 	public static override roles = new ListCubit<ErpRoleDto>(erpRolesApi);
 	public static readonly vouchers = new PageCubit<VoucherDto>(Services.voucherApi);
@@ -97,7 +99,6 @@ export class Cubits extends BaseCubits
 	public static readonly originalSalesInvoices = new PageCubit<SalesInvoiceDto>(Services.salesInvoicesApi);
 	public static readonly originalPurchaseInvoices = new PageCubit<PurchaseInvoiceDto>(Services.purchaseInvoicesApi);
 	public static readonly quotations = new PageCubit<QuotationDto>(Services.quotationsApi);
-	public static readonly partners = new PageCubit<PartnerDto>(Services.partnersApi);
 	public static readonly posTerminals = new PageCubit<PosTerminalDto>(Services.posTerminalsApi);
 	public static readonly fiscalYears = new PageCubit<FiscalYearDto>(Services.fiscalYearsApi);
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");

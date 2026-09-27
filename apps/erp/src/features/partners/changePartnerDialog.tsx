@@ -24,10 +24,10 @@ import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import { Cubits } from "@/core/services/cubits.ts";
 import { AccountType } from "@/core/data/account.ts";
-
+import { partnersApi } from "./partners.api";
 
 export default function ChangePartnerDialog(
-	{dto, service, onSuccess, initDto, selectTypes}: CommonChangeDialogProps<PartnerDto> & {
+	{dto, onSuccess, initDto, selectTypes}: CommonChangeDialogProps<PartnerDto> & {
 		initDto?: PartnerDto;
 		selectTypes?: PartnerType[];
 	}
@@ -42,7 +42,7 @@ export default function ChangePartnerDialog(
 	useEffect(() =>
 	{
 		Cubits.accounts.init([entity.value.type.value === PartnerType.Customer ? AccountType.AccountsReceivable : AccountType.AccountsPayable]);
-		Cubits.cities.init();
+		void Cubits.cities.init();
 	}, [entity.value.type.value]);
 
 	if (
@@ -75,24 +75,20 @@ export default function ChangePartnerDialog(
 				<FieldGroup className="gap-8">
 
 					<FieldsSection columns={ 2 }>
-
-						{ (selectTypes && selectTypes.length > 1)
-							&& (
-								<div className="col-span-2">
-									<SelectField
-										label={ "نوع الجهة" }
-										required
-										value={ entity.value.type }
-										error={ entity.value.getError("type") }
-										options={ selectTypes.map((type) => ({
-											value: type,
-											label: partnerTypeLabels[type]
-										})) }
-									/>
-								</div>
-							) }
-
-
+						{ (selectTypes && selectTypes.length > 1) && (
+							<div className="col-span-2">
+								<SelectField
+									label={ "نوع الجهة" }
+									required
+									value={ entity.value.type }
+									error={ entity.value.getError("type") }
+									options={ selectTypes.map((type) => ({
+										value: type,
+										label: partnerTypeLabels[type]
+									})) }
+								/>
+							</div>
+						) }
 						<div className="col-span-2">
 							<TextField
 								label={ t("partners.partnerName", "الاسم") }
@@ -150,9 +146,7 @@ export default function ChangePartnerDialog(
 							error={ entity.value.getError("postalCode") }
 						/>
 					</FieldsSection>
-
-					<FieldsSection title={ t("partners.financialAndGl", "البيانات المالية") }
-					               columns={ 2 }>
+					<FieldsSection title={ t("partners.financialAndGl", "البيانات المالية") } columns={ 2 }>
 						<NumberField
 							label={ t("partners.openingBalance", "الرصيد الافتتاحي") }
 							value={ entity.value.openingBalance }
@@ -166,8 +160,7 @@ export default function ChangePartnerDialog(
 							currency={ <ErpCurrencyIcon/> }
 						/>
 						<div className="col-span-2">
-							<FormField
-								label={ t("partners.customGl", "حساب استاذ مخصص") }>
+							<FormField label={ t("partners.customGl", "حساب استاذ مخصص") }>
 								<AccountsSearchableSelect
 									id={ entity.value.overrideGlAccountId }
 									label={ entity.value.overrideGlAccountName }
@@ -194,7 +187,7 @@ export default function ChangePartnerDialog(
 						<ChangeDialog.Close/>
 						<ChangeDialog.SaveButton<Partner, PartnerDto>
 							entity={ entity }
-							service={ service }
+							resource={ partnersApi }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 						/>
 					</div>

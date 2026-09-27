@@ -1,6 +1,5 @@
 import { type AccountDto } from "@/core/data/account";
 import { Cubits } from "@/core/services/cubits";
-import { Services } from "@/core/services/services";
 import ChangeAccountDialog from "@/features/accounts/changeAccountDialog";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -50,7 +49,6 @@ export default function AccountsSearchableSelect(
 					{ isAddAccountOpen.value && (
 						<ChangeAccountDialog
 							initDto={ {name: newAccountSearchText.value} as AccountDto }
-							service={ Services.accountsApi }
 							onSuccess={ (data) =>
 							{
 								if (props.id) props.id.value = data.id;

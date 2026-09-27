@@ -2,10 +2,8 @@ import { BaseApiService, BaseServices, UserDto } from "yusr-ui";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
-import { type AccountDto } from "@/core/data/account.ts";
 import type { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
 import { type BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
-import type { PartnerDto } from "@/core/data/partner.ts";
 import PosSessionApiService from "@/core/networking/posSessionApiService.ts";
 import PosCheckoutApiService from "@/core/networking/posCheckoutApiService.ts";
 import PosTerminalsApiService from "@/core/networking/posTerminalsApiService.ts";
@@ -25,7 +23,8 @@ import { itemsApi } from "@/features/items/items.api";
 import { itemsSettlementsApi, stocktakingsApi } from "@/features/stocktakings/stocktakings.api";
 import { costAdjustmentsApi } from "@/features/costAdjustments/costAdjustments.api";
 import { itemTransfersApi } from "@/features/itemTransfers/itemTransfers.api";
-
+import { accountsApi } from "@/features/accounts/accounts.api";
+import { partnersApi } from "@/features/partners/partners.api";
 
 export class Services extends BaseServices
 {
@@ -42,8 +41,8 @@ export class Services extends BaseServices
 	public static readonly itemsSettlementsApi = itemsSettlementsApi;
 	public static readonly costAdjustmentsApi = costAdjustmentsApi;
 	public static readonly itemTransfersApi = itemTransfersApi;
-	public static readonly accountsApi = new BaseApiService<AccountDto>("Accounts");
-	public static readonly partnersApi = new BaseApiService<PartnerDto>("Partners");
+	public static readonly accountsApi = accountsApi;
+	public static readonly partnersApi = partnersApi;
 	public static readonly paymentMethodsApi = new BaseApiService<PaymentMethodDto>("PaymentMethods");
 	public static readonly balanceTransfersApi = new BaseApiService<BalanceTransferDto>("BalanceTransfers");
 	public static readonly voucherApi = new VouchersApiService();
