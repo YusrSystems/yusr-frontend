@@ -13,21 +13,21 @@ export function FiscalYearStatusBadge({status}: FiscalYearStatusBadgeProps)
 		case FiscalYearStatus.Open:
 			return (
 				<span
-					className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+					className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 whitespace-nowrap shrink-0">
 					مفتوحة
 				</span>
 			);
 		case FiscalYearStatus.Locked:
 			return (
 				<span
-					className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+					className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 whitespace-nowrap shrink-0">
 					مجمّدة
 				</span>
 			);
 		case FiscalYearStatus.Closed:
 			return (
 				<span
-					className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300">
+					className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300 whitespace-nowrap shrink-0">
 					مقفلة
 				</span>
 			);

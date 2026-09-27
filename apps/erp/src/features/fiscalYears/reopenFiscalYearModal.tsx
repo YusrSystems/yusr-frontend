@@ -55,26 +55,28 @@ export default function ReopenFiscalYearModal({
 
 	return (
 		<Dialog open={ open } onOpenChange={ onOpenChange }>
-			<DialogContent dir="rtl" className="sm:max-w-md">
-				<DialogHeader>
-					<DialogTitle className="flex items-center gap-2 text-lg">
-						<RotateCcw className="w-5 h-5 text-amber-600"/>
-						إعادة فتح السنة المالية ({ fiscalYear.name })
+			<DialogContent dir="rtl" className="sm:max-w-md max-h-[94dvh] flex flex-col overflow-hidden">
+				<DialogHeader className="shrink-0">
+					<DialogTitle className="flex items-center gap-2 text-base sm:text-lg">
+						<RotateCcw className="w-5 h-5 text-amber-600 shrink-0"/>
+						<span>إعادة فتح السنة المالية ({ fiscalYear.name })</span>
 					</DialogTitle>
-					<DialogDescription className="pt-2 text-start leading-relaxed">
-						هل أنت تأكد من أنك تريد إعادة فتح السنة المالية <strong>{ fiscalYear.name }</strong>؟
+					<DialogDescription className="pt-2 text-start leading-relaxed text-xs sm:text-sm">
+						هل أنت متأكد من أنك تريد إعادة فتح السنة المالية <strong>{ fiscalYear.name }</strong>؟
 					</DialogDescription>
 				</DialogHeader>
 
-				<div
-					className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl p-4 text-amber-800 dark:text-amber-300 flex items-start gap-3 my-2 text-xs leading-relaxed">
-					<AlertTriangle className="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5"/>
-					<span>
-						سيؤدي هذا الإجراء إلى عكس قيد الإقفال السنوي واستعادة أرصدة الحسابات الاسمية (الإيرادات والمصروفات).
-					</span>
+				<div className="flex-1 min-h-0 overflow-y-auto py-2 px-1">
+					<div
+						className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl p-3 sm:p-4 text-amber-800 dark:text-amber-300 flex items-start gap-3 text-xs leading-relaxed">
+						<AlertTriangle className="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5"/>
+						<span>
+							سيؤدي هذا الإجراء إلى عكس قيد الإقفال السنوي واستعادة أرصدة الحسابات الاسمية (الإيرادات والمصروفات).
+						</span>
+					</div>
 				</div>
 
-				<DialogFooter>
+				<DialogFooter className="gap-2 sm:gap-0 shrink-0">
 					<Button variant="outline" onClick={ () => onOpenChange(false) } disabled={ isReopening.value }>
 						إلغاء
 					</Button>

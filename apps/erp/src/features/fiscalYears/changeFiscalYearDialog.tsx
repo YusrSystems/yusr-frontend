@@ -27,6 +27,7 @@ export default function ChangeFiscalYearDialog({
 	useSignals();
 
 	const entity = useMemo(() => signal<FiscalYear>(dto ? FiscalYear.load(dto) : FiscalYear.create()), [dto]);
+	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
 
 	if (
 		(entity.value.mode.value === ChangeableEntityMode.Create &&
@@ -38,16 +39,16 @@ export default function ChangeFiscalYearDialog({
 		return <ChangeDialog.Unauthorized/>;
 	}
 
-	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
 	const title = !isUpdateMode ? "إضافة سنة مالية جديدة" : "تعديل السنة المالية";
 
 	return (
-		<ChangeDialog className={ isUpdateMode ? "sm:max-w-4xl" : "sm:max-w-lg" }>
+		<ChangeDialog
+			className={ isUpdateMode ? "sm:max-w-4xl max-h-[94dvh] flex flex-col overflow-hidden" : "sm:max-w-lg max-h-[94dvh] flex flex-col overflow-hidden" }>
 			<ChangeDialog.Header title={ title }/>
 
-			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
+			<div className="flex-1 min-h-0 overflow-y-auto px-1 sm:px-2 pb-2">
 				<FieldGroup className="gap-6">
-					<FieldsSection title="البيانات الأساسية" columns={ 3 }>
+					<FieldsSection title="البيانات الأساسية" columns={ {base: 1, md: 3} }>
 						<TextField
 							label="اسم السنة المالية"
 							required

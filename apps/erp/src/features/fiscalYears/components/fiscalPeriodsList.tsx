@@ -78,21 +78,21 @@ export function FiscalPeriodsList({year}: FiscalPeriodsListProps)
 					return (
 						<div
 							key={ period.id }
-							className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-card shadow-2xs"
+							className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-card shadow-2xs gap-2"
 						>
-							<div className="flex flex-col gap-0.5">
-								<span className="font-bold text-xs">{ period.name }</span>
-								<span className="text-[10px] text-muted-foreground">
+							<div className="flex flex-col gap-0.5 min-w-0 flex-1">
+								<span className="font-bold text-xs truncate">{ period.name }</span>
+								<span className="text-[10px] text-muted-foreground truncate">
 									{ period.startDate } إلى { period.endDate }
 								</span>
 							</div>
 
-							<div className="flex items-center gap-2">
+							<div className="flex items-center gap-2 shrink-0">
 								{ isUpdating ? (
 									<Loader2 className="w-3.5 h-3.5 animate-spin text-primary"/>
 								) : (
 									<span
-										className={ `text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+										className={ `text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap shrink-0 ${
 											isPeriodOpen
 												? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
 												: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
