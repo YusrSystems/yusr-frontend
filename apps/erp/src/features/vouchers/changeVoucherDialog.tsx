@@ -127,10 +127,10 @@ export default function ChangeVoucherDialog({
 
 	return (
 		<>
-			<ChangeDialog className="sm:max-w-5xl">
+			<ChangeDialog className="sm:max-w-5xl max-h-[94dvh] flex flex-col overflow-hidden">
 				<ChangeDialog.Header title={ title }/>
-				<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
-					<FieldGroup className="gap-10">
+				<div className="flex-1 min-h-0 overflow-y-auto px-1 sm:px-2 pb-2">
+					<FieldGroup className="gap-6 sm:gap-8">
 						<div className="flex bg-muted/40 rounded-lg p-1 border max-w-md mx-auto w-full">
 							<Button
 								type="button"
@@ -141,7 +141,7 @@ export default function ChangeVoucherDialog({
 									entity.value.glAccountId.value = undefined;
 									entity.value.glAccountName.value = undefined;
 								} }
-								className="flex-1 rounded-md text-xs font-semibold"
+								className="flex-1 rounded-md text-[11px] sm:text-xs font-semibold px-2"
 								disabled={ !isDraft }
 							>
 								{ t("vouchers.partnerPaymentMode", "دفعة لحساب عميل / مورد") }
@@ -157,14 +157,14 @@ export default function ChangeVoucherDialog({
 									entity.value.salesInvoiceId.value = undefined;
 									entity.value.purchaseInvoiceId.value = undefined;
 								} }
-								className="flex-1 rounded-md text-xs font-semibold"
+								className="flex-1 rounded-md text-[11px] sm:text-xs font-semibold px-2"
 								disabled={ !isDraft }
 							>
 								{ t("vouchers.directExpenseMode", "مصروف عام / إيراد مباشر") }
 							</Button>
 						</div>
 
-						<FieldsSection title={ t("vouchers.basicInfo") } columns={ 2 }>
+						<FieldsSection title={ t("vouchers.basicInfo") } columns={ {base: 1, md: 2} }>
 							<SelectField
 								label={ t("vouchers.voucherType") }
 								required
@@ -254,7 +254,7 @@ export default function ChangeVoucherDialog({
 									className="bg-muted"
 								/>
 							) }
-							<div className="col-span-2">
+							<div className="col-span-1 md:col-span-2">
 								<TextField
 									disabled
 									label={ t("vouchers.amountInWords") }
@@ -265,14 +265,15 @@ export default function ChangeVoucherDialog({
 
 						<FieldsSection
 							title="توزيع المعاملة على فترات دورية"
-							columns={ 2 }
+							columns={ {base: 1, md: 2} }
 						>
 							<div
-								className="col-span-2 flex items-center justify-between p-3 rounded-lg border bg-muted/20">
-								<div className="flex items-center gap-3">
-									<CalendarClock className="h-5 w-5 text-primary"/>
-									<div>
-										<p className="font-semibold text-sm">توزيع القيمة دفتريًا على فترات زمنية</p>
+								className="col-span-1 md:col-span-2 flex items-center justify-between p-3 rounded-lg border bg-muted/20 gap-2">
+								<div className="flex items-center gap-3 min-w-0 flex-1">
+									<CalendarClock className="h-5 w-5 text-primary shrink-0"/>
+									<div className="min-w-0">
+										<p className="font-semibold text-sm truncate">توزيع القيمة دفتريًا على فترات
+											زمنية</p>
 										<p className="text-xs text-muted-foreground">
 											{ entity.value.type.value === VoucherType.Payment
 												? "توزيع المصروف كأصل مدفوع مقدماً يستهلك دورياً"
@@ -281,6 +282,7 @@ export default function ChangeVoucherDialog({
 									</div>
 								</div>
 								<Switch
+									className="shrink-0"
 									checked={ entity.value.isDistributed.value }
 									onCheckedChange={ (val) =>
 									{
@@ -320,7 +322,7 @@ export default function ChangeVoucherDialog({
 										placeholder="مثال: 12"
 									/>
 									<div
-										className="col-span-2 p-3 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg flex items-start gap-2 text-xs text-blue-800 dark:text-blue-300">
+										className="col-span-1 md:col-span-2 p-3 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg flex items-start gap-2 text-xs text-blue-800 dark:text-blue-300">
 										<Info className="h-4 w-4 shrink-0 mt-0.5"/>
 										<div>
 											سيتم دفع كامل المبلغ من البنك/الصندوق في تاريخ السند، ثم يقوم النظام بتوزيع
@@ -332,20 +334,20 @@ export default function ChangeVoucherDialog({
 							) }
 
 							{ !isDraft && (dto?.distributionCount ?? 0) > 1 && (
-								<div className="col-span-2 space-y-3">
+								<div className="col-span-1 md:col-span-2 space-y-3">
 									<div
-										className="grid grid-cols-3 gap-3 p-4 bg-muted/40 rounded-xl border text-center">
-										<div>
+										className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 p-3 sm:p-4 bg-muted/40 rounded-xl border text-center">
+										<div className="p-2 sm:p-0">
 											<p className="text-xs text-muted-foreground">الفترات المعتمدة</p>
-											<p className="text-lg font-bold text-primary">{ dto?.recognizedCount } / { dto?.distributionCount }</p>
+											<p className="text-base sm:text-lg font-bold text-primary">{ dto?.recognizedCount } / { dto?.distributionCount }</p>
 										</div>
-										<div>
+										<div className="p-2 sm:p-0">
 											<p className="text-xs text-muted-foreground">المبلغ المعترف به</p>
-											<p className="text-lg font-bold text-green-600 dark:text-green-400">{ (dto?.recognizedAmount ?? 0).toLocaleString() } ريال</p>
+											<p className="text-base sm:text-lg font-bold text-green-600 dark:text-green-400">{ (dto?.recognizedAmount ?? 0).toLocaleString() } ريال</p>
 										</div>
-										<div>
+										<div className="p-2 sm:p-0">
 											<p className="text-xs text-muted-foreground">المتبقي للتوزيع</p>
-											<p className="text-lg font-bold text-orange-600 dark:text-orange-400">{ (dto?.remainingUnrecognizedAmount ?? 0).toLocaleString() } ريال</p>
+											<p className="text-base sm:text-lg font-bold text-orange-600 dark:text-orange-400">{ (dto?.remainingUnrecognizedAmount ?? 0).toLocaleString() } ريال</p>
 										</div>
 									</div>
 									{ canTerminate && (
@@ -372,7 +374,7 @@ export default function ChangeVoucherDialog({
 									label={ t("vouchers.relatedInvoice") }
 									value={ signal(`#${ entity.value.salesInvoiceId.value }`) }
 									disabled={ true }
-									className="bg-muted w-1/2"
+									className="bg-muted w-full sm:w-1/2"
 								/>
 							</FieldsSection>
 						) }
@@ -383,12 +385,12 @@ export default function ChangeVoucherDialog({
 									label={ t("vouchers.relatedInvoice") }
 									value={ signal(`#${ entity.value.purchaseInvoiceId.value }`) }
 									disabled={ true }
-									className="bg-muted w-1/2"
+									className="bg-muted w-full sm:w-1/2"
 								/>
 							</FieldsSection>
 						) }
 
-						<FieldsSection columns={ 2 }>
+						<FieldsSection columns={ {base: 1, md: 2} }>
 							<TextField
 								label={ t("vouchers.giver") }
 								value={ entity.value.giver }
@@ -397,7 +399,7 @@ export default function ChangeVoucherDialog({
 								label={ t("vouchers.recipient") }
 								value={ entity.value.recipient }
 							/>
-							<div className="col-span-2">
+							<div className="col-span-1 md:col-span-2">
 								<TextAreaField
 									label={ t("balanceTransfers.description") }
 									value={ entity.value.description }
