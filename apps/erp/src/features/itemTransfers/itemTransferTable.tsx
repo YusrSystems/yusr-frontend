@@ -171,15 +171,15 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 			{ groupedItems.length > 0
 				? (
 					<div className="w-full overflow-x-auto border border-border rounded-lg shadow-sm bg-background">
-						<table className="w-full text-sm text-right">
+						<table className="w-full min-w-[550px] text-sm text-right">
 							<thead className="bg-muted/40 border-b border-border">
 							<tr>
-								<th className="p-4 font-semibold w-10 text-center text-muted-foreground">
+								<th className="p-3 sm:p-4 font-semibold w-10 text-center text-muted-foreground">
 									{ t("itemTransfers.number") }
 								</th>
-								<th className="p-4 font-semibold text-start w-1/4">{ t("itemTransfers.itemName") }</th>
-								<th className="p-4 font-semibold text-start w-1/2">{ t("itemTransfers.quantity") }</th>
-								<th className="p-4 font-semibold w-16 text-center"></th>
+								<th className="p-3 sm:p-4 font-semibold text-start min-w-[120px] w-1/4">{ t("itemTransfers.itemName") }</th>
+								<th className="p-3 sm:p-4 font-semibold text-start min-w-[280px] w-1/2">{ t("itemTransfers.quantity") }</th>
+								<th className="p-3 sm:p-4 font-semibold w-16 text-center"></th>
 							</tr>
 							</thead>
 							<tbody>
@@ -198,24 +198,24 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 										key={ itemId }
 										className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors"
 									>
-										<td className="p-4 text-center font-bold text-muted-foreground align-top pt-5">
+										<td className="p-3 sm:p-4 text-center font-bold text-muted-foreground align-top pt-5">
 											{ index + 1 }
 										</td>
 
-										<td className="p-4 text-start align-top pt-5">
+										<td className="p-3 sm:p-4 text-start align-top pt-5">
 											<div
 												className="font-semibold text-foreground">{ group[0]?.itemName.value }</div>
 										</td>
 
-										<td className="py-4 px-2">
+										<td className="py-3 sm:py-4 px-2">
 											<div className="flex flex-col gap-2">
 												{ group.map((row) => (
 													<div key={ row.id.value } className="flex gap-2 items-start">
 														<div
-															className="bg-muted px-3 py-2 rounded-md text-xs font-medium w-32 truncate text-center border shrink-0 mt-0.5">
+															className="bg-muted px-2 sm:px-3 py-2 rounded-md text-xs font-medium w-24 sm:w-32 truncate text-center border shrink-0 mt-0.5">
 															{ row.unitName.value }
 														</div>
-														<div className="flex-1">
+														<div className="flex-1 min-w-[120px]">
 															<NumberField
 																label=""
 																min={ 0 }
@@ -245,7 +245,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 												)) }
 
 												{ isDraft && availableUnits.length > 0 && (
-													<div className="mt-1">
+													<div className="mt-1 max-w-[200px]">
 														<SelectField<number>
 															options={ availableUnits.map((uom) => ({
 																label: uom.unitName,
@@ -260,7 +260,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 										</td>
 
 										{ isDraft && (
-											<td className="p-4 text-center align-top pt-4">
+											<td className="p-3 sm:p-4 text-center align-top pt-4">
 												<Button
 													type="button"
 													variant="ghost"

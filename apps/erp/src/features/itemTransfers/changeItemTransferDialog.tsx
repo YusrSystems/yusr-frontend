@@ -97,12 +97,12 @@ export default function ChangeItemTransferDialog(
 	const isVoided = entity.value.transactionStatus.value === TransactionStatus.Voided;
 
 	return (
-		<ChangeDialog className="sm:max-w-7xl">
+		<ChangeDialog className="sm:max-w-7xl max-h-[94dvh] flex flex-col overflow-hidden">
 			<ChangeDialog.Header title={ title }/>
 
-			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
+			<div className="flex-1 min-h-0 overflow-y-auto px-1 sm:px-2 pb-2">
 				<FieldGroup>
-					<FieldsSection columns={ 3 }>
+					<FieldsSection columns={ {base: 1, md: 3} }>
 						<DateField
 							label={ t("itemTransfers.date") }
 							required
