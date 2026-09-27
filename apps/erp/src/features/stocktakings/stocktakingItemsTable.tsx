@@ -245,16 +245,15 @@ export default function StocktakingItemsTable(
 
 			{ entity.items.value && entity.items.value.length > 0
 				? (
-					<div className="bg-background rounded-lg border overflow-hidden">
-						<table className="w-full text-sm text-right">
+					<div className="bg-background rounded-lg border overflow-x-auto">
+						<table className="w-full min-w-[650px] text-sm text-right">
 							<thead className="bg-muted/50 text-muted-foreground border-b">
 							<tr>
 								<th className="p-3 w-12 text-center">#</th>
-								<th className="p-3 w-1/4 text-start">{ t("stocktakings.item") }</th>
-								<th className="p-3 w-1/6 text-center">{ t("stocktakings.systemQuantity") }</th>
-								<th className="p-3 w-1/6 text-center">{ t("stocktakings.variance") }</th>
-								<th className="p-3 w-1/4 text-center">{ t("stocktakings.actualQuantity") }</th>
-								<th className="p-3 w-1/6 text-center">{ t("stocktakings.unitCost", "سعر التكلفة") }</th>
+								<th className="p-3 min-w-[140px] text-start">{ t("stocktakings.item") }</th>
+								<th className="p-3 w-24 text-center">{ t("stocktakings.systemQuantity") }</th>
+								<th className="p-3 w-24 text-center">{ t("stocktakings.variance") }</th>
+								<th className="p-3 min-w-[280px] text-center">{ t("stocktakings.actualQuantity") }</th>
 								<th className="p-3 w-12 text-center"></th>
 							</tr>
 							</thead>
@@ -284,7 +283,7 @@ export default function StocktakingItemsTable(
 										</td>
 
 										<td className="p-3 align-top pt-5 text-center">
-                                            <span
+											<span
 												className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold font-mono ${
 													variance < 0
 														? "bg-red-100 text-red-800"
@@ -293,19 +292,18 @@ export default function StocktakingItemsTable(
 															: "bg-gray-100 text-gray-800"
 												}` }
 											>
-                                            { variance > 0 ? `+${ variance }` : variance }
-                                            </span>
+												{ variance > 0 ? `+${ variance }` : variance }
+											</span>
 										</td>
-
-										<td className="p-3" colSpan={ 2 }>
+										<td className="p-3">
 											<div className="flex flex-col gap-2">
 												{ group.map((item, j) => (
 													<div key={ j } className="flex gap-2 items-center w-full">
 														<div
-															className="bg-muted px-3 py-2 rounded-md text-xs font-medium w-24 truncate text-center border shrink-0">
+															className="bg-muted px-2.5 py-2 rounded-md text-xs font-medium min-w-[70px] truncate text-center border shrink-0">
 															{ item.unitName.value }
 														</div>
-														<div className="w-1/2">
+														<div className="flex-1 min-w-[80px]">
 															<NumberField
 																label=""
 																value={ item.actualQuantity }
@@ -313,7 +311,7 @@ export default function StocktakingItemsTable(
 																disabled={ !isDraft }
 															/>
 														</div>
-														<div className="w-1/2">
+														<div className="flex-1 min-w-[90px]">
 															<NumberField
 																label=""
 																min={ 0 }
@@ -331,7 +329,7 @@ export default function StocktakingItemsTable(
 																type="button"
 																variant="ghost"
 																size="icon"
-																className="text-red-500 hover:text-red-700 hover:bg-red-50 h-9 w-9 shrink-0"
+																className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 w-8 shrink-0"
 																onClick={ () => removeUnit(item) }
 															>
 																<X className="w-4 h-4"/>
@@ -341,7 +339,7 @@ export default function StocktakingItemsTable(
 												)) }
 
 												{ isDraft && availableUnits.length > 0 && (
-													<div className="mt-1 w-1/2">
+													<div className="mt-1 w-1/2 min-w-[140px]">
 														<SelectField<number>
 															options={ availableUnits.map((u) => ({
 																label: u.unitName,
