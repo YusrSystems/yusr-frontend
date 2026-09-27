@@ -24,22 +24,22 @@ import { BalanceTransfer, type BalanceTransferDto } from "@/core/data/balanceTra
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { Cubits } from "@/core/services/cubits.ts";
 import { TransactionStatus } from "#/types/transactionStatus.ts";
-
+import { balanceTransfersApi } from "./balanceTransfers.api";
 
 export default function ChangeBalanceTransferDialog(
-	{dto, service, onSuccess}: CommonChangeDialogProps<BalanceTransferDto>
+	{dto, onSuccess}: CommonChangeDialogProps<BalanceTransferDto>
 )
 {
 	useSignals();
 
 	const {t} = useTranslation(["accounting", "common"]);
-	const entity = useMemo(() => signal<BalanceTransfer>(dto ? BalanceTransfer.load(dto) : BalanceTransfer.create()), []);
+	const entity = useMemo(() => signal<BalanceTransfer>(dto ? BalanceTransfer.load(dto) : BalanceTransfer.create()), [dto]);
 	const amountToWords = useMemo(() => signal<string>(""), []);
 
 	useEffect(() =>
 	{
 		if (entity.value.transactionStatus.value === TransactionStatus.Voided) return;
-		Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true});
+		void Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true});
 	}, [entity.value.transactionStatus.value]);
 
 	useEffect(() =>
@@ -145,7 +145,7 @@ export default function ChangeBalanceTransferDialog(
 					<>
 						<ChangeDialog.SaveButton<BalanceTransfer, BalanceTransferDto>
 							entity={ entity }
-							service={ service }
+							resource={ balanceTransfersApi }
 							variant="outline"
 							label={ t("common:saveAsDraft", "حفظ كمسودة") }
 							transformData={ (data) =>
@@ -158,7 +158,7 @@ export default function ChangeBalanceTransferDialog(
 						/>
 						<ChangeDialog.SaveButton<BalanceTransfer, BalanceTransferDto>
 							entity={ entity }
-							service={ service }
+							resource={ balanceTransfersApi }
 							label={ t("common:saveAndPost", "حفظ وترحيل") }
 							transformData={ (data) =>
 							{
@@ -174,7 +174,7 @@ export default function ChangeBalanceTransferDialog(
 				{ (isPosted || isVoided) && (
 					<ChangeDialog.SaveButton<BalanceTransfer, BalanceTransferDto>
 						entity={ entity }
-						service={ service }
+						resource={ balanceTransfersApi }
 						label={ t("common:saveButton.saveChanges") }
 						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 					/>

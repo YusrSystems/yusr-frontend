@@ -20,13 +20,20 @@ import { BalanceTransferDto } from "@/core/data/balanceTransfer.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
 import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "#/types/transactionStatus.ts";
-
+import { balanceTransfersApi } from "./balanceTransfers.api";
 
 export default function BalanceTransfersPage()
 {
 	useSignals();
 	const {t} = useTranslation("accounting");
-	useEffect(() => Cubits.balanceTransfers.init(), []);
+
+	useEffect(() =>
+	{
+		if (Services.auth.hasAuth(SystemPermissionsResources.BalanceTransfers, SystemPermissionsActions.Get))
+		{
+			void Cubits.balanceTransfers.init();
+		}
+	}, []);
 
 	useEffect(() =>
 	{
@@ -61,35 +68,31 @@ export default function BalanceTransfersPage()
 			<CrudPage.ChangeDialog
 				fetchEntity={ async (id: number) =>
 				{
-					const result = await Services.balanceTransfersApi.Get(id);
+					const result = await balanceTransfersApi.get(id);
 					return result.data;
 				} }
-				changeDialog={ (dto: BalanceTransferDto | undefined, closeDialog) =>
-				{
-					return (
-						<ChangeBalanceTransferDialog
-							dto={ dto }
-							service={ Services.balanceTransfersApi }
-							onSuccess={ (data, mode) =>
+				changeDialog={ (dto: BalanceTransferDto | undefined, closeDialog) => (
+					<ChangeBalanceTransferDialog
+						dto={ dto }
+						onSuccess={ (data, mode) =>
+						{
+							if (mode === ChangeableEntityMode.Create)
 							{
-								if (mode === ChangeableEntityMode.Create)
-								{
-									Cubits.balanceTransfers.add(data);
-									closeDialog();
-								}
-								else if (mode === ChangeableEntityMode.Update)
-								{
-									Cubits.balanceTransfers.update(data);
-								}
-							} }
-						/>
-					);
-				} }
+								Cubits.balanceTransfers.add(data);
+								closeDialog();
+							}
+							else if (mode === ChangeableEntityMode.Update)
+							{
+								Cubits.balanceTransfers.update(data);
+							}
+						} }
+					/>
+				) }
 			/>
 
 			<CrudPage.DeleteDialog<BalanceTransferDto>
 				entityNameSelector={ () => `"${ t("balanceTransfers.entityName") }"` }
-				service={ Services.balanceTransfersApi }
+				resource={ balanceTransfersApi }
 				onSuccess={ (entity) =>
 				{
 					if (entity.transactionStatus !== TransactionStatus.Draft)
@@ -127,6 +130,7 @@ function Table()
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common"]);
+
 	if (Cubits.balanceTransfers.state.value instanceof PageLoading)
 	{
 		return <TablePreview.Loading/>;
@@ -149,14 +153,13 @@ function Table()
 						{rowBody: t("balanceTransfers.amount"), rowStyles: "w-32"},
 						{rowBody: t("balanceTransfers.description"), rowStyles: "w-48"}
 					] }
-					tableRowMapper={ (
-						transfer
-					) => [
+					tableRowMapper={ (transfer) => [
 						{rowBody: `#${ transfer.id }`, rowStyles: ""},
 						{
 							rowBody: (
 								<span
-									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(transfer.transactionStatus) }` }>
+									className={ `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ getTransactionStatusColor(transfer.transactionStatus) }` }
+								>
 									{ getTransactionStatusName(transfer.transactionStatus) }
 								</span>
 							),
