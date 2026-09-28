@@ -1,6 +1,5 @@
 import logoDark from "@/assets/yusrLogoOnly_Dark.png";
 import logoLight from "@/assets/yusrLogoOnly_Light.png";
-import SettingsApiService from "@/core/networking/settingsApiService.ts";
 import { Building2, FileText, Globe, Hash, Home, MailOpen, MapPin, Navigation, Phone, Receipt } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -8,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { Badge, CopyButton, LanguageToggle, Separator, ThemeToggle } from "yusr-ui";
 import { APP_NAME } from "../../../appConfig.ts";
 import type { SharingSetting } from "@/core/data/setting.ts";
+import { settingsApi } from "@/features/setting/settings.api";
 
 
 interface FieldRowProps
@@ -22,9 +22,10 @@ function FieldRow({icon, label, value}: FieldRowProps)
 	return (
 		<div
 			className="group flex items-start gap-3 py-2.5 px-1 rounded-lg hover:bg-muted/50 transition-colors duration-150">
-      <span className="text-muted-foreground/60 group-hover:text-muted-foreground transition-colors shrink-0 mt-0.5">
-        { icon }
-      </span>
+			<span
+				className="text-muted-foreground/60 group-hover:text-muted-foreground transition-colors shrink-0 mt-0.5">
+				{ icon }
+			</span>
 			<span className="text-sm text-muted-foreground w-35 shrink-0">{ label }</span>
 			<h3 className="text-sm flex-1 font-medium break-all" title={ value ?? "-" }>
 				{ value ?? "-" }
@@ -34,13 +35,7 @@ function FieldRow({icon, label, value}: FieldRowProps)
 	);
 }
 
-function SectionCard({
-	title,
-	children
-}: {
-	title: string;
-	children: React.ReactNode;
-})
+function SectionCard({title, children}: { title: string; children: React.ReactNode; })
 {
 	return (
 		<div className="rounded-2xl border bg-card shadow-sm overflow-hidden">
@@ -57,11 +52,7 @@ function SectionCard({
 
 function Skeleton({className}: { className?: string; })
 {
-	return (
-		<div
-			className={ `animate-pulse rounded-md bg-muted ${ className ?? "" }` }
-		/>
-	);
+	return <div className={ `animate-pulse rounded-md bg-muted ${ className ?? "" }` }/>;
 }
 
 function LoadingSkeleton()
@@ -104,17 +95,17 @@ export default function TenantInfoSharingPage()
 		{
 			return;
 		}
-		const fetch = async () =>
+		const fetchSharing = async () =>
 		{
 			setInitLoading(true);
-			const response = await new SettingsApiService().GetForSharing(registrationKey);
-			if (response.data)
+			const response = await settingsApi.getForSharing(registrationKey);
+			if (response.ok && response.data)
 			{
 				setSetting(response.data);
 			}
 			setInitLoading(false);
 		};
-		void fetch();
+		void fetchSharing();
 	}, [registrationKey]);
 
 	if (initLoading)
@@ -135,10 +126,7 @@ export default function TenantInfoSharingPage()
 	}
 
 	return (
-		<div
-			className="min-h-screen bg-background"
-			dir={ i18n.dir() }
-		>
+		<div className="min-h-screen bg-background" dir={ i18n.dir() }>
 			<header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b">
 				<div className="mx-auto flex gap-5 max-w-6xl items-center justify-between px-6 py-2">
 					<a
@@ -169,51 +157,31 @@ export default function TenantInfoSharingPage()
 					href="https://erp.yusrsys.com"
 					target="_blank"
 					rel="noopener noreferrer"
-					className="
-            group inline-flex items-center gap-2
-            rounded-full border
-            border-border/60
-            bg-blue-100/60
-            px-4 py-1.5
-            text-[14px] font-medium text-blue-600 text-center
-            shadow-sm backdrop-blur
-            transition-all duration-200
-            hover:-translate-y-0.5
-            hover:border-primary/30
-            hover:bg-primary/10
-            hover:text-primary
-            hover:shadow-md
-        "
+					className="group inline-flex items-center gap-2 rounded-full border border-border/60 bg-blue-100/60 px-4 py-1.5 text-[14px] font-medium text-blue-600 text-center shadow-sm backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/10 hover:text-primary hover:shadow-md"
 				>
 					<Globe className="h-4 w-4 transition-transform group-hover:rotate-12"/>
-
-					<span>
-            { t("sharing.promotionText") }
-          </span>
+					<span>{ t("sharing.promotionText") }</span>
 				</a>
 			</div>
 			<div className="max-w-lg mx-auto px-4 py-3 space-y-5">
 				<div className="flex flex-col items-center gap-3 pt-2 pb-2">
-					{ setting.logo?.url
-						? (
-							<div className="relative">
-								<div
-									className="w-24 h-24 rounded-full border-2 border-border shadow-md overflow-hidden bg-muted">
-									<img
-										src={ setting.logo.url }
-										alt={ setting.companyName }
-										className="w-full h-full object-contain"
-									/>
-								</div>
-							</div>
-						)
-						: (
+					{ setting.logo?.url ? (
+						<div className="relative">
 							<div
-								className="w-24 h-24 rounded-full border-2 border-border bg-muted flex items-center justify-center shadow-md">
-								<Building2 className="w-10 h-10 text-muted-foreground"/>
+								className="w-24 h-24 rounded-full border-2 border-border shadow-md overflow-hidden bg-muted">
+								<img
+									src={ setting.logo.url }
+									alt={ setting.companyName }
+									className="w-full h-full object-contain"
+								/>
 							</div>
-						) }
-
+						</div>
+					) : (
+						<div
+							className="w-24 h-24 rounded-full border-2 border-border bg-muted flex items-center justify-center shadow-md">
+							<Building2 className="w-10 h-10 text-muted-foreground"/>
+						</div>
+					) }
 					<div className="text-center space-y-1">
 						<h1 className="text-xl font-semibold tracking-tight">
 							{ setting.companyName }

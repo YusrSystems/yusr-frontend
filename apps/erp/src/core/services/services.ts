@@ -1,7 +1,5 @@
-import { BaseApiService, BaseServices, UserDto } from "yusr-ui";
+import { BaseServices } from "yusr-ui";
 import { ErpAuthService } from "./erpAuthService";
-import DashboardApiService from "@/core/networking/dashboardApiService.ts";
-import SettingsApiService from "@/core/networking/settingsApiService.ts";
 import { erpRolesApi } from "@/features/roles/roles.api";
 import { storesApi } from "@/features/stores/stores.api";
 import { pricingMethodsApi } from "@/features/pricingMethods/pricingMethods.api";
@@ -25,6 +23,9 @@ import { posCheckoutApi } from "@/features/Pos/posScreen/posCheckout.api";
 import { salesInvoicesApi } from "@/features/commercial/sales/salesInvoices.api";
 import { purchaseInvoicesApi } from "@/features/commercial/purchases/purchaseInvoices.api";
 import { quotationsApi } from "@/features/commercial/quotations/quotations.api";
+import { settingsApi } from "@/features/setting/settings.api";
+import { dashboardApi } from "@/features/dashboard/dashboard.api";
+import { eInvoicingApi } from "@/features/setting/eInvoicing/eInvoicing.api";
 
 
 export class Services extends BaseServices
@@ -54,9 +55,9 @@ export class Services extends BaseServices
 	public static readonly salesInvoicesApi = salesInvoicesApi;
 	public static readonly purchaseInvoicesApi = purchaseInvoicesApi;
 	public static readonly quotationsApi = quotationsApi;
-	public static readonly settingApi = new SettingsApiService();
-	public static readonly dashboardApi = new DashboardApiService();
-	public static readonly usersApi = new BaseApiService<UserDto>("Users");
+	public static readonly settingApi = settingsApi;
+	public static readonly dashboardApi = dashboardApi;
+	public static readonly eInvoicingApi = eInvoicingApi;
 
 	static
 	{

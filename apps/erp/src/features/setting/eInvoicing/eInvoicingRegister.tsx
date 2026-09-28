@@ -1,11 +1,12 @@
 import { type EInvoicingEnvironmentType } from "@/core/data/setting";
-import EInvoicingApiService from "@/core/networking/eInvoicingApiService";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, Card, CardContent, OtpInput } from "yusr-ui";
 import { type Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useMemo } from "react";
+import { eInvoicingApi } from "./eInvoicing.api";
+import { Services } from "@/core/services/services";
 
 
 interface EInvoicingRegisterProps
@@ -30,15 +31,20 @@ export function EInvoicingRegister({linkType, onFinish, formData}: EInvoicingReg
 		}
 
 		isLoading.value = true;
-
-		const res = await new EInvoicingApiService().Link(otp.value, linkType);
-
-		if (res.status === 200)
+		try
 		{
-			onFinish?.();
-			formData.eInvoicingEnvironmentType.value = linkType;
+			const res = await eInvoicingApi.link(otp.value, linkType);
+			if (res.ok && res.data)
+			{
+				Services.auth.setSettings(res.data);
+				formData.eInvoicingEnvironmentType.value = linkType;
+				onFinish?.();
+			}
 		}
-		isLoading.value = false;
+		finally
+		{
+			isLoading.value = false;
+		}
 	};
 
 	return (
@@ -55,21 +61,20 @@ export function EInvoicingRegister({linkType, onFinish, formData}: EInvoicingReg
 
 			<Card className="w-full">
 				<CardContent className="flex flex-col items-center gap-6 pt-6">
-					<OtpInput value={ otp.value } onChange={ (val) => otp.value = val } disabled={ isLoading.value }/>
-
+					<OtpInput value={ otp.value } onChange={ (val) => (otp.value = val) } disabled={ isLoading.value }/>
 					<Button
 						type="button"
 						onClick={ handleLink }
 						disabled={ otp.value.length !== 6 || isLoading.value }
 						className="w-full rounded-xl h-11"
 					>
-						{ isLoading.value
-							? (
-								<>
-									<Loader2 className="ml-2 h-4 w-4 animate-spin"/> { t("settings.linking") }
-								</>
-							)
-							: t("settings.startLinking") }
+						{ isLoading.value ? (
+							<>
+								<Loader2 className="ml-2 h-4 w-4 animate-spin"/> { t("settings.linking") }
+							</>
+						) : (
+							t("settings.startLinking")
+						) }
 					</Button>
 				</CardContent>
 			</Card>

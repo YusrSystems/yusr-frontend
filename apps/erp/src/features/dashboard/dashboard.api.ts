@@ -1,7 +1,8 @@
-import { DashboardDataDto } from "@/core/data/dashboardData";
-import { apiClient } from "#/api";
+import { apiClient, type ApiResponse } from "yusr-ui";
+import { type DashboardDataDto } from "@/core/data/dashboardData";
 
 
 export const dashboardApi = {
-	get: () => apiClient.get<DashboardDataDto>("/api/Dashboard")
+	get: (): Promise<ApiResponse<DashboardDataDto>> =>
+		apiClient.get<DashboardDataDto>("/api/Dashboard")
 };

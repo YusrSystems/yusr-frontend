@@ -9,6 +9,7 @@ import {
 import { Setting } from "@/core/data/setting.ts";
 import { Signal, signal } from "@preact/signals-react";
 import { Services } from "@/core/services/services.ts";
+import { settingsApi } from "../settings.api";
 
 
 export default class SettingsCubit extends Cubit<SettingsState>
@@ -23,56 +24,38 @@ export default class SettingsCubit extends Cubit<SettingsState>
 
 	public async init()
 	{
-		try
+		this.emit(new SettingsLoading());
+		const response = await settingsApi.get();
+
+		if (response.ok && response.data)
 		{
-			this.emit(new SettingsLoading());
-			const response = await Services.settingApi.Get();
-			if (response.data)
-			{
-				this.formData = new Setting(response.data);
-				this.emit(new SettingsInitial());
-			}
-			else
-			{
-				this.emit(new SettingsError());
-			}
+			this.formData = new Setting(response.data);
+			this.emit(new SettingsInitial());
+			return;
 		}
-		catch
-		{
-			this.emit(new SettingsError());
-		}
+
+		this.emit(new SettingsError());
 	}
 
 	public async save(draftTheme: Signal<ThemeSettings | undefined>)
 	{
-		try
+		if (!this.formData.validate())
 		{
-			if (!this.formData.validate())
-			{
-				this.activeTab.value = "basic";
-				return;
-			}
-
-			this.emit(new SettingsSaving());
-			const result = await Services.settingApi.Update(
-				this.formData.toJson()
-			);
-			if (result.data)
-			{
-				Services.auth.setSettings(result.data);
-				draftTheme.value = undefined; // remove it
-				// themeSettings.value = draftTheme.value;
-				this.emit(new SettingsInitial());
-			}
-			else
-			{
-				this.emit(new SettingsError());
-			}
-
+			this.activeTab.value = "basic";
+			return;
 		}
-		catch
+
+		this.emit(new SettingsSaving());
+		const result = await settingsApi.update(this.formData.toJson());
+
+		if (result.ok && result.data)
 		{
-			this.emit(new SettingsError());
+			Services.auth.setSettings(result.data);
+			draftTheme.value = undefined;
+			this.emit(new SettingsInitial());
+			return;
 		}
+
+		this.emit(new SettingsError());
 	}
 }

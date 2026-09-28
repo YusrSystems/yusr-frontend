@@ -1,11 +1,12 @@
 import { Cubit } from "yusr-ui";
 import {
+	DashboardErrorState,
 	DashboardLoadedState,
 	DashboardLoadingState,
 	DashboardState
 } from "@/features/dashboard/logic/dashboardState.ts";
 import { DashboardData } from "@/core/data/dashboardData.ts";
-import DashboardApiService from "@/core/networking/dashboardApiService.ts";
+import { dashboardApi } from "../dashboard.api";
 
 
 export default class DashboardCubit extends Cubit<DashboardState>
@@ -19,23 +20,16 @@ export default class DashboardCubit extends Cubit<DashboardState>
 
 	public async init()
 	{
-		const service = new DashboardApiService();
-		try
-		{
-			this.emit(new DashboardLoadingState());
-			const result = await service.get();
+		this.emit(new DashboardLoadingState());
+		const result = await dashboardApi.get();
 
-			if (result.status === 200 && result.data)
-			{
-				this.data = new DashboardData(result.data);
-
-				this.emit(new DashboardLoadedState())
-				;
-			}
-		}
-		catch
+		if (result.ok && result.data)
 		{
-			throw Error("Could not get dashboard");
+			this.data = new DashboardData(result.data);
+			this.emit(new DashboardLoadedState());
+			return;
 		}
+
+		this.emit(new DashboardErrorState());
 	}
 }

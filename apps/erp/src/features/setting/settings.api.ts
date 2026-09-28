@@ -1,20 +1,16 @@
-import type { EInvoicingEnvironmentType, SettingDto, SharingSetting } from "@/core/data/setting";
-import { apiClient } from "#/api";
+import { apiClient, type ApiResponse } from "yusr-ui";
+import { type SettingDto, type SharingSetting } from "@/core/data/setting";
 
 
 export const settingsApi = {
-	get: () => apiClient.get<SettingDto>("/api/Settings"),
-	getForSharing: (registrationKey: string) =>
-		apiClient.get<SharingSetting>(`/api/Settings/Share/${ registrationKey }`),
-	update: (dto: SettingDto) =>
-		apiClient.put<SettingDto>("/api/Settings", dto, {
-			successMessage: "تم حفظ الإعدادات بنجاح"
-		})
-};
+	get: (): Promise<ApiResponse<SettingDto>> =>
+		apiClient.get<SettingDto>("/api/Settings"),
 
-export const eInvoicingApi = {
-	link: (otp: string, environment: EInvoicingEnvironmentType) =>
-		apiClient.get<SettingDto>(`/api/EInvoicing/LinkEInvoicing/${ otp }/${ environment }`, {
-			successMessage: "تم ربط الفوترة الإلكترونية بنجاح"
-		})
+	update: (dto: SettingDto): Promise<ApiResponse<SettingDto>> =>
+		apiClient.put<SettingDto>("/api/Settings", dto, {
+			successMessage: "تم تحديث الإعدادات بنجاح"
+		}),
+
+	getForSharing: (registrationKey: string): Promise<ApiResponse<SharingSetting>> =>
+		apiClient.get<SharingSetting>(`/api/Settings/Share/${ registrationKey }`)
 };
