@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
-import { YusrApiHelper } from "yusr-ui";
+import { apiClient } from "yusr-ui";
 
 
 export function useCommercialPrint<TReportResult>()
@@ -27,8 +27,8 @@ export function useCommercialPrint<TReportResult>()
 		isPrinting.value = id;
 		try
 		{
-			const res = await YusrApiHelper.Post<TReportResult>(endpointUrl, requestPayload);
-			if (res.data)
+			const res = await apiClient.post<TReportResult>(endpointUrl, requestPayload);
+			if (res.ok && res.data)
 			{
 				printedReport.value = res.data;
 				requestAnimationFrame(() =>

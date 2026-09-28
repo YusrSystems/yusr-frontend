@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import {
+	apiClient,
 	Button,
 	Dialog,
 	DialogClose,
@@ -11,8 +12,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	TextAreaField,
-	TextField,
-	YusrApiHelper
+	TextField
 } from "yusr-ui";
 import { AlertCircle, Loader2, QrCode, Send } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa6";
@@ -26,6 +26,7 @@ import {
 	DEFAULT_WHATSAPP_QUOTATION_TEMPLATE,
 	DEFAULT_WHATSAPP_SALES_TEMPLATE
 } from "@/features/commercial/logic/whatsappTemplateHelper";
+
 
 type CommercialSendWhatsappDialogDocumentType = "sales" | "quotations";
 
@@ -297,9 +298,8 @@ export default function CommercialSendWhatsappDialog({
 				endpoint = "/api/Reports/Quotation";
 				reqBody = new QuotationReportRequest({quotationId: documentId});
 			}
-
-			const reportRes = await YusrApiHelper.Post<CommercialReportResult>(endpoint, reqBody);
-			if (!reportRes.data)
+			const reportRes = await apiClient.post<CommercialReportResult>(endpoint, reqBody);
+			if (!reportRes.ok || !reportRes.data)
 			{
 				throw new Error("فشل في جلب بيانات وتصميم الفاتورة من الخادم.");
 			}
@@ -340,19 +340,19 @@ export default function CommercialSendWhatsappDialog({
 					<base href="${ window.location.origin }/">
 					${ styles }
 					<style>
-						@page { 
-							size: A4 portrait; 
-							margin: 0; 
+						@page {
+							size: A4 portrait;
+							margin: 0;
 						}
-						html, body { 
-							background-color: #ffffff !important; 
-							color: #000000 !important; 
-							margin: 0 !important; 
-							padding: 6mm !important; 
-							width: 100% !important; 
-							box-sizing: border-box !important; 
-							-webkit-print-color-adjust: exact !important; 
-							print-color-adjust: exact !important; 
+						html, body {
+							background-color: #ffffff !important;
+							color: #000000 !important;
+							margin: 0 !important;
+							padding: 6mm !important;
+							width: 100% !important;
+							box-sizing: border-box !important;
+							-webkit-print-color-adjust: exact !important;
+							print-color-adjust: exact !important;
 						}
 						.report {
 							max-width: 100% !important;
@@ -501,7 +501,7 @@ export default function CommercialSendWhatsappDialog({
 				</DialogContent>
 			</Dialog>
 
-			{/* Hidden mount for rendering exact print styling when sending */}
+			{/* Hidden mount for rendering exact print styling when sending */ }
 			<div
 				ref={ reportContainerRef }
 				style={ {

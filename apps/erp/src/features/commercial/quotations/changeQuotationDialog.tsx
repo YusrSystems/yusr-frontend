@@ -33,11 +33,11 @@ import { useCommercialUrlLoader } from "../hooks/useCommercialUrlLoader";
 import { prepareCommercialPayload } from "../logic/commercialPayload";
 import { ItemProfitDialog } from "@/features/commercial/components/profit/itemProfitDialog.tsx";
 import InvoiceProfitDialog from "@/features/commercial/components/profit/invoiceProfitDialog.tsx";
+import { quotationsApi } from "./quotations.api";
 
 
 export default function ChangeQuotationDialog({
 	dto,
-	service,
 	onSuccess
 }: CommonChangeDialogProps<QuotationDto>)
 {
@@ -59,7 +59,7 @@ export default function ChangeQuotationDialog({
 		mode: entity.value.mode,
 		isLoading,
 		hasAddAuth: canAdd,
-		fetchCopyDetails: (id) => service.Get(id),
+		fetchCopyDetails: (id) => quotationsApi.get(id),
 		onLoadCopy: (data) => entity.value.loadFromCopy(data)
 	});
 
@@ -115,7 +115,7 @@ export default function ChangeQuotationDialog({
 								<div className="xl:col-span-8 2xl:col-span-9 space-y-4 min-w-0">
 									<FieldsSection columns={ {base: 1, md: 2, lg: 4} }>
 										<DateField
-											label={ "تاريخ عرض السعر" }
+											label="تاريخ عرض السعر"
 											required
 											disabled={ entity.value.isDisabled }
 											value={ entity.value.date }
@@ -232,7 +232,7 @@ export default function ChangeQuotationDialog({
 				<ChangeDialog.Close/>
 				<ChangeDialog.SaveButton<Quotation, QuotationDto>
 					entity={ entity }
-					service={ service }
+					resource={ quotationsApi }
 					loadingSignal={ isSaving }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 					transformData={ transformDataBeforeSave }

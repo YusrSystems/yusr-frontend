@@ -17,6 +17,7 @@ import {
 	FormField,
 	Loading,
 	NumberField,
+	type SaveButtonProps,
 	SelectField,
 	StorageType,
 	SystemPermissionsActions,
@@ -54,12 +55,12 @@ import { useInvoiceOrigin } from "../hooks/useInvoiceOrigin";
 import { useStoreItemsSync } from "../hooks/useStoreItemsSync";
 import { useCommercialUrlLoader } from "../hooks/useCommercialUrlLoader";
 import { prepareCommercialPayload } from "../logic/commercialPayload";
-import type { SaveButtonProps } from "#/components/custom/buttons/saveButton.tsx";
+import { salesInvoicesApi } from "./salesInvoices.api";
+import { quotationsApi } from "../quotations/quotations.api";
 
 
 export default function ChangeSalesInvoiceDialog({
 	dto,
-	service,
 	onSuccess,
 	fixedType = SalesInvoiceType.Invoice
 }: CommonChangeDialogProps<SalesInvoiceDto> & {
@@ -87,9 +88,9 @@ export default function ChangeSalesInvoiceDialog({
 		mode: entity.value.mode,
 		isLoading,
 		hasAddAuth: canAdd,
-		fetchReturnDetails: (id) => Services.salesInvoicesApi.GetReturnInvoiceInitialDetails(id),
-		fetchCopyDetails: (id) => Services.salesInvoicesApi.Get(id),
-		fetchQuotationDetails: (id) => Services.quotationsApi.Get(id),
+		fetchReturnDetails: (id) => salesInvoicesApi.getReturnDetails(id),
+		fetchCopyDetails: (id) => salesInvoicesApi.get(id),
+		fetchQuotationDetails: (id) => quotationsApi.get(id),
 		onLoadReturn: (data) =>
 		{
 			hasCostVouchers.value = (data.costVouchers || []).length > 0;
@@ -154,8 +155,8 @@ export default function ChangeSalesInvoiceDialog({
 			isLoading.value = true;
 			try
 			{
-				const res = await Services.salesInvoicesApi.GetReturnInvoiceInitialDetails(originalInvoice.id);
-				if (res?.data)
+				const res = await salesInvoicesApi.getReturnDetails(originalInvoice.id);
+				if (res.ok && res.data)
 				{
 					hasCostVouchers.value = (res.data.costVouchers || []).length > 0;
 					isFullyReturned.value = (res.data.items || []).length === 0;
@@ -580,12 +581,12 @@ export default function ChangeSalesInvoiceDialog({
 	function SalesInvoiceSaveButton({
 		transformData,
 		...props
-	}: Omit<SaveButtonProps<SalesInvoice, SalesInvoiceDto>, "entity" | "service" | "onSuccess">)
+	}: Omit<SaveButtonProps<SalesInvoice, SalesInvoiceDto>, "entity" | "resource" | "onSuccess">)
 	{
 		return (
 			<ChangeDialog.SaveButton<SalesInvoice, SalesInvoiceDto>
 				entity={ entity }
-				service={ service }
+				resource={ salesInvoicesApi }
 				loadingSignal={ isSaving }
 				onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				transformData={ async () =>

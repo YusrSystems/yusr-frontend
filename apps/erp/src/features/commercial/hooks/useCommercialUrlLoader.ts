@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { type Signal } from "@preact/signals-react";
-import { ChangeableEntityMode, type RequestResult } from "yusr-ui";
+import { type ApiResponse, ChangeableEntityMode } from "yusr-ui";
 import type { ICommercialDocumentDto } from "@/core/data/commercial/commercialDocument";
 import type { QuotationDto } from "@/core/data/commercial/quotation";
 
@@ -14,9 +14,9 @@ export interface UseCommercialUrlLoaderOptions<
 	mode: Signal<ChangeableEntityMode>;
 	isLoading: Signal<boolean>;
 	hasAddAuth: boolean;
-	fetchReturnDetails?: (id: number) => Promise<RequestResult<TDto>>;
-	fetchCopyDetails?: (id: number) => Promise<RequestResult<TDto>>;
-	fetchQuotationDetails?: (id: number) => Promise<RequestResult<TQuotationDto>>;
+	fetchReturnDetails?: (id: number) => Promise<ApiResponse<TDto>>;
+	fetchCopyDetails?: (id: number) => Promise<ApiResponse<TDto>>;
+	fetchQuotationDetails?: (id: number) => Promise<ApiResponse<TQuotationDto>>;
 	onLoadReturn?: (dto: TDto) => void;
 	onLoadCopy?: (dto: TDto) => void;
 	onLoadQuotation?: (dto: TQuotationDto) => void;
@@ -52,7 +52,7 @@ export function useCommercialUrlLoader<
 			fetchReturnDetails(Number(returnFromId))
 				.then((res) =>
 				{
-					if (res?.data) onLoadReturn(res.data);
+					if (res.ok && res.data) onLoadReturn(res.data);
 				})
 				.finally(() =>
 				{
@@ -71,7 +71,7 @@ export function useCommercialUrlLoader<
 			fetchCopyDetails(Number(copyFromId))
 				.then((res) =>
 				{
-					if (res?.data) onLoadCopy(res.data);
+					if (res.ok && res.data) onLoadCopy(res.data);
 				})
 				.finally(() =>
 				{
@@ -90,7 +90,7 @@ export function useCommercialUrlLoader<
 			fetchQuotationDetails(Number(fromQuotationId))
 				.then((res) =>
 				{
-					if (res?.data) onLoadQuotation(res.data);
+					if (res.ok && res.data) onLoadQuotation(res.data);
 				})
 				.finally(() =>
 				{

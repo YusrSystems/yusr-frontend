@@ -7,7 +7,6 @@ import { PricingMethodDto } from "../data/pricingMethod";
 import { StocktakingDto } from "../data/stocktaking";
 import { TaxDto } from "../data/tax";
 import { UnitDto } from "../data/unit";
-import { Services } from "./services";
 import { VoucherDto } from "@/core/data/voucher.ts";
 import { StoreDto } from "@/core/data/store.ts";
 import { PaymentMethodDto } from "@/core/data/paymentMethod.ts";
@@ -58,9 +57,9 @@ import { PosTerminalDto } from "@/core/data/posTerminal.ts";
 import { CategoryDto } from "@/core/data/category.ts";
 import { BrandDto } from "@/core/data/brand.ts";
 import { FiscalYearDto } from "@/core/data/fiscalYear.ts";
-import type { SalesInvoiceDto } from "@/core/data/commercial/salesInvoice.ts";
-import type { PurchaseInvoiceDto } from "@/core/data/commercial/purchaseInvoice.ts";
-import type { QuotationDto } from "@/core/data/commercial/quotation.ts";
+import { SalesInvoiceDto } from "@/core/data/commercial/salesInvoice.ts";
+import { PurchaseInvoiceDto } from "@/core/data/commercial/purchaseInvoice.ts";
+import { QuotationDto } from "@/core/data/commercial/quotation.ts";
 import { erpRolesApi } from "@/features/roles/roles.api";
 import { storesApi } from "@/features/stores/stores.api";
 import { pricingMethodsApi } from "@/features/pricingMethods/pricingMethods.api";
@@ -78,6 +77,9 @@ import { balanceTransfersApi } from "@/features/balanceTransfer/balanceTransfers
 import { fiscalYearsApi } from "@/features/fiscalYears/fiscalYears.api";
 import { vouchersApi } from "@/features/vouchers/vouchers.api";
 import { posTerminalsApi } from "@/features/Pos/posTerminals/posTerminals.api";
+import { salesInvoicesApi } from "@/features/commercial/sales/salesInvoices.api";
+import { purchaseInvoicesApi } from "@/features/commercial/purchases/purchaseInvoices.api";
+import { quotationsApi } from "@/features/commercial/quotations/quotations.api";
 
 
 export class Cubits extends BaseCubits
@@ -91,6 +93,11 @@ export class Cubits extends BaseCubits
 	public static readonly paymentMethods = new ListCubit<PaymentMethodDto>(paymentMethodsApi);
 	public static readonly fiscalYears = new ListCubit<FiscalYearDto>(fiscalYearsApi);
 	public static readonly posTerminals = new ListCubit<PosTerminalDto>(posTerminalsApi);
+	public static readonly salesInvoices = new PageCubit<SalesInvoiceDto>(salesInvoicesApi);
+	public static readonly purchaseInvoices = new PageCubit<PurchaseInvoiceDto>(purchaseInvoicesApi);
+	public static readonly originalSalesInvoices = new PageCubit<SalesInvoiceDto>(salesInvoicesApi);
+	public static readonly originalPurchaseInvoices = new PageCubit<PurchaseInvoiceDto>(purchaseInvoicesApi);
+	public static readonly quotations = new PageCubit<QuotationDto>(quotationsApi);
 	public static readonly stocktaking = new PageCubit<StocktakingDto>(stocktakingsApi);
 	public static readonly itemsSettlements = new PageCubit<StocktakingDto>(itemsSettlementsApi);
 	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(costAdjustmentsApi);
@@ -102,11 +109,6 @@ export class Cubits extends BaseCubits
 	public static readonly partners = new PageCubit<PartnerDto>(partnersApi);
 	public static readonly vouchers = new PageCubit<VoucherDto>(vouchersApi);
 	public static override roles = new ListCubit<ErpRoleDto>(erpRolesApi);
-	public static readonly salesInvoices = new PageCubit<SalesInvoiceDto>(Services.salesInvoicesApi);
-	public static readonly purchaseInvoices = new PageCubit<PurchaseInvoiceDto>(Services.purchaseInvoicesApi);
-	public static readonly originalSalesInvoices = new PageCubit<SalesInvoiceDto>(Services.salesInvoicesApi);
-	public static readonly originalPurchaseInvoices = new PageCubit<PurchaseInvoiceDto>(Services.purchaseInvoicesApi);
-	public static readonly quotations = new PageCubit<QuotationDto>(Services.quotationsApi);
 
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");
 	public static readonly itemFilterFields = new FilterFieldsCubit("Items");

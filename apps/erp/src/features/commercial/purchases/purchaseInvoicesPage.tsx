@@ -43,6 +43,7 @@ import { APP_NAME } from "../../../../appConfig";
 import { PurchaseInvoiceReportRequest } from "@/features/reports/invoice/invoiceReportRequest.ts";
 import { useCommercialPrint } from "../hooks/useCommercialPrint";
 import { CommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
+import { purchaseInvoicesApi } from "./purchaseInvoices.api";
 
 
 export default function PurchaseInvoicesPage({initialType}: { initialType?: PurchaseInvoiceType })
@@ -78,15 +79,15 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 			activeTypeTab.value === 0
 				? [PurchaseInvoiceType.Bill, PurchaseInvoiceType.CreditNote, PurchaseInvoiceType.DebitNote]
 				: [activeTypeTab.value];
-		Cubits.purchaseInvoices.init(types);
+		void Cubits.purchaseInvoices.init(types);
 	}, [activeTypeTab.value]);
 
 	useEffect(() =>
 	{
-		Cubits.partners.init([PartnerType.Supplier]);
-		Cubits.items.init();
-		Cubits.stores.init();
-		Cubits.paymentMethods.init();
+		void Cubits.partners.init([PartnerType.Supplier]);
+		void Cubits.items.init();
+		void Cubits.stores.init();
+		void Cubits.paymentMethods.init();
 	}, []);
 
 	const printInvoice = (invoice: PurchaseInvoiceDto) =>
@@ -367,13 +368,12 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 				fetchEntity={ async (id: number) =>
 				{
 					if (!id || id <= 0) return undefined;
-					const result = await Services.purchaseInvoicesApi.Get(id);
+					const result = await purchaseInvoicesApi.get(id);
 					return result.data;
 				} }
 				changeDialog={ (dto: PurchaseInvoiceDto | undefined, closeDialog) => (
 					<ChangePurchaseInvoiceDialog
 						dto={ dto }
-						service={ Services.purchaseInvoicesApi }
 						fixedType={ activeTypeTab.value === 0 ? PurchaseInvoiceType.Bill : activeTypeTab.value }
 						onSuccess={ (data, mode) =>
 						{

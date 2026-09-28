@@ -38,6 +38,7 @@ import type { QuotationReportResult } from "@/features/reports/invoice/invoiceRe
 import { useCommercialPrint } from "../hooks/useCommercialPrint";
 import { CommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
 import CommercialSendWhatsappDialog from "@/features/commercial/components/commercialSendWhatsappDialog";
+import { quotationsApi } from "./quotations.api";
 
 
 export default function QuotationsPage()
@@ -68,10 +69,10 @@ export default function QuotationsPage()
 
 	useEffect(() =>
 	{
-		Cubits.quotations.init();
-		Cubits.partners.init([PartnerType.Customer]);
-		Cubits.items.init();
-		Cubits.stores.init();
+		void Cubits.quotations.init();
+		void Cubits.partners.init([PartnerType.Customer]);
+		void Cubits.items.init();
+		void Cubits.stores.init();
 	}, []);
 
 	const printQuotation = (quote: QuotationDto) =>
@@ -301,13 +302,12 @@ export default function QuotationsPage()
 				fetchEntity={ async (id: number) =>
 				{
 					if (!id || id <= 0) return undefined;
-					const result = await Services.quotationsApi.Get(id);
+					const result = await quotationsApi.get(id);
 					return result.data;
 				} }
 				changeDialog={ (dto: QuotationDto | undefined, closeDialog) => (
 					<ChangeQuotationDialog
 						dto={ dto }
-						service={ Services.quotationsApi }
 						onSuccess={ (data, mode) =>
 						{
 							if (mode === ChangeableEntityMode.Create)
@@ -324,9 +324,9 @@ export default function QuotationsPage()
 				) }
 			/>
 
-			<CrudPage.DeleteDialog
+			<CrudPage.DeleteDialog<QuotationDto>
 				entityNameSelector={ () => `"${ t("invoices.quotation") }"` }
-				service={ Services.quotationsApi }
+				resource={ quotationsApi }
 				onSuccess={ (entity) => Cubits.quotations.delete(entity) }
 			/>
 

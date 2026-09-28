@@ -49,6 +49,7 @@ import { useCommercialPrint } from "../hooks/useCommercialPrint";
 import { CommercialFilterInput } from "@/features/commercial/components/commercialFilterInput.tsx";
 import CommercialSendWhatsappDialog from "@/features/commercial/components/commercialSendWhatsappDialog";
 import { FaWhatsapp } from "react-icons/fa";
+import { salesInvoicesApi } from "./salesInvoices.api";
 
 
 export default function SalesInvoicesPage({initialType}: { initialType?: SalesInvoiceType })
@@ -61,11 +62,6 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 	const whatsappDialogInvoice = useMemo(() => signal<SalesInvoiceDto | undefined>(undefined), []);
 	const {printedReport, isPrinting, handlePrint} = useCommercialPrint<SalesInvoiceReportResult>();
 	const today = useMemo(() => DateService.formatDateOnly(new Date()), []);
-
-	useEffect(() =>
-	{
-		document.title = `${ t("invoices.salesManagement") } | ${ APP_NAME }`;
-	}, [t]);
 
 	useEffect(() =>
 	{
@@ -91,15 +87,15 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 			activeTypeTab.value === 0
 				? [SalesInvoiceType.Invoice, SalesInvoiceType.CreditNote, SalesInvoiceType.DebitNote]
 				: [activeTypeTab.value];
-		Cubits.salesInvoices.init(types);
+		void Cubits.salesInvoices.init(types);
 	}, [activeTypeTab.value]);
 
 	useEffect(() =>
 	{
-		Cubits.partners.init([PartnerType.Customer]);
-		Cubits.stores.init();
-		Cubits.paymentMethods.init();
-		Cubits.accounts.init(getAccountTypesByClasses([AccountClass.Expense]));
+		void Cubits.partners.init([PartnerType.Customer]);
+		void Cubits.stores.init();
+		void Cubits.paymentMethods.init();
+		void Cubits.accounts.init(getAccountTypesByClasses([AccountClass.Expense]));
 	}, []);
 
 	const printInvoice = (invoice: SalesInvoiceDto) =>
@@ -124,20 +120,26 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 	const resendEInvoice = async (invoice: SalesInvoiceDto) =>
 	{
 		resendingEInvoice.value = true;
-		const res = await Services.salesInvoicesApi.ResendEInvoice(invoice.id);
-		if (res.status === 200 && res.data !== undefined)
+		try
 		{
-			if (res.data === EInvoiceStatus.NotSent)
+			const res = await salesInvoicesApi.resendEInvoice(invoice.id);
+			if (res.ok && res.data !== undefined)
 			{
-				toast.error(t("invoices.resendFailed"));
+				if (res.data === EInvoiceStatus.NotSent)
+				{
+					toast.error(t("invoices.resendFailed"));
+				}
+				else
+				{
+					toast.success(t("invoices.resendSuccess"));
+				}
+				invoice.eInvoiceStatus = res.data;
 			}
-			else
-			{
-				toast.success(t("invoices.resendSuccess"));
-			}
-			invoice.eInvoiceStatus = res.data;
 		}
-		resendingEInvoice.value = false;
+		finally
+		{
+			resendingEInvoice.value = false;
+		}
 	};
 
 	if (!Services.auth.hasAuth(SystemPermissionsResources.InvoiceSell, SystemPermissionsActions.Get))
@@ -477,13 +479,12 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 				fetchEntity={ async (id: number) =>
 				{
 					if (!id || id <= 0) return undefined;
-					const result = await Services.salesInvoicesApi.Get(id);
+					const result = await salesInvoicesApi.get(id);
 					return result.data;
 				} }
 				changeDialog={ (dto: SalesInvoiceDto | undefined, closeDialog) => (
 					<ChangeSalesInvoiceDialog
 						dto={ dto }
-						service={ Services.salesInvoicesApi }
 						fixedType={ activeTypeTab.value === 0 ? SalesInvoiceType.Invoice : activeTypeTab.value }
 						onSuccess={ (data, mode) =>
 						{

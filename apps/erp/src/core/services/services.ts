@@ -2,9 +2,6 @@ import { BaseApiService, BaseServices, UserDto } from "yusr-ui";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
-import PurchaseInvoicesApiService from "@/core/networking/purchaseInvoicesApiService.ts";
-import SalesInvoicesApiService from "@/core/networking/salesInvoicesApiService.ts";
-import type { QuotationDto } from "@/core/data/commercial/quotation.ts";
 import { erpRolesApi } from "@/features/roles/roles.api";
 import { storesApi } from "@/features/stores/stores.api";
 import { pricingMethodsApi } from "@/features/pricingMethods/pricingMethods.api";
@@ -25,6 +22,9 @@ import { vouchersApi } from "@/features/vouchers/vouchers.api";
 import { posTerminalsApi } from "@/features/Pos/posTerminals/posTerminals.api";
 import { posSessionsApi } from "@/features/Pos/posSession/posSessions.api";
 import { posCheckoutApi } from "@/features/Pos/posScreen/posCheckout.api";
+import { salesInvoicesApi } from "@/features/commercial/sales/salesInvoices.api";
+import { purchaseInvoicesApi } from "@/features/commercial/purchases/purchaseInvoices.api";
+import { quotationsApi } from "@/features/commercial/quotations/quotations.api";
 
 
 export class Services extends BaseServices
@@ -51,9 +51,9 @@ export class Services extends BaseServices
 	public static readonly posTerminalsApi = posTerminalsApi;
 	public static readonly posSessionsApi = posSessionsApi;
 	public static readonly posCheckoutApi = posCheckoutApi;
-	public static readonly salesInvoicesApi = new SalesInvoicesApiService();
-	public static readonly purchaseInvoicesApi = new PurchaseInvoicesApiService();
-	public static readonly quotationsApi = new BaseApiService<QuotationDto>("Quotations");
+	public static readonly salesInvoicesApi = salesInvoicesApi;
+	public static readonly purchaseInvoicesApi = purchaseInvoicesApi;
+	public static readonly quotationsApi = quotationsApi;
 	public static readonly settingApi = new SettingsApiService();
 	public static readonly dashboardApi = new DashboardApiService();
 	public static readonly usersApi = new BaseApiService<UserDto>("Users");

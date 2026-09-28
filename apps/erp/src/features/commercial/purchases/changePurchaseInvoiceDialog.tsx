@@ -39,11 +39,11 @@ import { useInvoiceOrigin } from "../hooks/useInvoiceOrigin";
 import { useStoreItemsSync } from "../hooks/useStoreItemsSync";
 import { useCommercialUrlLoader } from "../hooks/useCommercialUrlLoader";
 import { prepareCommercialPayload } from "../logic/commercialPayload";
+import { purchaseInvoicesApi } from "./purchaseInvoices.api";
 
 
 export default function ChangePurchaseInvoiceDialog({
 	dto,
-	service,
 	onSuccess,
 	fixedType = PurchaseInvoiceType.Bill
 }: CommonChangeDialogProps<PurchaseInvoiceDto> & {
@@ -69,8 +69,8 @@ export default function ChangePurchaseInvoiceDialog({
 		mode: entity.value.mode,
 		isLoading,
 		hasAddAuth: canAdd,
-		fetchReturnDetails: (id) => Services.purchaseInvoicesApi.GetReturnInvoiceInitialDetails(id),
-		fetchCopyDetails: (id) => Services.purchaseInvoicesApi.Get(id),
+		fetchReturnDetails: (id) => purchaseInvoicesApi.getReturnDetails(id),
+		fetchCopyDetails: (id) => purchaseInvoicesApi.get(id),
 		onLoadReturn: (data) => entity.value.loadFromReturn(data),
 		onLoadCopy: (data) => entity.value.loadFromCopy(data)
 	});
@@ -126,8 +126,8 @@ export default function ChangePurchaseInvoiceDialog({
 			isLoading.value = true;
 			try
 			{
-				const res = await Services.purchaseInvoicesApi.GetReturnInvoiceInitialDetails(originalInvoice.id);
-				if (res?.data)
+				const res = await purchaseInvoicesApi.getReturnDetails(originalInvoice.id);
+				if (res.ok && res.data)
 				{
 					entity.value.loadFromReturn(res.data);
 				}
@@ -343,7 +343,7 @@ export default function ChangePurchaseInvoiceDialog({
 				<ChangeDialog.Close/>
 				<ChangeDialog.SaveButton<PurchaseInvoice, PurchaseInvoiceDto>
 					entity={ entity }
-					service={ service }
+					resource={ purchaseInvoicesApi }
 					loadingSignal={ isSaving }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 					transformData={ transformDataBeforeSave }

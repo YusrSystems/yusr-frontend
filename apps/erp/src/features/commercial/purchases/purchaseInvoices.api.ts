@@ -1,11 +1,10 @@
-import { PurchaseInvoiceDto } from "@/core/data/commercial/purchaseInvoice";
-import { apiClient, createCrudResource } from "#/api";
+import { apiClient, createCrudResource } from "yusr-ui";
+import { type PurchaseInvoiceDto } from "@/core/data/commercial/purchaseInvoice";
 
 
 export const purchaseInvoicesApi = {
 	...createCrudResource<PurchaseInvoiceDto>("PurchaseInvoices"),
-	getReturnInvoiceInitialDetails: (originalPurchaseInvoiceId: number) =>
-		apiClient.get<PurchaseInvoiceDto>(
-			`/api/PurchaseInvoices/GetReturnInvoiceInitialDetails/${ originalPurchaseInvoiceId }`
-		)
+
+	getReturnDetails: (originalId: number) =>
+		apiClient.get<PurchaseInvoiceDto>(`/api/PurchaseInvoices/GetReturnInvoiceInitialDetails/${ originalId }`)
 };
