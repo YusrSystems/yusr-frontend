@@ -5,7 +5,7 @@ import { PaymentMethodsPage } from "@/features/paymentMethods/paymentMethodsPage
 import { ErpRolesPage } from "@/features/roles/erpRolesPage";
 import VouchersPage from "@/features/vouchers/vouchersPage";
 import { createBrowserRouter } from "react-router-dom";
-import { BaseFilterableApiService, BranchesPage, ErrorFallback, NotFoundPage, UsersPage } from "yusr-ui";
+import { apiClient, BranchesPage, ErrorFallback, NotFoundPage, UsersPage } from "yusr-ui";
 import DashboardPage from "../features/dashboard/dashboardPage";
 import ItemsPage from "../features/items/itemsPage";
 import ItemsSettlementsPage from "../features/stocktakings/itemsSettlementsPage";
@@ -58,6 +58,7 @@ const refreshPage = () =>
 {
 	window.location.reload();
 };
+
 export const router = createBrowserRouter([
 	{
 		errorElement: <ErrorFallback reset={ refreshPage }/>,
@@ -155,10 +156,11 @@ export const router = createBrowserRouter([
 		]
 	}
 ]);
+
 router.subscribe((state) =>
 {
 	if (state.historyAction === "PUSH" || state.historyAction === "POP")
 	{
-		BaseFilterableApiService.abortAll();
+		apiClient.abortAll();
 	}
 });

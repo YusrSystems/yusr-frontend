@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { StorageFile, StorageFileStatus, StorageType } from "#/entities";
-import { StorageApiService } from "../networking/storageApiService";
+import { storageApi } from "../api/storage.api";
 
 
 export function useStorageFile(
@@ -47,6 +47,7 @@ export function useStorageFile(
 		{
 			alert(errorMessages.join("\n"));
 		}
+
 		if (validFiles.length === 0)
 		{
 			return;
@@ -116,8 +117,7 @@ export function useStorageFile(
 						{
 							return null;
 						}
-
-						const {uploadUrl, readUrl, key} = await StorageApiService.getPresignedUploadUrl(
+						const {uploadUrl, readUrl, key} = await storageApi.getPresignedUploadUrl(
 							pathPrefix,
 							f.extension ?? ".bin",
 							f.contentType ?? "application/octet-stream",
@@ -153,8 +153,8 @@ export function useStorageFile(
 						const keyToDelete = f.key ?? f.url; // fallback to url if key missing
 						if (keyToDelete)
 						{
-							const {deleteUrl} = await StorageApiService.getPresignedDeleteUrl(keyToDelete, storageType);
-							await StorageApiService.delete(deleteUrl);
+							const {deleteUrl} = await storageApi.getPresignedDeleteUrl(keyToDelete, storageType);
+							await storageApi.delete(deleteUrl);
 						}
 						return null;
 					}

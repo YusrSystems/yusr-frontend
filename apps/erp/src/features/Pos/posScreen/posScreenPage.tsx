@@ -211,7 +211,7 @@ export default function PosScreenPage()
 
 		const fetchReturnDetails = async () =>
 		{
-			const res = await Services.salesInvoicesApi.GetReturnInvoiceInitialDetails(invoiceDto.id);
+			const res = await Services.salesInvoicesApi.getReturnDetails(invoiceDto.id);
 
 			if (res.data)
 			{

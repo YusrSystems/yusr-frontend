@@ -20,6 +20,23 @@ export interface RequestOptions extends Omit<RequestInit, "body">
 
 export class ApiClient
 {
+	private static pendingControllers = new Set<AbortController>();
+
+	static abortAll(): void
+	{
+		this.pendingControllers.forEach((controller) =>
+		{
+			try
+			{
+				controller.abort();
+			}
+			catch
+			{
+			}
+		});
+		this.pendingControllers.clear();
+	}
+
 	static async get<T>(url: string, options?: RequestOptions): Promise<ApiResponse<T>>
 	{
 		return this.executeRequest<T>(url, {
@@ -76,9 +93,21 @@ export class ApiClient
 		options?: RequestOptions
 	): Promise<ApiResponse<T>>
 	{
+		const controller = new AbortController();
+		this.pendingControllers.add(controller);
+
+		// If caller provided their own signal, listen to it to abort our controller
+		if (options?.signal)
+		{
+			options.signal.addEventListener("abort", () => controller.abort(), {once: true});
+		}
+
 		try
 		{
-			const response = await fetch(url, init);
+			const response = await fetch(url, {
+				...init,
+				signal: controller.signal
+			});
 			return await this.handleResponse<T>(response, options);
 		}
 		catch (error: any)
@@ -108,6 +137,10 @@ export class ApiClient
 				errors: [error?.message || "فشل الاتصال بالخادم"],
 				warnings: []
 			};
+		}
+		finally
+		{
+			this.pendingControllers.delete(controller);
 		}
 	}
 

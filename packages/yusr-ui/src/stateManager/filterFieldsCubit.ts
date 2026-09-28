@@ -1,7 +1,7 @@
 import { signal, type Signal } from "@preact/signals-react";
-import { Cubit } from "../stateManager/cubit.ts";
+import { Cubit } from "./cubit.ts";
 import type { FilterFieldMetadataDto } from "#/filter";
-import { YusrApiHelper } from "#/networking";
+import { apiClient } from "#/api";
 
 
 export class FilterFieldsInitial
@@ -42,16 +42,16 @@ export class FilterFieldsCubit extends Cubit<FilterFieldsState>
 		}
 
 		this.emit(new FilterFieldsLoading());
-		try
+		const result = await apiClient.get<FilterFieldMetadataDto[]>(`/api/${ this._routeName }/FilterFields`);
+
+		if (result.ok && result.data)
 		{
-			const result = await YusrApiHelper.Get<FilterFieldMetadataDto[]>(`/api/${ this._routeName }/FilterFields`);
-			this.fields.value = result.data ?? [];
+			this.fields.value = result.data;
 			this._loadedRouteName = this._routeName;
 			this.emit(new FilterFieldsLoaded());
+			return;
 		}
-		catch
-		{
-			this.emit(new FilterFieldsError());
-		}
+
+		this.emit(new FilterFieldsError());
 	}
 }

@@ -1,20 +1,20 @@
 import type { StorageType } from "#/entities";
-import { YusrApiHelper } from "./yusrApiHelper";
+import { apiClient } from "./apiClient";
 
 
-interface PresignUploadResponse
+export interface PresignUploadResponse
 {
 	uploadUrl: string;
 	readUrl: string;
 	key: string;
 }
 
-interface PresignDeleteResponse
+export interface PresignDeleteResponse
 {
 	deleteUrl: string;
 }
 
-export class StorageApiService
+export class StorageApi
 {
 	static async getPresignedUploadUrl(
 		pathPrefix: string,
@@ -23,27 +23,33 @@ export class StorageApiService
 		storageType: StorageType
 	): Promise<PresignUploadResponse>
 	{
-		const result = await YusrApiHelper.Post<PresignUploadResponse>(`/api/Storage/UploadUrl`, {
+		const result = await apiClient.post<PresignUploadResponse>("/api/Storage/UploadUrl", {
 			pathPrefix,
 			extension,
 			contentType,
 			storageType
 		});
-		if (!result.data)
+
+		if (!result.ok || !result.data)
 		{
 			throw new Error("Failed to get upload URL");
 		}
+
 		return result.data;
 	}
 
 	static async getPresignedDeleteUrl(key: string, storageType: StorageType): Promise<PresignDeleteResponse>
 	{
-		const result = await YusrApiHelper.Post<PresignDeleteResponse>("/api/Storage/DeleteUrl", {key, storageType});
+		const result = await apiClient.post<PresignDeleteResponse>("/api/Storage/DeleteUrl", {
+			key,
+			storageType
+		});
 
-		if (!result.data)
+		if (!result.ok || !result.data)
 		{
 			throw new Error("Failed to get delete URL");
 		}
+
 		return result.data;
 	}
 
@@ -57,7 +63,7 @@ export class StorageApiService
 
 		if (!res.ok)
 		{
-			throw new Error(`file upload failed: ${ res.status }`);
+			throw new Error(`File upload failed: ${ res.status }`);
 		}
 	}
 
@@ -66,7 +72,9 @@ export class StorageApiService
 		const res = await fetch(deleteUrl, {method: "DELETE"});
 		if (!res.ok)
 		{
-			throw new Error(`file delete failed: ${ res.status }`);
+			throw new Error(`File delete failed: ${ res.status }`);
 		}
 	}
 }
+
+export const storageApi = StorageApi;

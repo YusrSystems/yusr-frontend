@@ -3,16 +3,7 @@ import type { i18n } from "i18next";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { RouterProvider } from "react-router-dom";
-import {
-	BaseApiService,
-	NumberToWordsService,
-	setupAuthListeners,
-	ThemeProvider,
-	Toaster,
-	TooltipProvider,
-	Validators,
-	YusrApiHelper
-} from "yusr-ui";
+import { NumberToWordsService, setupAuthListeners, ThemeProvider, Toaster, TooltipProvider, Validators } from "yusr-ui";
 import { AppNavigator } from "./appNavigator";
 import { router } from "./router";
 import { createPortal } from "react-dom";
@@ -94,8 +85,6 @@ function App()
 	useEffect(() =>
 	{
 		NumberToWordsService.init(t, i18n.language);
-		YusrApiHelper.init(t, i18n.language);
-		BaseApiService.init(t);
 		Validators.init(t);
 	}, [t, i18n.language]);
 

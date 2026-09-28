@@ -1,6 +1,6 @@
 import { signal, type Signal } from "@preact/signals-react";
-import { YusrApiHelper } from "#/networking";
 import { Cubit } from "./cubit.ts";
+import { apiClient } from "#/api";
 
 
 export class ReportInitial
@@ -32,16 +32,16 @@ export class ReportCubit<TRequest, TResult> extends Cubit<ReportInitial>
 
 	async getReportData(request: TRequest)
 	{
-		try
+		this.emit(new ReportLoading());
+		const result = await apiClient.post<TResult>(`/api/Reports/${ this.routeName }`, request);
+
+		if (result.ok && result.data)
 		{
-			this.emit(new ReportLoading());
-			const result = await YusrApiHelper.Post<TResult>(`/api/Reports/${ this.routeName }`, request);
-			this.emit(new ReportLoaded());
 			this.result.value = result.data;
+			this.emit(new ReportLoaded());
+			return;
 		}
-		catch (e)
-		{
-			this.emit(new ReportError());
-		}
+
+		this.emit(new ReportError());
 	}
 }

@@ -1,5 +1,5 @@
 import { Cubit } from "./cubit.ts";
-import { YusrApiHelper } from "#/networking";
+import { apiClient } from "#/api";
 import { UserMetadata, UserMetadataDto } from "#/entities";
 import { signal, type Signal } from "@preact/signals-react";
 
@@ -37,11 +37,11 @@ export class ContinueWithGoogleCubit extends Cubit<ContinueWithGoogleState>
 	public async init()
 	{
 		this.emit(new ContinueWithGoogleLoadingState());
-		const result = await YusrApiHelper.Get<UserMetadataDto>(
-			`/api/auth/external/email`
+		const result = await apiClient.get<UserMetadataDto>(
+			"/api/auth/external/email"
 		);
 
-		if (result.status === 200 && result.data)
+		if (result.ok && result.data)
 		{
 			this._setUserMetaData(result.data);
 			this.emit(new ContinueWithGoogleLoadedState());
@@ -54,17 +54,16 @@ export class ContinueWithGoogleCubit extends Cubit<ContinueWithGoogleState>
 	public async Connect(token: string)
 	{
 		this.emit(new ContinueWithGoogleLoadingState());
-		const result = await YusrApiHelper.Post<UserMetadataDto>(
-			`/api/auth/external/connect`,
+		const result = await apiClient.post<UserMetadataDto>(
+			"/api/auth/external/connect",
 			{
 				provider: "google",
 				token
 			}
 		);
 
-		if (result.status === 200 && result.data)
+		if (result.ok && result.data)
 		{
-			this._setUserMetaData(result.data);
 			this._setUserMetaData(result.data);
 			this.emit(new ContinueWithGoogleLoadedState());
 			return;
@@ -76,12 +75,12 @@ export class ContinueWithGoogleCubit extends Cubit<ContinueWithGoogleState>
 	public async disconnect(password: string)
 	{
 		this.emit(new ContinueWithGoogleLoadingState());
-		const result = await YusrApiHelper.Post(
-			`/api/auth/external/disconnect`,
-			{password: password}
+		const result = await apiClient.post(
+			"/api/auth/external/disconnect",
+			{password}
 		);
 
-		if (result.status === 200 && result.data)
+		if (result.ok)
 		{
 			this.userMetadata.value.connectedEmail.value = undefined;
 			this.userMetadata.value.picture.value = undefined;
