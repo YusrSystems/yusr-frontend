@@ -5,6 +5,7 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { TaxAuditReportRequest } from "./taxAuditReportRequest";
 
+
 interface TaxAuditReportFieldsProps
 {
 	onSubmit: (request: TaxAuditReportRequest) => void;
@@ -15,7 +16,6 @@ export function TaxAuditReportFields({onSubmit, isLoading = false}: TaxAuditRepo
 {
 	useSignals();
 	const isOpen = useMemo(() => signal(true), []);
-
 	const defaults = useMemo(() =>
 	{
 		const req = new TaxAuditReportRequest();
@@ -24,7 +24,6 @@ export function TaxAuditReportFields({onSubmit, isLoading = false}: TaxAuditRepo
 		if (params.get("toDate")) req.toDate = params.get("toDate")!;
 		return req;
 	}, []);
-
 	const fromDate = useMemo(() => signal<string>(defaults.fromDate), [defaults.fromDate]);
 	const toDate = useMemo(() => signal<string>(defaults.toDate), [defaults.toDate]);
 
@@ -46,7 +45,7 @@ export function TaxAuditReportFields({onSubmit, isLoading = false}: TaxAuditRepo
 	return (
 		<Collapsible
 			open={ isOpen.value }
-			onOpenChange={ (open) => isOpen.value = open }
+			onOpenChange={ (open) => (isOpen.value = open) }
 			className="bg-card border border-border rounded-t-lg"
 		>
 			<CollapsibleTrigger asChild>
@@ -64,8 +63,8 @@ export function TaxAuditReportFields({onSubmit, isLoading = false}: TaxAuditRepo
 				</button>
 			</CollapsibleTrigger>
 			<CollapsibleContent>
-				<div className="flex flex-col gap-4 p-4 border-t border-border">
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+				<div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 border-t border-border">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 						<DateField label="من تاريخ" value={ fromDate }/>
 						<DateField label="إلى تاريخ" value={ toDate }/>
 					</div>

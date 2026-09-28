@@ -44,7 +44,7 @@ export function ItemTransferReport({
 				<ReportHeader.MetaDataSection/>
 			</ReportHeader>
 
-			<div className="flex flex-col gap-3 my-4 print:break-inside-avoid">
+			<div className="flex flex-col gap-2.5 sm:gap-3 my-3 sm:my-4 print:break-inside-avoid">
 				<ReportField labelAr="تم نقل مواد من المستودع" labelEn="Transferred from store"
 				             value={ itemTransfer.fromStoreName ?? "" }/>
 				<ReportField labelAr="إلى المستودع" labelEn="To store" value={ itemTransfer.toStoreName ?? "" }/>
@@ -53,40 +53,43 @@ export function ItemTransferReport({
 
 			<ReportPageContainer>
 				<ReportPageBody>
-					<table className="w-full mt-5 border-collapse rounded-lg overflow-hidden">
-						<thead>
-						<tr>
-							<ReportTableTh ar="الرقم" en="No."/>
-							<ReportTableTh ar="رقم المادة" en="Item id"/>
-							<ReportTableTh ar="اسم المادة" en="Item name"/>
-							<ReportTableTh ar="الوحدة" en="Unit"/>
-							<ReportTableTh ar="الكمية" en="Quantity"/>
-							<ReportTableTh ar="الكمية في وحدة المادة" en="Quantity in item unit"/>
-							<ReportTableTh ar="مجموع كمية المادة" en="Total item quantity"/>
-						</tr>
-						</thead>
-						<tbody>
-						{ rows.map((item, idx) =>
-						{
-							const isEven = idx % 2 === 0;
-							const multiplier = getMultiplier(item);
-							const totalItemQuantity = item.quantity * multiplier;
+					<div className="w-full overflow-x-auto">
+						<table className="w-full min-w-[650px] mt-5 border-collapse rounded-lg overflow-hidden">
+							<thead>
+							<tr>
+								<ReportTableTh ar="الرقم" en="No."/>
+								<ReportTableTh ar="رقم المادة" en="Item id"/>
+								<ReportTableTh ar="اسم المادة" en="Item name"/>
+								<ReportTableTh ar="الوحدة" en="Unit"/>
+								<ReportTableTh ar="الكمية" en="Quantity"/>
+								<ReportTableTh ar="الكمية في وحدة المادة" en="Quantity in item unit"/>
+								<ReportTableTh ar="مجموع كمية المادة" en="Total item quantity"/>
+							</tr>
+							</thead>
+							<tbody>
+							{ rows.map((item, idx) =>
+							{
+								const isEven = idx % 2 === 0;
+								const multiplier = getMultiplier(item);
+								const totalItemQuantity = item.quantity * multiplier;
 
-							return (
-								<tr key={ `${ item.itemId }-${ item.itemUoMId }` }>
-									<ReportTableTd isEven={ isEven }>{ idx + 1 }</ReportTableTd>
-									<ReportTableTd isEven={ isEven }>{ item.itemId }</ReportTableTd>
-									<ReportTableTd isEven={ isEven } align="start">{ item.itemName }</ReportTableTd>
-									<ReportTableTd isEven={ isEven }
-									               align="start">{ item.unitName }</ReportTableTd>
-									<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity) }</ReportTableTd>
-									<ReportTableTd isEven={ isEven }>{ formatNumber(multiplier) }</ReportTableTd>
-									<ReportTableTd isEven={ isEven }>{ formatNumber(totalItemQuantity) }</ReportTableTd>
-								</tr>
-							);
-						}) }
-						</tbody>
-					</table>
+								return (
+									<tr key={ `${ item.itemId }-${ item.itemUoMId }` }>
+										<ReportTableTd isEven={ isEven }>{ idx + 1 }</ReportTableTd>
+										<ReportTableTd isEven={ isEven }>{ item.itemId }</ReportTableTd>
+										<ReportTableTd isEven={ isEven } align="start">{ item.itemName }</ReportTableTd>
+										<ReportTableTd isEven={ isEven }
+										               align="start">{ item.unitName }</ReportTableTd>
+										<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity) }</ReportTableTd>
+										<ReportTableTd isEven={ isEven }>{ formatNumber(multiplier) }</ReportTableTd>
+										<ReportTableTd
+											isEven={ isEven }>{ formatNumber(totalItemQuantity) }</ReportTableTd>
+									</tr>
+								);
+							}) }
+							</tbody>
+						</table>
+					</div>
 				</ReportPageBody>
 			</ReportPageContainer>
 		</ReportContainer>

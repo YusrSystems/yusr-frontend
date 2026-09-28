@@ -6,6 +6,7 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { ProfitAndLossReportRequest } from "@/features/reports/profitAndLoss/profitAndLossReportRequest.ts";
 
+
 interface ProfitAndLossReportFieldsProps
 {
 	onSubmit: (request: ProfitAndLossReportRequest) => void;
@@ -17,7 +18,6 @@ export function ProfitAndLossReportFields({onSubmit, isLoading = false}: ProfitA
 	useSignals();
 	const {t} = useTranslation(["erpCommon", "common"]);
 	const isOpen = useMemo(() => signal(true), []);
-
 	const defaults = useMemo(() =>
 	{
 		const req = new ProfitAndLossReportRequest();
@@ -26,7 +26,6 @@ export function ProfitAndLossReportFields({onSubmit, isLoading = false}: ProfitA
 		if (params.get("toDate")) req.toDate = params.get("toDate")!;
 		return req;
 	}, []);
-
 	const fromDate = useMemo(() => signal<string>(defaults.fromDate), [defaults.fromDate]);
 	const toDate = useMemo(() => signal<string>(defaults.toDate), [defaults.toDate]);
 
@@ -48,7 +47,7 @@ export function ProfitAndLossReportFields({onSubmit, isLoading = false}: ProfitA
 	return (
 		<Collapsible
 			open={ isOpen.value }
-			onOpenChange={ (open) => isOpen.value = open }
+			onOpenChange={ (open) => (isOpen.value = open) }
 			className="bg-card border border-border rounded-t-lg"
 		>
 			<CollapsibleTrigger asChild>
@@ -66,8 +65,8 @@ export function ProfitAndLossReportFields({onSubmit, isLoading = false}: ProfitA
 				</button>
 			</CollapsibleTrigger>
 			<CollapsibleContent>
-				<div className="flex flex-col gap-4 p-4 border-t border-border">
-					<div className="grid grid-cols-2 gap-3">
+				<div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 border-t border-border">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 						<DateField label={ t("reports.fromDate") } value={ fromDate }/>
 						<DateField label={ t("reports.toDate") } value={ toDate }/>
 					</div>

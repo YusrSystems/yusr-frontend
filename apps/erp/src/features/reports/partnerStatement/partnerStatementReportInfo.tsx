@@ -12,7 +12,6 @@ interface PartnerStatementReportInfoProps
 export function PartnerStatementReportInfo({data}: PartnerStatementReportInfoProps)
 {
 	const {partner} = data;
-
 	const isDebitNormal = partner.type === PartnerType.Customer;
 
 	const debitLabelAr = isDebitNormal
@@ -21,7 +20,6 @@ export function PartnerStatementReportInfo({data}: PartnerStatementReportInfoPro
 	const debitLabelEn = isDebitNormal
 		? "Total Incoming Amount (Total Debits)"
 		: "Total Outgoing Amount (Total Debits)";
-
 	const creditLabelAr = isDebitNormal
 		? "إجمالي المبالغ الخارجة (الحركات الدائنة)"
 		: "إجمالي المبالغ الداخلة (الحركات الدائنة)";
@@ -30,13 +28,12 @@ export function PartnerStatementReportInfo({data}: PartnerStatementReportInfoPro
 		: "Total Incoming Amount (Total Credits)";
 
 	return (
-		<div className="flex flex-col gap-3 my-4 print:break-inside-avoid">
-			<div className="grid grid-cols-2 gap-3">
+		<div className="flex flex-col gap-2.5 sm:gap-3 my-3 sm:my-4 print:break-inside-avoid">
+			<div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-2 gap-2 sm:gap-3">
 				<ReportField labelAr="رقم الجهة" labelEn="Partner Id" value={ partner.id.toString() }/>
 				<ReportField labelAr="اسم الجهة" labelEn="Partner Name" value={ partner.name }/>
 			</div>
-
-			<div className="grid grid-cols-2 gap-3 mt-2 pt-2">
+			<div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-2 gap-2 sm:gap-3 sm:mt-2 sm:pt-2">
 				<ReportField
 					labelAr="الرصيد قبل بداية الفترة"
 					labelEn="Balance before start date"
@@ -50,20 +47,17 @@ export function PartnerStatementReportInfo({data}: PartnerStatementReportInfoPro
 					value={ formatNumber(data.closingBalanceAfterPeriod) }
 				/>
 			</div>
-
-			<div className="grid grid-cols-1 gap-3">
+			<div className="grid grid-cols-1 gap-2 sm:gap-3">
 				<ReportField labelAr={ debitLabelAr } labelEn={ debitLabelEn }
 				             value={ formatNumber(data.pageTotalDebits) }/>
-
 				<ReportField
 					labelAr={ creditLabelAr }
 					labelEn={ creditLabelEn }
 					value={ formatNumber(data.pageTotalCredits) }
 				/>
 			</div>
-
 			{ partner.notes && (
-				<div className="grid grid-cols-1 gap-3">
+				<div className="grid grid-cols-1 gap-2 sm:gap-3">
 					<ReportField labelAr="ملاحظات" labelEn="Notes" value={ partner.notes }/>
 				</div>
 			) }

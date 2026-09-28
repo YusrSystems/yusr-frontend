@@ -19,7 +19,8 @@ export default function ReportPage({children, permissionResource}: ReportPagePro
 	}
 
 	return (
-		<div className="flex flex-col h-[calc(100vh-70px)] print:h-auto max-w-5xl w-full mx-auto pb-6 px-4 print:p-0">
+		<div
+			className="flex flex-col h-[calc(100dvh-70px)] print:h-auto max-w-5xl w-full mx-auto pb-4 sm:pb-6 px-2 sm:px-4 print:p-0">
 			{ children }
 		</div>
 	);
@@ -27,7 +28,7 @@ export default function ReportPage({children, permissionResource}: ReportPagePro
 
 ReportPage.ActionButtonsContainer = function ({children}: PropsWithChildren)
 {
-	return <div className="flex gap-3 mb-6 justify-end print:hidden">
+	return <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 sm:mb-6 justify-end print:hidden">
 		{ children }
 	</div>;
 };
@@ -35,13 +36,12 @@ ReportPage.ActionButtonsContainer = function ({children}: PropsWithChildren)
 function ReportPagePrintButton()
 {
 	const {t} = useTranslation("common");
-
 	return (
 		<Button
 			onClick={ () => window.print() }
-			className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2"
+			className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 sm:px-4 py-2"
 		>
-			<Printer className="me-1 size-5"/>
+			<Printer className="me-1 size-4 sm:size-5"/>
 			{ t("printReport") }
 		</Button>
 	);
@@ -81,10 +81,10 @@ function ReportPageExcelButton<T>({getRows, columns, fileName, label}: ExportExc
 			variant="outline"
 			disabled={ isExporting }
 			onClick={ handleExport }
-			className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2"
+			className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 sm:px-4 py-2"
 		>
-			{ isExporting ? <Loader2 className="me-1 size-5 animate-spin"/> :
-				<FileSpreadsheet className="me-1 size-5"/> }
+			{ isExporting ? <Loader2 className="me-1 size-4 sm:size-5 animate-spin"/> :
+				<FileSpreadsheet className="me-1 size-4 sm:size-5"/> }
 			{ label ?? t("reports.exportToExcel") }
 		</Button>
 	);

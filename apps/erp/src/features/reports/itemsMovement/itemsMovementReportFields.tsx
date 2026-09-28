@@ -21,6 +21,7 @@ import BrandsMultiSearchableSelect from "@/core/components/searchableSelect/bran
 import { DocumentType } from "@/core/types/documentType.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 
+
 interface ItemsMovementReportFieldsProps
 {
 	onSubmit: (request: ItemsMovementReportRequest) => void;
@@ -32,7 +33,6 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 	useSignals();
 	const {t} = useTranslation(["erpCommon", "common", "stocking", "accounting"]);
 	const isOpen = useMemo(() => signal(true), []);
-
 	const defaults = useMemo(() =>
 	{
 		const req = new ItemsMovementReportRequest();
@@ -41,7 +41,6 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 		if (params.get("toDate")) req.toDate = params.get("toDate");
 		return req;
 	}, []);
-
 	const fromDate = useMemo(() => signal<string | undefined>(defaults.fromDate ?? undefined), [defaults.fromDate]);
 	const toDate = useMemo(() => signal<string | undefined>(defaults.toDate ?? undefined), [defaults.toDate]);
 	const documentTypes = useMemo(() => signal<DocumentType[]>([]), []);
@@ -58,8 +57,8 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 
 	useEffect(() =>
 	{
-		Cubits.categories.init();
-		Cubits.brands.init();
+		void Cubits.categories.init();
+		void Cubits.brands.init();
 	}, []);
 
 	const handleClear = () =>
@@ -86,7 +85,7 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 	return (
 		<Collapsible
 			open={ isOpen.value }
-			onOpenChange={ (open) => isOpen.value = open }
+			onOpenChange={ (open) => (isOpen.value = open) }
 			className="bg-card border border-border rounded-t-lg"
 		>
 			<CollapsibleTrigger asChild>
@@ -104,8 +103,8 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 				</button>
 			</CollapsibleTrigger>
 			<CollapsibleContent>
-				<div className="flex flex-col gap-4 p-4 border-t border-border">
-					<div className="grid grid-cols-2 gap-3">
+				<div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 border-t border-border">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 						<MultiSelectField
 							label={ t("reports.movementType") }
 							value={ documentTypes }
@@ -123,7 +122,7 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 							<ItemsMultiSearchableSelect ids={ itemIds } labels={ itemLabels }/>
 						</FormField>
 					</div>
-					<div className="grid grid-cols-2 gap-3">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 						<FormField label={ t("stocking:items.category", "التصنيف") }>
 							<CategoriesMultiSearchableSelect ids={ categoryIds } labels={ categoryLabels }/>
 						</FormField>
@@ -131,11 +130,11 @@ export function ItemsMovementReportFields({onSubmit, isLoading = false}: ItemsMo
 							<BrandsMultiSearchableSelect ids={ brandIds } labels={ brandLabels }/>
 						</FormField>
 					</div>
-					<div className="grid grid-cols-2 gap-3">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 						<DateField label={ t("reports.fromDate") } value={ fromDate }/>
 						<DateField label={ t("reports.toDate") } value={ toDate }/>
 					</div>
-					<div className="grid grid-cols-2 gap-3">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 						<FormField label={ t("reports.partner", "الجهة") }>
 							<PartnersSearchableSelect
 								id={ partnerId }

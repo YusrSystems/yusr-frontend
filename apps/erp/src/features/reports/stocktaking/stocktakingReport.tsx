@@ -48,8 +48,6 @@ export function StocktakingReport({
 		return Array.from(groups.values());
 	})();
 
-	// Matches StocktakingItemsTable's Update-mode getSystemQuantity: the stored
-	// systemQuantity needs the unit's multiplier applied.
 	const getSystemQuantity = (group: StocktakingItemDto[]) =>
 	{
 		const first = group[0];
@@ -85,66 +83,69 @@ export function StocktakingReport({
 				<ReportHeader.MetaDataSection/>
 			</ReportHeader>
 
-			<div className="grid grid-cols-2 gap-3 my-4 print:break-inside-avoid">
+			<div
+				className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-2 gap-2 sm:gap-3 my-3 sm:my-4 print:break-inside-avoid">
 				<ReportField labelAr="المستودع" labelEn="Store" value={ stocktaking.storeName ?? "" }/>
 				<ReportField labelAr="بتاريخ" labelEn="Date" value={ stocktaking.date }/>
 			</div>
 
 			<ReportPageContainer>
 				<ReportPageBody>
-					<table className="w-full mt-5 border-collapse rounded-lg overflow-hidden">
-						<thead>
-						<tr>
-							<ReportTableTh ar="الرقم" en="No."/>
-							<ReportTableTh ar="اسم المادة" en="Item name"/>
-							<ReportTableTh ar="الكمية في النظام" en="Quantity in system"/>
-							<ReportTableTh ar="فرق الكمية" en="Variance"/>
-							<ReportTableTh ar="الكمية الفعلية" en="Actual quantity"/>
-							<ReportTableTh ar="التكلفة" en="Cost"/>
-						</tr>
-						</thead>
-						<tbody>
-						{ groupedItems.map((group, idx) =>
-						{
-							const isEven = idx % 2 === 0;
-							const systemQty = getSystemQuantity(group);
-							const variance = getVariance(group);
+					<div className="w-full overflow-x-auto">
+						<table className="w-full min-w-[650px] mt-5 border-collapse rounded-lg overflow-hidden">
+							<thead>
+							<tr>
+								<ReportTableTh ar="الرقم" en="No."/>
+								<ReportTableTh ar="اسم المادة" en="Item name"/>
+								<ReportTableTh ar="الكمية في النظام" en="Quantity in system"/>
+								<ReportTableTh ar="فرق الكمية" en="Variance"/>
+								<ReportTableTh ar="الكمية الفعلية" en="Actual quantity"/>
+								<ReportTableTh ar="التكلفة" en="Cost"/>
+							</tr>
+							</thead>
+							<tbody>
+							{ groupedItems.map((group, idx) =>
+							{
+								const isEven = idx % 2 === 0;
+								const systemQty = getSystemQuantity(group);
+								const variance = getVariance(group);
 
-							return (
-								<tr key={ group[0]?.itemId }>
-									<ReportTableTd isEven={ isEven }>{ idx + 1 }</ReportTableTd>
-									<ReportTableTd isEven={ isEven }
-									               align="start">{ group[0]?.itemName }</ReportTableTd>
-									<ReportTableTd isEven={ isEven }>{ formatNumber(systemQty) }</ReportTableTd>
-									<ReportTableTd
-										isEven={ isEven }
-										className={ variance === 0
-											? undefined
-											: variance > 0
-												? "text-emerald-600! font-bold!"
-												: "text-destructive! font-bold!" }
-									>
-										{ variance > 0 ? `+${ formatNumber(variance) }` : formatNumber(variance) }
-									</ReportTableTd>
-									<ReportTableTd isEven={ isEven } align="start">
-										<div className="flex flex-col gap-1">
-											{ group.map((item, j) => (
-												<div key={ j } className="flex items-center gap-2">
-													<span className="text-xs text-muted-foreground min-w-20">
-														{ item.unitName }
-													</span>
-													<span
-														className="font-medium">{ formatNumber(item.actualQuantity) }</span>
-												</div>
-											)) }
-										</div>
-									</ReportTableTd>
-									<ReportTableTd isEven={ isEven }>{ getUnitCost(group) }</ReportTableTd>
-								</tr>
-							);
-						}) }
-						</tbody>
-					</table>
+								return (
+									<tr key={ group[0]?.itemId }>
+										<ReportTableTd isEven={ isEven }>{ idx + 1 }</ReportTableTd>
+										<ReportTableTd isEven={ isEven }
+										               align="start">{ group[0]?.itemName }</ReportTableTd>
+										<ReportTableTd isEven={ isEven }>{ formatNumber(systemQty) }</ReportTableTd>
+										<ReportTableTd
+											isEven={ isEven }
+											className={ variance === 0
+												? undefined
+												: variance > 0
+													? "text-emerald-600! font-bold!"
+													: "text-destructive! font-bold!" }
+										>
+											{ variance > 0 ? `+${ formatNumber(variance) }` : formatNumber(variance) }
+										</ReportTableTd>
+										<ReportTableTd isEven={ isEven } align="start">
+											<div className="flex flex-col gap-1">
+												{ group.map((item, j) => (
+													<div key={ j } className="flex items-center gap-2">
+														<span className="text-xs text-muted-foreground min-w-20">
+															{ item.unitName }
+														</span>
+														<span
+															className="font-medium">{ formatNumber(item.actualQuantity) }</span>
+													</div>
+												)) }
+											</div>
+										</ReportTableTd>
+										<ReportTableTd isEven={ isEven }>{ getUnitCost(group) }</ReportTableTd>
+									</tr>
+								);
+							}) }
+							</tbody>
+						</table>
+					</div>
 				</ReportPageBody>
 			</ReportPageContainer>
 		</ReportContainer>

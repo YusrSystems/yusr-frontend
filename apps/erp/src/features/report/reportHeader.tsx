@@ -9,7 +9,7 @@ export default function ReportHeader({children}: PropsWithChildren)
 {
 	return (
 		<div
-			className="grid grid-cols-3 p-3 rounded-md items-center gap-5 bg-accent">
+			className="grid grid-cols-1 sm:grid-cols-3 print:grid-cols-3 p-3 rounded-md items-center gap-3 sm:gap-5 print:gap-5 bg-accent">
 			{ children }
 		</div>
 	);
@@ -18,11 +18,10 @@ export default function ReportHeader({children}: PropsWithChildren)
 ReportHeader.CompanySection = function CompanyCard({className, ...props}: ComponentProps<typeof Card>)
 {
 	useSignals();
-
 	return (
-		<div className={ cn("flex items-center gap-4", className) } { ...props }>
+		<div className={ cn("flex items-center gap-3 sm:gap-4 print:gap-4", className) } { ...props }>
 			<div
-				className="w-20 h-20 shrink-0 rounded-md overflow-hidden border border-border bg-muted flex items-center justify-center">
+				className="w-16 h-16 sm:w-20 sm:h-20 print:w-20 print:h-20 shrink-0 rounded-md overflow-hidden border border-border bg-muted flex items-center justify-center">
 				{ Services.auth.setting?.logo.value?.url ? (
 					<img
 						src={ Services.auth.setting?.logo.value.url }
@@ -35,14 +34,13 @@ ReportHeader.CompanySection = function CompanyCard({className, ...props}: Compon
 					</span>
 				) }
 			</div>
-
-			<div className="flex flex-col text-[10px] text-muted-foreground">
-				<h3 className="font-bold text-lg text-primary mb-1">{ Services.auth.setting?.companyName.value }</h3>
-				<p>{ Services.auth.setting?.vatNumber.value }</p>
-				<p>
+			<div className="flex flex-col text-[10px] text-muted-foreground min-w-0">
+				<h3 className="font-bold text-base sm:text-lg print:text-lg text-primary mb-0.5 sm:mb-1 truncate">{ Services.auth.setting?.companyName.value }</h3>
+				<p className="truncate">{ Services.auth.setting?.vatNumber.value }</p>
+				<p className="truncate">
 					{ Services.auth.setting?.branch.value?.cityName.value } - { Services.auth.setting?.branch.value?.district.value } - { Services.auth.setting?.branch.value?.postalCode.value }
 				</p>
-				<p>{ Services.auth.setting?.companyPhone.value }</p>
+				<p className="truncate">{ Services.auth.setting?.companyPhone.value }</p>
 			</div>
 		</div>
 	);
@@ -54,11 +52,11 @@ ReportHeader.TitleSection = function Title({titleAr, titleEn, children}: {
 } & PropsWithChildren)
 {
 	return (
-		<div className="flex flex-col gap-1 text-center h-full w-full">
-			<h1 className="text-lg font-extrabold tracking-tight text-primary uppercase">
+		<div className="flex flex-col gap-1 text-center h-full w-full justify-center">
+			<h1 className="text-base sm:text-lg print:text-lg font-extrabold tracking-tight text-primary uppercase">
 				{ titleAr }
 			</h1>
-			<h2 className="text-lg font-extrabold tracking-tight text-primary uppercase">
+			<h2 className="text-base sm:text-lg print:text-lg font-extrabold tracking-tight text-primary uppercase">
 				{ titleEn }
 			</h2>
 			{ children }
@@ -88,7 +86,6 @@ ReportHeader.MetaDataSection = function MetaData({children}: PropsWithChildren)
 				dateRef.current.textContent = freshDate;
 			}
 		};
-
 		window.addEventListener("beforeprint", handleBeforePrint);
 		return () =>
 		{
@@ -97,13 +94,13 @@ ReportHeader.MetaDataSection = function MetaData({children}: PropsWithChildren)
 	}, []);
 
 	return (
-		<div className="h-full relative ">
+		<div className="h-full relative min-h-[40px] sm:min-h-0">
 			{ children }
-			<div className="absolute bottom-0 w-full flex justify-end gap-4 text-[10px] text-foreground">
+			<div
+				className="sm:absolute sm:bottom-0 print:absolute print:bottom-0 w-full flex justify-end gap-3 sm:gap-4 print:gap-4 text-[10px] text-foreground">
 				<span>{ Services.auth.loggedInUser?.username.value }</span>
 				<span ref={ dateRef }>{ initialDate }</span>
 			</div>
 		</div>
 	);
 };
-

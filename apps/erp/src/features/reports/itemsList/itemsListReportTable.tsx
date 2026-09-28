@@ -13,12 +13,10 @@ export function ItemsListReportTable()
 {
 	useSignals();
 	const {t} = useTranslation("stocking");
-
 	if (Cubits.items.state.value instanceof PageLoading)
 	{
 		return <TablePreview.Loading/>;
 	}
-
 	if (Cubits.items.state.value instanceof PageError)
 	{
 		return <TablePreview.Error/>;
@@ -26,67 +24,65 @@ export function ItemsListReportTable()
 	if (Cubits.items.state.value instanceof PageLoaded)
 	{
 		return (
-			<table className="w-full mt-5 border-collapse rounded-lg overflow-hidden">
-				<thead>
-				<tr>
-					<ReportTableTh ar="الرقم" en="No."/>
-					<ReportTableTh ar="رقم المادة" en="Item Id"/>
-					<ReportTableTh ar="نوع المادة" en="Item type"/>
-					<ReportTableTh ar="اسم المادة" en="Item Name"/>
-					<ReportTableTh ar="التصنيف" en="Category"/>
-					<ReportTableTh ar="العلامة التجارية" en="Brand"/>
-					<ReportTableTh ar="الوحدة الأساسية" en="main unit"/>
-					<ReportTableTh ar="الكمية" en="quantity"/>
-					<ReportTableTh ar="متوسط التكلفة" en="avg cost"/>
-					<ReportTableTh ar="التكلفة الإجمالية" en="total cost"/>
-				</tr>
-				</thead>
-				<tbody>
-				{ Cubits.items.entities.value.map((item, idx) =>
-				{
-					const isEven = idx % 2 === 0;
-
-					// Calculate totals safely
-					const itemTotalCost = item.itemStores?.reduce((sum, s) => sum + (s.quantity * s.averageCost), 0) ?? 0;
-					const itemAverageCost = item.quantity > 0 ? itemTotalCost / item.quantity : 0;
-
-					return (
-						<tr key={ item.id }>
-							<ReportTableTd isEven={ isEven }>
-								{ idx + 1 + ((Cubits.items.currentPage.value - 1) * Cubits.items.pageSize.value) }
-							</ReportTableTd>
-							<ReportTableTd isEven={ isEven }
-							               className="p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!">
-								<Link
-									to={ `/items/${ item.id }` }
-									target="_blank"
-									rel="noopener noreferrer"
-									className="block w-full h-full"
-								>
-									{ item.id }
-								</Link>
-							</ReportTableTd>
-							<ReportTableTd
-								isEven={ isEven }
-								className={ `print:font-medium font-bold! ${ item.type === ItemType.Product ? "text-sky-500!" : "text-emerald-600!" }` }
-								align="start">{ item.type === ItemType.Product ? t("items.product") : t("items.service") }
-							</ReportTableTd>
-							<ReportTableTd isEven={ isEven }
-							               align="start">{ item.name }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }
-							               align="start">{ item.itemCategories?.map(c => c.categoryName).join(" - ") || "-" }</ReportTableTd>
-							<ReportTableTd isEven={ isEven } align="start">{ item.brandName || "-" }</ReportTableTd>
-							<ReportTableTd isEven={ isEven } align="start">{ item.sellUnitName }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity) }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(itemAverageCost) }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>{ formatNumber(itemTotalCost) }</ReportTableTd>
-						</tr>
-					);
-				}) }
-				</tbody>
-			</table>
+			<div className="w-full overflow-x-auto">
+				<table className="w-full min-w-[780px] mt-5 border-collapse rounded-lg overflow-hidden">
+					<thead>
+					<tr>
+						<ReportTableTh ar="الرقم" en="No."/>
+						<ReportTableTh ar="رقم المادة" en="Item Id"/>
+						<ReportTableTh ar="نوع المادة" en="Item type"/>
+						<ReportTableTh ar="اسم المادة" en="Item Name"/>
+						<ReportTableTh ar="التصنيف" en="Category"/>
+						<ReportTableTh ar="العلامة التجارية" en="Brand"/>
+						<ReportTableTh ar="الوحدة الأساسية" en="main unit"/>
+						<ReportTableTh ar="الكمية" en="quantity"/>
+						<ReportTableTh ar="متوسط التكلفة" en="avg cost"/>
+						<ReportTableTh ar="التكلفة الإجمالية" en="total cost"/>
+					</tr>
+					</thead>
+					<tbody>
+					{ Cubits.items.entities.value.map((item, idx) =>
+					{
+						const isEven = idx % 2 === 0;
+						const itemTotalCost = item.itemStores?.reduce((sum, s) => sum + (s.quantity * s.averageCost), 0) ?? 0;
+						const itemAverageCost = item.quantity > 0 ? itemTotalCost / item.quantity : 0;
+						return (
+							<tr key={ item.id }>
+								<ReportTableTd isEven={ isEven }>
+									{ idx + 1 + ((Cubits.items.currentPage.value - 1) * Cubits.items.pageSize.value) }
+								</ReportTableTd>
+								<ReportTableTd isEven={ isEven }
+								               className="p-0! text-blue-600! hover:bg-blue-100/50! hover:underline! print:text-foreground! print:no-underline! print:bg-transparent!">
+									<Link
+										to={ `/items/${ item.id }` }
+										target="_blank"
+										rel="noopener noreferrer"
+										className="block w-full h-full"
+									>
+										{ item.id }
+									</Link>
+								</ReportTableTd>
+								<ReportTableTd
+									isEven={ isEven }
+									className={ `print:font-medium font-bold! ${ item.type === ItemType.Product ? "text-sky-500!" : "text-emerald-600!" }` }
+									align="start">{ item.type === ItemType.Product ? t("items.product") : t("items.service") }
+								</ReportTableTd>
+								<ReportTableTd isEven={ isEven }
+								               align="start">{ item.name }</ReportTableTd>
+								<ReportTableTd isEven={ isEven }
+								               align="start">{ item.itemCategories?.map(c => c.categoryName).join(" - ") || "-" }</ReportTableTd>
+								<ReportTableTd isEven={ isEven } align="start">{ item.brandName || "-" }</ReportTableTd>
+								<ReportTableTd isEven={ isEven } align="start">{ item.sellUnitName }</ReportTableTd>
+								<ReportTableTd isEven={ isEven }>{ formatNumber(item.quantity) }</ReportTableTd>
+								<ReportTableTd isEven={ isEven }>{ formatNumber(itemAverageCost) }</ReportTableTd>
+								<ReportTableTd isEven={ isEven }>{ formatNumber(itemTotalCost) }</ReportTableTd>
+							</tr>
+						);
+					}) }
+					</tbody>
+				</table>
+			</div>
 		);
 	}
-
 	return <TablePreview.Empty/>;
 }

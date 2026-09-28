@@ -5,6 +5,7 @@ import { signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { VatReturnReportRequest } from "./vatReturnReportRequest";
 
+
 interface VatReturnReportFieldsProps
 {
 	onSubmit: (request: VatReturnReportRequest) => void;
@@ -15,7 +16,6 @@ export function VatReturnReportFields({onSubmit, isLoading = false}: VatReturnRe
 {
 	useSignals();
 	const isOpen = useMemo(() => signal(true), []);
-
 	const defaultRequest = useMemo(() =>
 	{
 		const req = new VatReturnReportRequest();
@@ -24,7 +24,6 @@ export function VatReturnReportFields({onSubmit, isLoading = false}: VatReturnRe
 		if (params.get("toDate")) req.toDate = params.get("toDate")!;
 		return req;
 	}, []);
-
 	const fromDate = useMemo(() => signal<string>(defaultRequest.fromDate), [defaultRequest.fromDate]);
 	const toDate = useMemo(() => signal<string>(defaultRequest.toDate), [defaultRequest.toDate]);
 
@@ -41,7 +40,7 @@ export function VatReturnReportFields({onSubmit, isLoading = false}: VatReturnRe
 	return (
 		<Collapsible
 			open={ isOpen.value }
-			onOpenChange={ (open) => isOpen.value = open }
+			onOpenChange={ (open) => (isOpen.value = open) }
 			className="bg-card border border-border rounded-t-lg"
 		>
 			<CollapsibleTrigger asChild>
@@ -59,8 +58,8 @@ export function VatReturnReportFields({onSubmit, isLoading = false}: VatReturnRe
 				</button>
 			</CollapsibleTrigger>
 			<CollapsibleContent>
-				<div className="flex flex-col gap-4 p-4 border-t border-border">
-					<div className="grid grid-cols-2 gap-3">
+				<div className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-4 border-t border-border">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 						<DateField label="من تاريخ" value={ fromDate }/>
 						<DateField label="إلى تاريخ" value={ toDate }/>
 					</div>

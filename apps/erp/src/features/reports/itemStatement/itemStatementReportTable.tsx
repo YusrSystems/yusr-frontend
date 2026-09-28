@@ -13,91 +13,84 @@ const linkClassName = "text-blue-600! hover:bg-blue-100/50! hover:underline! pri
 export function ItemStatementReportTable()
 {
 	useSignals();
-
 	if (Cubits.ItemStatementReport.state.value instanceof ReportLoading)
 	{
 		return <TablePreview.Loading/>;
 	}
-
 	if (Cubits.ItemStatementReport.state.value instanceof ReportLoaded)
 	{
 		const result = Cubits.ItemStatementReport.result.value;
 		const lines = result?.lines ?? [];
-
 		return (
-			<table className="w-full mt-5 border-collapse rounded-lg overflow-hidden">
-				<thead>
-				<tr>
-					<ReportTableTh ar="التاريخ" en="Date"/>
-					<ReportTableTh ar="نوع المستند" en="Document Type"/>
-					<ReportTableTh ar="رقم المستند" en="Doc No."/>
-					<ReportTableTh ar="الجهة" en="Partner" align="start"/>
-					<ReportTableTh ar="الوارد (+)" en="Qty In"/>
-					<ReportTableTh ar="الصادر (-)" en="Qty Out"/>
-					<ReportTableTh ar="تكلفة الحركة" en="Trans. Cost"/>
-					<ReportTableTh ar="الرصيد الجاري" en="Running Qty"/>
-					<ReportTableTh ar="متوسط التكلفة" en="Running Avg Cost"/>
-					<ReportTableTh ar="التقييم" en="Running Valuation"/>
-				</tr>
-				</thead>
-				<tbody>
-				{ lines.map((line, idx) =>
-				{
-					const isEven = idx % 2 === 0;
-					const routePath = getDocumentRoute(line.documentType);
+			<div className="w-full overflow-x-auto">
+				<table className="w-full min-w-[780px] mt-5 border-collapse rounded-lg overflow-hidden">
+					<thead>
+					<tr>
+						<ReportTableTh ar="التاريخ" en="Date"/>
+						<ReportTableTh ar="نوع المستند" en="Document Type"/>
+						<ReportTableTh ar="رقم المستند" en="Doc No."/>
+						<ReportTableTh ar="الجهة" en="Partner" align="start"/>
+						<ReportTableTh ar="الوارد (+)" en="Qty In"/>
+						<ReportTableTh ar="الصادر (-)" en="Qty Out"/>
+						<ReportTableTh ar="تكلفة الحركة" en="Trans. Cost"/>
+						<ReportTableTh ar="الرصيد الجاري" en="Running Qty"/>
+						<ReportTableTh ar="متوسط التكلفة" en="Running Avg Cost"/>
+						<ReportTableTh ar="التقييم" en="Running Valuation"/>
+					</tr>
+					</thead>
+					<tbody>
+					{ lines.map((line, idx) =>
+					{
+						const isEven = idx % 2 === 0;
+						const routePath = getDocumentRoute(line.documentType);
 
-					return (
-						<tr key={ `${ line.id }-${ idx }` }>
-							<ReportTableTd isEven={ isEven }>{ line.date }</ReportTableTd>
-							<ReportTableTd isEven={ isEven }>
-								{ getDocumentTypeName(line.documentType) }
-							</ReportTableTd>
-
-							{ routePath ? (
-								<ReportTableTd isEven={ isEven } className={ linkClassName }>
-									<Link
-										to={ `/${ routePath }/${ line.documentId }` }
-										target="_blank"
-										rel="noopener noreferrer"
-										className="block w-full h-full"
-									>
-										{ line.documentId }
-									</Link>
+						return (
+							<tr key={ `${ line.id }-${ idx }` }>
+								<ReportTableTd isEven={ isEven }>{ line.date }</ReportTableTd>
+								<ReportTableTd isEven={ isEven }>
+									{ getDocumentTypeName(line.documentType) }
 								</ReportTableTd>
-							) : (
-								<ReportTableTd isEven={ isEven }>{ line.documentId || "-" }</ReportTableTd>
-							) }
-
-							<ReportTableTd isEven={ isEven } align="start">{ line.partnerName || "-" }</ReportTableTd>
-
-							<ReportTableTd isEven={ isEven }
-							               className={ line.quantityIn > 0 ? "text-green-600! font-semibold!" : "text-muted-foreground!" }>
-								{ line.quantityIn > 0 ? formatNumber(line.quantityIn) : "-" }
-							</ReportTableTd>
-
-							<ReportTableTd isEven={ isEven }
-							               className={ line.quantityOut > 0 ? "text-red-600! font-semibold!" : "text-muted-foreground!" }>
-								{ line.quantityOut > 0 ? formatNumber(line.quantityOut) : "-" }
-							</ReportTableTd>
-
-							<ReportTableTd isEven={ isEven }>{ formatNumber(line.transactionCost) }</ReportTableTd>
-
-							<ReportTableTd
-								isEven={ isEven }
-								className={ line.runningQuantity > 0 ? "text-green-600! font-semibold!" : "text-red-600!" }>
-								{ formatNumber(line.runningQuantity) }
-							</ReportTableTd>
-
-							<ReportTableTd isEven={ isEven }>{ formatNumber(line.runningAverageCost) }</ReportTableTd>
-							<ReportTableTd
-								isEven={ isEven }>{ formatNumber(line.runningValuationValue) }</ReportTableTd>
-						</tr>
-					);
-				}) }
-				</tbody>
-			</table>
+								{ routePath ? (
+									<ReportTableTd isEven={ isEven } className={ linkClassName }>
+										<Link
+											to={ `/${ routePath }/${ line.documentId }` }
+											target="_blank"
+											rel="noopener noreferrer"
+											className="block w-full h-full"
+										>
+											{ line.documentId }
+										</Link>
+									</ReportTableTd>
+								) : (
+									<ReportTableTd isEven={ isEven }>{ line.documentId || "-" }</ReportTableTd>
+								) }
+								<ReportTableTd isEven={ isEven }
+								               align="start">{ line.partnerName || "-" }</ReportTableTd>
+								<ReportTableTd isEven={ isEven }
+								               className={ line.quantityIn > 0 ? "text-green-600! font-semibold!" : "text-muted-foreground!" }>
+									{ line.quantityIn > 0 ? formatNumber(line.quantityIn) : "-" }
+								</ReportTableTd>
+								<ReportTableTd isEven={ isEven }
+								               className={ line.quantityOut > 0 ? "text-red-600! font-semibold!" : "text-muted-foreground!" }>
+									{ line.quantityOut > 0 ? formatNumber(line.quantityOut) : "-" }
+								</ReportTableTd>
+								<ReportTableTd isEven={ isEven }>{ formatNumber(line.transactionCost) }</ReportTableTd>
+								<ReportTableTd
+									isEven={ isEven }
+									className={ line.runningQuantity > 0 ? "text-green-600! font-semibold!" : "text-red-600!" }>
+									{ formatNumber(line.runningQuantity) }
+								</ReportTableTd>
+								<ReportTableTd
+									isEven={ isEven }>{ formatNumber(line.runningAverageCost) }</ReportTableTd>
+								<ReportTableTd
+									isEven={ isEven }>{ formatNumber(line.runningValuationValue) }</ReportTableTd>
+							</tr>
+						);
+					}) }
+					</tbody>
+				</table>
+			</div>
 		);
 	}
-
 	return <TablePreview.Empty/>;
 }
