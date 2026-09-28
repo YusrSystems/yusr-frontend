@@ -41,13 +41,13 @@ export function ItemProfitDialog({invoiceItem}: ItemProfitDialogProps)
 			</button>
 
 			<Dialog open={ open } onOpenChange={ setOpen }>
-				<DialogContent className="max-w-sm" dir={ i18n.dir() }>
-					<DialogHeader>
+				<DialogContent className="max-w-sm max-h-[94dvh] flex flex-col overflow-hidden" dir={ i18n.dir() }>
+					<DialogHeader className="shrink-0">
 						<DialogTitle>{ t("invoices.itemProfit") }</DialogTitle>
-						<DialogDescription>{ invoiceItem.itemName.value }</DialogDescription>
+						<DialogDescription className="truncate">{ invoiceItem.itemName.value }</DialogDescription>
 					</DialogHeader>
 
-					<div className="mt-2">
+					<div className="flex-1 min-h-0 overflow-y-auto mt-2 px-1">
 						<ProfitRow label={ t("invoices.priceIncludingTax") } value={ profit.taxInclusivePrice }/>
 						<ProfitRow label={ t("invoices.cost") } value={ profit.cost }/>
 						<ProfitRow label={ t("invoices.totalTaxesAmount") } value={ profit.totalTaxesAmount }/>

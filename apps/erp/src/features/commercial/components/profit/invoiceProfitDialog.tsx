@@ -29,13 +29,13 @@ interface ProfitRowProps
 export function ProfitRow({label, value, showCurrency = true, variant = "default"}: ProfitRowProps)
 {
 	return (
-		<div className="flex justify-between items-center py-2.5 border-b border-border last:border-b-0">
-			<span className="text-sm text-muted-foreground">{ label }</span>
+		<div className="flex justify-between items-center py-2.5 border-b border-border last:border-b-0 gap-2">
+			<span className="text-xs sm:text-sm text-muted-foreground">{ label }</span>
 			<span
 				className={ cn(
-					"inline-flex items-center gap-1 text-sm font-medium tabular-nums",
-					variant === "profit" && value >= 0 && "text-emerald-600 dark:text-emerald-400",
-					variant === "profit" && value < 0 && "text-red-600 dark:text-red-400",
+					"inline-flex items-center gap-1 text-xs sm:text-sm font-medium tabular-nums shrink-0",
+					variant === "profit" && value >= 0 && "text-emerald-600 dark:text-emerald-400 font-bold",
+					variant === "profit" && value < 0 && "text-red-600 dark:text-red-400 font-bold",
 					variant === "default" && "text-foreground"
 				) }
 			>
@@ -101,13 +101,13 @@ export default function InvoiceProfitDialog<
 			</Button>
 
 			<Dialog open={ open } onOpenChange={ setOpen }>
-				<DialogContent className="max-w-sm" dir={ i18n.dir() }>
-					<DialogHeader>
+				<DialogContent className="max-w-sm max-h-[94dvh] flex flex-col overflow-hidden" dir={ i18n.dir() }>
+					<DialogHeader className="shrink-0">
 						<DialogTitle>{ t("invoices.invoiceProfit") }</DialogTitle>
 						<DialogDescription>{ t("invoices.profitSummary") }</DialogDescription>
 					</DialogHeader>
 
-					<div className="mt-2">
+					<div className="flex-1 min-h-0 overflow-y-auto mt-2 px-1">
 						<ProfitRow label={ t("invoices.totalPriceIncludingTax") }
 						           value={ profit.taxInclusiveTotalPrice }/>
 						<ProfitRow label={ t("invoices.totalCosts") } value={ profit.totalCost }/>

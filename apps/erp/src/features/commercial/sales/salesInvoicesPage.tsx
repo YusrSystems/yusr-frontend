@@ -149,13 +149,16 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 
 	return (
 		<CrudPage<SalesInvoiceDto>>
-			<CrudPage.HeaderContainer>
+			<CrudPage.HeaderContainer
+				className="flex flex-col sm:flex-row justify-between mb-6 sm:mb-8 gap-3 sm:items-center">
 				<h1>{ t("invoices.salesManagement") }</h1>
-				<CrudPage.HeaderButtonsContainer>
-					<div className="flex bg-muted/40 rounded-lg p-1 border">
+				<CrudPage.HeaderButtonsContainer className="flex flex-wrap items-center gap-2 sm:gap-3">
+					<div
+						className="flex bg-muted/40 rounded-lg p-1 border overflow-x-auto no-scrollbar max-w-full shrink-0">
 						<Button
 							variant={ activeTypeTab.value === 0 ? "default" : "ghost" }
 							size="sm"
+							className="whitespace-nowrap shrink-0 h-8 px-2.5 sm:px-3 text-xs"
 							onClick={ () => (activeTypeTab.value = 0) }
 						>
 							الكل
@@ -163,6 +166,7 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 						<Button
 							variant={ activeTypeTab.value === SalesInvoiceType.Invoice ? "default" : "ghost" }
 							size="sm"
+							className="whitespace-nowrap shrink-0 h-8 px-2.5 sm:px-3 text-xs"
 							onClick={ () => (activeTypeTab.value = SalesInvoiceType.Invoice) }
 						>
 							فواتير المبيعات
@@ -170,6 +174,7 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 						<Button
 							variant={ activeTypeTab.value === SalesInvoiceType.CreditNote ? "default" : "ghost" }
 							size="sm"
+							className="whitespace-nowrap shrink-0 h-8 px-2.5 sm:px-3 text-xs"
 							onClick={ () => (activeTypeTab.value = SalesInvoiceType.CreditNote) }
 						>
 							إشعارات دائنة (مرتجعات)
@@ -177,6 +182,7 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 						<Button
 							variant={ activeTypeTab.value === SalesInvoiceType.DebitNote ? "default" : "ghost" }
 							size="sm"
+							className="whitespace-nowrap shrink-0 h-8 px-2.5 sm:px-3 text-xs"
 							onClick={ () => (activeTypeTab.value = SalesInvoiceType.DebitNote) }
 						>
 							إشعارات مدينة
@@ -187,6 +193,7 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 					) }
 				</CrudPage.HeaderButtonsContainer>
 			</CrudPage.HeaderContainer>
+
 			<CrudPage.Cards
 				cards={ [
 					{
@@ -196,16 +203,19 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 					}
 				] }
 			/>
+
 			<FilterSection
 				fieldsCubit={ Cubits.salesInvoiceFilterFields }
 				onApply={ (groups) => Cubits.salesInvoices.applyFilterGroups(groups) }
 				onClear={ () => Cubits.salesInvoices.clearFilterGroups() }
 				renderCustomInput={ (props) => CommercialFilterInput({...props, partnerTypes: [PartnerType.Customer]}) }
 			/>
+
 			<CrudPage.SearchInput
 				className="rounded-t-none!"
 				onSearch={ (searchText) => Cubits.salesInvoices.search(searchText) }
 			/>
+
 			{ (() =>
 			{
 				if (Cubits.salesInvoices.state.value instanceof PageLoading) return <TablePreview.Loading/>;
@@ -350,16 +360,15 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 											: []),
 										{
 											rowBody: (
-												<div className="flex items-center justify-end gap-2">
-													{/* WHATSAPP BUTTON */ }
+												<div className="flex items-center justify-end gap-1.5 sm:gap-2">
 													<Button
 														size="sm"
 														variant="outline"
-														className="text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700"
+														className="text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700 h-8 w-8 p-0"
 														onClick={ () => (whatsappDialogInvoice.value = inv) }
 														title="إرسال عبر الواتساب"
 													>
-														<FaWhatsapp className="h-6 w-6"/>
+														<FaWhatsapp className="h-4 w-4"/>
 													</Button>
 
 													{/* PRINT BUTTON */ }
@@ -368,6 +377,7 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 															<Button
 																size="sm"
 																variant="outline"
+																className="h-8 w-8 p-0"
 																disabled={ !inv.canBePrinted }
 																onClick={ () => printInvoice(inv) }
 															>
@@ -475,6 +485,7 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 				}
 				return <TablePreview.Empty/>;
 			})() }
+
 			<CrudPage.ChangeDialog
 				fetchEntity={ async (id: number) =>
 				{

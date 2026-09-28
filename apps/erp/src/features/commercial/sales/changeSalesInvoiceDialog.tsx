@@ -226,7 +226,7 @@ export default function ChangeSalesInvoiceDialog({
 		: undefined;
 
 	return (
-		<ChangeDialog className="sm:max-w-[100vw] sm:w-screen sm:h-screen">
+		<ChangeDialog className="sm:max-w-[100vw] sm:w-screen sm:h-screen max-h-[100dvh] flex flex-col overflow-hidden">
 			<ChangeDialog.Header title={ getDialogTitle() }/>
 			<ChangeDialog.Tabbed
 				tabs={ [
@@ -356,12 +356,14 @@ export default function ChangeSalesInvoiceDialog({
 										}
 									/>
 								</div>
-								<div className="xl:col-span-4 2xl:col-span-3">
+
+								<div className="xl:col-span-4 2xl:col-span-3 space-y-4">
 									<div className="sticky top-4 space-y-4">
 										{ Services.auth.hasAuth(
 											SystemPermissionsResources.InvoiceAddSettlement,
 											SystemPermissionsActions.Get
 										) && <CommercialGlobalSettlement document={ entity.value }/> }
+
 										<CommercialSummaryCard
 											document={ entity.value }
 											renderFooter={
@@ -407,14 +409,14 @@ export default function ChangeSalesInvoiceDialog({
 								</Button>
 								<div
 									className="w-full overflow-x-auto border border-border rounded-lg shadow-sm bg-background">
-									<table className="w-full text-sm text-right">
+									<table className="w-full min-w-[650px] text-sm text-right">
 										<thead className="bg-muted/40 border-b border-border">
 										<tr>
 											<th className="p-3 font-semibold w-16 text-center text-muted-foreground">#</th>
-											<th className="p-3 text-start font-semibold">{ t("invoices.account", "الحساب") }</th>
-											<th className="p-3 text-start font-semibold">{ t("invoices.partner", "الجهة (اختياري)") }</th>
-											<th className="p-3 text-start font-semibold">{ t("invoices.paymentMethod") }</th>
-											<th className="p-3 text-start font-semibold">{ t("invoices.amount") }</th>
+											<th className="p-3 text-start font-semibold min-w-[130px]">{ t("invoices.account", "الحساب") }</th>
+											<th className="p-3 text-start font-semibold min-w-[130px]">{ t("invoices.partner", "الجهة (اختياري)") }</th>
+											<th className="p-3 text-start font-semibold min-w-[130px]">{ t("invoices.paymentMethod") }</th>
+											<th className="p-3 text-start font-semibold min-w-[120px] w-40">{ t("invoices.amount") }</th>
 											<th className="p-3 text-start font-semibold">{ t("invoices.description") }</th>
 											<th className="p-4 text-start font-semibold w-16"/>
 										</tr>
@@ -513,8 +515,8 @@ export default function ChangeSalesInvoiceDialog({
 	function ConfirmationDialogContent()
 	{
 		return (
-			<DialogContent dir="rtl" className="sm:max-w-xl">
-				<DialogHeader>
+			<DialogContent dir="rtl" className="sm:max-w-xl max-h-[94dvh] flex flex-col overflow-hidden">
+				<DialogHeader className="shrink-0">
 					<DialogTitle>الفاتورة الأصلية تحتوي على سندات تكاليف</DialogTitle>
 					<DialogDescription asChild>
 						<div className="mt-4 space-y-5 text-start text-[15px] leading-7 text-foreground">
@@ -552,7 +554,7 @@ export default function ChangeSalesInvoiceDialog({
 						</div>
 					</DialogDescription>
 				</DialogHeader>
-				<DialogFooter>
+				<DialogFooter className="gap-2 sm:gap-0 shrink-0">
 					<DialogClose asChild>
 						<Button variant="outline" disabled={ isSaving.value }>إلغاء</Button>
 					</DialogClose>

@@ -49,7 +49,8 @@ export function CommercialPaymentVouchers<
 
 	return (
 		<div className="border border-border rounded-xl bg-background overflow-hidden">
-			<div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/30">
+			<div
+				className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b border-border bg-muted/30">
 				<div className="flex items-center gap-2">
 					<Wallet className="w-4 h-4 text-muted-foreground"/>
 					<h3 className="font-semibold text-sm">{ t("invoices.paymentVouchers") }</h3>
@@ -79,8 +80,9 @@ export function CommercialPaymentVouchers<
 					);
 
 					return (
-						<div key={ idx } className="flex items-center gap-3 px-4 py-2">
-							<div className="flex-1 min-w-0">
+						<div key={ idx }
+						     className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2">
+							<div className="flex-1 min-w-[140px]">
 								<FormField label="" error={ voucher.getError("paymentMethodId") }>
 									<PaymentMethodsSearchableSelect
 										id={ voucher.paymentMethodId }
@@ -88,7 +90,7 @@ export function CommercialPaymentVouchers<
 									/>
 								</FormField>
 							</div>
-							<div className="w-36 shrink-0">
+							<div className="w-28 sm:w-36 shrink-0">
 								<NumberField
 									min={ 0 }
 									max={ maxForThisVoucher }

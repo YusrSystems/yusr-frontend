@@ -196,12 +196,12 @@ export function CommercialItemsTable<
 				<ColumnVisibilityToggle columns={ COLUMNS } visible={ visible } toggle={ toggle }/>
 			</div>
 			<div className="max-h-100 overflow-y-auto overflow-x-auto">
-				<table className="relative w-full text-sm text-right">
+				<table className="relative w-full min-w-[950px] text-sm text-right">
 					<thead className="sticky top-0 bg-muted z-50 border-b border-border">
 					<tr>
 						<th className="p-3 w-5"/>
-						<th className="p-3 font-semibold w-16 text-muted-foreground">{ t("invoices.number") }</th>
-						<th className="p-3 font-semibold text-start w-40">{ t("invoices.item") }</th>
+						<th className="p-3 font-semibold w-14 text-muted-foreground">{ t("invoices.number") }</th>
+						<th className="p-3 font-semibold text-start min-w-[140px] w-40">{ t("invoices.item") }</th>
 						<th className="p-3 font-semibold text-start w-24 min-w-24">{ t("stocking:items.unit") }</th>
 						<th className="p-3 font-semibold text-start w-24 min-w-24">{ t("invoices.pricingMethod") }</th>
 						{ isVisible("cost") && (
@@ -260,7 +260,7 @@ export function CommercialItemsTable<
 									<td className="px-2 pt-2 font-bold text-muted-foreground">{ index + 1 }</td>
 									<td className="px-2 pt-2">
 										<div
-											className="font-semibold text-start text-foreground">{ invoiceItem.itemName }</div>
+											className="font-semibold text-start text-foreground truncate max-w-[200px]">{ invoiceItem.itemName }</div>
 									</td>
 									<td className="px-2 pt-2">
 										{ document.isDisabled ? (

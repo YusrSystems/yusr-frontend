@@ -11,6 +11,7 @@ import {
 	cn,
 	ContextMenuItem,
 	CrudPage,
+	CrudTablePagination,
 	DateService,
 	DropdownMenuItem,
 	FilterSection,
@@ -116,13 +117,16 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 
 	return (
 		<CrudPage<PurchaseInvoiceDto>>
-			<CrudPage.HeaderContainer>
+			<CrudPage.HeaderContainer
+				className="flex flex-col sm:flex-row justify-between mb-6 sm:mb-8 gap-3 sm:items-center">
 				<h1>{ t("invoices.purchasesManagement") }</h1>
-				<CrudPage.HeaderButtonsContainer>
-					<div className="flex bg-muted/40 rounded-lg p-1 border">
+				<CrudPage.HeaderButtonsContainer className="flex flex-wrap items-center gap-2 sm:gap-3">
+					<div
+						className="flex bg-muted/40 rounded-lg p-1 border overflow-x-auto no-scrollbar max-w-full shrink-0">
 						<Button
 							variant={ activeTypeTab.value === 0 ? "default" : "ghost" }
 							size="sm"
+							className="whitespace-nowrap shrink-0 h-8 px-2.5 sm:px-3 text-xs"
 							onClick={ () => (activeTypeTab.value = 0) }
 						>
 							الكل
@@ -130,6 +134,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 						<Button
 							variant={ activeTypeTab.value === PurchaseInvoiceType.Bill ? "default" : "ghost" }
 							size="sm"
+							className="whitespace-nowrap shrink-0 h-8 px-2.5 sm:px-3 text-xs"
 							onClick={ () => (activeTypeTab.value = PurchaseInvoiceType.Bill) }
 						>
 							فواتير الشراء
@@ -137,6 +142,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 						<Button
 							variant={ activeTypeTab.value === PurchaseInvoiceType.CreditNote ? "default" : "ghost" }
 							size="sm"
+							className="whitespace-nowrap shrink-0 h-8 px-2.5 sm:px-3 text-xs"
 							onClick={ () => (activeTypeTab.value = PurchaseInvoiceType.CreditNote) }
 						>
 							إشعارات دائنة (مرتجعات)
@@ -144,6 +150,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 						<Button
 							variant={ activeTypeTab.value === PurchaseInvoiceType.DebitNote ? "default" : "ghost" }
 							size="sm"
+							className="whitespace-nowrap shrink-0 h-8 px-2.5 sm:px-3 text-xs"
 							onClick={ () => (activeTypeTab.value = PurchaseInvoiceType.DebitNote) }
 						>
 							إشعارات مدينة
@@ -282,7 +289,8 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 										},
 										{
 											rowBody: (
-												<Button size="sm" variant="outline" onClick={ () => printInvoice(inv) }>
+												<Button size="sm" variant="outline" className="h-8 w-8 p-0"
+												        onClick={ () => printInvoice(inv) }>
 													{ isPrinting.value === inv.id ? (
 														<Loader2 className="h-4 w-4 animate-spin"/>
 													) : (
@@ -304,7 +312,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 										? [
 											<DropdownMenuItem
 												key="ret"
-												className="text-orange-700 font-semibold"
+												className="text-orange-700 font-semibold cursor-pointer"
 												onSelect={ () => handleReturnPurchase(dto) }
 											>
 												<Undo2 className="h-4 w-4 me-2"/>
@@ -316,7 +324,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 										? [
 											<DropdownMenuItem
 												key="copy"
-												className="text-blue-600 font-semibold"
+												className="text-blue-600 font-semibold cursor-pointer"
 												onSelect={ () => handleCopyPurchase(dto) }
 											>
 												<Copy className="h-4 w-4 me-2"/>
@@ -330,7 +338,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 										? [
 											<ContextMenuItem
 												key="ret"
-												className="text-orange-700 font-semibold"
+												className="text-orange-700 font-semibold cursor-pointer"
 												onSelect={ () => handleReturnPurchase(dto) }
 											>
 												<Undo2 className="h-4 w-4 me-2"/>
@@ -342,7 +350,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 										? [
 											<ContextMenuItem
 												key="copy"
-												className="text-blue-600 font-semibold"
+												className="text-blue-600 font-semibold cursor-pointer"
 												onSelect={ () => handleCopyPurchase(dto) }
 											>
 												<Copy className="h-4 w-4 me-2"/>
@@ -352,7 +360,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 										: [])
 								] }
 							/>
-							<CrudPage.TablePagination
+							<CrudTablePagination
 								pageSize={ Cubits.purchaseInvoices.pageSize.value }
 								totalNumber={ Cubits.purchaseInvoices.count.value }
 								currentPage={ Cubits.purchaseInvoices.currentPage.value }

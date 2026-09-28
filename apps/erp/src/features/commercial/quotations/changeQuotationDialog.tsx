@@ -101,7 +101,7 @@ export default function ChangeQuotationDialog({
 	const basicHasError = entity.value.hasErrors || entity.value.items.value.some((t) => t.hasErrors);
 
 	return (
-		<ChangeDialog className="sm:max-w-[100vw] sm:w-screen sm:h-screen">
+		<ChangeDialog className="sm:max-w-[100vw] sm:w-screen sm:h-screen max-h-[100dvh] flex flex-col overflow-hidden">
 			<ChangeDialog.Header title={ title }/>
 			<ChangeDialog.Tabbed
 				tabs={ [
@@ -190,7 +190,7 @@ export default function ChangeQuotationDialog({
 									/>
 								</div>
 
-								<div className="xl:col-span-4 2xl:col-span-3">
+								<div className="xl:col-span-4 2xl:col-span-3 space-y-4">
 									<div className="sticky top-4 space-y-4">
 										{ Services.auth.hasAuth(
 											SystemPermissionsResources.InvoiceAddSettlement,

@@ -399,8 +399,8 @@ export default function CommercialSendWhatsappDialog({
 	return (
 		<>
 			<Dialog open={ open } onOpenChange={ onOpenChange }>
-				<DialogContent dir="rtl" className="sm:max-w-md">
-					<DialogHeader>
+				<DialogContent dir="rtl" className="sm:max-w-md max-h-[94dvh] flex flex-col overflow-hidden">
+					<DialogHeader className="shrink-0">
 						<DialogTitle className="flex items-center gap-2 text-green-600">
 							<FaWhatsapp className="w-5 h-5"/>
 							{ connState.value === "connected" ? "إرسال الفاتورة عبر الواتساب" : "ربط حساب الواتساب" }
@@ -412,9 +412,9 @@ export default function CommercialSendWhatsappDialog({
 						</DialogDescription>
 					</DialogHeader>
 
-					<div className="py-4">
+					<div className="flex-1 min-h-0 overflow-y-auto py-2 sm:py-4 px-1">
 						{ !isDesktopApp ? (
-							<div className="flex flex-col items-center gap-4 text-center">
+							<div className="flex flex-col items-center gap-4 text-center py-6">
 								<AlertCircle className="w-12 h-12 text-amber-500"/>
 								<p className="text-sm leading-relaxed">
 									هذه الميزة تتطلب تشغيل النظام عبر <strong>تطبيق سطح المكتب</strong>.
@@ -438,11 +438,12 @@ export default function CommercialSendWhatsappDialog({
 						) : connState.value === "connecting" ? (
 							<div className="flex flex-col items-center gap-4 p-4">
 								{ qrCode.value ? (
-									<div className="bg-white p-2 rounded-xl border shadow-sm">
+									<div
+										className="bg-white p-2 rounded-xl border shadow-sm max-w-full overflow-hidden">
 										<img
 											src={ `data:image/png;base64,${ qrCode.value }` }
 											alt="QR Code"
-											className="w-56 h-56 object-contain"
+											className="w-48 h-48 sm:w-56 sm:h-56 object-contain mx-auto"
 										/>
 									</div>
 								) : (
@@ -472,7 +473,7 @@ export default function CommercialSendWhatsappDialog({
 						) }
 					</div>
 
-					<DialogFooter>
+					<DialogFooter className="gap-2 sm:gap-0 shrink-0">
 						<DialogClose asChild>
 							<Button variant="outline" disabled={ isSending.value }>
 								إلغاء

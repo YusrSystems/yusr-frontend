@@ -34,7 +34,7 @@ export function CommercialPolicyTab<
 			label={ t("invoices.policyTerms") }
 			value={ document.policy }
 			disabled={ document.isDisabled }
-			className="h-100"
+			className="h-60 sm:h-100"
 		/>
 	);
 }

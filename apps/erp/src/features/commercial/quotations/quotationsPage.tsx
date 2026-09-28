@@ -101,14 +101,18 @@ export default function QuotationsPage()
 
 	return (
 		<CrudPage<QuotationDto>>
-			<CrudPage.Header
-				title={ t("invoices.quotationsManagement") }
-				addButtonTitle={ t("invoices.addNewQuotationTitle") }
-				isAddButtonVisible={ Services.auth.hasAuth(
-					SystemPermissionsResources.Quotations,
-					SystemPermissionsActions.Add
-				) }
-			/>
+			<CrudPage.HeaderContainer
+				className="flex flex-col sm:flex-row justify-between mb-6 sm:mb-8 gap-3 sm:items-center">
+				<h1>{ t("invoices.quotationsManagement") }</h1>
+				<CrudPage.HeaderButtonsContainer className="flex flex-wrap items-center gap-2 sm:gap-3">
+					{ Services.auth.hasAuth(
+						SystemPermissionsResources.Quotations,
+						SystemPermissionsActions.Add
+					) && (
+						<CrudPage.AddButton title={ t("invoices.addNewQuotationTitle") }/>
+					) }
+				</CrudPage.HeaderButtonsContainer>
+			</CrudPage.HeaderContainer>
 
 			<CrudPage.Cards
 				cards={ [
@@ -191,20 +195,18 @@ export default function QuotationsPage()
 										},
 										{
 											rowBody: (
-												<div className="flex items-center justify-end gap-2">
-													{/* WHATSAPP BUTTON */ }
+												<div className="flex items-center justify-end gap-1.5 sm:gap-2">
 													<Button
 														size="sm"
 														variant="outline"
-														className="text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700"
+														className="text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700 h-8 w-8 p-0"
 														onClick={ () => (whatsappDialogQuotation.value = quote) }
 														title="إرسال عبر الواتساب"
 													>
 														<FaWhatsapp className="h-4 w-4"/>
 													</Button>
 
-													{/* PRINT BUTTON */ }
-													<Button size="sm" variant="outline"
+													<Button size="sm" variant="outline" className="h-8 w-8 p-0"
 													        onClick={ () => printQuotation(quote) }>
 														{ isPrinting.value === quote.id ? (
 															<Loader2 className="h-4 w-4 animate-spin"/>
@@ -233,7 +235,7 @@ export default function QuotationsPage()
 									quote.status === QuotationStatus.Active ? (
 										<DropdownMenuItem
 											key="conv"
-											className="text-emerald-600 font-semibold"
+											className="text-emerald-600 font-semibold cursor-pointer"
 											onSelect={ () => handleConvertToSales(quote) }
 										>
 											<FilePlusCorner className="h-4 w-4 me-2"/>
@@ -242,7 +244,7 @@ export default function QuotationsPage()
 									) : null,
 									<DropdownMenuItem
 										key="copy"
-										className="text-blue-600 font-semibold"
+										className="text-blue-600 font-semibold cursor-pointer"
 										onSelect={ () => handleCopyQuotation(quote) }
 									>
 										<Copy className="h-4 w-4 me-2"/>
@@ -261,7 +263,7 @@ export default function QuotationsPage()
 									quote.status === QuotationStatus.Active ? (
 										<ContextMenuItem
 											key="conv"
-											className="text-emerald-600 font-semibold"
+											className="text-emerald-600 font-semibold cursor-pointer"
 											onSelect={ () => handleConvertToSales(quote) }
 										>
 											<FilePlusCorner className="h-4 w-4 me-2"/>
@@ -270,7 +272,7 @@ export default function QuotationsPage()
 									) : null,
 									<ContextMenuItem
 										key="copy"
-										className="text-blue-600 font-semibold"
+										className="text-blue-600 font-semibold cursor-pointer"
 										onSelect={ () => handleCopyQuotation(quote) }
 									>
 										<Copy className="h-4 w-4 me-2"/>

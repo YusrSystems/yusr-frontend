@@ -42,10 +42,10 @@ export function CommercialGlobalSettlement<
 	return (
 		<div className="border border-border rounded-xl bg-background overflow-hidden">
 			<div className="px-4 py-3 border-b border-border bg-muted/30">
-				<h3 className="font-semibold">{ t("invoices.globalSettlement") }</h3>
+				<h3 className="font-semibold text-sm sm:text-base">{ t("invoices.globalSettlement") }</h3>
 			</div>
-			<div className="p-4 flex flex-col gap-3">
-				<FieldsSection columns={ 2 }>
+			<div className="p-3 sm:p-4 flex flex-col gap-3">
+				<FieldsSection columns={ {base: 1, sm: 2} }>
 					<NumberField
 						label={ t("paymentMethods.fixedAmount") }
 						className="mt-1"
