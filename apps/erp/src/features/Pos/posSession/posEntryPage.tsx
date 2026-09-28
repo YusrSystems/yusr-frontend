@@ -170,49 +170,50 @@ export default function PosEntryPage()
 	if (isLoading.value)
 	{
 		return (
-			<div className="h-screen w-full flex items-center justify-center bg-muted/20 overflow-hidden">
+			<div className="min-h-dvh h-dvh w-full flex items-center justify-center bg-muted/20 overflow-hidden">
 				<Loader2 className="w-10 h-10 animate-spin text-primary"/>
 			</div>
 		);
 	}
 
 	return (
-		<div className="h-screen w-full flex items-center justify-center p-4 relative overflow-hidden" dir="rtl">
+		<div className="min-h-dvh h-dvh w-full flex items-center justify-center p-3 sm:p-4 relative overflow-hidden"
+		     dir="rtl">
 			<YusrBackground/>
 
 			<div className="w-full max-w-md relative z-10 my-auto">
 				{ activeSession.value ? (
-					<Card className="border-red-200 shadow-lg shadow-red-500/10 max-h-[85vh] overflow-y-auto">
+					<Card className="border-red-200 shadow-lg shadow-red-500/10 max-h-[90dvh] overflow-y-auto">
 						<CardHeader className="text-center pb-2">
 							<div
-								className="mx-auto w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4">
-								<AlertCircle className="w-8 h-8"/>
+								className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-3">
+								<AlertCircle className="w-7 h-7 sm:w-8 sm:h-8"/>
 							</div>
-							<CardTitle className="text-red-600 text-xl">
+							<CardTitle className="text-red-600 text-lg sm:text-xl">
 								لديك وردية مفتوحة من يوم سابق
 							</CardTitle>
-							<CardDescription className="text-base mt-2">
+							<CardDescription className="text-sm sm:text-base mt-1.5">
 								يجب إغلاق الوردية السابقة قبل التمكن من بدء يوم عمل جديد.
 							</CardDescription>
 						</CardHeader>
-						<CardContent className="flex flex-col gap-4 pt-4">
-							<div className="bg-muted/50 rounded-lg p-4 flex flex-col gap-2 text-sm">
+						<CardContent className="flex flex-col gap-4 pt-2">
+							<div className="bg-muted/50 rounded-lg p-3 sm:p-4 flex flex-col gap-2 text-sm">
 								<div className="flex justify-between">
 									<span className="text-muted-foreground">الجهاز:</span>
 									<span className="font-semibold">{ activeSession.value.posTerminalName }</span>
 								</div>
 								<div className="flex justify-between">
 									<span className="text-muted-foreground">تاريخ الافتتاح:</span>
-									<span className="font-semibold" dir="ltr">
+									<span className="font-semibold text-xs sm:text-sm" dir="ltr">
 										{ new Date(activeSession.value.openedAt).toLocaleString() }
 									</span>
 								</div>
 							</div>
-							<div className="flex gap-2">
+							<div className="flex flex-col sm:flex-row gap-2">
 								<Button
 									size="lg"
 									variant="outline"
-									className="w-full text-md h-12"
+									className="w-full text-sm sm:text-base h-11 sm:h-12"
 									onClick={ () =>
 									{
 										selectedTerminalId.value = undefined;
@@ -225,7 +226,7 @@ export default function PosEntryPage()
 								<Button
 									size="lg"
 									variant="destructive"
-									className="w-full text-md h-12"
+									className="w-full text-sm sm:text-base h-11 sm:h-12"
 									onClick={ () => (isCloseDialogOpen.value = true) }
 								>
 									إغلاق الوردية
@@ -234,26 +235,26 @@ export default function PosEntryPage()
 						</CardContent>
 					</Card>
 				) : (
-					<Card className="shadow-xl border-primary/10 max-h-[85vh] overflow-y-auto">
-						<CardHeader className="text-center pb-6 relative">
+					<Card className="shadow-xl border-primary/10 max-h-[90dvh] overflow-y-auto">
+						<CardHeader className="text-center pb-4 sm:pb-6 relative">
 							<Button
 								variant="ghost"
 								size="icon"
 								className="absolute top-4 right-4"
 								onClick={ () => navigate("/dashboard") }
 							>
-								<ArrowRight className="w-5 h-5"/>
+								<ArrowRight className="w-5 h-5 rtl:rotate-0 ltr:rotate-180"/>
 							</Button>
 							<div
-								className="mx-auto w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
-								<Store className="w-8 h-8"/>
+								className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-3 sm:mb-4">
+								<Store className="w-7 h-7 sm:w-8 sm:h-8"/>
 							</div>
-							<CardTitle className="text-2xl">فتح وردية جديدة</CardTitle>
-							<CardDescription>
+							<CardTitle className="text-xl sm:text-2xl">فتح وردية جديدة</CardTitle>
+							<CardDescription className="text-xs sm:text-sm">
 								الرجاء تحديد الجهاز وإدخال مبلغ العهدة للبدء
 							</CardDescription>
 						</CardHeader>
-						<CardContent className="flex flex-col gap-5">
+						<CardContent className="flex flex-col gap-4 sm:gap-5">
 							<SelectField<number>
 								label="جهاز نقطة البيع"
 								required
@@ -271,14 +272,14 @@ export default function PosEntryPage()
 									<Loader2 className="w-8 h-8 animate-spin text-primary"/>
 								</div>
 							) : selectedTerminalId.value && !activeSession.value ? (
-								<div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2">
+								<div className="flex flex-col gap-4 sm:gap-5 animate-in fade-in slide-in-from-top-2">
 									<NumberField
 										label="مبلغ العهدة الافتتاحي (الكاش)"
 										required
 										min={ 0 }
 										value={ openingCash }
 										currency={ <ErpCurrencyIcon/> }
-										className="text-lg"
+										className="text-base sm:text-lg"
 									/>
 
 									<TextAreaField
@@ -289,7 +290,7 @@ export default function PosEntryPage()
 
 									<Button
 										size="lg"
-										className="w-full mt-2 h-12 text-md"
+										className="w-full mt-1 sm:mt-2 h-11 sm:h-12 text-sm sm:text-base font-bold"
 										disabled={ openingCash.value === undefined || isStarting.value }
 										onClick={ handleOpenSession }
 									>

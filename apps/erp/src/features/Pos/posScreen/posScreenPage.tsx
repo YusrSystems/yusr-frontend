@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSignals } from "@preact/signals-react/runtime";
 import { signal } from "@preact/signals-react";
 import { AlertCircle, ArrowRight, Loader2, LogOut, MonitorPlay, ReceiptText, ShoppingCart } from "lucide-react";
-import { Button, DateService } from "yusr-ui";
+import { Button, DateService, Sheet, SheetContent } from "yusr-ui";
 import { Services } from "@/core/services/services";
 import { PosSessionDto } from "@/core/data/posSession";
 import { PosTerminalDto } from "@/core/data/posTerminal";
@@ -23,6 +23,7 @@ import type { SalesInvoiceReportResult } from "@/features/reports/invoice/invoic
 import { PosTempCache } from "@/features/Pos/posTempCache.ts";
 import { posSessionsApi } from "../posSession/posSessions.api";
 import { posTerminalsApi } from "../posTerminals/posTerminals.api";
+import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
 
 
 export default function PosScreenPage()
@@ -38,6 +39,7 @@ export default function PosScreenPage()
 	const isCheckoutDialogOpen = useMemo(() => signal(false), []);
 	const isRecentInvoicesDialogOpen = useMemo(() => signal(false), []);
 	const isOutdatedSession = useMemo(() => signal(false), []);
+	const isMobileCartOpen = useMemo(() => signal(false), []);
 
 	const cartInvoice = useMemo(() => signal<SalesInvoice | null>(null), []);
 	const printedInvoice = useMemo(() => signal<SalesInvoiceReportResult | undefined>(undefined), []);
@@ -258,9 +260,14 @@ export default function PosScreenPage()
 		);
 	}
 
+	const cartItemsCount = cartInvoice.value.items.value.reduce(
+		(sum, item) => sum + (Number(item.quantity.value) || 0),
+		0
+	);
+	const cartTotal = cartInvoice.value.fullAmount.value || 0;
+
 	return (
-		<div className="h-screen flex flex-col bg-muted/10 overflow-hidden relative" dir="rtl">
-			{/* Outdated Session Overlay / Blocker */ }
+		<div className="h-dvh flex flex-col bg-muted/10 overflow-hidden relative" dir="rtl">
 			{ isOutdatedSession.value && (
 				<div
 					className="absolute inset-0 z-50 bg-background/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
@@ -289,28 +296,29 @@ export default function PosScreenPage()
 			) }
 
 			<header
-				className="h-14 bg-card border-b border-border flex items-center justify-between px-4 shadow-sm shrink-0 z-10">
-				<div className="flex items-center gap-4">
-					<Button variant="ghost" size="icon" onClick={ () => navigate("/dashboard") }>
-						<ArrowRight className="w-5 h-5"/>
+				className="h-14 bg-card border-b border-border flex items-center justify-between px-3 sm:px-4 shadow-sm shrink-0 z-10 gap-2">
+				<div className="flex items-center gap-2 sm:gap-4 min-w-0">
+					<Button variant="ghost" size="icon-sm" onClick={ () => navigate("/dashboard") }>
+						<ArrowRight className="w-5 h-5 rtl:rotate-0 ltr:rotate-180"/>
 					</Button>
-					<div className="flex items-center gap-2">
-						<div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+					<div className="flex items-center gap-2 min-w-0">
+						<div
+							className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary shrink-0">
 							<ShoppingCart className="w-4 h-4"/>
 						</div>
-						<div className="flex flex-col">
+						<div className="flex flex-col min-w-0">
 							<span
-								className="font-bold text-sm leading-none">{ activeSession.value.posTerminalName }</span>
+								className="font-bold text-xs sm:text-sm leading-none truncate">{ activeSession.value.posTerminalName }</span>
 							<span
-								className="text-xs text-muted-foreground mt-1">{ activeSession.value.cashierUsername }</span>
+								className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 truncate">{ activeSession.value.cashierUsername }</span>
 						</div>
 					</div>
 				</div>
 
-				<div className="flex items-center gap-3">
+				<div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
 					<Button
 						variant="outline"
-						className="gap-2 h-9 text-xs"
+						className="gap-1.5 h-8 sm:h-9 px-2 sm:px-3 text-xs"
 						onClick={ () =>
 						{
 							window.open(
@@ -319,36 +327,37 @@ export default function PosScreenPage()
 								"width=1024,height=768,menubar=no,toolbar=no,location=no,status=no"
 							);
 						} }
-						title="فتح شاشة العميل في شاشة منفصلة"
+						title="فتح شاشة العميل"
 					>
 						<MonitorPlay className="w-4 h-4 text-primary"/>
-						شاشة العميل
+						<span className="hidden sm:inline">شاشة العميل</span>
 					</Button>
 
 					<Button
 						variant="outline"
-						className="gap-2 h-9"
+						className="gap-1.5 h-8 sm:h-9 px-2 sm:px-3 text-xs"
 						onClick={ () => (isRecentInvoicesDialogOpen.value = true) }
 						disabled={ isOutdatedSession.value }
+						title="الفواتير الأخيرة"
 					>
 						<ReceiptText className="w-4 h-4 text-primary"/>
-						الفواتير الأخيرة
+						<span className="hidden sm:inline">الفواتير الأخيرة</span>
 					</Button>
 
 					<Button
 						variant="destructive"
-						className="gap-2 h-9"
+						className="gap-1.5 h-8 sm:h-9 px-2 sm:px-3 text-xs"
 						onClick={ () => (isCloseDialogOpen.value = true) }
+						title="إغلاق الوردية"
 					>
 						<LogOut className="w-4 h-4"/>
-						إغلاق الوردية
+						<span className="hidden sm:inline">إغلاق الوردية</span>
 					</Button>
 				</div>
 			</header>
 
-			<main className="flex-1 flex overflow-hidden">
-				{/* Left Side: Products Grid */ }
-				<div className="flex-1 flex flex-col overflow-hidden border-l border-border">
+			<main className="flex-1 flex overflow-hidden relative">
+				<div className="flex-1 flex flex-col overflow-hidden lg:border-l border-border">
 					<PosProductGrid
 						terminal={ activeTerminal.value }
 						onAddItem={ (item, uomId, pmId) =>
@@ -368,8 +377,7 @@ export default function PosScreenPage()
 					/>
 				</div>
 
-				{/* Right Side: Cart */ }
-				<div className="w-[400px] flex flex-col bg-card shrink-0 shadow-xl z-10">
+				<div className="hidden lg:flex w-[400px] flex-col bg-card shrink-0 shadow-xl z-10">
 					<PosCart
 						invoice={ cartInvoice.value }
 						onCheckout={ () =>
@@ -385,6 +393,72 @@ export default function PosScreenPage()
 					/>
 				</div>
 			</main>
+
+			<div
+				className="lg:hidden p-3 bg-card border-t border-border shadow-lg flex items-center justify-between gap-3 shrink-0 z-20">
+				<Button
+					onClick={ () => (isMobileCartOpen.value = true) }
+					variant="outline"
+					className="flex-1 h-12 justify-between px-4 font-bold border-primary/30 bg-primary/5 hover:bg-primary/10"
+				>
+					<div className="flex items-center gap-2">
+						<ShoppingCart className="w-5 h-5 text-primary"/>
+						<span>السلة ({ cartItemsCount })</span>
+					</div>
+					<div className="flex items-center gap-1 font-mono text-primary">
+						<span>{ cartTotal.toLocaleString(undefined, {
+							minimumFractionDigits: 2,
+							maximumFractionDigits: 2
+						}) }</span>
+						<ErpCurrencyIcon className="w-3.5 h-3.5"/>
+					</div>
+				</Button>
+
+				<Button
+					disabled={ cartItemsCount === 0 }
+					onClick={ () =>
+					{
+						if (isOutdatedSession.value)
+						{
+							toast.error("يجب إغلاق الوردية السابقة أولاً");
+							return;
+						}
+						isCheckoutDialogOpen.value = true;
+					} }
+					className="h-12 px-6 font-bold text-base shrink-0"
+				>
+					الدفع
+				</Button>
+			</div>
+
+			<Sheet open={ isMobileCartOpen.value } onOpenChange={ (open) => (isMobileCartOpen.value = open) }>
+				<SheetContent side="right" className="p-0 w-full sm:max-w-md flex flex-col h-full" dir="rtl">
+					<div
+						className="p-3 border-b flex items-center justify-between font-bold text-base bg-muted/20 shrink-0">
+						<span>سلة المشتريات ({ cartItemsCount } مادة)</span>
+					</div>
+					<div className="flex-1 min-h-0 overflow-hidden">
+						<PosCart
+							invoice={ cartInvoice.value }
+							onCheckout={ () =>
+							{
+								isMobileCartOpen.value = false;
+								if (isOutdatedSession.value)
+								{
+									toast.error("يجب إغلاق الوردية السابقة أولاً");
+									return;
+								}
+								isCheckoutDialogOpen.value = true;
+							} }
+							onCancelReturn={ () =>
+							{
+								handleCancelReturn();
+								isMobileCartOpen.value = false;
+							} }
+						/>
+					</div>
+				</SheetContent>
+			</Sheet>
 
 			<CloseSessionDialog
 				open={ isCloseDialogOpen.value }
@@ -407,6 +481,7 @@ export default function PosScreenPage()
 					{
 						initNewCart(activeTerminal.value!);
 						isCheckoutDialogOpen.value = false;
+						isMobileCartOpen.value = false;
 
 						if (reportResult)
 						{
@@ -438,7 +513,11 @@ export default function PosScreenPage()
 					onOpenChange={ (open) => (isRecentInvoicesDialogOpen.value = open) }
 					terminal={ activeTerminal.value }
 					session={ activeSession.value }
-					onProcessReturn={ handleProcessReturn }
+					onProcessReturn={ (inv) =>
+					{
+						handleProcessReturn(inv);
+						isMobileCartOpen.value = true;
+					} }
 				/>
 			) }
 

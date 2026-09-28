@@ -59,7 +59,7 @@ export default function ChangePosTerminalDialog({dto, onSuccess}: CommonChangeDi
 	const title = entity.value.mode.value === ChangeableEntityMode.Create ? "إضافة نقطة بيع جديدة" : "تعديل نقطة البيع";
 
 	return (
-		<ChangeDialog className="sm:max-w-3xl">
+		<ChangeDialog className="sm:max-w-3xl max-h-[94dvh] flex flex-col overflow-hidden">
 			<ChangeDialog.Header title={ title }/>
 
 			<ChangeDialog.Tabbed
@@ -98,9 +98,9 @@ function GeneralTab({entity}: { entity: PosTerminal })
 	useSignals();
 
 	return (
-		<div className="max-h-[55vh] overflow-y-auto px-1 py-1 space-y-4 animate-in fade-in">
+		<div className="flex-1 min-h-0 overflow-y-auto px-1 py-1 space-y-4 animate-in fade-in">
 			<FieldGroup>
-				<FieldsSection columns={ 2 }>
+				<FieldsSection columns={ {base: 1, md: 2} }>
 					<TextField
 						label="اسم نقطة البيع"
 						required
@@ -128,7 +128,7 @@ function GeneralTab({entity}: { entity: PosTerminal })
 					</FormField>
 				</FieldsSection>
 
-				<FieldsSection title="الصلاحيات وطرق الدفع" columns={ 2 }>
+				<FieldsSection title="الصلاحيات وطرق الدفع" columns={ {base: 1, md: 2} }>
 					<FormField label="طرق الدفع المسموحة">
 						<PaymentMethodsMultiSearchableSelect
 							selectedItems={ entity.allowedPaymentMethods }
@@ -232,9 +232,9 @@ function FavoritesOrderTab({entity}: { entity: PosTerminal })
 	};
 
 	return (
-		<div className="max-h-[55vh] overflow-y-auto px-1 py-1 space-y-3 animate-in fade-in">
+		<div className="flex-1 min-h-0 overflow-y-auto px-1 py-1 space-y-3 animate-in fade-in">
 			<div className="flex items-end gap-2 p-2.5 rounded-lg border border-dashed border-border bg-muted/30">
-				<div className="flex-1">
+				<div className="flex-1 min-w-0">
 					<FormField label="إضافة عنصر إلى المفضلة">
 						<ItemsSearchableSelect
 							onSelect={ (item) => addItem(item) }
@@ -289,17 +289,17 @@ function FavoritesOrderTab({entity}: { entity: PosTerminal })
 								</button>
 							</div>
 
-							<span className="flex-1 text-sm font-medium truncate">{ fav.itemName }</span>
+							<span className="flex-1 text-sm font-medium truncate min-w-0">{ fav.itemName }</span>
 
 							<div className="flex items-center gap-1.5 shrink-0">
-								<span className="text-[11px] text-muted-foreground">الترتيب</span>
+								<span className="text-[11px] text-muted-foreground hidden sm:inline">الترتيب</span>
 								<input
 									type="number"
 									min={ 1 }
 									max={ items.value.length }
 									value={ index + 1 }
 									onChange={ (e) => setPosition(index, Number(e.target.value)) }
-									className="w-14 h-7 text-center text-xs rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+									className="w-12 sm:w-14 h-7 text-center text-xs rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
 								/>
 							</div>
 

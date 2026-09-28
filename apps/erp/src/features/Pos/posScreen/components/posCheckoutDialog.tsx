@@ -242,179 +242,181 @@ export default function PosCheckoutDialog({
 
 	return (
 		<Dialog open={ open } onOpenChange={ onOpenChange }>
-			<DialogContent dir="rtl" className="sm:max-w-3xl">
-				<DialogHeader>
+			<DialogContent dir="rtl" className="sm:max-w-3xl max-h-[94dvh] flex flex-col overflow-hidden">
+				<DialogHeader className="shrink-0">
 					<DialogTitle
-						className={ cn("text-2xl flex items-center gap-2", isReturnMode && "text-red-600 dark:text-red-400") }>
-						{ isReturnMode ? <Undo2 className="w-6 h-6"/> : null }
-						{ isReturnMode ? `إرجاع المبلغ للفاتورة #${ invoice.originalSalesInvoiceId.value }` : "إتمام الدفع" }
+						className={ cn("text-xl sm:text-2xl flex items-center gap-2", isReturnMode && "text-red-600 dark:text-red-400") }>
+						{ isReturnMode ? <Undo2 className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"/> : null }
+						<span>{ isReturnMode ? `إرجاع المبلغ للفاتورة #${ invoice.originalSalesInvoiceId.value }` : "إتمام الدفع" }</span>
 					</DialogTitle>
 				</DialogHeader>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-4">
-					{/* Left Side: Payment Methods */ }
-					<div className="flex flex-col gap-4 border-l border-border pl-6">
-						<div className="flex items-center justify-between">
-							<h3 className="font-bold text-lg">{ isReturnMode ? "طريقة إرجاع المبلغ" : "طرق الدفع" }</h3>
-							<Button variant="outline" size="sm" onClick={ handleAddPayment }>
-								<Plus className="w-4 h-4 ml-1"/> إضافة
-							</Button>
-						</div>
-
-						<div className="flex flex-col gap-4 max-h-[400px] overflow-y-auto pr-2">
-							{ payments.value.map((payment, index) =>
-							{
-								const method = terminal.allowedPaymentMethods?.find((m) => m.id === payment.paymentMethodId);
-								const isCash = method?.category === 1;
-								const allowOverpay = isCash && !isReturnMode;
-								const othersTotal = payments.value.reduce((sum, p, i) => (i === index ? sum : sum + (p.amount || 0)), 0);
-								const lineMax = allowOverpay ? undefined : Math.max(0, Number((totalAmount - othersTotal).toFixed(2)));
-
-								return (
-									<div key={ index }
-									     className="shrink-0 flex flex-col gap-3 bg-card p-4 rounded-xl border border-border shadow-sm relative overflow-hidden group">
-										<div className="flex items-center gap-3">
-											<div
-												className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary shrink-0">
-												{ getPaymentIcon(method?.category || 0) }
-											</div>
-											<div className="flex-1">
-												<SelectInput<number>
-													value={ signal(payment.paymentMethodId) }
-													onValueChange={ (val) => handleUpdatePayment(index, "paymentMethodId", val) }
-													options={ terminal.allowedPaymentMethods?.map((pm) => ({
-														label: pm.name,
-														value: pm.id
-													})) || [] }
-												/>
-											</div>
-											<Button
-												variant="ghost"
-												size="icon"
-												className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0"
-												onClick={ () => handleRemovePayment(index) }
-											>
-												<Trash2 className="w-4 h-4"/>
-											</Button>
-										</div>
-
-										<div className="flex items-center gap-2">
-											<div className="flex-1">
-												<NumberInput
-													min={ 0 }
-													max={ lineMax }
-													value={ signal(payment.amount === 0 ? undefined : payment.amount) }
-													onChange={ (val) => handleUpdatePayment(index, "amount", val || 0) }
-													className="h-12 text-lg font-bold text-left bg-muted/20 focus:bg-background transition-colors"
-													currency={ <ErpCurrencyIcon className="w-4 h-4"/> }
-													placeholder="0.00"
-												/>
-											</div>
-											{ remaining > 0 && (
-												<Button
-													variant="secondary"
-													className="h-12 px-4 font-bold text-primary bg-primary/10 hover:bg-primary/20"
-													onClick={ () => handleUpdatePayment(index, "amount", Number((payment.amount + remaining).toFixed(2))) }
-													title="إكمال المبلغ المتبقي"
-												>
-													+{ remaining.toLocaleString(undefined, {
-													minimumFractionDigits: 2,
-													maximumFractionDigits: 2
-												}) }
-												</Button>
-											) }
-										</div>
-									</div>
-								);
-							}) }
-						</div>
-
-						<div className="pt-2">
-							<TextAreaField
-								label="ملاحظات الفاتورة"
-								value={ notes }
-								rows={ 2 }
-							/>
-						</div>
-					</div>
-
-					{/* Right Side: Summary */ }
-					<div className="flex flex-col gap-6">
+				<div className="flex-1 min-h-0 overflow-y-auto px-1 sm:px-2 py-2">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 						<div
-							className={ cn(
-								"border rounded-xl p-6 text-center flex flex-col gap-2",
-								isReturnMode ? "bg-red-500/10 border-red-500/20" : "bg-primary/5 border-primary/20"
-							) }>
-							<span className="text-muted-foreground font-medium">
-								{ isReturnMode ? "إجمالي المبلغ المراد إرجاعه" : "الإجمالي المطلوب" }
-							</span>
-							<span
-								className={ cn("text-4xl font-bold", isReturnMode ? "text-red-600 dark:text-red-400" : "text-primary") }>
-								{ totalAmount.toLocaleString(undefined, {
-									minimumFractionDigits: 2,
-									maximumFractionDigits: 2
-								}) } <ErpCurrencyIcon className="w-6 h-6 inline"/>
-							</span>
+							className="flex flex-col gap-3 sm:gap-4 border-b pb-4 md:border-b-0 md:pb-0 md:border-l md:pl-6 border-border">
+							<div className="flex items-center justify-between">
+								<h3 className="font-bold text-base sm:text-lg">{ isReturnMode ? "طريقة إرجاع المبلغ" : "طرق الدفع" }</h3>
+								<Button variant="outline" size="sm" onClick={ handleAddPayment }
+								        className="h-8 text-xs">
+									<Plus className="w-3.5 h-3.5 ml-1"/> إضافة
+								</Button>
+							</div>
+
+							<div className="flex flex-col gap-3 max-h-[320px] overflow-y-auto pr-1">
+								{ payments.value.map((payment, index) =>
+								{
+									const method = terminal.allowedPaymentMethods?.find((m) => m.id === payment.paymentMethodId);
+									const isCash = method?.category === 1;
+									const allowOverpay = isCash && !isReturnMode;
+									const othersTotal = payments.value.reduce((sum, p, i) => (i === index ? sum : sum + (p.amount || 0)), 0);
+									const lineMax = allowOverpay ? undefined : Math.max(0, Number((totalAmount - othersTotal).toFixed(2)));
+
+									return (
+										<div key={ index }
+										     className="shrink-0 flex flex-col gap-2.5 bg-card p-3 rounded-xl border border-border shadow-xs">
+											<div className="flex items-center gap-2">
+												<div
+													className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary shrink-0">
+													{ getPaymentIcon(method?.category || 0) }
+												</div>
+												<div className="flex-1 min-w-0">
+													<SelectInput<number>
+														value={ signal(payment.paymentMethodId) }
+														onValueChange={ (val) => handleUpdatePayment(index, "paymentMethodId", val) }
+														options={ terminal.allowedPaymentMethods?.map((pm) => ({
+															label: pm.name,
+															value: pm.id
+														})) || [] }
+													/>
+												</div>
+												<Button
+													variant="ghost"
+													size="icon-sm"
+													className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0"
+													onClick={ () => handleRemovePayment(index) }
+												>
+													<Trash2 className="w-4 h-4"/>
+												</Button>
+											</div>
+
+											<div className="flex items-center gap-2">
+												<div className="flex-1 min-w-0">
+													<NumberInput
+														min={ 0 }
+														max={ lineMax }
+														value={ signal(payment.amount === 0 ? undefined : payment.amount) }
+														onChange={ (val) => handleUpdatePayment(index, "amount", val || 0) }
+														className="h-10 text-base font-bold text-left bg-muted/20 focus:bg-background transition-colors"
+														currency={ <ErpCurrencyIcon className="w-4 h-4"/> }
+														placeholder="0.00"
+													/>
+												</div>
+												{ remaining > 0 && (
+													<Button
+														variant="secondary"
+														className="h-10 px-2.5 sm:px-3 text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 shrink-0"
+														onClick={ () => handleUpdatePayment(index, "amount", Number((payment.amount + remaining).toFixed(2))) }
+														title="إكمال المبلغ المتبقي"
+													>
+														+{ remaining.toLocaleString(undefined, {
+														minimumFractionDigits: 2,
+														maximumFractionDigits: 2
+													}) }
+													</Button>
+												) }
+											</div>
+										</div>
+									);
+								}) }
+							</div>
+
+							<div className="pt-1">
+								<TextAreaField
+									label="ملاحظات الفاتورة"
+									value={ notes }
+									rows={ 2 }
+								/>
+							</div>
 						</div>
 
-						<div className="flex flex-col gap-3 text-lg">
+						<div className="flex flex-col gap-4 sm:gap-6 justify-between">
 							<div
-								className="flex justify-between items-center p-4 bg-muted/30 rounded-xl border border-border">
+								className={ cn(
+									"border rounded-xl p-4 sm:p-5 text-center flex flex-col gap-1.5",
+									isReturnMode ? "bg-red-500/10 border-red-500/20" : "bg-primary/5 border-primary/20"
+								) }>
+								<span className="text-muted-foreground text-xs sm:text-sm font-medium">
+									{ isReturnMode ? "إجمالي المبلغ المراد إرجاعه" : "الإجمالي المطلوب" }
+								</span>
 								<span
-									className="text-muted-foreground font-medium">{ isReturnMode ? "المسترد" : "المدفوع" }</span>
-								<span className="font-bold text-xl">
-									{ totalPaid.toLocaleString(undefined, {
+									className={ cn("text-2xl sm:text-3xl font-black", isReturnMode ? "text-red-600 dark:text-red-400" : "text-primary") }>
+									{ totalAmount.toLocaleString(undefined, {
 										minimumFractionDigits: 2,
 										maximumFractionDigits: 2
-									}) } <ErpCurrencyIcon className="w-4 h-4 inline text-muted-foreground"/>
+									}) } <ErpCurrencyIcon className="w-5 h-5 inline"/>
 								</span>
 							</div>
-							{ remaining > 0 ? (
+
+							<div className="flex flex-col gap-2.5 text-base sm:text-lg">
 								<div
-									className="flex justify-between items-center p-4 bg-red-50 text-red-600 rounded-xl border border-red-100">
-									<span className="font-bold">المتبقي</span>
-									<span className="font-black text-2xl">
-										{ remaining.toLocaleString(undefined, {
+									className="flex justify-between items-center p-3 sm:p-4 bg-muted/30 rounded-xl border border-border">
+									<span
+										className="text-muted-foreground font-medium text-xs sm:text-sm">{ isReturnMode ? "المسترد" : "المدفوع" }</span>
+									<span className="font-bold text-base sm:text-xl">
+										{ totalPaid.toLocaleString(undefined, {
 											minimumFractionDigits: 2,
 											maximumFractionDigits: 2
-										}) } <ErpCurrencyIcon className="w-5 h-5 inline"/>
+										}) } <ErpCurrencyIcon className="w-3.5 h-3.5 inline text-muted-foreground"/>
 									</span>
 								</div>
-							) : (
-								!isReturnMode && (
+								{ remaining > 0 ? (
 									<div
-										className="flex justify-between items-center p-4 bg-green-50 text-green-600 rounded-xl border border-green-100">
-										<span className="font-bold">الباقي للعميل (Change)</span>
-										<span className="font-black text-2xl">
-											{ change.toLocaleString(undefined, {
+										className="flex justify-between items-center p-3 sm:p-4 bg-red-50 text-red-600 rounded-xl border border-red-100">
+										<span className="font-bold text-xs sm:text-sm">المتبقي</span>
+										<span className="font-black text-lg sm:text-2xl">
+											{ remaining.toLocaleString(undefined, {
 												minimumFractionDigits: 2,
 												maximumFractionDigits: 2
-											}) } <ErpCurrencyIcon className="w-5 h-5 inline"/>
+											}) } <ErpCurrencyIcon className="w-4 h-4 inline"/>
 										</span>
 									</div>
-								)
-							) }
-						</div>
+								) : (
+									!isReturnMode && (
+										<div
+											className="flex justify-between items-center p-3 sm:p-4 bg-green-50 text-green-600 rounded-xl border border-green-100">
+											<span className="font-bold text-xs sm:text-sm">الباقي للعميل (Change)</span>
+											<span className="font-black text-lg sm:text-2xl">
+												{ change.toLocaleString(undefined, {
+													minimumFractionDigits: 2,
+													maximumFractionDigits: 2
+												}) } <ErpCurrencyIcon className="w-4 h-4 inline"/>
+											</span>
+										</div>
+									)
+								) }
+							</div>
 
-						<Button
-							size="lg"
-							variant={ isReturnMode ? "destructive" : "default" }
-							className={ cn(
-								"w-full h-14 text-xl mt-auto shadow-lg transition-transform gap-2",
-								remaining > 0 ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.02] active:scale-[0.98]"
-							) }
-							disabled={ remaining > 0 || isSubmitting.value }
-							onClick={ handleCheckout }
-						>
-							{ isSubmitting.value ? (
-								<Loader2 className="w-6 h-6 animate-spin"/>
-							) : isReturnMode ? (
-								<Undo2 className="w-6 h-6"/>
-							) : (
-								<CheckCircle2 className="w-6 h-6"/>
-							) }
-							{ isReturnMode ? "تأكيد إرجاع المبلغ" : "تأكيد الدفع" }
-						</Button>
+							<Button
+								size="lg"
+								variant={ isReturnMode ? "destructive" : "default" }
+								className={ cn(
+									"w-full h-12 sm:h-14 text-base sm:text-xl shadow-lg transition-transform gap-2 mt-auto",
+									remaining > 0 ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.01] active:scale-[0.98]"
+								) }
+								disabled={ remaining > 0 || isSubmitting.value }
+								onClick={ handleCheckout }
+							>
+								{ isSubmitting.value ? (
+									<Loader2 className="w-5 h-5 animate-spin"/>
+								) : isReturnMode ? (
+									<Undo2 className="w-5 h-5"/>
+								) : (
+									<CheckCircle2 className="w-5 h-5"/>
+								) }
+								{ isReturnMode ? "تأكيد إرجاع المبلغ" : "تأكيد الدفع" }
+							</Button>
+						</div>
 					</div>
 				</div>
 			</DialogContent>

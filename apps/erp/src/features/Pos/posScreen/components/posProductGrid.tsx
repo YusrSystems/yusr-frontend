@@ -250,8 +250,8 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 
 			return (
 				<div className="flex-1 flex flex-col min-h-0">
-					<div className="flex-1 overflow-y-auto p-3">
-						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+					<div className="flex-1 overflow-y-auto p-2 sm:p-3">
+						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-3">
 							{ items.map(item =>
 							{
 								const isFavorite = favoriteIds.includes(item.id);
@@ -284,7 +284,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 										</button>
 
 										<div
-											className="w-full h-50 max-h-50 aspect-4/3 bg-white flex items-center justify-center overflow-hidden relative border-b border-border/40 p-2">
+											className="w-full h-32 sm:h-40 md:h-48 max-h-48 aspect-4/3 bg-white flex items-center justify-center overflow-hidden relative border-b border-border/40 p-2">
 											{ imageUrl ? (
 												<img
 													src={ imageUrl }
@@ -296,7 +296,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 											) }
 										</div>
 
-										<div className="p-2.5 flex flex-col flex-1 gap-2">
+										<div className="p-2 sm:p-2.5 flex flex-col flex-1 gap-1.5 sm:gap-2">
 											<div className="flex flex-col gap-0.5">
 												{ item.brandName && (
 													<span
@@ -305,7 +305,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 													</span>
 												) }
 												<span
-													className="font-bold text-sm leading-tight text-foreground group-hover:text-primary transition-colors">
+													className="font-bold text-xs sm:text-sm leading-tight text-foreground group-hover:text-primary transition-colors line-clamp-2">
 													{ item.name }
 												</span>
 											</div>
@@ -328,15 +328,16 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 											) }
 
 											<div
-												className="mt-auto pt-2 flex items-end justify-between border-t border-border/40">
+												className="mt-auto pt-2 flex items-end justify-between border-t border-border/40 gap-1">
 												<div
-													className="flex items-center gap-1.5 bg-muted/50 px-1.5 py-0.5 rounded-md border border-border/50">
-													<span className="text-[10px] font-medium text-muted-foreground">
+													className="flex items-center gap-1 bg-muted/50 px-1.5 py-0.5 rounded-md border border-border/50 min-w-0">
+													<span
+														className="text-[10px] font-medium text-muted-foreground truncate max-w-[60px]">
 														{ defaultUom?.unitName }
 													</span>
 													<span
-														className="w-0.75 h-0.75 rounded-full bg-muted-foreground/40"/>
-													<div className="flex items-center gap-0.5 text-primary/80">
+														className="w-0.75 h-0.75 rounded-full bg-muted-foreground/40 shrink-0"/>
+													<div className="flex items-center gap-0.5 text-primary/80 shrink-0">
 														<Package className="w-3 h-3"/>
 														<span className="text-[11px] font-bold" dir="ltr">
 															{ formattedQty }
@@ -344,13 +345,13 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 													</div>
 												</div>
 												<span
-													className="font-black text-primary flex items-center gap-1 text-base">
+													className="font-black text-primary flex items-center gap-0.5 text-sm sm:text-base shrink-0">
 													{ taxInclusivePrice.toLocaleString(undefined, {
 														minimumFractionDigits: 2,
 														maximumFractionDigits: 2
 													}) }
 													<ErpCurrencyIcon
-														className="w-4 h-4 text-muted-foreground/70 mb-0.5"/>
+														className="w-3.5 h-3.5 text-muted-foreground/70 mb-0.5"/>
 												</span>
 											</div>
 										</div>
@@ -385,14 +386,14 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 	return (
 		<div className="flex flex-col h-full bg-muted/10">
 			<div className="flex flex-col bg-card border-b border-border shrink-0">
-				<div className="p-3 flex gap-3 items-center">
-					<div className="flex-1">
+				<div className="p-2.5 sm:p-3 flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center">
+					<div className="flex-1 min-w-0">
 						<SearchInput
 							onSearch={ handleSearchChange }
 							className="bg-transparent border-none p-0 rounded-none w-full"
 						/>
 					</div>
-					<div className="relative w-64 shrink-0 h-8">
+					<div className="relative w-full sm:w-64 shrink-0 h-8">
 						<ScanBarcode
 							className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"/>
 						<input
