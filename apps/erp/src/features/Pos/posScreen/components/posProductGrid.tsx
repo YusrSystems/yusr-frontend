@@ -9,17 +9,16 @@ import {
 	FilterOperator,
 	PageLoaded,
 	PageLoading,
-	ResultStatus,
 	SearchInput
 } from "yusr-ui";
 import { Loader2, Package, ScanBarcode, Star } from "lucide-react";
 import React, { useEffect, useMemo } from "react";
 import { signal } from "@preact/signals-react";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
-import { Services } from "@/core/services/services";
 import { toast } from "sonner";
 import PosCategoryFilterBar from "./posCategoryFilterBar";
 import { CommercialMath } from "@/features/commercial/logic/commercialMath.ts";
+import { posTerminalsApi } from "../../posTerminals/posTerminals.api";
 
 
 interface PosProductGridProps
@@ -55,7 +54,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 
 	useEffect(() =>
 	{
-		Cubits.categories.init();
+		void Cubits.categories.init();
 	}, []);
 
 	const fetchItems = () =>
@@ -142,8 +141,8 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 		{
 			if (isFav)
 			{
-				const res = await Services.posTerminalsApi.RemoveFavorite(terminal.id, item.id);
-				if (res.status !== ResultStatus.Ok)
+				const res = await posTerminalsApi.removeFavorite(terminal.id, item.id);
+				if (!res.ok)
 				{
 					favoriteItems.value = [...favoriteItems.value, {
 						itemId: item.id,
@@ -166,9 +165,8 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 				const currentMaxOrder = favoriteItems.value.length > 0
 					? Math.max(...favoriteItems.value.map(f => f.displayOrder))
 					: 0;
-
-				const res = await Services.posTerminalsApi.AddFavorite(terminal.id, item.id, currentMaxOrder + 1);
-				if (res.status !== ResultStatus.Ok)
+				const res = await posTerminalsApi.addFavorite(terminal.id, item.id, currentMaxOrder + 1);
+				if (!res.ok)
 				{
 					favoriteItems.value = favoriteItems.value.filter(f => f.itemId !== item.id);
 					terminal.favoriteItems = favoriteItems.value;
@@ -253,8 +251,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 			return (
 				<div className="flex-1 flex flex-col min-h-0">
 					<div className="flex-1 overflow-y-auto p-3">
-						<div
-							className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+						<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
 							{ items.map(item =>
 							{
 								const isFavorite = favoriteIds.includes(item.id);
@@ -295,8 +292,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 													className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
 												/>
 											) : (
-												<span
-													className="text-muted-foreground/50 text-[10px] font-medium">لا توجد صورة</span>
+												<span className="text-muted-foreground/50 text-[10px] font-medium">لا توجد صورة</span>
 											) }
 										</div>
 
@@ -403,7 +399,7 @@ export default function PosProductGrid({terminal, onAddItem}: PosProductGridProp
 							type="text"
 							placeholder="قراءة الباركود..."
 							value={ barcodeQuery.value }
-							onChange={ (e) => barcodeQuery.value = e.target.value }
+							onChange={ (e) => (barcodeQuery.value = e.target.value) }
 							onKeyDown={ handleBarcodeSubmit }
 							disabled={ isBarcodeLoading.value }
 							className="w-full h-8 pl-4 pr-9 text-sm rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"

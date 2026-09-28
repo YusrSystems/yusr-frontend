@@ -77,6 +77,7 @@ import { paymentMethodsApi } from "@/features/paymentMethods/paymentMethod.api.t
 import { balanceTransfersApi } from "@/features/balanceTransfer/balanceTransfers.api";
 import { fiscalYearsApi } from "@/features/fiscalYears/fiscalYears.api";
 import { vouchersApi } from "@/features/vouchers/vouchers.api";
+import { posTerminalsApi } from "@/features/Pos/posTerminals/posTerminals.api";
 
 
 export class Cubits extends BaseCubits
@@ -89,6 +90,7 @@ export class Cubits extends BaseCubits
 	public static readonly categories = new ListCubit<CategoryDto>(categoriesApi);
 	public static readonly paymentMethods = new ListCubit<PaymentMethodDto>(paymentMethodsApi);
 	public static readonly fiscalYears = new ListCubit<FiscalYearDto>(fiscalYearsApi);
+	public static readonly posTerminals = new ListCubit<PosTerminalDto>(posTerminalsApi);
 	public static readonly stocktaking = new PageCubit<StocktakingDto>(stocktakingsApi);
 	public static readonly itemsSettlements = new PageCubit<StocktakingDto>(itemsSettlementsApi);
 	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(costAdjustmentsApi);
@@ -105,7 +107,6 @@ export class Cubits extends BaseCubits
 	public static readonly originalSalesInvoices = new PageCubit<SalesInvoiceDto>(Services.salesInvoicesApi);
 	public static readonly originalPurchaseInvoices = new PageCubit<PurchaseInvoiceDto>(Services.purchaseInvoicesApi);
 	public static readonly quotations = new PageCubit<QuotationDto>(Services.quotationsApi);
-	public static readonly posTerminals = new PageCubit<PosTerminalDto>(Services.posTerminalsApi);
 
 	public static readonly accountFilterFields = new FilterFieldsCubit("Accounts");
 	public static readonly itemFilterFields = new FilterFieldsCubit("Items");

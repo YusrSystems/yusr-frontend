@@ -1,5 +1,4 @@
 import { PosSessionDto } from "@/core/data/posSession";
-import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
 import { signal } from "@preact/signals-react";
 import { useEffect, useMemo } from "react";
@@ -17,6 +16,7 @@ import {
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
 import { AlertTriangle, Calculator, Loader2, ReceiptText } from "lucide-react";
 import { PosTempCache } from "@/features/Pos/posTempCache.ts";
+import { posSessionsApi } from "./posSessions.api";
 
 
 interface CloseSessionDialogProps
@@ -47,10 +47,10 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 			isSubmitting.value = false;
 			isLoading.value = true;
 
-			Services.posSessionsApi.Get(session.id)
+			posSessionsApi.get(session.id)
 				.then(res =>
 				{
-					if (res.data)
+					if (res.ok && res.data)
 					{
 						liveSession.value = res.data;
 					}
@@ -68,21 +68,26 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 	const handleCloseSession = async () =>
 	{
 		isSubmitting.value = true;
-
-		const res = await Services.posSessionsApi.CloseSession({
-			posSessionId: liveSession.value.id,
-			closingCash: closingCash.value,
-			closingNotes: closingNotes.value,
-			rowVer: liveSession.value.rowVer
-		});
-
-		if (res.status === 200 && res.data)
+		try
 		{
-			PosTempCache.clear();
-			onSuccess(res.data);
-			onOpenChange(false);
+			const res = await posSessionsApi.closeSession({
+				posSessionId: liveSession.value.id,
+				closingCash: closingCash.value,
+				closingNotes: closingNotes.value,
+				rowVer: liveSession.value.rowVer
+			});
+
+			if (res.ok && res.data)
+			{
+				PosTempCache.clear();
+				onSuccess(res.data);
+				onOpenChange(false);
+			}
 		}
-		isSubmitting.value = false;
+		finally
+		{
+			isSubmitting.value = false;
+		}
 	};
 
 	return (
@@ -146,11 +151,11 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 						<div className="flex flex-col gap-2 p-4 rounded-xl bg-muted/50 border border-border">
 							<span className="text-sm font-medium text-muted-foreground">المبلغ المتوقع في الصندوق</span>
 							<span className="text-2xl font-bold tabular-nums">
-                                { expectedCash.toLocaleString(undefined, {
+								{ expectedCash.toLocaleString(undefined, {
 									minimumFractionDigits: 2,
 									maximumFractionDigits: 2
 								}) } <ErpCurrencyIcon className="w-5 h-5 inline text-muted-foreground"/>
-                            </span>
+							</span>
 						</div>
 
 						<div className="flex flex-col gap-2">
@@ -172,8 +177,10 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 								"bg-red-50 border-red-200 dark:bg-red-950/30 dark:border-red-900"
 					) }>
 						<div className="flex items-center gap-2">
-							{ difference !== 0 && <AlertTriangle
-                                className={ cn("w-5 h-5", difference > 0 ? "text-blue-600" : "text-red-600") }/> }
+							{ difference !== 0 && (
+								<AlertTriangle
+									className={ cn("w-5 h-5", difference > 0 ? "text-blue-600" : "text-red-600") }/>
+							) }
 							<span className="font-semibold">العجز / الزيادة</span>
 						</div>
 						<span className={ cn(
@@ -181,11 +188,11 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 							difference === 0 ? "text-green-600" :
 								difference > 0 ? "text-blue-600" : "text-red-600"
 						) }>
-                            { difference > 0 ? "+" : "" }{ difference.toLocaleString(undefined, {
+							{ difference > 0 ? "+" : "" }{ difference.toLocaleString(undefined, {
 							minimumFractionDigits: 2,
 							maximumFractionDigits: 2
 						}) } <ErpCurrencyIcon className="w-4 h-4 inline"/>
-                        </span>
+						</span>
 					</div>
 
 					<TextAreaField
@@ -197,12 +204,17 @@ export default function CloseSessionDialog({open, onOpenChange, session, onSucce
 				</div>
 
 				<DialogFooter>
-					<Button variant="outline" onClick={ () => onOpenChange(false) }
-					        disabled={ isSubmitting.value || isLoading.value }>
+					<Button
+						variant="outline"
+						onClick={ () => onOpenChange(false) }
+						disabled={ isSubmitting.value || isLoading.value }
+					>
 						إلغاء
 					</Button>
-					<Button onClick={ handleCloseSession }
-					        disabled={ isSubmitting.value || isLoading.value || closingCash.value === undefined }>
+					<Button
+						onClick={ handleCloseSession }
+						disabled={ isSubmitting.value || isLoading.value || closingCash.value === undefined }
+					>
 						تأكيد الإغلاق
 					</Button>
 				</DialogFooter>

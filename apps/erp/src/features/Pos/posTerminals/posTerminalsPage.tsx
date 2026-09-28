@@ -17,13 +17,20 @@ import {
 import { PosTerminalDto } from "@/core/data/posTerminal.ts";
 import ChangePosTerminalDialog from "./changePosTerminalDialog";
 import { APP_NAME } from "../../../../appConfig.ts";
+import { posTerminalsApi } from "./posTerminals.api";
 
 
 export default function PosTerminalsPage()
 {
 	useSignals();
 
-	useEffect(() => Cubits.posTerminals.init(), []);
+	useEffect(() =>
+	{
+		if (Services.auth.hasAuth(SystemPermissionsResources.PosTerminals, SystemPermissionsActions.Get))
+		{
+			void Cubits.posTerminals.init();
+		}
+	}, []);
 
 	useEffect(() =>
 	{
@@ -62,13 +69,12 @@ export default function PosTerminalsPage()
 			<CrudPage.ChangeDialog
 				fetchEntity={ async (id: number) =>
 				{
-					const result = await Services.posTerminalsApi.Get(id);
+					const result = await posTerminalsApi.get(id);
 					return result.data;
 				} }
 				changeDialog={ (dto: PosTerminalDto | undefined, closeDialog) => (
 					<ChangePosTerminalDialog
 						dto={ dto }
-						service={ Services.posTerminalsApi }
 						onSuccess={ (data, mode) =>
 						{
 							if (mode === ChangeableEntityMode.Create)
@@ -84,10 +90,9 @@ export default function PosTerminalsPage()
 					/>
 				) }
 			/>
-
-			<CrudPage.DeleteDialog
+			<CrudPage.DeleteDialog<PosTerminalDto>
 				entityNameSelector={ (terminal) => terminal.name }
-				service={ Services.posTerminalsApi }
+				resource={ posTerminalsApi }
 				onSuccess={ (entity) => Cubits.posTerminals.delete(entity) }
 			/>
 		</CrudPage>
@@ -131,12 +136,6 @@ function PageTable()
 					] }
 					hasUpdatePermission={ Services.auth.hasAuth(SystemPermissionsResources.PosTerminals, SystemPermissionsActions.Update) }
 					hasDeletePermission={ Services.auth.hasAuth(SystemPermissionsResources.PosTerminals, SystemPermissionsActions.Delete) }
-				/>
-				<CrudPage.TablePagination
-					pageSize={ Cubits.posTerminals.pageSize.value }
-					totalNumber={ Cubits.posTerminals.count.value }
-					currentPage={ Cubits.posTerminals.currentPage.value }
-					onPageChanged={ (newPage) => Cubits.posTerminals.changePage(newPage) }
 				/>
 			</CrudPage.Table>
 		);

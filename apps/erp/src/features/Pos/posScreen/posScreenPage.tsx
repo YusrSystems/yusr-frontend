@@ -11,7 +11,6 @@ import CloseSessionDialog from "../posSession/closeSessionDialog";
 import { APP_NAME } from "../../../../appConfig";
 import { SalesInvoice, type SalesInvoiceDto, SalesInvoiceMode } from "@/core/data/commercial/salesInvoice";
 import { SalesInvoiceType } from "@/core/types/commercialEnums";
-
 import PosProductGrid from "./components/posProductGrid";
 import PosCart from "./components/posCart";
 import PosCheckoutDialog from "./components/posCheckoutDialog";
@@ -22,6 +21,8 @@ import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { InvoiceReport } from "@/features/reports/invoice/invoiceReport.tsx";
 import type { SalesInvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
 import { PosTempCache } from "@/features/Pos/posTempCache.ts";
+import { posSessionsApi } from "../posSession/posSessions.api";
+import { posTerminalsApi } from "../posTerminals/posTerminals.api";
 
 
 export default function PosScreenPage()
@@ -136,8 +137,8 @@ export default function PosScreenPage()
 						Promise<{ data?: PosSessionDto }> | null,
 						Promise<{ data?: PosTerminalDto }> | null
 				] = [
-					cachedSession === undefined ? Services.posSessionsApi.GetActiveSession(terminalId) : null,
-					!cachedTerminal ? Services.posTerminalsApi.Get(terminalId) : null
+					cachedSession === undefined ? posSessionsApi.getActiveSession(terminalId) : null,
+					!cachedTerminal ? posTerminalsApi.get(terminalId) : null
 				];
 
 				const [sessionRes, terminalRes] = await Promise.all([
@@ -189,8 +190,7 @@ export default function PosScreenPage()
 				isLoading.value = false;
 			}
 		};
-
-		fetchSessionAndTerminal();
+		void fetchSessionAndTerminal();
 	}, [terminalIdParam]);
 
 	const initNewCart = (terminal: PosTerminalDto, sessionId?: number) =>

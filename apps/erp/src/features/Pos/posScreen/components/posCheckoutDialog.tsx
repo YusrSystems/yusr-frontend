@@ -16,7 +16,6 @@ import { SalesInvoice } from "@/core/data/commercial/salesInvoice";
 import { SalesInvoiceType } from "@/core/types/commercialEnums";
 import { PosTerminalDto } from "@/core/data/posTerminal";
 import { PosCheckoutDto, PosPaymentLineDto, PosSessionDto } from "@/core/data/posSession";
-import { Services } from "@/core/services/services";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
 import {
 	ArrowRightLeft,
@@ -36,6 +35,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { SalesInvoiceReportResult } from "@/features/reports/invoice/invoiceReportResult.ts";
+import { posCheckoutApi } from "../posCheckout.api";
 
 
 interface PosCheckoutDialogProps
@@ -227,21 +227,12 @@ export default function PosCheckoutDialog({
 
 		try
 		{
-			const res = await Services.posCheckoutApi.Checkout(dto);
-			if (res.status === 200 && res.data)
+			const res = await posCheckoutApi.checkout(dto);
+			if (res.ok && res.data)
 			{
 				toast.success(isReturnMode ? "تمت عملية إرجاع المبلغ بنجاح" : "تمت عملية الدفع بنجاح");
 				onSuccess(res.data);
 			}
-			else
-			{
-				toast.error("حدث خطأ أثناء العملية، يرجى التحقق من البيانات");
-			}
-		}
-		catch (error)
-		{
-			toast.error("فشل الاتصال بالخادم");
-			console.error(error);
 		}
 		finally
 		{
@@ -371,33 +362,35 @@ export default function PosCheckoutDialog({
 								className="flex justify-between items-center p-4 bg-muted/30 rounded-xl border border-border">
 								<span
 									className="text-muted-foreground font-medium">{ isReturnMode ? "المسترد" : "المدفوع" }</span>
-								<span className="font-bold text-xl">{ totalPaid.toLocaleString(undefined, {
-									minimumFractionDigits: 2,
-									maximumFractionDigits: 2
-								}) } <ErpCurrencyIcon
-									className="w-4 h-4 inline text-muted-foreground"/></span>
+								<span className="font-bold text-xl">
+									{ totalPaid.toLocaleString(undefined, {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2
+									}) } <ErpCurrencyIcon className="w-4 h-4 inline text-muted-foreground"/>
+								</span>
 							</div>
-
 							{ remaining > 0 ? (
 								<div
 									className="flex justify-between items-center p-4 bg-red-50 text-red-600 rounded-xl border border-red-100">
 									<span className="font-bold">المتبقي</span>
-									<span className="font-black text-2xl">{ remaining.toLocaleString(undefined, {
-										minimumFractionDigits: 2,
-										maximumFractionDigits: 2
-									}) }
-										<ErpCurrencyIcon className="w-5 h-5 inline"/></span>
+									<span className="font-black text-2xl">
+										{ remaining.toLocaleString(undefined, {
+											minimumFractionDigits: 2,
+											maximumFractionDigits: 2
+										}) } <ErpCurrencyIcon className="w-5 h-5 inline"/>
+									</span>
 								</div>
 							) : (
 								!isReturnMode && (
 									<div
 										className="flex justify-between items-center p-4 bg-green-50 text-green-600 rounded-xl border border-green-100">
 										<span className="font-bold">الباقي للعميل (Change)</span>
-										<span className="font-black text-2xl">{ change.toLocaleString(undefined, {
-											minimumFractionDigits: 2,
-											maximumFractionDigits: 2
-										}) } <ErpCurrencyIcon
-											className="w-5 h-5 inline"/></span>
+										<span className="font-black text-2xl">
+											{ change.toLocaleString(undefined, {
+												minimumFractionDigits: 2,
+												maximumFractionDigits: 2
+											}) } <ErpCurrencyIcon className="w-5 h-5 inline"/>
+										</span>
 									</div>
 								)
 							) }

@@ -17,7 +17,6 @@ import {
 	TextAreaField,
 	YusrBackground
 } from "yusr-ui";
-import { Services } from "@/core/services/services";
 import { Cubits } from "@/core/services/cubits";
 import { PosSessionDto } from "@/core/data/posSession";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon";
@@ -25,6 +24,7 @@ import CloseSessionDialog from "./closeSessionDialog";
 import { APP_NAME } from "../../../../appConfig";
 import { PosTempCache } from "../posTempCache";
 import type { PosTerminalDto } from "@/core/data/posTerminal.ts";
+import { posSessionsApi } from "./posSessions.api";
 
 
 export default function PosEntryPage()
@@ -45,7 +45,7 @@ export default function PosEntryPage()
 	useEffect(() =>
 	{
 		document.title = `نقطة البيع | ${ APP_NAME }`;
-		Cubits.posTerminals.init();
+		void Cubits.posTerminals.init();
 	}, []);
 
 	useEffect(() =>
@@ -84,9 +84,8 @@ export default function PosEntryPage()
 			{
 				PosTempCache.setTerminal(terminal);
 			}
-
-			const res = await Services.posSessionsApi.GetActiveSession(terminalId);
-			if (res && res.data)
+			const res = await posSessionsApi.getActiveSession(terminalId);
+			if (res.ok && res.data)
 			{
 				const session = res.data;
 				PosTempCache.setSession(terminalId, session);
@@ -131,13 +130,12 @@ export default function PosEntryPage()
 		isStarting.value = true;
 		try
 		{
-			const res = await Services.posSessionsApi.OpenSession({
+			const res = await posSessionsApi.openSession({
 				posTerminalId: selectedTerminalId.value,
 				openingCash: openingCash.value,
 				openingNotes: openingNotes.value
 			});
-
-			if (res.status === 200 && res.data)
+			if (res.ok && res.data)
 			{
 				PosTempCache.setSession(selectedTerminalId.value, res.data);
 				const terminal = Cubits.posTerminals.entities.value.find(t => t.id === selectedTerminalId.value);
@@ -148,10 +146,6 @@ export default function PosEntryPage()
 
 				navigate(`/pos/screen/${ selectedTerminalId.value }`, {replace: true});
 			}
-		}
-		catch (error)
-		{
-			console.error("Failed to open POS session:", error);
 		}
 		finally
 		{
@@ -209,8 +203,9 @@ export default function PosEntryPage()
 								</div>
 								<div className="flex justify-between">
 									<span className="text-muted-foreground">تاريخ الافتتاح:</span>
-									<span className="font-semibold"
-									      dir="ltr">{ new Date(activeSession.value.openedAt).toLocaleString() }</span>
+									<span className="font-semibold" dir="ltr">
+										{ new Date(activeSession.value.openedAt).toLocaleString() }
+									</span>
 								</div>
 							</div>
 							<div className="flex gap-2">
@@ -231,7 +226,7 @@ export default function PosEntryPage()
 									size="lg"
 									variant="destructive"
 									className="w-full text-md h-12"
-									onClick={ () => isCloseDialogOpen.value = true }
+									onClick={ () => (isCloseDialogOpen.value = true) }
 								>
 									إغلاق الوردية
 								</Button>
@@ -298,8 +293,11 @@ export default function PosEntryPage()
 										disabled={ openingCash.value === undefined || isStarting.value }
 										onClick={ handleOpenSession }
 									>
-										{ isStarting.value ? <Loader2 className="w-5 h-5 animate-spin"/> :
-											<Play className="w-5 h-5 me-2"/> }
+										{ isStarting.value ? (
+											<Loader2 className="w-5 h-5 animate-spin"/>
+										) : (
+											<Play className="w-5 h-5 me-2"/>
+										) }
 										بدء الوردية
 									</Button>
 								</div>
@@ -312,7 +310,7 @@ export default function PosEntryPage()
 			{ activeSession.value && (
 				<CloseSessionDialog
 					open={ isCloseDialogOpen.value }
-					onOpenChange={ (open) => isCloseDialogOpen.value = open }
+					onOpenChange={ (open) => (isCloseDialogOpen.value = open) }
 					session={ activeSession.value }
 					onSuccess={ async () =>
 					{

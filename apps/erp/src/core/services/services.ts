@@ -2,9 +2,6 @@ import { BaseApiService, BaseServices, UserDto } from "yusr-ui";
 import { ErpAuthService } from "./erpAuthService";
 import DashboardApiService from "@/core/networking/dashboardApiService.ts";
 import SettingsApiService from "@/core/networking/settingsApiService.ts";
-import PosSessionApiService from "@/core/networking/posSessionApiService.ts";
-import PosCheckoutApiService from "@/core/networking/posCheckoutApiService.ts";
-import PosTerminalsApiService from "@/core/networking/posTerminalsApiService.ts";
 import PurchaseInvoicesApiService from "@/core/networking/purchaseInvoicesApiService.ts";
 import SalesInvoicesApiService from "@/core/networking/salesInvoicesApiService.ts";
 import type { QuotationDto } from "@/core/data/commercial/quotation.ts";
@@ -25,6 +22,9 @@ import { balanceTransfersApi } from "@/features/balanceTransfer/balanceTransfers
 import { paymentMethodsApi } from "@/features/paymentMethods/paymentMethod.api.ts";
 import { fiscalYearsApi } from "@/features/fiscalYears/fiscalYears.api";
 import { vouchersApi } from "@/features/vouchers/vouchers.api";
+import { posTerminalsApi } from "@/features/Pos/posTerminals/posTerminals.api";
+import { posSessionsApi } from "@/features/Pos/posSession/posSessions.api";
+import { posCheckoutApi } from "@/features/Pos/posScreen/posCheckout.api";
 
 
 export class Services extends BaseServices
@@ -48,14 +48,14 @@ export class Services extends BaseServices
 	public static readonly balanceTransfersApi = balanceTransfersApi;
 	public static readonly fiscalYearsApi = fiscalYearsApi;
 	public static readonly voucherApi = vouchersApi;
+	public static readonly posTerminalsApi = posTerminalsApi;
+	public static readonly posSessionsApi = posSessionsApi;
+	public static readonly posCheckoutApi = posCheckoutApi;
 	public static readonly salesInvoicesApi = new SalesInvoicesApiService();
 	public static readonly purchaseInvoicesApi = new PurchaseInvoicesApiService();
 	public static readonly quotationsApi = new BaseApiService<QuotationDto>("Quotations");
 	public static readonly settingApi = new SettingsApiService();
 	public static readonly dashboardApi = new DashboardApiService();
-	public static readonly posSessionsApi = new PosSessionApiService();
-	public static readonly posCheckoutApi = new PosCheckoutApiService();
-	public static readonly posTerminalsApi = new PosTerminalsApiService();
 	public static readonly usersApi = new BaseApiService<UserDto>("Users");
 
 	static

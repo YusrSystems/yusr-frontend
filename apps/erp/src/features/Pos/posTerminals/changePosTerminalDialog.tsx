@@ -26,21 +26,21 @@ import { PartnerType } from "@/core/data/partner.ts";
 import { ChevronDown, ChevronUp, GripVertical, MonitorSmartphone, Star, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { ItemDto } from "@/core/data/item.ts";
+import { posTerminalsApi } from "./posTerminals.api";
 
 
-export default function ChangePosTerminalDialog({dto, service, onSuccess}: CommonChangeDialogProps<PosTerminalDto>)
+export default function ChangePosTerminalDialog({dto, onSuccess}: CommonChangeDialogProps<PosTerminalDto>)
 {
 	useSignals();
-
-	const entity = useMemo(() => signal<PosTerminal>(dto ? PosTerminal.load(dto) : PosTerminal.create()), []);
+	const entity = useMemo(() => signal<PosTerminal>(dto ? PosTerminal.load(dto) : PosTerminal.create()), [dto]);
 
 	useEffect(() =>
 	{
-		Cubits.stores.init();
-		Cubits.branches.init();
-		Cubits.partners.init([PartnerType.Customer]);
-		Cubits.paymentMethods.init();
-		Cubits.users.init();
+		void Cubits.stores.init();
+		void Cubits.branches.init();
+		void Cubits.partners.init([PartnerType.Customer]);
+		void Cubits.paymentMethods.init();
+		void Cubits.users.init();
 	}, []);
 
 	useEffect(() =>
@@ -70,10 +70,9 @@ export default function ChangePosTerminalDialog({dto, service, onSuccess}: Commo
 						icon: MonitorSmartphone,
 						active: true,
 						hasError: entity.value.hasErrors,
-						content: <GeneralTab
-							entity={ entity.value }
-						/>
-					}, {
+						content: <GeneralTab entity={ entity.value }/>
+					},
+					{
 						label: "ترتيب المفضلة",
 						icon: Star,
 						active: false,
@@ -84,9 +83,9 @@ export default function ChangePosTerminalDialog({dto, service, onSuccess}: Commo
 
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
-				<ChangeDialog.SaveButton
+				<ChangeDialog.SaveButton<PosTerminal, PosTerminalDto>
 					entity={ entity }
-					service={ service }
+					resource={ posTerminalsApi }
 					onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 				/>
 			</ChangeDialog.Footer>
@@ -94,11 +93,7 @@ export default function ChangePosTerminalDialog({dto, service, onSuccess}: Commo
 	);
 }
 
-function GeneralTab({
-	entity
-}: {
-	entity: PosTerminal;
-})
+function GeneralTab({entity}: { entity: PosTerminal })
 {
 	useSignals();
 
@@ -242,10 +237,7 @@ function FavoritesOrderTab({entity}: { entity: PosTerminal })
 				<div className="flex-1">
 					<FormField label="إضافة عنصر إلى المفضلة">
 						<ItemsSearchableSelect
-							onSelect={ (item) =>
-							{
-								addItem(item);
-							} }
+							onSelect={ (item) => addItem(item) }
 						/>
 					</FormField>
 				</div>
@@ -260,17 +252,17 @@ function FavoritesOrderTab({entity}: { entity: PosTerminal })
 				<>
 					<p className="text-xs text-muted-foreground">
 						اسحب العناصر لإعادة ترتيبها، أو استخدم الأسهم، أو أدخل رقم الترتيب مباشرة لتحديد موضع الزر في
-						شاشة نقطة البيع (مثال: أهم 4 مشروبات في الصف الأول).
+						شاشة نقطة البيع.
 					</p>
 
 					{ items.value.map((fav, index) => (
 						<div
 							key={ fav.itemId }
 							draggable
-							onDragStart={ () => draggedIndex.value = index }
+							onDragStart={ () => (draggedIndex.value = index) }
 							onDragOver={ (e) => e.preventDefault() }
 							onDrop={ () => handleDrop(index) }
-							onDragEnd={ () => draggedIndex.value = null }
+							onDragEnd={ () => (draggedIndex.value = null) }
 							className={ `flex items-center gap-2 p-2 rounded-lg border bg-card transition-colors ${
 								draggedIndex.value === index ? "opacity-40 border-primary" : "border-border"
 							}` }
