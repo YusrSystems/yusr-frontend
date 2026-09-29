@@ -64,7 +64,7 @@ export class ItemTransferDto extends Dto implements IStatusWorkflowDto, IRowVerD
 	public fromStoreName?: string;
 	public toStoreId!: number;
 	public toStoreName?: string;
-	public itemTransfersItems!: ItemTransfersItemDto[];
+	public items!: ItemTransfersItemDto[];
 	public rowVer!: number;
 	public transactionStatus: TransactionStatus = TransactionStatus.Draft;
 }
@@ -77,7 +77,7 @@ export default class ItemTransfer extends ChangeableEntity<ItemTransferDto> impl
 	public fromStoreName: Signal<string | undefined>;
 	public toStoreId: Signal<number | undefined>;
 	public toStoreName: Signal<string | undefined>;
-	public itemTransfersItems: Signal<ItemTransfersItem[]>;
+	public items: Signal<ItemTransfersItem[]>;
 	public rowVer: Signal<number>;
 	public transactionStatus: Signal<TransactionStatus>;
 
@@ -102,8 +102,8 @@ export default class ItemTransfer extends ChangeableEntity<ItemTransferDto> impl
 				)
 			]
 		}, {
-			field: "itemTransfersItems",
-			selector: (d) => d.itemTransfersItems,
+			field: "items",
+			selector: (d) => d.items,
 			validators: [Validators.arrayMinLength(1, i18n.t("stocking:itemTransfers.itemsRequired"))]
 		}], mode);
 
@@ -113,9 +113,21 @@ export default class ItemTransfer extends ChangeableEntity<ItemTransferDto> impl
 		this.fromStoreName = this.assign("fromStoreName", dto?.fromStoreName ?? undefined);
 		this.toStoreId = this.assign("toStoreId", dto?.toStoreId ?? undefined);
 		this.toStoreName = this.assign("toStoreName", dto?.toStoreName ?? undefined);
-		const itemsList = (dto?.itemTransfersItems ?? []).map((s) => new ItemTransfersItem(s));
-		this.itemTransfersItems = this.assign("itemTransfersItems", itemsList);
+		const itemsList = (dto?.items ?? []).map((s) => new ItemTransfersItem(s));
+		this.items = this.assign("items", itemsList);
 		this.rowVer = this.assign("rowVer", dto?.rowVer);
 		this.transactionStatus = this.assign("transactionStatus", dto?.transactionStatus ?? TransactionStatus.Draft);
+
+		const checkChildren = () =>
+		{
+			this.hasChanges.value =
+				this.items.value.some((t) => t.hasChanges.value);
+		};
+
+		this.items.subscribe((itemsList) =>
+		{
+			itemsList.forEach((s) => s.hasChanges.subscribe(checkChildren));
+			checkChildren();
+		});
 	}
 }

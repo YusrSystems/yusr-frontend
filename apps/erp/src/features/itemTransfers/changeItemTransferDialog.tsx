@@ -120,7 +120,7 @@ export default function ChangeItemTransferDialog(
 								disabled={ !isDraft }
 								onSelect={ () =>
 								{
-									entity.value.itemTransfersItems.value = [];
+									entity.value.items.value = [];
 								} }
 							/>
 						</FormField>

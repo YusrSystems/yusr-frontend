@@ -32,7 +32,7 @@ export function ItemTransferReport({
 	const getMultiplier = (item: ItemTransfersItemDto) =>
 		item.uoMs?.find((m) => m.id === item.itemUoMId)?.quantityMultiplier ?? 1;
 
-	const rows = itemTransfer.itemTransfersItems ?? [];
+	const rows = itemTransfer.items ?? [];
 
 	return (
 		<ReportContainer isPortal={ isPortal }>

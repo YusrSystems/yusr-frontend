@@ -22,7 +22,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 	const groupedItems = (() =>
 	{
 		const groups = new Map<number, ItemTransfersItem[]>();
-		entity.itemTransfersItems?.value.forEach((item) =>
+		entity.items?.value.forEach((item) =>
 		{
 			if (!groups.has(item.itemId.value))
 			{
@@ -114,7 +114,7 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 			return;
 		}
 
-		entity.itemTransfersItems.value = [...entity.itemTransfersItems.value, createTransferItem(storeItem, unitDetails)];
+		entity.items.value = [...entity.items.value, createTransferItem(storeItem, unitDetails)];
 	};
 
 	const handleStoreItemSelect = (item: ItemDto, selectedUoMId?: number) =>
@@ -128,28 +128,28 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 			return;
 		}
 
-		const list = [...(entity.itemTransfersItems.value || [])];
+		const list = [...(entity.items.value || [])];
 		const existingIndex = list.findIndex((i) => i.itemId.value === item.id && i.itemUoMId.value === itemUoM.id);
 
 		if (existingIndex !== -1 && list[existingIndex])
 		{
 			list[existingIndex].quantity.value += 1;
-			entity.itemTransfersItems.value = list;
+			entity.items.value = list;
 		}
 		else
 		{
-			entity.itemTransfersItems.value = [...list, createTransferItem(item, itemUoM)];
+			entity.items.value = [...list, createTransferItem(item, itemUoM)];
 		}
 	};
 
 	const removeUnit = (row: ItemTransfersItem) =>
 	{
-		entity.itemTransfersItems.value = entity.itemTransfersItems?.value.filter((i) => i.id.value !== row.id.value) || [];
+		entity.items.value = entity.items?.value.filter((i) => i.id.value !== row.id.value) || [];
 	};
 
 	const removeEntireItem = (itemId: number) =>
 	{
-		entity.itemTransfersItems.value = entity.itemTransfersItems?.value.filter((i) => i.itemId.value !== itemId) || [];
+		entity.items.value = entity.items?.value.filter((i) => i.itemId.value !== itemId) || [];
 	};
 
 	if (!entity.fromStoreId.value)
@@ -284,11 +284,11 @@ export default function ItemTransferTable({entity}: { entity: ItemTransfer; })
 						className="flex flex-col items-center justify-center p-10 text-center text-muted-foreground border border-dashed border-border rounded-lg bg-background/50">
 						<p>{ t("itemTransfers.noItems") }</p>
 						<p className="text-xs mt-1">{ t("itemTransfers.noItemsHint") }</p>
-						{ entity.getError("itemTransfersItems").value && (
+						{ entity.getError("items").value && (
 							<div
 								className="flex items-center gap-1 text-red-500 mt-3 text-sm font-medium bg-red-500/10 px-3 py-1.5 rounded-md">
 								<AlertCircle className="h-4 w-4"/>
-								{ entity.getError("itemTransfersItems").value }
+								{ entity.getError("items").value }
 							</div>
 						) }
 					</div>
