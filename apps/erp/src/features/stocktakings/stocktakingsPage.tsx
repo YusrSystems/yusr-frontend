@@ -13,6 +13,7 @@ import {
 	CrudPage,
 	DropdownMenuItem,
 	PageError,
+	PageLoaded,
 	PageLoading,
 	SystemPermissionsActions,
 	TablePreview,
@@ -231,77 +232,82 @@ function PageTable({
 		SystemPermissionsActions.Add
 	);
 
-	return (
-		<CrudPage.Table>
-			<CrudPage.TableBody<StocktakingDto>
-				data={ Cubits.stocktaking.entities.value }
-				headerRows={ [
-					{rowBody: "", rowStyles: "text-left w-12.5"},
-					{rowBody: t("stocktakings.stocktakingId"), rowStyles: "w-32"},
-					{rowBody: t("stocktakings.date"), rowStyles: "w-32"},
-					{rowBody: t("stocktakings.store"), rowStyles: "w-48"},
-					{rowBody: t("stocktakings.description"), rowStyles: ""},
-					...((canPrint || canAddSettlement) ? [{rowBody: "", rowStyles: "w-44"}] : [])
-				] }
-				tableRowMapper={ (stocktaking) => [
-					{rowBody: `#${ stocktaking.id }`, rowStyles: ""},
-					{rowBody: stocktaking.date, rowStyles: ""},
-					{rowBody: stocktaking.storeName, rowStyles: "font-semibold"},
-					{rowBody: stocktaking.description ?? "-", rowStyles: "text-sm text-gray-500"},
-					...((canPrint || canAddSettlement)
-						? [{
-							rowBody: (
-								<div className="flex items-center justify-end gap-1.5">
-									{ canAddSettlement && (
-										<Button
-											variant="outline"
-											size="sm"
-											className="h-8 gap-1.5 text-xs text-primary font-medium"
-											disabled={ convertingId === stocktaking.id }
-											onClick={ () => onConvertToSettlement(stocktaking) }
-											title="تحويل هذا الجرد إلى تسوية مخزون"
-										>
-											{ convertingId === stocktaking.id ? (
-												<Loader2 className="h-3.5 w-3.5 animate-spin"/>
-											) : (
-												<ArrowRightLeft className="h-3.5 w-3.5"/>
-											) }
-											<span>تسوية</span>
-										</Button>
-									) }
-									{ canPrint && (
-										<Button
-											variant="outline"
-											size="icon-sm"
-											onClick={ () => onPrint(stocktaking) }
-											title="طباعة تقرير الجرد"
-										>
-											<Printer className="h-4 w-4"/>
-										</Button>
-									) }
-								</div>
-							),
-							rowStyles: "w-44"
-						}]
-						: [])
-				] }
-				hasUpdatePermission={ Services.auth.hasAuth(
-					SystemPermissionsResources.Stocktakings,
-					SystemPermissionsActions.Update
-				) }
-				hasDeletePermission={ Services.auth.hasAuth(
-					SystemPermissionsResources.Stocktakings,
-					SystemPermissionsActions.Delete
-				) }
-				dropdownItems={ (stocktaking, openEditDialog) => getActions(stocktaking, openEditDialog, DropdownMenuItem) }
-				contextMenuItems={ (stocktaking, openEditDialog) => getActions(stocktaking, openEditDialog, ContextMenuItem) }
-			/>
-			<CrudPage.TablePagination
-				pageSize={ Cubits.stocktaking.pageSize.value }
-				totalNumber={ Cubits.stocktaking.count.value }
-				currentPage={ Cubits.stocktaking.currentPage.value }
-				onPageChanged={ (newPage) => Cubits.stocktaking.changePage(newPage) }
-			/>
-		</CrudPage.Table>
-	);
+	if (Cubits.stocktaking.state.value instanceof PageLoaded)
+	{
+		return (
+			<CrudPage.Table>
+				<CrudPage.TableBody<StocktakingDto>
+					data={ Cubits.stocktaking.entities.value }
+					headerRows={ [
+						{rowBody: "", rowStyles: "text-left w-12.5"},
+						{rowBody: t("stocktakings.stocktakingId"), rowStyles: "w-32"},
+						{rowBody: t("stocktakings.date"), rowStyles: "w-32"},
+						{rowBody: t("stocktakings.store"), rowStyles: "w-48"},
+						{rowBody: t("stocktakings.description"), rowStyles: ""},
+						...((canPrint || canAddSettlement) ? [{rowBody: "", rowStyles: "w-44"}] : [])
+					] }
+					tableRowMapper={ (stocktaking) => [
+						{rowBody: `#${ stocktaking.id }`, rowStyles: ""},
+						{rowBody: stocktaking.date, rowStyles: ""},
+						{rowBody: stocktaking.storeName, rowStyles: "font-semibold"},
+						{rowBody: stocktaking.description ?? "-", rowStyles: "text-sm text-gray-500"},
+						...((canPrint || canAddSettlement)
+							? [{
+								rowBody: (
+									<div className="flex items-center justify-end gap-1.5">
+										{ canAddSettlement && (
+											<Button
+												variant="outline"
+												size="sm"
+												className="h-8 gap-1.5 text-xs text-primary font-medium"
+												disabled={ convertingId === stocktaking.id }
+												onClick={ () => onConvertToSettlement(stocktaking) }
+												title="تحويل هذا الجرد إلى تسوية مخزون"
+											>
+												{ convertingId === stocktaking.id ? (
+													<Loader2 className="h-3.5 w-3.5 animate-spin"/>
+												) : (
+													<ArrowRightLeft className="h-3.5 w-3.5"/>
+												) }
+												<span>تسوية</span>
+											</Button>
+										) }
+										{ canPrint && (
+											<Button
+												variant="outline"
+												size="icon-sm"
+												onClick={ () => onPrint(stocktaking) }
+												title="طباعة تقرير الجرد"
+											>
+												<Printer className="h-4 w-4"/>
+											</Button>
+										) }
+									</div>
+								),
+								rowStyles: "w-44"
+							}]
+							: [])
+					] }
+					hasUpdatePermission={ Services.auth.hasAuth(
+						SystemPermissionsResources.Stocktakings,
+						SystemPermissionsActions.Update
+					) }
+					hasDeletePermission={ Services.auth.hasAuth(
+						SystemPermissionsResources.Stocktakings,
+						SystemPermissionsActions.Delete
+					) }
+					dropdownItems={ (stocktaking, openEditDialog) => getActions(stocktaking, openEditDialog, DropdownMenuItem) }
+					contextMenuItems={ (stocktaking, openEditDialog) => getActions(stocktaking, openEditDialog, ContextMenuItem) }
+				/>
+				<CrudPage.TablePagination
+					pageSize={ Cubits.stocktaking.pageSize.value }
+					totalNumber={ Cubits.stocktaking.count.value }
+					currentPage={ Cubits.stocktaking.currentPage.value }
+					onPageChanged={ (newPage) => Cubits.stocktaking.changePage(newPage) }
+				/>
+			</CrudPage.Table>
+		);
+	}
+
+	return <TablePreview.Empty/>;
 }
