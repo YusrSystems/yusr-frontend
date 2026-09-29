@@ -8,7 +8,7 @@ import { unitsApi } from "@/features/units/units.api";
 import { brandsApi } from "@/features/brands/brands.api";
 import { categoriesApi } from "@/features/itemCategories/categories.api";
 import { itemsApi } from "@/features/items/items.api";
-import { itemsSettlementsApi, stocktakingsApi } from "@/features/stocktakings/stocktakings.api";
+import { stocktakingsApi } from "@/features/stocktakings/stocktakings.api";
 import { costAdjustmentsApi } from "@/features/costAdjustments/costAdjustments.api";
 import { itemTransfersApi } from "@/features/itemTransfers/itemTransfers.api";
 import { accountsApi } from "@/features/accounts/accounts.api";
@@ -26,6 +26,7 @@ import { quotationsApi } from "@/features/commercial/quotations/quotations.api";
 import { settingsApi } from "@/features/setting/settings.api";
 import { dashboardApi } from "@/features/dashboard/dashboard.api";
 import { eInvoicingApi } from "@/features/setting/eInvoicing/eInvoicing.api";
+import { itemsSettlementsApi } from "@/features/stocktakings/itemSettlements.api.ts";
 
 
 export class Services extends BaseServices

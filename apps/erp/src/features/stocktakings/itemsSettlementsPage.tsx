@@ -1,4 +1,5 @@
-import type { StocktakingDto } from "@/core/data/stocktaking.ts";
+import type { ItemsSettlementDto } from "@/core/data/itemsSettlement.ts";
+import ItemsSettlement from "@/core/data/itemsSettlement.ts";
 import { Cubits } from "@/core/services/cubits.ts";
 import { Services } from "@/core/services/services.ts";
 import { useSignals } from "@preact/signals-react/runtime";
@@ -24,7 +25,7 @@ import { StocktakingReport } from "@/features/reports/stocktaking/stocktakingRep
 import { PortalReportContainer } from "@/features/report/reportContainer.tsx";
 import { APP_NAME } from "../../../appConfig.ts";
 import { getTransactionStatusColor, getTransactionStatusName, TransactionStatus } from "#/types/transactionStatus.ts";
-import { itemsSettlementsApi } from "@/features/stocktakings/stocktakings.api.ts";
+import { itemsSettlementsApi } from "@/features/stocktakings/itemSettlements.api.ts";
 
 
 export default function ItemsSettlementsPage()
@@ -49,12 +50,11 @@ export default function ItemsSettlementsPage()
 		};
 	}, [t]);
 
-	const printedSettlement = useMemo(() => signal<StocktakingDto | undefined>(undefined), []);
+	const printedSettlement = useMemo(() => signal<ItemsSettlementDto | undefined>(undefined), []);
 
 	useEffect(() =>
 	{
 		const settlement = printedSettlement.value;
-
 		if (settlement)
 		{
 			document.title = `تسوية مواد رقم #${ settlement.id }`;
@@ -63,7 +63,6 @@ export default function ItemsSettlementsPage()
 		{
 			document.title = t("itemsSettlements.title");
 		}
-
 		return () =>
 		{
 			document.title = APP_NAME;
@@ -77,7 +76,7 @@ export default function ItemsSettlementsPage()
 
 	return (
 		<>
-			<CrudPage<StocktakingDto>>
+			<CrudPage<ItemsSettlementDto>>
 				<CrudPage.Header
 					title={ t("itemsSettlements.title") }
 					addButtonTitle={ t("itemsSettlements.addNewTitle") }
@@ -86,11 +85,8 @@ export default function ItemsSettlementsPage()
 						SystemPermissionsActions.Add
 					) }
 				/>
-
 				<Cards/>
-
 				<CrudPage.SearchInput onSearch={ (searchText) => Cubits.itemsSettlements.search(searchText) }/>
-
 				<PageTable onPrint={ (settlement) =>
 				{
 					printedSettlement.value = settlement;
@@ -100,7 +96,6 @@ export default function ItemsSettlementsPage()
 						window.removeEventListener("afterprint", handleAfterPrint);
 					};
 					window.addEventListener("afterprint", handleAfterPrint);
-
 					requestAnimationFrame(() =>
 					{
 						requestAnimationFrame(() =>
@@ -109,20 +104,21 @@ export default function ItemsSettlementsPage()
 						});
 					});
 				} }/>
-
 				<CrudPage.ChangeDialog
 					fetchEntity={ async (id: number) =>
 					{
 						const result = await itemsSettlementsApi.get(id);
 						return result.data;
 					} }
-					changeDialog={ (dto: StocktakingDto | undefined, closeDialog) => (
-						<ChangeStocktakingDialog
+					changeDialog={ (dto: ItemsSettlementDto | undefined, closeDialog) => (
+						<ChangeStocktakingDialog<ItemsSettlement, ItemsSettlementDto>
 							addDialogTitle={ t("itemsSettlements.addNewTitle") }
 							updateDialogTitle={ `${ t("common:crudRow.edit") } ${ t("itemsSettlements.entityName") }` }
 							dto={ dto }
 							resource={ itemsSettlementsApi }
+							hasWorkflow={ true }
 							showIsOpeningBalance={ true }
+							createEntity={ (d) => (d ? ItemsSettlement.load(d) : ItemsSettlement.create()) }
 							onSuccess={ (data, mode) =>
 							{
 								if (mode === ChangeableEntityMode.Create)
@@ -138,7 +134,7 @@ export default function ItemsSettlementsPage()
 						/>
 					) }
 				/>
-				<CrudPage.DeleteDialog<StocktakingDto>
+				<CrudPage.DeleteDialog<ItemsSettlementDto>
 					entityNameSelector={ () => `"${ t("itemsSettlements.entityName") }"` }
 					resource={ itemsSettlementsApi }
 					onSuccess={ (entity) =>
@@ -155,7 +151,6 @@ export default function ItemsSettlementsPage()
 					} }
 				/>
 			</CrudPage>
-
 			{ createPortal(
 				<PortalReportContainer>
 					<StocktakingReport
@@ -185,7 +180,7 @@ function Cards()
 	);
 }
 
-function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void })
+function PageTable({onPrint}: { onPrint: (stocktaking: ItemsSettlementDto) => void })
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
@@ -194,12 +189,11 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 	{
 		return <TablePreview.Loading/>;
 	}
-
 	if (Cubits.itemsSettlements.state.value instanceof PageLoaded)
 	{
 		return (
 			<CrudPage.Table>
-				<CrudPage.TableBody<StocktakingDto>
+				<CrudPage.TableBody<ItemsSettlementDto>
 					isShareablePage={ true }
 					data={ Cubits.itemsSettlements.entities.value }
 					headerRows={ [
@@ -275,11 +269,9 @@ function PageTable({onPrint}: { onPrint: (stocktaking: StocktakingDto) => void }
 			</CrudPage.Table>
 		);
 	}
-
 	if (Cubits.itemsSettlements.state.value instanceof PageError)
 	{
 		return <TablePreview.Error/>;
 	}
-
 	return <TablePreview.Empty/>;
 }

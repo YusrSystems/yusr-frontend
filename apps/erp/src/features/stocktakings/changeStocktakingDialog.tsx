@@ -1,17 +1,18 @@
 import StoresSearchableSelect from "@/core/components/searchableSelect/storesSearchableSelect";
-import type { StocktakingDto } from "@/core/data/stocktaking";
-import Stocktaking from "@/core/data/stocktaking";
+import { type StocktakingDto } from "@/core/data/stocktaking";
+import type ItemsSettlement from "@/core/data/itemsSettlement";
+import { ItemsSettlementDto } from "@/core/data/itemsSettlement";
 import { StocktakingItem } from "@/core/data/stocktakingItem";
 import { Cubits } from "@/core/services/cubits";
-import { signal } from "@preact/signals-react";
+import { type Signal, signal } from "@preact/signals-react";
 import { useSignals } from "@preact/signals-react/runtime";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	ChangeableEntity,
 	ChangeableEntityMode,
 	ChangeDialog,
 	CheckboxField,
-	type CommonChangeDialogProps,
 	DateField,
 	FieldGroup,
 	FieldsSection,
@@ -25,47 +26,77 @@ import StocktakingItemsTable from "./stocktakingItemsTable";
 import { TransactionStatus } from "#/types/transactionStatus.ts";
 
 
-export default function ChangeStocktakingDialog(
-	{dto, resource, onSuccess, addDialogTitle, updateDialogTitle, showIsOpeningBalance}:
-		CommonChangeDialogProps<StocktakingDto> & {
-		resource: ICrudResource<StocktakingDto>;
-		addDialogTitle: string;
-		updateDialogTitle: string;
-		showIsOpeningBalance?: boolean;
-	}
-)
+export interface IStocktakingEntity<TDto extends StocktakingDto> extends ChangeableEntity<TDto>
+{
+	date: Signal<string>;
+	storeId: Signal<number | undefined>;
+	storeName: Signal<string | undefined>;
+	description: Signal<string | undefined>;
+	items: Signal<StocktakingItem[]>;
+	rowVer: Signal<number>;
+}
+
+function hasStatusWorkflow(data: StocktakingDto): data is ItemsSettlementDto
+{
+	return "transactionStatus" in data;
+}
+
+export interface ChangeStocktakingDialogProps<
+	TEntity extends IStocktakingEntity<TDto>,
+	TDto extends StocktakingDto
+>
+{
+	dto?: TDto;
+	resource: ICrudResource<TDto>;
+	addDialogTitle: string;
+	updateDialogTitle: string;
+	createEntity: (dto?: TDto) => TEntity;
+	onSuccess?: (newData: TDto, mode: ChangeableEntityMode) => void;
+	showIsOpeningBalance?: boolean;
+	hasWorkflow?: boolean;
+}
+
+export default function ChangeStocktakingDialog<
+	TEntity extends IStocktakingEntity<TDto>,
+	TDto extends StocktakingDto
+>({
+	dto,
+	resource,
+	onSuccess,
+	createEntity,
+	addDialogTitle,
+	updateDialogTitle,
+	showIsOpeningBalance = false,
+	hasWorkflow = false
+}: ChangeStocktakingDialogProps<TEntity, TDto>)
 {
 	useSignals();
 	const {t} = useTranslation(["stocking", "common"]);
 	const isLoading = useMemo(() => signal<boolean>(false), []);
-	const entity = useMemo(() => signal<Stocktaking>(dto ? Stocktaking.load(dto) : Stocktaking.create()), [dto]);
+	const entity = useMemo(() => signal<TEntity>(createEntity(dto)), [dto]);
+
+	const settlementEntity = hasWorkflow ? (entity.value as unknown as ItemsSettlement) : null;
+	const isDraft = settlementEntity ? settlementEntity.transactionStatus.value === TransactionStatus.Draft : true;
+	const isVoided = settlementEntity ? settlementEntity.transactionStatus.value === TransactionStatus.Voided : false;
+	const isFullyEditable = hasWorkflow ? isDraft : true;
+	const isUpdateMode = entity.value.mode.value === ChangeableEntityMode.Update;
 
 	useEffect(() =>
 	{
-		if (entity.value.mode.value !== ChangeableEntityMode.Create)
-		{
-			return;
-		}
-
+		if (!isFullyEditable) return;
 		void Cubits.stores.init();
-	}, [entity.value.mode.value]);
+	}, [isFullyEditable]);
 
 	useEffect(() =>
 	{
-		if (entity.value.mode.value !== ChangeableEntityMode.Create)
-		{
-			return;
-		}
-
+		if (!isFullyEditable) return;
 		if (entity.value.storeId.value && entity.value.date.value)
 		{
 			Cubits.items.initForStoreAndDate([ItemType.Product], entity.value.storeId.value, entity.value.date.value);
 		}
-	}, [entity.value.mode.value, entity.value.storeId.value, entity.value.date.value]);
+	}, [isFullyEditable, entity.value.storeId.value, entity.value.date.value]);
 
-	const title = entity.value.mode.value === ChangeableEntityMode.Create
-		? addDialogTitle
-		: updateDialogTitle;
+	const title = !isUpdateMode ? addDialogTitle : updateDialogTitle;
 
 	if (isLoading.value)
 	{
@@ -77,31 +108,25 @@ export default function ChangeStocktakingDialog(
 		);
 	}
 
-	const isDraft = entity.value.transactionStatus.value === TransactionStatus.Draft;
-	const isPosted = entity.value.transactionStatus.value === TransactionStatus.Posted;
-	const isVoided = entity.value.transactionStatus.value === TransactionStatus.Voided;
-
 	return (
-		<ChangeDialog className="sm:max-w-7xl max-h-[94dvh] flex flex-col overflow-hidden">
+		<ChangeDialog className="sm:max-w-7xl">
 			<ChangeDialog.Header title={ title }/>
-
-			<div className="flex-1 min-h-0 overflow-y-auto px-1 sm:px-2 pb-2">
+			<div className="max-h-[75vh] overflow-y-auto px-2 pb-2">
 				<FieldGroup>
-					<FieldsSection columns={ {base: 1, md: 2} }>
+					<FieldsSection columns={ 2 }>
 						<DateField
 							label={ t("stocktakings.date") }
 							value={ entity.value.date }
 							required
-							disabled={ !isDraft }
+							disabled={ !isFullyEditable }
 							onChange={ (val) =>
 							{
-								if (entity.value.mode.value === ChangeableEntityMode.Create && val)
+								if (isFullyEditable && val)
 								{
 									entity.value.items.value = [];
 								}
 							} }
 						/>
-
 						<FormField
 							label={ t("stocktakings.store") }
 							required
@@ -110,7 +135,7 @@ export default function ChangeStocktakingDialog(
 							<StoresSearchableSelect
 								id={ entity.value.storeId }
 								label={ entity.value.storeName }
-								disabled={ !isDraft }
+								disabled={ !isFullyEditable }
 								onSelect={ (store) =>
 								{
 									entity.value.storeId.value = store?.id;
@@ -119,58 +144,68 @@ export default function ChangeStocktakingDialog(
 								} }
 							/>
 						</FormField>
-
-						{ showIsOpeningBalance && (
+						{ showIsOpeningBalance && settlementEntity && (
 							<FormField
 								label={ t("common:isOpeningBalance", "هذه التسوية عبارة عن رصيد افتتاحي للمخزون") }
 								required
 							>
 								<CheckboxField
-									checked={ entity.value.isOpeningBalance }
-									disabled={ !isDraft }
+									checked={ settlementEntity.isOpeningBalance }
+									disabled={ !isFullyEditable }
 								/>
 							</FormField>
 						) }
 					</FieldsSection>
-
 					<TextAreaField
 						label={ t("stocktakings.description") }
 						value={ entity.value.description }
 						collapsible
 						collapsedHeight={ 60 }
 					/>
-
 					<StocktakingItemsTable
 						entity={ entity.value }
 						createInstance={ () => StocktakingItem.create() }
+						isEditable={ isFullyEditable }
 					/>
 				</FieldGroup>
 			</div>
-
 			<ChangeDialog.Footer>
 				<ChangeDialog.Close/>
-				{ isDraft && (
+				{ !hasWorkflow && (
+					<ChangeDialog.SaveButton<TEntity, TDto>
+						entity={ entity }
+						resource={ resource }
+						onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
+					/>
+				) }
+				{ hasWorkflow && isDraft && (
 					<>
-						<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
+						<ChangeDialog.SaveButton<TEntity, TDto>
 							entity={ entity }
 							resource={ resource }
 							variant="outline"
 							label={ t("common:saveAsDraft", "حفظ كمسودة") }
 							transformData={ (data) =>
 							{
-								data.transactionStatus = TransactionStatus.Draft;
+								if (hasStatusWorkflow(data))
+								{
+									data.transactionStatus = TransactionStatus.Draft;
+								}
 								return data;
 							} }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
 							disabled={ isVoided }
 						/>
-						<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
+						<ChangeDialog.SaveButton<TEntity, TDto>
 							entity={ entity }
 							resource={ resource }
 							label={ t("common:saveAndPost", "حفظ واعتماد") }
 							transformData={ (data) =>
 							{
-								data.transactionStatus = TransactionStatus.Posted;
+								if (hasStatusWorkflow(data))
+								{
+									data.transactionStatus = TransactionStatus.Posted;
+								}
 								return data;
 							} }
 							onSuccess={ (data) => onSuccess?.(data, entity.value.mode.value) }
@@ -179,8 +214,8 @@ export default function ChangeStocktakingDialog(
 						/>
 					</>
 				) }
-				{ (isPosted || isVoided) && (
-					<ChangeDialog.SaveButton<Stocktaking, StocktakingDto>
+				{ hasWorkflow && !isDraft && (
+					<ChangeDialog.SaveButton<TEntity, TDto>
 						entity={ entity }
 						resource={ resource }
 						label={ t("common:save", "حفظ") }

@@ -67,7 +67,7 @@ import { taxesApi } from "@/features/taxes/taxes.api";
 import { unitsApi } from "@/features/units/units.api";
 import { brandsApi } from "@/features/brands/brands.api";
 import { categoriesApi } from "@/features/itemCategories/categories.api";
-import { itemsSettlementsApi, stocktakingsApi } from "@/features/stocktakings/stocktakings.api";
+import { stocktakingsApi } from "@/features/stocktakings/stocktakings.api";
 import { costAdjustmentsApi } from "@/features/costAdjustments/costAdjustments.api";
 import { itemTransfersApi } from "@/features/itemTransfers/itemTransfers.api";
 import { accountsApi } from "@/features/accounts/accounts.api";
@@ -80,6 +80,8 @@ import { posTerminalsApi } from "@/features/Pos/posTerminals/posTerminals.api";
 import { salesInvoicesApi } from "@/features/commercial/sales/salesInvoices.api";
 import { purchaseInvoicesApi } from "@/features/commercial/purchases/purchaseInvoices.api";
 import { quotationsApi } from "@/features/commercial/quotations/quotations.api";
+import type { ItemsSettlementDto } from "@/core/data/itemsSettlement.ts";
+import { itemsSettlementsApi } from "@/features/stocktakings/itemSettlements.api.ts";
 
 
 export class Cubits extends BaseCubits
@@ -99,7 +101,7 @@ export class Cubits extends BaseCubits
 	public static readonly originalPurchaseInvoices = new PageCubit<PurchaseInvoiceDto>(purchaseInvoicesApi);
 	public static readonly quotations = new PageCubit<QuotationDto>(quotationsApi);
 	public static readonly stocktaking = new PageCubit<StocktakingDto>(stocktakingsApi);
-	public static readonly itemsSettlements = new PageCubit<StocktakingDto>(itemsSettlementsApi);
+	public static readonly itemsSettlements = new PageCubit<ItemsSettlementDto>(itemsSettlementsApi);
 	public static readonly costAdjustments = new PageCubit<CostAdjustmentDto>(costAdjustmentsApi);
 	public static readonly itemTransfers = new PageCubit<ItemTransferDto>(itemTransfersApi);
 	public static readonly balanceTransfers = new PageCubit<BalanceTransferDto>(balanceTransfersApi);
