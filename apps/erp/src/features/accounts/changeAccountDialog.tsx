@@ -24,7 +24,7 @@ import {
 	type AccountDto,
 	AccountType,
 	getAccountClass,
-	getAccountTypesByClasses
+	getAllowedParentTypes
 } from "@/core/data/account.ts";
 import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import React, { useEffect, useMemo } from "react";
@@ -72,7 +72,8 @@ export default function ChangeAccountDialog(
 		{
 			group: "حقوق الملكية (Equity)",
 			options: [
-				{label: "حقوق الملكية (Equity)", value: AccountType.Equity},
+				{label: "رأس المال (Paid-in Capital)", value: AccountType.Equity},
+				{label: "الأرباح المبقاة (Retained Earnings)", value: AccountType.RetainedEarnings},
 				{label: "حقوق ملكية رصيد افتتاحي (Opening Balance Equity)", value: AccountType.OpeningBalanceEquity}
 			]
 		},
@@ -100,7 +101,6 @@ export default function ChangeAccountDialog(
 			section.options.forEach((opt) =>
 			{
 				list.push({
-					// Wrap the text in our new custom component to display the text + badge
 					label: <AccountTypeOptionItem type={ opt.value } label={ opt.label }/>,
 					value: opt.value
 				});
@@ -111,7 +111,7 @@ export default function ChangeAccountDialog(
 
 	useEffect(() =>
 	{
-		Cubits.parentAccounts.init(getAccountTypesByClasses([getAccountClass(entity.value.type.value ?? AccountType.CashAndBank)]), {
+		Cubits.parentAccounts.init(getAllowedParentTypes(entity.value.type.value ?? AccountType.CashAndBank), {
 			"isParentOnly": true
 		});
 	}, [entity.value.type.value]);
@@ -127,9 +127,9 @@ export default function ChangeAccountDialog(
 	}
 
 	return (
-		<ChangeDialog className="sm:max-w-2xl max-h-[94dvh] flex flex-col overflow-hidden">
+		<ChangeDialog className="sm:max-w-2xl">
 			<ChangeDialog.Header title={ title }/>
-			<div className="flex-1 min-h-0 overflow-y-auto px-1 sm:px-2 pb-2">
+			<div className="max-h-[70vh] overflow-y-auto px-2 pb-2">
 				<FieldGroup>
 					<FieldsSection columns={ 1 }>
 						<TextField
@@ -164,8 +164,7 @@ export default function ChangeAccountDialog(
 								showAddButton={ false }
 							/>
 						</FormField>
-
-						<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+						<div className="grid grid-cols-2 gap-4">
 							<NumberField
 								label={ t("accounts.openingBalance", "الرصيد الافتتاحي") }
 								value={ entity.value.openingBalance }
@@ -190,12 +189,9 @@ export default function ChangeAccountDialog(
 				</FieldGroup>
 			</div>
 			<ChangeDialog.Footer>
-				<div
-					className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between w-full gap-2 sm:gap-3">
-					<div className="shrink-0 flex items-center">
-						<YoutubeButton videoId="WNCe2c2kqCw"/>
-					</div>
-					<div className="flex justify-end gap-2 sm:gap-3">
+				<div className="flex items-center justify-between w-full">
+					<YoutubeButton videoId="WNCe2c2kqCw"/>
+					<div className="flex justify-end gap-3">
 						<ChangeDialog.Close/>
 						<ChangeDialog.SaveButton<Account, AccountDto>
 							entity={ entity }

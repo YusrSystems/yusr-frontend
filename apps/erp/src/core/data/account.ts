@@ -4,37 +4,29 @@ import { ChangeableEntity, ChangeableEntityMode, Dto, i18n, Validators } from "y
 
 export enum AccountClass
 {
-	Asset = 1,          // الأصول
-	Liability = 2,      // الالتزامات
-	Equity = 3,         // حقوق الملكية
-	Revenue = 4,        // الإيرادات
-	Expense = 5         // المصروفات
+	Asset = 1,
+	Liability = 2,
+	Equity = 3,
+	Revenue = 4,
+	Expense = 5
 }
 
 export enum AccountType
 {
-	// Asset Types
-	CurrentAsset = 1,        // أصول متداولة
-	AccountsReceivable = 2,  // ذمم مدينة
-	CashAndBank = 3,         // النقد والبنوك
-	NonCurrentAsset = 4,     // أصول غير متداولة
-	InputTax = 5,            // ضريبة مدخلات
-	InventoryAsset = 14,     // أصول المخزون
-
-	// Liability Types
-	CurrentLiability = 6,    // التزامات متداولة
-	AccountsPayable = 7,     // ذمم دائنة
-	NonCurrentLiability = 8, // التزامات غير متداولة
-	OutputTax = 9,           // ضريبة مخرجات
-
-	// Equity
+	CurrentAsset = 1,
+	AccountsReceivable = 2,
+	CashAndBank = 3,
+	NonCurrentAsset = 4,
+	InputTax = 5,
+	InventoryAsset = 14,
+	CurrentLiability = 6,
+	AccountsPayable = 7,
+	NonCurrentLiability = 8,
+	OutputTax = 9,
 	Equity = 10,
-	OpeningBalanceEquity = 15, // رصيد افتتاحي - حقوق ملكية
-
-	// Revenue
+	OpeningBalanceEquity = 15,
+	RetainedEarnings = 17,
 	SalesRevenue = 11,
-
-	// Expense
 	CostOfGoodsSold = 12,
 	OperatingExpense = 13,
 	InventoryAdjustment = 16
@@ -60,6 +52,7 @@ export function getAccountClass(type: AccountType): AccountClass
 
 		case AccountType.Equity:
 		case AccountType.OpeningBalanceEquity:
+		case AccountType.RetainedEarnings:
 			return AccountClass.Equity;
 
 		case AccountType.SalesRevenue:
@@ -106,7 +99,8 @@ export function getAccountTypesByClasses(classes: AccountClass[]): AccountType[]
 			case AccountClass.Equity:
 				types.push(
 					AccountType.Equity,
-					AccountType.OpeningBalanceEquity
+					AccountType.OpeningBalanceEquity,
+					AccountType.RetainedEarnings
 				);
 				break;
 
@@ -127,6 +121,53 @@ export function getAccountTypesByClasses(classes: AccountClass[]): AccountType[]
 	}
 
 	return types;
+}
+
+export function getAllowedParentTypes(childType: AccountType): AccountType[]
+{
+	switch (childType)
+	{
+		case AccountType.CurrentAsset:
+			return [AccountType.CurrentAsset];
+		case AccountType.NonCurrentAsset:
+			return [AccountType.NonCurrentAsset];
+		case AccountType.CashAndBank:
+			return [AccountType.CurrentAsset, AccountType.CashAndBank];
+		case AccountType.AccountsReceivable:
+			return [AccountType.CurrentAsset, AccountType.AccountsReceivable];
+		case AccountType.InventoryAsset:
+			return [AccountType.CurrentAsset, AccountType.InventoryAsset];
+		case AccountType.InputTax:
+			return [AccountType.CurrentAsset, AccountType.InputTax];
+
+		case AccountType.CurrentLiability:
+			return [AccountType.CurrentLiability];
+		case AccountType.NonCurrentLiability:
+			return [AccountType.NonCurrentLiability];
+		case AccountType.AccountsPayable:
+			return [AccountType.CurrentLiability, AccountType.AccountsPayable];
+		case AccountType.OutputTax:
+			return [AccountType.CurrentLiability, AccountType.OutputTax];
+
+		case AccountType.Equity:
+			return [AccountType.Equity];
+		case AccountType.RetainedEarnings:
+			return [AccountType.Equity, AccountType.RetainedEarnings];
+		case AccountType.OpeningBalanceEquity:
+			return [AccountType.Equity, AccountType.OpeningBalanceEquity];
+
+		case AccountType.SalesRevenue:
+			return [AccountType.SalesRevenue];
+
+		case AccountType.CostOfGoodsSold:
+			return [AccountType.CostOfGoodsSold];
+		case AccountType.OperatingExpense:
+			return [AccountType.OperatingExpense];
+		case AccountType.InventoryAdjustment:
+			return [AccountType.InventoryAdjustment];
+		default:
+			return [];
+	}
 }
 
 export class AccountDto extends Dto
@@ -190,7 +231,6 @@ export class Account extends ChangeableEntity<AccountDto>
 		this.parentAccountName = this.assign("parentAccountName", dto?.parentAccountName ?? null);
 		this.isParent = this.assign("isParent", dto?.isParent ?? false);
 
-		// Synchronize AccountClass automatically when AccountType updates
 		this.type.subscribe((newType) =>
 		{
 			this.class.value = getAccountClass(newType);

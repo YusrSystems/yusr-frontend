@@ -230,6 +230,7 @@ function PageTable()
 		SystemPermissionsResources.AccountShowBalance,
 		SystemPermissionsActions.Get
 	);
+
 	if (Cubits.accounts.state.value instanceof PageLoading)
 	{
 		return <TablePreview.Loading/>;
@@ -386,6 +387,7 @@ function TreeNode({
 	);
 
 	const {t} = useTranslation("erpCommon");
+
 	const hasChildren = node.children.length > 0;
 	const isExpanded = !!expandedNodes[node.id];
 
@@ -475,94 +477,87 @@ function TreeNode({
 	);
 }
 
+function createVNode(id: string, name: string, accountClass: AccountClass): TreeNodeData
+{
+	return {
+		id,
+		name,
+		balance: 0,
+		isVirtual: true,
+		isParent: true,
+		children: [],
+		accountClass
+	};
+}
+
 function buildHierarchicalTree(accounts: AccountDto[]): TreeNodeData[]
 {
-	const classMap: Record<AccountClass, TreeNodeData> = {
-		[AccountClass.Asset]: {
-			id: "class-1",
-			name: "الأصول (Assets)",
-			balance: 0,
-			isVirtual: true,
-			isParent: true,
-			children: [],
-			accountClass: AccountClass.Asset
-		},
-		[AccountClass.Liability]: {
-			id: "class-2",
-			name: "الالـتزامات (Liabilities)",
-			balance: 0,
-			isVirtual: true,
-			isParent: true,
-			children: [],
-			accountClass: AccountClass.Liability
-		},
-		[AccountClass.Equity]: {
-			id: "class-3",
-			name: "حقوق الملكية (Equity)",
-			balance: 0,
-			isVirtual: true,
-			isParent: true,
-			children: [],
-			accountClass: AccountClass.Equity
-		},
-		[AccountClass.Revenue]: {
-			id: "class-4",
-			name: "الإيرادات (Revenues)",
-			balance: 0,
-			isVirtual: true,
-			isParent: true,
-			children: [],
-			accountClass: AccountClass.Revenue
-		},
-		[AccountClass.Expense]: {
-			id: "class-5",
-			name: "المصروفات (Expenses)",
-			balance: 0,
-			isVirtual: true,
-			isParent: true,
-			children: [],
-			accountClass: AccountClass.Expense
-		}
+	const vNodes = {
+		ClassAsset: createVNode("class-1", "الأصول (Assets)", AccountClass.Asset),
+		ClassLiability: createVNode("class-2", "الالتزامات (Liabilities)", AccountClass.Liability),
+		ClassEquity: createVNode("class-3", "حقوق الملكية (Equity)", AccountClass.Equity),
+		ClassRevenue: createVNode("class-4", "الإيرادات (Revenues)", AccountClass.Revenue),
+		ClassExpense: createVNode("class-5", "المصروفات (Expenses)", AccountClass.Expense),
+
+		TypeCurrentAsset: createVNode(`type-${ AccountType.CurrentAsset }`, "أصول متداولة (Current Assets)", AccountClass.Asset),
+		TypeCashAndBank: createVNode(`type-${ AccountType.CashAndBank }`, "النقد والبنوك (Cash & Equivalents)", AccountClass.Asset),
+		TypeAccountsReceivable: createVNode(`type-${ AccountType.AccountsReceivable }`, "ذمم مدينة (Accounts Receivable)", AccountClass.Asset),
+		TypeInventoryAsset: createVNode(`type-${ AccountType.InventoryAsset }`, "المخزون (Inventory)", AccountClass.Asset),
+		TypeInputTax: createVNode(`type-${ AccountType.InputTax }`, "ضريبة المدخلات (Input VAT)", AccountClass.Asset),
+
+		TypeNonCurrentAsset: createVNode(`type-${ AccountType.NonCurrentAsset }`, "أصول غير متداولة (Non-Current Assets)", AccountClass.Asset),
+
+		TypeCurrentLiability: createVNode(`type-${ AccountType.CurrentLiability }`, "التزامات متداولة (Current Liabilities)", AccountClass.Liability),
+		TypeAccountsPayable: createVNode(`type-${ AccountType.AccountsPayable }`, "ذمم دائنة (Accounts Payable)", AccountClass.Liability),
+		TypeOutputTax: createVNode(`type-${ AccountType.OutputTax }`, "ضريبة المخرجات (Output VAT)", AccountClass.Liability),
+
+		TypeNonCurrentLiability: createVNode(`type-${ AccountType.NonCurrentLiability }`, "التزامات غير متداولة (Non-Current Liabilities)", AccountClass.Liability),
+
+		TypeEquity: createVNode(`type-${ AccountType.Equity }`, "رأس المال (Paid-in Capital)", AccountClass.Equity),
+		TypeRetainedEarnings: createVNode(`type-${ AccountType.RetainedEarnings }`, "الأرباح المبقاة (Retained Earnings)", AccountClass.Equity),
+		TypeOpeningBalanceEquity: createVNode(`type-${ AccountType.OpeningBalanceEquity }`, "الأرصدة الافتتاحية (Opening Balance Equity)", AccountClass.Equity),
+
+		TypeSalesRevenue: createVNode(`type-${ AccountType.SalesRevenue }`, "إيرادات النشاط (Operating Revenue)", AccountClass.Revenue),
+
+		TypeCostOfGoodsSold: createVNode(`type-${ AccountType.CostOfGoodsSold }`, "تكلفة المبيعات (Cost of Goods Sold)", AccountClass.Expense),
+		TypeOperatingExpense: createVNode(`type-${ AccountType.OperatingExpense }`, "مصاريف تشغيلية (Operating & Admin Expenses)", AccountClass.Expense),
+		TypeInventoryAdjustment: createVNode(`type-${ AccountType.InventoryAdjustment }`, "تسوية المخزون (Inventory Adjustments)", AccountClass.Expense)
 	};
 
+	vNodes.ClassAsset.children.push(vNodes.TypeCurrentAsset, vNodes.TypeNonCurrentAsset);
+	vNodes.TypeCurrentAsset.children.push(vNodes.TypeCashAndBank, vNodes.TypeAccountsReceivable, vNodes.TypeInventoryAsset, vNodes.TypeInputTax);
+
+	vNodes.ClassLiability.children.push(vNodes.TypeCurrentLiability, vNodes.TypeNonCurrentLiability);
+	vNodes.TypeCurrentLiability.children.push(vNodes.TypeAccountsPayable, vNodes.TypeOutputTax);
+
+	vNodes.ClassEquity.children.push(vNodes.TypeEquity, vNodes.TypeRetainedEarnings, vNodes.TypeOpeningBalanceEquity);
+
+	vNodes.ClassRevenue.children.push(vNodes.TypeSalesRevenue);
+
+	vNodes.ClassExpense.children.push(vNodes.TypeCostOfGoodsSold, vNodes.TypeOperatingExpense, vNodes.TypeInventoryAdjustment);
+
 	const typeMap = new Map<AccountType, TreeNodeData>();
-	const typeDefinitions = [
-		{type: AccountType.CurrentAsset, label: "أصول متداولة (Current Assets)"},
-		{type: AccountType.AccountsReceivable, label: "ذمم مدينة (Accounts Receivable)"},
-		{type: AccountType.CashAndBank, label: "النقد والبنوك (Cash & Bank)"},
-		{type: AccountType.NonCurrentAsset, label: "أصول غير متداولة (Non-Current Assets)"},
-		{type: AccountType.InputTax, label: "ضريبة مدخلات (Input Tax)"},
-		{type: AccountType.InventoryAsset, label: "أصول المخزون (Inventory Assets)"},
+	typeMap.set(AccountType.CurrentAsset, vNodes.TypeCurrentAsset);
+	typeMap.set(AccountType.CashAndBank, vNodes.TypeCashAndBank);
+	typeMap.set(AccountType.AccountsReceivable, vNodes.TypeAccountsReceivable);
+	typeMap.set(AccountType.InventoryAsset, vNodes.TypeInventoryAsset);
+	typeMap.set(AccountType.InputTax, vNodes.TypeInputTax);
+	typeMap.set(AccountType.NonCurrentAsset, vNodes.TypeNonCurrentAsset);
 
-		{type: AccountType.CurrentLiability, label: "التزامات متداولة (Current Liabilities)"},
-		{type: AccountType.AccountsPayable, label: "ذمم دائنة (Accounts Payable)"},
-		{type: AccountType.NonCurrentLiability, label: "التزامات غير متداولة (Non-Current Liabilities)"},
-		{type: AccountType.OutputTax, label: "ضريبة مخرجات (Output Tax)"},
+	typeMap.set(AccountType.CurrentLiability, vNodes.TypeCurrentLiability);
+	typeMap.set(AccountType.AccountsPayable, vNodes.TypeAccountsPayable);
+	typeMap.set(AccountType.OutputTax, vNodes.TypeOutputTax);
+	typeMap.set(AccountType.NonCurrentLiability, vNodes.TypeNonCurrentLiability);
 
-		{type: AccountType.Equity, label: "حقوق الملكية (Equity)"},
-		{type: AccountType.OpeningBalanceEquity, label: "حقوق ملكية رصيد افتتاحي (Opening Balance Equity)"},
+	typeMap.set(AccountType.Equity, vNodes.TypeEquity);
+	typeMap.set(AccountType.RetainedEarnings, vNodes.TypeRetainedEarnings);
+	typeMap.set(AccountType.OpeningBalanceEquity, vNodes.TypeOpeningBalanceEquity);
 
-		{type: AccountType.SalesRevenue, label: "إيرادات المبيعات (Sales Revenue)"},
-		{type: AccountType.CostOfGoodsSold, label: "تكلفة البضاعة المباعة (Cost of Goods Sold)"},
-		{type: AccountType.OperatingExpense, label: "مصاريف تشغيلية (Operating Expenses)"},
-		{type: AccountType.InventoryAdjustment, label: "تسوية قيمة المخزون (Inventory Adjustments)"}
-	];
+	typeMap.set(AccountType.SalesRevenue, vNodes.TypeSalesRevenue);
 
-	typeDefinitions.forEach((def) =>
-	{
-		const cls = getAccountClass(def.type);
-		const typeNode: TreeNodeData = {
-			id: `type-${ def.type }`,
-			name: def.label,
-			balance: 0,
-			isVirtual: true,
-			isParent: true,
-			children: [],
-			accountClass: cls
-		};
-		typeMap.set(def.type, typeNode);
-		classMap[cls].children.push(typeNode);
-	});
+	typeMap.set(AccountType.CostOfGoodsSold, vNodes.TypeCostOfGoodsSold);
+	typeMap.set(AccountType.OperatingExpense, vNodes.TypeOperatingExpense);
+	typeMap.set(AccountType.InventoryAdjustment, vNodes.TypeInventoryAdjustment);
 
 	const accountNodesMap = new Map<number, TreeNodeData>();
 	accounts.forEach((acc) =>
@@ -617,13 +612,21 @@ function buildHierarchicalTree(accounts: AccountDto[]): TreeNodeData[]
 		}
 	}
 
-	const roots = Object.values(classMap);
+	const roots = [vNodes.ClassAsset, vNodes.ClassLiability, vNodes.ClassEquity, vNodes.ClassRevenue, vNodes.ClassExpense];
+
 	roots.forEach((root) => calculateSubBalances(root));
 
-	roots.forEach((root) =>
+	function pruneEmptyVirtualNodes(nodes: TreeNodeData[]): TreeNodeData[]
 	{
-		root.children = root.children.filter((typeNode) => typeNode.children.length > 0);
-	});
+		return nodes.filter(node =>
+		{
+			if (node.children.length > 0)
+			{
+				node.children = pruneEmptyVirtualNodes(node.children);
+			}
+			return node.children.length > 0 || !node.isVirtual;
+		});
+	}
 
-	return roots.filter((root) => root.children.length > 0);
+	return pruneEmptyVirtualNodes(roots);
 }
