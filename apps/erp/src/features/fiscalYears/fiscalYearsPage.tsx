@@ -59,16 +59,29 @@ export default function FiscalYearsPage()
 	const handleToggleLockYear = async (year: FiscalYearDto) =>
 	{
 		const newStatus = year.status === FiscalYearStatus.Open ? FiscalYearStatus.Locked : FiscalYearStatus.Open;
-		const res = await fiscalYearsApi.toggleLock({
-			fiscalYearId: year.id,
-			status: newStatus,
-			rowVer: year.rowVer
-		});
-		if (res.ok && res.data)
+		const actionName = newStatus === FiscalYearStatus.Locked ? "تجميد" : "فك تجميد";
+
+		const process = async () =>
 		{
-			toast.success(`تم ${ newStatus === FiscalYearStatus.Locked ? "تجميد" : "فك تجميد" } السنة المالية ${ year.name }`);
-			Cubits.fiscalYears.update(res.data);
-		}
+			const res = await fiscalYearsApi.toggleLock({
+				fiscalYearId: year.id,
+				status: newStatus,
+				rowVer: year.rowVer
+			});
+
+			if (res.ok && res.data)
+			{
+				Cubits.fiscalYears.update(res.data);
+				return `تم ${ actionName } السنة المالية ${ year.name } بنجاح`;
+			}
+			throw new Error(res.errors?.[0] || `فشل في ${ actionName } السنة المالية`);
+		};
+
+		toast.promise(process(), {
+			loading: `جاري ${ actionName } السنة المالية ${ year.name }...`,
+			success: (msg) => msg,
+			error: (err) => err?.message || "حدث خطأ أثناء العملية"
+		});
 	};
 
 	return (
