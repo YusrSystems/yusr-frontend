@@ -27,6 +27,7 @@ export class PartnerDto extends Dto
 	public district?: string;
 	public buildingNumber?: string;
 	public postalCode?: string;
+	public isActive?: boolean;
 
 	public city?: CityDto;
 }
@@ -50,6 +51,7 @@ export class Partner extends ChangeableEntity<PartnerDto>
 	public district: Signal<string | undefined>;
 	public buildingNumber: Signal<string | undefined>;
 	public postalCode: Signal<string | undefined>;
+	public isActive: Signal<boolean>;
 
 	public city: Signal<CityDto | undefined>;
 
@@ -142,6 +144,7 @@ export class Partner extends ChangeableEntity<PartnerDto>
 		this.district = this.assign("district", dto?.district);
 		this.buildingNumber = this.assign("buildingNumber", dto?.buildingNumber);
 		this.postalCode = this.assign("postalCode", dto?.postalCode);
+		this.isActive = this.assign("isActive", dto?.isActive ?? false);
 		this.city = this.assign("city", dto?.city);
 	}
 

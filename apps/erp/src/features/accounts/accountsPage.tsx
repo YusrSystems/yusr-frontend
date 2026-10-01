@@ -2,14 +2,16 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
-import { ChevronDown, ChevronLeft, FileText, FolderTree, List, Printer, WalletIcon } from "lucide-react";
+import { ChevronDown, ChevronLeft, FileText, FolderTree, List, Power, Printer, WalletIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	Button,
 	ChangeableEntityMode,
 	cn,
+	ContextMenuItem,
 	CrudPage,
+	DropdownMenuItem,
 	FilterSection,
 	PageError,
 	PageLoaded,
@@ -30,6 +32,7 @@ import type { Signal } from "@preact/signals-react";
 import { AppNavigator } from "@/app/appNavigator.ts";
 import { APP_NAME } from "../../../appConfig.ts";
 import { accountsApi } from "./accounts.api";
+import { toast } from "sonner";
 
 
 interface TreeNodeData
@@ -39,6 +42,7 @@ interface TreeNodeData
 	balance: number;
 	isVirtual: boolean;
 	isParent: boolean;
+	isActive?: boolean;
 	children: TreeNodeData[];
 	account?: AccountDto;
 	accountClass: AccountClass;
@@ -72,6 +76,28 @@ export default function AccountsPage()
 	{
 		return <UnauthorizedPage/>;
 	}
+
+	const handleToggleStatus = async (account: AccountDto) =>
+	{
+		const targetStatus = !account.isActive;
+		const actionName = targetStatus ? "تفعيل" : "تعطيل";
+
+		const process = async () =>
+		{
+			const res = await accountsApi.updateStatus(account.id, targetStatus);
+			if (res.ok)
+			{
+				account.isActive = targetStatus;
+				Cubits.accounts.update(account);
+				return targetStatus ? "تم تفعيل الحساب بنجاح" : "تم تعطيل الحساب بنجاح";
+			}
+			throw new Error(res.errors?.[0] || `فشل في ${ actionName } الحساب`);
+		};
+
+		toast.promise(process(), {
+			loading: `جاري ${ actionName } الحساب #${ account.id }...`
+		});
+	};
 
 	return (
 		<>
@@ -146,7 +172,8 @@ export default function AccountsPage()
 					onSearch={ (searchText) => Cubits.accounts.search(searchText) }
 				/>
 
-				{ viewMode === "table" ? <PageTable/> : <PageTree/> }
+				{ viewMode === "table" ? <PageTable onToggleStatus={ handleToggleStatus }/> :
+					<PageTree onToggleStatus={ handleToggleStatus }/> }
 
 				<CrudPage.ChangeDialog
 					fetchEntity={ async (id: number) =>
@@ -222,7 +249,7 @@ function Cards({count}: { count: Signal<number>; })
 	);
 }
 
-function PageTable()
+function PageTable({onToggleStatus}: { onToggleStatus: (account: AccountDto) => void })
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common", "erpCommon"]);
@@ -230,11 +257,32 @@ function PageTable()
 		SystemPermissionsResources.AccountShowBalance,
 		SystemPermissionsActions.Get
 	);
+	const canUpdate = Services.auth.hasAuth(
+		SystemPermissionsResources.Accounts,
+		SystemPermissionsActions.Update
+	);
 
 	if (Cubits.accounts.state.value instanceof PageLoading)
 	{
 		return <TablePreview.Loading/>;
 	}
+
+	const getActions = (
+		account: AccountDto,
+		_openEditDialog: (dto: AccountDto) => void,
+		ItemComponent: typeof DropdownMenuItem | typeof ContextMenuItem
+	) => [
+		canUpdate ? (
+			<ItemComponent
+				key="toggle-status"
+				className={ account.isActive ? "text-destructive font-semibold cursor-pointer" : "text-emerald-600 font-semibold cursor-pointer" }
+				onSelect={ () => onToggleStatus(account) }
+			>
+				<Power className="w-4 h-4 me-2"/>
+				{ account.isActive ? "تعطيل الحساب" : "تفعيل الحساب" }
+			</ItemComponent>
+		) : null
+	];
 
 	if (Cubits.accounts.state.value instanceof PageLoaded)
 	{
@@ -247,6 +295,7 @@ function PageTable()
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("accounts.accountId"), rowStyles: "w-24"},
 						{rowBody: t("accounts.accountName"), rowStyles: "w-60"},
+						{rowBody: "الحالة", rowStyles: "w-28 text-center"},
 						...(canShowBalance ? [{rowBody: t("accounts.balance"), rowStyles: "w-32"}] : []),
 						...(Services.auth.hasAuth(
 							SystemPermissionsResources.ReportAccountStatement,
@@ -258,7 +307,21 @@ function PageTable()
 					tableRowMapper={ (account) => [
 						{rowBody: `#${ account.id }`, rowStyles: ""},
 						{rowBody: account.name, rowStyles: "font-semibold"},
-
+						{
+							rowBody: (
+								<span
+									className={ cn(
+										"inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold",
+										account.isActive !== false
+											? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
+											: "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300"
+									) }
+								>
+									{ account.isActive !== false ? "نشط" : "معطل" }
+								</span>
+							),
+							rowStyles: "text-center"
+						},
 						...(canShowBalance
 							? [{
 								rowBody: (
@@ -288,16 +351,14 @@ function PageTable()
 								rowStyles: "w-32"
 							}]
 							: [])
-
 					] }
-					hasUpdatePermission={ Services.auth.hasAuth(
-						SystemPermissionsResources.Accounts,
-						SystemPermissionsActions.Update
-					) }
+					hasUpdatePermission={ canUpdate }
 					hasDeletePermission={ Services.auth.hasAuth(
 						SystemPermissionsResources.Accounts,
 						SystemPermissionsActions.Delete
 					) }
+					dropdownItems={ (account, openEditDialog) => getActions(account, openEditDialog, DropdownMenuItem) }
+					contextMenuItems={ (account, openEditDialog) => getActions(account, openEditDialog, ContextMenuItem) }
 				/>
 				<CrudPage.TablePagination
 					pageSize={ Cubits.accounts.pageSize.value }
@@ -317,7 +378,7 @@ function PageTable()
 	return <TablePreview.Empty/>;
 }
 
-function PageTree()
+function PageTree({onToggleStatus}: { onToggleStatus: (account: AccountDto) => void })
 {
 	useSignals();
 	const [expandedNodes, setExpandedNodes] = useState<Record<string | number, boolean>>({
@@ -356,6 +417,7 @@ function PageTree()
 						level={ 0 }
 						expandedNodes={ expandedNodes }
 						onToggle={ toggleExpand }
+						onToggleStatus={ onToggleStatus }
 					/>
 				)) }
 			</ul>
@@ -367,23 +429,27 @@ function TreeNode({
 	node,
 	level,
 	expandedNodes,
-	onToggle
+	onToggle,
+	onToggleStatus
 }: {
 	node: TreeNodeData;
 	level: number;
 	expandedNodes: Record<string | number, boolean>;
 	onToggle: (id: string | number) => void;
+	onToggleStatus: (account: AccountDto) => void;
 })
 {
-
 	const canShowBalance = Services.auth.hasAuth(
 		SystemPermissionsResources.AccountShowBalance,
 		SystemPermissionsActions.Get
 	);
-
 	const canShowStatement = Services.auth.hasAuth(
 		SystemPermissionsResources.ReportAccountStatement,
 		SystemPermissionsActions.Get
+	);
+	const canUpdate = Services.auth.hasAuth(
+		SystemPermissionsResources.Accounts,
+		SystemPermissionsActions.Update
 	);
 
 	const {t} = useTranslation("erpCommon");
@@ -412,7 +478,11 @@ function TreeNode({
 					) }
 					<span
 						title={ node.name }
-						className={ cn("text-xs sm:text-sm truncate", node.isVirtual ? "font-bold text-primary" : "font-normal") }
+						className={ cn(
+							"text-xs sm:text-sm truncate",
+							node.isVirtual ? "font-bold text-primary" : "font-normal",
+							node.account && node.account.isActive === false && "text-muted-foreground line-through"
+						) }
 					>
 						{ node.name }
 					</span>
@@ -422,9 +492,31 @@ function TreeNode({
 							#{ node.id }
 						</span>
 					) }
+					{ node.account && node.account.isActive === false && (
+						<span
+							className="text-[9px] font-semibold text-destructive bg-destructive/10 px-1.5 py-0.5 rounded-full shrink-0">
+							معطل
+						</span>
+					) }
 				</div>
 
 				<div className="flex items-center gap-2 sm:gap-3 shrink-0">
+					{ !node.isVirtual && node.account && canUpdate && (
+						<Button
+							variant="ghost"
+							size="icon-xs"
+							className={ node.account.isActive ? "text-muted-foreground hover:text-destructive" : "text-emerald-600" }
+							title={ node.account.isActive ? "تعطيل الحساب" : "تفعيل الحساب" }
+							onClick={ (e) =>
+							{
+								e.stopPropagation();
+								onToggleStatus(node.account!);
+							} }
+						>
+							<Power className="w-3.5 h-3.5"/>
+						</Button>
+					) }
+
 					{ canShowStatement && !node.isVirtual && (
 						<Button
 							variant="outline"
@@ -469,6 +561,7 @@ function TreeNode({
 							level={ level + 1 }
 							expandedNodes={ expandedNodes }
 							onToggle={ onToggle }
+							onToggleStatus={ onToggleStatus }
 						/>
 					)) }
 				</ul>
@@ -568,6 +661,7 @@ function buildHierarchicalTree(accounts: AccountDto[]): TreeNodeData[]
 			balance: acc.balance,
 			isVirtual: false,
 			isParent: acc.isParent ?? false,
+			isActive: acc.isActive,
 			children: [],
 			account: acc,
 			accountClass: getAccountClass(acc.type)

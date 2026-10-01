@@ -181,6 +181,7 @@ export class AccountDto extends Dto
 	public parentAccountId?: number;
 	public parentAccountName?: string;
 	public isParent?: boolean;
+	public isActive?: boolean;
 }
 
 export class Account extends ChangeableEntity<AccountDto>
@@ -194,6 +195,7 @@ export class Account extends ChangeableEntity<AccountDto>
 	public parentAccountId: Signal<number | undefined>;
 	public parentAccountName: Signal<string | undefined>;
 	public isParent: Signal<boolean>;
+	public isActive: Signal<boolean>;
 
 	constructor(dto: Partial<AccountDto> | undefined, mode: ChangeableEntityMode = ChangeableEntityMode.Create)
 	{
@@ -230,6 +232,7 @@ export class Account extends ChangeableEntity<AccountDto>
 		this.parentAccountId = this.assign("parentAccountId", dto?.parentAccountId ?? null);
 		this.parentAccountName = this.assign("parentAccountName", dto?.parentAccountName ?? null);
 		this.isParent = this.assign("isParent", dto?.isParent ?? false);
+		this.isActive = this.assign("isActive", dto?.isActive ?? false);
 
 		this.type.subscribe((newType) =>
 		{

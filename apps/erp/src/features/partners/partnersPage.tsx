@@ -2,13 +2,16 @@ import { SystemPermissionsResources } from "@/core/auth/systemPermissionsResourc
 import { Cubits } from "@/core/services/cubits";
 import { Services } from "@/core/services/services";
 import { useSignals } from "@preact/signals-react/runtime";
-import { Printer, Users } from "lucide-react";
+import { Power, Printer, Users } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	Button,
 	ChangeableEntityMode,
+	cn,
+	ContextMenuItem,
 	CrudPage,
+	DropdownMenuItem,
 	FilterSection,
 	PageError,
 	PageLoaded,
@@ -25,6 +28,8 @@ import ErpCurrencyIcon from "@/core/components/erpCurrencyIcon.tsx";
 import { AppNavigator } from "@/app/appNavigator.ts";
 import { APP_NAME } from "../../../appConfig.ts";
 import { partnersApi } from "./partners.api";
+import { toast } from "sonner";
+
 
 export default function PartnersPage({type}: { type: PartnerType })
 {
@@ -61,6 +66,28 @@ export default function PartnersPage({type}: { type: PartnerType })
 	{
 		return <UnauthorizedPage/>;
 	}
+
+	const handleToggleStatus = async (partner: PartnerDto) =>
+	{
+		const targetStatus = !partner.isActive;
+		const actionName = targetStatus ? "تفعيل" : "تعطيل";
+
+		const process = async () =>
+		{
+			const res = await partnersApi.updateStatus(partner.id, targetStatus);
+			if (res.ok)
+			{
+				partner.isActive = targetStatus;
+				Cubits.partners.update(partner);
+				return targetStatus ? "تم تفعيل الجهة بنجاح" : "تم تعطيل الجهة بنجاح";
+			}
+			throw new Error(res.errors?.[0] || `فشل في ${ actionName } الجهة`);
+		};
+
+		toast.promise(process(), {
+			loading: `جاري ${ actionName } الجهة #${ partner.id }...`
+		});
+	};
 
 	return (
 		<CrudPage<PartnerDto>>
@@ -114,9 +141,7 @@ export default function PartnersPage({type}: { type: PartnerType })
 				className="rounded-t-none!"
 				onSearch={ (searchText) => Cubits.partners.search(searchText) }
 			/>
-
-			<PageTable/>
-
+			<PageTable onToggleStatus={ handleToggleStatus }/>
 			<CrudPage.ChangeDialog
 				fetchEntity={ async (id: number) =>
 				{
@@ -152,15 +177,36 @@ export default function PartnersPage({type}: { type: PartnerType })
 	);
 }
 
-function PageTable()
+function PageTable({onToggleStatus}: { onToggleStatus: (partner: PartnerDto) => void })
 {
 	useSignals();
 	const {t} = useTranslation(["accounting", "common", "erpCommon"]);
+	const canUpdate = Services.auth.hasAuth(
+		SystemPermissionsResources.Partners,
+		SystemPermissionsActions.Update
+	);
 
 	if (Cubits.partners.state.value instanceof PageLoading)
 	{
 		return <TablePreview.Loading/>;
 	}
+
+	const getActions = (
+		partner: PartnerDto,
+		_openEditDialog: (dto: PartnerDto) => void,
+		ItemComponent: typeof DropdownMenuItem | typeof ContextMenuItem
+	) => [
+		canUpdate ? (
+			<ItemComponent
+				key="toggle-status"
+				className={ partner.isActive ? "text-destructive font-semibold cursor-pointer" : "text-emerald-600 font-semibold cursor-pointer" }
+				onSelect={ () => onToggleStatus(partner) }
+			>
+				<Power className="w-4 h-4 me-2"/>
+				{ partner.isActive ? "تعطيل الجهة" : "تفعيل الجهة" }
+			</ItemComponent>
+		) : null
+	];
 
 	if (Cubits.partners.state.value instanceof PageLoaded)
 	{
@@ -173,6 +219,7 @@ function PageTable()
 						{rowBody: "", rowStyles: "text-left w-12.5"},
 						{rowBody: t("partners.partnerId", "الرقم"), rowStyles: "w-24"},
 						{rowBody: t("partners.partnerName", "الاسم"), rowStyles: "w-48"},
+						{rowBody: "الحالة", rowStyles: "w-28 text-center"},
 						{rowBody: t("partners.mobile", "الجوال"), rowStyles: "w-32"},
 						{rowBody: t("partners.balance", "الرصيد الجاري"), rowStyles: "w-32"},
 						...(Services.auth.hasAuth(
@@ -206,6 +253,21 @@ function PageTable()
 							{rowBody: `#${ partner.id }`, rowStyles: ""},
 							{rowBody: partner.name, rowStyles: "font-semibold"},
 							{
+								rowBody: (
+									<span
+										className={ cn(
+											"inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold",
+											partner.isActive !== false
+												? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
+												: "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-300"
+										) }
+									>
+										{ partner.isActive !== false ? "نشط" : "معطل" }
+									</span>
+								),
+								rowStyles: "text-center"
+							},
+							{
 								rowBody: partner.mobile || partner.phone || "-",
 								rowStyles: "font-mono text-muted-foreground"
 							},
@@ -215,7 +277,7 @@ function PageTable()
 										<span>{ absBalance.toLocaleString("en-US", {minimumFractionDigits: 2}) }</span>
 										<ErpCurrencyIcon/>
 										<span className="text-xs font-sans px-1.5 py-0.5 shrink-0">
-										   { partner.balance !== 0 && (isDebit ? t("erpCommon:accounting.debit", "مدين") : t("erpCommon:accounting.credit", "دائن")) }
+											{ partner.balance !== 0 && (isDebit ? t("erpCommon:accounting.debit", "مدين") : t("erpCommon:accounting.credit", "دائن")) }
 										</span>
 									</div>
 								),
@@ -243,14 +305,13 @@ function PageTable()
 								: [])
 						];
 					} }
-					hasUpdatePermission={ Services.auth.hasAuth(
-						SystemPermissionsResources.Partners,
-						SystemPermissionsActions.Update
-					) }
+					hasUpdatePermission={ canUpdate }
 					hasDeletePermission={ Services.auth.hasAuth(
 						SystemPermissionsResources.Partners,
 						SystemPermissionsActions.Delete
 					) }
+					dropdownItems={ (partner, openEditDialog) => getActions(partner, openEditDialog, DropdownMenuItem) }
+					contextMenuItems={ (partner, openEditDialog) => getActions(partner, openEditDialog, ContextMenuItem) }
 				/>
 				<CrudPage.TablePagination
 					pageSize={ Cubits.partners.pageSize.value }

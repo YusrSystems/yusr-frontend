@@ -112,7 +112,8 @@ export default function ChangeAccountDialog(
 	useEffect(() =>
 	{
 		Cubits.parentAccounts.init(getAllowedParentTypes(entity.value.type.value ?? AccountType.CashAndBank), {
-			"isParentOnly": true
+			"isParentOnly": true,
+			"isActive": true
 		});
 	}, [entity.value.type.value]);
 

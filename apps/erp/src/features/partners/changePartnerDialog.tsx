@@ -26,6 +26,7 @@ import { Cubits } from "@/core/services/cubits.ts";
 import { AccountType } from "@/core/data/account.ts";
 import { partnersApi } from "./partners.api";
 
+
 export default function ChangePartnerDialog(
 	{dto, onSuccess, initDto, selectTypes}: CommonChangeDialogProps<PartnerDto> & {
 		initDto?: PartnerDto;
@@ -41,7 +42,10 @@ export default function ChangePartnerDialog(
 
 	useEffect(() =>
 	{
-		Cubits.accounts.init([entity.value.type.value === PartnerType.Customer ? AccountType.AccountsReceivable : AccountType.AccountsPayable]);
+		Cubits.accounts.init(
+			[entity.value.type.value === PartnerType.Customer ? AccountType.AccountsReceivable : AccountType.AccountsPayable],
+			{isActive: true}
+		);
 		void Cubits.cities.init();
 	}, [entity.value.type.value]);
 
