@@ -216,7 +216,7 @@ export class ApiClient
 			{
 				toast.error("حدث خطأ غير متوقع في الخادم");
 			}
-			else if (!options?.silent && status === 400)
+			else if (!options?.silent && status !== 422 && status !== 412)
 			{
 				toast.error(json?.title || "طلب غير صالح", {
 					description: errors.join("\n")
