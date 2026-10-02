@@ -51,13 +51,13 @@ export default function ChangeVoucherDialog({
 	useEffect(() =>
 	{
 		void Cubits.paymentMethods.init();
-		void Cubits.partners.init();
+		void Cubits.partners.init(undefined, {isActive: true});
 	}, []);
 
 	useEffect(() =>
 	{
 		if (!entity.value.isDirectMode.value) return;
-		Cubits.accounts.init(getAccountTypesByClasses(entity.value.type.value === VoucherType.Payment ? [AccountClass.Expense] : [AccountClass.Revenue]));
+		Cubits.accounts.init(getAccountTypesByClasses(entity.value.type.value === VoucherType.Payment ? [AccountClass.Expense] : [AccountClass.Revenue]), {isActive: true});
 	}, [entity.value.type.value, entity.value.isDirectMode.value]);
 
 	useEffect(() =>

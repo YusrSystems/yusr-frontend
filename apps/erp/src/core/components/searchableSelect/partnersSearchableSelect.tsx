@@ -57,7 +57,7 @@ export function PartnersSearchableSelect({
 								if (props.label) props.label.value = data.name;
 								props.onSelect?.(data);
 								isAddOpen.value = false;
-								void Cubits.partners.init(types);
+								void Cubits.partners.init(types, {isActive: true});
 							} }
 						/>
 					) }

@@ -55,7 +55,7 @@ export default function AccountsSearchableSelect(
 								if (props.label) props.label.value = data.name;
 								props.onSelect?.(data);
 								isAddAccountOpen.value = false;
-								accountsCubit.init();
+								accountsCubit.init(undefined, {isActive: true});
 							} }
 						/>
 					) }

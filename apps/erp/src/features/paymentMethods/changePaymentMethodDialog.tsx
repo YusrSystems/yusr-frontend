@@ -22,6 +22,7 @@ import { Cubits } from "@/core/services/cubits";
 import { signal } from "@preact/signals-react";
 import { paymentMethodsApi } from "@/features/paymentMethods/paymentMethod.api.ts";
 
+
 export default function ChangePaymentMethodDialog(
 	{dto, onSuccess}: CommonChangeDialogProps<PaymentMethodDto>
 )
@@ -32,7 +33,7 @@ export default function ChangePaymentMethodDialog(
 
 	useEffect(() =>
 	{
-		void Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true});
+		void Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true, isActive: true});
 	}, []);
 
 	if (

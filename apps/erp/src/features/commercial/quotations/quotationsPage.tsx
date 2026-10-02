@@ -70,7 +70,7 @@ export default function QuotationsPage()
 	useEffect(() =>
 	{
 		void Cubits.quotations.init();
-		void Cubits.partners.init([PartnerType.Customer]);
+		void Cubits.partners.init([PartnerType.Customer], {isActive: true});
 		void Cubits.items.init();
 		void Cubits.stores.init();
 	}, []);

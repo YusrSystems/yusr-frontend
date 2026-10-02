@@ -26,6 +26,7 @@ import { Cubits } from "@/core/services/cubits.ts";
 import { TransactionStatus } from "#/types/transactionStatus.ts";
 import { balanceTransfersApi } from "./balanceTransfers.api";
 
+
 export default function ChangeBalanceTransferDialog(
 	{dto, onSuccess}: CommonChangeDialogProps<BalanceTransferDto>
 )
@@ -39,7 +40,7 @@ export default function ChangeBalanceTransferDialog(
 	useEffect(() =>
 	{
 		if (entity.value.transactionStatus.value === TransactionStatus.Voided) return;
-		void Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true});
+		void Cubits.accounts.init([AccountType.CashAndBank], {"isLeafOnly": true, isActive: true});
 	}, [entity.value.transactionStatus.value]);
 
 	useEffect(() =>

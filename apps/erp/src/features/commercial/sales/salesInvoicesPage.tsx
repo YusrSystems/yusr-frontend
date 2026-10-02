@@ -92,10 +92,10 @@ export default function SalesInvoicesPage({initialType}: { initialType?: SalesIn
 
 	useEffect(() =>
 	{
-		void Cubits.partners.init([PartnerType.Customer]);
+		void Cubits.partners.init([PartnerType.Customer], {isActive: true});
 		void Cubits.stores.init();
 		void Cubits.paymentMethods.init();
-		void Cubits.accounts.init(getAccountTypesByClasses([AccountClass.Expense]));
+		void Cubits.accounts.init(getAccountTypesByClasses([AccountClass.Expense]), {isActive: true});
 	}, []);
 
 	const printInvoice = (invoice: SalesInvoiceDto) =>

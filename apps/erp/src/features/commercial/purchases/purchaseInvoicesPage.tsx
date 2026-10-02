@@ -85,7 +85,7 @@ export default function PurchaseInvoicesPage({initialType}: { initialType?: Purc
 
 	useEffect(() =>
 	{
-		void Cubits.partners.init([PartnerType.Supplier]);
+		void Cubits.partners.init([PartnerType.Supplier], {isActive: true});
 		void Cubits.items.init();
 		void Cubits.stores.init();
 		void Cubits.paymentMethods.init();

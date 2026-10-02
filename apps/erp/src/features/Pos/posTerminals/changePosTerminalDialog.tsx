@@ -38,7 +38,7 @@ export default function ChangePosTerminalDialog({dto, onSuccess}: CommonChangeDi
 	{
 		void Cubits.stores.init();
 		void Cubits.branches.init();
-		void Cubits.partners.init([PartnerType.Customer]);
+		void Cubits.partners.init([PartnerType.Customer], {isActive: true});
 		void Cubits.paymentMethods.init();
 		void Cubits.users.init();
 	}, []);

@@ -18,7 +18,7 @@ export default function DefaultsSection({formData}: { formData: Setting })
 
 	useEffect(() =>
 	{
-		Cubits.partners.init();
+		Cubits.partners.init(undefined, {isActive: true});
 	}, []);
 
 	return (

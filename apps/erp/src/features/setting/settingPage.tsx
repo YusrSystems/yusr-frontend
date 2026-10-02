@@ -65,7 +65,7 @@ export default function SettingPage()
 
 	useEffect(() =>
 	{
-		Cubits.accounts.init();
+		Cubits.accounts.init(undefined, {isActive: true});
 		Cubits.paymentMethods.init();
 		Cubits.stores.init();
 		Cubits.taxes.init();
