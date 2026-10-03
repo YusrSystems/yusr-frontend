@@ -141,8 +141,8 @@ export function SaveButton<TEntity extends ChangeableEntity<TDto> = any, TDto ex
 			const isCreate = entity.value.mode.value === ChangeableEntityMode.Create;
 
 			const result = isCreate
-				? await resource.add(payload, {silent: true})
-				: await resource.update(payload, {silent: true});
+				? await resource.add(payload)
+				: await resource.update(payload);
 
 			if (result.status === ResultStatus.UnprocessableEntity || (!result.ok && result.status === 422))
 			{
