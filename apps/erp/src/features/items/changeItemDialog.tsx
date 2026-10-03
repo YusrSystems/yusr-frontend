@@ -42,6 +42,8 @@ export default function ChangeItemDialog({dto, onSuccess}: CommonChangeDialogPro
 			isLoading.value = true;
 			void Cubits.taxes.init();
 			void Cubits.pricingMethods.init();
+			void Cubits.units.init();
+			void Cubits.stores.init();
 			void Cubits.categories.init();
 			void Cubits.brands.init();
 
