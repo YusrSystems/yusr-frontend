@@ -40,12 +40,14 @@ export default function ChangeItemDialog({dto, onSuccess}: CommonChangeDialogPro
 		const fetch = async () =>
 		{
 			isLoading.value = true;
-			void Cubits.taxes.init();
-			void Cubits.pricingMethods.init();
-			void Cubits.units.init();
-			void Cubits.stores.init();
-			void Cubits.categories.init();
-			void Cubits.brands.init();
+			await Promise.all([
+				Cubits.taxes.init(),
+				Cubits.pricingMethods.init(),
+				Cubits.units.init(),
+				Cubits.stores.init(),
+				Cubits.categories.init(),
+				Cubits.brands.init()
+			]);
 
 			if (entity.value.mode.value === ChangeableEntityMode.Update && entity.value?.id)
 			{
@@ -53,6 +55,13 @@ export default function ChangeItemDialog({dto, onSuccess}: CommonChangeDialogPro
 				if (res.ok && res.data)
 				{
 					entity.value = Item.load(res.data);
+				}
+			}
+			else if (entity.value.mode.value === ChangeableEntityMode.Create)
+			{
+				if (entity.value.itemTaxes.value.length === 0 && Cubits.taxes.entities.value.length > 0)
+				{
+					entity.value.changeTaxable(true, Cubits.taxes.entities);
 				}
 			}
 
@@ -65,7 +74,11 @@ export default function ChangeItemDialog({dto, onSuccess}: CommonChangeDialogPro
 
 	useEffect(() =>
 	{
-		if (entity.value.mode.value === ChangeableEntityMode.Create && !entity.value.isDirty.value && Cubits.taxes.entities.value.length > 0)
+		if (
+			entity.value.mode.value === ChangeableEntityMode.Create &&
+			entity.value.itemTaxes.value.length === 0 &&
+			Cubits.taxes.entities.value.length > 0
+		)
 		{
 			entity.value.changeTaxable(true, Cubits.taxes.entities);
 		}
